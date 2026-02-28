@@ -95,19 +95,38 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">mustangpeak_endian_helper.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Implementation of the byte-order swap helpers.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:aeae0fa6d7b6ce3ae943243e627904964" id="r_aeae0fa6d7b6ce3ae943243e627904964"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeae0fa6d7b6ce3ae943243e627904964">swap_endian8</a> (uint8_t x)</td></tr>
+<tr class="memdesc:aeae0fa6d7b6ce3ae943243e627904964"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the input byte unchanged (no-op for API symmetry).  <br /></td></tr>
 <tr class="separator:aeae0fa6d7b6ce3ae943243e627904964"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11e51f45a22085d09e55d271b938ff46" id="r_a11e51f45a22085d09e55d271b938ff46"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11e51f45a22085d09e55d271b938ff46">swap_endian16</a> (uint16_t x)</td></tr>
+<tr class="memdesc:a11e51f45a22085d09e55d271b938ff46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reverses the byte order of a 16-bit unsigned integer.  <br /></td></tr>
 <tr class="separator:a11e51f45a22085d09e55d271b938ff46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa215f200063f6269288e7a5ab29c5500" id="r_aa215f200063f6269288e7a5ab29c5500"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa215f200063f6269288e7a5ab29c5500">swap_endian32</a> (uint32_t x)</td></tr>
+<tr class="memdesc:aa215f200063f6269288e7a5ab29c5500"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reverses the byte order of a 32-bit unsigned integer.  <br /></td></tr>
 <tr class="separator:aa215f200063f6269288e7a5ab29c5500"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f2ef427bd14418705c58a121a6301d8" id="r_a6f2ef427bd14418705c58a121a6301d8"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f2ef427bd14418705c58a121a6301d8">swap_endian64</a> (uint64_t x)</td></tr>
+<tr class="memdesc:a6f2ef427bd14418705c58a121a6301d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reverses the byte order of a 64-bit unsigned integer.  <br /></td></tr>
 <tr class="separator:a6f2ef427bd14418705c58a121a6301d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Implementation of the byte-order swap helpers. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+</ul>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>Each function reverses the byte order of its argument. On GCC/Clang the compiler built-in __builtin_bswapNN is used for optimal code generation; on other compilers a portable bit-shift fallback is provided.</p>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="aeae0fa6d7b6ce3ae943243e627904964" name="aeae0fa6d7b6ce3ae943243e627904964"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeae0fa6d7b6ce3ae943243e627904964">&#9670;&#160;</a></span>swap_endian8()</h2>
 
@@ -122,6 +141,10 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns the input byte unchanged (no-op for API symmetry). </p>
+<pre class="fragment">* @param x  Byte value to "swap".
+* </pre><dl class="section return"><dt>Returns</dt><dd>The same byte value, unchanged. </dd></dl>
 
 </div>
 </div>
@@ -140,6 +163,14 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Reverses the byte order of a 16-bit unsigned integer. </p>
+<p>Algorithm:</p><ol type="1">
+<li>If __builtin_bswap16 is available, use it directly.</li>
+<li>Otherwise shift the low byte up 8 bits and OR with the high byte shifted down.</li>
+</ol>
+<pre class="fragment">* @param x  16-bit value to byte-swap.
+* </pre><dl class="section return"><dt>Returns</dt><dd>The byte-swapped 16-bit value. </dd></dl>
+
 </div>
 </div>
 <a id="aa215f200063f6269288e7a5ab29c5500" name="aa215f200063f6269288e7a5ab29c5500"></a>
@@ -157,6 +188,14 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Reverses the byte order of a 32-bit unsigned integer. </p>
+<p>Algorithm:</p><ol type="1">
+<li>If __builtin_bswap32 is available, use it directly.</li>
+<li>Otherwise mask and shift each of the four bytes into its mirror position.</li>
+</ol>
+<pre class="fragment">* @param x  32-bit value to byte-swap.
+* </pre><dl class="section return"><dt>Returns</dt><dd>The byte-swapped 32-bit value. </dd></dl>
+
 </div>
 </div>
 <a id="a6f2ef427bd14418705c58a121a6301d8" name="a6f2ef427bd14418705c58a121a6301d8"></a>
@@ -173,6 +212,14 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Reverses the byte order of a 64-bit unsigned integer. </p>
+<p>Algorithm:</p><ol type="1">
+<li>If __builtin_bswap64 is available, use it directly.</li>
+<li>Otherwise mask and shift each of the eight bytes into its mirror position.</li>
+</ol>
+<pre class="fragment">* @param x  64-bit value to byte-swap.
+* </pre><dl class="section return"><dt>Returns</dt><dd>The byte-swapped 64-bit value. </dd></dl>
 
 </div>
 </div>

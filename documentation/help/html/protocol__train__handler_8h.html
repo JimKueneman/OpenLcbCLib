@@ -111,21 +111,17 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a8910429fd811c07e7ff663cedfabc411" id="r_a8910429fd811c07e7ff663cedfabc411"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8910429fd811c07e7ff663cedfabc411">ProtocolTrainHandler_initialize</a> (const <a class="el" href="structinterface__protocol__train__handler__t.html">interface_protocol_train_handler_t</a> *interface)</td></tr>
+<tr class="memdesc:a8910429fd811c07e7ff663cedfabc411"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the Train Control Protocol handler.  <br /></td></tr>
 <tr class="separator:a8910429fd811c07e7ff663cedfabc411"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf84497d74966cc915ade105271e13dd" id="r_acf84497d74966cc915ade105271e13dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf84497d74966cc915ade105271e13dd">ProtocolTrainHandler_handle_train_command</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:acf84497d74966cc915ade105271e13dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles an incoming Train Control Protocol command (MTI_TRAIN_PROTOCOL).  <br /></td></tr>
 <tr class="separator:acf84497d74966cc915ade105271e13dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0cf810c64a3181ec44f8c75a24a88c9a" id="r_a0cf810c64a3181ec44f8c75a24a88c9a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cf810c64a3181ec44f8c75a24a88c9a">ProtocolTrainHandler_handle_train_reply</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a0cf810c64a3181ec44f8c75a24a88c9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles an incoming Train Control Protocol reply (MTI_TRAIN_REPLY).  <br /></td></tr>
 <tr class="separator:a0cf810c64a3181ec44f8c75a24a88c9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c91df40d0f5c00442e06e5429f85c69" id="r_a3c91df40d0f5c00442e06e5429f85c69"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c91df40d0f5c00442e06e5429f85c69">ProtocolTrainHandler_attach_listener</a> (<a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *state, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t flags)</td></tr>
-<tr class="separator:a3c91df40d0f5c00442e06e5429f85c69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a660903e989a8a10161c3585e70311f62" id="r_a660903e989a8a10161c3585e70311f62"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a660903e989a8a10161c3585e70311f62">ProtocolTrainHandler_detach_listener</a> (<a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *state, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
-<tr class="separator:a660903e989a8a10161c3585e70311f62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ba0ada1c25dd68bf00fa0bf88860eb4" id="r_a9ba0ada1c25dd68bf00fa0bf88860eb4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtrain__listener__entry__t.html">train_listener_entry_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ba0ada1c25dd68bf00fa0bf88860eb4">ProtocolTrainHandler_find_listener</a> (<a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *state, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
-<tr class="separator:a9ba0ada1c25dd68bf00fa0bf88860eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89725dd6069178dd3c63bd780d62129b" id="r_a89725dd6069178dd3c63bd780d62129b"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89725dd6069178dd3c63bd780d62129b">ProtocolTrainHandler_get_listener_count</a> (<a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *state)</td></tr>
-<tr class="separator:a89725dd6069178dd3c63bd780d62129b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ecd777d393714719a068167214f0d68" id="r_a8ecd777d393714719a068167214f0d68"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtrain__listener__entry__t.html">train_listener_entry_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ecd777d393714719a068167214f0d68">ProtocolTrainHandler_get_listener_by_index</a> (<a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *state, uint8_t index)</td></tr>
-<tr class="separator:a8ecd777d393714719a068167214f0d68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4a34f4e0ee27e144f7057ef13cbf4c7" id="r_ac4a34f4e0ee27e144f7057ef13cbf4c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4a34f4e0ee27e144f7057ef13cbf4c7">ProtocolTrainHandler_handle_emergency_event</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:ac4a34f4e0ee27e144f7057ef13cbf4c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a global or addressed emergency event for a train node.  <br /></td></tr>
+<tr class="separator:ac4a34f4e0ee27e144f7057ef13cbf4c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Train Control Protocol message handler (Layer 1) </p>
@@ -144,7 +140,7 @@ Functions</h2></td></tr>
 <p>Throttle-side callbacks are all notifiers that fire when a reply is received.</p>
 <p>Called from the main statemachine when a train protocol message is received.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Feb 2026</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__application__train_8h.html" title="Application-level Train Control Protocol module.">openlcb_application_train.h</a> - Layer 2 state and API </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a8910429fd811c07e7ff663cedfabc411" name="a8910429fd811c07e7ff663cedfabc411"></a>
@@ -170,6 +166,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Initializes the Train Control Protocol handler. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface</td><td>Pointer to <a class="el" href="structinterface__protocol__train__handler__t.html">interface_protocol_train_handler_t</a> callbacks (may be NULL).</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Initializes the Train Control Protocol handler.</p>
+<pre class="fragment">* @param interface  Populated callback table (may be NULL).
+* </pre> 
 </div>
 </div>
 <a id="acf84497d74966cc915ade105271e13dd" name="acf84497d74966cc915ade105271e13dd"></a>
@@ -195,6 +201,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Handles an incoming Train Control Protocol command (MTI_TRAIN_PROTOCOL). </p>
+<p>Decodes the sub-command byte, updates train_state, builds the appropriate reply, and fires notifier or decision callbacks.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles an incoming Train Control Protocol command (MTI_TRAIN_PROTOCOL).</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* </pre> 
 </div>
 </div>
 <a id="a0cf810c64a3181ec44f8c75a24a88c9a" name="a0cf810c64a3181ec44f8c75a24a88c9a"></a>
@@ -220,10 +237,21 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Handles an incoming Train Control Protocol reply (MTI_TRAIN_REPLY). </p>
+<p>Decodes the reply sub-command and fires the matching throttle-side notifier callback.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles an incoming Train Control Protocol reply (MTI_TRAIN_REPLY).</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* </pre> 
 </div>
 </div>
-<a id="a3c91df40d0f5c00442e06e5429f85c69" name="a3c91df40d0f5c00442e06e5429f85c69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c91df40d0f5c00442e06e5429f85c69">&#9670;&#160;</a></span>ProtocolTrainHandler_attach_listener()</h2>
+<a id="ac4a34f4e0ee27e144f7057ef13cbf4c7" name="ac4a34f4e0ee27e144f7057ef13cbf4c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4a34f4e0ee27e144f7057ef13cbf4c7">&#9670;&#160;</a></span>ProtocolTrainHandler_handle_emergency_event()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -232,19 +260,14 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool ProtocolTrainHandler_attach_listener </td>
+          <td class="memname">void ProtocolTrainHandler_handle_emergency_event </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -254,118 +277,19 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a660903e989a8a10161c3585e70311f62" name="a660903e989a8a10161c3585e70311f62"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a660903e989a8a10161c3585e70311f62">&#9670;&#160;</a></span>ProtocolTrainHandler_detach_listener()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool ProtocolTrainHandler_detach_listener </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a9ba0ada1c25dd68bf00fa0bf88860eb4" name="a9ba0ada1c25dd68bf00fa0bf88860eb4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ba0ada1c25dd68bf00fa0bf88860eb4">&#9670;&#160;</a></span>ProtocolTrainHandler_find_listener()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structtrain__listener__entry__t.html">train_listener_entry_t</a> * ProtocolTrainHandler_find_listener </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a89725dd6069178dd3c63bd780d62129b" name="a89725dd6069178dd3c63bd780d62129b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89725dd6069178dd3c63bd780d62129b">&#9670;&#160;</a></span>ProtocolTrainHandler_get_listener_count()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint8_t ProtocolTrainHandler_get_listener_count </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>state</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8ecd777d393714719a068167214f0d68" name="a8ecd777d393714719a068167214f0d68"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ecd777d393714719a068167214f0d68">&#9670;&#160;</a></span>ProtocolTrainHandler_get_listener_by_index()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structtrain__listener__entry__t.html">train_listener_entry_t</a> * ProtocolTrainHandler_get_listener_by_index </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
+<p>Handles a global or addressed emergency event for a train node. </p>
+<p>Activates or clears the emergency state based on the well-known Event ID and fires the appropriate notifier callback.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">event_id</td><td>Well-known <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the emergency condition.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Sets or clears emergency flags based on the well-known Event ID and fires the appropriate notifier callback.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param event_id           Well-known event_id_t for the emergency condition.
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

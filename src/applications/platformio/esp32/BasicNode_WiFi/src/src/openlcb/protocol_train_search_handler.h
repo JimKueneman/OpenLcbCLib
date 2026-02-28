@@ -37,7 +37,7 @@
  * every train node so each can check for a match.
  *
  * @author Jim Kueneman
- * @date 17 Feb 2026
+ * @date 28 Feb 2026
  *
  * @see openlcb_application_train.h - Train state with DCC address
  * @see openlcb_utilities.h - Event ID encoding/decoding functions
@@ -53,26 +53,16 @@
 
     /**
      * @struct interface_protocol_train_search_handler_t
-     * @brief Application callbacks for train search events
+     * @brief Application callbacks for train search events.
      *
      * All callbacks are optional (can be NULL).
      */
     typedef struct {
 
-        /**
-         * @brief Called when a search matches this train node
-         * @param openlcb_node The matching train node
-         * @param search_address The numeric DCC address from the search query
-         * @param flags The raw flags byte from the search event
-         */
+            /** @brief Called when a search matches this train node. */
         void (*on_search_matched)(openlcb_node_t *openlcb_node, uint16_t search_address, uint8_t flags);
 
-        /**
-         * @brief Called when no train node matches (allocate case, deferred)
-         * @param search_address The numeric DCC address from the search query
-         * @param flags The raw flags byte from the search event
-         * @return Pointer to a newly allocated train node, or NULL
-         */
+            /** @brief Called when no train node matches (allocate case, deferred). */
         openlcb_node_t* (*on_search_no_match)(uint16_t search_address, uint8_t flags);
 
     } interface_protocol_train_search_handler_t;
@@ -82,20 +72,21 @@ extern "C" {
 #endif
 
     /**
-     * @brief Initializes the Train Search Protocol handler
-     * @param interface Pointer to callback interface structure (may be NULL)
+     * @brief Initializes the Train Search Protocol handler.
+     *
+     * @param interface  Pointer to @ref interface_protocol_train_search_handler_t callbacks (may be NULL).
      */
     extern void ProtocolTrainSearch_initialize(const interface_protocol_train_search_handler_t *interface);
 
     /**
-     * @brief Handles incoming train search events
+     * @brief Handles incoming train search events.
      *
      * @details Called from the main statemachine MTI_PC_EVENT_REPORT case
      * for each train node. Decodes the search query, compares against this
      * node's DCC address, and if matching, loads a Producer Identified reply.
      *
-     * @param statemachine_info State machine context with incoming message and node
-     * @param event_id Full 64-bit Event ID containing encoded search query
+     * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+     * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
      */
     extern void ProtocolTrainSearch_handle_search_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 

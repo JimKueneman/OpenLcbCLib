@@ -25,37 +25,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file openlcb_gridconnect.h
- * @brief GridConnect protocol implementation for CAN message conversion
- *
- * @details This module provides bidirectional conversion between CAN messages and
- * GridConnect protocol format, commonly used for serial and TCP/IP communication
- * in OpenLCB systems. GridConnect is a human-readable ASCII protocol that encodes
- * CAN frames as colon-delimited strings with hexadecimal identifiers and data.
- *
- * GridConnect Format:
- * ```
- * :X12345678N0102030405;
- *  │└──────┘││└───────┘│
- *  │   ID   ││  Data   │
- *  Start  Normal  Terminator
- * ```
- *
- * The protocol provides:
- * - Streaming parser for incoming byte-by-byte reception
- * - Automatic error recovery and synchronization
- * - Bidirectional CAN ↔ GridConnect conversion
- * - Support for variable-length data payloads (0-8 bytes)
- *
- * Use cases:
- * - Serial port communication with OpenLCB tools
- * - TCP/IP bridges for network-based OpenLCB systems
- * - Debugging and monitoring OpenLCB traffic
- * - Gateway applications between CAN and Ethernet
+ * @brief Bidirectional conversion between CAN messages and GridConnect ASCII
+ *        format (:X<8-hex-ID>N<hex-data>;).  Includes a streaming byte-at-a-time
+ *        parser with automatic error recovery.
  *
  * @author Jim Kueneman
- * @date 17 Jan 2026
- *
- * @see can_types.h - CAN message structures
+ * @date 28 Feb 2026
  */
 
 #ifndef __OPENLCB_OPENLCB_GRIDCONNECT__
@@ -90,18 +65,7 @@
 /** @brief Number of characters before data section (used for length calculation) */
 #define GRIDCONNECT_HEADER_LEN 12
 
-/**
- * @brief Maximum length of a GridConnect message
- *
- * @details Calculation:
- * - ':' (1) + 'X' (1) = 2 chars
- * - Identifier (8 hex chars) = 8 chars
- * - 'N' flag (1) = 1 char
- * - Data (max 8 bytes × 2 hex chars) = 16 chars
- * - ';' terminator (1) = 1 char
- * - Null terminator (1) = 1 char
- * Total: 2 + 8 + 1 + 16 + 1 + 1 = 29 bytes
- */
+/** @brief Max GridConnect string length: :X(8)N(16); + NUL = 29 bytes. */
 #define MAX_GRID_CONNECT_LEN 29
 
 /** @brief Type definition for GridConnect message buffer */
@@ -113,140 +77,37 @@ extern "C"
 #endif /* __cplusplus */
 
         /**
-         * @brief Processes incoming GridConnect byte stream and extracts complete message
+         * @brief Feeds one byte into the streaming GridConnect parser.
          *
-         * @details This function implements a state machine parser that processes GridConnect
-         * protocol data one byte at a time. It automatically handles synchronization and
-         * error recovery, validating message framing, hexadecimal characters, identifier
-         * length, and data byte counts.
+         * @details Uses static state — NOT thread-safe, single context only.
+         * Malformed input resets the parser automatically.
          *
-         * The parser maintains internal state between calls, making it suitable for
-         * byte-by-byte processing from serial ports or network streams. It will return
-         * true when a complete valid message has been extracted, and false while still
-         * collecting data or recovering from errors.
+         * @param next_byte              Next byte from the incoming stream.
+         * @param gridconnect_buffer     Destination for the completed message.
          *
-         * Use cases:
-         * - Serial port receive interrupt handlers
-         * - TCP/IP socket data processing
-         * - File parsing of GridConnect logs
-         * - Real-time stream processing
-         *
-         * @param next_byte Next byte from the incoming GridConnect stream
-         * @param gridconnect_buffer Pointer to buffer where complete message will be stored
-         *
-         * @return true when a complete and valid GridConnect message has been extracted
-         * @return false while still collecting data or after recovering from errors
-         *
-         * @warning Buffer pointer must point to a valid gridconnect_buffer_t array.
-         *          NULL pointer will cause undefined behavior.
-         *
-         * @warning This function uses static variables to maintain parser state. It is
-         *          NOT thread-safe and must be called from a single context only.
-         *
-         * @attention After receiving true, caller must process the message before the next
-         *            call, as the internal state will be reset for the next message.
-         *
-         * @note The parser automatically recovers from malformed messages by resetting
-         *       to SYNC_START state. No explicit reset function is needed.
-         *
-         * @note Invalid hex characters, wrong lengths, or buffer overflows are silently
-         *       handled by resetting the parser. The function does not report error types.
-         *
-         * @see OpenLcbGridConnect_to_can_msg - Convert extracted GridConnect to CAN message
-         * @see GRIDCONNECT_STATE_SYNC_START - Initial parser state
+         * @return true when a complete, valid GridConnect message is ready.
          */
     extern bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *gridconnect_buffer);
 
         /**
-         * @brief Converts a GridConnect message to a CAN message structure
+         * @brief Converts a validated GridConnect string to a @ref can_msg_t.
          *
-         * @details Parses a complete GridConnect format message and populates a CAN message
-         * structure with the extracted identifier and payload data. The function extracts
-         * the hexadecimal identifier string, converts it to a 32-bit integer, calculates
-         * the payload length from the data section, and converts each pair of hex characters
-         * to data bytes.
+         * @details Input must come from the parser; no format validation is done here.
          *
-         * GridConnect format example:
-         * ```
-         * :X19170640N0501010107015555;
-         *   ^^^^^^^^ ^^^^^^^^^^^^^^^
-         *   ID (8)   Data (variable, even count)
-         * ```
-         *
-         * Use cases:
-         * - Processing received GridConnect messages from serial/TCP
-         * - Converting logged GridConnect data to CAN for replay
-         * - Bridging GridConnect protocol to native CAN bus
-         *
-         * @param gridconnect_buffer Pointer to GridConnect message buffer (null-terminated string)
-         * @param can_msg Pointer to CAN message structure to populate with converted data
-         *
-         * @warning Input buffer must contain a valid, complete GridConnect message as
-         *          produced by OpenLcbGridConnect_copy_out_gridconnect_when_done(). Passing
-         *          malformed data may produce incorrect CAN messages or undefined behavior.
-         *
-         * @warning Input buffer must be at least 12 characters long (header minimum).
-         *          Shorter buffers will cause buffer underflow when calculating data length.
-         *
-         * @warning Output CAN message pointer must not be NULL. No NULL check is performed, dereferencing
-         *          NULL will cause immediate crash.
-         *
-         * @attention This function does not validate the GridConnect format. It assumes
-         *            the input has been validated by the parser. Always use messages from
-         *            OpenLcbGridConnect_copy_out_gridconnect_when_done() or equivalent.
-         *
-         * @note The function uses strtoul() for hex string conversion, which is not the
-         *       most efficient method but provides robust parsing with automatic base detection.
-         *
-         * @see OpenLcbGridConnect_copy_out_gridconnect_when_done - Extract valid GridConnect messages
-         * @see OpenLcbGridConnect_from_can_msg - Reverse conversion (CAN to GridConnect)
-         * @see can_msg_t - CAN message structure definition
+         * @param gridconnect_buffer     Completed GridConnect string.
+         * @param can_msg                Destination CAN message.
          */
     extern void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect_buffer, can_msg_t *can_msg);
 
         /**
-         * @brief Converts a CAN message structure to GridConnect format
+         * @brief Converts a @ref can_msg_t to a null-terminated GridConnect string.
          *
-         * @details Generates a complete GridConnect protocol message from a CAN message
-         * structure. The function formats the message start sequence, converts the 32-bit
-         * identifier to uppercase hexadecimal with leading zeros, adds the normal flag,
-         * converts each payload byte to uppercase hexadecimal, and adds the terminator.
+         * @details Output is uppercase hex with leading zeros on the 8-char ID.
          *
-         * Output format: `:X<8-hex-ID>N<2-hex-byte>...<2-hex-byte>;`
+         * @param gridconnect_buffer     Destination buffer (>= MAX_GRID_CONNECT_LEN).
+         * @param can_msg                Source CAN message.
          *
-         * Example conversions:
-         * - ID=0x19170640, Data={0x05,0x01} → ":X19170640N0501;"
-         * - ID=0x00000001, Data={} → ":X00000001N;"
-         *
-         * Use cases:
-         * - Transmitting CAN messages over serial/TCP connections
-         * - Logging CAN traffic in human-readable format
-         * - Debugging and monitoring OpenLCB bus activity
-         * - Gateway applications forwarding CAN to GridConnect clients
-         *
-         * @param gridconnect_buffer Pointer to buffer where GridConnect message will be stored
-         * @param can_msg Pointer to source CAN message structure to convert
-         *
-         * @warning Output buffer must point to a valid gridconnect_buffer_t array
-         *          (minimum 29 bytes). Buffer overflow will occur if smaller.
-         *
-         * @warning Source CAN message pointer must not be NULL. No NULL check is performed, dereferencing
-         *          NULL will cause immediate crash.
-         *
-         * @warning Payload count must be accurate and not exceed 8. Values > 8
-         *          will cause buffer overflow when writing data bytes.
-         *
-         * @attention The output buffer is null-terminated and safe to use as a C string
-         *            for transmission or logging.
-         *
-         * @note All hexadecimal output is uppercase (A-F, not a-f) for consistency.
-         *
-         * @note The identifier is always formatted with leading zeros to maintain the
-         *       8-character width required by GridConnect protocol.
-         *
-         * @see OpenLcbGridConnect_to_can_msg - Reverse conversion (GridConnect to CAN)
-         * @see OpenLcbGridConnect_copy_out_gridconnect_when_done - Parse received GridConnect
-         * @see can_msg_t - CAN message structure definition
+         * @warning Payload count must not exceed 8 or buffer overflow will occur.
          */
     extern void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect_buffer, can_msg_t *can_msg);
 

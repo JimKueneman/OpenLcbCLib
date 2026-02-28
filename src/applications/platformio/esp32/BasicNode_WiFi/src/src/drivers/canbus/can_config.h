@@ -31,85 +31,87 @@
  * All other CAN-internal wiring is handled automatically by can_config.c.
  *
  * @author Jim Kueneman
- * @date 17 Feb 2026
+ * @date 28 Feb 2026
  *
  * @see openlcb_config.h - OpenLCB protocol layer configuration
  */
 
-#ifndef __CAN_CONFIG__
-#define __CAN_CONFIG__
+#ifndef __DRIVERS_CANBUS_CAN_CONFIG__
+#define __DRIVERS_CANBUS_CAN_CONFIG__
 
 #include <stdbool.h>
 #include <stdint.h>
 
 #include "can_types.h"
 
-/**
- * @brief CAN bus transport configuration.
- *
- * @details Users provide their hardware-specific CAN driver functions here.
- * All other CAN-internal wiring is handled automatically.
- *
- * Example:
- * @code
- * static const can_config_t can_config = {
- *     .transmit_raw_can_frame  = &MyCanDriver_transmit,
- *     .is_tx_buffer_clear      = &MyCanDriver_is_tx_clear,
- *     .lock_shared_resources   = &MyDriver_lock,
- *     .unlock_shared_resources = &MyDriver_unlock,
- *     .on_rx                   = &my_can_rx_handler,   // optional
- *     .on_tx                   = &my_can_tx_handler,   // optional
- *     .on_alias_change         = &my_alias_handler,    // optional
- * };
- *
- * CanConfig_initialize(&can_config);
- * @endcode
- */
-typedef struct {
-
-    /** @brief Transmit a raw CAN frame. REQUIRED. */
-    bool (*transmit_raw_can_frame)(can_msg_t *can_msg);
-
-    /** @brief Check if CAN TX hardware buffer can accept another frame. REQUIRED. */
-    bool (*is_tx_buffer_clear)(void);
-
-    /** @brief Disable interrupts / acquire mutex for shared resource access. REQUIRED.
-     *  Same function as openlcb_config_t.lock_shared_resources. */
-    void (*lock_shared_resources)(void);
-
-    /** @brief Re-enable interrupts / release mutex. REQUIRED.
-     *  Same function as openlcb_config_t.unlock_shared_resources. */
-    void (*unlock_shared_resources)(void);
-
-    /** @brief Called when a CAN frame is received. Optional. */
-    void (*on_rx)(can_msg_t *can_msg);
-
-    /** @brief Called when a CAN frame is transmitted. Optional. */
-    void (*on_tx)(can_msg_t *can_msg);
-
-    /** @brief Called when a node's CAN alias changes. Optional.
-     *  @param alias The new CAN alias
-     *  @param node_id The node's full 48-bit Node ID */
-    void (*on_alias_change)(uint16_t alias, node_id_t node_id);
-
-} can_config_t;
-
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
-/**
- * @brief Initialize the CAN bus transport layer.
- *
- * @details Must be called BEFORE OpenLcb_initialize().
- *
- * @param config CAN transport configuration. Must remain valid for the
- *               lifetime of the application.
- */
-extern void CanConfig_initialize(const can_config_t *config);
+    /**
+     * @brief CAN bus transport configuration.
+     *
+     * @details Users provide their hardware-specific CAN driver functions here.
+     * All other CAN-internal wiring is handled automatically.
+     *
+     * Example:
+     * @code
+     * static const can_config_t can_config = {
+     *     .transmit_raw_can_frame  = &MyCanDriver_transmit,
+     *     .is_tx_buffer_clear      = &MyCanDriver_is_tx_clear,
+     *     .lock_shared_resources   = &MyDriver_lock,
+     *     .unlock_shared_resources = &MyDriver_unlock,
+     *     .on_rx                   = &my_can_rx_handler,   // optional
+     *     .on_tx                   = &my_can_tx_handler,   // optional
+     *     .on_alias_change         = &my_alias_handler,    // optional
+     * };
+     *
+     * CanConfig_initialize(&can_config);
+     * @endcode
+     */
+    typedef struct {
+
+        /** @brief Transmit a raw CAN frame. REQUIRED. */
+        bool (*transmit_raw_can_frame)(can_msg_t *can_msg);
+
+        /** @brief Check if CAN TX hardware buffer can accept another frame. REQUIRED. */
+        bool (*is_tx_buffer_clear)(void);
+
+        /** @brief Disable interrupts / acquire mutex for shared resource access. REQUIRED.
+         *  Same function as openlcb_config_t.lock_shared_resources. */
+        void (*lock_shared_resources)(void);
+
+        /** @brief Re-enable interrupts / release mutex. REQUIRED.
+         *  Same function as openlcb_config_t.unlock_shared_resources. */
+        void (*unlock_shared_resources)(void);
+
+        /** @brief Called when a CAN frame is received. Optional. */
+        void (*on_rx)(can_msg_t *can_msg);
+
+        /** @brief Called when a CAN frame is transmitted. Optional. */
+        void (*on_tx)(can_msg_t *can_msg);
+
+        /** @brief Called when a node's CAN alias changes. Optional. */
+        void (*on_alias_change)(uint16_t alias, node_id_t node_id);
+
+    } can_config_t;
+
+        /**
+         * @brief Initializes the CAN bus transport layer.
+         *
+         * @details Must be called BEFORE OpenLcb_initialize().
+         *
+         * @param config  Pointer to @ref can_config_t configuration. Must remain
+         *                valid for the lifetime of the application.
+         *
+         * @warning NOT thread-safe - call during single-threaded initialization only.
+         *
+         * @see openlcb_config.h
+         */
+    extern void CanConfig_initialize(const can_config_t *config);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
-#endif /* __CAN_CONFIG__ */
+#endif /* __DRIVERS_CANBUS_CAN_CONFIG__ */

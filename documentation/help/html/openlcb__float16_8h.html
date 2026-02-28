@@ -105,35 +105,49 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a35c99703722746307901892fdc3cdde7" id="r_a35c99703722746307901892fdc3cdde7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35c99703722746307901892fdc3cdde7">FLOAT16_POSITIVE_ZERO</a>&#160;&#160;&#160;0x0000</td></tr>
+<tr class="memdesc:a35c99703722746307901892fdc3cdde7"><td class="mdescLeft">&#160;</td><td class="mdescRight">float16 value representing positive zero (forward, stopped).  <br /></td></tr>
 <tr class="separator:a35c99703722746307901892fdc3cdde7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17e4abbc002afefaeeead655aeb2fbcb" id="r_a17e4abbc002afefaeeead655aeb2fbcb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17e4abbc002afefaeeead655aeb2fbcb">FLOAT16_NEGATIVE_ZERO</a>&#160;&#160;&#160;0x8000</td></tr>
+<tr class="memdesc:a17e4abbc002afefaeeead655aeb2fbcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">float16 value representing negative zero (reverse, stopped).  <br /></td></tr>
 <tr class="separator:a17e4abbc002afefaeeead655aeb2fbcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fa22b558efa1465b7cf675b4398e936" id="r_a4fa22b558efa1465b7cf675b4398e936"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4fa22b558efa1465b7cf675b4398e936">FLOAT16_NAN</a>&#160;&#160;&#160;0x7E00</td></tr>
+<tr class="memdesc:a4fa22b558efa1465b7cf675b4398e936"><td class="mdescLeft">&#160;</td><td class="mdescRight">float16 NaN value (speed not available).  <br /></td></tr>
 <tr class="separator:a4fa22b558efa1465b7cf675b4398e936"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54e8c9f630384b06ac3257317620c912" id="r_a54e8c9f630384b06ac3257317620c912"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54e8c9f630384b06ac3257317620c912">FLOAT16_SIGN_MASK</a>&#160;&#160;&#160;0x8000</td></tr>
+<tr class="memdesc:a54e8c9f630384b06ac3257317620c912"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit mask for the sign/direction bit (bit 15).  <br /></td></tr>
 <tr class="separator:a54e8c9f630384b06ac3257317620c912"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee00ace4f5a5daf960b727c1ae1c1145" id="r_aee00ace4f5a5daf960b727c1ae1c1145"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee00ace4f5a5daf960b727c1ae1c1145">FLOAT16_EXPONENT_MASK</a>&#160;&#160;&#160;0x7C00</td></tr>
+<tr class="memdesc:aee00ace4f5a5daf960b727c1ae1c1145"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit mask for the 5-bit exponent field (bits 14-10).  <br /></td></tr>
 <tr class="separator:aee00ace4f5a5daf960b727c1ae1c1145"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5fe438cb59ce59398cd060652d4a111" id="r_aa5fe438cb59ce59398cd060652d4a111"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5fe438cb59ce59398cd060652d4a111">FLOAT16_MANTISSA_MASK</a>&#160;&#160;&#160;0x03FF</td></tr>
+<tr class="memdesc:aa5fe438cb59ce59398cd060652d4a111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit mask for the 10-bit mantissa field (bits 9-0).  <br /></td></tr>
 <tr class="separator:aa5fe438cb59ce59398cd060652d4a111"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a51976029470270650b06819012d8a69f" id="r_a51976029470270650b06819012d8a69f"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51976029470270650b06819012d8a69f">OpenLcbFloat16_from_float</a> (float value)</td></tr>
+<tr class="memdesc:a51976029470270650b06819012d8a69f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a 32-bit float to a float16 bit pattern.  <br /></td></tr>
 <tr class="separator:a51976029470270650b06819012d8a69f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a534de0a0223112e0fb75a4e9a49255a6" id="r_a534de0a0223112e0fb75a4e9a49255a6"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a534de0a0223112e0fb75a4e9a49255a6">OpenLcbFloat16_to_float</a> (uint16_t half)</td></tr>
+<tr class="memdesc:a534de0a0223112e0fb75a4e9a49255a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a float16 bit pattern to a 32-bit float.  <br /></td></tr>
 <tr class="separator:a534de0a0223112e0fb75a4e9a49255a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bf33416cbe673bbe999d4f2d56ab686" id="r_a4bf33416cbe673bbe999d4f2d56ab686"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4bf33416cbe673bbe999d4f2d56ab686">OpenLcbFloat16_negate</a> (uint16_t half)</td></tr>
+<tr class="memdesc:a4bf33416cbe673bbe999d4f2d56ab686"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flips the sign/direction bit of a float16 value and returns the result.  <br /></td></tr>
 <tr class="separator:a4bf33416cbe673bbe999d4f2d56ab686"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d84bcae510904bb26541217c507ec17" id="r_a9d84bcae510904bb26541217c507ec17"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d84bcae510904bb26541217c507ec17">OpenLcbFloat16_is_nan</a> (uint16_t half)</td></tr>
+<tr class="memdesc:a9d84bcae510904bb26541217c507ec17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the float16 bit pattern represents NaN (speed not available).  <br /></td></tr>
 <tr class="separator:a9d84bcae510904bb26541217c507ec17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad3e6b75f030a5f05d5c287236167f31" id="r_aad3e6b75f030a5f05d5c287236167f31"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad3e6b75f030a5f05d5c287236167f31">OpenLcbFloat16_is_zero</a> (uint16_t half)</td></tr>
+<tr class="memdesc:aad3e6b75f030a5f05d5c287236167f31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the float16 bit pattern represents positive or negative zero.  <br /></td></tr>
 <tr class="separator:aad3e6b75f030a5f05d5c287236167f31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3b4f8b1c4e439ec4926a5cb60c65d03" id="r_ab3b4f8b1c4e439ec4926a5cb60c65d03"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3b4f8b1c4e439ec4926a5cb60c65d03">OpenLcbFloat16_speed_with_direction</a> (float speed, bool reverse)</td></tr>
+<tr class="memdesc:ab3b4f8b1c4e439ec4926a5cb60c65d03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes a speed magnitude and direction into a float16 bit pattern.  <br /></td></tr>
 <tr class="separator:ab3b4f8b1c4e439ec4926a5cb60c65d03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b9b9c0f255db719e381478a23fdcdaf" id="r_a7b9b9c0f255db719e381478a23fdcdaf"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b9b9c0f255db719e381478a23fdcdaf">OpenLcbFloat16_get_speed</a> (uint16_t half)</td></tr>
+<tr class="memdesc:a7b9b9c0f255db719e381478a23fdcdaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the speed magnitude from a float16 bit pattern (ignores direction).  <br /></td></tr>
 <tr class="separator:a7b9b9c0f255db719e381478a23fdcdaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a24abb3a67e16b1b8615d7cc0714567a8" id="r_a24abb3a67e16b1b8615d7cc0714567a8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24abb3a67e16b1b8615d7cc0714567a8">OpenLcbFloat16_get_direction</a> (uint16_t half)</td></tr>
+<tr class="memdesc:a24abb3a67e16b1b8615d7cc0714567a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the direction bit is set (reverse).  <br /></td></tr>
 <tr class="separator:a24abb3a67e16b1b8615d7cc0714567a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -145,12 +159,9 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>The OpenLCB Train Control Protocol encodes speed as IEEE 754 binary16 (half-precision float). The sign bit represents direction (0 = forward, 1 = reverse). The value is speed in scale meters per second.</p>
-<p>Format: [S][EEEEE][MMMMMMMMMM] S = sign/direction (bit 15) EEEEE = 5-bit exponent with bias 15 (bits 14-10) M...M = 10-bit mantissa (bits 9-0)</p>
-<p>Special values: 0x0000 = positive zero (forward, stopped) 0x8000 = negative zero (reverse, stopped) Exponent all 1s, mantissa != 0 = NaN (speed not available)</p>
-<p>All conversions use integer-only bit manipulation (no math.h dependency) for embedded target compatibility.</p>
+<p>Encodes/decodes OpenLCB train speed as binary16. Sign bit = direction (0 forward, 1 reverse). All conversions use integer-only bit manipulation for embedded targets.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a35c99703722746307901892fdc3cdde7" name="a35c99703722746307901892fdc3cdde7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a35c99703722746307901892fdc3cdde7">&#9670;&#160;</a></span>FLOAT16_POSITIVE_ZERO</h2>
@@ -163,6 +174,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>float16 value representing positive zero (forward, stopped). </p>
 
 </div>
 </div>
@@ -178,6 +191,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>float16 value representing negative zero (reverse, stopped). </p>
+
 </div>
 </div>
 <a id="a4fa22b558efa1465b7cf675b4398e936" name="a4fa22b558efa1465b7cf675b4398e936"></a>
@@ -191,6 +206,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>float16 NaN value (speed not available). </p>
 
 </div>
 </div>
@@ -206,6 +223,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Bit mask for the sign/direction bit (bit 15). </p>
+
 </div>
 </div>
 <a id="aee00ace4f5a5daf960b727c1ae1c1145" name="aee00ace4f5a5daf960b727c1ae1c1145"></a>
@@ -220,6 +239,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Bit mask for the 5-bit exponent field (bits 14-10). </p>
+
 </div>
 </div>
 <a id="aa5fe438cb59ce59398cd060652d4a111" name="aa5fe438cb59ce59398cd060652d4a111"></a>
@@ -233,6 +254,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Bit mask for the 10-bit mantissa field (bits 9-0). </p>
 
 </div>
 </div>
@@ -260,6 +283,26 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Converts a 32-bit float to a float16 bit pattern. </p>
+<p>Rounds toward zero. Overflow is clamped. NaN produces FLOAT16_NAN.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>32-bit float to convert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>16-bit float16 bit pattern.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Extract sign, exponent, mantissa from IEEE 754 single</li>
+<li>Handle special cases: zero, NaN, infinity</li>
+<li>Clamp overflow to max finite half value</li>
+<li>Normal range: rebias exponent, truncate mantissa</li>
+<li>Subnormal: shift mantissa into denormalized form</li>
+<li>Underflow: flush to signed zero</li>
+</ol>
+<pre class="fragment">* @param value 32-bit float to convert
+* </pre><dl class="section return"><dt>Returns</dt><dd>16-bit float16 bit pattern </dd></dl>
+
 </div>
 </div>
 <a id="a534de0a0223112e0fb75a4e9a49255a6" name="a534de0a0223112e0fb75a4e9a49255a6"></a>
@@ -284,6 +327,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Converts a float16 bit pattern to a 32-bit float. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Extract sign, exponent, mantissa from half-precision fields</li>
+<li>Handle zero, subnormal (normalize), infinity/NaN, and normal cases</li>
+<li>Rebias exponent and expand mantissa to single-precision format</li>
+</ol>
+<pre class="fragment">* @param half 16-bit float16 bit pattern
+* </pre><dl class="section return"><dt>Returns</dt><dd>32-bit float </dd></dl>
 
 </div>
 </div>
@@ -310,6 +362,9 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Flips the sign/direction bit of a float16 value and returns the result. </p>
+<p>Flips the sign/direction bit of a float16 value and returns the result. </p>
+
 </div>
 </div>
 <a id="a9d84bcae510904bb26541217c507ec17" name="a9d84bcae510904bb26541217c507ec17"></a>
@@ -335,6 +390,9 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Returns true if the float16 bit pattern represents NaN (speed not available). </p>
+<p>Returns true if the float16 bit pattern represents NaN (speed not available). </p>
+
 </div>
 </div>
 <a id="aad3e6b75f030a5f05d5c287236167f31" name="aad3e6b75f030a5f05d5c287236167f31"></a>
@@ -359,6 +417,8 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Returns true if the float16 bit pattern represents positive or negative zero. </p>
 
 </div>
 </div>
@@ -389,6 +449,8 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Encodes a speed magnitude and direction into a float16 bit pattern. </p>
+
 </div>
 </div>
 <a id="a7b9b9c0f255db719e381478a23fdcdaf" name="a7b9b9c0f255db719e381478a23fdcdaf"></a>
@@ -414,6 +476,8 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Returns the speed magnitude from a float16 bit pattern (ignores direction). </p>
+
 </div>
 </div>
 <a id="a24abb3a67e16b1b8615d7cc0714567a8" name="a24abb3a67e16b1b8615d7cc0714567a8"></a>
@@ -438,6 +502,8 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Returns true if the direction bit is set (reverse). </p>
 
 </div>
 </div>

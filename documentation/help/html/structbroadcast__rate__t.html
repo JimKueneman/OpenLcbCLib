@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Clock rate for fast/slow time simulation.  
+<p>Broadcast Time clock rate (12-bit signed fixed point, 2 fractional bits).  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -103,13 +103,8 @@ Data Fields</h2></td></tr>
 <tr class="separator:a28e3c179a86f337095088b3ca02a2b2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Clock rate for fast/slow time simulation. </p>
-<p>12-bit signed fixed point value with 2 fractional bits. Format: rrrrrrrrrr.rr</p><ul>
-<li>Range: -512.00 to +511.75 in 0.25 increments</li>
-<li>Examples: 0x0004 = 1.00 (real-time), 0x0010 = 4.00 (4x speed)</li>
-<li>Negative values in 2's complement (e.g., 0xFFFC = -1.00)</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structbroadcast__clock__state__t.html#a38657176f9b5c2f867298632792c596b">broadcast_clock_state_t.rate</a> </dd></dl>
+<div class="textblock"><p>Broadcast Time clock rate (12-bit signed fixed point, 2 fractional bits). </p>
+<p>Range -512.00 to +511.75 in 0.25 increments. Example: 0x0004 = 1.00x (real-time), 0x0010 = 4.00x. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a64692688596f71182233ef827606e499" name="a64692688596f71182233ef827606e499"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a64692688596f71182233ef827606e499">&#9670;&#160;</a></span>rate</h2>
@@ -122,7 +117,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Clock rate (12-bit signed fixed point, 2 fractional bits) </p>
+<p>Clock rate </p>
 
 </div>
 </div>
@@ -137,7 +132,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Rate data is valid (true if valid, false if invalid) </p>
+<p>true if data has been received </p>
 
 </div>
 </div>

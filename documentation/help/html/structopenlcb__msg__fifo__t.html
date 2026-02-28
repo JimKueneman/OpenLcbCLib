@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>FIFO structure containing circular buffer and pointers.  
+<p>Circular buffer of message pointers with head/tail indices.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -108,8 +108,7 @@ Data Fields</h2></td></tr>
 <tr class="separator:a8db7f977b77e4e4d588ef0d3e04ada16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>FIFO structure containing circular buffer and pointers. </p>
-<p>Contains the message pointer array and head/tail indices for FIFO management. The extra buffer slot (LEN_MESSAGE_BUFFER + 1) allows distinguishing between full and empty states using only the head and tail pointers. </p>
+<div class="textblock"><p>Circular buffer of message pointers with head/tail indices. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a7eaa035a07b8f3ef1762213822da1761" name="a7eaa035a07b8f3ef1762213822da1761"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7eaa035a07b8f3ef1762213822da1761">&#9670;&#160;</a></span>list</h2>

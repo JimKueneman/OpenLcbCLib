@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Command codes for Memory Configuration Protocol.  
+<p>Datagram byte 0 = 0x20, byte 1 = command code.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -102,17 +102,7 @@ Macros</h2></td></tr>
 <tr class="separator:gaa729ec2c93077d6c0cec5fd65ec7cffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Command codes for Memory Configuration Protocol. </p>
-<p>The Memory Configuration Protocol operates via datagrams with a command structure:</p><ul>
-<li>Byte 0: Protocol identifier (0x20 for Configuration Memory)</li>
-<li>Byte 1: Command/subcommand code</li>
-<li>Bytes 2+: Command-specific data</li>
-</ul>
-<p>Address spaces are identified by:</p><ul>
-<li>Single byte (0-254) for spaces &lt; 0xFD</li>
-<li>0xFD, 0xFE, 0xFF with space ID in byte 6 for well-known spaces</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd>OpenLCB Memory Configuration Protocol Standard </dd></dl>
+<p>Datagram byte 0 = 0x20, byte 1 = command code. </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="gaa729ec2c93077d6c0cec5fd65ec7cffd" name="gaa729ec2c93077d6c0cec5fd65ec7cffd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaa729ec2c93077d6c0cec5fd65ec7cffd">&#9670;&#160;</a></span>CONFIG_MEM_CONFIGURATION</h2>

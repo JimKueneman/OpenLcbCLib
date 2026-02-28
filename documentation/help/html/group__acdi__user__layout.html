@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Memory addresses and lengths for ACDI user information.  
+<p>Space 0xFB: user-assignable name and description strings.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -123,12 +123,7 @@ Macros</h2></td></tr>
 <tr class="separator:ga1530ea724f2fac7211f1fc233a3c3e46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Memory addresses and lengths for ACDI user information. </p>
-<p>The ACDI User space (0xFB) contains user-assignable strings. Layout:</p><ul>
-<li>Byte 0: Version (always 1)</li>
-<li>Bytes 1-63: User name (null-terminated, max 63 bytes including null)</li>
-<li>Bytes 64-127: User description (null-terminated, max 64 bytes including null) </li>
-</ul>
+<p>Space 0xFB: user-assignable name and description strings. </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ga47a94db0b3db47b17178362a3e6b1f90" name="ga47a94db0b3db47b17178362a3e6b1f90"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga47a94db0b3db47b17178362a3e6b1f90">&#9670;&#160;</a></span>CONFIG_MEM_USER_MODEL_ADDRESS</h2>

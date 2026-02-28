@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>OpenLCB message structure.  
+<p>Core OpenLCB message structure.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -121,25 +121,9 @@ Data Fields</h2></td></tr>
 <tr class="separator:a88bbea41a453d7a42970580800cafe26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>OpenLCB message structure. </p>
-<p>Core message structure containing all information for an OpenLCB message.</p>
-<p><b>Message Lifecycle:</b></p><ol type="1">
-<li>Allocated from buffer store (allocate sets state.allocated=1)</li>
-<li>Populated with MTI, addresses, and payload data</li>
-<li>Queued in FIFO or list</li>
-<li>Processed by state machine</li>
-<li>Reference count decremented (freed when reaches 0)</li>
-</ol>
-<p><b>Multi-frame Assembly:</b> For messages spanning multiple CAN frames (datagrams, SNIP), the first frame creates the message with state.inprocess=1. Subsequent frames append data. Final frame clears inprocess flag.</p>
-<p><b>Reference Counting:</b> Messages can be referenced by multiple subsystems (e.g., TX queue and retry buffer). Reference count tracks number of active references. Buffer is returned to pool when count reaches zero.</p>
-<dl class="section warning"><dt>Warning</dt><dd>Do not access payload directly; use payload pointer with proper type cast </dd>
-<dd>
-Reference count must be managed correctly to prevent leaks</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> </dd>
-<dd>
-<a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer</a> </dd>
-<dd>
-<a class="el" href="openlcb__buffer__store_8c.html#a36d2ba67201acfcfa2a5c67b406161e6" title="Increments the reference count on an allocated buffer.">OpenLcbBufferStore_inc_reference_count</a> </dd></dl>
+<div class="textblock"><p>Core OpenLCB message structure. </p>
+<p>Holds MTI, source/dest addressing, payload pointer, and reference count. Multi-frame messages are assembled with state.inprocess = 1 until the final frame arrives.</p>
+<dl class="section warning"><dt>Warning</dt><dd>Reference count must be managed correctly to prevent leaks. </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a94263e86a8ad051c8fc1fea1ba29f300" name="a94263e86a8ad051c8fc1fea1ba29f300"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a94263e86a8ad051c8fc1fea1ba29f300">&#9670;&#160;</a></span>state</h2>
@@ -272,7 +256,7 @@ Reference count must be managed correctly to prevent leaks</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to payload buffer (cast to appropriate type) </p>
+<p>Pointer to payload buffer </p>
 
 </div>
 </div>

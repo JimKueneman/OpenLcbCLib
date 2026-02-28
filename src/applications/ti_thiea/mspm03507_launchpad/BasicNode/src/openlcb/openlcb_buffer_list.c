@@ -25,26 +25,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file openlcb_buffer_list.c
- * @brief Implementation of the linear search buffer list
+ * @brief Random-access list of OpenLCB message pointers.
  *
- * @details Implements a simple array-based list with linear search operations.
- * This data structure is optimized for small list sizes where the overhead of
- * more complex data structures (hash tables, trees) outweighs their benefits.
- *
- * Design rationale:
- * - Small expected list size (typically < 20 entries)
- * - Simple NULL-based free slot detection
- * - No memory allocation overhead
- * - Predictable worst-case behavior
- * - Easy to debug and verify
- *
- * Memory characteristics:
- * - Fixed size allocation at compile time
- * - No dynamic memory allocation
- * - Pointer storage only (4-8 bytes per slot)
+ * @details Fixed-size array with linear search.  NULL slots are free.
+ * Supports indexed access and attribute-based search (alias + MTI).
  *
  * @author Jim Kueneman
- * @date 17 Jan 2026
+ * @date 28 Feb 2026
  */
 
 #include "openlcb_buffer_list.h"
@@ -62,26 +49,11 @@
 static openlcb_msg_t *_openlcb_msg_buffer_list[LEN_MESSAGE_BUFFER];
 
     /**
-     * @brief Initializes the OpenLcb Message Buffer List
-     *
-     * @details Algorithm:
-     * Simple initialization by clearing all slots to NULL.
-     * -# Iterate through all LEN_MESSAGE_BUFFER slots
-     * -# Set each slot to NULL
-     * -# Result: Empty list ready for use
-     *
-     * Use cases:
-     * - Called once during application startup
-     * - Required before any list operations
-     * - Must be called after OpenLcbBufferStore_initialize()
-     *
-     * @warning MUST be called exactly once during initialization
-     * @warning NOT thread-safe
-     *
-     * @attention Call after OpenLcbBufferStore_initialize()
-     *
-     * @see OpenLcbBufferStore_initialize - Must be called first
-     */
+    * @brief Initializes the buffer list.
+    *
+    * @details Algorithm:
+    * -# Clear all slots to NULL
+    */
 void OpenLcbBufferList_initialize(void) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
@@ -93,40 +65,18 @@ void OpenLcbBufferList_initialize(void) {
 }
 
     /**
-     * @brief Inserts a new OpenLcb message into the buffer at the first open slot
-     *
-     * @details Algorithm:
-     * Linear search for first free slot, then store pointer.
-     * -# Iterate from index 0 to LEN_MESSAGE_BUFFER-1
-     * -# Check if _openlcb_msg_buffer_list[i] is NULL (free slot)
-     * -# If NULL found:
-     *    - Store new_msg at that index
-     *    - Return new_msg (success)
-     * -# If loop completes without finding NULL:
-     *    - Return NULL (list full)
-     *
-     * Use cases:
-     * - Storing first frame of multi-frame message
-     * - Tracking in-progress operations
-     * - Managing messages needing attribute lookup
-     *
-     * @verbatim
-     * @param new_msg Pointer to message from buffer store (should NOT be NULL)
-     * @endverbatim
-     *
-     * @return Pointer to message on success, NULL if list full
-     *
-     * @warning Returns NULL when list full
-     * @warning NOT thread-safe
-     *
-     * @attention Check return value for NULL
-     * @attention Caller retains ownership
-     *
-     * @remark If frequently returning NULL, increase LEN_MESSAGE_BUFFER
-     *
-     * @see OpenLcbBufferStore_allocate_buffer - Allocate before adding
-     * @see OpenLcbBufferList_release - Remove from list
-     */
+    * @brief Inserts a message pointer into the first available slot.
+    *
+    * @details Algorithm:
+    * -# Search for first NULL slot
+    * -# Store the pointer and return it, or return NULL if full
+    *
+    * @verbatim
+    * @param new_msg Pointer to @ref openlcb_msg_t from the buffer store
+    * @endverbatim
+    *
+    * @return The stored pointer on success, or NULL if the list is full
+    */
 openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
@@ -145,44 +95,20 @@ openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg) {
 }
 
     /**
-     * @brief Searches the buffer for a message matching the passed parameters
-     *
-     * @details Algorithm:
-     * Linear search with triple condition matching.
-     * -# Iterate from index 0 to LEN_MESSAGE_BUFFER-1
-     * -# Skip NULL slots (no message stored)
-     * -# For each non-NULL slot, check if ALL three conditions match:
-     *    - dest_alias matches
-     *    - source_alias matches  
-     *    - mti matches
-     * -# If all match, return pointer immediately
-     * -# If loop completes without match, return NULL
-     *
-     * Use cases:
-     * - Finding partial multi-frame message by source/dest/type
-     * - Looking up message for frame assembly
-     * - Verifying message existence
-     *
-     * @verbatim
-     * @param source_alias CAN alias of sending node
-     * @param dest_alias CAN alias of receiving node
-     * @param mti Message Type Indicator code
-     * @endverbatim
-     *
-     * @return Pointer to first matching message, or NULL if not found
-     *
-     * @warning Returns NULL if no match
-     * @warning Does NOT remove from list
-     * @warning NOT thread-safe
-     *
-     * @attention All three parameters must match
-     * @attention Returns first match only
-     *
-     * @note Early exit on first match
-     *
-     * @see OpenLcbBufferList_add - How messages get into list
-     * @see OpenLcbBufferList_release - Remove after finding
-     */
+    * @brief Finds a message matching source alias, dest alias, and MTI.
+    *
+    * @details Algorithm:
+    * -# Search all non-NULL slots for a triple match
+    * -# Return the first match, or NULL if none found
+    *
+    * @verbatim
+    * @param source_alias CAN alias of sending node
+    * @param dest_alias CAN alias of receiving node
+    * @param mti Message Type Indicator code
+    * @endverbatim
+    *
+    * @return Pointer to matching @ref openlcb_msg_t, or NULL if not found
+    */
 openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
@@ -205,40 +131,19 @@ openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias
 }
 
     /**
-     * @brief Removes an OpenLcb message from the buffer list
-     *
-     * @details Algorithm:
-     * Linear search for matching pointer, then NULL that slot.
-     * -# If msg is NULL, return NULL immediately
-     * -# Iterate from index 0 to LEN_MESSAGE_BUFFER-1
-     * -# Compare each slot's pointer with msg
-     * -# If match found:
-     *    - Set slot to NULL (remove from list)
-     *    - Return msg pointer
-     * -# If loop completes without match:
-     *    - Return NULL (not found)
-     *
-     * Use cases:
-     * - Removing completed multi-frame message
-     * - Cleaning up before freeing message
-     * - Removing message from tracking
-     *
-     * @verbatim
-     * @param msg Pointer to message to remove (can be NULL)
-     * @endverbatim
-     *
-     * @return Pointer to message if found and removed, NULL otherwise
-     *
-     * @warning Does NOT free message buffer
-     * @warning Caller must call free_buffer() separately
-     * @warning NOT thread-safe
-     *
-     * @attention Safe to call with NULL
-     * @attention Message not freed, only removed from list
-     *
-     * @see OpenLcbBufferStore_free_buffer - Free after releasing
-     * @see OpenLcbBufferList_find - Find before releasing
-     */
+    * @brief Removes a message from the list without freeing it.
+    *
+    * @details Algorithm:
+    * -# If NULL, return NULL
+    * -# Search for the pointer, clear the slot, return the pointer
+    * -# Return NULL if not found
+    *
+    * @verbatim
+    * @param msg Pointer to @ref openlcb_msg_t to remove (NULL is safe)
+    * @endverbatim
+    *
+    * @return The removed pointer, or NULL if not found
+    */
 openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg) {
 
     if (!msg) {
@@ -262,39 +167,7 @@ openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg) {
     return NULL;
 }
 
-    /**
-     * @brief Returns a pointer to the message at the passed index
-     *
-     * @details Algorithm:
-     * Simple bounds checking followed by array access.
-     * -# Check if index >= LEN_MESSAGE_BUFFER
-     * -# If out of bounds, return NULL
-     * -# Otherwise, return _openlcb_msg_buffer_list[index]
-     *    (may be NULL if slot is empty)
-     *
-     * Use cases:
-     * - Iterating through all entries
-     * - Direct access by index
-     * - Debugging and diagnostics
-     *
-     * @verbatim
-     * @param index Index of message requested (0 to LEN_MESSAGE_BUFFER-1)
-     * @endverbatim
-     *
-     * @return Pointer to message at index, or NULL if out of bounds or empty
-     *
-     * @warning Returns NULL for out-of-bounds
-     * @warning Returns NULL for empty slots
-     * @warning Cannot distinguish out-of-bounds from empty
-     * @warning NOT thread-safe
-     *
-     * @attention Check return value for NULL
-     * @attention Valid range: 0 to LEN_MESSAGE_BUFFER-1
-     *
-     * @note Does not remove from list
-     *
-     * @see OpenLcbBufferList_find - Search by attributes instead
-     */
+    /** @brief Returns the message pointer at the given index, or NULL if empty or out of range. */
 openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index) {
 
     if (index >= LEN_MESSAGE_BUFFER) {
@@ -306,31 +179,7 @@ openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index) {
     return _openlcb_msg_buffer_list[index];
 }
 
-    /**
-     * @brief Tests if there are any messages stored in the buffer list
-     *
-     * @details Algorithm:
-     * Linear scan with early exit optimization.
-     * -# Iterate from index 0 to LEN_MESSAGE_BUFFER-1
-     * -# If any slot is not NULL:
-     *    - Return false immediately (not empty)
-     * -# If loop completes (all slots NULL):
-     *    - Return true (empty)
-     *
-     * Use cases:
-     * - Checking for in-progress multi-frame messages
-     * - Idle detection
-     * - Shutdown validation
-     * - Memory leak detection
-     *
-     * @return True if all slots NULL (empty), false if any message present
-     *
-     * @note Non-destructive
-     * @note Early exit on first non-NULL
-     *
-     * @see OpenLcbBufferList_add - Causes to return false
-     * @see OpenLcbBufferList_release - May cause to return true
-     */
+    /** @brief Returns true if the list contains no messages. */
 bool OpenLcbBufferList_is_empty(void) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {

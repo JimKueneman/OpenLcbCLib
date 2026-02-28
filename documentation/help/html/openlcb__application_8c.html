@@ -102,44 +102,49 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a78c4dd26cc000fae9e2af5b6453ad511" id="r_a78c4dd26cc000fae9e2af5b6453ad511"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78c4dd26cc000fae9e2af5b6453ad511">OpenLcbApplication_initialize</a> (const <a class="el" href="structinterface__openlcb__application__t.html">interface_openlcb_application_t</a> *interface_openlcb_application)</td></tr>
-<tr class="memdesc:a78c4dd26cc000fae9e2af5b6453ad511"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLCB Application interface.  <br /></td></tr>
+<tr class="memdesc:a78c4dd26cc000fae9e2af5b6453ad511"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the application callback interface for use by all application layer functions.  <br /></td></tr>
 <tr class="separator:a78c4dd26cc000fae9e2af5b6453ad511"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90a0fe82553f0554429866a6bc770e40" id="r_a90a0fe82553f0554429866a6bc770e40"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90a0fe82553f0554429866a6bc770e40">OpenLcbApplication_send_event_with_mti</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t mti)</td></tr>
+<tr class="memitem:a90a0fe82553f0554429866a6bc770e40" id="r_a90a0fe82553f0554429866a6bc770e40"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90a0fe82553f0554429866a6bc770e40">OpenLcbApplication_send_event_with_mti</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t mti)</td></tr>
+<tr class="memdesc:a90a0fe82553f0554429866a6bc770e40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an event message with an arbitrary MTI.  <br /></td></tr>
 <tr class="separator:a90a0fe82553f0554429866a6bc770e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d8d8805e7ddd4c67084bd273d6f95bb" id="r_a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d8d8805e7ddd4c67084bd273d6f95bb">OpenLcbApplication_clear_consumer_eventids</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
-<tr class="memdesc:a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all consumer event IDs registered for the specified node.  <br /></td></tr>
+<tr class="memitem:a5d8d8805e7ddd4c67084bd273d6f95bb" id="r_a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d8d8805e7ddd4c67084bd273d6f95bb">OpenLcbApplication_clear_consumer_eventids</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the consumer event list for a node by resetting its count to zero.  <br /></td></tr>
 <tr class="separator:a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a357ca2ca5479e96f908713026e3957f6" id="r_a357ca2ca5479e96f908713026e3957f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a357ca2ca5479e96f908713026e3957f6">OpenLcbApplication_clear_producer_eventids</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
-<tr class="memdesc:a357ca2ca5479e96f908713026e3957f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all producer event IDs registered for the specified node.  <br /></td></tr>
+<tr class="memitem:a357ca2ca5479e96f908713026e3957f6" id="r_a357ca2ca5479e96f908713026e3957f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a357ca2ca5479e96f908713026e3957f6">OpenLcbApplication_clear_producer_eventids</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a357ca2ca5479e96f908713026e3957f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the producer event list for a node by resetting its count to zero.  <br /></td></tr>
 <tr class="separator:a357ca2ca5479e96f908713026e3957f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1623ce9844facbe8b68f216e0392efa" id="r_aa1623ce9844facbe8b68f216e0392efa"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa1623ce9844facbe8b68f216e0392efa">OpenLcbApplication_register_consumer_eventid</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> event_status)</td></tr>
-<tr class="memdesc:aa1623ce9844facbe8b68f216e0392efa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a consumer event ID with the specified node.  <br /></td></tr>
+<tr class="memitem:aa1623ce9844facbe8b68f216e0392efa" id="r_aa1623ce9844facbe8b68f216e0392efa"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa1623ce9844facbe8b68f216e0392efa">OpenLcbApplication_register_consumer_eventid</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> event_status)</td></tr>
+<tr class="memdesc:aa1623ce9844facbe8b68f216e0392efa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a consumer event ID to the node's consumer list.  <br /></td></tr>
 <tr class="separator:aa1623ce9844facbe8b68f216e0392efa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89b413f9021c179fab80ce4ec132cc2c" id="r_a89b413f9021c179fab80ce4ec132cc2c"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89b413f9021c179fab80ce4ec132cc2c">OpenLcbApplication_register_producer_eventid</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> event_status)</td></tr>
-<tr class="memdesc:a89b413f9021c179fab80ce4ec132cc2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a producer event ID with the specified node.  <br /></td></tr>
+<tr class="memitem:a89b413f9021c179fab80ce4ec132cc2c" id="r_a89b413f9021c179fab80ce4ec132cc2c"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89b413f9021c179fab80ce4ec132cc2c">OpenLcbApplication_register_producer_eventid</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> event_status)</td></tr>
+<tr class="memdesc:a89b413f9021c179fab80ce4ec132cc2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a producer event ID to the node's producer list.  <br /></td></tr>
 <tr class="separator:a89b413f9021c179fab80ce4ec132cc2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4fbe6ee65257dfe82cb8931aaa1a65ab" id="r_a4fbe6ee65257dfe82cb8931aaa1a65ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4fbe6ee65257dfe82cb8931aaa1a65ab">OpenLcbApplication_clear_consumer_ranges</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:a4fbe6ee65257dfe82cb8931aaa1a65ab" id="r_a4fbe6ee65257dfe82cb8931aaa1a65ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4fbe6ee65257dfe82cb8931aaa1a65ab">OpenLcbApplication_clear_consumer_ranges</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a4fbe6ee65257dfe82cb8931aaa1a65ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the consumer event-range list by resetting its range count to zero.  <br /></td></tr>
 <tr class="separator:a4fbe6ee65257dfe82cb8931aaa1a65ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9715c78e46027ef0b820f02db535773b" id="r_a9715c78e46027ef0b820f02db535773b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9715c78e46027ef0b820f02db535773b">OpenLcbApplication_clear_producer_ranges</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:a9715c78e46027ef0b820f02db535773b" id="r_a9715c78e46027ef0b820f02db535773b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9715c78e46027ef0b820f02db535773b">OpenLcbApplication_clear_producer_ranges</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a9715c78e46027ef0b820f02db535773b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the producer event-range list by resetting its range count to zero.  <br /></td></tr>
 <tr class="separator:a9715c78e46027ef0b820f02db535773b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32922743b79ea43e2c4b67a74f05db6c" id="r_a32922743b79ea43e2c4b67a74f05db6c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32922743b79ea43e2c4b67a74f05db6c">OpenLcbApplication_register_consumer_range</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id_base, <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a> range_size)</td></tr>
+<tr class="memitem:a32922743b79ea43e2c4b67a74f05db6c" id="r_a32922743b79ea43e2c4b67a74f05db6c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32922743b79ea43e2c4b67a74f05db6c">OpenLcbApplication_register_consumer_range</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id_base, <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a> range_size)</td></tr>
+<tr class="memdesc:a32922743b79ea43e2c4b67a74f05db6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers an event ID range in the node's consumer range list.  <br /></td></tr>
 <tr class="separator:a32922743b79ea43e2c4b67a74f05db6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fc87073f3058af5461777cf7c2bda91" id="r_a7fc87073f3058af5461777cf7c2bda91"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fc87073f3058af5461777cf7c2bda91">OpenLcbApplication_register_producer_range</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id_base, <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a> range_size)</td></tr>
+<tr class="memitem:a7fc87073f3058af5461777cf7c2bda91" id="r_a7fc87073f3058af5461777cf7c2bda91"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fc87073f3058af5461777cf7c2bda91">OpenLcbApplication_register_producer_range</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id_base, <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a> range_size)</td></tr>
+<tr class="memdesc:a7fc87073f3058af5461777cf7c2bda91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers an event ID range in the node's producer range list.  <br /></td></tr>
 <tr class="separator:a7fc87073f3058af5461777cf7c2bda91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56e3f060f9a65d5d4b35588ffd4a0028" id="r_a56e3f060f9a65d5d4b35588ffd4a0028"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56e3f060f9a65d5d4b35588ffd4a0028">OpenLcbApplication_send_event_pc_report</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
-<tr class="memdesc:a56e3f060f9a65d5d4b35588ffd4a0028"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Producer/Consumer event report message.  <br /></td></tr>
+<tr class="memitem:a56e3f060f9a65d5d4b35588ffd4a0028" id="r_a56e3f060f9a65d5d4b35588ffd4a0028"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56e3f060f9a65d5d4b35588ffd4a0028">OpenLcbApplication_send_event_pc_report</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a56e3f060f9a65d5d4b35588ffd4a0028"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Producer/Consumer Event Report (PCER) message to the network.  <br /></td></tr>
 <tr class="separator:a56e3f060f9a65d5d4b35588ffd4a0028"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a693d55cbf56d18656dfe24189126167d" id="r_a693d55cbf56d18656dfe24189126167d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a693d55cbf56d18656dfe24189126167d">OpenLcbApplication_send_teach_event</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
-<tr class="memdesc:a693d55cbf56d18656dfe24189126167d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a teach event message.  <br /></td></tr>
+<tr class="memitem:a693d55cbf56d18656dfe24189126167d" id="r_a693d55cbf56d18656dfe24189126167d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a693d55cbf56d18656dfe24189126167d">OpenLcbApplication_send_teach_event</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a693d55cbf56d18656dfe24189126167d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Learn Event (teach) message to the network.  <br /></td></tr>
 <tr class="separator:a693d55cbf56d18656dfe24189126167d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2da804fe3dce3a9035ce6d4579bb4d6f" id="r_a2da804fe3dce3a9035ce6d4579bb4d6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2da804fe3dce3a9035ce6d4579bb4d6f">OpenLcbApplication_send_initialization_event</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
-<tr class="memdesc:a2da804fe3dce3a9035ce6d4579bb4d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an initialization complete event for the specified node.  <br /></td></tr>
+<tr class="memitem:a2da804fe3dce3a9035ce6d4579bb4d6f" id="r_a2da804fe3dce3a9035ce6d4579bb4d6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2da804fe3dce3a9035ce6d4579bb4d6f">OpenLcbApplication_send_initialization_event</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a2da804fe3dce3a9035ce6d4579bb4d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an Initialization Complete message for the specified node.  <br /></td></tr>
 <tr class="separator:a2da804fe3dce3a9035ce6d4579bb4d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9255f494607f8447f499ca2d833e0d32" id="r_a9255f494607f8447f499ca2d833e0d32"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9255f494607f8447f499ca2d833e0d32">OpenLcbApplication_read_configuration_memory</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
-<tr class="memdesc:a9255f494607f8447f499ca2d833e0d32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads data from the node's configuration memory.  <br /></td></tr>
+<tr class="memitem:a9255f494607f8447f499ca2d833e0d32" id="r_a9255f494607f8447f499ca2d833e0d32"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9255f494607f8447f499ca2d833e0d32">OpenLcbApplication_read_configuration_memory</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:a9255f494607f8447f499ca2d833e0d32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads bytes from the node's configuration memory via the application callback.  <br /></td></tr>
 <tr class="separator:a9255f494607f8447f499ca2d833e0d32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0082cc94a4a076abd9b0c95697c544cf" id="r_a0082cc94a4a076abd9b0c95697c544cf"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0082cc94a4a076abd9b0c95697c544cf">OpenLcbApplication_write_configuration_memory</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
-<tr class="memdesc:a0082cc94a4a076abd9b0c95697c544cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes data to the node's configuration memory.  <br /></td></tr>
+<tr class="memitem:a0082cc94a4a076abd9b0c95697c544cf" id="r_a0082cc94a4a076abd9b0c95697c544cf"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0082cc94a4a076abd9b0c95697c544cf">OpenLcbApplication_write_configuration_memory</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:a0082cc94a4a076abd9b0c95697c544cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes bytes to the node's configuration memory via the application callback.  <br /></td></tr>
 <tr class="separator:a0082cc94a4a076abd9b0c95697c544cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -151,16 +156,9 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>This module implements the high-level application programming interface for the OpenLCB protocol stack. It provides functions for event registration, event transmission, and configuration memory access.</p>
-<p>The implementation maintains a static interface pointer to application-provided callbacks for message transmission and memory operations. All functions are designed to be simple wrappers that either manipulate node structures directly or call through to the registered callbacks.</p>
-<p>Event registration functions modify the node's producer/consumer lists in place. Event transmission functions build OpenLCB messages and queue them via the send_openlcb_msg callback. Memory access functions provide pass-through to application-defined memory handlers with NULL checking.</p>
+<p>Implements the high-level application programming interface for the OpenLCB protocol stack. Maintains a single static pointer to the application-provided callback structure set by <a class="el" href="#a78c4dd26cc000fae9e2af5b6453ad511" title="Stores the application callback interface for use by all application layer functions.">OpenLcbApplication_initialize()</a>. All public functions are thin wrappers that either manipulate node data directly or call through to those callbacks.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__application_8h.html" title="Application layer interface for OpenLCB library.">openlcb_application.h</a> </dd>
-<dd>
-<a class="el" href="protocol__event__transport_8c.html" title="Implementation of event transport protocol.">protocol_event_transport.c</a> - Event protocol handling </dd>
-<dd>
-protocol_config_mem.c - Configuration memory protocol handling </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a78c4dd26cc000fae9e2af5b6453ad511" name="a78c4dd26cc000fae9e2af5b6453ad511"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a78c4dd26cc000fae9e2af5b6453ad511">&#9670;&#160;</a></span>OpenLcbApplication_initialize()</h2>
@@ -177,24 +175,17 @@ protocol_config_mem.c - Configuration memory protocol handling </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes the OpenLCB Application interface. </p>
-<p>Initialization <br  />
-</p>
-<p>Algorithm: Stores the application-provided interface pointer in static memory for use by all application layer functions throughout the program's lifetime.</p><ol type="1">
-<li>Cast away const qualifier from interface pointer</li>
-<li>Store pointer in static _interface variable</li>
-<li>Interface is now available to all application layer functions</li>
+<p>Stores the application callback interface for use by all application layer functions. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Cast away the const qualifier from the interface pointer.</li>
+<li>Store the pointer in the static _interface variable.</li>
 </ol>
-<pre class="fragment">* @param interface_openlcb_application Pointer to interface structure with callbacks
-*
-* </pre> <dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during application startup before any other OpenLCB application functions. Calling multiple times will reset the interface pointer and may cause loss of program context.</dd>
+<pre class="fragment">* @param interface_openlcb_application  Pointer to a fully initialised interface_openlcb_application_t.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once before any other function in this module. </dd>
 <dd>
-The interface pointer is stored in static memory. The pointed-to structure must remain valid for the lifetime of the program.</dd>
+The pointed-to structure must remain valid for the lifetime of the program. </dd>
 <dd>
-All function pointers in the interface must be non-NULL. NULL pointers will cause crashes when library attempts callbacks.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Must be called during single-threaded initialization phase.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The const cast is safe because the interface structure should be defined as a static const in the application code.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__application__t.html" title="Interface structure for application layer callbacks.">interface_openlcb_application_t</a> </dd></dl>
+All three function pointers in the structure must be non-NULL. </dd></dl>
 
 </div>
 </div>
@@ -207,7 +198,7 @@ All function pointers in the interface must be non-NULL. NULL pointers will caus
         <tr>
           <td class="memname">bool OpenLcbApplication_send_event_with_mti </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -222,6 +213,20 @@ All function pointers in the interface must be non-NULL. NULL pointers will caus
       </table>
 </div><div class="memdoc">
 
+<p>Sends an event message with an arbitrary MTI. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Declare msg and payload on the stack.</li>
+<li>Point msg.payload at the local payload buffer; set payload_type to BASIC.</li>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Loads message header fields and clears the payload to zeros.">OpenLcbUtilities_load_openlcb_message()</a> with the node's alias/ID, a zero destination alias, NULL_NODE_ID destination, and the caller-supplied MTI.</li>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID to payload at offset 0.">OpenLcbUtilities_copy_event_id_to_openlcb_payload()</a> to place event_id in the payload.</li>
+<li>If the send callback is non-NULL, call it and return its result; otherwise return false.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param event_id      64-bit event_id_t to include in the payload.
+* @param mti           16-bit MTI for the message.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued successfully, false if the transmit buffer is full or the callback is NULL.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer on the node causes a crash — no NULL check is performed. </dd></dl>
+
 </div>
 </div>
 <a id="a5d8d8805e7ddd4c67084bd273d6f95bb" name="a5d8d8805e7ddd4c67084bd273d6f95bb"></a>
@@ -233,24 +238,18 @@ All function pointers in the interface must be non-NULL. NULL pointers will caus
         <tr>
           <td class="memname">void OpenLcbApplication_clear_consumer_eventids </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Clears all consumer event IDs registered for the specified node. </p>
-<p>Algorithm: Resets the consumer event count to zero, effectively clearing the list.</p><ol type="1">
-<li>Set openlcb_node-&gt;consumers.count = 0</li>
-<li>Consumer list is now empty (existing event IDs remain in memory but inaccessible)</li>
+<p>Clears the consumer event list for a node by resetting its count to zero. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Set openlcb_node-&gt;consumers.count to 0.</li>
 </ol>
-<pre class="fragment">* @param openlcb_node Pointer to the OpenLCB node
-*
-* </pre> <dl class="section warning"><dt>Warning</dt><dd>Node pointer must not be NULL. No NULL check performed. Passing NULL will cause immediate crash on dereference.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Non-destructive operation - Event IDs remain in memory but are inaccessible due to zero count.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa1623ce9844facbe8b68f216e0392efa" title="Registers a consumer event ID with the specified node.">OpenLcbApplication_register_consumer_eventid</a> </dd>
-<dd>
-<a class="el" href="#a357ca2ca5479e96f908713026e3957f6" title="Clears all producer event IDs registered for the specified node.">OpenLcbApplication_clear_producer_eventids</a> </dd></dl>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t to clear.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash — no NULL check is performed. </dd></dl>
 
 </div>
 </div>
@@ -263,24 +262,18 @@ All function pointers in the interface must be non-NULL. NULL pointers will caus
         <tr>
           <td class="memname">void OpenLcbApplication_clear_producer_eventids </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Clears all producer event IDs registered for the specified node. </p>
-<p>Algorithm: Resets the producer event count to zero, effectively clearing the list.</p><ol type="1">
-<li>Set openlcb_node-&gt;producers.count = 0</li>
-<li>Producer list is now empty (existing event IDs remain in memory but inaccessible)</li>
+<p>Clears the producer event list for a node by resetting its count to zero. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Set openlcb_node-&gt;producers.count to 0.</li>
 </ol>
-<pre class="fragment">* @param openlcb_node Pointer to the OpenLCB node
-*
-* </pre> <dl class="section warning"><dt>Warning</dt><dd>Node pointer must not be NULL. No NULL check performed. Passing NULL will cause immediate crash on dereference.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Non-destructive operation - Event IDs remain in memory but are inaccessible due to zero count.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a89b413f9021c179fab80ce4ec132cc2c" title="Registers a producer event ID with the specified node.">OpenLcbApplication_register_producer_eventid</a> </dd>
-<dd>
-<a class="el" href="#a5d8d8805e7ddd4c67084bd273d6f95bb" title="Clears all consumer event IDs registered for the specified node.">OpenLcbApplication_clear_consumer_eventids</a> </dd></dl>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t to clear.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash — no NULL check is performed. </dd></dl>
 
 </div>
 </div>
@@ -293,7 +286,7 @@ All function pointers in the interface must be non-NULL. NULL pointers will caus
         <tr>
           <td class="memname">uint16_t OpenLcbApplication_register_consumer_eventid </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -308,30 +301,21 @@ All function pointers in the interface must be non-NULL. NULL pointers will caus
       </table>
 </div><div class="memdoc">
 
-<p>Registers a consumer event ID with the specified node. </p>
-<p>Algorithm: Adds event to consumer list if space available, otherwise returns error.</p><ol type="1">
-<li>Check if count &lt; USER_DEFINED_CONSUMER_COUNT (room in array)</li>
-<li>If room: Store event_id at consumers.list[count].event</li>
-<li>Store event_status at consumers.list[count].status</li>
-<li>Increment consumers.count by 1</li>
-<li>Return count - 1 (0-based array index where event was stored)</li>
-<li>If no room: Return 0xFFFF error code</li>
+<p>Adds a consumer event ID to the node's consumer list. </p>
+<p>Algorithm:</p><ol type="1">
+<li>If consumers.count &lt; USER_DEFINED_CONSUMER_COUNT:<ul>
+<li>Store event_id and event_status at consumers.list[count].</li>
+<li>Increment consumers.count.</li>
+<li>Return the new entry's 0-based index (count - 1).</li>
+</ul>
+</li>
+<li>Otherwise return 0xFFFF.</li>
 </ol>
-<pre class="fragment">* @param openlcb_node Pointer to the OpenLCB node
-* @param event_id 64-bit Event ID to register (8 bytes MSB first per OpenLCB spec)
-* @param event_status Initial status: EVENT_UNKNOWN, EVENT_VALID, or EVENT_INVALID
-*
-* </pre> <dl class="section return"><dt>Returns</dt><dd>0-based array index where event was stored (0 to USER_DEFINED_CONSUMER_COUNT-1), or 0xFFFF if consumer array is full (registration failed)</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Node pointer must not be NULL. No NULL check performed.</dd>
-<dd>
-Consumer array has fixed size USER_DEFINED_CONSUMER_COUNT. Caller must check for 0xFFFF return to detect full array.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Uses direct comparison (count &lt; MAX) to check for available space. Valid indices are 0 to USER_DEFINED_CONSUMER_COUNT-1.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Return value is 0-based array index. Can be used directly to access the event: openlcb_node-&gt;consumers.list[return_value]</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a5d8d8805e7ddd4c67084bd273d6f95bb" title="Clears all consumer event IDs registered for the specified node.">OpenLcbApplication_clear_consumer_eventids</a> </dd>
-<dd>
-<a class="el" href="#a89b413f9021c179fab80ce4ec132cc2c" title="Registers a producer event ID with the specified node.">OpenLcbApplication_register_producer_eventid</a> </dd>
-<dd>
-<a class="el" href="protocol__event__transport_8c.html" title="Implementation of event transport protocol.">protocol_event_transport.c</a> - Consumer Identified message handling </dd></dl>
+<pre class="fragment">* @param openlcb_node   Pointer to the openlcb_node_t receiving the registration.
+* @param event_id       64-bit event_id_t to register (8 bytes, MSB first).
+* @param event_status   Initial status: one of the event_status_enum values.
+* </pre><dl class="section return"><dt>Returns</dt><dd>0-based index of the newly registered entry, or 0xFFFF if the array is full.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash — no NULL check is performed on the node. </dd></dl>
 
 </div>
 </div>
@@ -344,7 +328,7 @@ Consumer array has fixed size USER_DEFINED_CONSUMER_COUNT. Caller must check for
         <tr>
           <td class="memname">uint16_t OpenLcbApplication_register_producer_eventid </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -359,32 +343,21 @@ Consumer array has fixed size USER_DEFINED_CONSUMER_COUNT. Caller must check for
       </table>
 </div><div class="memdoc">
 
-<p>Registers a producer event ID with the specified node. </p>
-<p>Algorithm: Adds event to producer list if space available, otherwise returns error.</p><ol type="1">
-<li>Check if count &lt; USER_DEFINED_PRODUCER_COUNT (room in array)</li>
-<li>If room: Store event_id at producers.list[count].event</li>
-<li>Store event_status at producers.list[count].status</li>
-<li>Increment producers.count by 1</li>
-<li>Return count - 1 (0-based array index where event was stored)</li>
-<li>If no room: Return 0xFFFF error code</li>
+<p>Adds a producer event ID to the node's producer list. </p>
+<p>Algorithm:</p><ol type="1">
+<li>If producers.count &lt; USER_DEFINED_PRODUCER_COUNT:<ul>
+<li>Store event_id and event_status at producers.list[count].</li>
+<li>Increment producers.count.</li>
+<li>Return the new entry's 0-based index (count - 1).</li>
+</ul>
+</li>
+<li>Otherwise return 0xFFFF.</li>
 </ol>
-<pre class="fragment">* @param openlcb_node Pointer to the OpenLCB node
-* @param event_id 64-bit Event ID to register (8 bytes MSB first per OpenLCB spec)
-* @param event_status Initial status: EVENT_UNKNOWN, EVENT_VALID, or EVENT_INVALID
-*
-* </pre> <dl class="section return"><dt>Returns</dt><dd>0-based array index where event was stored (0 to USER_DEFINED_PRODUCER_COUNT-1), or 0xFFFF if producer array is full (registration failed)</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Node pointer must not be NULL. No NULL check performed.</dd>
-<dd>
-Producer array has fixed size USER_DEFINED_PRODUCER_COUNT. Caller must check for 0xFFFF return to detect full array.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Uses direct comparison (count &lt; MAX) to check for available space. Valid indices are 0 to USER_DEFINED_PRODUCER_COUNT-1.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Return value is 0-based array index. Can be used directly to access the event: openlcb_node-&gt;producers.list[return_value]</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a357ca2ca5479e96f908713026e3957f6" title="Clears all producer event IDs registered for the specified node.">OpenLcbApplication_clear_producer_eventids</a> </dd>
-<dd>
-<a class="el" href="#aa1623ce9844facbe8b68f216e0392efa" title="Registers a consumer event ID with the specified node.">OpenLcbApplication_register_consumer_eventid</a> </dd>
-<dd>
-<a class="el" href="#a56e3f060f9a65d5d4b35588ffd4a0028" title="Sends a Producer/Consumer event report message.">OpenLcbApplication_send_event_pc_report</a> - To send registered events </dd>
-<dd>
-<a class="el" href="protocol__event__transport_8c.html" title="Implementation of event transport protocol.">protocol_event_transport.c</a> - Producer Identified message handling </dd></dl>
+<pre class="fragment">* @param openlcb_node   Pointer to the openlcb_node_t receiving the registration.
+* @param event_id       64-bit event_id_t to register (8 bytes, MSB first).
+* @param event_status   Initial status: one of the event_status_enum values.
+* </pre><dl class="section return"><dt>Returns</dt><dd>0-based index of the newly registered entry, or 0xFFFF if the array is full.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash — no NULL check is performed on the node. </dd></dl>
 
 </div>
 </div>
@@ -397,11 +370,19 @@ Producer array has fixed size USER_DEFINED_PRODUCER_COUNT. Caller must check for
         <tr>
           <td class="memname">void OpenLcbApplication_clear_consumer_ranges </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Clears the consumer event-range list by resetting its range count to zero. </p>
+<p>Clears the consumer event-range list for a node by resetting its range count to zero.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Set openlcb_node-&gt;consumers.range_count to 0.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t to clear.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash — no NULL check is performed. </dd></dl>
 
 </div>
 </div>
@@ -414,11 +395,19 @@ Producer array has fixed size USER_DEFINED_PRODUCER_COUNT. Caller must check for
         <tr>
           <td class="memname">void OpenLcbApplication_clear_producer_ranges </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Clears the producer event-range list by resetting its range count to zero. </p>
+<p>Clears the producer event-range list for a node by resetting its range count to zero.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Set openlcb_node-&gt;producers.range_count to 0.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t to clear.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash — no NULL check is performed. </dd></dl>
 
 </div>
 </div>
@@ -431,7 +420,7 @@ Producer array has fixed size USER_DEFINED_PRODUCER_COUNT. Caller must check for
         <tr>
           <td class="memname">bool OpenLcbApplication_register_consumer_range </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -445,6 +434,22 @@ Producer array has fixed size USER_DEFINED_PRODUCER_COUNT. Caller must check for
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Registers an event ID range in the node's consumer range list. </p>
+<p>Algorithm:</p><ol type="1">
+<li>If consumers.range_count &lt; USER_DEFINED_CONSUMER_RANGE_COUNT:<ul>
+<li>Store event_id_base and range_size in the next range_list slot.</li>
+<li>Increment consumers.range_count.</li>
+<li>Return true.</li>
+</ul>
+</li>
+<li>Otherwise return false.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the openlcb_node_t receiving the registration.
+* @param event_id_base   Base event_id_t of the range.
+* @param range_size      Number of consecutive event IDs (event_range_count_enum).
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if registered successfully, false if the range array is full.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash — no NULL check is performed on the node. </dd></dl>
 
 </div>
 </div>
@@ -457,7 +462,7 @@ Producer array has fixed size USER_DEFINED_PRODUCER_COUNT. Caller must check for
         <tr>
           <td class="memname">bool OpenLcbApplication_register_producer_range </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -472,6 +477,22 @@ Producer array has fixed size USER_DEFINED_PRODUCER_COUNT. Caller must check for
       </table>
 </div><div class="memdoc">
 
+<p>Registers an event ID range in the node's producer range list. </p>
+<p>Algorithm:</p><ol type="1">
+<li>If producers.range_count &lt; USER_DEFINED_PRODUCER_RANGE_COUNT:<ul>
+<li>Store event_id_base and range_size in the next range_list slot.</li>
+<li>Increment producers.range_count.</li>
+<li>Return true.</li>
+</ul>
+</li>
+<li>Otherwise return false.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the openlcb_node_t receiving the registration.
+* @param event_id_base   Base event_id_t of the range.
+* @param range_size      Number of consecutive event IDs (event_range_count_enum).
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if registered successfully, false if the range array is full.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash — no NULL check is performed on the node. </dd></dl>
+
 </div>
 </div>
 <a id="a56e3f060f9a65d5d4b35588ffd4a0028" name="a56e3f060f9a65d5d4b35588ffd4a0028"></a>
@@ -483,7 +504,7 @@ Producer array has fixed size USER_DEFINED_PRODUCER_COUNT. Caller must check for
         <tr>
           <td class="memname">bool OpenLcbApplication_send_event_pc_report </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -493,43 +514,20 @@ Producer array has fixed size USER_DEFINED_PRODUCER_COUNT. Caller must check for
       </table>
 </div><div class="memdoc">
 
-<p>Sends a Producer/Consumer event report message. </p>
-<p>Algorithm: Builds a PC Event Report message and queues it for transmission.</p><ol type="1">
-<li>Declare msg and payload structures on stack</li>
-<li>Set msg.payload to point to local payload structure</li>
-<li>Set msg.payload_type = BASIC (no extended payload)</li>
-<li>Call <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message()</a> with:<ul>
-<li>Source alias from openlcb_node-&gt;alias</li>
-<li>Source ID from openlcb_node-&gt;id</li>
-<li>Destination alias = 0 (global message)</li>
-<li>Destination ID = NULL_NODE_ID (global)</li>
-<li>MTI = MTI_PC_EVENT_REPORT (0x05B4)</li>
-</ul>
-</li>
-<li>Call <a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID into the message payload.">OpenLcbUtilities_copy_event_id_to_openlcb_payload()</a> to add event_id to payload</li>
-<li>Check if _interface-&gt;send_openlcb_msg is non-NULL</li>
-<li>If NULL: Return false (callback not initialized)</li>
-<li>If non-NULL: Call _interface-&gt;send_openlcb_msg() to queue message</li>
-<li>Return true if send succeeded, false if buffer full or callback NULL</li>
+<p>Sends a Producer/Consumer Event Report (PCER) message to the network. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Declare msg and payload on the stack.</li>
+<li>Point msg.payload at the local payload buffer; set payload_type to BASIC.</li>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Loads message header fields and clears the payload to zeros.">OpenLcbUtilities_load_openlcb_message()</a> with the node's alias/ID, a zero destination alias, NULL_NODE_ID destination, and MTI_PC_EVENT_REPORT (0x05B4).</li>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID to payload at offset 0.">OpenLcbUtilities_copy_event_id_to_openlcb_payload()</a> to place event_id in the payload.</li>
+<li>If the send callback is non-NULL, call it and return its result; otherwise return false.</li>
 </ol>
-<pre class="fragment">* @param openlcb_node Pointer to the OpenLCB node sending the report
-* @param event_id 64-bit Event ID to report (8 bytes MSB first)
-*
-* </pre> <dl class="section return"><dt>Returns</dt><dd>true if message was successfully queued for transmission, false if message buffer is full or callback is NULL</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Node pointer must not be NULL. No NULL check performed.</dd>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param event_id      64-bit event_id_t to report.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued successfully, false if the transmit buffer is full or the callback is NULL.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer on the node causes a crash — no NULL check is performed. </dd>
 <dd>
-Returns false if _interface-&gt;send_openlcb_msg is NULL. Ensure <a class="el" href="#a78c4dd26cc000fae9e2af5b6453ad511" title="Initializes the OpenLCB Application interface.">OpenLcbApplication_initialize()</a> was called with valid callbacks.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Per OpenLCB Event Transport Protocol Section 7, events should be advertised via Producer Identified before sending PCER (except automatically-routed well-known events).</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This sends a global (unaddressed) message with MTI 0x05B4. Event payload is 8 bytes (64-bit event ID).</dd>
-<dd>
-Function is non-blocking. Message is queued, not transmitted immediately.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a89b413f9021c179fab80ce4ec132cc2c" title="Registers a producer event ID with the specified node.">OpenLcbApplication_register_producer_eventid</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID into the message payload.">OpenLcbUtilities_copy_event_id_to_openlcb_payload</a> </dd>
-<dd>
-<a class="el" href="protocol__event__transport_8c.html" title="Implementation of event transport protocol.">protocol_event_transport.c</a> - PCER message handling </dd></dl>
+Returns false if <a class="el" href="#a78c4dd26cc000fae9e2af5b6453ad511" title="Stores the application callback interface for use by all application layer functions.">OpenLcbApplication_initialize()</a> was not called first. </dd></dl>
 
 </div>
 </div>
@@ -542,7 +540,7 @@ Function is non-blocking. Message is queued, not transmitted immediately.</dd></
         <tr>
           <td class="memname">bool OpenLcbApplication_send_teach_event </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -552,43 +550,20 @@ Function is non-blocking. Message is queued, not transmitted immediately.</dd></
       </table>
 </div><div class="memdoc">
 
-<p>Sends a teach event message. </p>
-<p>Algorithm: Builds a Learn Event message and queues it for transmission.</p><ol type="1">
-<li>Declare msg and payload structures on stack</li>
-<li>Set msg.payload to point to local payload structure</li>
-<li>Set msg.payload_type = BASIC (no extended payload)</li>
-<li>Call <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message()</a> with:<ul>
-<li>Source alias from openlcb_node-&gt;alias</li>
-<li>Source ID from openlcb_node-&gt;id</li>
-<li>Destination alias = 0 (global message)</li>
-<li>Destination ID = NULL_NODE_ID (global)</li>
-<li>MTI = MTI_EVENT_LEARN (0x0594)</li>
-</ul>
-</li>
-<li>Call <a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID into the message payload.">OpenLcbUtilities_copy_event_id_to_openlcb_payload()</a> to add event_id to payload</li>
-<li>Check if _interface-&gt;send_openlcb_msg is non-NULL</li>
-<li>If NULL: Return false (callback not initialized)</li>
-<li>If non-NULL: Call _interface-&gt;send_openlcb_msg() to queue message</li>
-<li>Return true if send succeeded, false if buffer full or callback NULL</li>
+<p>Sends a Learn Event (teach) message to the network. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Declare msg and payload on the stack.</li>
+<li>Point msg.payload at the local payload buffer; set payload_type to BASIC.</li>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Loads message header fields and clears the payload to zeros.">OpenLcbUtilities_load_openlcb_message()</a> with the node's alias/ID, a zero destination alias, NULL_NODE_ID destination, and MTI_EVENT_LEARN (0x0594).</li>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID to payload at offset 0.">OpenLcbUtilities_copy_event_id_to_openlcb_payload()</a> to place event_id in the payload.</li>
+<li>If the send callback is non-NULL, call it and return its result; otherwise return false.</li>
 </ol>
-<pre class="fragment">* @param openlcb_node Pointer to the OpenLCB node sending the teach event
-* @param event_id 64-bit Event ID to teach (8 bytes MSB first)
-*
-* </pre> <dl class="section return"><dt>Returns</dt><dd>true if message was successfully queued for transmission, false if message buffer is full or callback is NULL</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Node pointer must not be NULL. No NULL check performed.</dd>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param event_id      64-bit event_id_t to teach.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued successfully, false if the transmit buffer is full or the callback is NULL.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer on the node causes a crash — no NULL check is performed. </dd>
 <dd>
-Returns false if _interface-&gt;send_openlcb_msg is NULL. Ensure <a class="el" href="#a78c4dd26cc000fae9e2af5b6453ad511" title="Initializes the OpenLCB Application interface.">OpenLcbApplication_initialize()</a> was called with valid callbacks.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Per OpenLCB Event Transport Protocol, Learn Event (0x0594) is used to teach other nodes about event IDs during configuration.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This sends a global (unaddressed) message with MTI 0x0594. Event payload is 8 bytes (64-bit event ID).</dd>
-<dd>
-Function is non-blocking. Message is queued, not transmitted immediately.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a56e3f060f9a65d5d4b35588ffd4a0028" title="Sends a Producer/Consumer event report message.">OpenLcbApplication_send_event_pc_report</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID into the message payload.">OpenLcbUtilities_copy_event_id_to_openlcb_payload</a> </dd>
-<dd>
-<a class="el" href="protocol__event__transport_8c.html" title="Implementation of event transport protocol.">protocol_event_transport.c</a> - Learn Event message handling </dd></dl>
+Returns false if <a class="el" href="#a78c4dd26cc000fae9e2af5b6453ad511" title="Stores the application callback interface for use by all application layer functions.">OpenLcbApplication_initialize()</a> was not called first. </dd></dl>
 
 </div>
 </div>
@@ -601,50 +576,27 @@ Function is non-blocking. Message is queued, not transmitted immediately.</dd></
         <tr>
           <td class="memname">bool OpenLcbApplication_send_initialization_event </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sends an initialization complete event for the specified node. </p>
-<p>Algorithm: Builds an Initialization Complete message with node ID payload and queues it.</p><ol type="1">
-<li>Declare msg and payload structures on stack</li>
-<li>Set msg.payload to point to local payload structure</li>
-<li>Set msg.payload_type = BASIC (no extended payload)</li>
-<li>Call <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message()</a> with:<ul>
-<li>Source alias from openlcb_node-&gt;alias</li>
-<li>Source ID from openlcb_node-&gt;id</li>
-<li>Destination alias = 0 (global message)</li>
-<li>Destination ID = NULL_NODE_ID (global)</li>
-<li>MTI = MTI_INITIALIZATION_COMPLETE (0x0100)</li>
-</ul>
-</li>
-<li>Call <a class="el" href="openlcb__utilities_8c.html#aebdc740485642f016371b4604b93aa7f" title="Copies a 6-byte node ID into the message payload at a specified offset.">OpenLcbUtilities_copy_node_id_to_openlcb_payload()</a> to add node ID to payload at offset 0</li>
-<li>Check if _interface-&gt;send_openlcb_msg is non-NULL</li>
-<li>If NULL: Return false (callback not initialized)</li>
-<li>If non-NULL: Call _interface-&gt;send_openlcb_msg() to queue message</li>
-<li>Return true if send succeeded, false if buffer full or callback NULL</li>
+<p>Sends an Initialization Complete message for the specified node. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Declare msg and payload on the stack.</li>
+<li>Point msg.payload at the local payload buffer; set payload_type to BASIC.</li>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Loads message header fields and clears the payload to zeros.">OpenLcbUtilities_load_openlcb_message()</a> with the node's alias/ID, a zero destination alias, NULL_NODE_ID destination, and MTI_INITIALIZATION_COMPLETE (0x0100).</li>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#aebdc740485642f016371b4604b93aa7f" title="Copies a 6-byte node ID (big-endian) to payload at the given offset.">OpenLcbUtilities_copy_node_id_to_openlcb_payload()</a> to place the 6-byte Node ID at payload offset 0.</li>
+<li>If the send callback is non-NULL, call it and return its result; otherwise return false.</li>
 </ol>
-<pre class="fragment">* @param openlcb_node Pointer to the OpenLCB node sending the initialization event
-*
-* </pre> <dl class="section return"><dt>Returns</dt><dd>true if message was successfully queued for transmission, false if message buffer is full or callback is NULL</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Node pointer must not be NULL. No NULL check performed.</dd>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t that has just finished login.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued successfully, false if the transmit buffer is full or the callback is NULL.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer on the node causes a crash — no NULL check is performed. </dd>
 <dd>
-Returns false if _interface-&gt;send_openlcb_msg is NULL. Ensure <a class="el" href="#a78c4dd26cc000fae9e2af5b6453ad511" title="Initializes the OpenLCB Application interface.">OpenLcbApplication_initialize()</a> was called with valid callbacks.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Per OpenLCB Message Network Protocol, Initialization Complete (0x0100) must be sent after alias negotiation completes and before sending any other OpenLCB messages (except alias negotiation frames).</dd>
+Returns false if <a class="el" href="#a78c4dd26cc000fae9e2af5b6453ad511" title="Stores the application callback interface for use by all application layer functions.">OpenLcbApplication_initialize()</a> was not called first. </dd>
 <dd>
-The payload contains the node's full 48-bit (6-byte) Node ID. This allows other nodes to map the CAN alias to the full Node ID.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This sends a global (unaddressed) message with MTI 0x0100. Payload is 6 bytes (48-bit node ID, MSB first).</dd>
-<dd>
-Function is non-blocking. Message is queued, not transmitted immediately.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html" title="Implementation of the login state machine dispatcher.">openlcb_login_statemachine.c</a> - Login sequence that calls this function </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#aebdc740485642f016371b4604b93aa7f" title="Copies a 6-byte node ID into the message payload at a specified offset.">OpenLcbUtilities_copy_node_id_to_openlcb_payload</a> </dd>
-<dd>
-<a class="el" href="protocol__message__network_8c.html" title="Implementation of core message network protocol.">protocol_message_network.c</a> - Initialization Complete handling </dd></dl>
+Per the OpenLCB Message Network Standard this message must be sent before any other OpenLCB messages after alias negotiation completes. </dd></dl>
 
 </div>
 </div>
@@ -657,7 +609,7 @@ Function is non-blocking. Message is queued, not transmitted immediately.</dd></
         <tr>
           <td class="memname">uint16_t OpenLcbApplication_read_configuration_memory </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -677,38 +629,17 @@ Function is non-blocking. Message is queued, not transmitted immediately.</dd></
       </table>
 </div><div class="memdoc">
 
-<p>Reads data from the node's configuration memory. </p>
-<p>Algorithm: Calls application-provided read callback if available, otherwise returns error.</p><ol type="1">
-<li>Check if _interface-&gt;config_memory_read is non-NULL</li>
-<li>If NULL: Return 0xFFFF error code</li>
-<li>If non-NULL: Call _interface-&gt;config_memory_read() with all parameters</li>
-<li>Return result from callback (byte count or error code)</li>
+<p>Reads bytes from the node's configuration memory via the application callback. </p>
+<p>Algorithm:</p><ol type="1">
+<li>If config_memory_read callback is non-NULL, call it with all parameters and return the result.</li>
+<li>Otherwise return 0xFFFF.</li>
 </ol>
-<pre class="fragment">* @param openlcb_node Pointer to the OpenLCB node
-* @param address Starting address to read from (address space defined by CDI)
-* @param count Number of bytes to read
-* @param buffer Pointer to buffer to store the read data
-*
-* </pre> <dl class="section return"><dt>Returns</dt><dd>Number of bytes successfully read from callback, or 0xFFFF if callback is NULL or read operation failed</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>openlcb_node must not be NULL. Not validated before callback.</dd>
-<dd>
-Buffer must have sufficient space for the requested byte count. Application callback is responsible for buffer overflow prevention.</dd>
-<dd>
-Returns 0xFFFF if _interface-&gt;config_memory_read is NULL. Application must initialize interface before calling.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This is a pass-through function. All validation (address range, memory space, access permissions) is done by application callback.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This is a synchronous call. Blocks until callback completes.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Application callback determines actual read behavior, including:<ul>
-<li>Which memory spaces are available (CDI, ACDI, user config, etc.)</li>
-<li>Address range validation</li>
-<li>Read-only vs read-write space handling</li>
-<li>Error code returns for invalid operations</li>
-</ul>
-</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0082cc94a4a076abd9b0c95697c544cf" title="Writes data to the node&#39;s configuration memory.">OpenLcbApplication_write_configuration_memory</a> </dd>
-<dd>
-<a class="el" href="structinterface__openlcb__application__t.html#ab4ad220ab7a2676bb10369163fcb0ba2" title="Callback to read from configuration memory.">interface_openlcb_application_t::config_memory_read</a> </dd>
-<dd>
-protocol_config_mem.c - Configuration Memory Protocol handler </dd></dl>
+<pre class="fragment">* @param openlcb_node  Pointer to the requesting openlcb_node_t.
+* @param address       Starting address within the configuration address space.
+* @param count         Number of bytes to read.
+* @param buffer        Destination configuration_memory_buffer_t.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Number of bytes read, or 0xFFFF if the callback is NULL or the read failed.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer on the node is passed directly to the callback unchecked. </dd></dl>
 
 </div>
 </div>
@@ -721,7 +652,7 @@ protocol_config_mem.c - Configuration Memory Protocol handler </dd></dl>
         <tr>
           <td class="memname">uint16_t OpenLcbApplication_write_configuration_memory </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -741,41 +672,19 @@ protocol_config_mem.c - Configuration Memory Protocol handler </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Writes data to the node's configuration memory. </p>
-<p>Algorithm: Calls application-provided write callback if available, otherwise returns error.</p><ol type="1">
-<li>Check if _interface-&gt;config_memory_write is non-NULL</li>
-<li>If NULL: Return 0xFFFF error code</li>
-<li>If non-NULL: Call _interface-&gt;config_memory_write() with all parameters</li>
-<li>Return result from callback (byte count or error code)</li>
+<p>Writes bytes to the node's configuration memory via the application callback. </p>
+<p>Algorithm:</p><ol type="1">
+<li>If config_memory_write callback is non-NULL, call it with all parameters and return the result.</li>
+<li>Otherwise return 0xFFFF.</li>
 </ol>
-<pre class="fragment">* @param openlcb_node Pointer to the OpenLCB node
-* @param address Starting address to write to (address space defined by CDI)
-* @param count Number of bytes to write
-* @param buffer Pointer to buffer containing data to write
-*
-* </pre> <dl class="section return"><dt>Returns</dt><dd>Number of bytes successfully written from callback, or 0xFFFF if callback is NULL or write operation failed</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>openlcb_node must not be NULL. Not validated before callback.</dd>
+<pre class="fragment">* @param openlcb_node  Pointer to the requesting openlcb_node_t.
+* @param address       Starting address within the configuration address space.
+* @param count         Number of bytes to write.
+* @param buffer        Source configuration_memory_buffer_t.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Number of bytes written, or 0xFFFF if the callback is NULL or the write failed.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer on the node is passed directly to the callback unchecked. </dd>
 <dd>
-Buffer must contain sufficient valid data for the requested operation. Application callback is responsible for bounds checking.</dd>
-<dd>
-Returns 0xFFFF if _interface-&gt;config_memory_write is NULL. Application must initialize interface before calling.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This is a pass-through function. All validation (address range, memory space, access permissions, read-only checks) is done by application callback.</dd>
-<dd>
-Some memory spaces are read-only (CDI, ACDI, manufacturer data). Application callback should return 0 or error for read-only writes.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This is a synchronous call. Blocks until callback completes.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Application callback determines actual write behavior, including:<ul>
-<li>Which memory spaces are writable (user config, etc.)</li>
-<li>Address range validation</li>
-<li>Read-only space rejection</li>
-<li>Error code returns for invalid operations</li>
-<li>Persistence mechanism (EEPROM, flash, RAM, etc.)</li>
-</ul>
-</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a9255f494607f8447f499ca2d833e0d32" title="Reads data from the node&#39;s configuration memory.">OpenLcbApplication_read_configuration_memory</a> </dd>
-<dd>
-<a class="el" href="structinterface__openlcb__application__t.html#a7a72d0c9e692e2bdefb9cbaa347f1514" title="Callback to write to configuration memory.">interface_openlcb_application_t::config_memory_write</a> </dd>
-<dd>
-protocol_config_mem.c - Configuration Memory Protocol handler </dd></dl>
+Writes to read-only address spaces are rejected by the application callback, not here. </dd></dl>
 
 </div>
 </div>

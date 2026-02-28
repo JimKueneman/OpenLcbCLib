@@ -92,39 +92,17 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Interface structure for Simple Node Information Protocol (SNIP) handler.  
+<p>Callback interface for SNIP. config_memory_read is REQUIRED.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:ab4ad220ab7a2676bb10369163fcb0ba2" id="r_ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4ad220ab7a2676bb10369163fcb0ba2">config_memory_read</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
-<tr class="memdesc:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to read from configuration memory.  <br /></td></tr>
+<tr class="memitem:ab4ad220ab7a2676bb10369163fcb0ba2" id="r_ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4ad220ab7a2676bb10369163fcb0ba2">config_memory_read</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from config memory (ACDI User space) for user name/description. REQUIRED.  <br /></td></tr>
 <tr class="separator:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Interface structure for Simple Node Information Protocol (SNIP) handler. </p>
-<p>This structure defines the callback interface for the SNIP protocol handler, which provides basic node identification information to other nodes on the OpenLCB network. SNIP is a lightweight alternative to the full Memory Configuration Protocol for reading node identification data.</p>
-<p>The SNIP protocol provides access to two categories of information:</p><ul>
-<li>Manufacturer information (read-only): Version, name, model, hardware version, software version</li>
-<li>User information (read-write): Version, user-assigned name, user description</li>
-</ul>
-<p>The interface requires a configuration memory read callback to access user-editable information stored in the ACDI User address space. Manufacturer information is typically stored in the node parameters structure.</p>
-<p>SNIP data format consists of null-terminated strings in this order:</p><ol type="1">
-<li>Manufacturer version (1 byte)</li>
-<li>Manufacturer name (null-terminated string)</li>
-<li>Model (null-terminated string)</li>
-<li>Hardware version (null-terminated string)</li>
-<li>Software version (null-terminated string)</li>
-<li>User version (1 byte)</li>
-<li>User name (null-terminated string, from config memory)</li>
-<li>User description (null-terminated string, from config memory)</li>
-</ol>
-<dl class="section note"><dt>Note</dt><dd>Required callback must be set before calling ProtocolSnip_initialize</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__snip_8c.html#a299e55a84322665954521e5e913372d8" title="Initializes the SNIP protocol handler.">ProtocolSnip_initialize</a> </dd>
-<dd>
-<a class="el" href="protocol__snip_8c.html#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles incoming Simple Node Info Request message.">ProtocolSnip_handle_simple_node_info_request</a> </dd>
-<dd>
-OpenLCB Simple Node Information Protocol Specification </dd></dl>
+<div class="textblock"><p>Callback interface for SNIP. config_memory_read is REQUIRED. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ab4ad220ab7a2676bb10369163fcb0ba2" name="ab4ad220ab7a2676bb10369163fcb0ba2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab4ad220ab7a2676bb10369163fcb0ba2">&#9670;&#160;</a></span>config_memory_read</h2>
@@ -133,18 +111,12 @@ OpenLCB Simple Node Information Protocol Specification </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* config_memory_read) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
+          <td class="memname">uint16_t(* config_memory_read) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to read from configuration memory. </p>
-<p>This required callback reads data from the node's configuration memory, specifically the ACDI User address space containing user-assigned name and description. The SNIP handler uses this to retrieve user-editable identification information.</p>
-<p>The callback should read the requested number of bytes from the specified address in configuration memory and copy them into the provided buffer. Typical SNIP reads access:</p><ul>
-<li>User name at address USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS</li>
-<li>User description at address USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Read from config memory (ACDI User space) for user name/description. REQUIRED. </p>
 
 </div>
 </div>

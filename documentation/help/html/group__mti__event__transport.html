@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Message Type Indicators for Producer/Consumer event handling.  
+<p>Producer/Consumer event identification, learning, and PCER.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -159,16 +159,7 @@ Macros</h2></td></tr>
 <tr class="separator:ga06a3c9fd244f8ec8b3382f96c135149f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Message Type Indicators for Producer/Consumer event handling. </p>
-<p>OpenLCB uses a Producer/Consumer event model. Events are identified by 64-bit Event IDs. Nodes declare themselves as producers and/or consumers of specific events.</p>
-<p>Consumer identification messages indicate whether the node:</p><ul>
-<li>Consumes the event (UNKNOWN if current state unknown)</li>
-<li>Has the event SET or CLEAR</li>
-<li>Uses RESERVED state (protocol-specific)</li>
-</ul>
-<p>Producer identification follows the same pattern.</p>
-<p>The PCER (Producer/Consumer Event Report) is the actual event notification.</p>
-<dl class="section see"><dt>See also</dt><dd>OpenLCB Event Transport Standard S-9.7.4 </dd></dl>
+<p>Producer/Consumer event identification, learning, and PCER. </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="gaa500a05a3a8f9424542326dac28d5c84" name="gaa500a05a3a8f9424542326dac28d5c84"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaa500a05a3a8f9424542326dac28d5c84">&#9670;&#160;</a></span>MTI_CONSUMER_IDENTIFY</h2>

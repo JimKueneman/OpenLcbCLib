@@ -99,7 +99,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Core type definitions, structures, and configuration constants for OpenLCB library.  
+<p>Core type definitions, structures, and configuration constants for the OpenLCB library.  
 <a href="#details">More...</a></p>
 
 <p><a href="openlcb__types_8h_source.html">Go to the source code of this file.</a></p>
@@ -107,51 +107,52 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structevent__id__struct__t.html">event_id_struct_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID with status information.  <a href="structevent__id__struct__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID paired with its current status.  <a href="structevent__id__struct__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structevent__id__range__t.html">event_id_range_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contiguous range of Event IDs starting at a base address.  <a href="structevent__id__range__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbroadcast__time__t.html">broadcast_time_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time representation for Broadcast Time Protocol.  <a href="structbroadcast__time__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast Time hour/minute.  <a href="structbroadcast__time__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbroadcast__date__t.html">broadcast_date_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Date representation for Broadcast Time Protocol.  <a href="structbroadcast__date__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast Time month/day.  <a href="structbroadcast__date__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbroadcast__year__t.html">broadcast_year_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Year representation for Broadcast Time Protocol.  <a href="structbroadcast__year__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast Time year.  <a href="structbroadcast__year__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbroadcast__rate__t.html">broadcast_rate_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clock rate for fast/slow time simulation.  <a href="structbroadcast__rate__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast Time clock rate (12-bit signed fixed point, 2 fractional bits).  <a href="structbroadcast__rate__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete clock state for Broadcast Time Protocol.  <a href="structbroadcast__clock__state__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete state for one Broadcast Time clock.  <a href="structbroadcast__clock__state__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbroadcast__clock__t.html">broadcast_clock_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A clock slot with state and subscription flags.  <a href="structbroadcast__clock__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__msg__state__t.html">openlcb_msg_state_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message state flags.  <a href="structopenlcb__msg__state__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message buffer allocation/assembly state flags.  <a href="structopenlcb__msg__state__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenLCB message structure.  <a href="structopenlcb__msg__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Core OpenLCB message structure.  <a href="structopenlcb__msg__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmessage__buffer__t.html">message_buffer_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete message buffer storage.  <a href="structmessage__buffer__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Master buffer storage: message structures + segregated payload pools.  <a href="structmessage__buffer__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__snip__struct__t.html">user_snip_struct_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP (Simple Node Information Protocol) data structure.  <a href="structuser__snip__struct__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP identification strings (manufacturer + user version byte).  <a href="structuser__snip__struct__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__configuration__options.html">user_configuration_options</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory capabilities and options.  <a href="structuser__configuration__options.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Capability flags returned by Get Configuration Options command.  <a href="structuser__configuration__options.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__address__space__info__t.html">user_address_space_info_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Address space information and properties.  <a href="structuser__address__space__info__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Properties of a single configuration memory address space.  <a href="structuser__address__space__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnode__parameters__t.html">node_parameters_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete node configuration and parameters.  <a href="structnode__parameters__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete node configuration parameters (typically const/flash).  <a href="structnode__parameters__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structevent__id__enum__t.html">event_id_enum_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID enumeration state.  <a href="structevent__id__enum__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event list enumeration state.  <a href="structevent__id__enum__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structevent__id__consumer__list__t.html">event_id_consumer_list_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of events consumed by a node.  <a href="structevent__id__consumer__list__t.html#details">More...</a><br /></td></tr>
@@ -160,98 +161,56 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of events produced by a node.  <a href="structevent__id__producer__list__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__node__state__t.html">openlcb_node_state_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node state flags.  <a href="structopenlcb__node__state__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit-packed node state flags.  <a href="structopenlcb__node__state__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtrain__listener__entry__t.html">train_listener_entry_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A single listener entry for a train consist.  <a href="structtrain__listener__entry__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtrain__state___t_a_g.html">train_state_TAG</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per-node train state.  <a href="structtrain__state___t_a_g.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutable runtime state for a single train node.  <a href="structtrain__state___t_a_g.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenLCB virtual node structure.  <a href="structopenlcb__node__t.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__node___t_a_g.html">openlcb_node_TAG</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenLCB virtual node.  <a href="structopenlcb__node___t_a_g.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__nodes__t.html">openlcb_nodes_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collection of all virtual nodes.  <a href="structopenlcb__nodes__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__statemachine__worker__t.html">openlcb_statemachine_worker_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">State machine working buffers.  <a href="structopenlcb__statemachine__worker__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">State machine temporary working buffers.  <a href="structopenlcb__statemachine__worker__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__stream__message__t.html">openlcb_stream_message_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream message with embedded payload.  <a href="structopenlcb__stream__message__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message with inline STREAM-sized payload.  <a href="structopenlcb__stream__message__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__outgoing__stream__msg__info__t.html">openlcb_outgoing_stream_msg_info_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outgoing stream message information.  <a href="structopenlcb__outgoing__stream__msg__info__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outgoing message context for the main state machine.  <a href="structopenlcb__outgoing__stream__msg__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__incoming__msg__info__t.html">openlcb_incoming_msg_info_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Incoming message information.  <a href="structopenlcb__incoming__msg__info__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Incoming message context.  <a href="structopenlcb__incoming__msg__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">State machine context information.  <a href="structopenlcb__statemachine__info__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete context passed to protocol handler functions.  <a href="structopenlcb__statemachine__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__basic__message__t.html">openlcb_basic_message_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic message with embedded payload.  <a href="structopenlcb__basic__message__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message with inline BASIC-sized payload.  <a href="structopenlcb__basic__message__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__outgoing__basic__msg__info__t.html">openlcb_outgoing_basic_msg_info_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outgoing basic message information.  <a href="structopenlcb__outgoing__basic__msg__info__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outgoing message context for the login state machine.  <a href="structopenlcb__outgoing__basic__msg__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Login state machine context.  <a href="structopenlcb__login__statemachine__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structconfig__mem__operations__request__info___t_a_g.html">config_mem_operations_request_info_TAG</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request info for Get Options / Get Address Space Info commands.  <a href="structconfig__mem__operations__request__info___t_a_g.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structconfig__mem__read__request__info___t_a_g.html">config_mem_read_request_info_TAG</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request info for a configuration memory read operation.  <a href="structconfig__mem__read__request__info___t_a_g.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structconfig__mem__write__request__info___t_a_g.html">config_mem_write_request_info_TAG</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request info for a configuration memory write operation.  <a href="structconfig__mem__write__request__info___t_a_g.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ga9ba9ea43549d9794a5099bcc53a506cc" id="r_ga9ba9ea43549d9794a5099bcc53a506cc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a>&#160;&#160;&#160;32</td></tr>
-<tr class="memdesc:ga9ba9ea43549d9794a5099bcc53a506cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of BASIC message buffers (16 bytes each) in the pool.  <br /></td></tr>
-<tr class="separator:ga9ba9ea43549d9794a5099bcc53a506cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadf0c70d4563d008ddbdd2e28cbef8eb4" id="r_gadf0c70d4563d008ddbdd2e28cbef8eb4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#gadf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a>&#160;&#160;&#160;4</td></tr>
-<tr class="memdesc:gadf0c70d4563d008ddbdd2e28cbef8eb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of DATAGRAM message buffers (72 bytes each) in the pool.  <br /></td></tr>
-<tr class="separator:gadf0c70d4563d008ddbdd2e28cbef8eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga615ccc6d3d43ea0e949b1ead288474c5" id="r_ga615ccc6d3d43ea0e949b1ead288474c5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a>&#160;&#160;&#160;4</td></tr>
-<tr class="memdesc:ga615ccc6d3d43ea0e949b1ead288474c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of SNIP message buffers (256 bytes each) in the pool.  <br /></td></tr>
-<tr class="separator:ga615ccc6d3d43ea0e949b1ead288474c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaca6ba168c85438dde2a2e8d5903e1d79" id="r_gaca6ba168c85438dde2a2e8d5903e1d79"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#gaca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>&#160;&#160;&#160;1</td></tr>
-<tr class="memdesc:gaca6ba168c85438dde2a2e8d5903e1d79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of STREAM message buffers (512 bytes each) in the pool.  <br /></td></tr>
-<tr class="separator:gaca6ba168c85438dde2a2e8d5903e1d79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga02b00dd66a6ba4b9d405bdff61cc5171" id="r_ga02b00dd66a6ba4b9d405bdff61cc5171"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a>&#160;&#160;&#160;4</td></tr>
-<tr class="memdesc:ga02b00dd66a6ba4b9d405bdff61cc5171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of virtual nodes that can be allocated.  <br /></td></tr>
-<tr class="separator:ga02b00dd66a6ba4b9d405bdff61cc5171"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa41bfc2a48a167d019ddd088211b8d18" id="r_gaa41bfc2a48a167d019ddd088211b8d18"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#gaa41bfc2a48a167d019ddd088211b8d18">USER_DEFINED_CDI_LENGTH</a>&#160;&#160;&#160;20000</td></tr>
-<tr class="memdesc:gaa41bfc2a48a167d019ddd088211b8d18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of CDI (Configuration Description Information) buffer in bytes.  <br /></td></tr>
-<tr class="separator:gaa41bfc2a48a167d019ddd088211b8d18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0d663b83bcdf006041e64b5a981dc597" id="r_ga0d663b83bcdf006041e64b5a981dc597"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga0d663b83bcdf006041e64b5a981dc597">USER_DEFINED_FDI_LENGTH</a>&#160;&#160;&#160;1000</td></tr>
-<tr class="memdesc:ga0d663b83bcdf006041e64b5a981dc597"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of FDI (Function Description Information) buffer in bytes for train nodes.  <br /></td></tr>
-<tr class="separator:ga0d663b83bcdf006041e64b5a981dc597"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2a7a353f22f07963259ad19be53a5b35" id="r_ga2a7a353f22f07963259ad19be53a5b35"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga2a7a353f22f07963259ad19be53a5b35">USER_DEFINED_PRODUCER_COUNT</a>&#160;&#160;&#160;64</td></tr>
-<tr class="memdesc:ga2a7a353f22f07963259ad19be53a5b35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of events a node can produce.  <br /></td></tr>
-<tr class="separator:ga2a7a353f22f07963259ad19be53a5b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaac581d5006ed69c49a2fdcdc0ef8c8e2" id="r_gaac581d5006ed69c49a2fdcdc0ef8c8e2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#gaac581d5006ed69c49a2fdcdc0ef8c8e2">USER_DEFINED_PRODUCER_RANGE_COUNT</a>&#160;&#160;&#160;5</td></tr>
-<tr class="memdesc:gaac581d5006ed69c49a2fdcdc0ef8c8e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of event ranges a node can produce, must be at least one for a non zero array.  <br /></td></tr>
-<tr class="separator:gaac581d5006ed69c49a2fdcdc0ef8c8e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7f808bc3e97eec5e6a726f2b9b4698bd" id="r_ga7f808bc3e97eec5e6a726f2b9b4698bd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga7f808bc3e97eec5e6a726f2b9b4698bd">USER_DEFINED_CONSUMER_COUNT</a>&#160;&#160;&#160;32</td></tr>
-<tr class="memdesc:ga7f808bc3e97eec5e6a726f2b9b4698bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of events a node can consume.  <br /></td></tr>
-<tr class="separator:ga7f808bc3e97eec5e6a726f2b9b4698bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5de4baa8c4feab25b756b8ff800f906e" id="r_ga5de4baa8c4feab25b756b8ff800f906e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga5de4baa8c4feab25b756b8ff800f906e">USER_DEFINED_CONSUMER_RANGE_COUNT</a>&#160;&#160;&#160;5</td></tr>
-<tr class="memdesc:ga5de4baa8c4feab25b756b8ff800f906e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of event ranges a node can consume, must be at least one for a non zero array.  <br /></td></tr>
-<tr class="separator:ga5de4baa8c4feab25b756b8ff800f906e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5ac77ac899b0afb5faeba64e61eda7b9" id="r_ga5ac77ac899b0afb5faeba64e61eda7b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga5ac77ac899b0afb5faeba64e61eda7b9">USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS</a>&#160;&#160;&#160;0x00000000</td></tr>
-<tr class="memdesc:ga5ac77ac899b0afb5faeba64e61eda7b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Address in Configuration Memory for user-defined node name.  <br /></td></tr>
-<tr class="separator:ga5ac77ac899b0afb5faeba64e61eda7b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga88abaa583b85af01cfe62c2e34fd0437" id="r_ga88abaa583b85af01cfe62c2e34fd0437"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga88abaa583b85af01cfe62c2e34fd0437">USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS</a>&#160;&#160;&#160;(<a class="el" href="group__buffer__size__constants.html#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a> - 1)</td></tr>
-<tr class="memdesc:ga88abaa583b85af01cfe62c2e34fd0437"><td class="mdescLeft">&#160;</td><td class="mdescRight">Address in Configuration Memory for user description.  <br /></td></tr>
-<tr class="separator:ga88abaa583b85af01cfe62c2e34fd0437"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabdc8a0155ff1c1824dc2d31aaff834e0" id="r_gabdc8a0155ff1c1824dc2d31aaff834e0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#gabdc8a0155ff1c1824dc2d31aaff834e0">USER_DEFINED_TRAIN_NODE_COUNT</a>&#160;&#160;&#160;<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a></td></tr>
-<tr class="separator:gabdc8a0155ff1c1824dc2d31aaff834e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4391fa5bc7df0b55343220247f7fbf82" id="r_ga4391fa5bc7df0b55343220247f7fbf82"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga4391fa5bc7df0b55343220247f7fbf82">USER_DEFINED_MAX_LISTENERS_PER_TRAIN</a>&#160;&#160;&#160;6</td></tr>
-<tr class="separator:ga4391fa5bc7df0b55343220247f7fbf82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga961fbf38fa41495760bac1affbe3ffaa" id="r_ga961fbf38fa41495760bac1affbe3ffaa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga961fbf38fa41495760bac1affbe3ffaa">USER_DEFINED_MAX_TRAIN_FUNCTIONS</a>&#160;&#160;&#160;29</td></tr>
-<tr class="separator:ga961fbf38fa41495760bac1affbe3ffaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga37cd38742a23b040e5cd7f3483bef546" id="r_ga37cd38742a23b040e5cd7f3483bef546"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga37cd38742a23b040e5cd7f3483bef546">LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</a>&#160;&#160;&#160;(64 - 1)</td></tr>
 <tr class="memdesc:ga37cd38742a23b040e5cd7f3483bef546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum description length for Configuration Options reply.  <br /></td></tr>
 <tr class="separator:ga37cd38742a23b040e5cd7f3483bef546"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -265,22 +224,22 @@ Macros</h2></td></tr>
 <tr class="memdesc:gaf63a7a752ba5898e5a4b59eef8e6d951"><td class="mdescLeft">&#160;</td><td class="mdescRight">NULL/unassigned Event ID value.  <br /></td></tr>
 <tr class="separator:gaf63a7a752ba5898e5a4b59eef8e6d951"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga77cd82810167389f642c4030544031dc" id="r_ga77cd82810167389f642c4030544031dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga77cd82810167389f642c4030544031dc">LEN_SNIP_NAME_BUFFER</a>&#160;&#160;&#160;41</td></tr>
-<tr class="memdesc:ga77cd82810167389f642c4030544031dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP manufacturer name field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga77cd82810167389f642c4030544031dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP manufacturer name field length (including null)  <br /></td></tr>
 <tr class="separator:ga77cd82810167389f642c4030544031dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3bd54aaddbf4feda12720cc8385415eb" id="r_ga3bd54aaddbf4feda12720cc8385415eb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga3bd54aaddbf4feda12720cc8385415eb">LEN_SNIP_MODEL_BUFFER</a>&#160;&#160;&#160;41</td></tr>
-<tr class="memdesc:ga3bd54aaddbf4feda12720cc8385415eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP model name field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga3bd54aaddbf4feda12720cc8385415eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP model name field length (including null)  <br /></td></tr>
 <tr class="separator:ga3bd54aaddbf4feda12720cc8385415eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4e745356596632b27544ab341b95576e" id="r_ga4e745356596632b27544ab341b95576e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga4e745356596632b27544ab341b95576e">LEN_SNIP_HARDWARE_VERSION_BUFFER</a>&#160;&#160;&#160;21</td></tr>
-<tr class="memdesc:ga4e745356596632b27544ab341b95576e"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP hardware version field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga4e745356596632b27544ab341b95576e"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP hardware version field length (including null)  <br /></td></tr>
 <tr class="separator:ga4e745356596632b27544ab341b95576e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga99e88f7c4205c5961dcf0ed0c9234fe9" id="r_ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga99e88f7c4205c5961dcf0ed0c9234fe9">LEN_SNIP_SOFTWARE_VERSION_BUFFER</a>&#160;&#160;&#160;21</td></tr>
-<tr class="memdesc:ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP software version field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP software version field length (including null)  <br /></td></tr>
 <tr class="separator:ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga242f93351655c7e25ea4ad9610a5e725" id="r_ga242f93351655c7e25ea4ad9610a5e725"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a>&#160;&#160;&#160;63</td></tr>
-<tr class="memdesc:ga242f93351655c7e25ea4ad9610a5e725"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user-assigned name field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga242f93351655c7e25ea4ad9610a5e725"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user-assigned name field length (including null)  <br /></td></tr>
 <tr class="separator:ga242f93351655c7e25ea4ad9610a5e725"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga47bd085b568f0923f5c136ef54d891dc" id="r_ga47bd085b568f0923f5c136ef54d891dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga47bd085b568f0923f5c136ef54d891dc">LEN_SNIP_USER_DESCRIPTION_BUFFER</a>&#160;&#160;&#160;64</td></tr>
-<tr class="memdesc:ga47bd085b568f0923f5c136ef54d891dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user description field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga47bd085b568f0923f5c136ef54d891dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user description field length (including null)  <br /></td></tr>
 <tr class="separator:ga47bd085b568f0923f5c136ef54d891dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3ff44f2af02b36fd0bab26613ec89a4e" id="r_ga3ff44f2af02b36fd0bab26613ec89a4e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga3ff44f2af02b36fd0bab26613ec89a4e">LEN_SNIP_USER_DATA</a>&#160;&#160;&#160;(<a class="el" href="group__buffer__size__constants.html#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a> + <a class="el" href="group__buffer__size__constants.html#ga47bd085b568f0923f5c136ef54d891dc">LEN_SNIP_USER_DESCRIPTION_BUFFER</a>)</td></tr>
 <tr class="memdesc:ga3ff44f2af02b36fd0bab26613ec89a4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total SNIP user data size (name + description)  <br /></td></tr>
@@ -292,10 +251,10 @@ Macros</h2></td></tr>
 <tr class="memdesc:gac6d8748df026e898855dd0c267044883"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user version field length (1 byte)  <br /></td></tr>
 <tr class="separator:gac6d8748df026e898855dd0c267044883"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga99690385a9084bfc460c7c1e84a1d064" id="r_ga99690385a9084bfc460c7c1e84a1d064"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga99690385a9084bfc460c7c1e84a1d064">LEN_SNIP_STRUCTURE</a>&#160;&#160;&#160;264</td></tr>
-<tr class="memdesc:ga99690385a9084bfc460c7c1e84a1d064"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum SNIP structure size (Event with Payload: 256 payload + 8 Event ID)  <br /></td></tr>
+<tr class="memdesc:ga99690385a9084bfc460c7c1e84a1d064"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum SNIP structure size (256 payload + 8 Event ID)  <br /></td></tr>
 <tr class="separator:ga99690385a9084bfc460c7c1e84a1d064"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa9aea12772addc152d586bbaf6e10056" id="r_gaa9aea12772addc152d586bbaf6e10056"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gaa9aea12772addc152d586bbaf6e10056">LEN_MESSAGE_BYTES_BASIC</a>&#160;&#160;&#160;16</td></tr>
-<tr class="memdesc:gaa9aea12772addc152d586bbaf6e10056"><td class="mdescLeft">&#160;</td><td class="mdescRight">BASIC message payload size (most messages fit in 8 bytes, some use 2 frames)  <br /></td></tr>
+<tr class="memdesc:gaa9aea12772addc152d586bbaf6e10056"><td class="mdescLeft">&#160;</td><td class="mdescRight">BASIC message payload size.  <br /></td></tr>
 <tr class="separator:gaa9aea12772addc152d586bbaf6e10056"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gacd6144764073997710bc0bb846c261fc" id="r_gacd6144764073997710bc0bb846c261fc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gacd6144764073997710bc0bb846c261fc">LEN_MESSAGE_BYTES_DATAGRAM</a>&#160;&#160;&#160;72</td></tr>
 <tr class="memdesc:gacd6144764073997710bc0bb846c261fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">DATAGRAM message maximum payload size.  <br /></td></tr>
@@ -309,11 +268,11 @@ Macros</h2></td></tr>
 <tr class="memitem:ga12eb42fe9afe213aa8690aff0c9e4ee6" id="r_ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga12eb42fe9afe213aa8690aff0c9e4ee6">LEN_EVENT_ID</a>&#160;&#160;&#160;8</td></tr>
 <tr class="memdesc:ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID size in bytes.  <br /></td></tr>
 <tr class="separator:ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga871c59e021446d9f2fd97f1e81bfa76a" id="r_ga871c59e021446d9f2fd97f1e81bfa76a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>&#160;&#160;&#160;(<a class="el" href="group__user__config__constants.html#ga9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#gadf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#ga615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#gaca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>)</td></tr>
+<tr class="memitem:ga871c59e021446d9f2fd97f1e81bfa76a" id="r_ga871c59e021446d9f2fd97f1e81bfa76a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>&#160;&#160;&#160;(USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH)</td></tr>
 <tr class="memdesc:ga871c59e021446d9f2fd97f1e81bfa76a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of message buffers (sum of all buffer types)  <br /></td></tr>
 <tr class="separator:ga871c59e021446d9f2fd97f1e81bfa76a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga618f018d15b1ec2975b19e67383bb7e6" id="r_ga618f018d15b1ec2975b19e67383bb7e6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga618f018d15b1ec2975b19e67383bb7e6">LEN_DATAGRAM_MAX_PAYLOAD</a>&#160;&#160;&#160;64</td></tr>
-<tr class="memdesc:ga618f018d15b1ec2975b19e67383bb7e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum datagram payload after subtracting protocol overhead.  <br /></td></tr>
+<tr class="memdesc:ga618f018d15b1ec2975b19e67383bb7e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum datagram payload after protocol overhead.  <br /></td></tr>
 <tr class="separator:ga618f018d15b1ec2975b19e67383bb7e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7f1dc0e13c22505bd0cdbcbcd1257aaf" id="r_ga7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga7f1dc0e13c22505bd0cdbcbcd1257aaf">LEN_EVENT_PAYLOAD</a>&#160;&#160;&#160;<a class="el" href="group__buffer__size__constants.html#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td></tr>
 <tr class="memdesc:ga7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event payload maximum size (uses SNIP buffer)  <br /></td></tr>
@@ -333,55 +292,62 @@ Typedefs</h2></td></tr>
 <tr class="memitem:ga701be94703c1d4fceb9c32cdef0048f0" id="r_ga701be94703c1d4fceb9c32cdef0048f0"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>[<a class="el" href="group__buffer__size__constants.html#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>]</td></tr>
 <tr class="memdesc:ga701be94703c1d4fceb9c32cdef0048f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload buffer (512 bytes)  <br /></td></tr>
 <tr class="separator:ga701be94703c1d4fceb9c32cdef0048f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab60ba075676efb9e9f7c7014a46573f9" id="r_gab60ba075676efb9e9f7c7014a46573f9"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#gab60ba075676efb9e9f7c7014a46573f9">openlcb_basic_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#ga9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memitem:gab60ba075676efb9e9f7c7014a46573f9" id="r_gab60ba075676efb9e9f7c7014a46573f9"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#gab60ba075676efb9e9f7c7014a46573f9">openlcb_basic_data_buffer_t</a>[USER_DEFINED_BASIC_BUFFER_DEPTH]</td></tr>
 <tr class="memdesc:gab60ba075676efb9e9f7c7014a46573f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of BASIC payload buffers.  <br /></td></tr>
 <tr class="separator:gab60ba075676efb9e9f7c7014a46573f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga81508fbbcf9058f925fa1e296086a07e" id="r_ga81508fbbcf9058f925fa1e296086a07e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#ga81508fbbcf9058f925fa1e296086a07e">openlcb_datagram_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#gadf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memitem:ga81508fbbcf9058f925fa1e296086a07e" id="r_ga81508fbbcf9058f925fa1e296086a07e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#ga81508fbbcf9058f925fa1e296086a07e">openlcb_datagram_data_buffer_t</a>[USER_DEFINED_DATAGRAM_BUFFER_DEPTH]</td></tr>
 <tr class="memdesc:ga81508fbbcf9058f925fa1e296086a07e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of DATAGRAM payload buffers.  <br /></td></tr>
 <tr class="separator:ga81508fbbcf9058f925fa1e296086a07e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafc05dc719ff51bbc87035a82035c3cdc" id="r_gafc05dc719ff51bbc87035a82035c3cdc"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#gafc05dc719ff51bbc87035a82035c3cdc">openlcb_snip_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#ga615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memitem:gafc05dc719ff51bbc87035a82035c3cdc" id="r_gafc05dc719ff51bbc87035a82035c3cdc"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#gafc05dc719ff51bbc87035a82035c3cdc">openlcb_snip_data_buffer_t</a>[USER_DEFINED_SNIP_BUFFER_DEPTH]</td></tr>
 <tr class="memdesc:gafc05dc719ff51bbc87035a82035c3cdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of SNIP payload buffers.  <br /></td></tr>
 <tr class="separator:gafc05dc719ff51bbc87035a82035c3cdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadd0b8e081d6a21de7bc3f2781dd7aaa0" id="r_gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#gadd0b8e081d6a21de7bc3f2781dd7aaa0">openlcb_stream_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#gaca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memitem:gadd0b8e081d6a21de7bc3f2781dd7aaa0" id="r_gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#gadd0b8e081d6a21de7bc3f2781dd7aaa0">openlcb_stream_data_buffer_t</a>[USER_DEFINED_STREAM_BUFFER_DEPTH]</td></tr>
 <tr class="memdesc:gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of STREAM payload buffers.  <br /></td></tr>
 <tr class="separator:gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4925a4e7a5380d3c40cfceadbbed1c78" id="r_a4925a4e7a5380d3c40cfceadbbed1c78"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4925a4e7a5380d3c40cfceadbbed1c78">openlcb_payload_t</a>[1]</td></tr>
-<tr class="memdesc:a4925a4e7a5380d3c40cfceadbbed1c78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic payload pointer type.  <br /></td></tr>
+<tr class="memdesc:a4925a4e7a5380d3c40cfceadbbed1c78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic 1-byte payload pointer type for casting.  <br /></td></tr>
 <tr class="separator:a4925a4e7a5380d3c40cfceadbbed1c78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a124e6ffe91515b7b9f36f42c3517e70c" id="r_a124e6ffe91515b7b9f36f42c3517e70c"><td class="memItemLeft" align="right" valign="top">typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td></tr>
-<tr class="memdesc:a124e6ffe91515b7b9f36f42c3517e70c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID type (64-bit unsigned integer)  <br /></td></tr>
+<tr class="memdesc:a124e6ffe91515b7b9f36f42c3517e70c"><td class="mdescLeft">&#160;</td><td class="mdescRight">64-bit Event ID.  <br /></td></tr>
 <tr class="separator:a124e6ffe91515b7b9f36f42c3517e70c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab63b0eaf893badf557397c77fb74fe3c" id="r_ab63b0eaf893badf557397c77fb74fe3c"><td class="memItemLeft" align="right" valign="top">typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td></tr>
-<tr class="memdesc:ab63b0eaf893badf557397c77fb74fe3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node ID type (64-bit unsigned integer)  <br /></td></tr>
+<tr class="memdesc:ab63b0eaf893badf557397c77fb74fe3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">48-bit Node ID stored in a 64-bit type (upper 16 bits unused).  <br /></td></tr>
 <tr class="separator:ab63b0eaf893badf557397c77fb74fe3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d55dc9181adc6764d1e8f94bde6dbb8" id="r_a4d55dc9181adc6764d1e8f94bde6dbb8"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a>[<a class="el" href="group__buffer__size__constants.html#ga7f1dc0e13c22505bd0cdbcbcd1257aaf">LEN_EVENT_PAYLOAD</a>]</td></tr>
-<tr class="memdesc:a4d55dc9181adc6764d1e8f94bde6dbb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event payload data buffer.  <br /></td></tr>
+<tr class="memdesc:a4d55dc9181adc6764d1e8f94bde6dbb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event payload data buffer (LEN_EVENT_PAYLOAD bytes).  <br /></td></tr>
 <tr class="separator:a4d55dc9181adc6764d1e8f94bde6dbb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a249892a089c0d512eac257da1ec5b6be" id="r_a249892a089c0d512eac257da1ec5b6be"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a>[<a class="el" href="group__buffer__size__constants.html#ga618f018d15b1ec2975b19e67383bb7e6">LEN_DATAGRAM_MAX_PAYLOAD</a>]</td></tr>
-<tr class="memdesc:a249892a089c0d512eac257da1ec5b6be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory operation buffer.  <br /></td></tr>
+<tr class="memdesc:a249892a089c0d512eac257da1ec5b6be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory read/write operation buffer (64 bytes).  <br /></td></tr>
 <tr class="separator:a249892a089c0d512eac257da1ec5b6be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cc5550a13db98f7bd586e9bfac4651e" id="r_a5cc5550a13db98f7bd586e9bfac4651e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cc5550a13db98f7bd586e9bfac4651e">openlcb_msg_array_t</a>[<a class="el" href="group__buffer__size__constants.html#ga871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>]</td></tr>
-<tr class="memdesc:a5cc5550a13db98f7bd586e9bfac4651e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of OpenLCB message structures.  <br /></td></tr>
+<tr class="memdesc:a5cc5550a13db98f7bd586e9bfac4651e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of all message structures in the buffer store.  <br /></td></tr>
 <tr class="separator:a5cc5550a13db98f7bd586e9bfac4651e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4aacdb6ee7a816ef7bb419414ee990af" id="r_a4aacdb6ee7a816ef7bb419414ee990af"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structtrain__state___t_a_g.html">train_state_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a></td></tr>
+<tr class="memdesc:a4aacdb6ee7a816ef7bb419414ee990af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutable runtime state for a single train node.  <br /></td></tr>
 <tr class="separator:a4aacdb6ee7a816ef7bb419414ee990af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b2ee067d4e133b8a20b892d2337e0de" id="r_a2b2ee067d4e133b8a20b892d2337e0de"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structopenlcb__node___t_a_g.html">openlcb_node_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a></td></tr>
+<tr class="memdesc:a2b2ee067d4e133b8a20b892d2337e0de"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenLCB virtual node.  <br /></td></tr>
+<tr class="separator:a2b2ee067d4e133b8a20b892d2337e0de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b685f77fce4aaf049c71975bedf47a8" id="r_a1b685f77fce4aaf049c71975bedf47a8"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b685f77fce4aaf049c71975bedf47a8">parameterless_callback_t</a>) (void)</td></tr>
 <tr class="memdesc:a1b685f77fce4aaf049c71975bedf47a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function type with no parameters.  <br /></td></tr>
 <tr class="separator:a1b685f77fce4aaf049c71975bedf47a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8c67f936a9cfb7fc2d9702f0ef217af" id="r_ae8c67f936a9cfb7fc2d9702f0ef217af"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8c67f936a9cfb7fc2d9702f0ef217af">operations_config_mem_space_func_t</a>) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, struct <a class="el" href="structconfig__mem__operations__request__info___t_a_g.html">config_mem_operations_request_info_TAG</a> *config_mem_operations_request_info)</td></tr>
-<tr class="memdesc:ae8c67f936a9cfb7fc2d9702f0ef217af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory operations callback function type.  <br /></td></tr>
+<tr class="memdesc:ae8c67f936a9cfb7fc2d9702f0ef217af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Config mem operations callback function type.  <br /></td></tr>
 <tr class="separator:ae8c67f936a9cfb7fc2d9702f0ef217af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a117d2b090562ba06244209f946bd26c8" id="r_a117d2b090562ba06244209f946bd26c8"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structconfig__mem__operations__request__info___t_a_g.html">config_mem_operations_request_info_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a></td></tr>
+<tr class="memdesc:a117d2b090562ba06244209f946bd26c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request info for Get Options / Get Address Space Info commands.  <br /></td></tr>
 <tr class="separator:a117d2b090562ba06244209f946bd26c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c0c44d2ca651aaca32761e9a2519843" id="r_a7c0c44d2ca651aaca32761e9a2519843"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c0c44d2ca651aaca32761e9a2519843">read_config_mem_space_func_t</a>) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, struct <a class="el" href="structconfig__mem__read__request__info___t_a_g.html">config_mem_read_request_info_TAG</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:a7c0c44d2ca651aaca32761e9a2519843"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory read callback function type.  <br /></td></tr>
+<tr class="memdesc:a7c0c44d2ca651aaca32761e9a2519843"><td class="mdescLeft">&#160;</td><td class="mdescRight">Config mem read callback function type.  <br /></td></tr>
 <tr class="separator:a7c0c44d2ca651aaca32761e9a2519843"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01793aca5575602b9e56d547297106a4" id="r_a01793aca5575602b9e56d547297106a4"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structconfig__mem__read__request__info___t_a_g.html">config_mem_read_request_info_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a></td></tr>
+<tr class="memdesc:a01793aca5575602b9e56d547297106a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request info for a configuration memory read operation.  <br /></td></tr>
 <tr class="separator:a01793aca5575602b9e56d547297106a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20b38f8882ef79b433f7461000ac1d12" id="r_a20b38f8882ef79b433f7461000ac1d12"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20b38f8882ef79b433f7461000ac1d12">write_config_mem_space_func_t</a>) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, struct <a class="el" href="structconfig__mem__write__request__info___t_a_g.html">config_mem_write_request_info_TAG</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:a20b38f8882ef79b433f7461000ac1d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory write callback function type.  <br /></td></tr>
+<tr class="memdesc:a20b38f8882ef79b433f7461000ac1d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Config mem write callback function type.  <br /></td></tr>
 <tr class="separator:a20b38f8882ef79b433f7461000ac1d12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a193afa69c1ca562e8b89db07771a9c0c" id="r_a193afa69c1ca562e8b89db07771a9c0c"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structconfig__mem__write__request__info___t_a_g.html">config_mem_write_request_info_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a></td></tr>
+<tr class="memdesc:a193afa69c1ca562e8b89db07771a9c0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request info for a configuration memory write operation.  <br /></td></tr>
 <tr class="separator:a193afa69c1ca562e8b89db07771a9c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -391,18 +357,18 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c">SNIP</a>
 , <a class="el" href="#aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5">STREAM</a>
  }</td></tr>
-<tr class="memdesc:aececf1be5c268eb2c680b4a0cc778467"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message buffer payload type enumeration.  <a href="#aececf1be5c268eb2c680b4a0cc778467">More...</a><br /></td></tr>
+<tr class="memdesc:aececf1be5c268eb2c680b4a0cc778467"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message buffer payload type identifier.  <a href="#aececf1be5c268eb2c680b4a0cc778467">More...</a><br /></td></tr>
 <tr class="separator:aececf1be5c268eb2c680b4a0cc778467"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a236635602f03daeea70a4cabb135c8ce" id="r_a236635602f03daeea70a4cabb135c8ce"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> { <a class="el" href="#a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5">EVENT_STATUS_UNKNOWN</a>
 , <a class="el" href="#a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8">EVENT_STATUS_SET</a>
 , <a class="el" href="#a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6">EVENT_STATUS_CLEAR</a>
  }</td></tr>
-<tr class="memdesc:a236635602f03daeea70a4cabb135c8ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event status indicator for Producer/Consumer events.  <a href="#a236635602f03daeea70a4cabb135c8ce">More...</a><br /></td></tr>
+<tr class="memdesc:a236635602f03daeea70a4cabb135c8ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event status for Producer/Consumer identification messages.  <a href="#a236635602f03daeea70a4cabb135c8ce">More...</a><br /></td></tr>
 <tr class="separator:a236635602f03daeea70a4cabb135c8ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab08faa6c2f49792c273f5267068d549" id="r_aab08faa6c2f49792c273f5267068d549"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab08faa6c2f49792c273f5267068d549">space_encoding_enum</a> { <a class="el" href="#aab08faa6c2f49792c273f5267068d549a1ee43889b7408a03b6f79515150165c9">ADDRESS_SPACE_IN_BYTE_1</a> = 0
 , <a class="el" href="#aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9">ADDRESS_SPACE_IN_BYTE_6</a> = 1
  }</td></tr>
-<tr class="memdesc:aab08faa6c2f49792c273f5267068d549"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory address space encoding method.  <a href="#aab08faa6c2f49792c273f5267068d549">More...</a><br /></td></tr>
+<tr class="memdesc:aab08faa6c2f49792c273f5267068d549"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where the address space byte is encoded in a Config Mem command.  <a href="#aab08faa6c2f49792c273f5267068d549">More...</a><br /></td></tr>
 <tr class="separator:aab08faa6c2f49792c273f5267068d549"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29cac8697a125631149cacda733a9faa" id="r_a29cac8697a125631149cacda733a9faa"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a> { <br />
 &#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaaf3cf9374f875518f965c7915e86c8d57">EVENT_RANGE_COUNT_1</a> = 0
@@ -426,6 +392,7 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#a29cac8697a125631149cacda733a9faaa5121e69499e6250862df79a412d959f7">EVENT_RANGE_COUNT_32768</a> = 32768
 <br />
  }</td></tr>
+<tr class="memdesc:a29cac8697a125631149cacda733a9faa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Power-of-two event range sizes for range-identified events.  <a href="#a29cac8697a125631149cacda733a9faa">More...</a><br /></td></tr>
 <tr class="separator:a29cac8697a125631149cacda733a9faa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab52e2c84bc398c0dea7b742e92e2314a" id="r_ab52e2c84bc398c0dea7b742e92e2314a"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> { <br />
 &#160;&#160;<a class="el" href="#ab52e2c84bc398c0dea7b742e92e2314aa4d7e136a22ca0c74dfc5836e90de1f83">BROADCAST_TIME_EVENT_REPORT_TIME</a> = 0
@@ -446,11 +413,17 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="#ab52e2c84bc398c0dea7b742e92e2314aa34923d588714a227c0402497bea954fe">BROADCAST_TIME_EVENT_UNKNOWN</a> = 255
 <br />
  }</td></tr>
-<tr class="memdesc:ab52e2c84bc398c0dea7b742e92e2314a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast Time Protocol event type enumeration.  <a href="#ab52e2c84bc398c0dea7b742e92e2314a">More...</a><br /></td></tr>
+<tr class="memdesc:ab52e2c84bc398c0dea7b742e92e2314a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast Time Protocol event type decoded from an Event ID.  <a href="#ab52e2c84bc398c0dea7b742e92e2314a">More...</a><br /></td></tr>
 <tr class="separator:ab52e2c84bc398c0dea7b742e92e2314a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3acbf1c296b90bf14d90c4ff499a0113" id="r_a3acbf1c296b90bf14d90c4ff499a0113"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3acbf1c296b90bf14d90c4ff499a0113">train_emergency_type_enum</a> { <a class="el" href="#a3acbf1c296b90bf14d90c4ff499a0113a50dc6f903659c11529a10e4aa73e5f00">TRAIN_EMERGENCY_TYPE_ESTOP</a> = 0
+, <a class="el" href="#a3acbf1c296b90bf14d90c4ff499a0113a6fa4826dafd93ed16ca1fb15fb98a97f">TRAIN_EMERGENCY_TYPE_GLOBAL_STOP</a> = 1
+, <a class="el" href="#a3acbf1c296b90bf14d90c4ff499a0113ace30940db67038ded7296e34a36fd5b9">TRAIN_EMERGENCY_TYPE_GLOBAL_OFF</a> = 2
+ }</td></tr>
+<tr class="memdesc:a3acbf1c296b90bf14d90c4ff499a0113"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emergency state type for train protocol callbacks.  <a href="#a3acbf1c296b90bf14d90c4ff499a0113">More...</a><br /></td></tr>
+<tr class="separator:a3acbf1c296b90bf14d90c4ff499a0113"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Core type definitions, structures, and configuration constants for OpenLCB library. </p>
+<div class="textblock"><p>Core type definitions, structures, and configuration constants for the OpenLCB library. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -458,70 +431,9 @@ Enumerations</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>This header file defines all fundamental types and data structures used throughout the OpenLCB protocol implementation. It provides:</p>
-<p><b>User-Configurable Constants:</b></p><ul>
-<li>Buffer pool depths for different message types (BASIC, DATAGRAM, SNIP, STREAM)</li>
-<li>Maximum node count</li>
-<li>Event producer/consumer array sizes</li>
-<li>CDI and FDI buffer lengths</li>
-<li>Configuration memory addresses</li>
-</ul>
-<p><b>Core Type Definitions:</b></p><ul>
-<li>Node identifiers (48-bit Node IDs)</li>
-<li>Event identifiers (64-bit Event IDs)</li>
-<li>Message structures with variable-size payloads</li>
-<li>Node state and configuration structures</li>
-<li>Event producer/consumer lists</li>
-<li>Configuration memory structures</li>
-</ul>
-<p><b>Message Buffer Architecture:</b> The library uses segregated buffer pools organized by payload size:</p><ul>
-<li>BASIC: 16 bytes - For simple messages (most MTIs)</li>
-<li>DATAGRAM: 72 bytes - For datagram protocol</li>
-<li>SNIP: 256 bytes - For SNIP and Events with Payload</li>
-<li>STREAM: 512 bytes - For stream protocol</li>
-</ul>
-<p><b>Node Architecture:</b> Each node maintains:</p><ul>
-<li>Unique 48-bit Node ID and 12-bit CAN alias</li>
-<li>State flags (allocated, permitted, initialized)</li>
-<li>Lists of produced and consumed Event IDs</li>
-<li>Pointer to configuration parameters</li>
-<li>Reference to last received datagram (for replies)</li>
-</ul>
-<p><b>Configuration Memory:</b> Supports multiple address spaces per OpenLCB Memory Configuration Protocol:</p><ul>
-<li>0xFF: CDI (Configuration Description Information)</li>
-<li>0xFE: All memory combined</li>
-<li>0xFD: Configuration Memory (user settings)</li>
-<li>0xFC: ACDI Manufacturer (read-only)</li>
-<li>0xFB: ACDI User (user name/description)</li>
-<li>0xFA/0xF9: Train FDI and configuration</li>
-<li>0xEF: Firmware upgrade</li>
-</ul>
-<p><b>Design Philosophy:</b></p><ul>
-<li>Static allocation: All buffers pre-allocated at compile time</li>
-<li>Reference counting: Messages can be shared between queues</li>
-<li>Type safety: Extensive use of typedef for better type checking</li>
-<li>Segregated pools: Different message types have different buffer sizes</li>
-<li>Enumeration support: Multiple subsystems can enumerate nodes independently</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>All buffer depths can be overridden via compiler macros </dd>
-<dd>
-Total buffer count must not exceed 126 for 8-bit processors </dd>
-<dd>
-Node IDs and Event IDs use 64-bit types for consistency</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Changing buffer depths requires recompilation </dd>
-<dd>
-Node structures cannot be deallocated once allocated</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> - Protocol constants and MTI definitions </dd>
-<dd>
-<a class="el" href="openlcb__buffer__store_8h.html" title="Core buffer store for OpenLcb/LCC message buffers with allocation and management.">openlcb_buffer_store.h</a> - Buffer allocation functions </dd>
-<dd>
-<a class="el" href="openlcb__node_8h.html" title="OpenLCB node allocation, enumeration, and lifecycle management.">openlcb_node.h</a> - Node management functions </dd>
-<dd>
-OpenLCB Memory Configuration Protocol Standard </dd>
-<dd>
-OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
+<p>Defines all fundamental data types used across the library: message buffers (BASIC/DATAGRAM/SNIP/STREAM pools), node structures with event producer/consumer lists, configuration memory request types, broadcast time clock state, and train state. All memory is statically allocated at compile time — there is no dynamic allocation at runtime.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Typedef Documentation</h2>
 <a id="a4925a4e7a5380d3c40cfceadbbed1c78" name="a4925a4e7a5380d3c40cfceadbbed1c78"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4925a4e7a5380d3c40cfceadbbed1c78">&#9670;&#160;</a></span>openlcb_payload_t</h2>
@@ -535,8 +447,7 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Generic payload pointer type. </p>
-<p>Minimum 1-byte array type for generic payload pointer. Actual payload is accessed through payload_type and proper casting. </p>
+<p>Generic 1-byte payload pointer type for casting. </p>
 
 </div>
 </div>
@@ -552,13 +463,7 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Event ID type (64-bit unsigned integer) </p>
-<p>Event IDs uniquely identify events in the Producer/Consumer model. Format: 8 bytes, most significant byte first.</p>
-<p>Event ID structure (recommendation, not enforced):</p><ul>
-<li>Bytes 0-5: Derived from Node ID of defining node</li>
-<li>Bytes 6-7: Event-specific identifier within node</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd>OpenLCB Event Identifiers Standard </dd></dl>
+<p>64-bit Event ID. </p>
 
 </div>
 </div>
@@ -574,12 +479,7 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Node ID type (64-bit unsigned integer) </p>
-<p>Uniquely identifies a node on the OpenLCB network. Format: 48-bit value stored in 64-bit type (upper 16 bits unused).</p>
-<p>Transmission order: Most significant byte first Valid range: Must contain at least one '1' bit</p>
-<dl class="section see"><dt>See also</dt><dd>OpenLCB Unique Identifiers Standard </dd>
-<dd>
-<a class="el" href="group__buffer__size__constants.html#ga295e0f7856c5d61377cfadfc26c0c12d" title="NULL/unassigned Node ID value.">NULL_NODE_ID</a> </dd></dl>
+<p>48-bit Node ID stored in a 64-bit type (upper 16 bits unused). </p>
 
 </div>
 </div>
@@ -595,9 +495,7 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Event payload data buffer. </p>
-<p>Buffer for event payload data in Events with Payload messages. Maximum size is LEN_MESSAGE_BYTES_SNIP (256 bytes).</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__mti__event__transport.html#gadca02bd7909f23abf295f4e966821fcb" title="Event report with payload data (single frame, up to 8 bytes payload)">MTI_PC_EVENT_REPORT_WITH_PAYLOAD</a> </dd></dl>
+<p>Event payload data buffer (LEN_EVENT_PAYLOAD bytes). </p>
 
 </div>
 </div>
@@ -613,11 +511,7 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Configuration memory operation buffer. </p>
-<p>Buffer for read/write operations in Configuration Memory Protocol. Size matches maximum datagram payload (64 bytes).</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__config__mem__read.html#ga93d56126bc4f3e5dba6e414b954005cf" title="Read command: Address space 0xFD.">CONFIG_MEM_READ_SPACE_FD</a> </dd>
-<dd>
-<a class="el" href="group__config__mem__write.html#ga7f974350b24b3e5f8700588cd795be48" title="Write command: Address space 0xFD.">CONFIG_MEM_WRITE_SPACE_FD</a> </dd></dl>
+<p>Configuration memory read/write operation buffer (64 bytes). </p>
 
 </div>
 </div>
@@ -633,8 +527,7 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Array of OpenLCB message structures. </p>
-<p>The message buffer store contains one array with all message structures (BASIC + DATAGRAM + SNIP + STREAM count). </p>
+<p>Array of all message structures in the buffer store. </p>
 
 </div>
 </div>
@@ -649,6 +542,26 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Mutable runtime state for a single train node. </p>
+<p>Allocated from a static pool by <a class="el" href="openlcb__application__train_8c.html#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>. </p>
+
+</div>
+</div>
+<a id="a2b2ee067d4e133b8a20b892d2337e0de" name="a2b2ee067d4e133b8a20b892d2337e0de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b2ee067d4e133b8a20b892d2337e0de">&#9670;&#160;</a></span>openlcb_node_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structopenlcb__node___t_a_g.html">openlcb_node_TAG</a> <a class="el" href="#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OpenLCB virtual node. </p>
+<p>Holds identity, state, event lists, and a pointer to const configuration parameters. Nodes cannot be deallocated once allocated. </p>
 
 </div>
 </div>
@@ -665,8 +578,6 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
 </div><div class="memdoc">
 
 <p>Callback function type with no parameters. </p>
-<p>Used for simple callbacks like timer ticks.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__node__t.html#aea0579c23d8e07b8762d20d1d7e0290d" title="Callback invoked every 100ms timer tick.">interface_openlcb_node_t.on_100ms_timer_tick</a> </dd></dl>
 
 </div>
 </div>
@@ -682,15 +593,7 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Configuration memory operations callback function type. </p>
-<p>Callback for handling configuration memory operations. Application implements this to process Get Options and Get Address Space Info.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>State machine context </td></tr>
-    <tr><td class="paramname">config_mem_operations_request_info</td><td>Operation request details </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Config mem operations callback function type. </p>
 
 </div>
 </div>
@@ -701,10 +604,12 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef struct <a class="el" href="structconfig__mem__operations__request__info___t_a_g.html">config_mem_operations_request_info_TAG</a> config_mem_operations_request_info_t</td>
+          <td class="memname">typedef struct <a class="el" href="structconfig__mem__operations__request__info___t_a_g.html">config_mem_operations_request_info_TAG</a> <a class="el" href="#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Request info for Get Options / Get Address Space Info commands. </p>
 
 </div>
 </div>
@@ -720,15 +625,7 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Configuration memory read callback function type. </p>
-<p>Callback for handling configuration memory read requests. Application implements this to provide data from address spaces.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>State machine context </td></tr>
-    <tr><td class="paramname">config_mem_read_request_info</td><td>Read request details </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Config mem read callback function type. </p>
 
 </div>
 </div>
@@ -739,10 +636,12 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef struct <a class="el" href="structconfig__mem__read__request__info___t_a_g.html">config_mem_read_request_info_TAG</a> config_mem_read_request_info_t</td>
+          <td class="memname">typedef struct <a class="el" href="structconfig__mem__read__request__info___t_a_g.html">config_mem_read_request_info_TAG</a> <a class="el" href="#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Request info for a configuration memory read operation. </p>
 
 </div>
 </div>
@@ -758,15 +657,7 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Configuration memory write callback function type. </p>
-<p>Callback for handling configuration memory write requests. Application implements this to store data to address spaces.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>State machine context </td></tr>
-    <tr><td class="paramname">config_mem_write_request_info</td><td>Write request details </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Config mem write callback function type. </p>
 
 </div>
 </div>
@@ -777,10 +668,12 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef struct <a class="el" href="structconfig__mem__write__request__info___t_a_g.html">config_mem_write_request_info_TAG</a> config_mem_write_request_info_t</td>
+          <td class="memname">typedef struct <a class="el" href="structconfig__mem__write__request__info___t_a_g.html">config_mem_write_request_info_TAG</a> <a class="el" href="#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Request info for a configuration memory write operation. </p>
 
 </div>
 </div>
@@ -797,20 +690,15 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Message buffer payload type enumeration. </p>
-<p>Identifies which size category a message buffer belongs to. Used for buffer allocation and payload pointer management.</p>
-<p>The buffer store maintains separate pools for each type, allowing efficient memory usage by matching buffer size to message requirements.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> </dd>
-<dd>
-<a class="el" href="structopenlcb__msg__t.html#a9e12c939ca9b6d8140f1a9fc8bf72af7">openlcb_msg_t.payload_type</a> </dd></dl>
+<p>Message buffer payload type identifier. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a13c45196813cb44e6e81e9c48a5ec1b4" name="aececf1be5c268eb2c680b4a0cc778467a13c45196813cb44e6e81e9c48a5ec1b4"></a>BASIC&#160;</td><td class="fielddoc"><p>16-byte payload buffer for simple messages </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a13c45196813cb44e6e81e9c48a5ec1b4" name="aececf1be5c268eb2c680b4a0cc778467a13c45196813cb44e6e81e9c48a5ec1b4"></a>BASIC&#160;</td><td class="fielddoc"><p>16-byte payload buffer </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a802640598d6a1d0135cb7f5510ae9015" name="aececf1be5c268eb2c680b4a0cc778467a802640598d6a1d0135cb7f5510ae9015"></a>DATAGRAM&#160;</td><td class="fielddoc"><p>72-byte payload buffer for datagrams </p>
+<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a802640598d6a1d0135cb7f5510ae9015" name="aececf1be5c268eb2c680b4a0cc778467a802640598d6a1d0135cb7f5510ae9015"></a>DATAGRAM&#160;</td><td class="fielddoc"><p>72-byte payload buffer </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c" name="aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c"></a>SNIP&#160;</td><td class="fielddoc"><p>256-byte payload buffer for SNIP and Events with Payload </p>
+<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c" name="aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c"></a>SNIP&#160;</td><td class="fielddoc"><p>256-byte payload buffer </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5" name="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5"></a>STREAM&#160;</td><td class="fielddoc"><p>512-byte payload buffer for stream data </p>
+<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5" name="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5"></a>STREAM&#160;</td><td class="fielddoc"><p>512-byte payload buffer </p>
 </td></tr>
 </table>
 
@@ -828,29 +716,13 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Event status indicator for Producer/Consumer events. </p>
-<p>Indicates the current state of an event from a producer's or consumer's perspective. Used in Event Transport Protocol messages.</p>
-<p><b>Producer perspective:</b></p><ul>
-<li>UNKNOWN: Producer hasn't determined current state</li>
-<li>SET: Event is currently active/true</li>
-<li>CLEAR: Event is currently inactive/false</li>
-</ul>
-<p><b>Consumer perspective:</b></p><ul>
-<li>UNKNOWN: Consumer doesn't know if it would react to event</li>
-<li>SET: Consumer would act if event occurs</li>
-<li>CLEAR: Consumer would not act if event occurs</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__mti__event__transport.html#ga6fb8538bdceb28f0fa515900cb4dd3ba" title="Response: Node produces event and it is currently SET.">MTI_PRODUCER_IDENTIFIED_SET</a> </dd>
-<dd>
-<a class="el" href="group__mti__event__transport.html#ga3e8c3611d1c3398e1857b27334fa6d41" title="Response: Node consumes event and it is currently CLEAR.">MTI_CONSUMER_IDENTIFIED_CLEAR</a> </dd>
-<dd>
-<a class="el" href="structevent__id__struct__t.html" title="Event ID with status information.">event_id_struct_t</a> </dd></dl>
+<p>Event status for Producer/Consumer identification messages. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5" name="a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5"></a>EVENT_STATUS_UNKNOWN&#160;</td><td class="fielddoc"><p>Event state is unknown </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5" name="a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5"></a>EVENT_STATUS_UNKNOWN&#160;</td><td class="fielddoc"><p>State is unknown </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8" name="a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8"></a>EVENT_STATUS_SET&#160;</td><td class="fielddoc"><p>Event is in SET state </p>
+<tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8" name="a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8"></a>EVENT_STATUS_SET&#160;</td><td class="fielddoc"><p>Event is SET </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6" name="a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6"></a>EVENT_STATUS_CLEAR&#160;</td><td class="fielddoc"><p>Event is in CLEAR state </p>
+<tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6" name="a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6"></a>EVENT_STATUS_CLEAR&#160;</td><td class="fielddoc"><p>Event is CLEAR </p>
 </td></tr>
 </table>
 
@@ -868,21 +740,11 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Configuration memory address space encoding method. </p>
-<p>Specifies where the address space identifier is located in a Configuration Memory Protocol command message.</p>
-<ul>
-<li>ADDRESS_SPACE_IN_BYTE_1: Space ID is in byte 1 of command (for spaces &lt; 0xFD)</li>
-<li>ADDRESS_SPACE_IN_BYTE_6: Space ID is in byte 6 (for well-known spaces 0xFD-0xFF)</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__config__mem__read.html#ga3ccebcb26944dc7c657dd2023977e875" title="Read command: Address space in byte 6.">CONFIG_MEM_READ_SPACE_IN_BYTE_6</a> </dd>
-<dd>
-<a class="el" href="group__config__mem__read.html#ga93d56126bc4f3e5dba6e414b954005cf" title="Read command: Address space 0xFD.">CONFIG_MEM_READ_SPACE_FD</a> </dd>
-<dd>
-<a class="el" href="structconfig__mem__read__request__info___t_a_g.html#ad85ba467c219a6f999e386cd454f1d02">config_mem_read_request_info_t.encoding</a> </dd></dl>
+<p>Where the address space byte is encoded in a Config Mem command. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aab08faa6c2f49792c273f5267068d549a1ee43889b7408a03b6f79515150165c9" name="aab08faa6c2f49792c273f5267068d549a1ee43889b7408a03b6f79515150165c9"></a>ADDRESS_SPACE_IN_BYTE_1&#160;</td><td class="fielddoc"><p>Address space ID in command byte 1 </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aab08faa6c2f49792c273f5267068d549a1ee43889b7408a03b6f79515150165c9" name="aab08faa6c2f49792c273f5267068d549a1ee43889b7408a03b6f79515150165c9"></a>ADDRESS_SPACE_IN_BYTE_1&#160;</td><td class="fielddoc"><p>Space ID in command byte 1 </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9" name="aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9"></a>ADDRESS_SPACE_IN_BYTE_6&#160;</td><td class="fielddoc"><p>Address space ID in command byte 6 </p>
+<tr><td class="fieldname"><a id="aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9" name="aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9"></a>ADDRESS_SPACE_IN_BYTE_6&#160;</td><td class="fielddoc"><p>Space ID in command byte 6 </p>
 </td></tr>
 </table>
 
@@ -899,50 +761,25 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Power-of-two event range sizes for range-identified events. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaf3cf9374f875518f965c7915e86c8d57" name="a29cac8697a125631149cacda733a9faaaf3cf9374f875518f965c7915e86c8d57"></a>EVENT_RANGE_COUNT_1&#160;</td><td class="fielddoc"><p>2^0 Single event </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa9468e41e19572f329f541d26d479e7ed" name="a29cac8697a125631149cacda733a9faaa9468e41e19572f329f541d26d479e7ed"></a>EVENT_RANGE_COUNT_2&#160;</td><td class="fielddoc"><p>2^1 Two consecutive events </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa72f3fae6685ccfc2c0ebfb5a27fe746f" name="a29cac8697a125631149cacda733a9faaa72f3fae6685ccfc2c0ebfb5a27fe746f"></a>EVENT_RANGE_COUNT_4&#160;</td><td class="fielddoc"><p>2^2 Four consecutive events </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa797b7fe1393e39d8b6da77b6b5c060b0" name="a29cac8697a125631149cacda733a9faaa797b7fe1393e39d8b6da77b6b5c060b0"></a>EVENT_RANGE_COUNT_8&#160;</td><td class="fielddoc"><p>2^3 Eight consecutive events </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa02dd44c73f6053d1e115115b523ef184" name="a29cac8697a125631149cacda733a9faaa02dd44c73f6053d1e115115b523ef184"></a>EVENT_RANGE_COUNT_16&#160;</td><td class="fielddoc"><p>2^4 Sixteen consecutive events </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa34148699ccdcb018549bff4a6af46f55" name="a29cac8697a125631149cacda733a9faaa34148699ccdcb018549bff4a6af46f55"></a>EVENT_RANGE_COUNT_32&#160;</td><td class="fielddoc"><p>2^5 Thirty-two <br  />
- </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaa902bd21e2cc00adfab7c368b40d68e1" name="a29cac8697a125631149cacda733a9faaaa902bd21e2cc00adfab7c368b40d68e1"></a>EVENT_RANGE_COUNT_64&#160;</td><td class="fielddoc"><p>2^6 Sixty-four <br  />
- </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaf5a0dda3c6defaa7c1083ef40041939c" name="a29cac8697a125631149cacda733a9faaaf5a0dda3c6defaa7c1083ef40041939c"></a>EVENT_RANGE_COUNT_128&#160;</td><td class="fielddoc"><p>2^7 One hundred twenty-eight <br  />
- </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaadb8fe84787c36d2613ef8b6a6d922c65" name="a29cac8697a125631149cacda733a9faaadb8fe84787c36d2613ef8b6a6d922c65"></a>EVENT_RANGE_COUNT_256&#160;</td><td class="fielddoc"><p>2^8 Two hundred fifty-six <br  />
- </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa28eafb973153365834c56bfc82b1f183" name="a29cac8697a125631149cacda733a9faaa28eafb973153365834c56bfc82b1f183"></a>EVENT_RANGE_COUNT_512&#160;</td><td class="fielddoc"><p>2^9 Five hundred twelve <br  />
- </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaa467ad5d735790da48c6629f0ee8880f" name="a29cac8697a125631149cacda733a9faaaa467ad5d735790da48c6629f0ee8880f"></a>EVENT_RANGE_COUNT_1024&#160;</td><td class="fielddoc"><p>2^10 One thousand twenty-four <br  />
- </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaac99b6432c1d17877dfb1f48aca221242" name="a29cac8697a125631149cacda733a9faaac99b6432c1d17877dfb1f48aca221242"></a>EVENT_RANGE_COUNT_2048&#160;</td><td class="fielddoc"><p>2^11 Two thousand forty-eight <br  />
- </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaae5b8e28f28495311e061a73b2ea4ce4f" name="a29cac8697a125631149cacda733a9faaae5b8e28f28495311e061a73b2ea4ce4f"></a>EVENT_RANGE_COUNT_4096&#160;</td><td class="fielddoc"><p>2^12 Four thousand ninety-six <br  />
- </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa5cba51a9b680b388089ba7879614f8d1" name="a29cac8697a125631149cacda733a9faaa5cba51a9b680b388089ba7879614f8d1"></a>EVENT_RANGE_COUNT_8192&#160;</td><td class="fielddoc"><p>2^13 Eight thousand one hundred ninety-two <br  />
- </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaf5415e3d7f8d538af12c7b5442d3b0a3" name="a29cac8697a125631149cacda733a9faaaf5415e3d7f8d538af12c7b5442d3b0a3"></a>EVENT_RANGE_COUNT_16384&#160;</td><td class="fielddoc"><p>2^14 Sixteen thousand three hundred eighty-four <br  />
- </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa5121e69499e6250862df79a412d959f7" name="a29cac8697a125631149cacda733a9faaa5121e69499e6250862df79a412d959f7"></a>EVENT_RANGE_COUNT_32768&#160;</td><td class="fielddoc"><p>2^15 Thirty-two thousand seven hundred sixty-eight <br  />
- </p>
-</td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaf3cf9374f875518f965c7915e86c8d57" name="a29cac8697a125631149cacda733a9faaaf3cf9374f875518f965c7915e86c8d57"></a>EVENT_RANGE_COUNT_1&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa9468e41e19572f329f541d26d479e7ed" name="a29cac8697a125631149cacda733a9faaa9468e41e19572f329f541d26d479e7ed"></a>EVENT_RANGE_COUNT_2&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa72f3fae6685ccfc2c0ebfb5a27fe746f" name="a29cac8697a125631149cacda733a9faaa72f3fae6685ccfc2c0ebfb5a27fe746f"></a>EVENT_RANGE_COUNT_4&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa797b7fe1393e39d8b6da77b6b5c060b0" name="a29cac8697a125631149cacda733a9faaa797b7fe1393e39d8b6da77b6b5c060b0"></a>EVENT_RANGE_COUNT_8&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa02dd44c73f6053d1e115115b523ef184" name="a29cac8697a125631149cacda733a9faaa02dd44c73f6053d1e115115b523ef184"></a>EVENT_RANGE_COUNT_16&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa34148699ccdcb018549bff4a6af46f55" name="a29cac8697a125631149cacda733a9faaa34148699ccdcb018549bff4a6af46f55"></a>EVENT_RANGE_COUNT_32&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaa902bd21e2cc00adfab7c368b40d68e1" name="a29cac8697a125631149cacda733a9faaaa902bd21e2cc00adfab7c368b40d68e1"></a>EVENT_RANGE_COUNT_64&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaf5a0dda3c6defaa7c1083ef40041939c" name="a29cac8697a125631149cacda733a9faaaf5a0dda3c6defaa7c1083ef40041939c"></a>EVENT_RANGE_COUNT_128&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaadb8fe84787c36d2613ef8b6a6d922c65" name="a29cac8697a125631149cacda733a9faaadb8fe84787c36d2613ef8b6a6d922c65"></a>EVENT_RANGE_COUNT_256&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa28eafb973153365834c56bfc82b1f183" name="a29cac8697a125631149cacda733a9faaa28eafb973153365834c56bfc82b1f183"></a>EVENT_RANGE_COUNT_512&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaa467ad5d735790da48c6629f0ee8880f" name="a29cac8697a125631149cacda733a9faaaa467ad5d735790da48c6629f0ee8880f"></a>EVENT_RANGE_COUNT_1024&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaac99b6432c1d17877dfb1f48aca221242" name="a29cac8697a125631149cacda733a9faaac99b6432c1d17877dfb1f48aca221242"></a>EVENT_RANGE_COUNT_2048&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaae5b8e28f28495311e061a73b2ea4ce4f" name="a29cac8697a125631149cacda733a9faaae5b8e28f28495311e061a73b2ea4ce4f"></a>EVENT_RANGE_COUNT_4096&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa5cba51a9b680b388089ba7879614f8d1" name="a29cac8697a125631149cacda733a9faaa5cba51a9b680b388089ba7879614f8d1"></a>EVENT_RANGE_COUNT_8192&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaf5415e3d7f8d538af12c7b5442d3b0a3" name="a29cac8697a125631149cacda733a9faaaf5415e3d7f8d538af12c7b5442d3b0a3"></a>EVENT_RANGE_COUNT_16384&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa5121e69499e6250862df79a412d959f7" name="a29cac8697a125631149cacda733a9faaa5121e69499e6250862df79a412d959f7"></a>EVENT_RANGE_COUNT_32768&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
@@ -959,37 +796,44 @@ OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Broadcast Time Protocol event type enumeration. </p>
-<p>Identifies the type of broadcast time event encoded in an Event ID. Used to determine which data (time/date/year/rate/command) is present.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__utilities_8c.html#aaf584d752ad0787034618a14f69c4a11" title="Determines the type of broadcast time event from Event ID.">OpenLcbUtilities_get_broadcast_time_event_type</a> </dd>
-<dd>
-<a class="el" href="protocol__broadcast__time__handler_8c.html#a56545d916bd644bc5b3e8c8a6f86ef53" title="Handles incoming broadcast time events.">ProtocolBroadcastTime_handle_time_event</a> </dd></dl>
+<p>Broadcast Time Protocol event type decoded from an Event ID. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa4d7e136a22ca0c74dfc5836e90de1f83" name="ab52e2c84bc398c0dea7b742e92e2314aa4d7e136a22ca0c74dfc5836e90de1f83"></a>BROADCAST_TIME_EVENT_REPORT_TIME&#160;</td><td class="fielddoc"><p>Report Time event (hour/minute) </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa4d7e136a22ca0c74dfc5836e90de1f83" name="ab52e2c84bc398c0dea7b742e92e2314aa4d7e136a22ca0c74dfc5836e90de1f83"></a>BROADCAST_TIME_EVENT_REPORT_TIME&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aad78e1a5535047ef65670ec8058f28b8d" name="ab52e2c84bc398c0dea7b742e92e2314aad78e1a5535047ef65670ec8058f28b8d"></a>BROADCAST_TIME_EVENT_REPORT_DATE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa425799e1403e41cb2a947f1e29358105" name="ab52e2c84bc398c0dea7b742e92e2314aa425799e1403e41cb2a947f1e29358105"></a>BROADCAST_TIME_EVENT_REPORT_YEAR&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa11d5d9ad76059dd3a376fd2ff54e2ed1" name="ab52e2c84bc398c0dea7b742e92e2314aa11d5d9ad76059dd3a376fd2ff54e2ed1"></a>BROADCAST_TIME_EVENT_REPORT_RATE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa44a5e50520900574e42186c7906e1006" name="ab52e2c84bc398c0dea7b742e92e2314aa44a5e50520900574e42186c7906e1006"></a>BROADCAST_TIME_EVENT_SET_TIME&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aafc0866dfb174e893bd0aaca057e2aec8" name="ab52e2c84bc398c0dea7b742e92e2314aafc0866dfb174e893bd0aaca057e2aec8"></a>BROADCAST_TIME_EVENT_SET_DATE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa8a6e1f35b247e9f5a9b4d4b027316298" name="ab52e2c84bc398c0dea7b742e92e2314aa8a6e1f35b247e9f5a9b4d4b027316298"></a>BROADCAST_TIME_EVENT_SET_YEAR&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa7cd5dfce3ccfef67bc507bb35c28baf5" name="ab52e2c84bc398c0dea7b742e92e2314aa7cd5dfce3ccfef67bc507bb35c28baf5"></a>BROADCAST_TIME_EVENT_SET_RATE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa402bf871f84d742f6d01aa53e9c182da" name="ab52e2c84bc398c0dea7b742e92e2314aa402bf871f84d742f6d01aa53e9c182da"></a>BROADCAST_TIME_EVENT_QUERY&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa121f7792647a57f4bf15b74570727cde" name="ab52e2c84bc398c0dea7b742e92e2314aa121f7792647a57f4bf15b74570727cde"></a>BROADCAST_TIME_EVENT_STOP&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa1b7531b9d26a98d1e028f048432cfd8a" name="ab52e2c84bc398c0dea7b742e92e2314aa1b7531b9d26a98d1e028f048432cfd8a"></a>BROADCAST_TIME_EVENT_START&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa6e6b799375bdf5a807b037e8a0920463" name="ab52e2c84bc398c0dea7b742e92e2314aa6e6b799375bdf5a807b037e8a0920463"></a>BROADCAST_TIME_EVENT_DATE_ROLLOVER&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa34923d588714a227c0402497bea954fe" name="ab52e2c84bc398c0dea7b742e92e2314aa34923d588714a227c0402497bea954fe"></a>BROADCAST_TIME_EVENT_UNKNOWN&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<a id="a3acbf1c296b90bf14d90c4ff499a0113" name="a3acbf1c296b90bf14d90c4ff499a0113"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3acbf1c296b90bf14d90c4ff499a0113">&#9670;&#160;</a></span>train_emergency_type_enum</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a3acbf1c296b90bf14d90c4ff499a0113">train_emergency_type_enum</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Emergency state type for train protocol callbacks. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3acbf1c296b90bf14d90c4ff499a0113a50dc6f903659c11529a10e4aa73e5f00" name="a3acbf1c296b90bf14d90c4ff499a0113a50dc6f903659c11529a10e4aa73e5f00"></a>TRAIN_EMERGENCY_TYPE_ESTOP&#160;</td><td class="fielddoc"><p>Point-to-point Emergency Stop </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aad78e1a5535047ef65670ec8058f28b8d" name="ab52e2c84bc398c0dea7b742e92e2314aad78e1a5535047ef65670ec8058f28b8d"></a>BROADCAST_TIME_EVENT_REPORT_DATE&#160;</td><td class="fielddoc"><p>Report Date event (month/day) </p>
+<tr><td class="fieldname"><a id="a3acbf1c296b90bf14d90c4ff499a0113a6fa4826dafd93ed16ca1fb15fb98a97f" name="a3acbf1c296b90bf14d90c4ff499a0113a6fa4826dafd93ed16ca1fb15fb98a97f"></a>TRAIN_EMERGENCY_TYPE_GLOBAL_STOP&#160;</td><td class="fielddoc"><p>Global Emergency Stop (event-based) </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa425799e1403e41cb2a947f1e29358105" name="ab52e2c84bc398c0dea7b742e92e2314aa425799e1403e41cb2a947f1e29358105"></a>BROADCAST_TIME_EVENT_REPORT_YEAR&#160;</td><td class="fielddoc"><p>Report Year event (year) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa11d5d9ad76059dd3a376fd2ff54e2ed1" name="ab52e2c84bc398c0dea7b742e92e2314aa11d5d9ad76059dd3a376fd2ff54e2ed1"></a>BROADCAST_TIME_EVENT_REPORT_RATE&#160;</td><td class="fielddoc"><p>Report Rate event (clock rate) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa44a5e50520900574e42186c7906e1006" name="ab52e2c84bc398c0dea7b742e92e2314aa44a5e50520900574e42186c7906e1006"></a>BROADCAST_TIME_EVENT_SET_TIME&#160;</td><td class="fielddoc"><p>Set Time event (hour/minute) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aafc0866dfb174e893bd0aaca057e2aec8" name="ab52e2c84bc398c0dea7b742e92e2314aafc0866dfb174e893bd0aaca057e2aec8"></a>BROADCAST_TIME_EVENT_SET_DATE&#160;</td><td class="fielddoc"><p>Set Date event (month/day) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa8a6e1f35b247e9f5a9b4d4b027316298" name="ab52e2c84bc398c0dea7b742e92e2314aa8a6e1f35b247e9f5a9b4d4b027316298"></a>BROADCAST_TIME_EVENT_SET_YEAR&#160;</td><td class="fielddoc"><p>Set Year event (year) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa7cd5dfce3ccfef67bc507bb35c28baf5" name="ab52e2c84bc398c0dea7b742e92e2314aa7cd5dfce3ccfef67bc507bb35c28baf5"></a>BROADCAST_TIME_EVENT_SET_RATE&#160;</td><td class="fielddoc"><p>Set Rate event (clock rate) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa402bf871f84d742f6d01aa53e9c182da" name="ab52e2c84bc398c0dea7b742e92e2314aa402bf871f84d742f6d01aa53e9c182da"></a>BROADCAST_TIME_EVENT_QUERY&#160;</td><td class="fielddoc"><p>Query event (request sync) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa121f7792647a57f4bf15b74570727cde" name="ab52e2c84bc398c0dea7b742e92e2314aa121f7792647a57f4bf15b74570727cde"></a>BROADCAST_TIME_EVENT_STOP&#160;</td><td class="fielddoc"><p>Stop event (stop clock) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa1b7531b9d26a98d1e028f048432cfd8a" name="ab52e2c84bc398c0dea7b742e92e2314aa1b7531b9d26a98d1e028f048432cfd8a"></a>BROADCAST_TIME_EVENT_START&#160;</td><td class="fielddoc"><p>Start event (start clock) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa6e6b799375bdf5a807b037e8a0920463" name="ab52e2c84bc398c0dea7b742e92e2314aa6e6b799375bdf5a807b037e8a0920463"></a>BROADCAST_TIME_EVENT_DATE_ROLLOVER&#160;</td><td class="fielddoc"><p>Date Rollover event (midnight) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab52e2c84bc398c0dea7b742e92e2314aa34923d588714a227c0402497bea954fe" name="ab52e2c84bc398c0dea7b742e92e2314aa34923d588714a227c0402497bea954fe"></a>BROADCAST_TIME_EVENT_UNKNOWN&#160;</td><td class="fielddoc"><p>Unknown/invalid event type </p>
+<tr><td class="fieldname"><a id="a3acbf1c296b90bf14d90c4ff499a0113ace30940db67038ded7296e34a36fd5b9" name="a3acbf1c296b90bf14d90c4ff499a0113ace30940db67038ded7296e34a36fd5b9"></a>TRAIN_EMERGENCY_TYPE_GLOBAL_OFF&#160;</td><td class="fielddoc"><p>Global Emergency Off (event-based) </p>
 </td></tr>
 </table>
 

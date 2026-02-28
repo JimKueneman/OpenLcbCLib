@@ -28,11 +28,15 @@ Filenames are all lower case with underscores between words and are descriptive.
 
 Indentation of lines of code shall be 4 spaces, no tabs allowed, unless otherwise stated.   If the spec and examples are in conflict the value here shall be used.
 
+**Doxygen Comment Indentation**
+
+Doxygen blocks are always indented 4 spaces more than the code they document.  Find the first non-space character of the line being documented, count how many spaces precede it (call that N), and place the opening `/**` at column N + 4.  For full rules and examples see `documentation/Doxygen_StyleGuide.md`.
+
 **Line Length**
 
 Any function that has a large number or long identifier names shall be split up using these rules:
 
-1) If the line is longer than 120 characters (converting tabs equivalent number of space in the count) do the following
+1) If the line is longer than 160 characters (converting tabs equivalent number of space in the count) do the following
 2) Break the parameter list up with a parameter on each line (a parameter may be the return from another function recursively in which the same rule applies).  The indentation shall be as follows:
 
 ~~~

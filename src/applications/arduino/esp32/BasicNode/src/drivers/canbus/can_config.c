@@ -33,7 +33,7 @@
  * dependency_injection_canbus.c copies.
  *
  * @author Jim Kueneman
- * @date 17 Feb 2026
+ * @date 28 Feb 2026
  *
  * @see can_config.h - User-facing CAN configuration struct
  * @see openlcb_config.c - OpenLCB protocol layer wiring module
@@ -61,19 +61,35 @@
 
 // ---- Internal storage for built interface structs ----
 
+/** @brief Built interface struct for the login message handler. */
 static interface_can_login_message_handler_t _login_msg;
+
+/** @brief Built interface struct for the login state machine. */
 static interface_can_login_state_machine_t _login_sm;
+
+/** @brief Built interface struct for the receive message handler. */
 static interface_can_rx_message_handler_t _rx_msg;
+
+/** @brief Built interface struct for the receive state machine. */
 static interface_can_rx_statemachine_t _rx_sm;
+
+/** @brief Built interface struct for the transmit message handler. */
 static interface_can_tx_message_handler_t _tx_msg;
+
+/** @brief Built interface struct for the transmit state machine. */
 static interface_can_tx_statemachine_t _tx_sm;
+
+/** @brief Built interface struct for the main state machine. */
 static interface_can_main_statemachine_t _main_sm;
 
+/** @brief Saved pointer to the user-provided configuration. */
 static const can_config_t *_config;
 
 // ---- Build functions ----
 
+    /** @brief Wires the login message handler interface from user config and library internals. */
 static void _build_login_message_handler(void) {
+
     memset(&_login_msg, 0, sizeof(_login_msg));
 
     // Library-internal wiring
@@ -82,9 +98,12 @@ static void _build_login_message_handler(void) {
 
     // User callback (optional)
     _login_msg.on_alias_change = _config->on_alias_change;
+
 }
 
+    /** @brief Wires the login state machine interface with all 10 state handlers. */
 static void _build_login_statemachine(void) {
+
     memset(&_login_sm, 0, sizeof(_login_sm));
 
     // Library-internal wiring -- all 10 state handlers
@@ -98,9 +117,12 @@ static void _build_login_statemachine(void) {
     _login_sm.state_wait_200ms      = &CanLoginMessageHandler_state_wait_200ms;
     _login_sm.state_load_rid        = &CanLoginMessageHandler_state_load_rid;
     _login_sm.state_load_amd        = &CanLoginMessageHandler_state_load_amd;
+
 }
 
+    /** @brief Wires the receive message handler interface from library internals. */
 static void _build_rx_message_handler(void) {
+
     memset(&_rx_msg, 0, sizeof(_rx_msg));
 
     // Library-internal wiring
@@ -110,9 +132,12 @@ static void _build_rx_message_handler(void) {
     _rx_msg.alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id;
     _rx_msg.alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info;
     _rx_msg.alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag;
+
 }
 
+    /** @brief Wires the receive state machine interface with all 12 frame handlers and user callback. */
 static void _build_rx_statemachine(void) {
+
     memset(&_rx_sm, 0, sizeof(_rx_sm));
 
     // Library-internal wiring -- 12 message handlers
@@ -134,9 +159,12 @@ static void _build_rx_statemachine(void) {
 
     // User callback (optional)
     _rx_sm.on_receive = _config->on_rx;
+
 }
 
+    /** @brief Wires the transmit message handler interface from user config. */
 static void _build_tx_message_handler(void) {
+
     memset(&_tx_msg, 0, sizeof(_tx_msg));
 
     // User hardware driver (required)
@@ -144,9 +172,12 @@ static void _build_tx_message_handler(void) {
 
     // User callback (optional)
     _tx_msg.on_transmit = _config->on_tx;
+
 }
 
+    /** @brief Wires the transmit state machine interface with all 5 message type handlers. */
 static void _build_tx_statemachine(void) {
+
     memset(&_tx_sm, 0, sizeof(_tx_sm));
 
     // User hardware driver (required)
@@ -158,9 +189,12 @@ static void _build_tx_statemachine(void) {
     _tx_sm.handle_datagram_frame        = &CanTxMessageHandler_datagram_frame;
     _tx_sm.handle_stream_frame          = &CanTxMessageHandler_stream_frame;
     _tx_sm.handle_can_frame             = &CanTxMessageHandler_can_frame;
+
 }
 
+    /** @brief Wires the main state machine interface from user config and library internals. */
 static void _build_main_statemachine(void) {
+
     memset(&_main_sm, 0, sizeof(_main_sm));
 
     // User hardware drivers (required -- duplicated from openlcb_config_t)
@@ -182,11 +216,33 @@ static void _build_main_statemachine(void) {
     _main_sm.handle_login_outgoing_can_message = &CanMainStatemachine_handle_login_outgoing_can_message;
     _main_sm.handle_try_enumerate_first_node = &CanMainStatemachine_handle_try_enumerate_first_node;
     _main_sm.handle_try_enumerate_next_node = &CanMainStatemachine_handle_try_enumerate_next_node;
+
 }
 
 // ---- Public API ----
 
+    /**
+     * @brief Initializes the CAN bus transport layer.
+     *
+     * @details Algorithm:
+     * -# Save the user-provided config pointer.
+     * -# Initialize buffer infrastructure (CanBufferStore, CanBufferFifo).
+     * -# Build all 7 internal interface structs from user config and library functions.
+     * -# Initialize all CAN modules in dependency order:
+     *    RxMessageHandler, RxStatemachine, TxMessageHandler, TxStatemachine,
+     *    LoginMessageHandler, LoginStateMachine, MainStatemachine, AliasMappings.
+     *
+     * @verbatim
+     * @param config  Pointer to @ref can_config_t configuration. Must remain
+     *                valid for the lifetime of the application.
+     * @endverbatim
+     *
+     * @warning NOT thread-safe - call during single-threaded initialization only.
+     *
+     * @see openlcb_config.h
+     */
 void CanConfig_initialize(const can_config_t *config) {
+
     _config = config;
 
     // 1. Buffer infrastructure
@@ -214,4 +270,5 @@ void CanConfig_initialize(const can_config_t *config) {
     CanMainStatemachine_initialize(&_main_sm);
 
     AliasMappings_initialize();
+
 }

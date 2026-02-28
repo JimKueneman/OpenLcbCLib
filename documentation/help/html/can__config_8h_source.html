@@ -94,50 +94,50 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 <a href="can__config_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#ifndef __CAN_CONFIG__</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#define __CAN_CONFIG__</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#ifndef __DRIVERS_CANBUS_CAN_CONFIG__</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#define __DRIVERS_CANBUS_CAN_CONFIG__</span></div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &quot;<a class="code" href="can__types_8h.html">can_types.h</a>&quot;</span></div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="foldopen" id="foldopen00068" data-start="{" data-end="};">
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="structcan__config__t.html">   68</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="structcan__config__t.html#ae8e05e8dc9b3f43e4c58e798be7dea6c">   71</a></span>    bool (*transmit_raw_can_frame)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="structcan__config__t.html#a600ed23c9d8e12fbcbb70a922e21be15">   74</a></span>    bool (*is_tx_buffer_clear)(void);</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="structcan__config__t.html#ad5d977bbc45e071d19d77e261f17b7e7">   78</a></span>    void (*lock_shared_resources)(void);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="foldopen" id="foldopen00072" data-start="{" data-end="};">
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="structcan__config__t.html">   72</a></span>    <span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="structcan__config__t.html#ae8e05e8dc9b3f43e4c58e798be7dea6c">   75</a></span>        bool (*transmit_raw_can_frame)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="structcan__config__t.html#a600ed23c9d8e12fbcbb70a922e21be15">   78</a></span>        bool (*is_tx_buffer_clear)(void);</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="structcan__config__t.html#a654fa7c6260aa2ac2c0589f57fcd67e9">   82</a></span>    void (*unlock_shared_resources)(void);</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="structcan__config__t.html#ad5d977bbc45e071d19d77e261f17b7e7">   82</a></span>        void (*lock_shared_resources)(void);</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="structcan__config__t.html#a178e72043f7bc0a545207d24e7ba374f">   85</a></span>    void (*on_rx)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="structcan__config__t.html#aa2aac82ae0bd667ae3b61c769b5778dd">   88</a></span>    void (*on_tx)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="structcan__config__t.html#a015cf925a8f563f2ff7ab585ac9b809d">   93</a></span>    void (*on_alias_change)(uint16_t alias, <a class="code hl_typedef" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id);</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>} <a class="code hl_struct" href="structcan__config__t.html">can_config_t</a>;</div>
-</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="structcan__config__t.html#a654fa7c6260aa2ac2c0589f57fcd67e9">   86</a></span>        void (*unlock_shared_resources)(void);</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="structcan__config__t.html#a178e72043f7bc0a545207d24e7ba374f">   89</a></span>        void (*on_rx)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="structcan__config__t.html#aa2aac82ae0bd667ae3b61c769b5778dd">   92</a></span>        void (*on_tx)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="structcan__config__t.html#a015cf925a8f563f2ff7ab585ac9b809d">   95</a></span>        void (*on_alias_change)(uint16_t alias, <a class="code hl_typedef" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id);</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="can__config_8h.html#ae70d56f10f100fafe66a63842147ad14">CanConfig_initialize</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcan__config__t.html">can_config_t</a> *config);</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>}</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span><span class="preprocessor">#endif </span><span class="comment">/* __CAN_CONFIG__ */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="acan__config_8h_html_ae70d56f10f100fafe66a63842147ad14"><div class="ttname"><a href="can__config_8h.html#ae70d56f10f100fafe66a63842147ad14">CanConfig_initialize</a></div><div class="ttdeci">void CanConfig_initialize(const can_config_t *config)</div><div class="ttdoc">Initialize the CAN bus transport layer.</div><div class="ttdef"><b>Definition</b> can_config.c:189</div></div>
-<div class="ttc" id="acan__types_8h_html"><div class="ttname"><a href="can__types_8h.html">can_types.h</a></div><div class="ttdoc">Type definitions and constants for CAN operations.</div></div>
-<div class="ttc" id="aopenlcb__types_8h_html_ab63b0eaf893badf557397c77fb74fe3c"><div class="ttname"><a href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></div><div class="ttdeci">uint64_t node_id_t</div><div class="ttdoc">Node ID type (64-bit unsigned integer)</div><div class="ttdef"><b>Definition</b> openlcb_types.h:526</div></div>
-<div class="ttc" id="astructcan__config__t_html"><div class="ttname"><a href="structcan__config__t.html">can_config_t</a></div><div class="ttdoc">CAN bus transport configuration.</div><div class="ttdef"><b>Definition</b> can_config.h:68</div></div>
-<div class="ttc" id="astructcan__msg__struct_html"><div class="ttname"><a href="structcan__msg__struct.html">can_msg_struct</a></div><div class="ttdoc">Structure to hold information needed by a CAN message/frame.</div><div class="ttdef"><b>Definition</b> can_types.h:183</div></div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    } <a class="code hl_struct" href="structcan__config__t.html">can_config_t</a>;</div>
+</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="can__config_8h.html#ae70d56f10f100fafe66a63842147ad14">CanConfig_initialize</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcan__config__t.html">can_config_t</a> *config);</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>}</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="preprocessor">#endif </span><span class="comment">/* __DRIVERS_CANBUS_CAN_CONFIG__ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="acan__config_8h_html_ae70d56f10f100fafe66a63842147ad14"><div class="ttname"><a href="can__config_8h.html#ae70d56f10f100fafe66a63842147ad14">CanConfig_initialize</a></div><div class="ttdeci">void CanConfig_initialize(const can_config_t *config)</div><div class="ttdoc">Initializes the CAN bus transport layer.</div><div class="ttdef"><b>Definition</b> can_config.c:244</div></div>
+<div class="ttc" id="acan__types_8h_html"><div class="ttname"><a href="can__types_8h.html">can_types.h</a></div><div class="ttdoc">Type definitions and constants for the CAN transport layer.</div></div>
+<div class="ttc" id="aopenlcb__types_8h_html_ab63b0eaf893badf557397c77fb74fe3c"><div class="ttname"><a href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></div><div class="ttdeci">uint64_t node_id_t</div><div class="ttdoc">48-bit Node ID stored in a 64-bit type (upper 16 bits unused).</div><div class="ttdef"><b>Definition</b> openlcb_types.h:364</div></div>
+<div class="ttc" id="astructcan__config__t_html"><div class="ttname"><a href="structcan__config__t.html">can_config_t</a></div><div class="ttdoc">CAN bus transport configuration.</div><div class="ttdef"><b>Definition</b> can_config.h:72</div></div>
+<div class="ttc" id="astructcan__msg__struct_html"><div class="ttname"><a href="structcan__msg__struct.html">can_msg_struct</a></div><div class="ttdef"><b>Definition</b> can_types.h:114</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!doctype html>
 <html>

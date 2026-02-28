@@ -32,7 +32,7 @@
  * callbacks when state changes.
  *
  * @author Jim Kueneman
- * @date 14 Feb 2026
+ * @date 28 Feb 2026
  */
 
 #include "protocol_broadcast_time_handler.h"
@@ -47,15 +47,24 @@
 #include "openlcb_application_broadcast_time.h"
 
 
+    /** @brief Stored callback interface pointer. */
 static const interface_openlcb_protocol_broadcast_time_handler_t *_interface;
 
 
+    /**
+     * @brief Stores the callback interface.  Call once at startup.
+     *
+     * @verbatim
+     * @param interface_openlcb_protocol_broadcast_time_handler  Populated callback table.
+     * @endverbatim
+     */
 void ProtocolBroadcastTime_initialize(const interface_openlcb_protocol_broadcast_time_handler_t *interface_openlcb_protocol_broadcast_time_handler) {
 
     _interface = interface_openlcb_protocol_broadcast_time_handler;
 
 }
 
+    /** @brief Decode and store time-of-day from event ID, fire callback. */
 static void _handle_report_time(openlcb_node_t *node, broadcast_clock_state_t *clock, event_id_t event_id) {
 
     uint8_t hour;
@@ -78,6 +87,7 @@ static void _handle_report_time(openlcb_node_t *node, broadcast_clock_state_t *c
 }
 
 
+    /** @brief Decode and store date from event ID, fire callback. */
 static void _handle_report_date(openlcb_node_t *node, broadcast_clock_state_t *clock, event_id_t event_id) {
 
     uint8_t month;
@@ -100,6 +110,7 @@ static void _handle_report_date(openlcb_node_t *node, broadcast_clock_state_t *c
 }
 
 
+    /** @brief Decode and store year from event ID, fire callback. */
 static void _handle_report_year(openlcb_node_t *node, broadcast_clock_state_t *clock, event_id_t event_id) {
 
     uint16_t year;
@@ -120,6 +131,7 @@ static void _handle_report_year(openlcb_node_t *node, broadcast_clock_state_t *c
 }
 
 
+    /** @brief Decode and store clock rate from event ID, fire callback. */
 static void _handle_report_rate(openlcb_node_t *node, broadcast_clock_state_t *clock, event_id_t event_id) {
 
     int16_t rate;
@@ -140,6 +152,7 @@ static void _handle_report_rate(openlcb_node_t *node, broadcast_clock_state_t *c
 }
 
 
+    /** @brief Set clock running flag and fire callback. */
 static void _handle_start(openlcb_node_t *node, broadcast_clock_state_t *clock) {
 
     clock->is_running = true;
@@ -153,6 +166,7 @@ static void _handle_start(openlcb_node_t *node, broadcast_clock_state_t *clock) 
 }
 
 
+    /** @brief Clear clock running flag and fire callback. */
 static void _handle_stop(openlcb_node_t *node, broadcast_clock_state_t *clock) {
 
     clock->is_running = false;
@@ -166,6 +180,7 @@ static void _handle_stop(openlcb_node_t *node, broadcast_clock_state_t *clock) {
 }
 
 
+    /** @brief Fire date-rollover callback. */
 static void _handle_date_rollover(openlcb_node_t *node, broadcast_clock_state_t *clock) {
 
     if (_interface && _interface->on_date_rollover) {
@@ -177,6 +192,17 @@ static void _handle_date_rollover(openlcb_node_t *node, broadcast_clock_state_t 
 }
 
 
+    /**
+     * @brief Handles incoming broadcast time events.
+     *
+     * @details Decodes the event type, looks up the matching clock, and
+     * dispatches to the appropriate sub-handler.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param event_id           Full 64-bit event_id_t containing encoded time data.
+     * @endverbatim
+     */
 void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
 
     broadcast_time_event_type_enum event_type;

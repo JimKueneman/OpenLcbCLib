@@ -1,8 +1,13 @@
 var searchData=
 [
-  ['unaligned_5freads_5fsupported_0',['unaligned_reads_supported',['../structuser__configuration__options.html#ac0781e15c31e3cbc3e0b3c0e399a4d62',1,'user_configuration_options']]],
-  ['unaligned_5fwrites_5fsupported_1',['unaligned_writes_supported',['../structuser__configuration__options.html#abe9bf6cf47330d3c370b23b76803eeed',1,'user_configuration_options']]],
-  ['unfreeze_2',['unfreeze',['../structopenlcb__config__t.html#a4c271cda537b06216475cb0d9944d234',1,'openlcb_config_t']]],
-  ['unlock_5fshared_5fresources_3',['unlock_shared_resources',['../structopenlcb__config__t.html#a654fa7c6260aa2ac2c0589f57fcd67e9',1,'openlcb_config_t::unlock_shared_resources'],['../structinterface__openlcb__main__statemachine__t.html#a654fa7c6260aa2ac2c0589f57fcd67e9',1,'interface_openlcb_main_statemachine_t::unlock_shared_resources'],['../structinterface__protocol__datagram__handler__t.html#a654fa7c6260aa2ac2c0589f57fcd67e9',1,'interface_protocol_datagram_handler_t::unlock_shared_resources'],['../structcan__config__t.html#a654fa7c6260aa2ac2c0589f57fcd67e9',1,'can_config_t::unlock_shared_resources'],['../structinterface__can__main__statemachine__t.html#a654fa7c6260aa2ac2c0589f57fcd67e9',1,'interface_can_main_statemachine_t::unlock_shared_resources']]],
-  ['user_5fversion_4',['user_version',['../structuser__snip__struct__t.html#ad47425ec0aea2baf692b7b4de8d9e0d7',1,'user_snip_struct_t']]]
+  ['tail_0',['tail',['../structopenlcb__msg__fifo__t.html#a8db7f977b77e4e4d588ef0d3e04ada16',1,'openlcb_msg_fifo_t::tail'],['../structcan__fifo__t.html#a8db7f977b77e4e4d588ef0d3e04ada16',1,'can_fifo_t::tail']]],
+  ['time_1',['time',['../structbroadcast__clock__state__t.html#a817dab8bc6e031bf7d4f3bb6b5dfae47',1,'broadcast_clock_state_t']]],
+  ['timerticks_2',['timerticks',['../structopenlcb__msg__t.html#a8a741918d46cbac55bc258b35a254622',1,'openlcb_msg_t::timerticks'],['../structopenlcb__node___t_a_g.html#ab343469b0a7b8f055a707bbbfe329076',1,'openlcb_node_TAG::timerticks']]],
+  ['train_5fcontrol_5fcommand_3',['train_control_command',['../structinterface__openlcb__main__statemachine__t.html#a368c085e82434fce8eb17e3d3c463f08',1,'interface_openlcb_main_statemachine_t']]],
+  ['train_5fcontrol_5freply_4',['train_control_reply',['../structinterface__openlcb__main__statemachine__t.html#a1b5d26667a8caaa4a1f14a518845f4bf',1,'interface_openlcb_main_statemachine_t']]],
+  ['train_5femergency_5fevent_5fhandler_5',['train_emergency_event_handler',['../structinterface__openlcb__main__statemachine__t.html#a6a474a3e9d15636a9f87744476d62128',1,'interface_openlcb_main_statemachine_t']]],
+  ['train_5fsearch_5fevent_5fhandler_6',['train_search_event_handler',['../structinterface__openlcb__main__statemachine__t.html#ad91e972b5485893674763f527790e3d6',1,'interface_openlcb_main_statemachine_t']]],
+  ['train_5fstate_7',['train_state',['../structopenlcb__node___t_a_g.html#a06bedf5466ecbf8da42b92ba7431aa1a',1,'openlcb_node_TAG']]],
+  ['transmit_5fcan_5fframe_8',['transmit_can_frame',['../structinterface__can__tx__message__handler__t.html#abb132b7264a3f080f84953c8d3aa6b0e',1,'interface_can_tx_message_handler_t']]],
+  ['transmit_5fraw_5fcan_5fframe_9',['transmit_raw_can_frame',['../structcan__config__t.html#ae8e05e8dc9b3f43e4c58e798be7dea6c',1,'can_config_t']]]
 ];

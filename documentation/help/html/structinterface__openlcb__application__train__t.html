@@ -92,19 +92,22 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Application interface for train module.  
+<p>Application-provided callbacks for the train module.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a552e03ff9ca4d801cb74d04c100946e0" id="r_a552e03ff9ca4d801cb74d04c100946e0"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a552e03ff9ca4d801cb74d04c100946e0">send_openlcb_msg</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
+<tr class="memdesc:a552e03ff9ca4d801cb74d04c100946e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queues an outgoing OpenLCB message (required).  <br /></td></tr>
 <tr class="separator:a552e03ff9ca4d801cb74d04c100946e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95fd67c7a70620eca6d15f5921d7cf56" id="r_a95fd67c7a70620eca6d15f5921d7cf56"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95fd67c7a70620eca6d15f5921d7cf56">on_heartbeat_timeout</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:a95fd67c7a70620eca6d15f5921d7cf56" id="r_a95fd67c7a70620eca6d15f5921d7cf56"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95fd67c7a70620eca6d15f5921d7cf56">on_heartbeat_timeout</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a95fd67c7a70620eca6d15f5921d7cf56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when the heartbeat timer for a train node reaches zero (optional).  <br /></td></tr>
 <tr class="separator:a95fd67c7a70620eca6d15f5921d7cf56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Application interface for train module. </p>
-<p>send_openlcb_msg is required for throttle-side send helpers. </p>
+<div class="textblock"><p>Application-provided callbacks for the train module. </p>
+<p>send_openlcb_msg is required for all throttle-side send helpers. on_heartbeat_timeout may be NULL if the application does not need notification.</p>
+<dl class="section warning"><dt>Warning</dt><dd>send_openlcb_msg must be non-NULL before calling any send function. </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a552e03ff9ca4d801cb74d04c100946e0" name="a552e03ff9ca4d801cb74d04c100946e0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a552e03ff9ca4d801cb74d04c100946e0">&#9670;&#160;</a></span>send_openlcb_msg</h2>
@@ -118,6 +121,8 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Queues an outgoing OpenLCB message (required). </p>
+
 </div>
 </div>
 <a id="a95fd67c7a70620eca6d15f5921d7cf56" name="a95fd67c7a70620eca6d15f5921d7cf56"></a>
@@ -127,10 +132,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_heartbeat_timeout) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td>
+          <td class="memname">void(* on_heartbeat_timeout) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Called when the heartbeat timer for a train node reaches zero (optional). </p>
 
 </div>
 </div>

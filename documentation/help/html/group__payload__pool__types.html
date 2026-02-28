@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>OpenLcbCLib: Payload Buffer Pool Array Definitions</title>
+<title>OpenLcbCLib: Payload Buffer Pool Arrays</title>
 <link rel="icon" href="Diesel.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -88,31 +88,30 @@ $(function(){ initResizable(false); });
 <div class="header">
   <div class="summary">
 <a href="#typedef-members">Typedefs</a>  </div>
-  <div class="headertitle"><div class="title">Payload Buffer Pool Array Definitions</div></div>
+  <div class="headertitle"><div class="title">Payload Buffer Pool Arrays</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Arrays of payload buffers organized by type.  
+<p>Storage pools for each payload type.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:gab60ba075676efb9e9f7c7014a46573f9" id="r_gab60ba075676efb9e9f7c7014a46573f9"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gab60ba075676efb9e9f7c7014a46573f9">openlcb_basic_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#ga9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memitem:gab60ba075676efb9e9f7c7014a46573f9" id="r_gab60ba075676efb9e9f7c7014a46573f9"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gab60ba075676efb9e9f7c7014a46573f9">openlcb_basic_data_buffer_t</a>[USER_DEFINED_BASIC_BUFFER_DEPTH]</td></tr>
 <tr class="memdesc:gab60ba075676efb9e9f7c7014a46573f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of BASIC payload buffers.  <br /></td></tr>
 <tr class="separator:gab60ba075676efb9e9f7c7014a46573f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga81508fbbcf9058f925fa1e296086a07e" id="r_ga81508fbbcf9058f925fa1e296086a07e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga81508fbbcf9058f925fa1e296086a07e">openlcb_datagram_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#gadf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memitem:ga81508fbbcf9058f925fa1e296086a07e" id="r_ga81508fbbcf9058f925fa1e296086a07e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga81508fbbcf9058f925fa1e296086a07e">openlcb_datagram_data_buffer_t</a>[USER_DEFINED_DATAGRAM_BUFFER_DEPTH]</td></tr>
 <tr class="memdesc:ga81508fbbcf9058f925fa1e296086a07e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of DATAGRAM payload buffers.  <br /></td></tr>
 <tr class="separator:ga81508fbbcf9058f925fa1e296086a07e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafc05dc719ff51bbc87035a82035c3cdc" id="r_gafc05dc719ff51bbc87035a82035c3cdc"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gafc05dc719ff51bbc87035a82035c3cdc">openlcb_snip_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#ga615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memitem:gafc05dc719ff51bbc87035a82035c3cdc" id="r_gafc05dc719ff51bbc87035a82035c3cdc"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gafc05dc719ff51bbc87035a82035c3cdc">openlcb_snip_data_buffer_t</a>[USER_DEFINED_SNIP_BUFFER_DEPTH]</td></tr>
 <tr class="memdesc:gafc05dc719ff51bbc87035a82035c3cdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of SNIP payload buffers.  <br /></td></tr>
 <tr class="separator:gafc05dc719ff51bbc87035a82035c3cdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadd0b8e081d6a21de7bc3f2781dd7aaa0" id="r_gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gadd0b8e081d6a21de7bc3f2781dd7aaa0">openlcb_stream_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#gaca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memitem:gadd0b8e081d6a21de7bc3f2781dd7aaa0" id="r_gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gadd0b8e081d6a21de7bc3f2781dd7aaa0">openlcb_stream_data_buffer_t</a>[USER_DEFINED_STREAM_BUFFER_DEPTH]</td></tr>
 <tr class="memdesc:gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of STREAM payload buffers.  <br /></td></tr>
 <tr class="separator:gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Arrays of payload buffers organized by type. </p>
-<p>These define the actual storage pools for message payloads. The buffer store contains one instance of each type. </p>
+<p>Storage pools for each payload type. </p>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="gab60ba075676efb9e9f7c7014a46573f9" name="gab60ba075676efb9e9f7c7014a46573f9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gab60ba075676efb9e9f7c7014a46573f9">&#9670;&#160;</a></span>openlcb_basic_data_buffer_t</h2>
@@ -121,7 +120,7 @@ Typedefs</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="group__payload__buffer__types.html#ga4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a> openlcb_basic_data_buffer_t[<a class="el" href="group__user__config__constants.html#ga9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a>]</td>
+          <td class="memname">typedef <a class="el" href="group__payload__buffer__types.html#ga4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a> openlcb_basic_data_buffer_t[USER_DEFINED_BASIC_BUFFER_DEPTH]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -137,7 +136,7 @@ Typedefs</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="group__payload__buffer__types.html#ga00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a> openlcb_datagram_data_buffer_t[<a class="el" href="group__user__config__constants.html#gadf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a>]</td>
+          <td class="memname">typedef <a class="el" href="group__payload__buffer__types.html#ga00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a> openlcb_datagram_data_buffer_t[USER_DEFINED_DATAGRAM_BUFFER_DEPTH]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -153,7 +152,7 @@ Typedefs</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="group__payload__buffer__types.html#ga5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a> openlcb_snip_data_buffer_t[<a class="el" href="group__user__config__constants.html#ga615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a>]</td>
+          <td class="memname">typedef <a class="el" href="group__payload__buffer__types.html#ga5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a> openlcb_snip_data_buffer_t[USER_DEFINED_SNIP_BUFFER_DEPTH]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -169,7 +168,7 @@ Typedefs</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a> openlcb_stream_data_buffer_t[<a class="el" href="group__user__config__constants.html#gaca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>]</td>
+          <td class="memname">typedef <a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a> openlcb_stream_data_buffer_t[USER_DEFINED_STREAM_BUFFER_DEPTH]</td>
         </tr>
       </table>
 </div><div class="memdoc">

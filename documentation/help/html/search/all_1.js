@@ -18,7 +18,7 @@ var searchData=
   ['address_5fspace_5fin_5fbyte_5f6_15',['ADDRESS_SPACE_IN_BYTE_6',['../openlcb__types_8h.html#aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9',1,'openlcb_types.h']]],
   ['address_5fspace_5ftrain_5ffunction_5fconfig_5fmemory_16',['address_space_train_function_config_memory',['../structnode__parameters__t.html#a68f3f85973210202ddbf989fbdb61074',1,'node_parameters_t']]],
   ['address_5fspace_5ftrain_5ffunction_5fdefinition_5finfo_17',['address_space_train_function_definition_info',['../structnode__parameters__t.html#a3437288fd01848fbe71a639657181c21',1,'node_parameters_t']]],
-  ['alias_18',['alias',['../structopenlcb__node__t.html#a2059ac00d0625a5b402587002c764c5b',1,'openlcb_node_t::alias'],['../structalias__mapping__struct.html#a2059ac00d0625a5b402587002c764c5b',1,'alias_mapping_struct::alias']]],
+  ['alias_18',['alias',['../structopenlcb__node___t_a_g.html#a2059ac00d0625a5b402587002c764c5b',1,'openlcb_node_TAG::alias'],['../structalias__mapping__struct.html#a2059ac00d0625a5b402587002c764c5b',1,'alias_mapping_struct::alias']]],
   ['alias_5fmapping_5fbuffer_5fdepth_19',['ALIAS_MAPPING_BUFFER_DEPTH',['../can__types_8h.html#a63b1d35b3f9523dc6d9ba2a5f9260af3',1,'can_types.h']]],
   ['alias_5fmapping_5ffind_5fmapping_5fby_5falias_20',['alias_mapping_find_mapping_by_alias',['../structinterface__can__login__message__handler__t.html#a91e0e61d6e690cb434694399ee865976',1,'interface_can_login_message_handler_t::alias_mapping_find_mapping_by_alias'],['../structinterface__can__rx__message__handler__t.html#a91e0e61d6e690cb434694399ee865976',1,'interface_can_rx_message_handler_t::alias_mapping_find_mapping_by_alias'],['../structinterface__can__rx__statemachine__t.html#a91e0e61d6e690cb434694399ee865976',1,'interface_can_rx_statemachine_t::alias_mapping_find_mapping_by_alias']]],
   ['alias_5fmapping_5ffind_5fmapping_5fby_5fnode_5fid_21',['alias_mapping_find_mapping_by_node_id',['../structinterface__can__rx__message__handler__t.html#aa0b7d169168768548b73feae411c0c6d',1,'interface_can_rx_message_handler_t']]],
@@ -44,6 +44,6 @@ var searchData=
   ['allocated_41',['allocated',['../structopenlcb__msg__state__t.html#a1bdc374dc38908c70ed24a978ecfd22e',1,'openlcb_msg_state_t::allocated'],['../structopenlcb__node__state__t.html#a1bdc374dc38908c70ed24a978ecfd22e',1,'openlcb_node_state_t::allocated'],['../structcan__msg__state__struct.html#a2f6e1ef9ab9da4be83ad9239cbfac13e',1,'can_msg_state_struct::allocated']]],
   ['and_20masks_42',['CAN Frame Format and Masks',['../group__can__frame__format.html',1,'']]],
   ['and_20values_43',['Data Field Bit Masks and Values',['../group__data__field__masks.html',1,'']]],
-  ['array_20definitions_44',['Payload Buffer Pool Array Definitions',['../group__payload__pool__types.html',1,'']]],
+  ['arrays_44',['Payload Buffer Pool Arrays',['../group__payload__pool__types.html',1,'']]],
   ['auto_20routed_20well_20known_20events_45',['Auto Routed Well Known Events',['../group__well__known__events__auto.html',1,'Auto-Routed Well-Known Events'],['../group__well__known__events__local.html',1,'Non-Auto-Routed Well-Known Events']]]
 ];

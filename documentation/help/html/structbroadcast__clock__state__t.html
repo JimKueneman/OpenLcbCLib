@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Complete clock state for Broadcast Time Protocol.  
+<p>Complete state for one Broadcast Time clock.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -107,17 +107,13 @@ Data Fields</h2></td></tr>
 <tr class="separator:aa1e3c369179275af27a809e25e58bd3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38657176f9b5c2f867298632792c596b" id="r_a38657176f9b5c2f867298632792c596b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structbroadcast__rate__t.html">broadcast_rate_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38657176f9b5c2f867298632792c596b">rate</a></td></tr>
 <tr class="separator:a38657176f9b5c2f867298632792c596b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab21d8ab042b1bce7f47522d91408f0dc" id="r_ab21d8ab042b1bce7f47522d91408f0dc"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab21d8ab042b1bce7f47522d91408f0dc">is_running</a></td></tr>
-<tr class="separator:ab21d8ab042b1bce7f47522d91408f0dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95cbd6b99430748422cc048b4f29dc52" id="r_a95cbd6b99430748422cc048b4f29dc52"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95cbd6b99430748422cc048b4f29dc52">is_running</a></td></tr>
+<tr class="separator:a95cbd6b99430748422cc048b4f29dc52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab33496928805a37cca82d240e381a76c" id="r_ab33496928805a37cca82d240e381a76c"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab33496928805a37cca82d240e381a76c">ms_accumulator</a></td></tr>
 <tr class="separator:ab33496928805a37cca82d240e381a76c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Complete clock state for Broadcast Time Protocol. </p>
-<p>Contains all time/date/rate information and validity flags for a broadcast time clock. Updated as time events are received.</p>
-<dl class="section see"><dt>See also</dt><dd>openlcb_node_t.clock_state </dd>
-<dd>
-<a class="el" href="protocol__broadcast__time__handler_8c.html#a56545d916bd644bc5b3e8c8a6f86ef53" title="Handles incoming broadcast time events.">ProtocolBroadcastTime_handle_time_event</a> </dd></dl>
+<div class="textblock"><p>Complete state for one Broadcast Time clock. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a99bfaaaa396b21226ffe6b70cd0e4232" name="a99bfaaaa396b21226ffe6b70cd0e4232"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a99bfaaaa396b21226ffe6b70cd0e4232">&#9670;&#160;</a></span>clock_id</h2>
@@ -194,18 +190,18 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="ab21d8ab042b1bce7f47522d91408f0dc" name="ab21d8ab042b1bce7f47522d91408f0dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab21d8ab042b1bce7f47522d91408f0dc">&#9670;&#160;</a></span>is_running</h2>
+<a id="a95cbd6b99430748422cc048b4f29dc52" name="a95cbd6b99430748422cc048b4f29dc52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95cbd6b99430748422cc048b4f29dc52">&#9670;&#160;</a></span>is_running</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t is_running</td>
+          <td class="memname">bool is_running</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Clock running state: 1=running, 0=stopped </p>
+<p>true = running, false = stopped </p>
 
 </div>
 </div>
@@ -220,7 +216,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Internal: accumulated ms toward next minute (fixed-point scale) </p>
+<p>Internal: accumulated ms toward next minute </p>
 
 </div>
 </div>

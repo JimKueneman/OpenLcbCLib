@@ -91,44 +91,17 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">alias_mapping_info_struct Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>Structure to hold an array of <a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> structures and a flag to flag the main loop that at least one of the containing mappings has detected a duplicate Alias ID.  
- <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:aa44366f8302ed674cc8a4d17ef3ac018" id="r_aa44366f8302ed674cc8a4d17ef3ac018"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa44366f8302ed674cc8a4d17ef3ac018">list</a> [<a class="el" href="can__types_8h.html#a63b1d35b3f9523dc6d9ba2a5f9260af3">ALIAS_MAPPING_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memdesc:aa44366f8302ed674cc8a4d17ef3ac018"><td class="mdescLeft">&#160;</td><td class="mdescRight">All registered mappings.  <br /></td></tr>
 <tr class="separator:aa44366f8302ed674cc8a4d17ef3ac018"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fa6b7c5feb944f957c07ee2e25c49fd" id="r_a0fa6b7c5feb944f957c07ee2e25c49fd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0fa6b7c5feb944f957c07ee2e25c49fd">has_duplicate_alias</a></td></tr>
+<tr class="memdesc:a0fa6b7c5feb944f957c07ee2e25c49fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if any entry has is_duplicate set.  <br /></td></tr>
 <tr class="separator:a0fa6b7c5feb944f957c07ee2e25c49fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Structure to hold an array of <a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> structures and a flag to flag the main loop that at least one of the containing mappings has detected a duplicate Alias ID. </p>
-<p>This structure serves as the master container for all Node ID/Alias mappings in the system. It maintains an array sized to match the maximum number of nodes and includes a global duplicate detection flag for efficient conflict checking.</p>
-<p>The has_duplicate_alias flag provides a fast check mechanism: when set, at least one entry in the list has detected an alias conflict, allowing the main loop to efficiently scan for and handle duplicates without checking every entry on every iteration.</p>
-<p>Use cases:</p><ul>
-<li>Managing all active Node ID/Alias mappings for the system</li>
-<li>Providing fast duplicate alias detection across all nodes</li>
-<li>Supporting efficient main loop processing of alias conflicts</li>
-<li>Coordinating between interrupt context (flag setting) and main loop (handling)</li>
-</ul>
-<dl class="section warning"><dt>Warning</dt><dd>Array size must match USER_DEFINED_NODE_BUFFER_DEPTH </dd>
-<dd>
-NOT thread-safe - use lock/unlock when accessing</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>has_duplicate_alias is a global flag for ANY duplicate in the array </dd>
-<dd>
-Must scan array when has_duplicate_alias is true to find specific entry</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Array size defined by ALIAS_MAPPING_BUFFER_DEPTH </dd>
-<dd>
-has_duplicate_alias does not identify WHICH mapping has duplicate </dd>
-<dd>
-Cleared only after all duplicates are resolved</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8h.html" title="Alias/NodeID mapping buffer for tracking internal node aliases.">alias_mappings.h</a> - Manages this structure </dd>
-<dd>
-<a class="el" href="can__types_8h.html#a63b1d35b3f9523dc6d9ba2a5f9260af3" title="The number of Alias Mapping slots available for alias_mappings.h The default value for the buffer is ...">ALIAS_MAPPING_BUFFER_DEPTH</a> - Defines array size </dd>
-<dd>
-<a class="el" href="alias__mappings_8c.html#a1e2639729c40c4ba017fa2529493c2d7" title="Sets a flag that tells the main loop that a received message has been found to be using an Alias we h...">AliasMappings_set_has_duplicate_alias_flag</a> - Sets the global flag </dd></dl>
-</div><h2 class="groupheader">Field Documentation</h2>
+<h2 class="groupheader">Field Documentation</h2>
 <a id="aa44366f8302ed674cc8a4d17ef3ac018" name="aa44366f8302ed674cc8a4d17ef3ac018"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa44366f8302ed674cc8a4d17ef3ac018">&#9670;&#160;</a></span>list</h2>
 
@@ -140,6 +113,8 @@ Cleared only after all duplicates are resolved</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>All registered mappings. </p>
 
 </div>
 </div>
@@ -154,6 +129,8 @@ Cleared only after all duplicates are resolved</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>True if any entry has is_duplicate set. </p>
 
 </div>
 </div>

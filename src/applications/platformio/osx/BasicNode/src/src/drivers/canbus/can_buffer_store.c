@@ -25,9 +25,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file can_buffer_store.c
- * @brief Implementation of the core buffer store for CAN frames
+ * @brief Implementation of the pre-allocated CAN message buffer pool.
  * @author Jim Kueneman
- * @date 17 Jan 2026
+ * @date 28 Feb 2026
  */
 
 #include "can_buffer_store.h"
@@ -44,33 +44,23 @@
 #include "../../openlcb/openlcb_types.h"
 
 
-    /**
-     * @brief Pre-allocated array of CAN message buffers
-     *
-     * @details Static storage for all CAN message buffers. Size is determined by
-     * USER_DEFINED_CAN_MSG_BUFFER_DEPTH. Each buffer contains an 8-byte payload
-     * plus metadata (identifier, payload_count, state flags).
-     */
+/** @brief Pre-allocated pool of @ref can_msg_t buffers, size USER_DEFINED_CAN_MSG_BUFFER_DEPTH. */
 static can_msg_array_t _can_buffer_store;
 
-    /**
-     * @brief Current number of allocated buffers
-     *
-     * @details Tracks how many buffers are currently allocated. Incremented by
-     * CanBufferStore_allocate_buffer() and decremented by CanBufferStore_free_buffer().
-     * Used for monitoring buffer usage and detecting leaks.
-     */
+/** @brief Current number of allocated @ref can_msg_t buffers. */
 static uint16_t _can_buffer_store_message_allocated;
 
-    /**
-     * @brief Peak number of allocated buffers
-     *
-     * @details Records the maximum number of buffers allocated simultaneously since
-     * initialization or last reset. Used for sizing analysis during stress testing.
-     * Reset by CanBufferStore_clear_max_allocated().
-     */
+/** @brief Peak allocation count since last reset. */
 static uint16_t _can_buffer_store_message_max_allocated;
 
+    /**
+     * @brief Clears all buffers and resets telemetry counters.
+     *
+     * @details Algorithm:
+     * -# Iterate through all USER_DEFINED_CAN_MSG_BUFFER_DEPTH entries.
+     * -# Set allocated flag to false, clear identifier, payload_count, and all payload bytes.
+     * -# Reset both allocation counters to zero.
+     */
 void CanBufferStore_initialize(void) {
 
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
@@ -92,6 +82,17 @@ void CanBufferStore_initialize(void) {
 
 }
 
+    /**
+     * @brief Allocates one @ref can_msg_t buffer from the pool.
+     *
+     * @details Algorithm:
+     * -# Iterate through pool looking for first unallocated buffer.
+     * -# When found: increment allocation counter, update peak counter if needed,
+     *    clear the buffer, mark it allocated, and return pointer.
+     * -# If no free buffer found, return NULL.
+     *
+     * @return Pointer to the allocated @ref can_msg_t, or NULL if the pool is exhausted.
+     */
 can_msg_t *CanBufferStore_allocate_buffer(void) {
 
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
@@ -120,6 +121,17 @@ can_msg_t *CanBufferStore_allocate_buffer(void) {
 
 }
 
+    /**
+     * @brief Returns a @ref can_msg_t buffer to the pool.
+     *
+     * @details Algorithm:
+     * -# If NULL pointer passed, return immediately.
+     * -# Decrement allocation counter and clear the allocated flag.
+     *
+     * @verbatim
+     * @param msg Pointer to the buffer to free. NULL is safely ignored.
+     * @endverbatim
+     */
 void CanBufferStore_free_buffer(can_msg_t *msg) {
 
     if (!msg) {
@@ -133,18 +145,21 @@ void CanBufferStore_free_buffer(can_msg_t *msg) {
 
 }
 
+    /** @brief Returns the number of @ref can_msg_t buffers currently allocated. */
 uint16_t CanBufferStore_messages_allocated(void) {
 
     return _can_buffer_store_message_allocated;
 
 }
 
+    /** @brief Returns the peak allocation count since last reset. */
 uint16_t CanBufferStore_messages_max_allocated(void) {
 
     return _can_buffer_store_message_max_allocated;
 
 }
 
+    /** @brief Resets the peak counter without affecting current allocations. */
 void CanBufferStore_clear_max_allocated(void) {
 
     _can_buffer_store_message_max_allocated = 0;

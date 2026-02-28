@@ -25,14 +25,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file can_login_statemachine.c
- * @brief Implementation of the CAN login state machine
- *
- * @details Implements the main dispatcher for the 10-state CAN login sequence.
- * Uses a switch statement to route execution to the appropriate state handler
- * based on the node's current run_state value.
+ * @brief Implementation of the CAN login state machine dispatcher.
  *
  * @author Jim Kueneman
- * @date 17 Jan 2026
+ * @date 28 Feb 2026
  */
 
 #include "can_login_statemachine.h"
@@ -50,31 +46,7 @@
 
 static interface_can_login_state_machine_t *_interface;
 
-    /**
-     * @brief Initializes the CAN Login State Machine
-     *
-     * @details Algorithm:
-     * -# Cast away const qualifier from interface pointer
-     * -# Store interface pointer in static variable
-     *
-     * Use cases:
-     * - Called once during application initialization
-     * - Must be called before CanLoginStateMachine_run
-     *
-     * @verbatim
-     * @param interface_can_login_state_machine Pointer to a
-     * interface_can_login_state_machine_t struct containing the functions that this module requires
-     * @endverbatim
-     *
-     * @warning Interface pointer must remain valid for lifetime of application
-     * @warning All state handler function pointers must be non-NULL
-     * @warning NOT thread-safe
-     *
-     * @attention This must always be called during application initialization
-     *
-     * @see CanLoginMessageHandler_initialize - Initialize the message handlers
-     * @see CanLoginStateMachine_run - Main state machine execution function
-     */
+    /** @brief Stores the dependency-injection interface pointer. */
 void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine) {
 
     _interface = (interface_can_login_state_machine_t *) interface_can_login_state_machine;
@@ -82,38 +54,11 @@ void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *
 }
 
     /**
-     * @brief Runs the CAN login state machine
-     *
-     * @details Algorithm:
-     * -# Read node's current run_state
-     * -# Switch on run_state value
-     * -# For each state case:
-     *    - Call appropriate state handler via interface
-     *    - Return immediately after handler completes
-     * -# Default case returns without action
-     *
-     * Use cases:
-     * - Called from main application loop for nodes in login sequence
-     * - Called repeatedly until node reaches permitted state
+     * @brief Dispatches to the appropriate login state handler based on the node's run_state.
      *
      * @verbatim
-     * @param can_statemachine_info Pointer to a structure that contains the node
-     * and output message buffer for the login sequence
+     * @param can_statemachine_info State machine context (node + login frame buffer).
      * @endverbatim
-     *
-     * @warning Structure pointer must not be NULL
-     * @warning Node pointer within structure must not be NULL
-     * @warning Outgoing message buffer must be valid
-     * @warning NOT thread-safe
-     *
-     * @attention Modifies node run_state as it progresses through sequence
-     * @attention May set login_outgoing_can_msg_valid flag
-     *
-     * @note Call from the main application loop as fast as possible
-     * @note State machine returns immediately after dispatching to handler
-     *
-     * @see CanLoginMessageHandler_state_init - First state handler
-     * @see CanLoginMessageHandler_state_load_amd - Final state handler
      */
 void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info) {
 

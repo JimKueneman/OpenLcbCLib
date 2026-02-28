@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['last_5freceived_5fdatagram_0',['last_received_datagram',['../structopenlcb__node__t.html#a3f27044ef211c0dd8c46db692a48850a',1,'openlcb_node_t']]],
+  ['last_5freceived_5fdatagram_0',['last_received_datagram',['../structopenlcb__node___t_a_g.html#a3f27044ef211c0dd8c46db692a48850a',1,'openlcb_node_TAG']]],
   ['layout_1',['Layout',['../group__acdi__manufacturer__layout.html',1,'ACDI Manufacturer Space Memory Layout'],['../group__acdi__user__layout.html',1,'ACDI User Space Memory Layout']]],
   ['len_5fcan_5fbyte_5farray_2',['LEN_CAN_BYTE_ARRAY',['../can__types_8h.html#a5557aaecf7420e7ec1beccd6c614e8ba',1,'can_types.h']]],
   ['len_5fcan_5ffifo_5fbuffer_3',['LEN_CAN_FIFO_BUFFER',['../can__types_8h.html#a50ba6934b926753e5fc4f7419c9e28c9',1,'can_types.h']]],

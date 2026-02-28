@@ -96,65 +96,65 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Implementation of configuration memory read protocol handler.  
+<p>Configuration memory read handler — two-phase dispatch for read commands across all standard address spaces (CDI, All, Config, ACDI-Mfg, ACDI-User, Train FDI, Train Fn Config).  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a2fe67e836032839ca27cf44d6decec3b" id="r_a2fe67e836032839ca27cf44d6decec3b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fe67e836032839ca27cf44d6decec3b">ProtocolConfigMemReadHandler_initialize</a> (const <a class="el" href="structinterface__protocol__config__mem__read__handler__t.html">interface_protocol_config_mem_read_handler_t</a> *interface_protocol_config_mem_read_handler)</td></tr>
-<tr class="memdesc:a2fe67e836032839ca27cf44d6decec3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the configuration memory read protocol handler.  <br /></td></tr>
+<tr class="memdesc:a2fe67e836032839ca27cf44d6decec3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface. Call once at startup.  <br /></td></tr>
 <tr class="separator:a2fe67e836032839ca27cf44d6decec3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc4a977b77083cf4a361056044eefa73" id="r_acc4a977b77083cf4a361056044eefa73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc4a977b77083cf4a361056044eefa73">ProtocolConfigMemReadHandler_read_request_config_definition_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:acc4a977b77083cf4a361056044eefa73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a read request for Configuration Definition Info (CDI) space.  <br /></td></tr>
+<tr class="memitem:acc4a977b77083cf4a361056044eefa73" id="r_acc4a977b77083cf4a361056044eefa73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc4a977b77083cf4a361056044eefa73">ProtocolConfigMemReadHandler_read_request_config_definition_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:acc4a977b77083cf4a361056044eefa73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from CDI (0xFF): copy bytes from node-&gt;parameters-&gt;cdi[].  <br /></td></tr>
 <tr class="separator:acc4a977b77083cf4a361056044eefa73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0cdfe8d71878ca1c28012300aae19e68" id="r_a0cdfe8d71878ca1c28012300aae19e68"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cdfe8d71878ca1c28012300aae19e68">ProtocolConfigMemReadHandler_read_request_train_function_definition_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:a0cdfe8d71878ca1c28012300aae19e68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a read request for Train Function Definition Info (FDI) space (0xFA)  <br /></td></tr>
+<tr class="memitem:a0cdfe8d71878ca1c28012300aae19e68" id="r_a0cdfe8d71878ca1c28012300aae19e68"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cdfe8d71878ca1c28012300aae19e68">ProtocolConfigMemReadHandler_read_request_train_function_definition_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:a0cdfe8d71878ca1c28012300aae19e68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from Train FDI (0xFA): copy bytes from node-&gt;parameters-&gt;fdi[].  <br /></td></tr>
 <tr class="separator:a0cdfe8d71878ca1c28012300aae19e68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf0b7d60bbc19b43d676ad034c829396" id="r_adf0b7d60bbc19b43d676ad034c829396"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf0b7d60bbc19b43d676ad034c829396">ProtocolConfigMemReadHandler_read_request_train_function_config_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:adf0b7d60bbc19b43d676ad034c829396"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a read request for Train Function Configuration Memory space (0xF9)  <br /></td></tr>
+<tr class="memitem:adf0b7d60bbc19b43d676ad034c829396" id="r_adf0b7d60bbc19b43d676ad034c829396"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf0b7d60bbc19b43d676ad034c829396">ProtocolConfigMemReadHandler_read_request_train_function_config_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:adf0b7d60bbc19b43d676ad034c829396"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from Train Fn Config (0xF9): map flat byte address to functions[].  <br /></td></tr>
 <tr class="separator:adf0b7d60bbc19b43d676ad034c829396"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4fa704242622192e5eda84c62337db9" id="r_ac4fa704242622192e5eda84c62337db9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4fa704242622192e5eda84c62337db9">ProtocolConfigMemReadHandler_read_request_config_mem</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:ac4fa704242622192e5eda84c62337db9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a read request for Configuration Memory space.  <br /></td></tr>
+<tr class="memitem:ac4fa704242622192e5eda84c62337db9" id="r_ac4fa704242622192e5eda84c62337db9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4fa704242622192e5eda84c62337db9">ProtocolConfigMemReadHandler_read_request_config_mem</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:ac4fa704242622192e5eda84c62337db9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from Config space (0xFD) via config_memory_read callback.  <br /></td></tr>
 <tr class="separator:ac4fa704242622192e5eda84c62337db9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a678bee1f33e715fbf5ef27c238378806" id="r_a678bee1f33e715fbf5ef27c238378806"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a678bee1f33e715fbf5ef27c238378806">ProtocolConfigMemReadHandler_read_request_acdi_manufacturer</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:a678bee1f33e715fbf5ef27c238378806"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a read request for ACDI Manufacturer space.  <br /></td></tr>
+<tr class="memitem:a678bee1f33e715fbf5ef27c238378806" id="r_a678bee1f33e715fbf5ef27c238378806"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a678bee1f33e715fbf5ef27c238378806">ProtocolConfigMemReadHandler_read_request_acdi_manufacturer</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:a678bee1f33e715fbf5ef27c238378806"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from ACDI-Mfg (0xFC): dispatch to SNIP loaders by address.  <br /></td></tr>
 <tr class="separator:a678bee1f33e715fbf5ef27c238378806"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab896bacb527ee4c30e926e021a92de26" id="r_ab896bacb527ee4c30e926e021a92de26"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab896bacb527ee4c30e926e021a92de26">ProtocolConfigMemReadHandler_read_request_acdi_user</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:ab896bacb527ee4c30e926e021a92de26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a read request for ACDI User space.  <br /></td></tr>
+<tr class="memitem:ab896bacb527ee4c30e926e021a92de26" id="r_ab896bacb527ee4c30e926e021a92de26"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab896bacb527ee4c30e926e021a92de26">ProtocolConfigMemReadHandler_read_request_acdi_user</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:ab896bacb527ee4c30e926e021a92de26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from ACDI-User (0xFB): dispatch to SNIP loaders by address.  <br /></td></tr>
 <tr class="separator:ab896bacb527ee4c30e926e021a92de26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0ffea7386d7d5207d4bae41b7eda494" id="r_aa0ffea7386d7d5207d4bae41b7eda494"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0ffea7386d7d5207d4bae41b7eda494">ProtocolConfigMemReadHandler_read_space_config_description_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aa0ffea7386d7d5207d4bae41b7eda494"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entry point for processing read command for Configuration Definition Info space.  <br /></td></tr>
+<tr class="memdesc:aa0ffea7386d7d5207d4bae41b7eda494"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch CDI (0xFF) read to two-phase handler.  <br /></td></tr>
 <tr class="separator:aa0ffea7386d7d5207d4bae41b7eda494"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0cd8cbc7d255faa69e648e88446af432" id="r_a0cd8cbc7d255faa69e648e88446af432"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cd8cbc7d255faa69e648e88446af432">ProtocolConfigMemReadHandler_read_space_all</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a0cd8cbc7d255faa69e648e88446af432"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entry point for processing read command for All memory space.  <br /></td></tr>
+<tr class="memdesc:a0cd8cbc7d255faa69e648e88446af432"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch All (0xFE) read to two-phase handler.  <br /></td></tr>
 <tr class="separator:a0cd8cbc7d255faa69e648e88446af432"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7d16f04cbac4a0eb049b5aad4280f41" id="r_af7d16f04cbac4a0eb049b5aad4280f41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7d16f04cbac4a0eb049b5aad4280f41">ProtocolConfigMemReadHandler_read_space_config_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:af7d16f04cbac4a0eb049b5aad4280f41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entry point for processing read command for Configuration Memory space.  <br /></td></tr>
+<tr class="memdesc:af7d16f04cbac4a0eb049b5aad4280f41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Config (0xFD) read to two-phase handler.  <br /></td></tr>
 <tr class="separator:af7d16f04cbac4a0eb049b5aad4280f41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80a88e542a6a94ad0a03fab2c15e3be6" id="r_a80a88e542a6a94ad0a03fab2c15e3be6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80a88e542a6a94ad0a03fab2c15e3be6">ProtocolConfigMemReadHandler_read_space_acdi_manufacturer</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a80a88e542a6a94ad0a03fab2c15e3be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entry point for processing read command for ACDI Manufacturer space.  <br /></td></tr>
+<tr class="memdesc:a80a88e542a6a94ad0a03fab2c15e3be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch ACDI-Mfg (0xFC) read to two-phase handler.  <br /></td></tr>
 <tr class="separator:a80a88e542a6a94ad0a03fab2c15e3be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d9dcc74cec6b463c7feed60900c03ca" id="r_a1d9dcc74cec6b463c7feed60900c03ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d9dcc74cec6b463c7feed60900c03ca">ProtocolConfigMemReadHandler_read_space_acdi_user</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a1d9dcc74cec6b463c7feed60900c03ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entry point for processing read command for ACDI User space.  <br /></td></tr>
+<tr class="memdesc:a1d9dcc74cec6b463c7feed60900c03ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch ACDI-User (0xFB) read to two-phase handler.  <br /></td></tr>
 <tr class="separator:a1d9dcc74cec6b463c7feed60900c03ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2021bea8dabaf0fcf9734a81eacfa453" id="r_a2021bea8dabaf0fcf9734a81eacfa453"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2021bea8dabaf0fcf9734a81eacfa453">ProtocolConfigMemReadHandler_read_space_train_function_definition_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a2021bea8dabaf0fcf9734a81eacfa453"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entry point for processing read command for Train Function Definition space.  <br /></td></tr>
+<tr class="memdesc:a2021bea8dabaf0fcf9734a81eacfa453"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Train FDI (0xFA) read to two-phase handler.  <br /></td></tr>
 <tr class="separator:a2021bea8dabaf0fcf9734a81eacfa453"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfe1b9ad5e6c6eb6751203f497e93109" id="r_adfe1b9ad5e6c6eb6751203f497e93109"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfe1b9ad5e6c6eb6751203f497e93109">ProtocolConfigMemReadHandler_read_space_train_function_config_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:adfe1b9ad5e6c6eb6751203f497e93109"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entry point for processing read command for Train Function Configuration space.  <br /></td></tr>
+<tr class="memdesc:adfe1b9ad5e6c6eb6751203f497e93109"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Train Fn Config (0xF9) read to two-phase handler.  <br /></td></tr>
 <tr class="separator:adfe1b9ad5e6c6eb6751203f497e93109"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bc0483a1c3a58b611dbe553efd59b6d" id="r_a7bc0483a1c3a58b611dbe553efd59b6d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7bc0483a1c3a58b611dbe553efd59b6d">ProtocolConfigMemReadHandler_read_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)</td></tr>
-<tr class="memdesc:a7bc0483a1c3a58b611dbe553efd59b6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a generic read message.  <br /></td></tr>
+<tr class="memdesc:a7bc0483a1c3a58b611dbe553efd59b6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic read message handler. Placeholder.  <br /></td></tr>
 <tr class="separator:a7bc0483a1c3a58b611dbe553efd59b6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07744d791cf5dd153387847b9db22768" id="r_a07744d791cf5dd153387847b9db22768"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07744d791cf5dd153387847b9db22768">ProtocolConfigMemReadHandler_read_reply_ok_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint8_t space)</td></tr>
-<tr class="memdesc:a07744d791cf5dd153387847b9db22768"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a read reply OK message.  <br /></td></tr>
+<tr class="memdesc:a07744d791cf5dd153387847b9db22768"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic read reply OK handler. Placeholder.  <br /></td></tr>
 <tr class="separator:a07744d791cf5dd153387847b9db22768"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d20f0712caaf36183dc4651aaef5cfc" id="r_a1d20f0712caaf36183dc4651aaef5cfc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d20f0712caaf36183dc4651aaef5cfc">ProtocolConfigMemReadHandler_read_reply_reject_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint8_t space)</td></tr>
-<tr class="memdesc:a1d20f0712caaf36183dc4651aaef5cfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a read reply reject message.  <br /></td></tr>
+<tr class="memdesc:a1d20f0712caaf36183dc4651aaef5cfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic read reply reject handler. Placeholder.  <br /></td></tr>
 <tr class="separator:a1d20f0712caaf36183dc4651aaef5cfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implementation of configuration memory read protocol handler. </p>
+<div class="textblock"><p>Configuration memory read handler — two-phase dispatch for read commands across all standard address spaces (CDI, All, Config, ACDI-Mfg, ACDI-User, Train FDI, Train Fn Config). </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -163,7 +163,10 @@ Functions</h2></td></tr>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__config__mem__read__handler_8h.html" title="Configuration memory read handler — processes datagram read commands for CDI (0xFF),...">protocol_config_mem_read_handler.h</a> </dd>
+<dd>
+MemoryConfigurationS.pdf </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a2fe67e836032839ca27cf44d6decec3b" name="a2fe67e836032839ca27cf44d6decec3b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2fe67e836032839ca27cf44d6decec3b">&#9670;&#160;</a></span>ProtocolConfigMemReadHandler_initialize()</h2>
@@ -180,24 +183,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes the configuration memory read protocol handler. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Store pointer to interface structure in static variable</li>
-<li>Interface callbacks are now available for use by handler functions</li>
-</ol>
-<p>The interface structure must remain valid for the lifetime of the application as the handler stores a pointer to it rather than copying its contents.</p>
-<p>Use cases:</p><ul>
-<li>Called once during application startup</li>
-<li>Must be called before processing any configuration read datagrams</li>
-</ul>
-<pre class="fragment">* @param interface_protocol_config_mem_read_handler Pointer to interface structure with callback functions
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
-<dd>
-Interface structure must remain valid throughout application lifetime </dd>
-<dd>
-Required callbacks must be set (load_datagram_received_ok_message, load_datagram_received_rejected_message, config_memory_read) </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call during initialization before enabling datagram reception</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__protocol__config__mem__read__handler__t.html" title="Interface structure for configuration memory read protocol handler.">interface_protocol_config_mem_read_handler_t</a> </dd></dl>
+<p>Stores the callback interface. Call once at startup. </p>
+<pre class="fragment">* @param interface_protocol_config_mem_read_handler  Populated table.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Structure must remain valid for application lifetime. </dd></dl>
 
 </div>
 </div>
@@ -215,38 +203,13 @@ Required callbacks must be set (load_datagram_received_ok_message, load_datagram
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Processes a read request for Configuration Definition Info (CDI) space. </p>
-<p>Generates a read request for Configuration Definition Info space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Load read reply OK message header into outgoing message</li>
-<li>Copy CDI data from node parameters to outgoing payload:<ul>
-<li>Source: node-&gt;parameters-&gt;cdi array at requested address offset</li>
-<li>Destination: payload starting at data_start position</li>
-<li>Count: requested number of bytes</li>
-</ul>
-</li>
-<li>Set outgoing message as valid</li>
-</ol>
-<p>This function reads XML configuration definition data from the CDI buffer stored in the node's parameters. The CDI describes the structure and meaning of the configuration memory.</p>
-<p>Use cases:</p><ul>
-<li>Responding to CDI read requests from configuration tools</li>
-<li>Providing configuration structure information</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context for message generation
-* </pre> <pre class="fragment">* @param config_mem_read_request_info Pointer to request info with address and byte count
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL </dd>
-<dd>
-CDI buffer in node parameters must be valid </dd>
-<dd>
-Address and byte count must have been validated by caller</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__utilities_8c.html#add25f972525f3d14f22f4657a74e0c9c" title="Loads a configuration memory read success reply message header.">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#a39d5ca6fda22ae42d9b6efa8ca6dd81c" title="Copies a byte array into the message payload.">OpenLcbUtilities_copy_byte_array_to_openlcb_payload</a> </dd></dl>
+<p>Read from CDI (0xFF): copy bytes from node-&gt;parameters-&gt;cdi[]. </p>
+<p>Send read request targeting CDI (0xFF) on another node. </p>
 
 </div>
 </div>
@@ -264,40 +227,13 @@ Address and byte count must have been validated by caller</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Processes a read request for Train Function Definition Info (FDI) space (0xFA) </p>
-<p>Reads from Train Function Definition Information space (0xFA)</p>
-<p>Algorithm:</p><ol type="1">
-<li>Load read reply OK message header into outgoing message</li>
-<li>Copy FDI data from node parameters to outgoing payload:<ul>
-<li>Source: node-&gt;parameters-&gt;fdi array at requested address offset</li>
-<li>Destination: payload starting at data_start position</li>
-<li>Count: requested number of bytes</li>
-</ul>
-</li>
-<li>Set outgoing message as valid</li>
-</ol>
-<p>This function reads XML function definition data from the FDI buffer stored in the node's parameters. The FDI describes the train's function layout (kind, number, name) similar to how CDI describes configuration. FDI is read-only.</p>
-<p>Use cases:</p><ul>
-<li>Responding to FDI read requests from configuration tools (JMRI)</li>
-<li>Providing function description information for train nodes</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context for message generation
-* </pre> <pre class="fragment">* @param config_mem_read_request_info Pointer to request info with address and byte count
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL </dd>
-<dd>
-FDI buffer in node parameters must be valid </dd>
-<dd>
-Address and byte count must have been validated by caller</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__config__mem__read__handler_8h.html#acc4a977b77083cf4a361056044eefa73" title="Generates a read request for Configuration Definition Info space.">ProtocolConfigMemReadHandler_read_request_config_definition_info</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#add25f972525f3d14f22f4657a74e0c9c" title="Loads a configuration memory read success reply message header.">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#a39d5ca6fda22ae42d9b6efa8ca6dd81c" title="Copies a byte array into the message payload.">OpenLcbUtilities_copy_byte_array_to_openlcb_payload</a> </dd></dl>
+<p>Read from Train FDI (0xFA): copy bytes from node-&gt;parameters-&gt;fdi[]. </p>
+<p>Send read request targeting Train FDI (0xFA) on another node. </p>
 
 </div>
 </div>
@@ -315,38 +251,14 @@ Address and byte count must have been validated by caller</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Processes a read request for Train Function Configuration Memory space (0xF9) </p>
-<p>Reads from Train Function Configuration Memory space (0xF9)</p>
-<p>Algorithm:</p><ol type="1">
-<li>Load read reply OK message header into outgoing message</li>
-<li>Get train state for the node</li>
-<li>If train state exists:<ul>
-<li>Iterate over requested bytes</li>
-<li>For each byte, calculate function index (address / 2) and byte selector (address % 2)</li>
-<li>Byte selector 0 = high byte (big-endian), byte selector 1 = low byte</li>
-<li>Copy each byte to outgoing payload</li>
-</ul>
-</li>
-<li>Set outgoing message as valid</li>
-</ol>
-<p>This function reads function values from the <a class="el" href="structtrain__state___t_a_g.html#aec825c2a5463ff3857eedd2c5f996bf2">train_state_t.functions</a>[] array as a flat byte array in big-endian format. Function N's 16-bit value occupies byte offsets N*2 (high byte) and N*2+1 (low byte). Bulk reads spanning multiple functions are supported.</p>
-<p>Use cases:</p><ul>
-<li>Responding to function value read requests from configuration tools</li>
-<li>Bulk reading multiple function values in a single datagram</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context for message generation
-* </pre> <pre class="fragment">* @param config_mem_read_request_info Pointer to request info with address and byte count
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL </dd>
-<dd>
-Node must have train_state initialized via <a class="el" href="openlcb__application__train_8c.html#ae17ef6101bcfddf2d9debadb6c11d8d0">OpenLcbApplicationTrain_setup()</a></dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__utilities_8c.html#add25f972525f3d14f22f4657a74e0c9c" title="Loads a configuration memory read success reply message header.">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#a8cef78b21287a901f256be421c689e0d" title="Copies a single byte into the message payload at a specified offset.">OpenLcbUtilities_copy_byte_to_openlcb_payload</a> </dd></dl>
+<p>Read from Train Fn Config (0xF9): map flat byte address to functions[]. </p>
+<p>Send read request targeting Train Fn Config (0xF9) on another node.</p>
+<p>Each 16-bit function value occupies 2 bytes big-endian: address/2 = fn_index, address%2 selects high/low byte. </p>
 
 </div>
 </div>
@@ -364,53 +276,14 @@ Node must have train_state initialized via <a class="el" href="openlcb__applicat
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Processes a read request for Configuration Memory space. </p>
-<p>Generates a read request for Configuration Memory space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Check if config_memory_read callback is registered</li>
-<li>If callback exists:<ul>
-<li>Load read reply OK message header</li>
-<li>Call config_memory_read callback to read data:<ul>
-<li>Pass node pointer, address, byte count, and destination buffer</li>
-<li>Buffer points to outgoing payload at data_start position</li>
-</ul>
-</li>
-<li>Store actual bytes read count</li>
-<li>Update outgoing payload_count by adding bytes read</li>
-<li>Check if read count is less than requested:<ul>
-<li>If partial read, load read fail message with TRANSFER_ERROR</li>
-<li>Set outgoing message valid</li>
-<li>Return</li>
-</ul>
-</li>
-<li>If full read succeeded, set outgoing message valid</li>
-</ul>
-</li>
-<li>If callback not registered:<ul>
-<li>Load read fail message with INVALID_ARGUMENTS error</li>
-<li>Set outgoing message valid</li>
-</ul>
-</li>
-</ol>
-<p>This function delegates the actual memory reading to the application-provided callback, allowing flexible implementation of configuration storage (EEPROM, flash, RAM, etc.). Partial reads are treated as errors.</p>
-<p>Use cases:</p><ul>
-<li>Reading actual configuration data values</li>
-<li>Responding to configuration tool read requests</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context for message generation
-* </pre> <pre class="fragment">* @param config_mem_read_request_info Pointer to request info with address and byte count
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL </dd>
-<dd>
-The callback should be registered </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Partial reads (fewer bytes than requested) are treated as errors</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__utilities_8c.html#add25f972525f3d14f22f4657a74e0c9c" title="Loads a configuration memory read success reply message header.">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#ad0acbbfd410c33c725f1be639783dbf7" title="Loads a configuration memory read failure reply message header.">OpenLcbUtilities_load_config_mem_reply_read_fail_message_header</a> </dd></dl>
+<p>Read from Config space (0xFD) via config_memory_read callback. </p>
+<p>Send read request targeting Config (0xFD) on another node.</p>
+<p>Partial reads (fewer bytes than requested) return TRANSFER_ERROR. </p>
 
 </div>
 </div>
@@ -428,74 +301,13 @@ The callback should be registered </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Processes a read request for ACDI Manufacturer space. </p>
-<p>Generates a read request for ACDI Manufacturer space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Load read reply OK message header</li>
-<li>Use switch statement on requested address to determine SNIP field:<ul>
-<li>CONFIG_MEM_ACDI_MANUFACTURER_VERSION_ADDRESS:<ul>
-<li>Check if snip_load_manufacturer_version_id callback exists</li>
-<li>If exists, call it to load version data</li>
-<li>If not, load read fail message with INVALID_ARGUMENTS</li>
-</ul>
-</li>
-<li>CONFIG_MEM_ACDI_MANUFACTURER_NAME_ADDRESS:<ul>
-<li>Check if snip_load_name callback exists</li>
-<li>If exists, call it to load manufacturer name</li>
-<li>If not, load read fail message with INVALID_ARGUMENTS</li>
-</ul>
-</li>
-<li>CONFIG_MEM_ACDI_MANUFACTURER_MODEL_ADDRESS:<ul>
-<li>Check if snip_load_model callback exists</li>
-<li>If exists, call it to load model name</li>
-<li>If not, load read fail message with INVALID_ARGUMENTS</li>
-</ul>
-</li>
-<li>CONFIG_MEM_ACDI_HARDWARE_VERSION_ADDRESS:<ul>
-<li>Check if snip_load_hardware_version callback exists</li>
-<li>If exists, call it to load hardware version</li>
-<li>If not, load read fail message with INVALID_ARGUMENTS</li>
-</ul>
-</li>
-<li>CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS:<ul>
-<li>Check if snip_load_software_version callback exists</li>
-<li>If exists, call it to load software version</li>
-<li>If not, load read fail message with INVALID_ARGUMENTS</li>
-</ul>
-</li>
-<li>default (unrecognized address):<ul>
-<li>Load datagram rejected message with ADDRESS_SPACE_UNKNOWN error</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Set outgoing message valid</li>
-</ol>
-<p>This function maps fixed ACDI manufacturer addresses to SNIP (Simple Node Ident Protocol) data fields containing factory-set identification information.</p>
-<p>ACDI Manufacturer field addresses:</p><ul>
-<li>Version: Manufacturer-assigned version number</li>
-<li>Name: Manufacturer company name</li>
-<li>Model: Product model name</li>
-<li>Hardware Version: Hardware revision string</li>
-<li>Software Version: Software/firmware version string</li>
-</ul>
-<p>Use cases:</p><ul>
-<li>Responding to manufacturer identification queries</li>
-<li>Providing node hardware/software version information</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context for message generation
-* </pre> <pre class="fragment">* @param config_mem_read_request_info Pointer to request info with address indicating which field
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL </dd>
-<dd>
-Appropriate SNIP callbacks should be registered for supported fields</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__utilities_8c.html#add25f972525f3d14f22f4657a74e0c9c" title="Loads a configuration memory read success reply message header.">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#ad0acbbfd410c33c725f1be639783dbf7" title="Loads a configuration memory read failure reply message header.">OpenLcbUtilities_load_config_mem_reply_read_fail_message_header</a> </dd></dl>
+<p>Read from ACDI-Mfg (0xFC): dispatch to SNIP loaders by address. </p>
+<p>Send read request targeting ACDI-Mfg (0xFC) on another node. </p>
 
 </div>
 </div>
@@ -513,60 +325,13 @@ Appropriate SNIP callbacks should be registered for supported fields</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Processes a read request for ACDI User space. </p>
-<p>Generates a read request for ACDI User space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Load read reply OK message header</li>
-<li>Use switch statement on requested address to determine SNIP field:<ul>
-<li>CONFIG_MEM_ACDI_USER_VERSION_ADDRESS:<ul>
-<li>Check if snip_load_user_version_id callback exists</li>
-<li>If exists, call it to load user version data</li>
-<li>If not, load read fail message with INVALID_ARGUMENTS</li>
-</ul>
-</li>
-<li>CONFIG_MEM_ACDI_USER_NAME_ADDRESS:<ul>
-<li>Check if snip_load_user_name callback exists</li>
-<li>If exists, call it to load user-defined name</li>
-<li>If not, load read fail message with INVALID_ARGUMENTS</li>
-</ul>
-</li>
-<li>CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS:<ul>
-<li>Check if snip_load_user_description callback exists</li>
-<li>If exists, call it to load user description</li>
-<li>If not, load read fail message with INVALID_ARGUMENTS</li>
-</ul>
-</li>
-<li>default (unrecognized address):<ul>
-<li>Load datagram rejected message with ADDRESS_SPACE_UNKNOWN error</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Set outgoing message valid</li>
-</ol>
-<p>This function maps fixed ACDI user addresses to SNIP data fields containing user-customizable identification information.</p>
-<p>ACDI User field addresses:</p><ul>
-<li>Version: User-assigned version/revision number</li>
-<li>Name: User-defined node name (e.g. "Front Porch Light")</li>
-<li>Description: User-defined description (e.g. "Controls porch lighting")</li>
-</ul>
-<p>Use cases:</p><ul>
-<li>Responding to user identification queries</li>
-<li>Providing custom node naming information</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context for message generation
-* </pre> <pre class="fragment">* @param config_mem_read_request_info Pointer to request info with address indicating which field
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL </dd>
-<dd>
-Appropriate SNIP callbacks should be registered for supported fields</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__utilities_8c.html#add25f972525f3d14f22f4657a74e0c9c" title="Loads a configuration memory read success reply message header.">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#ad0acbbfd410c33c725f1be639783dbf7" title="Loads a configuration memory read failure reply message header.">OpenLcbUtilities_load_config_mem_reply_read_fail_message_header</a> </dd></dl>
+<p>Read from ACDI-User (0xFB): dispatch to SNIP loaders by address. </p>
+<p>Send read request targeting ACDI-User (0xFB) on another node. </p>
 
 </div>
 </div>
@@ -585,26 +350,8 @@ Appropriate SNIP callbacks should be registered for supported fields</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Entry point for processing read command for Configuration Definition Info space. </p>
-<p>Processes an incoming read command for Configuration Definition Info space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_read_request_info structure</li>
-<li>Set read_space_func to interface callback for CDI reads</li>
-<li>Set space_info to point to CDI address space definition</li>
-<li>Call central _handle_read_request dispatcher</li>
-</ol>
-<p>This wrapper function sets up the request context for CDI reads and delegates to the central handler which manages the two-phase processing (ACK then execute).</p>
-<p>Use cases:</p><ul>
-<li>Called by datagram handler when CDI read command is received</li>
-<li>Entry point for CDI read processing</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
-<dd>
-statemachine_info-&gt;incoming_msg_info.msg_ptr must contain valid read command</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_read_request </dd>
-<dd>
-<a class="el" href="protocol__config__mem__read__handler_8h.html#acc4a977b77083cf4a361056044eefa73" title="Generates a read request for Configuration Definition Info space.">ProtocolConfigMemReadHandler_read_request_config_definition_info</a> </dd></dl>
+<p>Dispatch CDI (0xFF) read to two-phase handler. </p>
+<p>Read from CDI space (0xFF). </p>
 
 </div>
 </div>
@@ -623,18 +370,8 @@ statemachine_info-&gt;incoming_msg_info.msg_ptr must contain valid read command<
       </table>
 </div><div class="memdoc">
 
-<p>Entry point for processing read command for All memory space. </p>
-<p>Processes an incoming read command for All memory space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_read_request_info structure</li>
-<li>Set read_space_func to interface callback for All space reads</li>
-<li>Set space_info to point to All address space definition</li>
-<li>Call central _handle_read_request dispatcher</li>
-</ol>
-<p>This wrapper processes reads to the unified All memory space which provides access to all readable memory.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_read_request </dd></dl>
+<p>Dispatch All (0xFE) read to two-phase handler. </p>
+<p>Read from All space (0xFE). </p>
 
 </div>
 </div>
@@ -653,22 +390,8 @@ statemachine_info-&gt;incoming_msg_info.msg_ptr must contain valid read command<
       </table>
 </div><div class="memdoc">
 
-<p>Entry point for processing read command for Configuration Memory space. </p>
-<p>Processes an incoming read command for Configuration Memory space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_read_request_info structure</li>
-<li>Set read_space_func to interface callback for config memory reads</li>
-<li>Set space_info to point to Configuration Memory address space definition</li>
-<li>Call central _handle_read_request dispatcher</li>
-</ol>
-<p>This wrapper processes reads to the actual configuration data storage.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
-<dd>
-The callback must be registered</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_read_request </dd>
-<dd>
-<a class="el" href="protocol__config__mem__read__handler_8h.html#ac4fa704242622192e5eda84c62337db9" title="Generates a read request for Configuration Memory space.">ProtocolConfigMemReadHandler_read_request_config_mem</a> </dd></dl>
+<p>Dispatch Config (0xFD) read to two-phase handler. </p>
+<p>Read from Config space (0xFD). </p>
 
 </div>
 </div>
@@ -687,22 +410,8 @@ The callback must be registered</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Entry point for processing read command for ACDI Manufacturer space. </p>
-<p>Processes an incoming read command for ACDI Manufacturer space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_read_request_info structure</li>
-<li>Set read_space_func to interface callback for ACDI manufacturer reads</li>
-<li>Set space_info to point to ACDI Manufacturer address space definition</li>
-<li>Call central _handle_read_request dispatcher</li>
-</ol>
-<p>This wrapper processes reads to manufacturer identification fields.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
-<dd>
-Appropriate SNIP callbacks should be registered</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_read_request </dd>
-<dd>
-<a class="el" href="protocol__config__mem__read__handler_8h.html#a678bee1f33e715fbf5ef27c238378806" title="Generates a read request for ACDI Manufacturer space.">ProtocolConfigMemReadHandler_read_request_acdi_manufacturer</a> </dd></dl>
+<p>Dispatch ACDI-Mfg (0xFC) read to two-phase handler. </p>
+<p>Read from ACDI-Mfg space (0xFC). </p>
 
 </div>
 </div>
@@ -721,22 +430,8 @@ Appropriate SNIP callbacks should be registered</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Entry point for processing read command for ACDI User space. </p>
-<p>Processes an incoming read command for ACDI User space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_read_request_info structure</li>
-<li>Set read_space_func to interface callback for ACDI user reads</li>
-<li>Set space_info to point to ACDI User address space definition</li>
-<li>Call central _handle_read_request dispatcher</li>
-</ol>
-<p>This wrapper processes reads to user-defined identification fields.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
-<dd>
-Appropriate SNIP callbacks should be registered</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_read_request </dd>
-<dd>
-<a class="el" href="protocol__config__mem__read__handler_8h.html#ab896bacb527ee4c30e926e021a92de26" title="Generates a read request for ACDI User space.">ProtocolConfigMemReadHandler_read_request_acdi_user</a> </dd></dl>
+<p>Dispatch ACDI-User (0xFB) read to two-phase handler. </p>
+<p>Read from ACDI-User space (0xFB). </p>
 
 </div>
 </div>
@@ -755,18 +450,8 @@ Appropriate SNIP callbacks should be registered</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Entry point for processing read command for Train Function Definition space. </p>
-<p>Processes an incoming read command for Train Function Definition space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_read_request_info structure</li>
-<li>Set read_space_func to interface callback for train function CDI reads</li>
-<li>Set space_info to point to Train Function Definition address space definition</li>
-<li>Call central _handle_read_request dispatcher</li>
-</ol>
-<p>This wrapper processes reads to train function configuration structure (XML).</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_read_request </dd></dl>
+<p>Dispatch Train FDI (0xFA) read to two-phase handler. </p>
+<p>Read from Train FDI space (0xFA). </p>
 
 </div>
 </div>
@@ -785,18 +470,8 @@ Appropriate SNIP callbacks should be registered</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Entry point for processing read command for Train Function Configuration space. </p>
-<p>Processes an incoming read command for Train Function Configuration space.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_read_request_info structure</li>
-<li>Set read_space_func to interface callback for train function config reads</li>
-<li>Set space_info to point to Train Function Config address space definition</li>
-<li>Call central _handle_read_request dispatcher</li>
-</ol>
-<p>This wrapper processes reads to train function configuration data.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_read_request </dd></dl>
+<p>Dispatch Train Fn Config (0xF9) read to two-phase handler. </p>
+<p>Read from Train Fn Config space (0xF9). </p>
 
 </div>
 </div>
@@ -829,23 +504,16 @@ Appropriate SNIP callbacks should be registered</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Processes a generic read message. </p>
-<p>Handles incoming read messages for any address space. This function provides a generic entry point for read command processing.</p>
-<p>Use cases:</p><ul>
-<li>Generic read message handling</li>
-<li>Protocol-level read processing</li>
-</ul>
+<p>Generic read message handler. Placeholder. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context </td></tr>
-    <tr><td class="paramname">space</td><td>Address space identifier </td></tr>
-    <tr><td class="paramname">return_msg_ok</td><td>Message type for successful read response </td></tr>
-    <tr><td class="paramname">return_msg_fail</td><td>Message type for failed read response</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">space</td><td>Address space number. </td></tr>
+    <tr><td class="paramname">return_msg_ok</td><td>MTI for success reply. </td></tr>
+    <tr><td class="paramname">return_msg_fail</td><td>MTI for failure reply. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Intentional stub - reserved for future implementation </dd></dl>
 
 </div>
 </div>
@@ -868,21 +536,14 @@ Appropriate SNIP callbacks should be registered</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Processes a read reply OK message. </p>
-<p>Handles incoming successful read response messages. Used when this node is acting as a configuration tool and receives read data from another node.</p>
-<p>Use cases:</p><ul>
-<li>Processing successful read responses</li>
-<li>Extracting read data from replies</li>
-</ul>
+<p>Generic read reply OK handler. Placeholder. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context </td></tr>
-    <tr><td class="paramname">space</td><td>Address space identifier</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">space</td><td>Address space number. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Intentional stub - reserved for future implementation </dd></dl>
 
 </div>
 </div>
@@ -905,21 +566,14 @@ Appropriate SNIP callbacks should be registered</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Processes a read reply reject message. </p>
-<p>Handles incoming failed read response messages. Used when this node is acting as a configuration tool and receives a rejection from another node indicating the read could not be completed.</p>
-<p>Use cases:</p><ul>
-<li>Processing read error responses</li>
-<li>Handling read failures</li>
-</ul>
+<p>Generic read reply reject handler. Placeholder. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context </td></tr>
-    <tr><td class="paramname">space</td><td>Address space identifier</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">space</td><td>Address space number. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Intentional stub - reserved for future implementation </dd></dl>
 
 </div>
 </div>

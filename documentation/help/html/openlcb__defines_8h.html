@@ -96,7 +96,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>OpenLCB protocol constants and Message Type Indicators (MTI)  
+<p>OpenLCB protocol constants, MTI codes, and memory configuration commands.  
 <a href="#details">More...</a></p>
 
 <p><a href="openlcb__defines_8h_source.html">Go to the source code of this file.</a></p>
@@ -319,20 +319,20 @@ Macros</h2></td></tr>
 <tr class="memitem:ga1b82388dd579d4dadd24e6f90f7cf79d" id="r_ga1b82388dd579d4dadd24e6f90f7cf79d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mti__datagram.html#ga1b82388dd579d4dadd24e6f90f7cf79d">MTI_DATAGRAM_REJECTED_REPLY</a>&#160;&#160;&#160;0x0A48</td></tr>
 <tr class="memdesc:ga1b82388dd579d4dadd24e6f90f7cf79d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Datagram rejected (negative acknowledgment with error code)  <br /></td></tr>
 <tr class="separator:ga1b82388dd579d4dadd24e6f90f7cf79d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga41608118d9814b9ceca1b7d7c51b665c" id="r_ga41608118d9814b9ceca1b7d7c51b665c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data__field__masks.html#ga41608118d9814b9ceca1b7d7c51b665c">MASK_MULTIFRAME_BITS</a>&#160;&#160;&#160;0xF0</td></tr>
-<tr class="memdesc:ga41608118d9814b9ceca1b7d7c51b665c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for multi-frame indicator bits in first data byte.  <br /></td></tr>
+<tr class="memitem:ga41608118d9814b9ceca1b7d7c51b665c" id="r_ga41608118d9814b9ceca1b7d7c51b665c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data__field__masks.html#ga41608118d9814b9ceca1b7d7c51b665c">MASK_MULTIFRAME_BITS</a>&#160;&#160;&#160;0x30</td></tr>
+<tr class="memdesc:ga41608118d9814b9ceca1b7d7c51b665c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for multi-frame indicator bits in first data byte (bits 5-4)  <br /></td></tr>
 <tr class="separator:ga41608118d9814b9ceca1b7d7c51b665c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae839cf049270cfc49dc870198154e4f8" id="r_gae839cf049270cfc49dc870198154e4f8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data__field__masks.html#gae839cf049270cfc49dc870198154e4f8">MULTIFRAME_ONLY</a>&#160;&#160;&#160;0x00</td></tr>
-<tr class="memdesc:gae839cf049270cfc49dc870198154e4f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single frame only (complete message in one frame)  <br /></td></tr>
+<tr class="memdesc:gae839cf049270cfc49dc870198154e4f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single frame only (complete message in one frame) - ff=00.  <br /></td></tr>
 <tr class="separator:gae839cf049270cfc49dc870198154e4f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7826aa3c0cd33c99f344169b78fd2bae" id="r_ga7826aa3c0cd33c99f344169b78fd2bae"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data__field__masks.html#ga7826aa3c0cd33c99f344169b78fd2bae">MULTIFRAME_FIRST</a>&#160;&#160;&#160;0x40</td></tr>
-<tr class="memdesc:ga7826aa3c0cd33c99f344169b78fd2bae"><td class="mdescLeft">&#160;</td><td class="mdescRight">First frame of multi-frame sequence.  <br /></td></tr>
+<tr class="memitem:ga7826aa3c0cd33c99f344169b78fd2bae" id="r_ga7826aa3c0cd33c99f344169b78fd2bae"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data__field__masks.html#ga7826aa3c0cd33c99f344169b78fd2bae">MULTIFRAME_FIRST</a>&#160;&#160;&#160;0x10</td></tr>
+<tr class="memdesc:ga7826aa3c0cd33c99f344169b78fd2bae"><td class="mdescLeft">&#160;</td><td class="mdescRight">First frame of multi-frame sequence - ff=01.  <br /></td></tr>
 <tr class="separator:ga7826aa3c0cd33c99f344169b78fd2bae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad845d6e1bfe20e195f820bb18ac1b599" id="r_gad845d6e1bfe20e195f820bb18ac1b599"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data__field__masks.html#gad845d6e1bfe20e195f820bb18ac1b599">MULTIFRAME_MIDDLE</a>&#160;&#160;&#160;0xC0</td></tr>
-<tr class="memdesc:gad845d6e1bfe20e195f820bb18ac1b599"><td class="mdescLeft">&#160;</td><td class="mdescRight">Middle frame of multi-frame sequence.  <br /></td></tr>
+<tr class="memitem:gad845d6e1bfe20e195f820bb18ac1b599" id="r_gad845d6e1bfe20e195f820bb18ac1b599"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data__field__masks.html#gad845d6e1bfe20e195f820bb18ac1b599">MULTIFRAME_MIDDLE</a>&#160;&#160;&#160;0x30</td></tr>
+<tr class="memdesc:gad845d6e1bfe20e195f820bb18ac1b599"><td class="mdescLeft">&#160;</td><td class="mdescRight">Middle frame of multi-frame sequence - ff=11.  <br /></td></tr>
 <tr class="separator:gad845d6e1bfe20e195f820bb18ac1b599"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaafa7e55033ed9270caa693b5da0897b5" id="r_gaafa7e55033ed9270caa693b5da0897b5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data__field__masks.html#gaafa7e55033ed9270caa693b5da0897b5">MULTIFRAME_FINAL</a>&#160;&#160;&#160;0x80</td></tr>
-<tr class="memdesc:gaafa7e55033ed9270caa693b5da0897b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final frame of multi-frame sequence.  <br /></td></tr>
+<tr class="memitem:gaafa7e55033ed9270caa693b5da0897b5" id="r_gaafa7e55033ed9270caa693b5da0897b5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data__field__masks.html#gaafa7e55033ed9270caa693b5da0897b5">MULTIFRAME_FINAL</a>&#160;&#160;&#160;0x20</td></tr>
+<tr class="memdesc:gaafa7e55033ed9270caa693b5da0897b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final frame of multi-frame sequence - ff=10.  <br /></td></tr>
 <tr class="separator:gaafa7e55033ed9270caa693b5da0897b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9d3f602268ae1ca1d53110b3f2924265" id="r_ga9d3f602268ae1ca1d53110b3f2924265"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mti__field__masks.html#ga9d3f602268ae1ca1d53110b3f2924265">MASK_STREAM_OR_DATAGRAM</a>&#160;&#160;&#160;0x01000</td></tr>
 <tr class="memdesc:ga9d3f602268ae1ca1d53110b3f2924265"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit indicating stream or datagram message type.  <br /></td></tr>
@@ -1113,7 +1113,7 @@ Macros</h2></td></tr>
 <tr class="separator:gaf8d3f4ef1d6dbce9cfa558b0e3d36131"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>OpenLCB protocol constants and Message Type Indicators (MTI) </p>
+<div class="textblock"><p>OpenLCB protocol constants, MTI codes, and memory configuration commands. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -1121,43 +1121,9 @@ Macros</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>This header file defines all OpenLCB protocol constants including:</p><ul>
-<li>CAN bus login state machine run states for alias allocation</li>
-<li>Message Type Indicators (MTI) for all OpenLCB message types</li>
-<li>CAN frame type identifiers and control frame definitions</li>
-<li>Protocol support indicator bits</li>
-<li>Error codes for permanent and temporary failures</li>
-<li>Configuration memory command and subcommand codes</li>
-<li>Memory address space identifiers</li>
-<li>ACDI (Abbreviated Configuration Description Information) memory addresses</li>
-</ul>
-<p>These constants are derived from the OpenLCB specifications:</p><ul>
-<li>Message Network Standard</li>
-<li>CAN Frame Transfer Standard</li>
-<li>Event Transport Standard</li>
-<li>Datagram Transport Standard</li>
-<li>Memory Configuration Protocol Standard</li>
-</ul>
-<p>The constants in this file are organized into logical groups:</p><ol type="1">
-<li>Node Login State Machine States</li>
-<li>CAN Frame Format and Control Frames</li>
-<li>Message Type Indicators (MTI)</li>
-<li>Protocol Support Indicators</li>
-<li>Error Codes</li>
-<li>Configuration Memory Protocol</li>
-<li>Address Space Definitions</li>
-<li>ACDI Memory Layout</li>
-</ol>
-<dl class="section note"><dt>Note</dt><dd>All constant values follow the OpenLCB specification exactly </dd>
-<dd>
-MTI values are 16-bit but only 12 bits are used in CAN adaptation</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__types_8h.html" title="Core type definitions, structures, and configuration constants for OpenLCB library.">openlcb_types.h</a> - Type definitions for OpenLCB structures </dd>
-<dd>
-OpenLCB Message Network Standard S-9.7.1.1 </dd>
-<dd>
-OpenLCB CAN Frame Transfer Standard S-9.7.3</dd></dl>
+<p>All numeric constants for the OpenLCB library in one place: login states, CAN frame fields, MTIs, error codes, Config Mem commands, Broadcast Time event IDs, Train Control instruction bytes, and well-known events.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div></div><!-- contents -->
 <!doctype html>
 <html>

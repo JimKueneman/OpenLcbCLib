@@ -91,44 +91,23 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">can_msg_struct Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>Structure to hold information needed by a CAN message/frame.  
- <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a28efd41a3e318718f0f5153d8d65988f" id="r_a28efd41a3e318718f0f5153d8d65988f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a1b48374ffe1be17512d6ce58d094f612">can_msg_state_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28efd41a3e318718f0f5153d8d65988f">state</a></td></tr>
-<tr class="memdesc:a28efd41a3e318718f0f5153d8d65988f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags for the current state of this buffer.  <br /></td></tr>
+<tr class="memdesc:a28efd41a3e318718f0f5153d8d65988f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocation flags.  <br /></td></tr>
 <tr class="separator:a28efd41a3e318718f0f5153d8d65988f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69cce241723713fbb29eec527865ce3b" id="r_a69cce241723713fbb29eec527865ce3b"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69cce241723713fbb29eec527865ce3b">identifier</a></td></tr>
-<tr class="memdesc:a69cce241723713fbb29eec527865ce3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">CAN 29 bit extended identifier for this buffer.  <br /></td></tr>
+<tr class="memdesc:a69cce241723713fbb29eec527865ce3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">29-bit extended CAN identifier.  <br /></td></tr>
 <tr class="separator:a69cce241723713fbb29eec527865ce3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a68e869a8d4ea2579a1c3c42ce03d9f" id="r_a9a68e869a8d4ea2579a1c3c42ce03d9f"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a68e869a8d4ea2579a1c3c42ce03d9f">payload_count</a></td></tr>
-<tr class="memdesc:a9a68e869a8d4ea2579a1c3c42ce03d9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines how many bytes in the payload are valid.  <br /></td></tr>
+<tr class="memdesc:a9a68e869a8d4ea2579a1c3c42ce03d9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of valid bytes in payload (0-8).  <br /></td></tr>
 <tr class="separator:a9a68e869a8d4ea2579a1c3c42ce03d9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe956fa6fe2f9e1f60b339d6978accf6" id="r_afe956fa6fe2f9e1f60b339d6978accf6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#af7e65c69ad6084a5b21698667757c8bd">payload_bytes_can_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe956fa6fe2f9e1f60b339d6978accf6">payload</a></td></tr>
-<tr class="memdesc:afe956fa6fe2f9e1f60b339d6978accf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data bytes of the message/frame.  <br /></td></tr>
+<tr class="memdesc:afe956fa6fe2f9e1f60b339d6978accf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data bytes of the frame.  <br /></td></tr>
 <tr class="separator:afe956fa6fe2f9e1f60b339d6978accf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Structure to hold information needed by a CAN message/frame. </p>
-<p>This structure represents a complete CAN 2.0B extended frame with 29-bit identifier and up to 8 data bytes. It includes state tracking for buffer management and is the fundamental unit for CAN communication throughout the library.</p>
-<p>Use cases:</p><ul>
-<li>Storing received CAN frames from hardware</li>
-<li>Building outgoing CAN frames for transmission</li>
-<li>Queuing frames in the CAN buffer FIFO</li>
-<li>Converting between OpenLCB messages and CAN frames</li>
-</ul>
-<dl class="section warning"><dt>Warning</dt><dd>Maximum payload is 8 bytes per CAN 2.0 specification </dd>
-<dd>
-NOT thread-safe - caller must handle synchronization</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The identifier field holds the full 29-bit extended CAN ID </dd>
-<dd>
-payload_count indicates valid bytes (0-8)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> - Manages allocation of these structures </dd>
-<dd>
-<a class="el" href="can__buffer__fifo_8h.html" title="FIFO buffer implementation for CAN message structures.">can_buffer_fifo.h</a> - Queues pointers to these structures </dd></dl>
-</div><h2 class="groupheader">Field Documentation</h2>
+<h2 class="groupheader">Field Documentation</h2>
 <a id="a28efd41a3e318718f0f5153d8d65988f" name="a28efd41a3e318718f0f5153d8d65988f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a28efd41a3e318718f0f5153d8d65988f">&#9670;&#160;</a></span>state</h2>
 
@@ -141,7 +120,7 @@ payload_count indicates valid bytes (0-8)</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Flags for the current state of this buffer. </p>
+<p>Allocation flags. </p>
 
 </div>
 </div>
@@ -157,7 +136,7 @@ payload_count indicates valid bytes (0-8)</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>CAN 29 bit extended identifier for this buffer. </p>
+<p>29-bit extended CAN identifier. </p>
 
 </div>
 </div>
@@ -173,7 +152,7 @@ payload_count indicates valid bytes (0-8)</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Defines how many bytes in the payload are valid. </p>
+<p>Number of valid bytes in payload (0-8). </p>
 
 </div>
 </div>
@@ -189,7 +168,7 @@ payload_count indicates valid bytes (0-8)</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Data bytes of the message/frame. </p>
+<p>Data bytes of the frame. </p>
 
 </div>
 </div>

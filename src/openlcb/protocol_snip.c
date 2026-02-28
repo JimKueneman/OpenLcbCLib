@@ -25,9 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file protocol_snip.c
- * @brief Implementation of Simple Node Information Protocol (SNIP)
+ * @brief Simple Node Information Protocol (SNIP) — builds and validates
+ *        SNIP reply messages from node parameters and config memory.
+ *
  * @author Jim Kueneman
- * @date 17 Jan 2026
+ * @date 28 Feb 2026
+ *
+ * @see protocol_snip.h
+ * @see SimpleNodeInformationS.pdf
  */
 
 #include "protocol_snip.h"
@@ -45,28 +50,21 @@
 #include "openlcb_buffer_list.h"
 
 
+    /** @brief Stored callback interface pointer; set by _initialize(). */
 static interface_openlcb_protocol_snip_t *_interface;
 
     /**
-    * @brief Initializes the SNIP protocol handler
-    *
-    * @details Algorithm:
-    * -# Store interface pointer in static variable
-    * -# Make callback functions available to SNIP loader functions
-    *
-    * Use cases:
-    * - Called once during application initialization
-    * - Must be called before processing any SNIP requests
-    *
-    * @verbatim
-    * @param interface_openlcb_protocol_snip Pointer to interface structure with callbacks
-    * @endverbatim
-    *
-    * @warning Pointer must not be NULL
-    * @warning Interface must remain valid for lifetime of application
-    *
-    * @see interface_openlcb_protocol_snip_t
-    */
+     * @brief Stores the callback interface.  Call once at startup.
+     *
+     * @details Algorithm:
+     * -# Cast away const and store pointer in module-level static
+     *
+     * @verbatim
+     * @param interface_openlcb_protocol_snip  Populated callback table.
+     * @endverbatim
+     *
+     * @warning Structure must remain valid for application lifetime.
+     */
 void ProtocolSnip_initialize(const interface_openlcb_protocol_snip_t *interface_openlcb_protocol_snip) {
 
     _interface = (interface_openlcb_protocol_snip_t*) interface_openlcb_protocol_snip;
@@ -74,36 +72,22 @@ void ProtocolSnip_initialize(const interface_openlcb_protocol_snip_t *interface_
 }
 
     /**
-    * @brief Internal helper to process SNIP string fields
-    *
-    * @details Algorithm:
-    * -# Calculate string length using strlen
-    * -# Check if string exceeds max buffer length
-    * -# Determine if result should be null-terminated
-    * -# If null-terminated:
-    *    - Copy string to payload at offset
-    *    - Add null terminator
-    *    - Update offset and payload count
-    * -# If not null-terminated:
-    *    - Copy requested bytes without null terminator
-    *    - Update offset and payload count
-    *
-    * @verbatim
-    * @param outgoing_msg Message to load string into
-    * @endverbatim
-    * @verbatim
-    * @param payload_offset Pointer to current payload offset (updated by function)
-    * @endverbatim
-    * @verbatim
-    * @param str Source string to copy
-    * @endverbatim
-    * @verbatim
-    * @param max_str_len Maximum string buffer length
-    * @endverbatim
-    * @verbatim
-    * @param byte_count Number of bytes requested
-    * @endverbatim
-    */
+     * @brief Copy a null-terminated string field into the SNIP payload.
+     *
+     * @details Algorithm:
+     * -# Clamp string length to max_str_len − 1
+     * -# If full string fits, copy + append null terminator
+     * -# Otherwise copy only byte_count bytes (no terminator)
+     * -# Update *payload_offset and outgoing_msg->payload_count
+     *
+     * @verbatim
+     * @param outgoing_msg     Destination message.
+     * @param payload_offset   Pointer to current offset (updated in place).
+     * @param str              Source string.
+     * @param max_str_len      Buffer size limit (includes null).
+     * @param byte_count       Max bytes the caller wants written.
+     * @endverbatim
+     */
 static void _process_snip_string(openlcb_msg_t* outgoing_msg, uint16_t *payload_offset, const char *str, uint16_t max_str_len, uint16_t byte_count) {
 
     bool result_is_null_terminated = false;
@@ -139,26 +123,19 @@ static void _process_snip_string(openlcb_msg_t* outgoing_msg, uint16_t *payload_
 }
 
     /**
-    * @brief Internal helper to process SNIP version ID bytes
-    *
-    * @details Algorithm:
-    * -# Write version byte to payload at current offset
-    * -# Increment payload count
-    * -# Increment offset pointer
-    * -# Return updated offset
-    *
-    * @verbatim
-    * @param outgoing_msg Message to load version into
-    * @endverbatim
-    * @verbatim
-    * @param payload_data_offset Pointer to current payload offset (updated by function)
-    * @endverbatim
-    * @verbatim
-    * @param version Version ID byte to write
-    * @endverbatim
-    *
-    * @return Updated payload offset value
-    */
+     * @brief Write a single version-ID byte into the SNIP payload.
+     *
+     * @details Algorithm:
+     * -# Store version byte at *payload_data_offset, bump offset and count
+     *
+     * @verbatim
+     * @param outgoing_msg         Destination message.
+     * @param payload_data_offset  Pointer to current offset (updated).
+     * @param version              Version byte to write.
+     * @endverbatim
+     *
+     * @return Updated offset.
+     */
 static uint16_t _process_snip_version(openlcb_msg_t* outgoing_msg, uint16_t *payload_data_offset, const uint8_t version) {
 
     *outgoing_msg->payload[*payload_data_offset] = version;
@@ -169,37 +146,7 @@ static uint16_t _process_snip_version(openlcb_msg_t* outgoing_msg, uint16_t *pay
 
 }
 
-    /**
-    * @brief Loads Manufacturer Version ID into message payload
-    *
-    * @details Algorithm:
-    * -# Check if requested_bytes > 0
-    * -# If yes: Call _process_snip_version with manufacturer version byte
-    * -# If no: Return 0
-    *
-    * Use cases:
-    * - Building SNIP reply messages
-    * - Responding to Simple Node Info Request
-    *
-    * @verbatim
-    * @param openlcb_node Node being requested for the information
-    * @endverbatim
-    * @verbatim
-    * @param outgoing_msg Message to load the information into its payload
-    * @endverbatim
-    * @verbatim
-    * @param offset The payload index to copy the information to
-    * @endverbatim
-    * @verbatim
-    * @param requested_bytes The max number of bytes to copy
-    * @endverbatim
-    *
-    * @return Updated offset value, or 0 if no bytes requested
-    *
-    * @note The OpenLCB message's Payload Count is auto-updated
-    *
-    * @see _process_snip_version
-    */
+    /** @brief Copy mfg version byte into payload.  Returns updated offset. */
 uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     if (requested_bytes > 0) {
@@ -212,37 +159,7 @@ uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node,
 
 }
 
-    /**
-    * @brief Loads Manufacturer Name string into message payload
-    *
-    * @details Algorithm:
-    * -# Call _process_snip_string with manufacturer name from node parameters
-    * -# String is limited to LEN_SNIP_NAME_BUFFER size
-    * -# Return updated offset value
-    *
-    * Use cases:
-    * - Building SNIP reply messages
-    * - Responding to Simple Node Info Request
-    *
-    * @verbatim
-    * @param openlcb_node Node being requested for the information
-    * @endverbatim
-    * @verbatim
-    * @param outgoing_msg Message to load the information into its payload
-    * @endverbatim
-    * @verbatim
-    * @param offset The payload index to copy the information to
-    * @endverbatim
-    * @verbatim
-    * @param requested_bytes The max number of bytes to copy
-    * @endverbatim
-    *
-    * @return Updated offset value
-    *
-    * @note The OpenLCB message's Payload Count is auto-updated
-    *
-    * @see _process_snip_string
-    */
+    /** @brief Copy manufacturer name string into payload.  Returns updated offset. */
 uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     _process_snip_string(outgoing_msg, &offset, openlcb_node->parameters->snip.name, LEN_SNIP_NAME_BUFFER, requested_bytes);
@@ -251,37 +168,7 @@ uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* out
 
 }
 
-    /**
-    * @brief Loads Manufacturer Model string into message payload
-    *
-    * @details Algorithm:
-    * -# Call _process_snip_string with model string from node parameters
-    * -# String is limited to LEN_SNIP_MODEL_BUFFER size
-    * -# Return updated offset value
-    *
-    * Use cases:
-    * - Building SNIP reply messages
-    * - Responding to Simple Node Info Request
-    *
-    * @verbatim
-    * @param openlcb_node Node being requested for the information
-    * @endverbatim
-    * @verbatim
-    * @param outgoing_msg Message to load the information into its payload
-    * @endverbatim
-    * @verbatim
-    * @param offset The payload index to copy the information to
-    * @endverbatim
-    * @verbatim
-    * @param requested_bytes The max number of bytes to copy
-    * @endverbatim
-    *
-    * @return Updated offset value
-    *
-    * @note The OpenLCB message's Payload Count is auto-updated
-    *
-    * @see _process_snip_string
-    */
+    /** @brief Copy model string into payload.  Returns updated offset. */
 uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     _process_snip_string(outgoing_msg, &offset, openlcb_node->parameters->snip.model, LEN_SNIP_MODEL_BUFFER, requested_bytes);
@@ -290,37 +177,7 @@ uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* ou
 
 }
 
-    /**
-    * @brief Loads Manufacturer Hardware Version string into message payload
-    *
-    * @details Algorithm:
-    * -# Call _process_snip_string with hardware version from node parameters
-    * -# String is limited to LEN_SNIP_HARDWARE_VERSION_BUFFER size
-    * -# Return updated offset value
-    *
-    * Use cases:
-    * - Building SNIP reply messages
-    * - Responding to Simple Node Info Request
-    *
-    * @verbatim
-    * @param openlcb_node Node being requested for the information
-    * @endverbatim
-    * @verbatim
-    * @param outgoing_msg Message to load the information into its payload
-    * @endverbatim
-    * @verbatim
-    * @param offset The payload index to copy the information to
-    * @endverbatim
-    * @verbatim
-    * @param requested_bytes The max number of bytes to copy
-    * @endverbatim
-    *
-    * @return Updated offset value
-    *
-    * @note The OpenLCB message's Payload Count is auto-updated
-    *
-    * @see _process_snip_string
-    */
+    /** @brief Copy hardware version string into payload.  Returns updated offset. */
 uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     _process_snip_string(outgoing_msg, &offset, openlcb_node->parameters->snip.hardware_version, LEN_SNIP_HARDWARE_VERSION_BUFFER, requested_bytes);
@@ -329,37 +186,7 @@ uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlc
 
 }
 
-    /**
-    * @brief Loads Manufacturer Software Version string into message payload
-    *
-    * @details Algorithm:
-    * -# Call _process_snip_string with software version from node parameters
-    * -# String is limited to LEN_SNIP_SOFTWARE_VERSION_BUFFER size
-    * -# Return updated offset value
-    *
-    * Use cases:
-    * - Building SNIP reply messages
-    * - Responding to Simple Node Info Request
-    *
-    * @verbatim
-    * @param openlcb_node Node being requested for the information
-    * @endverbatim
-    * @verbatim
-    * @param outgoing_msg Message to load the information into its payload
-    * @endverbatim
-    * @verbatim
-    * @param offset The payload index to copy the information to
-    * @endverbatim
-    * @verbatim
-    * @param requested_bytes The max number of bytes to copy
-    * @endverbatim
-    *
-    * @return Updated offset value
-    *
-    * @note The OpenLCB message's Payload Count is auto-updated
-    *
-    * @see _process_snip_string
-    */
+    /** @brief Copy software version string into payload.  Returns updated offset. */
 uint16_t ProtocolSnip_load_software_version(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     _process_snip_string(outgoing_msg, &offset, openlcb_node->parameters->snip.software_version, LEN_SNIP_SOFTWARE_VERSION_BUFFER, requested_bytes);
@@ -368,37 +195,7 @@ uint16_t ProtocolSnip_load_software_version(openlcb_node_t* openlcb_node, openlc
 
 }
 
-    /**
-    * @brief Loads User Version ID byte into message payload
-    *
-    * @details Algorithm:
-    * -# Check if requested_bytes > 0
-    * -# If yes: Call _process_snip_version with user version byte
-    * -# If no: Return 0
-    *
-    * Use cases:
-    * - Building SNIP reply messages
-    * - Responding to Simple Node Info Request
-    *
-    * @verbatim
-    * @param openlcb_node Node being requested for the information
-    * @endverbatim
-    * @verbatim
-    * @param outgoing_msg Message to load the information into its payload
-    * @endverbatim
-    * @verbatim
-    * @param offset The payload index to copy the information to
-    * @endverbatim
-    * @verbatim
-    * @param requested_bytes The max number of bytes to copy
-    * @endverbatim
-    *
-    * @return Updated offset value, or 0 if no bytes requested
-    *
-    * @note The OpenLCB message's Payload Count is auto-updated
-    *
-    * @see _process_snip_version
-    */
+    /** @brief Copy user version byte into payload.  Returns updated offset. */
 uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     if (requested_bytes > 0) {
@@ -412,41 +209,22 @@ uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t* openlcb_node, openlcb
 }
 
     /**
-    * @brief Loads User Name string into message payload from configuration memory
-    *
-    * @details Algorithm:
-    * -# Calculate data address (USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS)
-    * -# Add low_address offset if valid
-    * -# Read string from configuration memory using callback
-    * -# Call _process_snip_string with read data
-    * -# String is limited to LEN_SNIP_USER_NAME_BUFFER size
-    * -# Return updated offset value
-    *
-    * Use cases:
-    * - Building SNIP reply messages
-    * - Responding to Simple Node Info Request
-    *
-    * @verbatim
-    * @param openlcb_node Node being requested for the information
-    * @endverbatim
-    * @verbatim
-    * @param outgoing_msg Message to load the information into its payload
-    * @endverbatim
-    * @verbatim
-    * @param offset The payload index to copy the information to
-    * @endverbatim
-    * @verbatim
-    * @param requested_bytes The max number of bytes to copy
-    * @endverbatim
-    *
-    * @return Updated offset value
-    *
-    * @note The OpenLCB message's Payload Count is auto-updated
-    * @note User name is read from configuration memory, not node parameters
-    *
-    * @see _process_snip_string
-    * @see USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS
-    */
+     * @brief Read user name from config memory and copy into payload.
+     *
+     * @details Algorithm:
+     * -# Compute config-memory address (base + low_address offset if valid)
+     * -# Read via config_memory_read callback
+     * -# Copy into payload via _process_snip_string
+     *
+     * @verbatim
+     * @param openlcb_node      Source node.
+     * @param outgoing_msg      Destination message.
+     * @param offset            Current payload offset.
+     * @param requested_bytes   Max bytes to copy.
+     * @endverbatim
+     *
+     * @return Updated offset.
+     */
 uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
 
@@ -468,41 +246,22 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
 }
 
     /**
-    * @brief Loads User Description string into message payload from configuration memory
-    *
-    * @details Algorithm:
-    * -# Calculate data address (USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS)
-    * -# Add low_address offset if valid
-    * -# Read string from configuration memory using callback
-    * -# Call _process_snip_string with read data
-    * -# String is limited to LEN_SNIP_USER_DESCRIPTION_BUFFER size
-    * -# Return updated offset value
-    *
-    * Use cases:
-    * - Building SNIP reply messages
-    * - Responding to Simple Node Info Request
-    *
-    * @verbatim
-    * @param openlcb_node Node being requested for the information
-    * @endverbatim
-    * @verbatim
-    * @param outgoing_msg Message to load the information into its payload
-    * @endverbatim
-    * @verbatim
-    * @param offset The payload index to copy the information to
-    * @endverbatim
-    * @verbatim
-    * @param requested_bytes The max number of bytes to copy
-    * @endverbatim
-    *
-    * @return Updated offset value
-    *
-    * @note The OpenLCB message's Payload Count is auto-updated
-    * @note User description is read from configuration memory, not node parameters
-    *
-    * @see _process_snip_string
-    * @see USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS
-    */
+     * @brief Read user description from config memory and copy into payload.
+     *
+     * @details Algorithm:
+     * -# Compute config-memory address (base + low_address offset if valid)
+     * -# Read via config_memory_read callback
+     * -# Copy into payload via _process_snip_string
+     *
+     * @verbatim
+     * @param openlcb_node      Source node.
+     * @param outgoing_msg      Destination message.
+     * @param offset            Current payload offset.
+     * @param requested_bytes   Max bytes to copy.
+     * @endverbatim
+     *
+     * @return Updated offset.
+     */
 uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     configuration_memory_buffer_t configuration_memory_buffer;
@@ -523,38 +282,18 @@ uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlc
 }
 
     /**
-    * @brief Handles incoming Simple Node Info Request message
-    *
-    * @details Algorithm:
-    * -# Initialize payload offset to 0
-    * -# Load OpenLCB message header with SNIP reply MTI
-    * -# Call loader functions in sequence:
-    *    - Manufacturer Version ID (1 byte)
-    *    - Manufacturer Name (max LEN_SNIP_NAME_BUFFER-1)
-    *    - Model (max LEN_SNIP_MODEL_BUFFER-1)
-    *    - Hardware Version (max LEN_SNIP_HARDWARE_VERSION_BUFFER-1)
-    *    - Software Version (max LEN_SNIP_SOFTWARE_VERSION_BUFFER-1)
-    *    - User Version ID (1 byte)
-    *    - User Name (max LEN_SNIP_USER_NAME_BUFFER-1)
-    *    - User Description (max LEN_SNIP_USER_DESCRIPTION_BUFFER-1)
-    * -# Set outgoing message valid flag
-    *
-    * Use cases:
-    * - Processing MTI_SIMPLE_NODE_INFO_REQUEST
-    * - Responding to SNIP queries from other nodes
-    *
-    * @verbatim
-    * @param statemachine_info Pointer to state machine context
-    * @endverbatim
-    *
-    * @warning Pointer must not be NULL
-    * @warning Node must be initialized
-    *
-    * @note Each loader function updates the offset
-    * @note Reply is sent to the requesting node
-    *
-    * @see MTI_SIMPLE_NODE_INFO_REPLY
-    */
+     * @brief Build and return a SNIP reply (MTI 0x0A08).
+     *
+     * @details Algorithm:
+     * -# Prepare outgoing message header addressed to the requester
+     * -# Append 8 fields sequentially: mfg version, name, model, HW ver,
+     *    SW ver, user version, user name, user description
+     * -# Mark outgoing message valid
+     *
+     * @verbatim
+     * @param statemachine_info  Context with the incoming SNIP request.
+     * @endverbatim
+     */
 void ProtocolSnip_handle_simple_node_info_request(openlcb_statemachine_info_t *statemachine_info) {
 
     uint16_t payload_offset = 0;
@@ -618,25 +357,7 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_statemachine_info_t *s
 
 }
 
-    /**
-    * @brief Handles incoming Simple Node Info Reply message
-    *
-    * @details Algorithm:
-    * -# Set outgoing message valid flag to false (no reply needed)
-    *
-    * Use cases:
-    * - Processing MTI_SIMPLE_NODE_INFO_REPLY from other nodes
-    * - Receiving SNIP information from queried nodes
-    *
-    * @verbatim
-    * @param statemachine_info Pointer to state machine context
-    * @endverbatim
-    *
-    * @note This is a stub - application can override to process replies
-    * @note No outgoing message generated
-    *
-    * @see MTI_SIMPLE_NODE_INFO_REPLY
-    */
+    /** @brief Handle incoming SNIP reply — no automatic response generated. */
 void ProtocolSnip_handle_simple_node_info_reply(openlcb_statemachine_info_t *statemachine_info) {
 
     statemachine_info->outgoing_msg_info.valid = false;
@@ -644,33 +365,19 @@ void ProtocolSnip_handle_simple_node_info_reply(openlcb_statemachine_info_t *sta
 }
 
     /**
-    * @brief Validates a SNIP reply message structure
-    *
-    * @details Algorithm:
-    * -# Check payload size doesn't exceed LEN_MESSAGE_BYTES_SNIP
-    * -# Verify MTI is MTI_SIMPLE_NODE_INFO_REPLY
-    * -# Count null terminators in payload
-    * -# Verify exactly 6 null terminators present (one per field after version bytes)
-    *
-    * Use cases:
-    * - Validating received SNIP replies
-    * - Detecting malformed SNIP messages
-    *
-    * @verbatim
-    * @param snip_reply_msg Pointer to message to validate
-    * @endverbatim
-    *
-    * @return true if message is valid SNIP reply, false otherwise
-    *
-    * @warning Returns false for oversized payloads
-    * @warning Returns false for incorrect MTI
-    * @warning Returns false if null terminator count is not 6
-    *
-    * @note SNIP format requires exactly 6 null-terminated strings
-    *
-    * @see MTI_SIMPLE_NODE_INFO_REPLY
-    * @see LEN_MESSAGE_BYTES_SNIP
-    */
+     * @brief Validate a SNIP reply: correct MTI, valid length, exactly 6 nulls.
+     *
+     * @details Algorithm:
+     * -# Reject if payload_count > LEN_MESSAGE_BYTES_SNIP
+     * -# Reject if MTI != MTI_SIMPLE_NODE_INFO_REPLY
+     * -# Count null bytes in payload; must equal 6
+     *
+     * @verbatim
+     * @param snip_reply_msg  Message to validate.
+     * @endverbatim
+     *
+     * @return true if the message is a well-formed SNIP reply.
+     */
 bool ProtocolSnip_validate_snip_reply(openlcb_msg_t* snip_reply_msg) {
 
     if (snip_reply_msg->payload_count > LEN_MESSAGE_BYTES_SNIP) { // serious issue if this occurs

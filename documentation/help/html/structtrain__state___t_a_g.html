@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Per-node train state.  
+<p>Mutable runtime state for a single train node.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -103,8 +103,12 @@ Data Fields</h2></td></tr>
 <tr class="separator:afdf554783d64f3d9fecca617af94d811"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6da8041948c516570475c9a1ee9b23c" id="r_aa6da8041948c516570475c9a1ee9b23c"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6da8041948c516570475c9a1ee9b23c">actual_speed</a></td></tr>
 <tr class="separator:aa6da8041948c516570475c9a1ee9b23c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8aa217d63f4c5560ec157707259a4abf" id="r_a8aa217d63f4c5560ec157707259a4abf"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8aa217d63f4c5560ec157707259a4abf">estop_active</a></td></tr>
-<tr class="separator:a8aa217d63f4c5560ec157707259a4abf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a933cfe7fd6b47e6f196a06e7f16ba8f7" id="r_a933cfe7fd6b47e6f196a06e7f16ba8f7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a933cfe7fd6b47e6f196a06e7f16ba8f7">estop_active</a></td></tr>
+<tr class="separator:a933cfe7fd6b47e6f196a06e7f16ba8f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3a7d789d45d8e1eed614c5fd1828d39" id="r_ae3a7d789d45d8e1eed614c5fd1828d39"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3a7d789d45d8e1eed614c5fd1828d39">global_estop_active</a></td></tr>
+<tr class="separator:ae3a7d789d45d8e1eed614c5fd1828d39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0cf02437ff5926e3134829f1dbbcf6d" id="r_ad0cf02437ff5926e3134829f1dbbcf6d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0cf02437ff5926e3134829f1dbbcf6d">global_eoff_active</a></td></tr>
+<tr class="separator:ad0cf02437ff5926e3134829f1dbbcf6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9786efb1a6da1b353719b9b8e3d27b8" id="r_ae9786efb1a6da1b353719b9b8e3d27b8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae9786efb1a6da1b353719b9b8e3d27b8">controller_node_id</a></td></tr>
 <tr class="separator:ae9786efb1a6da1b353719b9b8e3d27b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0772b8ee106d86cafd6b17930570e1e" id="r_ab0772b8ee106d86cafd6b17930570e1e"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0772b8ee106d86cafd6b17930570e1e">reserved_node_count</a></td></tr>
@@ -113,22 +117,24 @@ Data Fields</h2></td></tr>
 <tr class="separator:a6d36649f103c206a5a45f7fdcf545fbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6be5fe961070849385d7332511c0a593" id="r_a6be5fe961070849385d7332511c0a593"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6be5fe961070849385d7332511c0a593">heartbeat_counter_100ms</a></td></tr>
 <tr class="separator:a6be5fe961070849385d7332511c0a593"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b56642ad2a44addfa924812ad3930ad" id="r_a5b56642ad2a44addfa924812ad3930ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtrain__listener__entry__t.html">train_listener_entry_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b56642ad2a44addfa924812ad3930ad">listeners</a> [<a class="el" href="group__user__config__constants.html#ga4391fa5bc7df0b55343220247f7fbf82">USER_DEFINED_MAX_LISTENERS_PER_TRAIN</a>]</td></tr>
+<tr class="memitem:a5b56642ad2a44addfa924812ad3930ad" id="r_a5b56642ad2a44addfa924812ad3930ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtrain__listener__entry__t.html">train_listener_entry_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b56642ad2a44addfa924812ad3930ad">listeners</a> [USER_DEFINED_MAX_LISTENERS_PER_TRAIN]</td></tr>
 <tr class="separator:a5b56642ad2a44addfa924812ad3930ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c055ac2bed0141d6ae1d2679116799a" id="r_a0c055ac2bed0141d6ae1d2679116799a"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c055ac2bed0141d6ae1d2679116799a">listener_count</a></td></tr>
 <tr class="separator:a0c055ac2bed0141d6ae1d2679116799a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec825c2a5463ff3857eedd2c5f996bf2" id="r_aec825c2a5463ff3857eedd2c5f996bf2"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec825c2a5463ff3857eedd2c5f996bf2">functions</a> [<a class="el" href="group__user__config__constants.html#ga961fbf38fa41495760bac1affbe3ffaa">USER_DEFINED_MAX_TRAIN_FUNCTIONS</a>]</td></tr>
+<tr class="memitem:aec825c2a5463ff3857eedd2c5f996bf2" id="r_aec825c2a5463ff3857eedd2c5f996bf2"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec825c2a5463ff3857eedd2c5f996bf2">functions</a> [USER_DEFINED_MAX_TRAIN_FUNCTIONS]</td></tr>
 <tr class="separator:aec825c2a5463ff3857eedd2c5f996bf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d15057172aadfa6ffc2f675fcd0d807" id="r_a8d15057172aadfa6ffc2f675fcd0d807"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d15057172aadfa6ffc2f675fcd0d807">dcc_address</a></td></tr>
 <tr class="separator:a8d15057172aadfa6ffc2f675fcd0d807"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa806246b019f6c7eddfd79e19ddf4bf" id="r_aaa806246b019f6c7eddfd79e19ddf4bf"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa806246b019f6c7eddfd79e19ddf4bf">is_long_address</a></td></tr>
-<tr class="separator:aaa806246b019f6c7eddfd79e19ddf4bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9231569054cae5f2bd081aaf0978b75e" id="r_a9231569054cae5f2bd081aaf0978b75e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9231569054cae5f2bd081aaf0978b75e">is_long_address</a></td></tr>
+<tr class="separator:a9231569054cae5f2bd081aaf0978b75e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8763ce7d33dc8d6f7a6a52fbd52990e1" id="r_a8763ce7d33dc8d6f7a6a52fbd52990e1"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8763ce7d33dc8d6f7a6a52fbd52990e1">speed_steps</a></td></tr>
 <tr class="separator:a8763ce7d33dc8d6f7a6a52fbd52990e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7578aa179402443343ac697b33e39514" id="r_a7578aa179402443343ac697b33e39514"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structopenlcb__node___t_a_g.html">openlcb_node_TAG</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7578aa179402443343ac697b33e39514">owner_node</a></td></tr>
+<tr class="separator:a7578aa179402443343ac697b33e39514"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Per-node train state. </p>
-<p>Holds the mutable runtime state for a single train node. Allocated from a static pool by <a class="el" href="openlcb__application__train_8c.html#ae17ef6101bcfddf2d9debadb6c11d8d0">OpenLcbApplicationTrain_setup()</a>. </p>
+<div class="textblock"><p>Mutable runtime state for a single train node. </p>
+<p>Allocated from a static pool by <a class="el" href="openlcb__application__train_8c.html#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a93eba1c6df23be744adae901f81f4ac6" name="a93eba1c6df23be744adae901f81f4ac6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a93eba1c6df23be744adae901f81f4ac6">&#9670;&#160;</a></span>set_speed</h2>
@@ -141,7 +147,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Last commanded speed (float16 IEEE 754) </p>
+<p>Last commanded speed (float16) </p>
 
 </div>
 </div>
@@ -175,18 +181,48 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a8aa217d63f4c5560ec157707259a4abf" name="a8aa217d63f4c5560ec157707259a4abf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8aa217d63f4c5560ec157707259a4abf">&#9670;&#160;</a></span>estop_active</h2>
+<a id="a933cfe7fd6b47e6f196a06e7f16ba8f7" name="a933cfe7fd6b47e6f196a06e7f16ba8f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a933cfe7fd6b47e6f196a06e7f16ba8f7">&#9670;&#160;</a></span>estop_active</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t estop_active</td>
+          <td class="memname">bool estop_active</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Emergency stop active flag </p>
+<p>Point-to-point E-stop active </p>
+
+</div>
+</div>
+<a id="ae3a7d789d45d8e1eed614c5fd1828d39" name="ae3a7d789d45d8e1eed614c5fd1828d39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3a7d789d45d8e1eed614c5fd1828d39">&#9670;&#160;</a></span>global_estop_active</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool global_estop_active</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Global Emergency Stop active </p>
+
+</div>
+</div>
+<a id="ad0cf02437ff5926e3134829f1dbbcf6d" name="ad0cf02437ff5926e3134829f1dbbcf6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0cf02437ff5926e3134829f1dbbcf6d">&#9670;&#160;</a></span>global_eoff_active</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool global_eoff_active</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Global Emergency Off active </p>
 
 </div>
 </div>
@@ -201,7 +237,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Active controller node ID (0 if none) </p>
+<p>Active controller (0 if none) </p>
 
 </div>
 </div>
@@ -257,7 +293,7 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtrain__listener__entry__t.html">train_listener_entry_t</a> listeners[<a class="el" href="group__user__config__constants.html#ga4391fa5bc7df0b55343220247f7fbf82">USER_DEFINED_MAX_LISTENERS_PER_TRAIN</a>]</td>
+          <td class="memname"><a class="el" href="structtrain__listener__entry__t.html">train_listener_entry_t</a> listeners[USER_DEFINED_MAX_LISTENERS_PER_TRAIN]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -275,7 +311,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of active listeners </p>
 
 </div>
 </div>
@@ -286,11 +321,11 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t functions[<a class="el" href="group__user__config__constants.html#ga961fbf38fa41495760bac1affbe3ffaa">USER_DEFINED_MAX_TRAIN_FUNCTIONS</a>]</td>
+          <td class="memname">uint16_t functions[USER_DEFINED_MAX_TRAIN_FUNCTIONS]</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function values (16-bit per function, indexed by function number) </p>
+<p>Function values indexed by function number </p>
 
 </div>
 </div>
@@ -309,18 +344,18 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="aaa806246b019f6c7eddfd79e19ddf4bf" name="aaa806246b019f6c7eddfd79e19ddf4bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa806246b019f6c7eddfd79e19ddf4bf">&#9670;&#160;</a></span>is_long_address</h2>
+<a id="a9231569054cae5f2bd081aaf0978b75e" name="a9231569054cae5f2bd081aaf0978b75e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9231569054cae5f2bd081aaf0978b75e">&#9670;&#160;</a></span>is_long_address</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t is_long_address</td>
+          <td class="memname">bool is_long_address</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>1 = extended (long) DCC address, 0 = short </p>
+<p>true = extended (long) DCC address </p>
 
 </div>
 </div>
@@ -335,7 +370,22 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>DCC speed steps: 0=default, 1=14, 2=28, 3=128 </p>
+<p>0=default, 1=14, 2=28, 3=128 </p>
+
+</div>
+</div>
+<a id="a7578aa179402443343ac697b33e39514" name="a7578aa179402443343ac697b33e39514"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7578aa179402443343ac697b33e39514">&#9670;&#160;</a></span>owner_node</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structopenlcb__node___t_a_g.html">openlcb_node_TAG</a>* owner_node</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Back-pointer to owning node </p>
 
 </div>
 </div>

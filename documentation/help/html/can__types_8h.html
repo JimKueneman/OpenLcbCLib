@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Type definitions and constants for CAN operations.  
+<p>Type definitions and constants for the CAN transport layer.  
 <a href="#details">More...</a></p>
 
 <p><a href="can__types_8h_source.html">Go to the source code of this file.</a></p>
@@ -106,84 +106,84 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcan__msg__state__struct.html">can_msg_state_struct</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold information needed to track the state of a CAN message/frame.  <a href="structcan__msg__state__struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcan__msg__struct.html">can_msg_struct</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold information needed by a CAN message/frame.  <a href="structcan__msg__struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcan__main__statemachine__struct.html">can_main_statemachine_struct</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold state information for the CAN main state machine.  <a href="structcan__main__statemachine__struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcan__statemachine__info__struct.html">can_statemachine_info_struct</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold information needed by the CAN Statemachine as it is pulling messages from <a class="el" href="can__buffer__fifo_8h.html" title="FIFO buffer implementation for CAN message structures.">can_buffer_fifo.h</a> and then dispatching them to handlers that may require a reply.  <a href="structcan__statemachine__info__struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structalias__mapping__struct.html">alias_mapping_struct</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold a shadow buffer of Node ID/Alias pairs for Nodes that have been allocated and logged into the network.  <a href="structalias__mapping__struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structalias__mapping__info__struct.html">alias_mapping_info_struct</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold an array of <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> structures and a flag to flag the main loop that at least one of the containing mappings has detected a duplicate Alias ID.  <a href="structalias__mapping__info__struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a66e224442df976c1bb15398aa0a681ab" id="r_a66e224442df976c1bb15398aa0a681ab"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a>&#160;&#160;&#160;10</td></tr>
-<tr class="memdesc:a66e224442df976c1bb15398aa0a681ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of CAN messages buffers that are available to allocate through the <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> The default value for the buffer depth is 10 (typically more than enough) but can be overridden by using a global define for the compiler such as USER_DEFINED_CAN_MSG_BUFFER_DEPTH=20.  <br /></td></tr>
+<tr class="memdesc:a66e224442df976c1bb15398aa0a681ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffers in the pool (<a class="el" href="can__buffer__store_8h.html" title="Pre-allocated pool of can_msg_t buffers (8-byte payload each).">can_buffer_store.h</a>).  <br /></td></tr>
 <tr class="separator:a66e224442df976c1bb15398aa0a681ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63b1d35b3f9523dc6d9ba2a5f9260af3" id="r_a63b1d35b3f9523dc6d9ba2a5f9260af3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63b1d35b3f9523dc6d9ba2a5f9260af3">ALIAS_MAPPING_BUFFER_DEPTH</a>&#160;&#160;&#160;<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a></td></tr>
-<tr class="memdesc:a63b1d35b3f9523dc6d9ba2a5f9260af3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Alias Mapping slots available for <a class="el" href="alias__mappings_8h.html" title="Alias/NodeID mapping buffer for tracking internal node aliases.">alias_mappings.h</a> The default value for the buffer is equal to the value used for /ref USER_DEFINED_NODE_BUFFER_DEPTH as there must be the same number mapping slot as there are allocated nodes.  <br /></td></tr>
+<tr class="memitem:a63b1d35b3f9523dc6d9ba2a5f9260af3" id="r_a63b1d35b3f9523dc6d9ba2a5f9260af3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63b1d35b3f9523dc6d9ba2a5f9260af3">ALIAS_MAPPING_BUFFER_DEPTH</a>&#160;&#160;&#160;USER_DEFINED_NODE_BUFFER_DEPTH</td></tr>
+<tr class="memdesc:a63b1d35b3f9523dc6d9ba2a5f9260af3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> slots. Defaults to USER_DEFINED_NODE_BUFFER_DEPTH.  <br /></td></tr>
 <tr class="separator:a63b1d35b3f9523dc6d9ba2a5f9260af3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50ba6934b926753e5fc4f7419c9e28c9" id="r_a50ba6934b926753e5fc4f7419c9e28c9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50ba6934b926753e5fc4f7419c9e28c9">LEN_CAN_FIFO_BUFFER</a>&#160;&#160;&#160;(<a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a> + 1)</td></tr>
-<tr class="memdesc:a50ba6934b926753e5fc4f7419c9e28c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Pointer slots in the FIFO to hold CAN Buffers from <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> The default value is size of the buffer depth plus one <a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a> so all buffers can be held in the FIFO implementation. The buffer can then be checked for full without the head == tail.  <br /></td></tr>
+<tr class="memdesc:a50ba6934b926753e5fc4f7419c9e28c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">FIFO slot count — one extra slot so head==tail always means empty.  <br /></td></tr>
 <tr class="separator:a50ba6934b926753e5fc4f7419c9e28c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5557aaecf7420e7ec1beccd6c614e8ba" id="r_a5557aaecf7420e7ec1beccd6c614e8ba"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5557aaecf7420e7ec1beccd6c614e8ba">LEN_CAN_BYTE_ARRAY</a>&#160;&#160;&#160;8</td></tr>
-<tr class="memdesc:a5557aaecf7420e7ec1beccd6c614e8ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of data bytes in a CAN frame.  <br /></td></tr>
+<tr class="memdesc:a5557aaecf7420e7ec1beccd6c614e8ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of data bytes in a CAN 2.0 frame.  <br /></td></tr>
 <tr class="separator:a5557aaecf7420e7ec1beccd6c614e8ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6dbc56c2815d2063e72aa79bd9380ea" id="r_aa6dbc56c2815d2063e72aa79bd9380ea"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6dbc56c2815d2063e72aa79bd9380ea">OFFSET_CAN_WITHOUT_DEST_ADDRESS</a>&#160;&#160;&#160;0</td></tr>
-<tr class="memdesc:aa6dbc56c2815d2063e72aa79bd9380ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Some CAN frames depending, of what OpenLcb/LCC message is being worked on, will have an destination Alias as the first 2 bytes. This is a constant passed to many functions to allow the function to know where the actual data for the message starts. This means there is no Alias in the data and the first position in the array is data.  <br /></td></tr>
+<tr class="memdesc:aa6dbc56c2815d2063e72aa79bd9380ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass to functions when the CAN payload starts at byte 0 (no destination alias).  <br /></td></tr>
 <tr class="separator:aa6dbc56c2815d2063e72aa79bd9380ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc9edd7d95f78d23e4db197856dcc424" id="r_abc9edd7d95f78d23e4db197856dcc424"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc9edd7d95f78d23e4db197856dcc424">OFFSET_CAN_WITH_DEST_ADDRESS</a>&#160;&#160;&#160;2</td></tr>
-<tr class="memdesc:abc9edd7d95f78d23e4db197856dcc424"><td class="mdescLeft">&#160;</td><td class="mdescRight">Some CAN frames depending, of what OpenLcb/LCC message is being worked on, will have an destination Alias as the first 2 bytes. This is a constant passed to many functions to allow the function to know where the actual data for the message starts. This means there is an Alias in the data and the 2 second position in the array is data.  <br /></td></tr>
+<tr class="memdesc:abc9edd7d95f78d23e4db197856dcc424"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass to functions when bytes 0-1 carry a destination alias; data starts at byte 2.  <br /></td></tr>
 <tr class="separator:abc9edd7d95f78d23e4db197856dcc424"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4b999c799cbe89d7af62fa1e85dfa62" id="r_ab4b999c799cbe89d7af62fa1e85dfa62"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4b999c799cbe89d7af62fa1e85dfa62">_OPENLCB_GLOBAL_ADDRESSED</a>&#160;&#160;&#160;(<a class="el" href="group__can__frame__format.html#ga97e367b03f496622abf8b1ee6c316ade">RESERVED_TOP_BIT</a> | <a class="el" href="group__can__frame__format.html#gab23013938b89003d8959b803bf74bd35">CAN_OPENLCB_MSG</a> | CAN_FRAME_TYPE_GLOBAL_ADDRESSED)</td></tr>
-<tr class="memdesc:ab4b999c799cbe89d7af62fa1e85dfa62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a value that can be used to build the bits in the higher positions of the CAN MTI.  <br /></td></tr>
+<tr class="memdesc:ab4b999c799cbe89d7af62fa1e85dfa62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit mask for building global/addressed OpenLCB CAN identifiers.  <br /></td></tr>
 <tr class="separator:ab4b999c799cbe89d7af62fa1e85dfa62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a403540b91c9477fe85a51af99c654301" id="r_a403540b91c9477fe85a51af99c654301"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a403540b91c9477fe85a51af99c654301">_DATAGRAM_REJECT_REPLY</a>&#160;&#160;&#160;(<a class="el" href="#ab4b999c799cbe89d7af62fa1e85dfa62">_OPENLCB_GLOBAL_ADDRESSED</a> | ((uint32_t) (<a class="el" href="group__mti__datagram.html#ga1b82388dd579d4dadd24e6f90f7cf79d">MTI_DATAGRAM_REJECTED_REPLY</a> &amp; 0x0FFF) &lt;&lt; 12))</td></tr>
-<tr class="memdesc:a403540b91c9477fe85a51af99c654301"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a value that can be used to build the bits in the higher positions of the CAN MTI for Datagram reject.  <br /></td></tr>
+<tr class="memdesc:a403540b91c9477fe85a51af99c654301"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-built upper bits for a Datagram Rejected reply CAN identifier.  <br /></td></tr>
 <tr class="separator:a403540b91c9477fe85a51af99c654301"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14098b1b0b294c193f8bcb5e4fed6e27" id="r_a14098b1b0b294c193f8bcb5e4fed6e27"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14098b1b0b294c193f8bcb5e4fed6e27">_OPTIONAL_INTERACTION_REJECT_REPLY</a>&#160;&#160;&#160;(<a class="el" href="#ab4b999c799cbe89d7af62fa1e85dfa62">_OPENLCB_GLOBAL_ADDRESSED</a> | ((uint32_t) (<a class="el" href="group__mti__message__network.html#ga37ba087609990ffef85aeca449c07a8e">MTI_OPTIONAL_INTERACTION_REJECTED</a> &amp; 0x0FFF) &lt;&lt; 12))</td></tr>
-<tr class="memdesc:a14098b1b0b294c193f8bcb5e4fed6e27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a value that can be used to build the bits in the higher positions of the CAN MTI for Datagram reject reply.  <br /></td></tr>
+<tr class="memdesc:a14098b1b0b294c193f8bcb5e4fed6e27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-built upper bits for an Optional Interaction Rejected reply CAN identifier.  <br /></td></tr>
 <tr class="separator:a14098b1b0b294c193f8bcb5e4fed6e27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:af7e65c69ad6084a5b21698667757c8bd" id="r_af7e65c69ad6084a5b21698667757c8bd"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7e65c69ad6084a5b21698667757c8bd">payload_bytes_can_t</a>[<a class="el" href="#a5557aaecf7420e7ec1beccd6c614e8ba">LEN_CAN_BYTE_ARRAY</a>]</td></tr>
-<tr class="memdesc:af7e65c69ad6084a5b21698667757c8bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a type that is an array of 8 bytes to carry the CAN frame data.  <br /></td></tr>
+<tr class="memdesc:af7e65c69ad6084a5b21698667757c8bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fixed 8-byte array holding a CAN frame payload.  <br /></td></tr>
 <tr class="separator:af7e65c69ad6084a5b21698667757c8bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b48374ffe1be17512d6ce58d094f612" id="r_a1b48374ffe1be17512d6ce58d094f612"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structcan__msg__state__struct.html">can_msg_state_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b48374ffe1be17512d6ce58d094f612">can_msg_state_t</a></td></tr>
+<tr class="memdesc:a1b48374ffe1be17512d6ce58d094f612"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit-field tracking allocation status of a <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffer.  <br /></td></tr>
 <tr class="separator:a1b48374ffe1be17512d6ce58d094f612"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9fec363f8b39411fc3ce3bafd7182309" id="r_a9fec363f8b39411fc3ce3bafd7182309"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structcan__msg__struct.html">can_msg_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a></td></tr>
+<tr class="memdesc:a9fec363f8b39411fc3ce3bafd7182309"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete CAN 2.0B extended frame: 29-bit identifier + up to 8 data bytes.  <br /></td></tr>
 <tr class="separator:a9fec363f8b39411fc3ce3bafd7182309"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90d0f10815864241524a1c20801e8e19" id="r_a90d0f10815864241524a1c20801e8e19"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90d0f10815864241524a1c20801e8e19">can_msg_array_t</a>[<a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a>]</td></tr>
-<tr class="memdesc:a90d0f10815864241524a1c20801e8e19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold the CAN message/frame buffers in an array up to <a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a> in count.  <br /></td></tr>
+<tr class="memdesc:a90d0f10815864241524a1c20801e8e19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-allocated array of <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffers, sized USER_DEFINED_CAN_MSG_BUFFER_DEPTH.  <br /></td></tr>
 <tr class="separator:a90d0f10815864241524a1c20801e8e19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fbf90b47d77d9ee616bb099f3d9ce3e" id="r_a6fbf90b47d77d9ee616bb099f3d9ce3e"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structcan__main__statemachine__struct.html">can_main_statemachine_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fbf90b47d77d9ee616bb099f3d9ce3e">can_main_statemachine_t</a></td></tr>
+<tr class="memdesc:a6fbf90b47d77d9ee616bb099f3d9ce3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Working context for the CAN main state machine.  <br /></td></tr>
 <tr class="separator:a6fbf90b47d77d9ee616bb099f3d9ce3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad52cca2be7565c8d23f3cc4d83cbc19e" id="r_ad52cca2be7565c8d23f3cc4d83cbc19e"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structcan__statemachine__info__struct.html">can_statemachine_info_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a></td></tr>
+<tr class="memdesc:ad52cca2be7565c8d23f3cc4d83cbc19e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Context block passed through the CAN state machine on every iteration.  <br /></td></tr>
 <tr class="separator:ad52cca2be7565c8d23f3cc4d83cbc19e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6742a625d665303b409391926b8a65b1" id="r_a6742a625d665303b409391926b8a65b1"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structalias__mapping__struct.html">alias_mapping_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a></td></tr>
+<tr class="memdesc:a6742a625d665303b409391926b8a65b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">One entry in the alias mapping table: a <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> / 12-bit alias pair.  <br /></td></tr>
 <tr class="separator:a6742a625d665303b409391926b8a65b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f5fe2a96f016592936919dc52552b60" id="r_a6f5fe2a96f016592936919dc52552b60"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structalias__mapping__info__struct.html">alias_mapping_info_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f5fe2a96f016592936919dc52552b60">alias_mapping_info_t</a></td></tr>
+<tr class="memdesc:a6f5fe2a96f016592936919dc52552b60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Container for all <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> entries plus a global duplicate flag.  <br /></td></tr>
 <tr class="separator:a6f5fe2a96f016592936919dc52552b60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Type definitions and constants for CAN operations. </p>
+<div class="textblock"><p>Type definitions and constants for the CAN transport layer. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<ul>
 <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
 </ul>
 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a66e224442df976c1bb15398aa0a681ab" name="a66e224442df976c1bb15398aa0a681ab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a66e224442df976c1bb15398aa0a681ab">&#9670;&#160;</a></span>USER_DEFINED_CAN_MSG_BUFFER_DEPTH</h2>
@@ -197,8 +197,9 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The number of CAN messages buffers that are available to allocate through the <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> The default value for the buffer depth is 10 (typically more than enough) but can be overridden by using a global define for the compiler such as USER_DEFINED_CAN_MSG_BUFFER_DEPTH=20. </p>
-<dl class="section warning"><dt>Warning</dt><dd>the maximum size for the buffer depth is 254 (0xFE) </dd></dl>
+<p>Number of <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffers in the pool (<a class="el" href="can__buffer__store_8h.html" title="Pre-allocated pool of can_msg_t buffers (8-byte payload each).">can_buffer_store.h</a>). </p>
+<p>Override at compile time: -D USER_DEFINED_CAN_MSG_BUFFER_DEPTH=20</p>
+<dl class="section warning"><dt>Warning</dt><dd>Maximum value is 254 (0xFE). </dd></dl>
 
 </div>
 </div>
@@ -209,12 +210,12 @@ Typedefs</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define ALIAS_MAPPING_BUFFER_DEPTH&#160;&#160;&#160;<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a></td>
+          <td class="memname">#define ALIAS_MAPPING_BUFFER_DEPTH&#160;&#160;&#160;USER_DEFINED_NODE_BUFFER_DEPTH</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>The number of Alias Mapping slots available for <a class="el" href="alias__mappings_8h.html" title="Alias/NodeID mapping buffer for tracking internal node aliases.">alias_mappings.h</a> The default value for the buffer is equal to the value used for /ref USER_DEFINED_NODE_BUFFER_DEPTH as there must be the same number mapping slot as there are allocated nodes. </p>
+<p>Number of <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> slots. Defaults to USER_DEFINED_NODE_BUFFER_DEPTH. </p>
 
 </div>
 </div>
@@ -230,7 +231,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The number of Pointer slots in the FIFO to hold CAN Buffers from <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> The default value is size of the buffer depth plus one <a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a> so all buffers can be held in the FIFO implementation. The buffer can then be checked for full without the head == tail. </p>
+<p>FIFO slot count — one extra slot so head==tail always means empty. </p>
 
 </div>
 </div>
@@ -246,7 +247,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The number of data bytes in a CAN frame. </p>
+<p>Number of data bytes in a CAN 2.0 frame. </p>
 
 </div>
 </div>
@@ -262,7 +263,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Some CAN frames depending, of what OpenLcb/LCC message is being worked on, will have an destination Alias as the first 2 bytes. This is a constant passed to many functions to allow the function to know where the actual data for the message starts. This means there is no Alias in the data and the first position in the array is data. </p>
+<p>Pass to functions when the CAN payload starts at byte 0 (no destination alias). </p>
 
 </div>
 </div>
@@ -278,7 +279,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Some CAN frames depending, of what OpenLcb/LCC message is being worked on, will have an destination Alias as the first 2 bytes. This is a constant passed to many functions to allow the function to know where the actual data for the message starts. This means there is an Alias in the data and the 2 second position in the array is data. </p>
+<p>Pass to functions when bytes 0-1 carry a destination alias; data starts at byte 2. </p>
 
 </div>
 </div>
@@ -294,7 +295,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a value that can be used to build the bits in the higher positions of the CAN MTI. </p>
+<p>Bit mask for building global/addressed OpenLCB CAN identifiers. </p>
 
 </div>
 </div>
@@ -310,7 +311,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a value that can be used to build the bits in the higher positions of the CAN MTI for Datagram reject. </p>
+<p>Pre-built upper bits for a Datagram Rejected reply CAN identifier. </p>
 
 </div>
 </div>
@@ -326,7 +327,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a value that can be used to build the bits in the higher positions of the CAN MTI for Datagram reject reply. </p>
+<p>Pre-built upper bits for an Optional Interaction Rejected reply CAN identifier. </p>
 
 </div>
 </div>
@@ -343,16 +344,10 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a type that is an array of 8 bytes to carry the CAN frame data. </p>
-<p>Defines the standard CAN payload buffer size according to the CAN 2.0 specification which allows up to 8 data bytes per frame. This type is used throughout the CAN layer to ensure consistent payload sizing.</p>
-<p>Use cases:</p><ul>
-<li>Allocating CAN frame payload buffers</li>
-<li>Passing CAN data between functions</li>
-<li>Ensuring compile-time type safety for CAN payloads</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a5557aaecf7420e7ec1beccd6c614e8ba" title="The number of data bytes in a CAN frame.">LEN_CAN_BYTE_ARRAY</a> - Defines the array size </dd>
+<p>Fixed 8-byte array holding a CAN frame payload. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a5557aaecf7420e7ec1beccd6c614e8ba" title="Number of data bytes in a CAN 2.0 frame.">LEN_CAN_BYTE_ARRAY</a> </dd>
 <dd>
-<a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> - Uses this type for payload storage </dd></dl>
+<a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309" title="Complete CAN 2.0B extended frame: 29-bit identifier + up to 8 data bytes.">can_msg_t</a> </dd></dl>
 
 </div>
 </div>
@@ -368,6 +363,11 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Bit-field tracking allocation status of a <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffer. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8c.html#afd3358d37ab07ff0f8ec918c00fffe99" title="Allocates one can_msg_t buffer from the pool.">CanBufferStore_allocate_buffer</a> </dd>
+<dd>
+<a class="el" href="can__buffer__store_8c.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Returns a can_msg_t buffer to the pool.">CanBufferStore_free_buffer</a> </dd></dl>
+
 </div>
 </div>
 <a id="a9fec363f8b39411fc3ce3bafd7182309" name="a9fec363f8b39411fc3ce3bafd7182309"></a>
@@ -381,6 +381,12 @@ Typedefs</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Complete CAN 2.0B extended frame: 29-bit identifier + up to 8 data bytes. </p>
+<dl class="section warning"><dt>Warning</dt><dd>Maximum payload is 8 bytes.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8h.html" title="Pre-allocated pool of can_msg_t buffers (8-byte payload each).">can_buffer_store.h</a> </dd>
+<dd>
+<a class="el" href="can__buffer__fifo_8h.html" title="Circular FIFO queue for can_msg_t pointers.">can_buffer_fifo.h</a> </dd></dl>
 
 </div>
 </div>
@@ -396,19 +402,8 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Structure to hold the CAN message/frame buffers in an array up to <a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a> in count. </p>
-<p>Defines a fixed-size array of CAN message buffers that forms the pre-allocated memory pool for CAN frame storage. The size is configurable at compile time but defaults to 10 buffers.</p>
-<p>Use cases:</p><ul>
-<li>Pre-allocating CAN message buffer pool at initialization</li>
-<li>Providing static memory allocation for embedded systems</li>
-<li>Avoiding dynamic memory allocation during runtime</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>Array size determined by USER_DEFINED_CAN_MSG_BUFFER_DEPTH </dd>
-<dd>
-Maximum array size is 254 buffers (0xFE)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a66e224442df976c1bb15398aa0a681ab" title="The number of CAN messages buffers that are available to allocate through the can_buffer_store....">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a> - Defines array size </dd>
-<dd>
-<a class="el" href="can__buffer__store_8c.html" title="Implementation of the core buffer store for CAN frames.">can_buffer_store.c</a> - Manages this array </dd></dl>
+<p>Pre-allocated array of <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffers, sized USER_DEFINED_CAN_MSG_BUFFER_DEPTH. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8c.html" title="Implementation of the pre-allocated CAN message buffer pool.">can_buffer_store.c</a> </dd></dl>
 
 </div>
 </div>
@@ -424,6 +419,8 @@ Maximum array size is 254 buffers (0xFE)</dd></dl>
       </table>
 </div><div class="memdoc">
 
+<p>Working context for the CAN main state machine. </p>
+
 </div>
 </div>
 <a id="ad52cca2be7565c8d23f3cc4d83cbc19e" name="ad52cca2be7565c8d23f3cc4d83cbc19e"></a>
@@ -437,6 +434,15 @@ Maximum array size is 254 buffers (0xFE)</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Context block passed through the CAN state machine on every iteration. </p>
+<p>Carries the current node pointer, a statically-allocated login frame buffer, a pointer to an outgoing frame from the pool, and control flags. The login buffer is always valid; outgoing_can_msg is NULL when no message is pending.</p>
+<dl class="section warning"><dt>Warning</dt><dd>login_outgoing_can_msg points to a static variable in <a class="el" href="can__main__statemachine_8c.html" title="Implementation of the main CAN state machine dispatcher.">can_main_statemachine.c</a> — do not free it. </dd>
+<dd>
+outgoing_can_msg must be freed after successful transmission.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8h.html" title="Main CAN layer state machine — orchestrates alias management, login, and message dispatch.">can_main_statemachine.h</a> </dd>
+<dd>
+<a class="el" href="can__login__statemachine_8h.html" title="Dispatcher for the 10-state CAN alias allocation login sequence.">can_login_statemachine.h</a> </dd></dl>
 
 </div>
 </div>
@@ -452,6 +458,10 @@ Maximum array size is 254 buffers (0xFE)</dd></dl>
       </table>
 </div><div class="memdoc">
 
+<p>One entry in the alias mapping table: a <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> / 12-bit alias pair. </p>
+<p>Flags may be set from interrupt context and read from the main loop. Use lock/unlock around accesses shared between contexts.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8h.html" title="Fixed-size buffer mapping 12-bit CAN aliases to 48-bit OpenLCB Node IDs.">alias_mappings.h</a> </dd></dl>
+
 </div>
 </div>
 <a id="a6f5fe2a96f016592936919dc52552b60" name="a6f5fe2a96f016592936919dc52552b60"></a>
@@ -465,6 +475,12 @@ Maximum array size is 254 buffers (0xFE)</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Container for all <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> entries plus a global duplicate flag. </p>
+<p>has_duplicate_alias is a fast-check flag: when set, at least one entry has is_duplicate set and the main loop should scan the list to find and resolve it.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8h.html" title="Fixed-size buffer mapping 12-bit CAN aliases to 48-bit OpenLCB Node IDs.">alias_mappings.h</a> </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a1e2639729c40c4ba017fa2529493c2d7" title="Sets the has_duplicate_alias flag to signal an alias conflict.">AliasMappings_set_has_duplicate_alias_flag</a> </dd></dl>
 
 </div>
 </div>

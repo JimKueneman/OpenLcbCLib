@@ -25,44 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file openlcb_defines.h
- * @brief OpenLCB protocol constants and Message Type Indicators (MTI)
+ * @brief OpenLCB protocol constants, MTI codes, and memory configuration commands.
  *
- * @details This header file defines all OpenLCB protocol constants including:
- * - CAN bus login state machine run states for alias allocation
- * - Message Type Indicators (MTI) for all OpenLCB message types
- * - CAN frame type identifiers and control frame definitions
- * - Protocol support indicator bits
- * - Error codes for permanent and temporary failures
- * - Configuration memory command and subcommand codes
- * - Memory address space identifiers
- * - ACDI (Abbreviated Configuration Description Information) memory addresses
- *
- * These constants are derived from the OpenLCB specifications:
- * - Message Network Standard
- * - CAN Frame Transfer Standard
- * - Event Transport Standard
- * - Datagram Transport Standard
- * - Memory Configuration Protocol Standard
- *
- * The constants in this file are organized into logical groups:
- * -# Node Login State Machine States
- * -# CAN Frame Format and Control Frames
- * -# Message Type Indicators (MTI)
- * -# Protocol Support Indicators
- * -# Error Codes
- * -# Configuration Memory Protocol
- * -# Address Space Definitions
- * -# ACDI Memory Layout
- *
- * @note All constant values follow the OpenLCB specification exactly
- * @note MTI values are 16-bit but only 12 bits are used in CAN adaptation
- *
- * @see openlcb_types.h - Type definitions for OpenLCB structures
- * @see OpenLCB Message Network Standard S-9.7.1.1
- * @see OpenLCB CAN Frame Transfer Standard S-9.7.3
+ * @details All numeric constants for the OpenLCB library in one place: login
+ * states, CAN frame fields, MTIs, error codes, Config Mem commands, Broadcast
+ * Time event IDs, Train Control instruction bytes, and well-known events.
  *
  * @author Jim Kueneman
- * @date 17 Jan 2026
+ * @date 28 Feb 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -73,35 +43,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#ifdef	__cplusplus
+  extern "C" {
+#endif /* __cplusplus */
+
 /**
  * @defgroup node_login_states Node Login State Machine States
- * @brief State definitions for CAN bus alias allocation and node login sequence
- *
- * @details These states control the multi-step process of allocating a CAN alias
- * and logging a node onto the OpenLCB network. The sequence ensures collision-free
- * alias assignment through the Check ID (CID) process.
- *
- * Normal login sequence:
- * -# RUNSTATE_INIT - Initialize with Node ID as seed
- * -# RUNSTATE_GENERATE_ALIAS - Generate 12-bit alias from seed
- * -# RUNSTATE_LOAD_CHECK_ID_07 through 04 - Send CID frames with Node ID fragments
- * -# RUNSTATE_WAIT_200ms - Wait for collision detection period
- * -# RUNSTATE_LOAD_RESERVE_ID - Send RID frame to claim alias
- * -# RUNSTATE_LOAD_ALIAS_MAP_DEFINITION - Send AMD frame, mark node as Permitted
- * -# RUNSTATE_LOAD_INITIALIZATION_COMPLETE - Send Initialization Complete message
- * -# RUNSTATE_LOAD_CONSUMER_EVENTS - Broadcast consumer event IDs
- * -# RUNSTATE_LOAD_PRODUCER_EVENTS - Broadcast producer event IDs
- * -# RUNSTATE_LOGIN_COMPLETE - Optional callback for final setup before normal operation
- * -# RUNSTATE_RUN - Normal operation mode
- *
- * If alias collision is detected during CID or wait period, state returns to
- * RUNSTATE_GENERATE_SEED to create a new alias.
- *
- * @note States are stored in 5-bit field, limiting to 32 possible states
- * @warning State transitions must follow the sequence defined in CAN Frame Transfer Standard
- *
- * @see openlcb_node_t.state.run_state
- * @see OpenLCB CAN Frame Transfer Standard S-9.7.3
+ * @brief CAN alias allocation sequence: CID → RID → AMD → Init Complete → Run.
  * @{
  */
 
@@ -126,7 +74,9 @@
     /** @brief Send CID frame 4 with last 12 bits of 48-bit Node ID */
 #define RUNSTATE_LOAD_CHECK_ID_04 6
 
-    /** @brief Wait 200ms for alias collision detection. An objection from another node could occur in this or the previous state, if they do then jump back to RUNSTATE_GENERATE_SEED to try again */
+    /** @brief Wait 200ms for alias collision detection.
+     * An objection from another node could occur in this or the previous
+     * state, if they do then jump back to RUNSTATE_GENERATE_SEED to try again */
 #define RUNSTATE_WAIT_200ms 7
 
     /** @brief Send Reserve ID (RID) frame to claim the alias */
@@ -144,38 +94,17 @@
     /** @brief Broadcast all producer event IDs that this node generates */
 #define RUNSTATE_LOAD_PRODUCER_EVENTS 12
 
-/** @brief Callback to allow any startup messages to be sent */
+    /** @brief Callback to allow any startup messages to be sent */
 #define RUNSTATE_LOGIN_COMPLETE 13
 
-/** @brief Normal operation mode - process messages from FIFO */
+    /** @brief Normal operation mode - process messages from FIFO */
 #define RUNSTATE_RUN 14
 
     /** @} */ // end of node_login_states
 
 /**
  * @defgroup can_frame_format CAN Frame Format and Masks
- * @brief CAN identifier bit definitions and frame type identifiers
- *
- * @details The CAN 29-bit extended identifier is structured as follows:
- *
- * Bits 28-0:
- * - Bit 28: Reserved (must be 0)
- * - Bit 27: OpenLCB/CAN selector (1=OpenLCB, 0=CAN control frame)
- * - Bits 26-24: Frame type (for OpenLCB) or sequence number (for CAN control)
- * - Bits 23-12: Variable field (MTI for OpenLCB messages)
- * - Bits 11-0: Source alias (12-bit node identifier)
- *
- * Frame types for OpenLCB messages (bits 26-24):
- * - 000: Reserved
- * - 001: Global/Addressed message
- * - 010: Datagram single frame only
- * - 011: Datagram first frame
- * - 100: Datagram middle frame
- * - 101: Datagram final frame
- * - 110: Reserved
- * - 111: Stream data
- *
- * @see OpenLCB CAN Frame Transfer Standard S-9.7.3
+ * @brief CAN 29-bit extended identifier bit definitions and frame type codes.
  * @{
  */
 
@@ -197,7 +126,7 @@
     /** @brief Frame type: Global or addressed OpenLCB message */
 #define OPENLCB_MESSAGE_STANDARD_FRAME_TYPE 0x01000000
 
-/** @brief Frame type: Datagram complete in single frame */
+    /** @brief Frame type: Datagram complete in single frame */
 #define CAN_FRAME_TYPE_DATAGRAM_ONLY 0x02000000
 
     /** @brief Frame type: First frame of multi-frame datagram */
@@ -219,14 +148,7 @@
 
 /**
  * @defgroup mti_message_network Message Network MTI Codes
- * @brief Message Type Indicators for basic node communication
- *
- * @details These MTI codes handle fundamental node operations:
- * - Node initialization and identification
- * - Protocol capability discovery
- * - Error reporting and interaction rejection
- *
- * @see OpenLCB Message Network Standard S-9.7.1.1
+ * @brief Node initialization, identification, protocol discovery, and error reporting.
  * @{
  */
 
@@ -264,22 +186,7 @@
 
 /**
  * @defgroup mti_event_transport Event Transport Protocol MTI Codes
- * @brief Message Type Indicators for Producer/Consumer event handling
- *
- * @details OpenLCB uses a Producer/Consumer event model. Events are identified
- * by 64-bit Event IDs. Nodes declare themselves as producers and/or consumers
- * of specific events.
- *
- * Consumer identification messages indicate whether the node:
- * - Consumes the event (UNKNOWN if current state unknown)
- * - Has the event SET or CLEAR
- * - Uses RESERVED state (protocol-specific)
- *
- * Producer identification follows the same pattern.
- *
- * The PCER (Producer/Consumer Event Report) is the actual event notification.
- *
- * @see OpenLCB Event Transport Standard S-9.7.4
+ * @brief Producer/Consumer event identification, learning, and PCER.
  * @{
  */
 
@@ -347,17 +254,7 @@
 
 /**
  * @defgroup mti_snip Simple Node Information Protocol MTI Codes
- * @brief Message Type Indicators for SNIP (node identification strings)
- *
- * @details SNIP provides human-readable node information including:
- * - Manufacturer name
- * - Model name
- * - Hardware version
- * - Software version
- * - User-assigned name
- * - User description
- *
- * @see OpenLCB Simple Node Information Protocol Standard
+ * @brief SNIP request/reply for human-readable node identification.
  * @{
  */
 
@@ -371,15 +268,7 @@
 
 /**
  * @defgroup mti_train Train Protocol MTI Codes
- * @brief Message Type Indicators for locomotive control (train)
- *
- * @details The train protocol controls model railroad locomotives including:
- * - Speed and direction
- * - Function controls (lights, horn, etc.)
- * - Consisting (multiple locomotive control)
- * - Train identification
- *
- * @see OpenLCB Train Protocol Standard
+ * @brief Speed, direction, function, and consist control for train nodes.
  * @{
  */
 
@@ -399,14 +288,7 @@
 
 /**
  * @defgroup mti_stream Stream Protocol MTI Codes
- * @brief Message Type Indicators for bulk data streaming
- *
- * @details Stream protocol provides high-throughput data transfer with:
- * - Flow control (window-based)
- * - Connection setup/teardown
- * - Bi-directional streams
- *
- * @see OpenLCB Stream Transport Standard
+ * @brief Bulk data streaming with flow control.
  * @{
  */
 
@@ -432,14 +314,7 @@
 
 /**
  * @defgroup mti_datagram Datagram Protocol MTI Codes
- * @brief Message Type Indicators for datagram transport
- *
- * @details Datagrams provide reliable message delivery with:
- * - Up to 72 bytes per datagram
- * - Acknowledgment required (OK or Rejected)
- * - Used by Configuration Memory Protocol
- *
- * @see OpenLCB Datagram Transport Standard
+ * @brief Reliable up-to-72-byte datagram transport with ACK/reject.
  * @{
  */
 
@@ -456,11 +331,7 @@
 
 /**
  * @defgroup data_field_masks Data Field Bit Masks and Values
- * @brief Masks and values for multi-frame message data fields
- *
- * @details Multi-frame messages (datagrams, SNIP) use the first data byte
- * to indicate frame position within the sequence.
- *
+ * @brief Multi-frame indicator bits in the first data byte.
  * @{
  */
 
@@ -483,15 +354,7 @@
 
 /**
  * @defgroup mti_field_masks MTI Bit Field Masks
- * @brief Bit masks for extracting information from MTI values
- *
- * @details The 16-bit MTI contains encoded information about:
- * - Message priority
- * - Stream vs datagram
- * - Simple protocol indicator
- * - Destination address presence
- * - Event ID presence
- *
+ * @brief Masks for priority, stream/datagram, dest address, and event presence.
  * @{
  */
 
@@ -517,22 +380,7 @@
 
 /**
  * @defgroup can_control_frames CAN Control Frame Identifiers
- * @brief Special CAN control frames for alias allocation
- *
- * @details CAN control frames (bit 27 = 0) are used during node login:
- *
- * Check ID (CID) frames:
- * - CID7-CID4 carry fragments of the 48-bit Node ID
- * - Sent during alias allocation to detect collisions
- * - Other nodes check if the Node ID conflicts with their alias
- *
- * Other control frames:
- * - RID: Reserve ID - claims alias after CID sequence
- * - AMD: Alias Map Definition - maps alias to Node ID
- * - AME: Alias Mapping Enquiry - query alias ownership
- * - AMR: Alias Map Reset - node is releasing alias
- *
- * @see OpenLCB CAN Frame Transfer Standard S-9.7.3
+ * @brief CID, RID, AMD, AME, AMR frames for alias allocation and mapping.
  * @{
  */
 
@@ -585,11 +433,7 @@
 
 /**
  * @defgroup can_identifier_masks CAN Identifier Field Masks
- * @brief Bit masks for CAN 29-bit extended identifier fields
- *
- * @details These masks extract specific fields from the CAN identifier
- * when processing OpenLCB messages over CAN bus.
- *
+ * @brief Extract fields from the CAN 29-bit extended identifier.
  * @{
  */
 
@@ -618,18 +462,7 @@
 
 /**
  * @defgroup protocol_support_bits Protocol Support Indicator Bits
- * @brief Bit flags for Protocol Support Inquiry/Reply messages
- *
- * @details The Protocol Support Reply message contains a 6-byte (48-bit)
- * bit field indicating which optional protocols the node implements.
- * Bits are numbered with bit 0 as the LSB of byte 0.
- *
- * Required protocols (always supported):
- * - Protocol Support Protocol itself
- * - Simple Node Information Protocol (SNIP)
- *
- * @see MTI_PROTOCOL_SUPPORT_INQUIRY
- * @see MTI_PROTOCOL_SUPPORT_REPLY
+ * @brief 48-bit field returned in Protocol Support Reply.
  * @{
  */
 
@@ -697,35 +530,13 @@
 
 /**
  * @defgroup well_known_events Well-Known Event IDs
- * @brief Predefined Event IDs for standard OpenLCB functions
- *
- * @details Well-Known Events are Event IDs defined by the OpenLCB standard
- * for common system-wide functions. They are divided into two categories:
- *
- * **Auto-Routed Events (0x0100000000xxxxxx):**
- * These events are automatically propagated across network segments by gateway
- * nodes. They handle critical system-wide functions like emergency stops.
- *
- * **Non-Auto-Routed Events (0x0101xxxxxxxxxxxxxx):**
- * These events are segment-local and not automatically forwarded by gateways.
- * They handle node-specific conditions and protocol-specific functions.
- *
- * **DCC-Specific Events:**
- * Several well-known events map to DCC (Digital Command Control) functions
- * for interoperability with existing DCC systems.
- *
- * @see OpenLCB Event Identifiers Standard
- * @see MTI_PC_EVENT_REPORT
+ * @brief Standard-defined Event IDs: auto-routed (emergency), local, and DCC.
  * @{
  */
 
 /**
  * @defgroup well_known_events_auto Auto-Routed Well-Known Events
- * @brief Events automatically propagated across network segments
- *
- * @details These events use the 0x0100000000xxxxxx range and are automatically
- * forwarded by gateway nodes to all connected segments.
- *
+ * @brief 0x0100000000xxxxxx — automatically forwarded by gateways.
  * @{
  */
 
@@ -769,11 +580,7 @@
 
 /**
  * @defgroup well_known_events_local Non-Auto-Routed Well-Known Events
- * @brief Events that remain local to network segment
- *
- * @details These events use the 0x0101xxxxxxxxxxxxxx range and are NOT
- * automatically forwarded across network segments by gateways.
- *
+ * @brief 0x0101xxxxxxxxxxxx — segment-local, not forwarded by gateways.
  * @{
  */
 
@@ -843,17 +650,7 @@
 
 /**
  * @defgroup error_codes OpenLCB Error Codes
- * @brief Error codes for Optional Interaction Rejected and Datagram Rejected
- *
- * @details Error codes are 16-bit values divided into:
- * - Permanent errors (0x1000-0x1FFF): Will not succeed if retried
- * - Temporary errors (0x2000-0x2FFF): May succeed if retried later
- *
- * Used in:
- * - Optional Interaction Rejected messages
- * - Datagram Rejected Reply messages
- * - Terminate Due To Error messages
- *
+ * @brief Permanent (0x1xxx) and temporary (0x2xxx) error codes.
  * @{
  */
 
@@ -933,19 +730,7 @@
 
 /**
  * @defgroup config_mem_protocol Configuration Memory Protocol Commands
- * @brief Command codes for Memory Configuration Protocol
- *
- * @details The Memory Configuration Protocol operates via datagrams with
- * a command structure:
- * - Byte 0: Protocol identifier (0x20 for Configuration Memory)
- * - Byte 1: Command/subcommand code
- * - Bytes 2+: Command-specific data
- *
- * Address spaces are identified by:
- * - Single byte (0-254) for spaces < 0xFD
- * - 0xFD, 0xFE, 0xFF with space ID in byte 6 for well-known spaces
- *
- * @see OpenLCB Memory Configuration Protocol Standard
+ * @brief Datagram byte 0 = 0x20, byte 1 = command code.
  * @{
  */
 
@@ -956,11 +741,7 @@
 
 /**
  * @defgroup config_mem_read Configuration Memory Read Commands
- * @brief Read command codes and reply codes
- *
- * @details Read commands request data from a memory address space.
- * Four variants handle different address space encodings.
- *
+ * @brief Read command and reply codes for each address space encoding.
  * @{
  */
 
@@ -1004,8 +785,7 @@
 
 /**
  * @defgroup config_mem_read_stream Configuration Memory Read Stream Commands
- * @brief Stream-based read command codes for large data transfers
- *
+ * @brief Stream-based read commands for large transfers.
  * @{
  */
 
@@ -1211,18 +991,7 @@
 
 /**
  * @defgroup address_spaces Configuration Memory Address Spaces
- * @brief Well-known address space identifiers
- *
- * @details Address spaces organize different types of configuration data:
- * - 0xFF: CDI (Configuration Description Information) - XML description
- * - 0xFE: All memory spaces combined
- * - 0xFD: Configuration memory - user-configurable values
- * - 0xFC: ACDI Manufacturer - factory set identification
- * - 0xFB: ACDI User - user-assignable identification
- * - 0xFA: FDI (Function Description Information) - for train nodes
- * - 0xF9: Function configuration memory - for train nodes
- * - 0xEF: Firmware upgrade space
- *
+ * @brief Well-known space identifiers (0xFF CDI through 0xEF Firmware).
  * @{
  */
 
@@ -1254,16 +1023,7 @@
 
 /**
  * @defgroup acdi_manufacturer_layout ACDI Manufacturer Space Memory Layout
- * @brief Memory addresses and lengths for ACDI manufacturer information
- *
- * @details The ACDI Manufacturer space (0xFC) contains read-only strings
- * set at manufacturing time. Layout:
- * - Byte 0: Version (always 1)
- * - Bytes 1-41: Manufacturer name (null-terminated, max 41 bytes including null)
- * - Bytes 42-82: Model name (null-terminated, max 41 bytes including null)
- * - Bytes 83-103: Hardware version (null-terminated, max 21 bytes including null)
- * - Bytes 104-124: Software version (null-terminated, max 21 bytes including null)
- *
+ * @brief Space 0xFC: read-only manufacturer strings (version, name, model, hw, sw).
  * @{
  */
 
@@ -1301,14 +1061,7 @@
 
 /**
  * @defgroup acdi_user_layout ACDI User Space Memory Layout
- * @brief Memory addresses and lengths for ACDI user information
- *
- * @details The ACDI User space (0xFB) contains user-assignable strings.
- * Layout:
- * - Byte 0: Version (always 1)
- * - Bytes 1-63: User name (null-terminated, max 63 bytes including null)
- * - Bytes 64-127: User description (null-terminated, max 64 bytes including null)
- *
+ * @brief Space 0xFB: user-assignable name and description strings.
  * @{
  */
 
@@ -1340,12 +1093,7 @@
 
 /**
  * @defgroup config_mem_reply_offsets Configuration Memory Reply Code Offsets
- * @brief Offset values to convert command codes to reply codes
- *
- * @details Add these offsets to command codes to get corresponding reply codes:
- * - Command + REPLY_OK_OFFSET = OK reply
- * - Command + REPLY_FAIL_OFFSET = FAIL reply
- *
+ * @brief Add to command code: +0x10 = OK reply, +0x18 = FAIL reply.
  * @{
  */
 
@@ -1359,11 +1107,7 @@
 
 /**
  * @defgroup config_options_bits Configuration Options Bit Flags
- * @brief Capability flags returned by Get Configuration Options
- *
- * @details These bits indicate which optional configuration memory
- * operations are supported by the node.
- *
+ * @brief Capability flags returned by Get Configuration Options.
  * @{
  */
 
@@ -1419,18 +1163,7 @@
 
 /**
  * @defgroup node_enum_keys Node Enumeration Key Management
- * @brief Constants for managing node enumeration keys
- *
- * @details Nodes can be enumerated using user-defined keys (0-3) and
- * internal system keys (4-6). This allows different subsystems to
- * independently enumerate nodes.
- *
- * User keys (0-3): Available for application use
- * Internal keys:
- * - Key 4: Main state machine enumeration
- * - Key 5: Login state machine enumeration
- * - Key 6: CAN state machine enumeration
- *
+ * @brief User keys (0-3) and internal keys (4-6) for independent node enumeration.
  * @{
  */
 
@@ -1468,53 +1201,7 @@
 
 /**
  * @defgroup broadcast_time_events Broadcast Time Protocol Event IDs
- * @brief Well-known Event IDs for clock synchronization and fast time
- *
- * @details The Broadcast Time Protocol uses well-known Event IDs to distribute
- * time information across the OpenLCB network. Time is encoded directly in the
- * Event ID itself (no payload data). This allows fast clock synchronization for
- * model railroad operations where time runs faster than real-time.
- *
- * **Event ID Structure (64 bits):**
- * - Bits 63-16 (6 bytes): Clock Identifier - identifies which clock
- * - Bits 15-0 (2 bytes): Time/Date/Year/Rate/Command Data
- *
- * **Well-Known Clock Identifiers (Upper 6 bytes):**
- * - 01.01.00.00.01.00 - Default Fast Clock
- * - 01.01.00.00.01.01 - Default Real-time Clock
- * - 01.01.00.00.01.02 - Alternate Clock 1
- * - 01.01.00.00.01.03 - Alternate Clock 2
- * - Custom unique IDs for additional clocks
- *
- * **Event Types (Lower 2 bytes encoding):**
- * - 0x0000-0x17FF: Report Time (hour 0-23, minute 0-59)
- * - 0x2100-0x2CFF: Report Date (month 1-12, day 1-31)
- * - 0x3000-0x3FFF: Report Year (year 0-4095 AD)
- * - 0x4000-0x4FFF: Report Rate (12-bit signed fixed point)
- * - 0x8000-0x97FF: Set Time (offset +0x8000 from Report Time)
- * - 0xA100-0xACFF: Set Date (offset +0x8000 from Report Date)
- * - 0xB000-0xBFFF: Set Year (offset +0x8000 from Report Year)
- * - 0xC000-0xCFFF: Set Rate (offset +0x8000 from Report Rate)
- * - 0xF000: Query (request clock synchronization)
- * - 0xF001: Stop (stop clock)
- * - 0xF002: Start (start clock)
- * - 0xF003: Date Rollover (midnight crossing notification)
- *
- * **Rate Format:**
- * Rate is a 12-bit signed fixed point value: rrrrrrrrrr.rr (2 fractional bits)
- * - Range: -512.00 to +511.75 in 0.25 increments
- * - Examples: 0x0004 = 1.00 (real-time), 0x0010 = 4.00 (4x speed)
- * - Negative values in 2's complement (e.g., 0xFFFC = -1.00)
- *
- * **Protocol Behaviors:**
- * - Report Time sent maximum once per real-world minute
- * - Report Time sent minimum once per real-world hour
- * - Date Rollover sent before midnight, Year/Date 3 seconds after
- * - Query triggers full synchronization sequence from producers
- * - Set commands echo as Report events, full sync 3 seconds later
- *
- * @see OpenLCB Broadcast Time Protocol Standard
- * @see MTI_PC_EVENT_REPORT - Transport MTI for time events
+ * @brief Clock IDs (upper 6 bytes) + time/date/year/rate/command (lower 2 bytes).
  * @{
  */
 
@@ -1579,12 +1266,7 @@
 
 /**
  * @defgroup train_protocol Train Control Protocol Defines
- * @brief Instruction bytes and sub-commands for Train Control Protocol
- *
- * @details Byte layouts for MTI_TRAIN_PROTOCOL (0x05EB) commands
- * and MTI_TRAIN_REPLY (0x01E9) replies.
- *
- * @see OpenLCB Train Control Standard S-9.7.4.6
+ * @brief Instruction bytes and sub-commands for MTI_TRAIN_PROTOCOL / MTI_TRAIN_REPLY.
  * @{
  */
 
@@ -1665,12 +1347,6 @@
 #define TRAIN_LISTENER_FLAG_HIDE          0x80
 
     /** @} */ // end of train_protocol
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-
 
 #ifdef __cplusplus
 }

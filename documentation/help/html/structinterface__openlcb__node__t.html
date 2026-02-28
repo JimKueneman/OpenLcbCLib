@@ -92,23 +92,18 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Dependency injection interface for OpenLCB Node module.  
+<p>Dependency injection interface for the OpenLCB Node module.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:aea0579c23d8e07b8762d20d1d7e0290d" id="r_aea0579c23d8e07b8762d20d1d7e0290d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea0579c23d8e07b8762d20d1d7e0290d">on_100ms_timer_tick</a> )(void)</td></tr>
-<tr class="memdesc:aea0579c23d8e07b8762d20d1d7e0290d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback invoked every 100ms timer tick.  <br /></td></tr>
+<tr class="memdesc:aea0579c23d8e07b8762d20d1d7e0290d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback invoked every 100ms after node timer updates (NULL if unused).  <br /></td></tr>
 <tr class="separator:aea0579c23d8e07b8762d20d1d7e0290d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Dependency injection interface for OpenLCB Node module. </p>
-<p>Provides callback hooks for application integration with the node management system. Allows the application to respond to timer events.</p>
-<p>Use cases:</p><ul>
-<li>Application needs notification of 100ms timer ticks</li>
-<li>Custom processing during node lifecycle events</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a7beb45af246c8e2bf112bfca6c11375b" title="Initializes the OpenLCB Node management module.">OpenLcbNode_initialize</a> - Accepts this interface structure </dd></dl>
+<div class="textblock"><p>Dependency injection interface for the OpenLCB Node module. </p>
+<p>Provides an optional callback hook for the application to receive 100ms timer tick notifications after all node counters have been incremented. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="aea0579c23d8e07b8762d20d1d7e0290d" name="aea0579c23d8e07b8762d20d1d7e0290d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aea0579c23d8e07b8762d20d1d7e0290d">&#9670;&#160;</a></span>on_100ms_timer_tick</h2>
@@ -122,15 +117,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback invoked every 100ms timer tick. </p>
-<p>Optional callback that is called by <a class="el" href="openlcb__node_8c.html#ad69a221293d91383b8f8214ca9a38b40" title="100ms timer tick handler for all nodes">OpenLcbNode_100ms_timer_tick()</a> after all node timer counters have been incremented. Set to NULL if not needed.</p>
-<p>Use cases:</p><ul>
-<li>Application-specific timer-based processing</li>
-<li>Periodic status monitoring</li>
-</ul>
-<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe, called in context of interrupt or thread typically</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#ad69a221293d91383b8f8214ca9a38b40" title="100ms timer tick handler for all nodes">OpenLcbNode_100ms_timer_tick</a> - Invokes this callback </dd></dl>
+<p>Optional callback invoked every 100ms after node timer updates (NULL if unused). </p>
 
 </div>
 </div>

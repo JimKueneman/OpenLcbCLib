@@ -92,24 +92,23 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Internal FIFO structure for circular queue management.  
+<p>Internal circular buffer for queuing <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> pointers.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a744ea5739cefea78c502a0923b1dd111" id="r_a744ea5739cefea78c502a0923b1dd111"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a744ea5739cefea78c502a0923b1dd111">list</a> [<a class="el" href="can__types_8h.html#a50ba6934b926753e5fc4f7419c9e28c9">LEN_CAN_FIFO_BUFFER</a>]</td></tr>
-<tr class="memdesc:a744ea5739cefea78c502a0923b1dd111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of message pointers (circular buffer)  <br /></td></tr>
+<tr class="memdesc:a744ea5739cefea78c502a0923b1dd111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message pointer slots.  <br /></td></tr>
 <tr class="separator:a744ea5739cefea78c502a0923b1dd111"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9794c0e61506b826b49b458708ae2489" id="r_a9794c0e61506b826b49b458708ae2489"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9794c0e61506b826b49b458708ae2489">head</a></td></tr>
-<tr class="memdesc:a9794c0e61506b826b49b458708ae2489"><td class="mdescLeft">&#160;</td><td class="mdescRight">Next insertion position (points to empty slot)  <br /></td></tr>
+<tr class="memdesc:a9794c0e61506b826b49b458708ae2489"><td class="mdescLeft">&#160;</td><td class="mdescRight">Next write position.  <br /></td></tr>
 <tr class="separator:a9794c0e61506b826b49b458708ae2489"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8db7f977b77e4e4d588ef0d3e04ada16" id="r_a8db7f977b77e4e4d588ef0d3e04ada16"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8db7f977b77e4e4d588ef0d3e04ada16">tail</a></td></tr>
-<tr class="memdesc:a8db7f977b77e4e4d588ef0d3e04ada16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Next removal position (points to oldest message)  <br /></td></tr>
+<tr class="memdesc:a8db7f977b77e4e4d588ef0d3e04ada16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Next read position.  <br /></td></tr>
 <tr class="separator:a8db7f977b77e4e4d588ef0d3e04ada16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Internal FIFO structure for circular queue management. </p>
-<p>Implements a circular buffer using array indices. The buffer size is LEN_CAN_FIFO_BUFFER which is (USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1). The extra slot allows distinction between empty (head == tail) and full (head + 1 == tail) conditions without needing a separate count variable. </p>
+<div class="textblock"><p>Internal circular buffer for queuing <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> pointers. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a744ea5739cefea78c502a0923b1dd111" name="a744ea5739cefea78c502a0923b1dd111"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a744ea5739cefea78c502a0923b1dd111">&#9670;&#160;</a></span>list</h2>
@@ -123,7 +122,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Array of message pointers (circular buffer) </p>
+<p>Message pointer slots. </p>
 
 </div>
 </div>
@@ -139,7 +138,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Next insertion position (points to empty slot) </p>
+<p>Next write position. </p>
 
 </div>
 </div>
@@ -155,7 +154,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Next removal position (points to oldest message) </p>
+<p>Next read position. </p>
 
 </div>
 </div>

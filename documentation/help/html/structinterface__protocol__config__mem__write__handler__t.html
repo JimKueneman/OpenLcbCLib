@@ -92,61 +92,54 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Interface structure for configuration memory write protocol handler.  
+<p>Callback interface for memory-config write operations.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:acbb0b05b4b90f1f8851f976ed278089d" id="r_acbb0b05b4b90f1f8851f976ed278089d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbb0b05b4b90f1f8851f976ed278089d">load_datagram_received_ok_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td></tr>
-<tr class="memdesc:acbb0b05b4b90f1f8851f976ed278089d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load a datagram received OK acknowledgment message.  <br /></td></tr>
+<tr class="memdesc:acbb0b05b4b90f1f8851f976ed278089d"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED — Send Datagram Received OK with reply-pending time.  <br /></td></tr>
 <tr class="separator:acbb0b05b4b90f1f8851f976ed278089d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1a9f28156897e98626879c442a13a8c" id="r_ae1a9f28156897e98626879c442a13a8c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1a9f28156897e98626879c442a13a8c">load_datagram_received_rejected_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t return_code)</td></tr>
-<tr class="memdesc:ae1a9f28156897e98626879c442a13a8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load a datagram received rejected acknowledgment message.  <br /></td></tr>
+<tr class="memdesc:ae1a9f28156897e98626879c442a13a8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED — Send Datagram Received Rejected with error code.  <br /></td></tr>
 <tr class="separator:ae1a9f28156897e98626879c442a13a8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a72d0c9e692e2bdefb9cbaa347f1514" id="r_a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a72d0c9e692e2bdefb9cbaa347f1514">config_memory_write</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
-<tr class="memdesc:a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to write data to configuration memory.  <br /></td></tr>
+<tr class="memitem:a7a72d0c9e692e2bdefb9cbaa347f1514" id="r_a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a72d0c9e692e2bdefb9cbaa347f1514">config_memory_write</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED — Write bytes to config memory; returns bytes written.  <br /></td></tr>
 <tr class="separator:a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a545751219d325aa68a2b1273413cf878" id="r_a545751219d325aa68a2b1273413cf878"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a545751219d325aa68a2b1273413cf878">write_request_config_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:a545751219d325aa68a2b1273413cf878"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle writes to Configuration Definition Info space.  <br /></td></tr>
+<tr class="memitem:a545751219d325aa68a2b1273413cf878" id="r_a545751219d325aa68a2b1273413cf878"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a545751219d325aa68a2b1273413cf878">write_request_config_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:a545751219d325aa68a2b1273413cf878"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — CDI (0xFF) write handler (normally read-only).  <br /></td></tr>
 <tr class="separator:a545751219d325aa68a2b1273413cf878"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acff2433f8c654934553b1f6c243efe78" id="r_acff2433f8c654934553b1f6c243efe78"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acff2433f8c654934553b1f6c243efe78">write_request_all</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:acff2433f8c654934553b1f6c243efe78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle writes to All memory space.  <br /></td></tr>
+<tr class="memitem:acff2433f8c654934553b1f6c243efe78" id="r_acff2433f8c654934553b1f6c243efe78"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acff2433f8c654934553b1f6c243efe78">write_request_all</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:acff2433f8c654934553b1f6c243efe78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — All (0xFE) write handler.  <br /></td></tr>
 <tr class="separator:acff2433f8c654934553b1f6c243efe78"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a074aba0e50bf1f7c7b66b0fa10983543" id="r_a074aba0e50bf1f7c7b66b0fa10983543"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a074aba0e50bf1f7c7b66b0fa10983543">write_request_config_mem</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:a074aba0e50bf1f7c7b66b0fa10983543"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle writes to Configuration Memory space.  <br /></td></tr>
+<tr class="memitem:a074aba0e50bf1f7c7b66b0fa10983543" id="r_a074aba0e50bf1f7c7b66b0fa10983543"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a074aba0e50bf1f7c7b66b0fa10983543">write_request_config_mem</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:a074aba0e50bf1f7c7b66b0fa10983543"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Config (0xFD) write handler.  <br /></td></tr>
 <tr class="separator:a074aba0e50bf1f7c7b66b0fa10983543"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a713fb04d68c46a3fa96bb29127dfe250" id="r_a713fb04d68c46a3fa96bb29127dfe250"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a713fb04d68c46a3fa96bb29127dfe250">write_request_acdi_manufacturer</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:a713fb04d68c46a3fa96bb29127dfe250"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle writes to ACDI Manufacturer space.  <br /></td></tr>
+<tr class="memitem:a713fb04d68c46a3fa96bb29127dfe250" id="r_a713fb04d68c46a3fa96bb29127dfe250"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a713fb04d68c46a3fa96bb29127dfe250">write_request_acdi_manufacturer</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:a713fb04d68c46a3fa96bb29127dfe250"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — ACDI-Mfg (0xFC) write handler (normally read-only).  <br /></td></tr>
 <tr class="separator:a713fb04d68c46a3fa96bb29127dfe250"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a660f1eaa97b56bcb043e440ad8cf59e1" id="r_a660f1eaa97b56bcb043e440ad8cf59e1"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a660f1eaa97b56bcb043e440ad8cf59e1">write_request_acdi_user</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:a660f1eaa97b56bcb043e440ad8cf59e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle writes to ACDI User space.  <br /></td></tr>
+<tr class="memitem:a660f1eaa97b56bcb043e440ad8cf59e1" id="r_a660f1eaa97b56bcb043e440ad8cf59e1"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a660f1eaa97b56bcb043e440ad8cf59e1">write_request_acdi_user</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:a660f1eaa97b56bcb043e440ad8cf59e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — ACDI-User (0xFB) write handler.  <br /></td></tr>
 <tr class="separator:a660f1eaa97b56bcb043e440ad8cf59e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a921c8b96bf19d23a6b500f83b5b42ee7" id="r_a921c8b96bf19d23a6b500f83b5b42ee7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a921c8b96bf19d23a6b500f83b5b42ee7">write_request_train_function_config_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:a921c8b96bf19d23a6b500f83b5b42ee7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle writes to Train Function Definition space.  <br /></td></tr>
+<tr class="memitem:a921c8b96bf19d23a6b500f83b5b42ee7" id="r_a921c8b96bf19d23a6b500f83b5b42ee7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a921c8b96bf19d23a6b500f83b5b42ee7">write_request_train_function_config_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:a921c8b96bf19d23a6b500f83b5b42ee7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Train FDI (0xFA) write handler (normally read-only).  <br /></td></tr>
 <tr class="separator:a921c8b96bf19d23a6b500f83b5b42ee7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35e20af9d55c24371e5aeba556b27c31" id="r_a35e20af9d55c24371e5aeba556b27c31"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35e20af9d55c24371e5aeba556b27c31">write_request_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:a35e20af9d55c24371e5aeba556b27c31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle writes to Train Function Configuration space.  <br /></td></tr>
+<tr class="memitem:a35e20af9d55c24371e5aeba556b27c31" id="r_a35e20af9d55c24371e5aeba556b27c31"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35e20af9d55c24371e5aeba556b27c31">write_request_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:a35e20af9d55c24371e5aeba556b27c31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Train Fn Config (0xF9) write handler.  <br /></td></tr>
 <tr class="separator:a35e20af9d55c24371e5aeba556b27c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae390d0c064a37e0b04339a43150fbf97" id="r_ae390d0c064a37e0b04339a43150fbf97"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae390d0c064a37e0b04339a43150fbf97">write_request_firmware</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:ae390d0c064a37e0b04339a43150fbf97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle writes to Firmware space.  <br /></td></tr>
+<tr class="memitem:ae390d0c064a37e0b04339a43150fbf97" id="r_ae390d0c064a37e0b04339a43150fbf97"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae390d0c064a37e0b04339a43150fbf97">write_request_firmware</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:ae390d0c064a37e0b04339a43150fbf97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Firmware (0xEF) write handler.  <br /></td></tr>
 <tr class="separator:ae390d0c064a37e0b04339a43150fbf97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82baac869860da64982f0bde9385d3bb" id="r_a82baac869860da64982f0bde9385d3bb"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82baac869860da64982f0bde9385d3bb">delayed_reply_time</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:a82baac869860da64982f0bde9385d3bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to override reply delay time.  <br /></td></tr>
+<tr class="memitem:a82baac869860da64982f0bde9385d3bb" id="r_a82baac869860da64982f0bde9385d3bb"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82baac869860da64982f0bde9385d3bb">delayed_reply_time</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:a82baac869860da64982f0bde9385d3bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Override reply delay (return N → 2^N seconds). Default 0.  <br /></td></tr>
 <tr class="separator:a82baac869860da64982f0bde9385d3bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a317d544123df617738d3d60062331418" id="r_a317d544123df617738d3d60062331418"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a317d544123df617738d3d60062331418">on_function_changed</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td></tr>
-<tr class="memdesc:a317d544123df617738d3d60062331418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notifier called when a train function value changes via 0xF9 write.  <br /></td></tr>
+<tr class="memitem:a317d544123df617738d3d60062331418" id="r_a317d544123df617738d3d60062331418"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a317d544123df617738d3d60062331418">on_function_changed</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td></tr>
+<tr class="memdesc:a317d544123df617738d3d60062331418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Notifier fired when a train function changes via 0xF9 write.  <br /></td></tr>
 <tr class="separator:a317d544123df617738d3d60062331418"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Interface structure for configuration memory write protocol handler. </p>
-<p>This structure defines the callback interface for handling OpenLCB Configuration Memory Write protocol messages. It contains function pointers for datagram acknowledgment, memory writing operations, and address space-specific write handlers.</p>
-<p>The interface allows the application layer to customize behavior for different address spaces while the protocol handler manages message formatting and state machine logic according to the OpenLCB Memory Configuration Protocol.</p>
-<dl class="section note"><dt>Note</dt><dd>Required callbacks must be set before calling ProtocolConfigMemWriteHandler_initialize </dd>
-<dd>
-Optional callbacks can be NULL if the corresponding functionality is not needed</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__config__mem__write__handler_8c.html#a456f44446ea0be1a304531ca365c41bf" title="Initializes the configuration memory write protocol handler.">ProtocolConfigMemWriteHandler_initialize</a> </dd>
-<dd>
-<a class="el" href="structconfig__mem__write__request__info__t.html" title="Configuration memory write request information.">config_mem_write_request_info_t</a> </dd></dl>
+<div class="textblock"><p>Callback interface for memory-config write operations. </p>
+<p>Required: load_datagram_received_ok_message, load_datagram_received_rejected_message, config_memory_write. All per-space handlers and delayed_reply_time are optional (NULL). </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="acbb0b05b4b90f1f8851f976ed278089d" name="acbb0b05b4b90f1f8851f976ed278089d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acbb0b05b4b90f1f8851f976ed278089d">&#9670;&#160;</a></span>load_datagram_received_ok_message</h2>
@@ -160,9 +153,7 @@ Optional callbacks can be NULL if the corresponding functionality is not needed<
       </table>
 </div><div class="memdoc">
 
-<p>Callback to load a datagram received OK acknowledgment message. </p>
-<p>This required callback formats a positive datagram acknowledgment message indicating the datagram was successfully received and will be processed. The reply_pending_time parameter indicates when a response message will be sent.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>REQUIRED — Send Datagram Received OK with reply-pending time. </p>
 
 </div>
 </div>
@@ -178,9 +169,7 @@ Optional callbacks can be NULL if the corresponding functionality is not needed<
       </table>
 </div><div class="memdoc">
 
-<p>Callback to load a datagram received rejected acknowledgment message. </p>
-<p>This required callback formats a negative datagram acknowledgment message indicating the datagram was rejected. The return_code specifies the reason for rejection per OpenLCB error code definitions.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>REQUIRED — Send Datagram Received Rejected with error code. </p>
 
 </div>
 </div>
@@ -191,18 +180,12 @@ Optional callbacks can be NULL if the corresponding functionality is not needed<
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* config_memory_write) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
+          <td class="memname">uint16_t(* config_memory_write) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to write data to configuration memory. </p>
-<p>This required callback writes the specified number of bytes from the provided buffer to the given address in configuration memory. The callback returns the actual number of bytes written, which may be less than requested if an error occurs or memory bounds are exceeded.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
-<dd>
-Implementation should handle address validation and bounds checking </dd>
-<dd>
-Implementation should handle write-protection and read-only regions </dd></dl>
+<p>REQUIRED — Write bytes to config memory; returns bytes written. </p>
 
 </div>
 </div>
@@ -213,15 +196,12 @@ Implementation should handle write-protection and read-only regions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* write_request_config_definition_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+          <td class="memname">void(* write_request_config_definition_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle writes to Configuration Definition Info space. </p>
-<p>Processes write requests for address space 0xFF (CDI). Typically this space is read-only, but this callback allows custom handling if needed.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if CDI space is read-only </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>CDI space is typically read-only per OpenLCB specification </dd></dl>
+<p>Optional — CDI (0xFF) write handler (normally read-only). </p>
 
 </div>
 </div>
@@ -232,14 +212,12 @@ Implementation should handle write-protection and read-only regions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* write_request_all) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+          <td class="memname">void(* write_request_all) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle writes to All memory space. </p>
-<p>Processes write requests for address space 0xFE (All Memory). This space typically maps writes to the underlying appropriate space.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if All space writes are not supported </dd></dl>
+<p>Optional — All (0xFE) write handler. </p>
 
 </div>
 </div>
@@ -250,14 +228,12 @@ Implementation should handle write-protection and read-only regions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* write_request_config_mem) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+          <td class="memname">void(* write_request_config_mem) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle writes to Configuration Memory space. </p>
-<p>Processes write requests for address space 0xFD (Configuration Memory), which contains the node's actual configuration data that can be modified.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if config memory writes use default implementation </dd></dl>
+<p>Optional — Config (0xFD) write handler. </p>
 
 </div>
 </div>
@@ -268,15 +244,12 @@ Implementation should handle write-protection and read-only regions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* write_request_acdi_manufacturer) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+          <td class="memname">void(* write_request_acdi_manufacturer) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle writes to ACDI Manufacturer space. </p>
-<p>Processes write requests for address space 0xFC (ACDI Manufacturer). Typically this space is read-only as it contains factory-set information.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if ACDI manufacturer space is read-only </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>ACDI manufacturer space is typically read-only per OpenLCB specification </dd></dl>
+<p>Optional — ACDI-Mfg (0xFC) write handler (normally read-only). </p>
 
 </div>
 </div>
@@ -287,14 +260,12 @@ Implementation should handle write-protection and read-only regions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* write_request_acdi_user) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+          <td class="memname">void(* write_request_acdi_user) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle writes to ACDI User space. </p>
-<p>Processes write requests for address space 0xFB (ACDI User), which contains user-defined identification information that can be modified.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if ACDI user writes use default implementation </dd></dl>
+<p>Optional — ACDI-User (0xFB) write handler. </p>
 
 </div>
 </div>
@@ -305,15 +276,12 @@ Implementation should handle write-protection and read-only regions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* write_request_train_function_config_definition_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+          <td class="memname">void(* write_request_train_function_config_definition_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle writes to Train Function Definition space. </p>
-<p>Processes write requests for address space 0xFA (Train Function CDI). Typically this space is read-only as it contains XML structure definitions.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if train function definition space is read-only </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Train function CDI space is typically read-only </dd></dl>
+<p>Optional — Train FDI (0xFA) write handler (normally read-only). </p>
 
 </div>
 </div>
@@ -324,14 +292,12 @@ Implementation should handle write-protection and read-only regions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* write_request_train_function_config_memory) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+          <td class="memname">void(* write_request_train_function_config_memory) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle writes to Train Function Configuration space. </p>
-<p>Processes write requests for address space 0xF9 (Train Function Config), which contains actual train function configuration data that can be modified.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if train function config writes use default implementation </dd></dl>
+<p>Optional — Train Fn Config (0xF9) write handler. </p>
 
 </div>
 </div>
@@ -342,15 +308,12 @@ Implementation should handle write-protection and read-only regions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* write_request_firmware) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+          <td class="memname">void(* write_request_firmware) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle writes to Firmware space. </p>
-<p>Processes write requests for address space 0xEF (Firmware Update), which is used for uploading new firmware to the node.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if firmware updates are not supported </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Implementation must handle firmware verification and safe update procedures </dd></dl>
+<p>Optional — Firmware (0xEF) write handler. </p>
 
 </div>
 </div>
@@ -361,16 +324,12 @@ Implementation should handle write-protection and read-only regions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* delayed_reply_time) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+          <td class="memname">uint16_t(* delayed_reply_time) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to override reply delay time. </p>
-<p>Allows the application to specify a custom delay time (in powers of 2 seconds) before the write response will be sent. Used in the datagram ACK to inform the requester when to expect the response.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - if NULL, default delay of 0 seconds is used </dd>
-<dd>
-Return value is encoded as power of 2: return N means 2^N seconds delay </dd></dl>
+<p>Optional — Override reply delay (return N → 2^N seconds). Default 0. </p>
 
 </div>
 </div>
@@ -381,20 +340,12 @@ Return value is encoded as power of 2: return N means 2^N seconds delay </dd></d
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_function_changed) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td>
+          <td class="memname">void(* on_function_changed) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Notifier called when a train function value changes via 0xF9 write. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>The train node whose function changed </td></tr>
-    <tr><td class="paramname">fn_address</td><td>The function address that was modified </td></tr>
-    <tr><td class="paramname">fn_value</td><td>The new function value </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Optional — Notifier fired when a train function changes via 0xF9 write. </p>
 
 </div>
 </div>

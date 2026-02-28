@@ -96,32 +96,32 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Implementation of the core buffer store for CAN frames.  
+<p>Implementation of the pre-allocated CAN message buffer pool.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a49fcb6055f37edb9e56977295cd0eaf2" id="r_a49fcb6055f37edb9e56977295cd0eaf2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49fcb6055f37edb9e56977295cd0eaf2">CanBufferStore_initialize</a> (void)</td></tr>
-<tr class="memdesc:a49fcb6055f37edb9e56977295cd0eaf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Buffer Store.  <br /></td></tr>
+<tr class="memdesc:a49fcb6055f37edb9e56977295cd0eaf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all buffers and resets telemetry counters.  <br /></td></tr>
 <tr class="separator:a49fcb6055f37edb9e56977295cd0eaf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd3358d37ab07ff0f8ec918c00fffe99" id="r_afd3358d37ab07ff0f8ec918c00fffe99"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer</a> (void)</td></tr>
-<tr class="memdesc:afd3358d37ab07ff0f8ec918c00fffe99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new CAN buffer from the pool.  <br /></td></tr>
+<tr class="memdesc:afd3358d37ab07ff0f8ec918c00fffe99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates one <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffer from the pool.  <br /></td></tr>
 <tr class="separator:afd3358d37ab07ff0f8ec918c00fffe99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad95fb1127ec823f0cc9117848b78e5a7" id="r_ad95fb1127ec823f0cc9117848b78e5a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *msg)</td></tr>
-<tr class="memdesc:ad95fb1127ec823f0cc9117848b78e5a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees a CAN buffer back to the pool.  <br /></td></tr>
+<tr class="memdesc:ad95fb1127ec823f0cc9117848b78e5a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffer to the pool.  <br /></td></tr>
 <tr class="separator:ad95fb1127ec823f0cc9117848b78e5a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a114ce74d1c445b6df687c6148d62d6c6" id="r_a114ce74d1c445b6df687c6148d62d6c6"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a114ce74d1c445b6df687c6148d62d6c6">CanBufferStore_messages_allocated</a> (void)</td></tr>
-<tr class="memdesc:a114ce74d1c445b6df687c6148d62d6c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of CAN messages currently allocated.  <br /></td></tr>
+<tr class="memdesc:a114ce74d1c445b6df687c6148d62d6c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffers currently allocated.  <br /></td></tr>
 <tr class="separator:a114ce74d1c445b6df687c6148d62d6c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94cdc3572a78f32c7a31b632b741ff31" id="r_a94cdc3572a78f32c7a31b632b741ff31"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94cdc3572a78f32c7a31b632b741ff31">CanBufferStore_messages_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:a94cdc3572a78f32c7a31b632b741ff31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum number of CAN messages that have been allocated.  <br /></td></tr>
+<tr class="memdesc:a94cdc3572a78f32c7a31b632b741ff31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the peak allocation count since last reset.  <br /></td></tr>
 <tr class="separator:a94cdc3572a78f32c7a31b632b741ff31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6eded9ea67c83dfe9fff89a79f36ad6" id="r_ab6eded9ea67c83dfe9fff89a79f36ad6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6eded9ea67c83dfe9fff89a79f36ad6">CanBufferStore_clear_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:ab6eded9ea67c83dfe9fff89a79f36ad6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the peak allocation counter to zero.  <br /></td></tr>
+<tr class="memdesc:ab6eded9ea67c83dfe9fff89a79f36ad6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the peak counter without affecting current allocations.  <br /></td></tr>
 <tr class="separator:ab6eded9ea67c83dfe9fff89a79f36ad6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implementation of the core buffer store for CAN frames. </p>
+<div class="textblock"><p>Implementation of the pre-allocated CAN message buffer pool. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -130,7 +130,7 @@ Functions</h2></td></tr>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a49fcb6055f37edb9e56977295cd0eaf2" name="a49fcb6055f37edb9e56977295cd0eaf2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a49fcb6055f37edb9e56977295cd0eaf2">&#9670;&#160;</a></span>CanBufferStore_initialize()</h2>
@@ -147,19 +147,12 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes the CAN Buffer Store. </p>
-<p>Clears all message structures in the buffer pool, resets allocation flags, and zeros all telemetry counters. Must be called once during application startup before any buffer operations.</p>
-<p>Use cases:</p><ul>
-<li>Called during system initialization</li>
-<li>Required before any buffer allocation</li>
-</ul>
-<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
-<dd>
-NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call before <a class="el" href="can__buffer__fifo_8c.html#ab0652f39f104350007ad642b955ddbad" title="Initializes the CAN Message Buffer FIFO.">CanBufferFifo_initialize()</a> </dd>
-<dd>
-Call before any <a class="el" href="can__buffer__store_8h.html#afd3358d37ab07ff0f8ec918c00fffe99" title="Allocates a new CAN buffer from the pool.">CanBufferStore_allocate_buffer()</a> operations</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8h.html#afd3358d37ab07ff0f8ec918c00fffe99" title="Allocates a new CAN buffer from the pool.">CanBufferStore_allocate_buffer</a> - Allocates from initialized pool </dd></dl>
+<p>Clears all buffers and resets telemetry counters. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Iterate through all USER_DEFINED_CAN_MSG_BUFFER_DEPTH entries.</li>
+<li>Set allocated flag to false, clear identifier, payload_count, and all payload bytes.</li>
+<li>Reset both allocation counters to zero. </li>
+</ol>
 
 </div>
 </div>
@@ -178,23 +171,13 @@ Call before any <a class="el" href="can__buffer__store_8h.html#afd3358d37ab07ff0
       </table>
 </div><div class="memdoc">
 
-<p>Allocates a new CAN buffer from the pool. </p>
-<p>Searches the buffer pool for an available buffer and returns a pointer to it. The buffer is cleared and marked as allocated. Allocation telemetry is updated to track current and peak usage.</p>
-<p>Use cases:</p><ul>
-<li>Hardware CAN receive interrupt/callback</li>
-<li>Creating outgoing CAN frames</li>
-<li>Assembling multi-frame messages</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to allocated CAN message buffer, or NULL if pool is exhausted</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when pool exhausted - caller MUST check for NULL </dd>
-<dd>
-NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Always check return value for NULL before use </dd>
-<dd>
-Caller must free buffer with <a class="el" href="can__buffer__store_8h.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Frees a CAN buffer back to the pool.">CanBufferStore_free_buffer()</a> when done</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8h.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Frees a CAN buffer back to the pool.">CanBufferStore_free_buffer</a> - Frees allocated buffer </dd>
-<dd>
-<a class="el" href="can__buffer__store_8h.html#a114ce74d1c445b6df687c6148d62d6c6" title="Returns the number of CAN messages currently allocated.">CanBufferStore_messages_allocated</a> - Current allocation count </dd></dl>
+<p>Allocates one <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffer from the pool. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Iterate through pool looking for first unallocated buffer.</li>
+<li>When found: increment allocation counter, update peak counter if needed, clear the buffer, mark it allocated, and return pointer.</li>
+<li>If no free buffer found, return NULL.</li>
+</ol>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the allocated <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>, or NULL if the pool is exhausted. </dd></dl>
 
 </div>
 </div>
@@ -213,27 +196,13 @@ Caller must free buffer with <a class="el" href="can__buffer__store_8h.html#ad95
       </table>
 </div><div class="memdoc">
 
-<p>Frees a CAN buffer back to the pool. </p>
-<p>Returns an allocated buffer to the pool for reuse. Marks the buffer as unallocated and decrements the allocation counter. NULL pointers are safely ignored.</p>
-<p>Use cases:</p><ul>
-<li>After processing received CAN frame</li>
-<li>After transmitting CAN frame</li>
-<li>When discarding invalid message</li>
-</ul>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">msg</td><td>Pointer to CAN message buffer to free (NULL is safely ignored)</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe - use shared resource locking</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Do not use buffer after freeing </dd>
-<dd>
-Safe to call with NULL pointer</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8h.html#afd3358d37ab07ff0f8ec918c00fffe99" title="Allocates a new CAN buffer from the pool.">CanBufferStore_allocate_buffer</a> - Allocates buffer </dd>
-<dd>
-<a class="el" href="can__buffer__fifo_8c.html#a2ffec18f770ac9eeb09eb5efc586addc" title="Pops a CAN message off the FIFO buffer.">CanBufferFifo_pop</a> - Returns buffer that must be freed </dd></dl>
-
+<p>Returns a <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffer to the pool. </p>
+<p>Algorithm:</p><ol type="1">
+<li>If NULL pointer passed, return immediately.</li>
+<li>Decrement allocation counter and clear the allocated flag.</li>
+</ol>
+<pre class="fragment">* @param msg Pointer to the buffer to free. NULL is safely ignored.
+* </pre> 
 </div>
 </div>
 <a id="a114ce74d1c445b6df687c6148d62d6c6" name="a114ce74d1c445b6df687c6148d62d6c6"></a>
@@ -251,22 +220,7 @@ Safe to call with NULL pointer</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the number of CAN messages currently allocated. </p>
-<p>Provides real-time count of allocated CAN message buffers. This is a live count that changes as buffers are allocated and freed.</p>
-<p>Use cases:</p><ul>
-<li>Runtime monitoring of buffer usage</li>
-<li>Detecting buffer leaks</li>
-<li>Load balancing decisions</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>Number of CAN messages currently allocated (0 to USER_DEFINED_CAN_MSG_BUFFER_DEPTH)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This is a live count that changes dynamically </dd>
-<dd>
-Compare with messages_max_allocated for sizing analysis</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8h.html#a94cdc3572a78f32c7a31b632b741ff31" title="Returns the maximum number of CAN messages that have been allocated.">CanBufferStore_messages_max_allocated</a> - Peak usage counter </dd>
-<dd>
-<a class="el" href="can__buffer__store_8h.html#afd3358d37ab07ff0f8ec918c00fffe99" title="Allocates a new CAN buffer from the pool.">CanBufferStore_allocate_buffer</a> - Increments count </dd>
-<dd>
-<a class="el" href="can__buffer__store_8h.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Frees a CAN buffer back to the pool.">CanBufferStore_free_buffer</a> - Decrements count </dd></dl>
+<p>Returns the number of <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffers currently allocated. </p>
 
 </div>
 </div>
@@ -285,20 +239,7 @@ Compare with messages_max_allocated for sizing analysis</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the maximum number of CAN messages that have been allocated. </p>
-<p>Tracks peak allocation count since initialization or last reset. Useful for stress testing to determine optimal buffer pool size.</p>
-<p>Use cases:</p><ul>
-<li>Sizing buffer pool during development</li>
-<li>Stress testing and load analysis</li>
-<li>Detecting memory usage spikes</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>Maximum number of CAN messages allocated simultaneously since last reset</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Peak value persists until <a class="el" href="can__buffer__store_8h.html#ab6eded9ea67c83dfe9fff89a79f36ad6" title="Resets the peak allocation counter to zero.">CanBufferStore_clear_max_allocated()</a> is called </dd>
-<dd>
-Use during stress testing to optimize USER_DEFINED_CAN_MSG_BUFFER_DEPTH</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8h.html#a114ce74d1c445b6df687c6148d62d6c6" title="Returns the number of CAN messages currently allocated.">CanBufferStore_messages_allocated</a> - Current allocation count </dd>
-<dd>
-<a class="el" href="can__buffer__store_8h.html#ab6eded9ea67c83dfe9fff89a79f36ad6" title="Resets the peak allocation counter to zero.">CanBufferStore_clear_max_allocated</a> - Resets peak counter </dd></dl>
+<p>Returns the peak allocation count since last reset. </p>
 
 </div>
 </div>
@@ -317,16 +258,7 @@ Use during stress testing to optimize USER_DEFINED_CAN_MSG_BUFFER_DEPTH</dd></dl
       </table>
 </div><div class="memdoc">
 
-<p>Resets the peak allocation counter to zero. </p>
-<p>Clears the maximum allocation counter without affecting current allocations. Useful for starting fresh stress tests or monitoring sessions.</p>
-<p>Use cases:</p><ul>
-<li>Starting a new stress test run</li>
-<li>Monitoring specific test scenarios</li>
-<li>Resetting telemetry after configuration changes</li>
-</ul>
-<dl class="section warning"><dt>Warning</dt><dd>Does NOT affect currently allocated buffers</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Current allocations remain unchanged</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8h.html#a94cdc3572a78f32c7a31b632b741ff31" title="Returns the maximum number of CAN messages that have been allocated.">CanBufferStore_messages_max_allocated</a> - Returns peak value </dd></dl>
+<p>Resets the peak counter without affecting current allocations. </p>
 
 </div>
 </div>

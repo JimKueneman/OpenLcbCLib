@@ -25,15 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file can_main_statemachine.c
- * @brief Implementation of the main CAN state machine dispatcher
+ * @brief Implementation of the main CAN state machine dispatcher.
  *
- * @details This module coordinates all CAN-level operations including duplicate alias
- * detection, message transmission queuing, login sequence management, and node enumeration.
- * It implements a cooperative multitasking pattern where each function returns after
- * completing one discrete operation, allowing other application code to execute.
+ * @details Coordinates duplicate alias detection, CAN and login frame transmission,
+ * and node enumeration.  Uses a cooperative multitasking pattern — each function
+ * does one unit of work and returns so other application code can run.
  *
  * @author Jim Kueneman
- * @date 17 Jan 2026
+ * @date 28 Feb 2026
  */
 
 #include "can_main_statemachine.h"
@@ -65,39 +64,16 @@ static can_statemachine_info_t _can_statemachine_info;
 static can_msg_t _can_msg;
 
     /**
-     * @brief Initializes the CAN Main State Machine
+     * @brief Initializes the CAN main state machine.
      *
-     * @details Algorithm:
-     * -# Store pointer to dependency interface for later use
-     * -# Clear login outgoing message buffer to zero
-     * -# Link login message buffer to state machine info structure
-     * -# Clear all state machine info fields:
-     *    - Set openlcb_node to NULL (no active node)
-     *    - Set login_outgoing_can_msg_valid to false
-     *    - Set enumerating to false
-     *    - Set outgoing_can_msg to NULL
-     *
-     * The login message buffer is statically allocated to avoid runtime allocation
-     * overhead during login processing.
-     *
-     * Use cases:
-     * - Called once during application startup
-     * - Required before any CAN communication can occur
-     * - Must be called after buffer stores are initialized
+     * @details Stores the interface pointer, clears the static login frame buffer,
+     * links it to the state machine context, and zeroes all context flags.
      *
      * @verbatim
-     * @param interface_can_main_statemachine Pointer to populated dependency interface
-     * structure containing all required function implementations
+     * @param interface_can_main_statemachine Pointer to the populated dependency interface.
      * @endverbatim
      *
-     * @warning MUST be called exactly once during initialization
-     * @warning NOT thread-safe - call before starting interrupts/threads
-     *
-     * @attention Call after CanBufferStore_initialize() and CanBufferFifo_initialize()
-     * @attention All function pointers in interface must be non-NULL
-     *
-     * @see CanMainStateMachine_run
-     * @see interface_can_main_statemachine_t
+     * @warning Must be called once at startup after CanBufferStore_initialize().
      */
 void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine) {
 
@@ -114,42 +90,16 @@ void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *int
 }
 
     /**
-     * @brief Resets a node to force alias reallocation
+     * @brief Resets a node to force it through alias reallocation from GENERATE_SEED.
      *
-     * @details Algorithm:
-     * -# Check if node pointer is NULL:
-     *    - If NULL, return immediately (defensive programming)
-     * -# Clear node alias to 0x00
-     * -# Reset all node state flags:
-     *    - Set permitted = false (node goes to inhibited state)
-     *    - Set initialized = false
-     *    - Set duplicate_id_detected = false
-     *    - Set firmware_upgrade_active = false
-     *    - Set resend_datagram = false
-     *    - Set openlcb_datagram_ack_sent = false
-     * -# Check if node has pending datagram:
-     *    - If last_received_datagram is not NULL, free it to buffer store
-     *    - Set last_received_datagram = NULL
-     * -# Set run_state to RUNSTATE_GENERATE_SEED to restart login
-     *
-     * This forces the node to reallocate a new alias through the complete CAN login
-     * sequence (seed generation, alias generation, CID frames, RID, AMD).
-     *
-     * Use cases:
-     * - Handling duplicate alias detection
-     * - Recovering from alias conflicts
-     * - Forcing node reinitialization
+     * @details Clears alias, all state flags, frees any pending datagram, and sets
+     * run_state to RUNSTATE_GENERATE_SEED. Safe to call with NULL.
      *
      * @verbatim
-     * @param openlcb_node Pointer to node structure to reset, may be NULL
+     * @param openlcb_node Node to reset. NULL is safely ignored.
      * @endverbatim
      *
-     * @note Handles NULL pointer gracefully by returning early
-     * @note Node will temporarily go offline during reallocation
-     * @note Frees any pending datagram to prevent memory leak
-     *
      * @see CanMainStatemachine_handle_duplicate_aliases
-     * @see OpenLcbBufferStore_free_buffer
      */
 static void _reset_node(openlcb_node_t *openlcb_node) {
 
@@ -178,42 +128,19 @@ static void _reset_node(openlcb_node_t *openlcb_node) {
 }
 
     /**
-     * @brief Processes all entries in alias mapping table with duplicate flag set
+     * @brief Scans the alias table for duplicate entries and resets each affected node.
      *
      * @details Algorithm:
-     * -# Initialize result flag to false
-     * -# Iterate through entire alias mapping buffer (0 to ALIAS_MAPPING_BUFFER_DEPTH):
-     *    - Get alias from current entry
-     *    - Check if alias is valid (> 0) AND is_duplicate flag is set
-     *    - If duplicate found:
-     *      - Call interface unregister function to remove mapping
-     *      - Find node by alias using interface lookup function
-     *      - Call _reset_node() to force node reallocation
-     *      - Set result flag to true
-     * -# Clear global has_duplicate_alias flag
-     * -# Return result flag
-     *
-     * The duplicate alias flag is set by the CAN receive state machine when it detects
-     * conflicting alias usage on the bus (same alias used by different Node IDs).
-     *
-     * Use cases:
-     * - Processing alias conflicts detected during reception
-     * - Clearing duplicate alias table entries
-     * - Forcing affected nodes to reallocate
+     * -# Iterate all ALIAS_MAPPING_BUFFER_DEPTH entries; for each with is_duplicate set:
+     *    unregister the alias, find the owning node, call _reset_node().
+     * -# Clear the has_duplicate_alias flag.
+     * -# Return true if any were found.
      *
      * @verbatim
-     * @param alias_mapping_info Pointer to alias mapping buffer structure
+     * @param alias_mapping_info Pointer to the alias mapping table.
      * @endverbatim
      *
-     * @return true if one or more duplicate aliases were processed, false if none found
-     *
-     * @note Clears has_duplicate_alias global flag after processing
-     * @note Multiple duplicates may be processed in single call
-     * @note Each affected node will restart login sequence
-     *
-     * @see _reset_node
-     * @see CanMainStatemachine_handle_duplicate_aliases
-     * @see ALIAS_MAPPING_BUFFER_DEPTH
+     * @return true if at least one duplicate was resolved, false if none.
      */
 static bool _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info) {
 
@@ -241,29 +168,7 @@ static bool _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info)
 
 }
 
-    /**
-     * @brief Provides read access to internal state machine context
-     *
-     * @details Algorithm:
-     * -# Return pointer to static _can_statemachine_info structure
-     *
-     * The returned structure contains live state machine context including current
-     * node being processed, login message buffer, and outgoing message pointer.
-     *
-     * Use cases:
-     * - Unit test verification of state machine behavior
-     * - Debugging state machine operation
-     * - Test coverage of edge cases
-     *
-     * @return Pointer to internal can_statemachine_info_t structure
-     *
-     * @warning For debugging and testing only - do not modify returned structure
-     * @warning NOT thread-safe - lock resources before accessing
-     *
-     * @note Provides read-only access to live state machine context
-     *
-     * @see can_statemachine_info_t
-     */
+    /** @brief Returns a pointer to the internal state machine context (for testing/debugging). */
 can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void) {
 
     return (&_can_statemachine_info);
@@ -271,37 +176,12 @@ can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void) {
 }
 
     /**
-     * @brief Handles all detected duplicate alias conflicts
+     * @brief Checks for the has_duplicate_alias flag; resolves any duplicates found.
      *
-     * @details Algorithm:
-     * -# Initialize result to false
-     * -# Lock shared resources to prevent concurrent access
-     * -# Get alias mapping info structure from interface
-     * -# Check if has_duplicate_alias flag is set:
-     *    - If set, call _process_duplicate_aliases() to handle them
-     *    - Set result to true
-     * -# Unlock shared resources
-     * -# Return result flag
+     * @details Locks shared resources, reads the flag, calls _process_duplicate_aliases()
+     * if needed, then unlocks.
      *
-     * Locking is required because alias mapping table is shared between CAN receive
-     * interrupt (which sets duplicate flags) and main loop (which processes them).
-     *
-     * Use cases:
-     * - Called by main state machine run loop
-     * - Unit testing of duplicate alias handling
-     * - Debugging alias conflicts
-     *
-     * @return true if duplicate aliases were found and processed, false if none detected
-     *
-     * @warning Locks shared resources during operation
-     * @warning Affected nodes will temporarily go offline during realias
-     *
-     * @note For testing/debugging - normally called via interface function pointer
-     * @note Clears has_duplicate_alias flag after processing
-     *
-     * @see interface_can_main_statemachine_t.handle_duplicate_aliases
-     * @see AliasMappings_unregister
-     * @see _process_duplicate_aliases
+     * @return true if duplicates were found and processed, false if none.
      */
 bool CanMainStatemachine_handle_duplicate_aliases(void) {
 
@@ -326,44 +206,16 @@ bool CanMainStatemachine_handle_duplicate_aliases(void) {
 }
 
     /**
-     * @brief Transmits pending outgoing CAN messages from FIFO
+     * @brief Pops and transmits one CAN frame from the outgoing FIFO.
      *
      * @details Algorithm:
-     * -# Check if working buffer already has a message:
-     *    - If NULL, need to pop from FIFO
-     *    - Lock shared resources
-     *    - Pop message from CAN buffer FIFO
-     *    - Unlock shared resources
-     *    - Store popped message in working buffer
-     * -# Check if working buffer has message:
-     *    - Call interface send_can_message() with message
-     *    - If transmission successful:
-     *      - Lock shared resources
-     *      - Free buffer back to CAN buffer store
-     *      - Unlock shared resources
-     *      - Clear working buffer pointer to NULL
-     *    - Return true (message was pending)
-     * -# Return false (no message pending)
+     * -# If no frame is held in the working slot, pop one from the FIFO (under lock).
+     * -# If a frame is held, try to send it; free it (under lock) only on success.
+     * -# Return true if a frame was pending (sent or not), false if FIFO was empty.
      *
-     * The working buffer prevents message loss if transmission fails due to full
-     * hardware buffer. Message remains in working buffer for retry on next call.
+     * @return true if a frame was pending, false if the FIFO was empty.
      *
-     * Use cases:
-     * - Called by main state machine run loop
-     * - Unit testing of message transmission
-     * - Debugging message flow
-     *
-     * @return true if message was in FIFO (whether sent or not), false if FIFO empty
-     *
-     * @warning Locks shared resources during FIFO access
-     *
-     * @note For testing/debugging - normally called via interface function pointer
-     * @note Frees buffer only after successful transmission
-     * @note May be called multiple times until transmission succeeds
-     *
-     * @see interface_can_main_statemachine_t.handle_outgoing_can_message
-     * @see CanBufferFifo_pop
-     * @see CanBufferStore_free_buffer
+     * @note The frame is retried on the next call if the hardware buffer was busy.
      */
 bool CanMainStatemachine_handle_outgoing_can_message(void) {
 
@@ -396,33 +248,10 @@ bool CanMainStatemachine_handle_outgoing_can_message(void) {
 }
 
     /**
-     * @brief Transmits pending login-related CAN messages
+     * @brief Transmits the pending login frame (CID/RID/AMD) if one is flagged as valid.
      *
-     * @details Algorithm:
-     * -# Check if login_outgoing_can_msg_valid flag is set:
-     *    - If set, message is pending transmission
-     *    - Call interface send_can_message() with login message buffer
-     *    - If transmission successful:
-     *      - Clear login_outgoing_can_msg_valid flag
-     *    - Return true (message was pending)
-     * -# Return false (no message pending)
-     *
-     * The login message buffer is statically allocated and reused for each login frame
-     * (CID7, CID6, CID5, CID4, RID, AMD). Valid flag indicates message is ready to send.
-     *
-     * Use cases:
-     * - Called by main state machine run loop
-     * - Unit testing of login message transmission
-     * - Debugging alias allocation sequence
-     *
-     * @return true if login message was pending (whether sent or not), false if no message pending
-     *
-     * @note For testing/debugging - normally called via interface function pointer
-     * @note Clears valid flag only after successful transmission
-     * @note May be called multiple times until transmission succeeds
-     *
-     * @see interface_can_main_statemachine_t.handle_login_outgoing_can_message
-     * @see CanLoginStateMachine_run
+     * @details Clears login_outgoing_can_msg_valid only after successful transmission.
+     * Returns true if a login frame was pending (sent or retried), false if none.
      */
 bool CanMainStatemachine_handle_login_outgoing_can_message(void) {
 
@@ -443,39 +272,13 @@ bool CanMainStatemachine_handle_login_outgoing_can_message(void) {
 }
 
     /**
-     * @brief Begins node enumeration and processes first node
+     * @brief Starts node enumeration by fetching and processing the first node.
      *
-     * @details Algorithm:
-     * -# Check if currently enumerating a node:
-     *    - If openlcb_node is NULL, no active enumeration
-     *    - Get first node using interface->openlcb_node_get_first()
-     *    - Store node pointer in state machine info
-     *    - If no nodes exist (NULL returned):
-     *      - Return true (done, nothing to process)
-     *    - Check if node is still in login sequence:
-     *      - If run_state < RUNSTATE_LOAD_INITIALIZATION_COMPLETE
-     *      - Call login state machine via interface
-     *    - Return true (first node processed)
-     * -# Return false (already enumerating)
+     * @details Returns false if enumeration is already active (node pointer non-NULL).
+     * Otherwise fetches the first node, runs its login state machine if still logging in,
+     * and returns true.
      *
-     * Node enumeration allows processing multiple virtual nodes. Each node may be
-     * in different states (logging in, initialized, running).
-     *
-     * Use cases:
-     * - Called by main state machine run loop
-     * - Unit testing of node enumeration
-     * - Debugging multi-node operation
-     *
-     * @return true if first node was found and processed (or none exist), false if enumeration already active
-     *
-     * @note For testing/debugging - normally called via interface function pointer
-     * @note Only processes node if not already enumerating
-     * @note Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH
-     *
-     * @see interface_can_main_statemachine_t.handle_try_enumerate_first_node
-     * @see CanMainStatemachine_handle_try_enumerate_next_node
-     * @see USER_DEFINED_NODE_BUFFER_DEPTH
-     * @see CAN_STATEMACHINE_NODE_ENUMRATOR_KEY
+     * @return true if enumeration was started (or no nodes exist), false if already active.
      */
 bool CanMainStatemachine_handle_try_enumerate_first_node(void) {
 
@@ -506,36 +309,12 @@ bool CanMainStatemachine_handle_try_enumerate_first_node(void) {
 }
 
     /**
-     * @brief Continues node enumeration to next node
+     * @brief Advances node enumeration to the next node.
      *
-     * @details Algorithm:
-     * -# Get next node using interface->openlcb_node_get_next()
-     * -# Store node pointer in state machine info
-     * -# If no more nodes (NULL returned):
-     *    - Return true (enumeration complete)
-     * -# Check if node is still in login sequence:
-     *    - If run_state < RUNSTATE_LOAD_INITIALIZATION_COMPLETE
-     *    - Call login state machine via interface
-     * -# Return false (more nodes to process)
+     * @details Fetches the next node and runs its login state machine if still logging in.
+     * Returns true when there are no more nodes (enumeration complete), false otherwise.
      *
-     * Called after handle_try_enumerate_first_node() to process remaining nodes in
-     * the node pool. Continues until all nodes have been processed.
-     *
-     * Use cases:
-     * - Called by main state machine run loop
-     * - Unit testing of node enumeration
-     * - Debugging multi-node operation
-     *
-     * @return true if no more nodes available (enumeration complete), false if more nodes to process
-     *
-     * @note For testing/debugging - normally called via interface function pointer
-     * @note Works in conjunction with handle_try_enumerate_first_node()
-     * @note Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH
-     *
-     * @see interface_can_main_statemachine_t.handle_try_enumerate_next_node
-     * @see CanMainStatemachine_handle_try_enumerate_first_node
-     * @see USER_DEFINED_NODE_BUFFER_DEPTH
-     * @see CAN_STATEMACHINE_NODE_ENUMRATOR_KEY
+     * @return true when all nodes have been processed, false if more nodes remain.
      */
 bool CanMainStatemachine_handle_try_enumerate_next_node(void) {
 
@@ -560,44 +339,11 @@ bool CanMainStatemachine_handle_try_enumerate_next_node(void) {
 }
 
     /**
-     * @brief Executes one iteration of the main CAN state machine
+     * @brief Executes one cooperative iteration of the main CAN state machine.
      *
-     * @details Algorithm:
-     * -# Call handle_duplicate_aliases():
-     *    - If returns true (duplicates processed), return
-     * -# Call handle_outgoing_can_message():
-     *    - If returns true (message transmitted or pending), return
-     * -# Call handle_login_outgoing_can_message():
-     *    - If returns true (login message transmitted or pending), return
-     * -# Call handle_try_enumerate_first_node():
-     *    - If returns true (first node processed or none exist), return
-     * -# Call handle_try_enumerate_next_node():
-     *    - If returns true (no more nodes), return
-     *    - If returns false (more nodes exist), will continue on next iteration
-     *
-     * Each function processes one discrete operation and returns. This cooperative
-     * multitasking pattern allows other application code to execute between operations.
-     *
-     * Priority order ensures critical operations (duplicate alias handling, message
-     * transmission) complete before lower-priority operations (node enumeration).
-     *
-     * Use cases:
-     * - Called continuously from main application loop
-     * - Cooperative multitasking with other application code
-     * - Non-blocking state machine advancement
-     *
-     * @warning Must be called frequently (as fast as possible in main loop)
-     * @warning Assumes CanMainStatemachine_initialize() was already called
-     *
-     * @note Returns after processing one operation for cooperative multitasking
-     * @note Each operation may lock shared resources briefly
-     *
-     * @see CanMainStatemachine_initialize
-     * @see CanMainStatemachine_handle_duplicate_aliases
-     * @see CanMainStatemachine_handle_outgoing_can_message
-     * @see CanMainStatemachine_handle_login_outgoing_can_message
-     * @see CanMainStatemachine_handle_try_enumerate_first_node
-     * @see CanMainStatemachine_handle_try_enumerate_next_node
+     * @details Calls each handler in priority order, returning after the first one
+     * that does work. Priority: duplicate aliases → outgoing CAN frame →
+     * login frame → enumerate first node → enumerate next node.
      */
 void CanMainStateMachine_run(void) {
 

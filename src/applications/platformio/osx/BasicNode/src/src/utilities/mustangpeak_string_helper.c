@@ -1,4 +1,3 @@
-
 /** \copyright
  * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
@@ -25,44 +24,103 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file mustangpeak_string_helper.c
+ * @file mustangpeak_string_helper.c
+ * @brief Implementation of the dynamic string allocation helpers.
  *
- * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are 
- * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
- * so care must be taken to Pause and Resume those calls if the main loop needs to 
- * access the buffers.  
+ * @details Uses malloc for all allocations.  Every buffer returned by these
+ * functions must be freed by the caller with free().
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 28 Feb 2026
  */
 
-#include "string.h"
-#include "stdio.h"
-#include "stdlib.h"
+#include "mustangpeak_string_helper.h"
+
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 
-char *strnew(unsigned long char_count)
-{
-    return (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
+    /**
+     * @brief Allocates a new uninitialized string buffer.
+     *
+     * @details Algorithm:
+     * -# Call malloc for char_count + 1 bytes (room for the null terminator).
+     * -# Return the pointer (may be NULL on allocation failure).
+     *
+     * @verbatim
+     * @param char_count  Number of usable characters (excluding the null terminator).
+     * @endverbatim
+     *
+     * @return Pointer to the allocated buffer, or NULL if malloc fails.
+     *
+     * @warning The caller must free() the returned pointer when finished.
+     */
+char *strnew(int char_count) {
+
+    return (char *)(malloc((char_count + 1) * sizeof(char)));
+
 }
 
-char *strnew_initialized(int char_count)
-{
-    char *result = (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
-    for (int i = 0; i < char_count + 1; i++)
-      result[i] = '\0';
+    /**
+     * @brief Allocates a new zero-initialized string buffer.
+     *
+     * @details Algorithm:
+     * -# Call malloc for char_count + 1 bytes.
+     * -# Fill every byte with '\\0'.
+     * -# Return the pointer.
+     *
+     * @verbatim
+     * @param char_count  Number of usable characters (excluding the null terminator).
+     * @endverbatim
+     *
+     * @return Pointer to the allocated and zeroed buffer, or NULL if malloc fails.
+     *
+     * @warning The caller must free() the returned pointer when finished.
+     */
+char *strnew_initialized(int char_count) {
+
+    char *result = (char *)(malloc((char_count + 1) * sizeof(char)));
+
+    for (int i = 0; i < char_count + 1; i++) {
+
+        result[i] = '\0';
+
+    }
+
     return result;
+
 }
 
-char *strcatnew(char *str1, char *str2)
-{
-    unsigned long len = strlen(str1) + strlen(str2);
+    /**
+     * @brief Concatenates two strings into a newly allocated buffer.
+     *
+     * @details Algorithm:
+     * -# Compute the combined length of str1 and str2.
+     * -# Allocate a new buffer via strnew().
+     * -# Copy str1 into the buffer with strcpy().
+     * -# Append str2 with strcat().
+     * -# Null-terminate and return.
+     *
+     * @verbatim
+     * @param str1  Pointer to the first null-terminated string.
+     * @param str2  Pointer to the second null-terminated string.
+     * @endverbatim
+     *
+     * @return Pointer to the newly allocated concatenated string, or NULL if
+     *         malloc fails.
+     *
+     * @warning The caller must free() the returned pointer when finished.
+     * @warning NULL pointers for either argument cause undefined behavior.
+     */
+char *strcatnew(char *str1, char *str2) {
+
+    int len = (int)(strlen(str1) + strlen(str2));
     char *temp1 = strnew(len);
     strcpy(temp1, str1);
     strcat(temp1, str2);
     temp1[len] = '\0';
+
     return temp1;
+
 }
-
-

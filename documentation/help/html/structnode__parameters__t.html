@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Complete node configuration and parameters.  
+<p>Complete node configuration parameters (typically const/flash).  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -105,9 +105,9 @@ Data Fields</h2></td></tr>
 <tr class="separator:a556311088cc9bf86383ce2b043703173"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae666a97d0e5aa057c15ab4f9e7845697" id="r_ae666a97d0e5aa057c15ab4f9e7845697"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae666a97d0e5aa057c15ab4f9e7845697">producer_count_autocreate</a></td></tr>
 <tr class="separator:ae666a97d0e5aa057c15ab4f9e7845697"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7cf08898fcb497dd22c9b73accf9f29" id="r_ac7cf08898fcb497dd22c9b73accf9f29"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7cf08898fcb497dd22c9b73accf9f29">cdi</a> [<a class="el" href="group__user__config__constants.html#gaa41bfc2a48a167d019ddd088211b8d18">USER_DEFINED_CDI_LENGTH</a>]</td></tr>
+<tr class="memitem:ac7cf08898fcb497dd22c9b73accf9f29" id="r_ac7cf08898fcb497dd22c9b73accf9f29"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7cf08898fcb497dd22c9b73accf9f29">cdi</a> [USER_DEFINED_CDI_LENGTH]</td></tr>
 <tr class="separator:ac7cf08898fcb497dd22c9b73accf9f29"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d59ed80eb1f91a808aed4b4377fdfbe" id="r_a4d59ed80eb1f91a808aed4b4377fdfbe"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d59ed80eb1f91a808aed4b4377fdfbe">fdi</a> [<a class="el" href="group__user__config__constants.html#ga0d663b83bcdf006041e64b5a981dc597">USER_DEFINED_FDI_LENGTH</a>]</td></tr>
+<tr class="memitem:a4d59ed80eb1f91a808aed4b4377fdfbe" id="r_a4d59ed80eb1f91a808aed4b4377fdfbe"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d59ed80eb1f91a808aed4b4377fdfbe">fdi</a> [USER_DEFINED_FDI_LENGTH]</td></tr>
 <tr class="separator:a4d59ed80eb1f91a808aed4b4377fdfbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfb900011d51f0a9ed48cd1b5e9bb40b" id="r_acfb900011d51f0a9ed48cd1b5e9bb40b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structuser__address__space__info__t.html">user_address_space_info_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acfb900011d51f0a9ed48cd1b5e9bb40b">address_space_configuration_definition</a></td></tr>
 <tr class="separator:acfb900011d51f0a9ed48cd1b5e9bb40b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,30 +129,8 @@ Data Fields</h2></td></tr>
 <tr class="separator:ac637865dc1b62d2bfd059827f36c944b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Complete node configuration and parameters. </p>
-<p>Contains all configuration data for an OpenLCB node. This structure is typically const and stored in program memory (flash).</p>
-<p><b>Node Identification:</b></p><ul>
-<li>snip: SNIP strings (manufacturer and user info)</li>
-<li>protocol_support: 48-bit Protocol Support Indicator</li>
-</ul>
-<p><b>Event Configuration:</b></p><ul>
-<li>consumer_count_autocreate: Number of consumer events to auto-create</li>
-<li>producer_count_autocreate: Number of producer events to auto-create</li>
-</ul>
-<p><b>Configuration Definitions:</b></p><ul>
-<li>cdi[]: Configuration Description Information (XML)</li>
-<li>fdi[]: Function Description Information (for train nodes)</li>
-</ul>
-<p><b>Memory Spaces:</b></p><ul>
-<li>configuration_options: Supported memory operations</li>
-<li>address_space_*: Information for each supported address space</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>Structure is usually const and pointed to by <a class="el" href="structopenlcb__node__t.html#a04db8f444dd14993f6923f368d6a7e94">openlcb_node_t.parameters</a> </dd>
-<dd>
-CDI and FDI buffers are large; consider using program memory</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structopenlcb__node__t.html#a04db8f444dd14993f6923f368d6a7e94">openlcb_node_t.parameters</a> </dd>
-<dd>
-<a class="el" href="openlcb__node_8c.html#a0864e7f15b95e49cd2320217de99d403" title="Allocates a new OpenLCB node with specified configuration.">OpenLcbNode_allocate</a> </dd></dl>
+<div class="textblock"><p>Complete node configuration parameters (typically const/flash). </p>
+<p>Contains SNIP strings, protocol support bits, CDI/FDI data, and address space information for every supported space. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a57a09149128a47f969c73501f7b4c2e1" name="a57a09149128a47f969c73501f7b4c2e1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a57a09149128a47f969c73501f7b4c2e1">&#9670;&#160;</a></span>snip</h2>
@@ -165,7 +143,6 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>SNIP identification strings </p>
 
 </div>
 </div>
@@ -195,7 +172,6 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Auto-create this many consumer events </p>
 
 </div>
 </div>
@@ -210,7 +186,6 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Auto-create this many producer events </p>
 
 </div>
 </div>
@@ -221,11 +196,10 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t cdi[<a class="el" href="group__user__config__constants.html#gaa41bfc2a48a167d019ddd088211b8d18">USER_DEFINED_CDI_LENGTH</a>]</td>
+          <td class="memname">uint8_t cdi[USER_DEFINED_CDI_LENGTH]</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>CDI XML data </p>
 
 </div>
 </div>
@@ -236,11 +210,10 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t fdi[<a class="el" href="group__user__config__constants.html#ga0d663b83bcdf006041e64b5a981dc597">USER_DEFINED_FDI_LENGTH</a>]</td>
+          <td class="memname">uint8_t fdi[USER_DEFINED_FDI_LENGTH]</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>FDI data (train nodes) </p>
 
 </div>
 </div>
@@ -255,7 +228,7 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Space 0xFF info </p>
+<p>Space 0xFF </p>
 
 </div>
 </div>
@@ -270,7 +243,7 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Space 0xFE info </p>
+<p>Space 0xFE </p>
 
 </div>
 </div>
@@ -285,7 +258,7 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Space 0xFD info </p>
+<p>Space 0xFD </p>
 
 </div>
 </div>
@@ -300,7 +273,7 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Space 0xFC info </p>
+<p>Space 0xFC </p>
 
 </div>
 </div>
@@ -315,7 +288,7 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Space 0xFB info </p>
+<p>Space 0xFB </p>
 
 </div>
 </div>
@@ -330,7 +303,7 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Space 0xFA info </p>
+<p>Space 0xFA </p>
 
 </div>
 </div>
@@ -345,7 +318,7 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Space 0xF9 info </p>
+<p>Space 0xF9 </p>
 
 </div>
 </div>
@@ -360,7 +333,6 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Memory operation capabilities </p>
 
 </div>
 </div>
@@ -375,7 +347,7 @@ CDI and FDI buffers are large; consider using program memory</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Space 0xEF info </p>
+<p>Space 0xEF </p>
 
 </div>
 </div>

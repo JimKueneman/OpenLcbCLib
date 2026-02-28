@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Configuration memory operations protocol handler.  
+<p>Configuration memory operations dispatcher — routes memory-config datagram sub-commands (options, address-space info, lock, freeze, reset, factory-reset) to registered callbacks.  
 <a href="#details">More...</a></p>
 
 <p><a href="protocol__config__mem__operations__handler_8h_source.html">Go to the source code of this file.</a></p>
@@ -105,68 +105,68 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__protocol__config__mem__operations__handler__t.html">interface_protocol_config_mem_operations_handler_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface structure for configuration memory operations protocol handler.  <a href="structinterface__protocol__config__mem__operations__handler__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback interface for memory-config operations.  <a href="structinterface__protocol__config__mem__operations__handler__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a369608a6899d5ca9bd89fedef6a6c294" id="r_a369608a6899d5ca9bd89fedef6a6c294"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a369608a6899d5ca9bd89fedef6a6c294">ProtocolConfigMemOperationsHandler_initialize</a> (const <a class="el" href="structinterface__protocol__config__mem__operations__handler__t.html">interface_protocol_config_mem_operations_handler_t</a> *interface_protocol_config_mem_operations_handler)</td></tr>
-<tr class="memdesc:a369608a6899d5ca9bd89fedef6a6c294"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the configuration memory operations protocol handler.  <br /></td></tr>
+<tr class="memdesc:a369608a6899d5ca9bd89fedef6a6c294"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface. Call once at startup.  <br /></td></tr>
 <tr class="separator:a369608a6899d5ca9bd89fedef6a6c294"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa13d307df69ce9e82941d6282456334e" id="r_aa13d307df69ce9e82941d6282456334e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa13d307df69ce9e82941d6282456334e">ProtocolConfigMemOperationsHandler_options_cmd</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aa13d307df69ce9e82941d6282456334e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Get Configuration Options command datagram.  <br /></td></tr>
+<tr class="memdesc:aa13d307df69ce9e82941d6282456334e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Get Configuration Options command.  <br /></td></tr>
 <tr class="separator:aa13d307df69ce9e82941d6282456334e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfd11cda1526aa24040be2c650dc1ff3" id="r_acfd11cda1526aa24040be2c650dc1ff3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acfd11cda1526aa24040be2c650dc1ff3">ProtocolConfigMemOperationsHandler_options_reply</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:acfd11cda1526aa24040be2c650dc1ff3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Get Configuration Options reply datagram.  <br /></td></tr>
+<tr class="memdesc:acfd11cda1526aa24040be2c650dc1ff3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Get Configuration Options reply.  <br /></td></tr>
 <tr class="separator:acfd11cda1526aa24040be2c650dc1ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae90bc3eba8a2f5266f6c84ca73e41d64" id="r_ae90bc3eba8a2f5266f6c84ca73e41d64"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae90bc3eba8a2f5266f6c84ca73e41d64">ProtocolConfigMemOperationsHandler_get_address_space_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae90bc3eba8a2f5266f6c84ca73e41d64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Get Address Space Information command datagram.  <br /></td></tr>
+<tr class="memdesc:ae90bc3eba8a2f5266f6c84ca73e41d64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Get Address Space Info command.  <br /></td></tr>
 <tr class="separator:ae90bc3eba8a2f5266f6c84ca73e41d64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a953e8a5fe2bcf414f41c6b8039c20bcb" id="r_a953e8a5fe2bcf414f41c6b8039c20bcb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a953e8a5fe2bcf414f41c6b8039c20bcb">ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a953e8a5fe2bcf414f41c6b8039c20bcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Address Space Information Not Present reply.  <br /></td></tr>
+<tr class="memdesc:a953e8a5fe2bcf414f41c6b8039c20bcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Address Space Info Not Present reply.  <br /></td></tr>
 <tr class="separator:a953e8a5fe2bcf414f41c6b8039c20bcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad174e2e570c03c391d003d6172429cb4" id="r_ad174e2e570c03c391d003d6172429cb4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad174e2e570c03c391d003d6172429cb4">ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ad174e2e570c03c391d003d6172429cb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Address Space Information Present reply.  <br /></td></tr>
+<tr class="memdesc:ad174e2e570c03c391d003d6172429cb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Address Space Info Present reply.  <br /></td></tr>
 <tr class="separator:ad174e2e570c03c391d003d6172429cb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4999c7893a2831e9f2b5f29d7be8f783" id="r_a4999c7893a2831e9f2b5f29d7be8f783"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4999c7893a2831e9f2b5f29d7be8f783">ProtocolConfigMemOperationsHandler_reserve_lock</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a4999c7893a2831e9f2b5f29d7be8f783"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Lock/Reserve command datagram.  <br /></td></tr>
+<tr class="memdesc:a4999c7893a2831e9f2b5f29d7be8f783"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Lock/Reserve command.  <br /></td></tr>
 <tr class="separator:a4999c7893a2831e9f2b5f29d7be8f783"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a687d216a304b57d74d04df9d37f25e7e" id="r_a687d216a304b57d74d04df9d37f25e7e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a687d216a304b57d74d04df9d37f25e7e">ProtocolConfigMemOperationsHandler_reserve_lock_reply</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a687d216a304b57d74d04df9d37f25e7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Lock/Reserve reply datagram.  <br /></td></tr>
+<tr class="memdesc:a687d216a304b57d74d04df9d37f25e7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Lock/Reserve reply.  <br /></td></tr>
 <tr class="separator:a687d216a304b57d74d04df9d37f25e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50d7c9aea699dc11455f119102901745" id="r_a50d7c9aea699dc11455f119102901745"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50d7c9aea699dc11455f119102901745">ProtocolConfigMemOperationsHandler_get_unique_id</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a50d7c9aea699dc11455f119102901745"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Get Unique ID command datagram.  <br /></td></tr>
+<tr class="memdesc:a50d7c9aea699dc11455f119102901745"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Get Unique ID command.  <br /></td></tr>
 <tr class="separator:a50d7c9aea699dc11455f119102901745"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a219374508a2ec11ff0ea7618289b5b2e" id="r_a219374508a2ec11ff0ea7618289b5b2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a219374508a2ec11ff0ea7618289b5b2e">ProtocolConfigMemOperationsHandler_get_unique_id_reply</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a219374508a2ec11ff0ea7618289b5b2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Get Unique ID reply datagram.  <br /></td></tr>
+<tr class="memdesc:a219374508a2ec11ff0ea7618289b5b2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Get Unique ID reply.  <br /></td></tr>
 <tr class="separator:a219374508a2ec11ff0ea7618289b5b2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a595afbe85938cae3f87400bcda077cd9" id="r_a595afbe85938cae3f87400bcda077cd9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a595afbe85938cae3f87400bcda077cd9">ProtocolConfigMemOperationsHandler_unfreeze</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a595afbe85938cae3f87400bcda077cd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Unfreeze command datagram.  <br /></td></tr>
+<tr class="memdesc:a595afbe85938cae3f87400bcda077cd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Unfreeze command.  <br /></td></tr>
 <tr class="separator:a595afbe85938cae3f87400bcda077cd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d363a3cf08501e4e1c4c9d829c3ca64" id="r_a8d363a3cf08501e4e1c4c9d829c3ca64"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d363a3cf08501e4e1c4c9d829c3ca64">ProtocolConfigMemOperationsHandler_freeze</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a8d363a3cf08501e4e1c4c9d829c3ca64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Freeze command datagram.  <br /></td></tr>
+<tr class="memdesc:a8d363a3cf08501e4e1c4c9d829c3ca64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Freeze command.  <br /></td></tr>
 <tr class="separator:a8d363a3cf08501e4e1c4c9d829c3ca64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68dbf07848b654d8eee830405c16edc2" id="r_a68dbf07848b654d8eee830405c16edc2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68dbf07848b654d8eee830405c16edc2">ProtocolConfigMemOperationsHandler_update_complete</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a68dbf07848b654d8eee830405c16edc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Update Complete command datagram.  <br /></td></tr>
+<tr class="memdesc:a68dbf07848b654d8eee830405c16edc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Update Complete command.  <br /></td></tr>
 <tr class="separator:a68dbf07848b654d8eee830405c16edc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae97bdda6c0fe6f2e61ce88b3a78d9fdf" id="r_ae97bdda6c0fe6f2e61ce88b3a78d9fdf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae97bdda6c0fe6f2e61ce88b3a78d9fdf">ProtocolConfigMemOperationsHandler_reset_reboot</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae97bdda6c0fe6f2e61ce88b3a78d9fdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Reset/Reboot command datagram.  <br /></td></tr>
+<tr class="memdesc:ae97bdda6c0fe6f2e61ce88b3a78d9fdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Reset/Reboot command.  <br /></td></tr>
 <tr class="separator:ae97bdda6c0fe6f2e61ce88b3a78d9fdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f8c26d33fcf35ac0a0ea014596a0fa2" id="r_a1f8c26d33fcf35ac0a0ea014596a0fa2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f8c26d33fcf35ac0a0ea014596a0fa2">ProtocolConfigMemOperationsHandler_factory_reset</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a1f8c26d33fcf35ac0a0ea014596a0fa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming Factory Reset command datagram.  <br /></td></tr>
+<tr class="memdesc:a1f8c26d33fcf35ac0a0ea014596a0fa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle incoming Factory Reset command (destructive).  <br /></td></tr>
 <tr class="separator:a1f8c26d33fcf35ac0a0ea014596a0fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a782edde504ea70333c6bbe6f6d7e7ca5" id="r_a782edde504ea70333c6bbe6f6d7e7ca5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a782edde504ea70333c6bbe6f6d7e7ca5">ProtocolConfigMemOperationsHandler_request_options_cmd</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
-<tr class="memdesc:a782edde504ea70333c6bbe6f6d7e7ca5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates an outgoing Get Configuration Options command datagram.  <br /></td></tr>
+<tr class="memitem:a782edde504ea70333c6bbe6f6d7e7ca5" id="r_a782edde504ea70333c6bbe6f6d7e7ca5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a782edde504ea70333c6bbe6f6d7e7ca5">ProtocolConfigMemOperationsHandler_request_options_cmd</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a782edde504ea70333c6bbe6f6d7e7ca5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build outgoing Get Configuration Options command datagram.  <br /></td></tr>
 <tr class="separator:a782edde504ea70333c6bbe6f6d7e7ca5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d88dbae5b2d969922547d39ddc5fb4a" id="r_a9d88dbae5b2d969922547d39ddc5fb4a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d88dbae5b2d969922547d39ddc5fb4a">ProtocolConfigMemOperationsHandler_request_get_address_space_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
-<tr class="memdesc:a9d88dbae5b2d969922547d39ddc5fb4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates an outgoing Get Address Space Information command datagram.  <br /></td></tr>
+<tr class="memitem:a9d88dbae5b2d969922547d39ddc5fb4a" id="r_a9d88dbae5b2d969922547d39ddc5fb4a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d88dbae5b2d969922547d39ddc5fb4a">ProtocolConfigMemOperationsHandler_request_get_address_space_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a9d88dbae5b2d969922547d39ddc5fb4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build outgoing Get Address Space Info command datagram.  <br /></td></tr>
 <tr class="separator:a9d88dbae5b2d969922547d39ddc5fb4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3a194a40f43679fd15c955cb81bba54" id="r_ab3a194a40f43679fd15c955cb81bba54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3a194a40f43679fd15c955cb81bba54">ProtocolConfigMemOperationsHandler_request_reserve_lock</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
-<tr class="memdesc:ab3a194a40f43679fd15c955cb81bba54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates an outgoing Lock/Reserve command datagram.  <br /></td></tr>
+<tr class="memitem:ab3a194a40f43679fd15c955cb81bba54" id="r_ab3a194a40f43679fd15c955cb81bba54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3a194a40f43679fd15c955cb81bba54">ProtocolConfigMemOperationsHandler_request_reserve_lock</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:ab3a194a40f43679fd15c955cb81bba54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build outgoing Lock/Reserve command datagram.  <br /></td></tr>
 <tr class="separator:ab3a194a40f43679fd15c955cb81bba54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Configuration memory operations protocol handler. </p>
+<div class="textblock"><p>Configuration memory operations dispatcher — routes memory-config datagram sub-commands (options, address-space info, lock, freeze, reset, factory-reset) to registered callbacks. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -175,7 +175,8 @@ Functions</h2></td></tr>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>MemoryConfigurationS.pdf </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a369608a6899d5ca9bd89fedef6a6c294" name="a369608a6899d5ca9bd89fedef6a6c294"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a369608a6899d5ca9bd89fedef6a6c294">&#9670;&#160;</a></span>ProtocolConfigMemOperationsHandler_initialize()</h2>
@@ -200,41 +201,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the configuration memory operations protocol handler. </p>
-<p>Sets up the protocol handler with the required callback interface for processing configuration memory operations commands. This must be called once during system initialization before any configuration operations can be processed.</p>
-<p>The interface structure provides callbacks for datagram acknowledgment (required) and specific operation handlers (optional based on supported features).</p>
-<p>Use cases:</p><ul>
-<li>Called once during application startup</li>
-<li>Must be called before processing any configuration datagrams</li>
-</ul>
+<p>Stores the callback interface. Call once at startup. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_protocol_config_mem_operations_handler</td><td>Pointer to interface structure with callback functions</td></tr>
+    <tr><td class="paramname">interface_protocol_config_mem_operations_handler</td><td>Pointer to <a class="el" href="structinterface__protocol__config__mem__operations__handler__t.html">interface_protocol_config_mem_operations_handler_t</a> (must remain valid for application lifetime).</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>interface_protocol_config_mem_operations_handler must not be NULL </dd>
-<dd>
-Required callbacks (load_datagram_received_ok_message, load_datagram_received_rejected_message) must be set </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call during initialization before enabling datagram reception</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__protocol__config__mem__operations__handler__t.html" title="Interface structure for configuration memory operations protocol handler.">interface_protocol_config_mem_operations_handler_t</a></dd></dl>
-<p>Algorithm:</p><ol type="1">
-<li>Store pointer to interface structure in static variable</li>
-<li>Interface callbacks are now available for use by handler functions</li>
-</ol>
-<p>The interface structure must remain valid for the lifetime of the application as the handler stores a pointer to it rather than copying its contents.</p>
-<p>Use cases:</p><ul>
-<li>Called once during application startup</li>
-<li>Must be called before processing any configuration datagrams</li>
-</ul>
-<pre class="fragment">* @param interface_protocol_config_mem_operations_handler Pointer to interface structure with callback functions
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
-<dd>
-Interface structure must remain valid throughout application lifetime </dd>
-<dd>
-Required callbacks (load_datagram_received_ok_message, load_datagram_received_rejected_message) must be set </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call during initialization before enabling datagram reception</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__protocol__config__mem__operations__handler__t.html" title="Interface structure for configuration memory operations protocol handler.">interface_protocol_config_mem_operations_handler_t</a> </dd></dl>
+<pre class="fragment">* @param interface_protocol_config_mem_operations_handler  Populated table.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Structure must remain valid for application lifetime. </dd></dl>
 
 </div>
 </div>
@@ -261,43 +236,14 @@ Required callbacks (load_datagram_received_ok_message, load_datagram_received_re
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Get Configuration Options command datagram. </p>
-<p>Handles a request for this node's configuration capabilities and features. The handler validates the request, sends a datagram acknowledgment, and invokes the registered callback to generate the response containing supported options flags.</p>
-<p>Use cases:</p><ul>
-<li>Responding to configuration tools querying node capabilities</li>
-<li>Advertising supported address spaces and features</li>
-</ul>
+<p>Handle incoming Get Configuration Options command. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message and node information</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL </dd>
-<dd>
-statemachine_info-&gt;incoming_msg_info.msg_ptr must contain valid Get Configuration Options command</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#acfd11cda1526aa24040be2c650dc1ff3" title="Processes an incoming Get Configuration Options reply datagram.">ProtocolConfigMemOperationsHandler_options_reply</a> </dd>
-<dd>
-<a class="el" href="structinterface__protocol__config__mem__operations__handler__t.html#a98881f1f9cce638ff8d7b51967a49877" title="Optional callback to process a Get Configuration Options command request.">interface_protocol_config_mem_operations_handler_t::operations_request_options_cmd</a></dd></dl>
-<p>Processes an incoming Get Configuration Options command datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for options command</li>
-<li>Set space_info to NULL (not space-specific operation)</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>This wrapper function sets up the request context and delegates to the central handler which manages the two-phase processing (ACK then execute).</p>
-<p>Use cases:</p><ul>
-<li>Called by datagram handler when Get Configuration Options command is received</li>
-<li>Entry point for options query processing</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
-<dd>
-statemachine_info-&gt;incoming_msg_info.msg_ptr must contain valid options command</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd>
-<dd>
-<a class="el" href="#a782edde504ea70333c6bbe6f6d7e7ca5" title="Generates an outgoing Get Configuration Options command datagram.">ProtocolConfigMemOperationsHandler_request_options_cmd</a> </dd></dl>
+<p>Handle incoming Get Configuration Options command. </p>
 
 </div>
 </div>
@@ -324,35 +270,14 @@ statemachine_info-&gt;incoming_msg_info.msg_ptr must contain valid options comma
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Get Configuration Options reply datagram. </p>
-<p>Handles a reply containing configuration capabilities from another node, typically when this node is acting as a configuration tool. The handler parses the options flags and invokes the registered callback for processing.</p>
-<p>Use cases:</p><ul>
-<li>Processing responses when acting as a configuration tool</li>
-<li>Discovering capabilities of nodes being configured</li>
-</ul>
+<p>Handle incoming Get Configuration Options reply. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message and node information</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL </dd>
-<dd>
-statemachine_info-&gt;incoming_msg_info.msg_ptr must contain valid options reply message</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa13d307df69ce9e82941d6282456334e" title="Processes an incoming Get Configuration Options command datagram.">ProtocolConfigMemOperationsHandler_options_cmd</a> </dd>
-<dd>
-<a class="el" href="structinterface__protocol__config__mem__operations__handler__t.html#a85f012c55072c87135354580efff57ee" title="Optional callback to process a Get Configuration Options reply message.">interface_protocol_config_mem_operations_handler_t::operations_request_options_cmd_reply</a></dd></dl>
-<p>Processes an incoming Get Configuration Options reply datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for options reply</li>
-<li>Set space_info to NULL (not space-specific operation)</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>This wrapper processes incoming options replies when acting as a configuration tool.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd></dl>
+<p>Handle incoming Get Configuration Options reply. </p>
 
 </div>
 </div>
@@ -379,39 +304,14 @@ statemachine_info-&gt;incoming_msg_info.msg_ptr must contain valid options reply
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Get Address Space Information command datagram. </p>
-<p>Handles a request for information about a specific address space identified in the command. The handler decodes the requested space, validates it exists, sends acknowledgment, and generates a response with space size, flags, and description.</p>
-<p>Use cases:</p><ul>
-<li>Responding to queries about configuration memory layout</li>
-<li>Advertising address space characteristics to configuration tools</li>
-</ul>
+<p>Handle incoming Get Address Space Info command. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message and node information</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL </dd>
-<dd>
-statemachine_info-&gt;incoming_msg_info.msg_ptr must contain valid Get Address Space Info command</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ad174e2e570c03c391d003d6172429cb4" title="Processes an incoming Address Space Information Present reply.">ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present</a> </dd>
-<dd>
-<a class="el" href="#a953e8a5fe2bcf414f41c6b8039c20bcb" title="Processes an incoming Address Space Information Not Present reply.">ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present</a></dd></dl>
-<p>Processes an incoming Get Address Space Information command datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for address space info</li>
-<li>Decode space identifier from payload to get space_info</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>The space identifier at payload offset 2 is decoded to find the appropriate address space definition before processing.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
-<dd>
-Payload must contain valid space identifier at offset 2</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd>
-<dd>
-_decode_to_space_definition </dd></dl>
+<p>Handle incoming Get Address Space Info command. </p>
 
 </div>
 </div>
@@ -438,35 +338,14 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Address Space Information Not Present reply. </p>
-<p>Handles a reply indicating the requested address space does not exist on the target node. Used when acting as a configuration tool to determine which address spaces are available.</p>
-<p>Use cases:</p><ul>
-<li>Discovering available address spaces on target nodes</li>
-<li>Handling queries for unsupported spaces</li>
-</ul>
+<p>Handle incoming Address Space Info Not Present reply. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ae90bc3eba8a2f5266f6c84ca73e41d64" title="Processes an incoming Get Address Space Information command datagram.">ProtocolConfigMemOperationsHandler_get_address_space_info</a> </dd>
-<dd>
-<a class="el" href="#ad174e2e570c03c391d003d6172429cb4" title="Processes an incoming Address Space Information Present reply.">ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present</a></dd></dl>
-<p>Processes an incoming Address Space Information Not Present reply.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for not present reply</li>
-<li>Decode space identifier from payload to get space_info</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes replies indicating requested address space does not exist.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd>
-<dd>
-_decode_to_space_definition </dd></dl>
+<p>Handle incoming Address Space Info Not Present reply. </p>
 
 </div>
 </div>
@@ -493,35 +372,14 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Address Space Information Present reply. </p>
-<p>Handles a reply containing information about an existing address space, including size, flags (read-only, low address valid), and description. Used when acting as a configuration tool to understand target node's memory layout.</p>
-<p>Use cases:</p><ul>
-<li>Discovering address space characteristics on target nodes</li>
-<li>Determining read/write permissions and size limits</li>
-</ul>
+<p>Handle incoming Address Space Info Present reply. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ae90bc3eba8a2f5266f6c84ca73e41d64" title="Processes an incoming Get Address Space Information command datagram.">ProtocolConfigMemOperationsHandler_get_address_space_info</a> </dd>
-<dd>
-<a class="el" href="#a953e8a5fe2bcf414f41c6b8039c20bcb" title="Processes an incoming Address Space Information Not Present reply.">ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present</a></dd></dl>
-<p>Processes an incoming Address Space Information Present reply.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for present reply</li>
-<li>Decode space identifier from payload to get space_info</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes replies containing address space information (size, flags, description).</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd>
-<dd>
-_decode_to_space_definition </dd></dl>
+<p>Handle incoming Address Space Info Present reply. </p>
 
 </div>
 </div>
@@ -548,34 +406,14 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Lock/Reserve command datagram. </p>
-<p>Handles a request to lock or reserve the node's configuration for exclusive access. The command includes a Node ID requesting the lock. If the node is unlocked or the requester already holds the lock, the lock is granted. A Node ID of 0 releases the lock.</p>
-<p>Use cases:</p><ul>
-<li>Granting exclusive configuration access to a configuration tool</li>
-<li>Preventing concurrent configuration modifications</li>
-</ul>
+<p>Handle incoming Lock/Reserve command. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Lock state persists until explicitly released or node resets</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a687d216a304b57d74d04df9d37f25e7e" title="Processes an incoming Lock/Reserve reply datagram.">ProtocolConfigMemOperationsHandler_reserve_lock_reply</a></dd></dl>
-<p>Processes an incoming Lock/Reserve command datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for reserve lock</li>
-<li>Set space_info to NULL (not space-specific operation)</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes incoming lock/reserve requests to grant or release exclusive configuration access.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd>
-<dd>
-<a class="el" href="#ab3a194a40f43679fd15c955cb81bba54" title="Generates an outgoing Lock/Reserve command datagram.">ProtocolConfigMemOperationsHandler_request_reserve_lock</a> </dd></dl>
+<p>Handle incoming Lock/Reserve command. </p>
 
 </div>
 </div>
@@ -602,31 +440,14 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Lock/Reserve reply datagram. </p>
-<p>Handles a reply to a lock/reserve request, indicating the current lock holder's Node ID. Used when acting as a configuration tool to determine if exclusive access was granted.</p>
-<p>Use cases:</p><ul>
-<li>Verifying lock acquisition before configuration operations</li>
-<li>Discovering current lock holder</li>
-</ul>
+<p>Handle incoming Lock/Reserve reply. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4999c7893a2831e9f2b5f29d7be8f783" title="Processes an incoming Lock/Reserve command datagram.">ProtocolConfigMemOperationsHandler_reserve_lock</a></dd></dl>
-<p>Processes an incoming Lock/Reserve reply datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for reserve lock reply</li>
-<li>Set space_info to NULL (not space-specific operation)</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes incoming lock/reserve replies when acting as a configuration tool.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd></dl>
+<p>Handle incoming Lock/Reserve reply. </p>
 
 </div>
 </div>
@@ -653,31 +474,14 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Get Unique ID command datagram. </p>
-<p>Handles a request for the node's unique event ID used in the configuration protocol. The handler sends acknowledgment and generates a reply containing the node's unique ID.</p>
-<p>Use cases:</p><ul>
-<li>Providing unique identification for configuration protocols</li>
-<li>Supporting configuration tool unique ID queries</li>
-</ul>
+<p>Handle incoming Get Unique ID command. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a219374508a2ec11ff0ea7618289b5b2e" title="Processes an incoming Get Unique ID reply datagram.">ProtocolConfigMemOperationsHandler_get_unique_id_reply</a></dd></dl>
-<p>Processes an incoming Get Unique ID command datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for get unique ID</li>
-<li>Set space_info to NULL (not space-specific operation)</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes incoming unique ID requests.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd></dl>
+<p>Handle incoming Get Unique ID command. </p>
 
 </div>
 </div>
@@ -704,31 +508,14 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Get Unique ID reply datagram. </p>
-<p>Handles a reply containing a node's unique event ID. Used when acting as a configuration tool to retrieve unique identifiers.</p>
-<p>Use cases:</p><ul>
-<li>Storing unique IDs of configured nodes</li>
-<li>Verifying node identity during configuration</li>
-</ul>
+<p>Handle incoming Get Unique ID reply. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a50d7c9aea699dc11455f119102901745" title="Processes an incoming Get Unique ID command datagram.">ProtocolConfigMemOperationsHandler_get_unique_id</a></dd></dl>
-<p>Processes an incoming Get Unique ID reply datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for get unique ID reply</li>
-<li>Set space_info to NULL (not space-specific operation)</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes incoming unique ID replies when acting as a configuration tool.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd></dl>
+<p>Handle incoming Get Unique ID reply. </p>
 
 </div>
 </div>
@@ -755,34 +542,14 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Unfreeze command datagram. </p>
-<p>Handles a request to resume normal operations in a specific address space after configuration updates are complete. The command specifies which address space to unfreeze.</p>
-<p>Use cases:</p><ul>
-<li>Resuming normal operations after configuration changes</li>
-<li>Re-enabling address space after freeze</li>
-</ul>
+<p>Handle incoming Unfreeze command. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Unfreeze must correspond to a previous Freeze command</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8d363a3cf08501e4e1c4c9d829c3ca64" title="Processes an incoming Freeze command datagram.">ProtocolConfigMemOperationsHandler_freeze</a></dd></dl>
-<p>Processes an incoming Unfreeze command datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for unfreeze</li>
-<li>Decode space identifier from payload to get space_info</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes incoming unfreeze commands to resume operations in a specific address space.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd>
-<dd>
-<a class="el" href="#a8d363a3cf08501e4e1c4c9d829c3ca64" title="Processes an incoming Freeze command datagram.">ProtocolConfigMemOperationsHandler_freeze</a> </dd></dl>
+<p>Handle incoming Unfreeze command. </p>
 
 </div>
 </div>
@@ -809,34 +576,14 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Freeze command datagram. </p>
-<p>Handles a request to suspend operations in a specific address space during configuration updates. The command specifies which address space to freeze, allowing safe modification without concurrent access.</p>
-<p>Use cases:</p><ul>
-<li>Suspending operations before configuration changes</li>
-<li>Ensuring consistent state during updates</li>
-</ul>
+<p>Handle incoming Freeze command. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Must be followed by Unfreeze to resume operations</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a595afbe85938cae3f87400bcda077cd9" title="Processes an incoming Unfreeze command datagram.">ProtocolConfigMemOperationsHandler_unfreeze</a></dd></dl>
-<p>Processes an incoming Freeze command datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for freeze</li>
-<li>Decode space identifier from payload to get space_info</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes incoming freeze commands to suspend operations in a specific address space.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd>
-<dd>
-<a class="el" href="#a595afbe85938cae3f87400bcda077cd9" title="Processes an incoming Unfreeze command datagram.">ProtocolConfigMemOperationsHandler_unfreeze</a> </dd></dl>
+<p>Handle incoming Freeze command. </p>
 
 </div>
 </div>
@@ -863,33 +610,14 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Update Complete command datagram. </p>
-<p>Handles a notification that configuration updates are complete and the node should apply changes or reset as appropriate. This signals the end of a configuration session.</p>
-<p>Use cases:</p><ul>
-<li>Applying accumulated configuration changes</li>
-<li>Triggering node reset after configuration</li>
-</ul>
+<p>Handle incoming Update Complete command. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Implementation may trigger node reset or configuration reload</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ae97bdda6c0fe6f2e61ce88b3a78d9fdf" title="Processes an incoming Reset/Reboot command datagram.">ProtocolConfigMemOperationsHandler_reset_reboot</a></dd></dl>
-<p>Processes an incoming Update Complete command datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for update complete</li>
-<li>Set space_info to NULL (not space-specific operation)</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes incoming update complete notifications indicating configuration changes are finished.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Implementation may trigger configuration reload or node reset</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd></dl>
+<p>Handle incoming Update Complete command. </p>
 
 </div>
 </div>
@@ -916,37 +644,14 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Reset/Reboot command datagram. </p>
-<p>Handles a request to reset or reboot the node, typically after configuration changes. The implementation should perform a safe shutdown and restart sequence.</p>
-<p>Use cases:</p><ul>
-<li>Applying configuration that requires restart</li>
-<li>Recovering from configuration errors</li>
-</ul>
+<p>Handle incoming Reset/Reboot command. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL </dd>
-<dd>
-Implementation must ensure safe shutdown before reset </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>May cause node to become temporarily unavailable</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a1f8c26d33fcf35ac0a0ea014596a0fa2" title="Processes an incoming Factory Reset command datagram.">ProtocolConfigMemOperationsHandler_factory_reset</a></dd></dl>
-<p>Processes an incoming Reset/Reboot command datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for reset/reboot</li>
-<li>Set space_info to NULL (not space-specific operation)</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes incoming reset/reboot commands to restart the node.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
-<dd>
-Implementation must handle safe shutdown before reset </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Node will become temporarily unavailable during reset</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd></dl>
+<p>Handle incoming Reset/Reboot command. </p>
 
 </div>
 </div>
@@ -973,41 +678,14 @@ Implementation must handle safe shutdown before reset </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Processes an incoming Factory Reset command datagram. </p>
-<p>Handles a request to reset the node to factory default configuration, erasing all user settings and customizations. This is a destructive operation that should be implemented with appropriate safeguards.</p>
-<p>Use cases:</p><ul>
-<li>Restoring node to factory defaults</li>
-<li>Recovering from corrupt configuration</li>
-</ul>
+<p>Handle incoming Factory Reset command (destructive). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must not be NULL </dd>
-<dd>
-Implementation must safely erase user configuration </dd>
-<dd>
-This is a destructive operation - all user settings will be lost </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Consider requiring confirmation before executing</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ae97bdda6c0fe6f2e61ce88b3a78d9fdf" title="Processes an incoming Reset/Reboot command datagram.">ProtocolConfigMemOperationsHandler_reset_reboot</a></dd></dl>
-<p>Processes an incoming Factory Reset command datagram.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Create local config_mem_operations_request_info structure</li>
-<li>Set operations_func to interface callback for factory reset</li>
-<li>Set space_info to NULL (not space-specific operation)</li>
-<li>Call central _handle_operations_request dispatcher</li>
-</ol>
-<p>Processes incoming factory reset commands to restore node to factory defaults.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
-<dd>
-Implementation must safely erase user configuration </dd>
-<dd>
-This is a destructive operation - all user settings will be lost </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Consider requiring confirmation before executing</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_handle_operations_request </dd></dl>
+<p>Handle incoming Factory Reset command (destructive). </p>
 
 </div>
 </div>
@@ -1028,7 +706,7 @@ This is a destructive operation - all user settings will be lost </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_operations_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_operations_request_info</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -1038,46 +716,22 @@ This is a destructive operation - all user settings will be lost </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Generates an outgoing Get Configuration Options command datagram. </p>
-<p>Creates and formats a Get Configuration Options command message to query another node's configuration capabilities. Used when this node is acting as a configuration tool.</p>
-<p>Use cases:</p><ul>
-<li>Initiating configuration capability queries</li>
-<li>Discovering supported features of target nodes</li>
-</ul>
+<p>Build outgoing Get Configuration Options command datagram. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context for message generation </td></tr>
-    <tr><td class="paramname">config_mem_operations_request_info</td><td>Pointer to request information structure</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">config_mem_operations_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> request.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa13d307df69ce9e82941d6282456334e" title="Processes an incoming Get Configuration Options command datagram.">ProtocolConfigMemOperationsHandler_options_cmd</a></dd></dl>
-<p>Generates an outgoing Get Configuration Options command datagram.</p>
+<p>Build outgoing Get Configuration Options command datagram.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Load reply message header</li>
-<li>Copy CONFIG_MEM_OPTIONS_REPLY command byte to payload</li>
-<li>Build and copy available write flags to payload</li>
-<li>Build and copy available commands flags (high byte then low byte) to payload</li>
-<li>Copy write lengths byte to payload (hardcoded to 0x00)</li>
-<li>Set outgoing message as valid</li>
+<li>Load header, write OPTIONS_REPLY + command flags + write flags + high/low space bounds + optional description string</li>
+<li>Mark outgoing message valid</li>
 </ol>
-<p>This function generates a response to a Get Configuration Options query, advertising the node's configuration capabilities including supported commands, write operations, and address spaces.</p>
-<p>Use cases:</p><ul>
-<li>Responding to configuration tool capability queries</li>
-<li>Advertising node features during configuration discovery</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context
-* </pre> <pre class="fragment">* @param config_mem_operations_request_info Pointer to request information
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL </dd>
-<dd>
-outgoing_msg_info.msg_ptr must be allocated</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_available_write_flags </dd>
-<dd>
-_available_commands_flags </dd>
-<dd>
-<a class="el" href="#aa13d307df69ce9e82941d6282456334e" title="Processes an incoming Get Configuration Options command datagram.">ProtocolConfigMemOperationsHandler_options_cmd</a> </dd></dl>
-
+<pre class="fragment">* @param statemachine_info                   Context.
+* @param config_mem_operations_request_info   Request info.
+* </pre> 
 </div>
 </div>
 <a id="a9d88dbae5b2d969922547d39ddc5fb4a" name="a9d88dbae5b2d969922547d39ddc5fb4a"></a>
@@ -1097,7 +751,7 @@ _available_commands_flags </dd>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_operations_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_operations_request_info</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -1107,68 +761,22 @@ _available_commands_flags </dd>
 </table>
 </div><div class="memdoc">
 
-<p>Generates an outgoing Get Address Space Information command datagram. </p>
-<p>Creates and formats a Get Address Space Information command message to query information about a specific address space on another node. Used when acting as a configuration tool.</p>
-<p>Use cases:</p><ul>
-<li>Querying address space characteristics</li>
-<li>Discovering memory layout of target nodes</li>
-</ul>
+<p>Build outgoing Get Address Space Info command datagram. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context for message generation </td></tr>
-    <tr><td class="paramname">config_mem_operations_request_info</td><td>Pointer to request information including target address space</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">config_mem_operations_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> request.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL </dd>
-<dd>
-config_mem_operations_request_info must specify valid address space</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ae90bc3eba8a2f5266f6c84ca73e41d64" title="Processes an incoming Get Address Space Information command datagram.">ProtocolConfigMemOperationsHandler_get_address_space_info</a></dd></dl>
-<p>Generates an outgoing Get Address Space Information command datagram.</p>
+<p>Build outgoing Get Address Space Info command datagram.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Initialize description offset to 8 (default position)</li>
-<li>Load reply message header</li>
-<li>Check if requested space definition exists</li>
-<li>If space exists and is present:<ul>
-<li>Copy CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT command byte</li>
-<li>Copy requested space identifier from incoming message</li>
-<li>Copy highest address (4 bytes) to payload</li>
-<li>Build and copy space info flags byte</li>
-<li>If low address is valid:<ul>
-<li>Copy low address (4 bytes) to payload</li>
-<li>Update description offset to 12</li>
-</ul>
-</li>
-<li>If description string exists (non-empty):<ul>
-<li>Copy description string to payload at description offset</li>
-</ul>
-</li>
-<li>Set outgoing message as valid</li>
-<li>Return</li>
-</ul>
-</li>
-<li>If space not present or doesn't exist:<ul>
-<li>Copy CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT command byte</li>
-<li>Copy requested space identifier from incoming message</li>
-<li>Set payload count to 8 (minimum size expected by OpenLcbChecker)</li>
-<li>Set outgoing message as valid</li>
-</ul>
-</li>
+<li>If space exists and is present: reply with highest address, flags, optional low address, optional description</li>
+<li>Otherwise: reply NOT_PRESENT with padded 8-byte payload</li>
 </ol>
-<p>This function responds to queries about specific address spaces, providing information about size, characteristics (read-only, low address), and description.</p>
-<p>Use cases:</p><ul>
-<li>Responding to address space capability queries</li>
-<li>Providing memory layout information to configuration tools</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context
-* </pre> <pre class="fragment">* @param config_mem_operations_request_info Pointer to request information containing space definition
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL </dd>
-<dd>
-outgoing_msg_info.msg_ptr must be allocated</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>_available_address_space_info_flags </dd>
-<dd>
-_decode_to_space_definition </dd></dl>
-
+<pre class="fragment">* @param statemachine_info                   Context.
+* @param config_mem_operations_request_info   Carries space_info pointer.
+* </pre> 
 </div>
 </div>
 <a id="ab3a194a40f43679fd15c955cb81bba54" name="ab3a194a40f43679fd15c955cb81bba54"></a>
@@ -1188,7 +796,7 @@ _decode_to_space_definition </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_operations_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_operations_request_info</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -1198,65 +806,23 @@ _decode_to_space_definition </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Generates an outgoing Lock/Reserve command datagram. </p>
-<p>Creates and formats a Lock/Reserve command message to request exclusive access to another node's configuration. Used when acting as a configuration tool.</p>
-<p>Use cases:</p><ul>
-<li>Requesting exclusive configuration access</li>
-<li>Releasing configuration lock (with Node ID 0)</li>
-</ul>
+<p>Build outgoing Lock/Reserve command datagram. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context for message generation </td></tr>
-    <tr><td class="paramname">config_mem_operations_request_info</td><td>Pointer to request information</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">config_mem_operations_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> request.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4999c7893a2831e9f2b5f29d7be8f783" title="Processes an incoming Lock/Reserve command datagram.">ProtocolConfigMemOperationsHandler_reserve_lock</a></dd></dl>
-<p>Generates an outgoing Lock/Reserve command datagram.</p>
+<p>Build outgoing Lock/Reserve command datagram.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Load reply message header</li>
-<li>Extract requested Node ID from incoming message payload (6 bytes starting at position 2)</li>
-<li>Check current lock state:<ul>
-<li>If node is unlocked (owner_node == 0):<ul>
-<li>Set owner_node to requested Node ID (grant lock)</li>
-</ul>
-</li>
-<li>If node is already locked:<ul>
-<li>If requested Node ID is 0:<ul>
-<li>Release lock (set owner_node to 0)</li>
-</ul>
-</li>
-<li>Otherwise keep existing lock holder</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Load reply message header again (ensure clean state)</li>
-<li>Copy CONFIG_MEM_RESERVE_LOCK_REPLY command byte to payload</li>
-<li>Copy current owner_node (6 bytes) to payload at position 2</li>
-<li>Set outgoing message as valid</li>
+<li>Extract requester Node ID from payload</li>
+<li>If unlocked: grant to requester. If locked and ID == 0: release.</li>
+<li>Reply with LOCK_REPLY + current owner Node ID</li>
 </ol>
-<p>Lock behavior:</p><ul>
-<li>Unlocked node: Grant lock to any requester</li>
-<li>Locked node: Only Node ID 0 can release lock</li>
-<li>Lock holder is always returned in the reply</li>
-</ul>
-<p>Use cases:</p><ul>
-<li>Granting exclusive configuration access</li>
-<li>Releasing configuration lock</li>
-<li>Checking current lock holder</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context
-* </pre> <pre class="fragment">* @param config_mem_operations_request_info Pointer to request information
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Both parameters must not be NULL </dd>
-<dd>
-incoming_msg_info.msg_ptr must contain valid Lock/Reserve command with Node ID </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Lock state persists until explicitly released or node resets</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__utilities_8c.html#a040663f01e6536b8f9fb5a77181e6015" title="Extracts a 6-byte node ID from the message payload.">OpenLcbUtilities_extract_node_id_from_openlcb_payload</a> </dd>
-<dd>
-<a class="el" href="openlcb__utilities_8c.html#aebdc740485642f016371b4604b93aa7f" title="Copies a 6-byte node ID into the message payload at a specified offset.">OpenLcbUtilities_copy_node_id_to_openlcb_payload</a> </dd></dl>
-
+<pre class="fragment">* @param statemachine_info                   Context.
+* @param config_mem_operations_request_info   Request info.
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

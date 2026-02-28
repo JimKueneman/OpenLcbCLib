@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>SNIP (Simple Node Information Protocol) data structure.  
+<p>SNIP identification strings (manufacturer + user version byte).  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -111,27 +111,8 @@ Data Fields</h2></td></tr>
 <tr class="separator:ad47425ec0aea2baf692b7b4de8d9e0d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>SNIP (Simple Node Information Protocol) data structure. </p>
-<p>Contains all SNIP strings for a node, both manufacturer-provided (read-only) and user-assignable fields.</p>
-<p><b>Manufacturer Fields (read-only from ACDI Manufacturer space 0xFC):</b></p><ul>
-<li>mfg_version: Always 1</li>
-<li>name: Manufacturer name</li>
-<li>model: Model name/number</li>
-<li>hardware_version: Hardware version string</li>
-<li>software_version: Software version string</li>
-</ul>
-<p><b>User Fields (writable in ACDI User space 0xFB):</b></p><ul>
-<li>user_version: Always 1</li>
-<li>User name and description stored separately in node configuration</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>String lengths include null terminator </dd>
-<dd>
-C compiler initializers handle null terminators inconsistently; some include it, some don't</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__mti__snip.html#gac2485417b2e2abf49432a5b6b4d6b526" title="Request simple node information from specific node.">MTI_SIMPLE_NODE_INFO_REQUEST</a> </dd>
-<dd>
-<a class="el" href="group__mti__snip.html#gadd8a52b3e09f012fba40d438144f5996" title="Response with SNIP data (manufacturer and user info)">MTI_SIMPLE_NODE_INFO_REPLY</a> </dd>
-<dd>
-<a class="el" href="group__address__spaces.html#ga04b99be4667eea924c7a2e53d98c9934" title="ACDI Manufacturer space - read-only manufacturer info.">CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS</a> </dd></dl>
+<div class="textblock"><p>SNIP identification strings (manufacturer + user version byte). </p>
+<p>Manufacturer fields are read-only (ACDI space 0xFC). User name/description are stored separately in node configuration. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a27c508feaccd82c32b00979d7bcf2baf" name="a27c508feaccd82c32b00979d7bcf2baf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a27c508feaccd82c32b00979d7bcf2baf">&#9670;&#160;</a></span>mfg_version</h2>

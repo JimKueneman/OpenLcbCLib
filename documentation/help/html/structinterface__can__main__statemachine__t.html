@@ -92,85 +92,58 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Interface structure for CAN main state machine callback functions.  
+<p>Dependency-injection interface for the CAN main state machine.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:ad5d977bbc45e071d19d77e261f17b7e7" id="r_ad5d977bbc45e071d19d77e261f17b7e7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7">lock_shared_resources</a> )(void)</td></tr>
-<tr class="memdesc:ad5d977bbc45e071d19d77e261f17b7e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to disable interrupts and lock shared resources.  <br /></td></tr>
+<tr class="memdesc:ad5d977bbc45e071d19d77e261f17b7e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Disable interrupts / acquire mutex. Typical: application lock function.  <br /></td></tr>
 <tr class="separator:ad5d977bbc45e071d19d77e261f17b7e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a654fa7c6260aa2ac2c0589f57fcd67e9" id="r_a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a654fa7c6260aa2ac2c0589f57fcd67e9">unlock_shared_resources</a> )(void)</td></tr>
-<tr class="memdesc:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to re-enable interrupts and unlock shared resources.  <br /></td></tr>
+<tr class="memdesc:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Re-enable interrupts / release mutex. Typical: application unlock function.  <br /></td></tr>
 <tr class="separator:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0bbea8088c0d628d4e066570baf35f3" id="r_af0bbea8088c0d628d4e066570baf35f3"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0bbea8088c0d628d4e066570baf35f3">send_can_message</a> )(<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *msg)</td></tr>
-<tr class="memdesc:af0bbea8088c0d628d4e066570baf35f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to transmit CAN messages to physical bus.  <br /></td></tr>
+<tr class="memdesc:af0bbea8088c0d628d4e066570baf35f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Transmit a pre-built CAN frame. Typical: CanTxStatemachine_send_can_message.  <br /></td></tr>
 <tr class="separator:af0bbea8088c0d628d4e066570baf35f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a642f075eed427764e99bda659f1fd22f" id="r_a642f075eed427764e99bda659f1fd22f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a642f075eed427764e99bda659f1fd22f">openlcb_node_get_first</a> )(uint8_t key)</td></tr>
-<tr class="memdesc:a642f075eed427764e99bda659f1fd22f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to retrieve first node for enumeration.  <br /></td></tr>
+<tr class="memitem:a642f075eed427764e99bda659f1fd22f" id="r_a642f075eed427764e99bda659f1fd22f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a642f075eed427764e99bda659f1fd22f">openlcb_node_get_first</a> )(uint8_t key)</td></tr>
+<tr class="memdesc:a642f075eed427764e99bda659f1fd22f"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Return the first allocated node (start of enumeration). Typical: OpenLcbNode_get_first.  <br /></td></tr>
 <tr class="separator:a642f075eed427764e99bda659f1fd22f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae198d49b6505cbba8429aeb49fa3879e" id="r_ae198d49b6505cbba8429aeb49fa3879e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e">openlcb_node_get_next</a> )(uint8_t key)</td></tr>
-<tr class="memdesc:ae198d49b6505cbba8429aeb49fa3879e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to retrieve next node in enumeration sequence.  <br /></td></tr>
+<tr class="memitem:ae198d49b6505cbba8429aeb49fa3879e" id="r_ae198d49b6505cbba8429aeb49fa3879e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e">openlcb_node_get_next</a> )(uint8_t key)</td></tr>
+<tr class="memdesc:ae198d49b6505cbba8429aeb49fa3879e"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Return the next node in the enumeration sequence. Typical: OpenLcbNode_get_next.  <br /></td></tr>
 <tr class="separator:ae198d49b6505cbba8429aeb49fa3879e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcc26a9aa6bd99c8b8c09cfac42e0125" id="r_afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afcc26a9aa6bd99c8b8c09cfac42e0125">openlcb_node_find_by_alias</a> )(uint16_t alias)</td></tr>
-<tr class="memdesc:afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to find node by CAN alias.  <br /></td></tr>
+<tr class="memitem:afcc26a9aa6bd99c8b8c09cfac42e0125" id="r_afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afcc26a9aa6bd99c8b8c09cfac42e0125">openlcb_node_find_by_alias</a> )(uint16_t alias)</td></tr>
+<tr class="memdesc:afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Find a node by its 12-bit CAN alias. Typical: OpenLcbNode_find_by_alias.  <br /></td></tr>
 <tr class="separator:afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac202b101b9553f768970f16f84691cdd" id="r_ac202b101b9553f768970f16f84691cdd"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac202b101b9553f768970f16f84691cdd">login_statemachine_run</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:ac202b101b9553f768970f16f84691cdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to execute CAN login state machine.  <br /></td></tr>
+<tr class="memdesc:ac202b101b9553f768970f16f84691cdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Advance the login state machine one step. Typical: CanLoginStateMachine_run.  <br /></td></tr>
 <tr class="separator:ac202b101b9553f768970f16f84691cdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11d6f4e079fa28cc00a01cdc38e526f6" id="r_a11d6f4e079fa28cc00a01cdc38e526f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a6f5fe2a96f016592936919dc52552b60">alias_mapping_info_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11d6f4e079fa28cc00a01cdc38e526f6">alias_mapping_get_alias_mapping_info</a> )(void)</td></tr>
-<tr class="memdesc:a11d6f4e079fa28cc00a01cdc38e526f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to access alias mapping table.  <br /></td></tr>
+<tr class="memdesc:a11d6f4e079fa28cc00a01cdc38e526f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Return pointer to the alias mapping table. Typical: AliasMappings_get_alias_mapping_info.  <br /></td></tr>
 <tr class="separator:a11d6f4e079fa28cc00a01cdc38e526f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad579e2c105067c9311bb173b30cd9130" id="r_ad579e2c105067c9311bb173b30cd9130"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad579e2c105067c9311bb173b30cd9130">alias_mapping_unregister</a> )(uint16_t alias)</td></tr>
-<tr class="memdesc:ad579e2c105067c9311bb173b30cd9130"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to remove alias from mapping table.  <br /></td></tr>
+<tr class="memdesc:ad579e2c105067c9311bb173b30cd9130"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Remove an alias from the mapping table. Typical: AliasMappings_unregister.  <br /></td></tr>
 <tr class="separator:ad579e2c105067c9311bb173b30cd9130"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdd549c43e6e2393090daf202ee785cf" id="r_acdd549c43e6e2393090daf202ee785cf"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acdd549c43e6e2393090daf202ee785cf">handle_duplicate_aliases</a> )(void)</td></tr>
-<tr class="memdesc:acdd549c43e6e2393090daf202ee785cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to process duplicate alias conflicts.  <br /></td></tr>
+<tr class="memdesc:acdd549c43e6e2393090daf202ee785cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Scan and resolve all duplicate aliases. Typical: CanMainStatemachine_handle_duplicate_aliases.  <br /></td></tr>
 <tr class="separator:acdd549c43e6e2393090daf202ee785cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21202484ac69bd5be4a3304038cf2f5f" id="r_a21202484ac69bd5be4a3304038cf2f5f"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21202484ac69bd5be4a3304038cf2f5f">handle_outgoing_can_message</a> )(void)</td></tr>
-<tr class="memdesc:a21202484ac69bd5be4a3304038cf2f5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to transmit pending outgoing CAN messages.  <br /></td></tr>
+<tr class="memdesc:a21202484ac69bd5be4a3304038cf2f5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Pop and transmit one outgoing CAN message. Typical: CanMainStatemachine_handle_outgoing_can_message.  <br /></td></tr>
 <tr class="separator:a21202484ac69bd5be4a3304038cf2f5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28e939b74de1df461b469f2ddf7d663c" id="r_a28e939b74de1df461b469f2ddf7d663c"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28e939b74de1df461b469f2ddf7d663c">handle_login_outgoing_can_message</a> )(void)</td></tr>
-<tr class="memdesc:a28e939b74de1df461b469f2ddf7d663c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to transmit pending login CAN messages.  <br /></td></tr>
+<tr class="memdesc:a28e939b74de1df461b469f2ddf7d663c"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Transmit a pending login frame (CID/RID/AMD). Typical: CanMainStatemachine_handle_login_outgoing_can_message.  <br /></td></tr>
 <tr class="separator:a28e939b74de1df461b469f2ddf7d663c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace54b5c03eafd093615c3de2f76587b1" id="r_ace54b5c03eafd093615c3de2f76587b1"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace54b5c03eafd093615c3de2f76587b1">handle_try_enumerate_first_node</a> )(void)</td></tr>
-<tr class="memdesc:ace54b5c03eafd093615c3de2f76587b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to begin node enumeration and process first node.  <br /></td></tr>
+<tr class="memdesc:ace54b5c03eafd093615c3de2f76587b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Start enumeration and process the first node. Typical: CanMainStatemachine_handle_try_enumerate_first_node.  <br /></td></tr>
 <tr class="separator:ace54b5c03eafd093615c3de2f76587b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41dbaa73eb2229932ffc76416db879e7" id="r_a41dbaa73eb2229932ffc76416db879e7"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41dbaa73eb2229932ffc76416db879e7">handle_try_enumerate_next_node</a> )(void)</td></tr>
-<tr class="memdesc:a41dbaa73eb2229932ffc76416db879e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to continue node enumeration to next node.  <br /></td></tr>
+<tr class="memdesc:a41dbaa73eb2229932ffc76416db879e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Continue enumeration to the next node. Typical: CanMainStatemachine_handle_try_enumerate_next_node.  <br /></td></tr>
 <tr class="separator:a41dbaa73eb2229932ffc76416db879e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Interface structure for CAN main state machine callback functions. </p>
-<p>This structure defines the callback interface for the CAN main state machine, which serves as the primary orchestrator for the CAN layer. It coordinates all CAN operations including alias management, login sequences, message transmission, and node enumeration across multiple virtual nodes.</p>
-<p>The main state machine executes in a cooperative multitasking fashion, processing one operation per call to CanMainStateMachine_run. Each iteration performs operations in the following priority order:</p><ol type="1">
-<li>Handle duplicate alias conflicts (highest priority)</li>
-<li>Transmit pending outgoing CAN messages from FIFO</li>
-<li>Transmit pending login messages (CID, RID, AMD frames)</li>
-<li>Process first node (enumerate and run login if needed)</li>
-<li>Process next node (continue enumeration)</li>
-</ol>
-<p>Resource Locking: The state machine requires shared resource locking to prevent conflicts between:</p><ul>
-<li>CAN receive interrupt/thread accessing incoming FIFO</li>
-<li>100ms timer updating node timerticks</li>
-<li>Main loop accessing buffers and alias mappings</li>
-</ul>
-<p>Lock duration is kept minimal (microseconds) to prevent CAN frame drops.</p>
-<p>Node Enumeration: Supports multiple virtual nodes (up to USER_DEFINED_NODE_BUFFER_DEPTH). Each node is processed through its login sequence independently. Enumeration uses a key-based system to allow multiple concurrent enumerators without interference.</p>
-<p>Alias Management: Monitors for duplicate alias conditions reported by Rx handlers. When duplicates detected, unregisters conflicting aliases and resets affected nodes to Inhibited state, forcing them through login sequence again with new alias.</p>
-<p>Message Transmission: Coordinates transmission of both:</p><ul>
-<li>Login-related frames (CID, RID, AMD) generated by login state machine</li>
-<li>General outgoing frames queued in CAN FIFO</li>
-</ul>
-<p>All callbacks are REQUIRED and must be initialized before calling CanMainStatemachine_initialize. Typical implementations use the library's standard modules (CanTxStatemachine, OpenLcbNode, AliasMappings, etc.).</p>
-<dl class="section note"><dt>Note</dt><dd>All callbacks are REQUIRED - none can be NULL </dd>
-<dd>
-State machine is non-blocking - returns after each operation </dd>
-<dd>
-Supports multiple virtual nodes limited only by memory</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN Main State Machine.">CanMainStatemachine_initialize</a> </dd>
-<dd>
-<a class="el" href="can__main__statemachine_8c.html#a9bdef5a88eff72849f2506381fe1742f" title="Executes one iteration of the main CAN state machine.">CanMainStateMachine_run</a> </dd></dl>
+<div class="textblock"><p>Dependency-injection interface for the CAN main state machine. </p>
+<p>All pointers are REQUIRED (must not be NULL). Each call to <a class="el" href="can__main__statemachine_8c.html#a9bdef5a88eff72849f2506381fe1742f" title="Executes one cooperative iteration of the main CAN state machine.">CanMainStateMachine_run()</a> processes one operation in priority order: duplicate aliases → outgoing CAN message → login message → first node → next node.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN main state machine.">CanMainStatemachine_initialize</a> </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>
@@ -184,26 +157,7 @@ Supports multiple virtual nodes limited only by memory</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to disable interrupts and lock shared resources. </p>
-<p>This required callback must prevent concurrent access to library buffers and data structures during critical operations. Called before accessing:</p><ul>
-<li>CAN buffer FIFO (incoming/outgoing)</li>
-<li>Alias mapping tables</li>
-<li>Node state during enumeration</li>
-</ul>
-<p>Typical implementations:</p><ul>
-<li>Disable CAN receive interrupt and 100ms timer interrupt</li>
-<li>Acquire mutex/semaphore (RTOS)</li>
-<li>Set critical section flag</li>
-</ul>
-<p>Lock duration is kept minimal (microseconds) to prevent:</p><ul>
-<li>Incoming CAN frame drops</li>
-<li>Timer tick overflow</li>
-<li>Real-time constraint violations</li>
-</ul>
-<p>Always paired with unlock_shared_resources call.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
-<dd>
-Keep lock duration minimal - typical &lt; 50 microseconds </dd></dl>
+<p>REQUIRED. Disable interrupts / acquire mutex. Typical: application lock function. </p>
 
 </div>
 </div>
@@ -219,21 +173,7 @@ Keep lock duration minimal - typical &lt; 50 microseconds </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to re-enable interrupts and unlock shared resources. </p>
-<p>This required callback must restore normal operation after critical section completes. Called after completing operations on shared resources.</p>
-<p>Typical implementations:</p><ul>
-<li>Re-enable CAN receive interrupt and 100ms timer interrupt</li>
-<li>Release mutex/semaphore (RTOS)</li>
-<li>Clear critical section flag</li>
-</ul>
-<p>MUST be called after every lock_shared_resources call to prevent:</p><ul>
-<li>Deadlock conditions</li>
-<li>Permanently disabled interrupts</li>
-<li>Resource starvation</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
-<dd>
-Always call after lock_shared_resources - no exceptions </dd></dl>
+<p>REQUIRED. Re-enable interrupts / release mutex. Typical: application unlock function. </p>
 
 </div>
 </div>
@@ -249,20 +189,7 @@ Always call after lock_shared_resources - no exceptions </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to transmit CAN messages to physical bus. </p>
-<p>This required callback transmits CAN frames to the hardware CAN controller. Used for both login frames (CID, RID, AMD) and general outgoing messages.</p>
-<p>The callback receives a fully constructed CAN frame containing:</p><ul>
-<li>29-bit extended CAN identifier</li>
-<li>0-8 data bytes</li>
-<li>Payload count</li>
-</ul>
-<p>Implementation should:</p><ul>
-<li>Check if hardware transmit buffer available</li>
-<li>Write frame to CAN controller</li>
-<li>Return true if transmitted, false if buffer full</li>
-</ul>
-<p>Typical implementation: CanTxStatemachine_send_can_message</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>REQUIRED. Transmit a pre-built CAN frame. Typical: CanTxStatemachine_send_can_message. </p>
 
 </div>
 </div>
@@ -273,21 +200,12 @@ Always call after lock_shared_resources - no exceptions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_get_first) (uint8_t key)</td>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(* openlcb_node_get_first) (uint8_t key)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to retrieve first node for enumeration. </p>
-<p>This required callback starts enumeration of allocated virtual nodes. Used to iterate through all nodes for login processing and state management.</p>
-<p>The key parameter allows multiple independent enumerations:</p><ul>
-<li>Key 0: Used by CAN main state machine</li>
-<li>Key 1: Used by OpenLCB login state machine</li>
-<li>Keys 2-7: Available for application use</li>
-</ul>
-<p>Returns pointer to first allocated node, or NULL if no nodes exist.</p>
-<p>Typical implementation: OpenLcbNode_get_first</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>REQUIRED. Return the first allocated node (start of enumeration). Typical: OpenLcbNode_get_first. </p>
 
 </div>
 </div>
@@ -298,16 +216,12 @@ Always call after lock_shared_resources - no exceptions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_get_next) (uint8_t key)</td>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(* openlcb_node_get_next) (uint8_t key)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to retrieve next node in enumeration sequence. </p>
-<p>This required callback continues enumeration started by openlcb_node_get_first. Returns next node using the enumeration key, or NULL when all nodes enumerated.</p>
-<p>Works in conjunction with openlcb_node_get_first to iterate through all virtual nodes.</p>
-<p>Typical implementation: OpenLcbNode_get_next</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>REQUIRED. Return the next node in the enumeration sequence. Typical: OpenLcbNode_get_next. </p>
 
 </div>
 </div>
@@ -318,16 +232,12 @@ Always call after lock_shared_resources - no exceptions </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_find_by_alias) (uint16_t alias)</td>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(* openlcb_node_find_by_alias) (uint16_t alias)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to find node by CAN alias. </p>
-<p>This required callback searches allocated nodes for one with matching 12-bit CAN alias. Used when processing incoming addressed messages to route them to the correct virtual node.</p>
-<p>Returns pointer to node with matching alias, or NULL if no match found.</p>
-<p>Typical implementation: OpenLcbNode_find_by_alias</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>REQUIRED. Find a node by its 12-bit CAN alias. Typical: OpenLcbNode_find_by_alias. </p>
 
 </div>
 </div>
@@ -343,15 +253,7 @@ Always call after lock_shared_resources - no exceptions </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to execute CAN login state machine. </p>
-<p>This required callback runs the login state machine for nodes that have not completed CAN alias allocation. Processes the 10-state login sequence: INIT → GENERATE_SEED → GENERATE_ALIAS → CID7 → CID6 → CID5 → CID4 → WAIT_200ms → RID → AMD</p>
-<p>The callback receives can_statemachine_info_t containing:</p><ul>
-<li>Node pointer</li>
-<li>Login outgoing message buffer</li>
-<li>Message valid flag</li>
-</ul>
-<p>Typical implementation: CanLoginStateMachine_run</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>REQUIRED. Advance the login state machine one step. Typical: CanLoginStateMachine_run. </p>
 
 </div>
 </div>
@@ -367,18 +269,7 @@ Always call after lock_shared_resources - no exceptions </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to access alias mapping table. </p>
-<p>This required callback returns pointer to the alias mapping structure containing all registered alias/NodeID pairs. Used for:</p><ul>
-<li>Duplicate alias detection</li>
-<li>Network topology monitoring</li>
-<li>Conflict resolution</li>
-</ul>
-<p>Returns pointer to alias_mapping_info_t structure containing:</p><ul>
-<li>Array of alias mappings</li>
-<li>Duplicate flag</li>
-</ul>
-<p>Typical implementation: AliasMappings_get_alias_mapping_info</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>REQUIRED. Return pointer to the alias mapping table. Typical: AliasMappings_get_alias_mapping_info. </p>
 
 </div>
 </div>
@@ -394,15 +285,7 @@ Always call after lock_shared_resources - no exceptions </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to remove alias from mapping table. </p>
-<p>This required callback unregisters an alias/NodeID mapping. Called when:</p><ul>
-<li>Duplicate alias detected</li>
-<li>Node goes offline</li>
-<li>Alias conflict resolution required</li>
-</ul>
-<p>After unregistration, alias becomes available for reallocation.</p>
-<p>Typical implementation: AliasMappings_unregister</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>REQUIRED. Remove an alias from the mapping table. Typical: AliasMappings_unregister. </p>
 
 </div>
 </div>
@@ -418,13 +301,7 @@ Always call after lock_shared_resources - no exceptions </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to process duplicate alias conflicts. </p>
-<p>This required callback handles detected duplicate alias conditions. Scans alias mapping table for duplicates, unregisters conflicting aliases, and resets affected nodes to Inhibited state.</p>
-<p>Returns true if duplicates were found and processed, false otherwise.</p>
-<p>Typical implementation: CanMainStatemachine_handle_duplicate_aliases</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
-<dd>
-This is an internal function exposed for testing </dd></dl>
+<p>REQUIRED. Scan and resolve all duplicate aliases. Typical: CanMainStatemachine_handle_duplicate_aliases. </p>
 
 </div>
 </div>
@@ -440,13 +317,7 @@ This is an internal function exposed for testing </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to transmit pending outgoing CAN messages. </p>
-<p>This required callback pops messages from the outgoing CAN FIFO and attempts transmission. Messages remain in buffer until successfully transmitted.</p>
-<p>Returns true if message was in FIFO (whether sent or not), false if FIFO empty.</p>
-<p>Typical implementation: CanMainStatemachine_handle_outgoing_can_message</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
-<dd>
-This is an internal function exposed for testing </dd></dl>
+<p>REQUIRED. Pop and transmit one outgoing CAN message. Typical: CanMainStatemachine_handle_outgoing_can_message. </p>
 
 </div>
 </div>
@@ -462,13 +333,7 @@ This is an internal function exposed for testing </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to transmit pending login CAN messages. </p>
-<p>This required callback attempts transmission of login-related frames (CID, RID, AMD) generated by the login state machine. Messages remain pending until successfully transmitted.</p>
-<p>Returns true if login message was pending (whether sent or not), false otherwise.</p>
-<p>Typical implementation: CanMainStatemachine_handle_login_outgoing_can_message</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
-<dd>
-This is an internal function exposed for testing </dd></dl>
+<p>REQUIRED. Transmit a pending login frame (CID/RID/AMD). Typical: CanMainStatemachine_handle_login_outgoing_can_message. </p>
 
 </div>
 </div>
@@ -484,13 +349,7 @@ This is an internal function exposed for testing </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to begin node enumeration and process first node. </p>
-<p>This required callback retrieves the first allocated node and processes it through the appropriate state machine based on login status. If node has not completed login (run_state &lt; RUNSTATE_LOAD_INITIALIZATION_COMPLETE), runs the login state machine.</p>
-<p>Returns true if enumeration started successfully.</p>
-<p>Typical implementation: CanMainStatemachine_handle_try_enumerate_first_node</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
-<dd>
-This is an internal function exposed for testing </dd></dl>
+<p>REQUIRED. Start enumeration and process the first node. Typical: CanMainStatemachine_handle_try_enumerate_first_node. </p>
 
 </div>
 </div>
@@ -506,12 +365,7 @@ This is an internal function exposed for testing </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to continue node enumeration to next node. </p>
-<p>This required callback retrieves the next allocated node and processes it through the appropriate state machine. Returns true if no more nodes remain, false to continue enumeration.</p>
-<p>Typical implementation: CanMainStatemachine_handle_try_enumerate_next_node</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
-<dd>
-This is an internal function exposed for testing </dd></dl>
+<p>REQUIRED. Continue enumeration to the next node. Typical: CanMainStatemachine_handle_try_enumerate_next_node. </p>
 
 </div>
 </div>

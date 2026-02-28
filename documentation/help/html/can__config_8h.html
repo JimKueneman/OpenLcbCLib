@@ -111,7 +111,7 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ae70d56f10f100fafe66a63842147ad14" id="r_ae70d56f10f100fafe66a63842147ad14"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae70d56f10f100fafe66a63842147ad14">CanConfig_initialize</a> (const <a class="el" href="structcan__config__t.html">can_config_t</a> *config)</td></tr>
-<tr class="memdesc:ae70d56f10f100fafe66a63842147ad14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the CAN bus transport layer.  <br /></td></tr>
+<tr class="memdesc:ae70d56f10f100fafe66a63842147ad14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN bus transport layer.  <br /></td></tr>
 <tr class="separator:ae70d56f10f100fafe66a63842147ad14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -125,8 +125,8 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Users provide their hardware-specific CAN driver functions here. All other CAN-internal wiring is handled automatically by <a class="el" href="can__config_8c.html" title="Library-internal wiring module for CAN bus transport.">can_config.c</a>.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Feb 2026</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__config_8h.html" title="User-facing configuration struct for OpenLcbCLib.">openlcb_config.h</a> - OpenLCB protocol layer configuration </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__config_8h.html" title="User-facing configuration struct and initialization API for OpenLcbCLib.">openlcb_config.h</a> - OpenLCB protocol layer configuration </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="ae70d56f10f100fafe66a63842147ad14" name="ae70d56f10f100fafe66a63842147ad14"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae70d56f10f100fafe66a63842147ad14">&#9670;&#160;</a></span>CanConfig_initialize()</h2>
@@ -151,14 +151,26 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initialize the CAN bus transport layer. </p>
-<p>Must be called BEFORE <a class="el" href="openlcb__config_8c.html#abe6efa2be502ad04780575a5cfb6b7da" title="Initialize the entire OpenLcbCLib stack with one call.">OpenLcb_initialize()</a>.</p>
+<p>Initializes the CAN bus transport layer. </p>
+<p>Must be called BEFORE <a class="el" href="openlcb__config_8c.html#acc5207f2b2fb16cc8ef8cbacac9f71ca" title="Initializes the entire OpenLCB stack from the user configuration.">OpenLcb_initialize()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">config</td><td>CAN transport configuration. Must remain valid for the lifetime of the application. </td></tr>
+    <tr><td class="paramname">config</td><td>Pointer to <a class="el" href="structcan__config__t.html">can_config_t</a> configuration. Must remain valid for the lifetime of the application.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe - call during single-threaded initialization only.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__config_8h.html" title="User-facing configuration struct and initialization API for OpenLcbCLib.">openlcb_config.h</a></dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Save the user-provided config pointer.</li>
+<li>Initialize buffer infrastructure (CanBufferStore, CanBufferFifo).</li>
+<li>Build all 7 internal interface structs from user config and library functions.</li>
+<li>Initialize all CAN modules in dependency order: RxMessageHandler, RxStatemachine, TxMessageHandler, TxStatemachine, LoginMessageHandler, LoginStateMachine, MainStatemachine, AliasMappings.</li>
+</ol>
+<pre class="fragment">* @param config  Pointer to @ref can_config_t configuration. Must remain
+*                valid for the lifetime of the application.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe - call during single-threaded initialization only.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__config_8h.html" title="User-facing configuration struct and initialization API for OpenLcbCLib.">openlcb_config.h</a> </dd></dl>
 
 </div>
 </div>

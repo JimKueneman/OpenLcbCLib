@@ -97,35 +97,35 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Implementation of the FIFO buffer for CAN messages.  
+<p>Circular FIFO queue for <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> pointers.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcan__fifo__t.html">can_fifo_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal FIFO structure for circular queue management.  <a href="structcan__fifo__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal circular buffer for queuing <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> pointers.  <a href="structcan__fifo__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ab0652f39f104350007ad642b955ddbad" id="r_ab0652f39f104350007ad642b955ddbad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0652f39f104350007ad642b955ddbad">CanBufferFifo_initialize</a> (void)</td></tr>
-<tr class="memdesc:ab0652f39f104350007ad642b955ddbad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Message Buffer FIFO.  <br /></td></tr>
+<tr class="memdesc:ab0652f39f104350007ad642b955ddbad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all FIFO slots and resets head and tail to zero.  <br /></td></tr>
 <tr class="separator:ab0652f39f104350007ad642b955ddbad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9506021e46c1e62c700b125252276346" id="r_a9506021e46c1e62c700b125252276346"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9506021e46c1e62c700b125252276346">CanBufferFifo_push</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *new_msg)</td></tr>
-<tr class="memdesc:a9506021e46c1e62c700b125252276346"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pushes a new CAN message into the FIFO buffer.  <br /></td></tr>
+<tr class="memdesc:a9506021e46c1e62c700b125252276346"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pushes a <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> pointer onto the tail of the FIFO.  <br /></td></tr>
 <tr class="separator:a9506021e46c1e62c700b125252276346"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ffec18f770ac9eeb09eb5efc586addc" id="r_a2ffec18f770ac9eeb09eb5efc586addc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ffec18f770ac9eeb09eb5efc586addc">CanBufferFifo_pop</a> (void)</td></tr>
-<tr class="memdesc:a2ffec18f770ac9eeb09eb5efc586addc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pops a CAN message off the FIFO buffer.  <br /></td></tr>
+<tr class="memdesc:a2ffec18f770ac9eeb09eb5efc586addc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes and returns the oldest <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> from the FIFO.  <br /></td></tr>
 <tr class="separator:a2ffec18f770ac9eeb09eb5efc586addc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad52fb1602439269439924aa2c962db07" id="r_ad52fb1602439269439924aa2c962db07"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad52fb1602439269439924aa2c962db07">CanBufferFifo_is_empty</a> (void)</td></tr>
-<tr class="memdesc:ad52fb1602439269439924aa2c962db07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests if the FIFO buffer is empty.  <br /></td></tr>
+<tr class="memdesc:ad52fb1602439269439924aa2c962db07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns non-zero if the FIFO is empty, zero if messages are present.  <br /></td></tr>
 <tr class="separator:ad52fb1602439269439924aa2c962db07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93d3428dcf398427024b61c4cfe096c3" id="r_a93d3428dcf398427024b61c4cfe096c3"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93d3428dcf398427024b61c4cfe096c3">CanBufferFifo_get_allocated_count</a> (void)</td></tr>
-<tr class="memdesc:a93d3428dcf398427024b61c4cfe096c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of messages currently in the FIFO buffer.  <br /></td></tr>
+<tr class="memdesc:a93d3428dcf398427024b61c4cfe096c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> pointers currently in the FIFO.  <br /></td></tr>
 <tr class="separator:a93d3428dcf398427024b61c4cfe096c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implementation of the FIFO buffer for CAN messages. </p>
+<div class="textblock"><p>Circular FIFO queue for <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> pointers. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -133,9 +133,9 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Implements a circular queue using an array of message pointers. The FIFO uses one extra slot (USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1) to distinguish between empty and full states without requiring a separate counter. Head points to the next insertion position, tail points to the next removal position.</p>
+<p>Uses one extra slot (USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1) so that head == tail always means empty without needing a separate counter.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="ab0652f39f104350007ad642b955ddbad" name="ab0652f39f104350007ad642b955ddbad"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab0652f39f104350007ad642b955ddbad">&#9670;&#160;</a></span>CanBufferFifo_initialize()</h2>
@@ -152,25 +152,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes the CAN Message Buffer FIFO. </p>
+<p>Clears all FIFO slots and resets head and tail to zero. </p>
 <p>Algorithm:</p><ol type="1">
-<li>Iterate through entire FIFO array</li>
-<li>Set each slot to NULL (no message present)</li>
-<li>Reset head pointer to 0 (next insertion position)</li>
-<li>Reset tail pointer to 0 (next removal position)</li>
-<li>FIFO is now empty (head == tail)</li>
+<li>Set all LEN_CAN_FIFO_BUFFER pointer slots to NULL.</li>
+<li>Reset head and tail indices to zero. </li>
 </ol>
-<p>Use cases:</p><ul>
-<li>Called during system initialization</li>
-<li>Required before any push or pop operations</li>
-</ul>
-<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
-<dd>
-NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call before <a class="el" href="#a9506021e46c1e62c700b125252276346" title="Pushes a new CAN message into the FIFO buffer.">CanBufferFifo_push()</a> or <a class="el" href="#a2ffec18f770ac9eeb09eb5efc586addc" title="Pops a CAN message off the FIFO buffer.">CanBufferFifo_pop()</a></dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a9506021e46c1e62c700b125252276346" title="Pushes a new CAN message into the FIFO buffer.">CanBufferFifo_push</a> - Adds message to FIFO </dd>
-<dd>
-<a class="el" href="can__buffer__store_8c.html#a49fcb6055f37edb9e56977295cd0eaf2" title="Initializes the CAN Buffer Store.">CanBufferStore_initialize</a> - Must be called before this function </dd></dl>
 
 </div>
 </div>
@@ -189,34 +175,14 @@ NOT thread-safe</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Pushes a new CAN message into the FIFO buffer. </p>
+<p>Pushes a <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> pointer onto the tail of the FIFO. </p>
 <p>Algorithm:</p><ol type="1">
-<li>Calculate next head position (head + 1)</li>
-<li>Apply wraparound if next &gt;= buffer length (circular buffer)</li>
-<li>Check if FIFO is full (next == tail)</li>
-<li>If full, return false (cannot add)</li>
-<li>If space available:<ul>
-<li>Store message pointer at current head position</li>
-<li>Update head to next position</li>
-<li>Return true (success)</li>
-</ul>
-</li>
+<li>Compute next head position with wraparound.</li>
+<li>If next != tail (not full): store pointer, advance head, return true.</li>
+<li>Otherwise return false (FIFO full).</li>
 </ol>
-<p>Use cases:</p><ul>
-<li>Hardware CAN receive interrupt/callback</li>
-<li>Queueing incoming CAN frames for processing</li>
-</ul>
-<pre class="fragment">* @param new_msg Pointer to allocated CAN message from CanBufferStore_allocate_buffer()
-* </pre><dl class="section return"><dt>Returns</dt><dd>true if message successfully added to FIFO, false if FIFO is full</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>FIFO full condition returns false - caller must handle this error </dd>
-<dd>
-NOT thread-safe - use shared resource locking</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Always check return value - dropped messages when FIFO full </dd>
-<dd>
-Message must be allocated before pushing</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8c.html#afd3358d37ab07ff0f8ec918c00fffe99" title="Allocates a new CAN buffer from the pool.">CanBufferStore_allocate_buffer</a> - Allocates message before push </dd>
-<dd>
-<a class="el" href="#a2ffec18f770ac9eeb09eb5efc586addc" title="Pops a CAN message off the FIFO buffer.">CanBufferFifo_pop</a> - Removes message from FIFO </dd></dl>
+<pre class="fragment">* @param new_msg Pointer to an allocated @ref can_msg_t.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true on success, false if the FIFO is full. </dd></dl>
 
 </div>
 </div>
@@ -235,35 +201,12 @@ Message must be allocated before pushing</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Pops a CAN message off the FIFO buffer. </p>
+<p>Removes and returns the oldest <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> from the FIFO. </p>
 <p>Algorithm:</p><ol type="1">
-<li>Check if FIFO is empty (head == tail)</li>
-<li>If empty, return NULL</li>
-<li>If not empty:<ul>
-<li>Retrieve message pointer from tail position</li>
-<li>Clear slot to NULL (optional cleanup)</li>
-<li>Increment tail pointer</li>
-<li>Apply wraparound if tail &gt;= buffer length</li>
-<li>Return retrieved message pointer</li>
-</ul>
-</li>
+<li>If head != tail (not empty): save pointer at tail, clear slot, advance tail with wraparound, return saved pointer.</li>
+<li>Otherwise return NULL (FIFO empty).</li>
 </ol>
-<p>Use cases:</p><ul>
-<li>Main processing loop</li>
-<li>CAN receive state machine</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the oldest CAN message, or NULL if FIFO is empty</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when FIFO empty - caller MUST check for NULL </dd>
-<dd>
-Caller MUST free message with <a class="el" href="can__buffer__store_8c.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Frees a CAN buffer back to the pool.">CanBufferStore_free_buffer()</a> when done </dd>
-<dd>
-NOT thread-safe - use shared resource locking</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Always check return value for NULL before use </dd>
-<dd>
-Remember to free message after processing</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8c.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Frees a CAN buffer back to the pool.">CanBufferStore_free_buffer</a> - Must call when done with message </dd>
-<dd>
-<a class="el" href="#ad52fb1602439269439924aa2c962db07" title="Tests if the FIFO buffer is empty.">CanBufferFifo_is_empty</a> - Check before popping </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the oldest <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>, or NULL if the FIFO is empty. </dd></dl>
 
 </div>
 </div>
@@ -282,21 +225,7 @@ Remember to free message after processing</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Tests if the FIFO buffer is empty. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Compare head and tail pointers</li>
-<li>If head == tail, FIFO is empty (return true)</li>
-<li>If head != tail, FIFO has messages (return false)</li>
-</ol>
-<p>Use cases:</p><ul>
-<li>Checking before calling pop to avoid NULL</li>
-<li>Polling for incoming messages</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>Non-zero (true) if FIFO is empty, zero (false) if messages present</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Return value is non-zero for true, zero for false</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2ffec18f770ac9eeb09eb5efc586addc" title="Pops a CAN message off the FIFO buffer.">CanBufferFifo_pop</a> - Removes message from FIFO </dd>
-<dd>
-<a class="el" href="#a93d3428dcf398427024b61c4cfe096c3" title="Returns the number of messages currently in the FIFO buffer.">CanBufferFifo_get_allocated_count</a> - Get exact count </dd></dl>
+<p>Returns non-zero if the FIFO is empty, zero if messages are present. </p>
 
 </div>
 </div>
@@ -315,33 +244,9 @@ Remember to free message after processing</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the number of messages currently in the FIFO buffer. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Compare tail and head positions</li>
-<li>If tail &gt; head:<ul>
-<li>Buffer has wrapped around</li>
-<li>Count = head + (buffer_length - tail)</li>
-</ul>
-</li>
-<li>If tail &lt;= head:<ul>
-<li>Normal case, no wraparound</li>
-<li>Count = head - tail</li>
-</ul>
-</li>
-<li>Return calculated count</li>
-</ol>
-<p>Use cases:</p><ul>
-<li>Monitoring FIFO usage</li>
-<li>Detecting near-full conditions</li>
-<li>Performance analysis</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>Number of messages currently in FIFO (0 to USER_DEFINED_CAN_MSG_BUFFER_DEPTH)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Count changes dynamically as messages are pushed and popped</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ad52fb1602439269439924aa2c962db07" title="Tests if the FIFO buffer is empty.">CanBufferFifo_is_empty</a> - Quick empty check </dd>
-<dd>
-<a class="el" href="#a9506021e46c1e62c700b125252276346" title="Pushes a new CAN message into the FIFO buffer.">CanBufferFifo_push</a> - Adds to count </dd>
-<dd>
-<a class="el" href="#a2ffec18f770ac9eeb09eb5efc586addc" title="Pops a CAN message off the FIFO buffer.">CanBufferFifo_pop</a> - Decrements count </dd></dl>
+<p>Returns the number of <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> pointers currently in the FIFO. </p>
+<p>Handles the wraparound case where tail &gt; head.</p>
+<dl class="section return"><dt>Returns</dt><dd>Current FIFO occupancy count. </dd></dl>
 
 </div>
 </div>

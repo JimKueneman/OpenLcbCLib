@@ -92,81 +92,71 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Interface structure for configuration memory read protocol handler.  
+<p>Callback interface for config memory reads. Datagram ACK and config_memory_read are REQUIRED; SNIP loaders and per-space handlers are optional.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:acbb0b05b4b90f1f8851f976ed278089d" id="r_acbb0b05b4b90f1f8851f976ed278089d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbb0b05b4b90f1f8851f976ed278089d">load_datagram_received_ok_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td></tr>
-<tr class="memdesc:acbb0b05b4b90f1f8851f976ed278089d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load a datagram received OK acknowledgment message.  <br /></td></tr>
+<tr class="memdesc:acbb0b05b4b90f1f8851f976ed278089d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build Datagram Received OK with reply-pending time. REQUIRED.  <br /></td></tr>
 <tr class="separator:acbb0b05b4b90f1f8851f976ed278089d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1a9f28156897e98626879c442a13a8c" id="r_ae1a9f28156897e98626879c442a13a8c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1a9f28156897e98626879c442a13a8c">load_datagram_received_rejected_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t return_code)</td></tr>
-<tr class="memdesc:ae1a9f28156897e98626879c442a13a8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load a datagram received rejected acknowledgment message.  <br /></td></tr>
+<tr class="memdesc:ae1a9f28156897e98626879c442a13a8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build Datagram Rejected with error code. REQUIRED.  <br /></td></tr>
 <tr class="separator:ae1a9f28156897e98626879c442a13a8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4ad220ab7a2676bb10369163fcb0ba2" id="r_ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4ad220ab7a2676bb10369163fcb0ba2">config_memory_read</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
-<tr class="memdesc:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to read data from configuration memory.  <br /></td></tr>
+<tr class="memitem:ab4ad220ab7a2676bb10369163fcb0ba2" id="r_ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4ad220ab7a2676bb10369163fcb0ba2">config_memory_read</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read bytes from config memory into buffer. Returns bytes read. REQUIRED.  <br /></td></tr>
 <tr class="separator:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf7abbeda8b5fa20452600b53476511c" id="r_acf7abbeda8b5fa20452600b53476511c"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf7abbeda8b5fa20452600b53476511c">snip_load_manufacturer_version_id</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:acf7abbeda8b5fa20452600b53476511c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to load manufacturer version ID for SNIP.  <br /></td></tr>
+<tr class="memitem:acf7abbeda8b5fa20452600b53476511c" id="r_acf7abbeda8b5fa20452600b53476511c"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf7abbeda8b5fa20452600b53476511c">snip_load_manufacturer_version_id</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
+<tr class="memdesc:acf7abbeda8b5fa20452600b53476511c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load mfg version ID into payload. Optional (for 0xFC).  <br /></td></tr>
 <tr class="separator:acf7abbeda8b5fa20452600b53476511c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aadfe2b54d043d3cca2ff74ebd2566946" id="r_aadfe2b54d043d3cca2ff74ebd2566946"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aadfe2b54d043d3cca2ff74ebd2566946">snip_load_name</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:aadfe2b54d043d3cca2ff74ebd2566946"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to load manufacturer name for SNIP.  <br /></td></tr>
+<tr class="memitem:aadfe2b54d043d3cca2ff74ebd2566946" id="r_aadfe2b54d043d3cca2ff74ebd2566946"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aadfe2b54d043d3cca2ff74ebd2566946">snip_load_name</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
+<tr class="memdesc:aadfe2b54d043d3cca2ff74ebd2566946"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load mfg name into payload. Optional (for 0xFC).  <br /></td></tr>
 <tr class="separator:aadfe2b54d043d3cca2ff74ebd2566946"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8235df58247086ba69cdd7c062e01cbd" id="r_a8235df58247086ba69cdd7c062e01cbd"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8235df58247086ba69cdd7c062e01cbd">snip_load_model</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a8235df58247086ba69cdd7c062e01cbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to load model name for SNIP.  <br /></td></tr>
+<tr class="memitem:a8235df58247086ba69cdd7c062e01cbd" id="r_a8235df58247086ba69cdd7c062e01cbd"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8235df58247086ba69cdd7c062e01cbd">snip_load_model</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
+<tr class="memdesc:a8235df58247086ba69cdd7c062e01cbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load model into payload. Optional (for 0xFC).  <br /></td></tr>
 <tr class="separator:a8235df58247086ba69cdd7c062e01cbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c7a47f634a348214c6205a734ebe90e" id="r_a9c7a47f634a348214c6205a734ebe90e"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c7a47f634a348214c6205a734ebe90e">snip_load_hardware_version</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a9c7a47f634a348214c6205a734ebe90e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to load hardware version for SNIP.  <br /></td></tr>
+<tr class="memitem:a9c7a47f634a348214c6205a734ebe90e" id="r_a9c7a47f634a348214c6205a734ebe90e"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c7a47f634a348214c6205a734ebe90e">snip_load_hardware_version</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
+<tr class="memdesc:a9c7a47f634a348214c6205a734ebe90e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load HW version into payload. Optional (for 0xFC).  <br /></td></tr>
 <tr class="separator:a9c7a47f634a348214c6205a734ebe90e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54e80a7ed961caa932b4f8d2b8de7569" id="r_a54e80a7ed961caa932b4f8d2b8de7569"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54e80a7ed961caa932b4f8d2b8de7569">snip_load_software_version</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a54e80a7ed961caa932b4f8d2b8de7569"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to load software version for SNIP.  <br /></td></tr>
+<tr class="memitem:a54e80a7ed961caa932b4f8d2b8de7569" id="r_a54e80a7ed961caa932b4f8d2b8de7569"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54e80a7ed961caa932b4f8d2b8de7569">snip_load_software_version</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
+<tr class="memdesc:a54e80a7ed961caa932b4f8d2b8de7569"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load SW version into payload. Optional (for 0xFC).  <br /></td></tr>
 <tr class="separator:a54e80a7ed961caa932b4f8d2b8de7569"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85a286c060483f0f4646c2c07de8561d" id="r_a85a286c060483f0f4646c2c07de8561d"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85a286c060483f0f4646c2c07de8561d">snip_load_user_version_id</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a85a286c060483f0f4646c2c07de8561d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to load user version ID for SNIP.  <br /></td></tr>
+<tr class="memitem:a85a286c060483f0f4646c2c07de8561d" id="r_a85a286c060483f0f4646c2c07de8561d"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85a286c060483f0f4646c2c07de8561d">snip_load_user_version_id</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
+<tr class="memdesc:a85a286c060483f0f4646c2c07de8561d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load user version ID into payload. Optional (for 0xFB).  <br /></td></tr>
 <tr class="separator:a85a286c060483f0f4646c2c07de8561d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0c7028f9fdc4458ec9d007fd14196ec" id="r_af0c7028f9fdc4458ec9d007fd14196ec"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0c7028f9fdc4458ec9d007fd14196ec">snip_load_user_name</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:af0c7028f9fdc4458ec9d007fd14196ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to load user name for SNIP.  <br /></td></tr>
+<tr class="memitem:af0c7028f9fdc4458ec9d007fd14196ec" id="r_af0c7028f9fdc4458ec9d007fd14196ec"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0c7028f9fdc4458ec9d007fd14196ec">snip_load_user_name</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
+<tr class="memdesc:af0c7028f9fdc4458ec9d007fd14196ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load user name into payload. Optional (for 0xFB).  <br /></td></tr>
 <tr class="separator:af0c7028f9fdc4458ec9d007fd14196ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a893d57fe7e295756cf27649a63b4d3b7" id="r_a893d57fe7e295756cf27649a63b4d3b7"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a893d57fe7e295756cf27649a63b4d3b7">snip_load_user_description</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a893d57fe7e295756cf27649a63b4d3b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to load user description for SNIP.  <br /></td></tr>
+<tr class="memitem:a893d57fe7e295756cf27649a63b4d3b7" id="r_a893d57fe7e295756cf27649a63b4d3b7"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a893d57fe7e295756cf27649a63b4d3b7">snip_load_user_description</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td></tr>
+<tr class="memdesc:a893d57fe7e295756cf27649a63b4d3b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load user description into payload. Optional (for 0xFB).  <br /></td></tr>
 <tr class="separator:a893d57fe7e295756cf27649a63b4d3b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf908782386bc2df34025b16b12d7ab1" id="r_aaf908782386bc2df34025b16b12d7ab1"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf908782386bc2df34025b16b12d7ab1">read_request_config_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:aaf908782386bc2df34025b16b12d7ab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle reads from Configuration Definition Info space.  <br /></td></tr>
+<tr class="memitem:aaf908782386bc2df34025b16b12d7ab1" id="r_aaf908782386bc2df34025b16b12d7ab1"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf908782386bc2df34025b16b12d7ab1">read_request_config_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:aaf908782386bc2df34025b16b12d7ab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom CDI (0xFF) read handler. Optional.  <br /></td></tr>
 <tr class="separator:aaf908782386bc2df34025b16b12d7ab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a102f3bec55c573e02b854ba5bd4669a8" id="r_a102f3bec55c573e02b854ba5bd4669a8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a102f3bec55c573e02b854ba5bd4669a8">read_request_all</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:a102f3bec55c573e02b854ba5bd4669a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle reads from All memory space.  <br /></td></tr>
+<tr class="memitem:a102f3bec55c573e02b854ba5bd4669a8" id="r_a102f3bec55c573e02b854ba5bd4669a8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a102f3bec55c573e02b854ba5bd4669a8">read_request_all</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:a102f3bec55c573e02b854ba5bd4669a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom All (0xFE) read handler. Optional.  <br /></td></tr>
 <tr class="separator:a102f3bec55c573e02b854ba5bd4669a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58b4d0585792e0737aa6cc3ea8f61cca" id="r_a58b4d0585792e0737aa6cc3ea8f61cca"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58b4d0585792e0737aa6cc3ea8f61cca">read_request_config_mem</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:a58b4d0585792e0737aa6cc3ea8f61cca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle reads from Configuration Memory space.  <br /></td></tr>
+<tr class="memitem:a58b4d0585792e0737aa6cc3ea8f61cca" id="r_a58b4d0585792e0737aa6cc3ea8f61cca"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58b4d0585792e0737aa6cc3ea8f61cca">read_request_config_mem</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:a58b4d0585792e0737aa6cc3ea8f61cca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom Config (0xFD) read handler. Optional.  <br /></td></tr>
 <tr class="separator:a58b4d0585792e0737aa6cc3ea8f61cca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae02053e5803a8c99e280dc136b0c9608" id="r_ae02053e5803a8c99e280dc136b0c9608"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae02053e5803a8c99e280dc136b0c9608">read_request_acdi_manufacturer</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:ae02053e5803a8c99e280dc136b0c9608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle reads from ACDI Manufacturer space.  <br /></td></tr>
+<tr class="memitem:ae02053e5803a8c99e280dc136b0c9608" id="r_ae02053e5803a8c99e280dc136b0c9608"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae02053e5803a8c99e280dc136b0c9608">read_request_acdi_manufacturer</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:ae02053e5803a8c99e280dc136b0c9608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom ACDI-Mfg (0xFC) read handler. Optional.  <br /></td></tr>
 <tr class="separator:ae02053e5803a8c99e280dc136b0c9608"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af091fb7cc074c39b7b8d10a889bd9913" id="r_af091fb7cc074c39b7b8d10a889bd9913"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af091fb7cc074c39b7b8d10a889bd9913">read_request_acdi_user</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:af091fb7cc074c39b7b8d10a889bd9913"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle reads from ACDI User space.  <br /></td></tr>
+<tr class="memitem:af091fb7cc074c39b7b8d10a889bd9913" id="r_af091fb7cc074c39b7b8d10a889bd9913"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af091fb7cc074c39b7b8d10a889bd9913">read_request_acdi_user</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:af091fb7cc074c39b7b8d10a889bd9913"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom ACDI-User (0xFB) read handler. Optional.  <br /></td></tr>
 <tr class="separator:af091fb7cc074c39b7b8d10a889bd9913"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f768d837a22d5f7cc6ab26ad680e63d" id="r_a4f768d837a22d5f7cc6ab26ad680e63d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4f768d837a22d5f7cc6ab26ad680e63d">read_request_train_function_config_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:a4f768d837a22d5f7cc6ab26ad680e63d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle reads from Train Function Definition space.  <br /></td></tr>
+<tr class="memitem:a4f768d837a22d5f7cc6ab26ad680e63d" id="r_a4f768d837a22d5f7cc6ab26ad680e63d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4f768d837a22d5f7cc6ab26ad680e63d">read_request_train_function_config_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:a4f768d837a22d5f7cc6ab26ad680e63d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom Train FDI (0xFA) read handler. Optional.  <br /></td></tr>
 <tr class="separator:a4f768d837a22d5f7cc6ab26ad680e63d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60e114b6133aebdf6f31f11d59f079c6" id="r_a60e114b6133aebdf6f31f11d59f079c6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60e114b6133aebdf6f31f11d59f079c6">read_request_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:a60e114b6133aebdf6f31f11d59f079c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle reads from Train Function Configuration space.  <br /></td></tr>
+<tr class="memitem:a60e114b6133aebdf6f31f11d59f079c6" id="r_a60e114b6133aebdf6f31f11d59f079c6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60e114b6133aebdf6f31f11d59f079c6">read_request_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:a60e114b6133aebdf6f31f11d59f079c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom Train Fn Config (0xF9) read handler. Optional.  <br /></td></tr>
 <tr class="separator:a60e114b6133aebdf6f31f11d59f079c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae34ac57960a8202d10d1c22dc66b61ea" id="r_ae34ac57960a8202d10d1c22dc66b61ea"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae34ac57960a8202d10d1c22dc66b61ea">delayed_reply_time</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:ae34ac57960a8202d10d1c22dc66b61ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to override reply delay time.  <br /></td></tr>
+<tr class="memitem:ae34ac57960a8202d10d1c22dc66b61ea" id="r_ae34ac57960a8202d10d1c22dc66b61ea"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae34ac57960a8202d10d1c22dc66b61ea">delayed_reply_time</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:ae34ac57960a8202d10d1c22dc66b61ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Override reply delay (return N means 2^N seconds). Optional (default 0).  <br /></td></tr>
 <tr class="separator:ae34ac57960a8202d10d1c22dc66b61ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Interface structure for configuration memory read protocol handler. </p>
-<p>This structure defines the callback interface for handling OpenLCB Configuration Memory Read protocol messages. It contains function pointers for datagram acknowledgment, memory reading operations, SNIP (Simple Node Ident Protocol) field loading, and address space-specific read handlers.</p>
-<p>The interface allows the application layer to customize behavior for different address spaces while the protocol handler manages message formatting and state machine logic according to the OpenLCB Memory Configuration Protocol.</p>
-<dl class="section note"><dt>Note</dt><dd>Required callbacks must be set before calling ProtocolConfigMemReadHandler_initialize </dd>
-<dd>
-Optional callbacks can be NULL if the corresponding functionality is not needed </dd>
-<dd>
-SNIP callbacks are only required if ACDI (Abbreviated Configuration Description Information) spaces 0xFB/0xFC are enabled</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__config__mem__read__handler_8c.html#a2fe67e836032839ca27cf44d6decec3b" title="Initializes the configuration memory read protocol handler.">ProtocolConfigMemReadHandler_initialize</a> </dd>
-<dd>
-<a class="el" href="structconfig__mem__read__request__info__t.html" title="Configuration memory read request information.">config_mem_read_request_info_t</a> </dd></dl>
+<div class="textblock"><p>Callback interface for config memory reads. Datagram ACK and config_memory_read are REQUIRED; SNIP loaders and per-space handlers are optional. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="acbb0b05b4b90f1f8851f976ed278089d" name="acbb0b05b4b90f1f8851f976ed278089d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acbb0b05b4b90f1f8851f976ed278089d">&#9670;&#160;</a></span>load_datagram_received_ok_message</h2>
@@ -180,9 +170,7 @@ SNIP callbacks are only required if ACDI (Abbreviated Configuration Description 
       </table>
 </div><div class="memdoc">
 
-<p>Callback to load a datagram received OK acknowledgment message. </p>
-<p>This required callback formats a positive datagram acknowledgment message indicating the datagram was successfully received and will be processed. The reply_pending_time parameter indicates when a response message will be sent.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Build Datagram Received OK with reply-pending time. REQUIRED. </p>
 
 </div>
 </div>
@@ -198,9 +186,7 @@ SNIP callbacks are only required if ACDI (Abbreviated Configuration Description 
       </table>
 </div><div class="memdoc">
 
-<p>Callback to load a datagram received rejected acknowledgment message. </p>
-<p>This required callback formats a negative datagram acknowledgment message indicating the datagram was rejected. The return_code specifies the reason for rejection per OpenLCB error code definitions.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Build Datagram Rejected with error code. REQUIRED. </p>
 
 </div>
 </div>
@@ -211,16 +197,12 @@ SNIP callbacks are only required if ACDI (Abbreviated Configuration Description 
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* config_memory_read) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
+          <td class="memname">uint16_t(* config_memory_read) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to read data from configuration memory. </p>
-<p>This required callback reads the specified number of bytes from the given address in configuration memory and stores them in the provided buffer. The callback returns the actual number of bytes read, which may be less than requested if an error occurs or end of memory is reached.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
-<dd>
-Implementation should handle address validation and bounds checking </dd></dl>
+<p>Read bytes from config memory into buffer. Returns bytes read. REQUIRED. </p>
 
 </div>
 </div>
@@ -231,14 +213,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* snip_load_manufacturer_version_id) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
+          <td class="memname">uint16_t(* snip_load_manufacturer_version_id) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to load manufacturer version ID for SNIP. </p>
-<p>Loads the manufacturer version number into the message payload for ACDI manufacturer space (0xFC) reads. Only required if ACDI manufacturer protocol is enabled.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - only required if Address Space 0xFC is supported </dd></dl>
+<p>Load mfg version ID into payload. Optional (for 0xFC). </p>
 
 </div>
 </div>
@@ -249,14 +229,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* snip_load_name) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
+          <td class="memname">uint16_t(* snip_load_name) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to load manufacturer name for SNIP. </p>
-<p>Loads the manufacturer name string into the message payload for ACDI manufacturer space (0xFC) reads. Only required if ACDI manufacturer protocol is enabled.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - only required if Address Space 0xFC is supported </dd></dl>
+<p>Load mfg name into payload. Optional (for 0xFC). </p>
 
 </div>
 </div>
@@ -267,14 +245,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* snip_load_model) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
+          <td class="memname">uint16_t(* snip_load_model) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to load model name for SNIP. </p>
-<p>Loads the model name string into the message payload for ACDI manufacturer space (0xFC) reads. Only required if ACDI manufacturer protocol is enabled.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - only required if Address Space 0xFC is supported </dd></dl>
+<p>Load model into payload. Optional (for 0xFC). </p>
 
 </div>
 </div>
@@ -285,14 +261,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* snip_load_hardware_version) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
+          <td class="memname">uint16_t(* snip_load_hardware_version) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to load hardware version for SNIP. </p>
-<p>Loads the hardware version string into the message payload for ACDI manufacturer space (0xFC) reads. Only required if ACDI manufacturer protocol is enabled.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - only required if Address Space 0xFC is supported </dd></dl>
+<p>Load HW version into payload. Optional (for 0xFC). </p>
 
 </div>
 </div>
@@ -303,14 +277,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* snip_load_software_version) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
+          <td class="memname">uint16_t(* snip_load_software_version) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to load software version for SNIP. </p>
-<p>Loads the software version string into the message payload for ACDI manufacturer space (0xFC) reads. Only required if ACDI manufacturer protocol is enabled.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - only required if Address Space 0xFC is supported </dd></dl>
+<p>Load SW version into payload. Optional (for 0xFC). </p>
 
 </div>
 </div>
@@ -321,14 +293,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* snip_load_user_version_id) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
+          <td class="memname">uint16_t(* snip_load_user_version_id) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to load user version ID for SNIP. </p>
-<p>Loads the user-defined version number into the message payload for ACDI user space (0xFB) reads. Only required if ACDI user protocol is enabled.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - only required if Address Space 0xFB is supported </dd></dl>
+<p>Load user version ID into payload. Optional (for 0xFB). </p>
 
 </div>
 </div>
@@ -339,14 +309,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* snip_load_user_name) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
+          <td class="memname">uint16_t(* snip_load_user_name) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to load user name for SNIP. </p>
-<p>Loads the user-defined name string into the message payload for ACDI user space (0xFB) reads. Only required if ACDI user protocol is enabled.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - only required if Address Space 0xFB is supported </dd></dl>
+<p>Load user name into payload. Optional (for 0xFB). </p>
 
 </div>
 </div>
@@ -357,14 +325,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* snip_load_user_description) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
+          <td class="memname">uint16_t(* snip_load_user_description) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *worker_msg, uint16_t payload_index, uint16_t requested_bytes)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to load user description for SNIP. </p>
-<p>Loads the user-defined description string into the message payload for ACDI user space (0xFB) reads. Only required if ACDI user protocol is enabled.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - only required if Address Space 0xFB is supported </dd></dl>
+<p>Load user description into payload. Optional (for 0xFB). </p>
 
 </div>
 </div>
@@ -375,14 +341,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* read_request_config_definition_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
+          <td class="memname">void(* read_request_config_definition_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle reads from Configuration Definition Info space. </p>
-<p>Processes read requests for address space 0xFF (CDI - Configuration Definition Information), which contains XML describing the node's configuration structure.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if CDI space reads are handled by default implementation </dd></dl>
+<p>Custom CDI (0xFF) read handler. Optional. </p>
 
 </div>
 </div>
@@ -393,14 +357,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* read_request_all) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
+          <td class="memname">void(* read_request_all) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle reads from All memory space. </p>
-<p>Processes read requests for address space 0xFE (All Memory), which provides access to all readable memory spaces.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if All space reads are not supported </dd></dl>
+<p>Custom All (0xFE) read handler. Optional. </p>
 
 </div>
 </div>
@@ -411,14 +373,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* read_request_config_mem) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
+          <td class="memname">void(* read_request_config_mem) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle reads from Configuration Memory space. </p>
-<p>Processes read requests for address space 0xFD (Configuration Memory), which contains the node's actual configuration data.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if config memory reads use default implementation </dd></dl>
+<p>Custom Config (0xFD) read handler. Optional. </p>
 
 </div>
 </div>
@@ -429,14 +389,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* read_request_acdi_manufacturer) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
+          <td class="memname">void(* read_request_acdi_manufacturer) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle reads from ACDI Manufacturer space. </p>
-<p>Processes read requests for address space 0xFC (ACDI Manufacturer), which contains manufacturer identification information.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if ACDI manufacturer reads use default implementation </dd></dl>
+<p>Custom ACDI-Mfg (0xFC) read handler. Optional. </p>
 
 </div>
 </div>
@@ -447,14 +405,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* read_request_acdi_user) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
+          <td class="memname">void(* read_request_acdi_user) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle reads from ACDI User space. </p>
-<p>Processes read requests for address space 0xFB (ACDI User), which contains user-defined identification information.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if ACDI user reads use default implementation </dd></dl>
+<p>Custom ACDI-User (0xFB) read handler. Optional. </p>
 
 </div>
 </div>
@@ -465,14 +421,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* read_request_train_function_config_definition_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
+          <td class="memname">void(* read_request_train_function_config_definition_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle reads from Train Function Definition space. </p>
-<p>Processes read requests for address space 0xFA (Train Function CDI), which contains XML describing train function configurations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if train function definition reads are not supported </dd></dl>
+<p>Custom Train FDI (0xFA) read handler. Optional. </p>
 
 </div>
 </div>
@@ -483,14 +437,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* read_request_train_function_config_memory) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
+          <td class="memname">void(* read_request_train_function_config_memory) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle reads from Train Function Configuration space. </p>
-<p>Processes read requests for address space 0xF9 (Train Function Config), which contains actual train function configuration data.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if train function config reads are not supported </dd></dl>
+<p>Custom Train Fn Config (0xF9) read handler. Optional. </p>
 
 </div>
 </div>
@@ -501,16 +453,12 @@ Implementation should handle address validation and bounds checking </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* delayed_reply_time) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
+          <td class="memname">uint16_t(* delayed_reply_time) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to override reply delay time. </p>
-<p>Allows the application to specify a custom delay time (in powers of 2 seconds) before the read response will be sent. Used in the datagram ACK to inform the requester when to expect the response.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - if NULL, default delay of 0 seconds is used </dd>
-<dd>
-Return value is encoded as power of 2: return N means 2^N seconds delay </dd></dl>
+<p>Override reply delay (return N means 2^N seconds). Optional (default 0). </p>
 
 </div>
 </div>

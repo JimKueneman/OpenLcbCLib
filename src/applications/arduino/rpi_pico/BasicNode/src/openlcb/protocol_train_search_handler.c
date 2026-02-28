@@ -32,7 +32,7 @@
  * Identified event when a match is found.
  *
  * @author Jim Kueneman
- * @date 17 Feb 2026
+ * @date 28 Feb 2026
  */
 
 #include "protocol_train_search_handler.h"
@@ -47,15 +47,24 @@
 #include "openlcb_application_train.h"
 
 
+    /** @brief Stored callback interface pointer. */
 static const interface_protocol_train_search_handler_t *_interface;
 
 
+    /**
+     * @brief Stores the callback interface.  Call once at startup.
+     *
+     * @verbatim
+     * @param interface  Populated callback table (may be NULL).
+     * @endverbatim
+     */
 void ProtocolTrainSearch_initialize(const interface_protocol_train_search_handler_t *interface) {
 
     _interface = interface;
 
 }
 
+    /** @brief Return true if train_state matches the search address and flags. */
 static bool _does_train_match(train_state_t *train_state, uint16_t search_address, uint8_t flags) {
 
     // Address must match
@@ -92,6 +101,17 @@ static bool _does_train_match(train_state_t *train_state, uint16_t search_addres
 }
 
 
+    /**
+     * @brief Handles incoming train search events.
+     *
+     * @details Decodes the search query, compares against this node's DCC
+     * address, and loads a Producer Identified reply if matched.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param event_id           Full 64-bit event_id_t containing encoded search query.
+     * @endverbatim
+     */
 void ProtocolTrainSearch_handle_search_event(
         openlcb_statemachine_info_t *statemachine_info,
         event_id_t event_id) {

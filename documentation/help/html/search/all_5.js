@@ -26,7 +26,7 @@ var searchData=
   ['error_5ftemporary_5ftime_5fout_23',['ERROR_TEMPORARY_TIME_OUT',['../group__error__codes.html#gae4f2ab4412ec14cbeb72602735e9e44f',1,'openlcb_defines.h']]],
   ['error_5ftemporary_5ftimeout_24',['ERROR_TEMPORARY_TIMEOUT',['../group__error__codes.html#ga65a341d9ad14c0e153416946bf884224',1,'openlcb_defines.h']]],
   ['error_5ftemporary_5ftransfer_5ferror_25',['ERROR_TEMPORARY_TRANSFER_ERROR',['../group__error__codes.html#ga7c7d466b22b5e6081c4f6cd1b5545d07',1,'openlcb_defines.h']]],
-  ['estop_5factive_26',['estop_active',['../structtrain__state___t_a_g.html#a8aa217d63f4c5560ec157707259a4abf',1,'train_state_TAG']]],
+  ['estop_5factive_26',['estop_active',['../structtrain__state___t_a_g.html#a933cfe7fd6b47e6f196a06e7f16ba8f7',1,'train_state_TAG']]],
   ['event_27',['event',['../structevent__id__struct__t.html#a4712ca8f6b3fe6d1dfa6b8b9d09993b0',1,'event_id_struct_t']]],
   ['event_20ids_28',['Event IDs',['../group__broadcast__time__events.html',1,'Broadcast Time Protocol Event IDs'],['../group__well__known__events.html',1,'Well-Known Event IDs']]],
   ['event_20transport_20protocol_20mti_20codes_29',['Event Transport Protocol MTI Codes',['../group__mti__event__transport.html',1,'']]],

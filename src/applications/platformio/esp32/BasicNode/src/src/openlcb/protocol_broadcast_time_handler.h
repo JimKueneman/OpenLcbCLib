@@ -35,7 +35,7 @@
  * Only processes events for node index 0 (broadcast time events are global).
  *
  * @author Jim Kueneman
- * @date 14 Feb 2026
+ * @date 28 Feb 2026
  *
  * @see openlcb_application_broadcast_time.h - Singleton clock state and API
  * @see openlcb_utilities.h - Event ID encoding/decoding functions
@@ -51,18 +51,25 @@
 
     /**
      * @struct interface_openlcb_protocol_broadcast_time_handler_t
-     * @brief Application callbacks for broadcast time events
+     * @brief Application callbacks for broadcast time events.
      *
      * All callbacks are optional (can be NULL).
      */
     typedef struct {
 
+            /** @brief Time-of-day updated.  Optional. */
         void (*on_time_received)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
+            /** @brief Date updated.  Optional. */
         void (*on_date_received)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
+            /** @brief Year updated.  Optional. */
         void (*on_year_received)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
+            /** @brief Clock rate changed.  Optional. */
         void (*on_rate_received)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
+            /** @brief Clock started.  Optional. */
         void (*on_clock_started)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
+            /** @brief Clock stopped.  Optional. */
         void (*on_clock_stopped)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
+            /** @brief Date rollover occurred.  Optional. */
         void (*on_date_rollover)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
 
     } interface_openlcb_protocol_broadcast_time_handler_t;
@@ -72,21 +79,21 @@ extern "C" {
 #endif
 
     /**
-     * @brief Initializes the Broadcast Time Protocol handler
+     * @brief Initializes the Broadcast Time Protocol handler.
      *
-     * @param interface_openlcb_protocol_broadcast_time_handler Pointer to callback interface structure
+     * @param interface_openlcb_protocol_broadcast_time_handler  Pointer to @ref interface_openlcb_protocol_broadcast_time_handler_t (must remain valid for application lifetime).
      */
     extern void ProtocolBroadcastTime_initialize(const interface_openlcb_protocol_broadcast_time_handler_t *interface_openlcb_protocol_broadcast_time_handler);
 
     /**
-     * @brief Handles incoming broadcast time events
+     * @brief Handles incoming broadcast time events.
      *
      * @details Decodes the Event ID and updates the singleton clock state.
      * Only processes if the node has index == 0 and a matching clock is
      * registered in the application broadcast time module.
      *
-     * @param statemachine_info State machine context with incoming message and node
-     * @param event_id Full 64-bit Event ID containing encoded time data
+     * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+     * @param event_id           Full 64-bit @ref event_id_t containing encoded time data.
      */
     extern void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 

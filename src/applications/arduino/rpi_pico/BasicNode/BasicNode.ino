@@ -81,7 +81,7 @@ void setup()
   RPiPicoDriver_setup();
 
   CanConfig_initialize(&can_config);
-  OpenLcb_initialize(&openlcb_config, OPENLCB_PROFILE_STANDARD | OPENLCB_FEATURE_FIRMWARE_UPGRADE);
+  OpenLcb_initialize(&openlcb_config);
 
   Callbacks_initialize();
 

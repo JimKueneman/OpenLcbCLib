@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>GridConnect protocol implementation for CAN message conversion.  
+<p>Bidirectional conversion between CAN messages and GridConnect ASCII format (:X&lt;8-hex-ID&gt;N&lt;hex-data&gt;;). Includes a streaming byte-at-a-time parser with automatic error recovery.  
 <a href="#details">More...</a></p>
 
 <p><a href="openlcb__gridconnect_8h_source.html">Go to the source code of this file.</a></p>
@@ -130,7 +130,7 @@ Macros</h2></td></tr>
 <tr class="memdesc:a427e2eb39119b277fd341b5ce31b8994"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of characters before data section (used for length calculation)  <br /></td></tr>
 <tr class="separator:a427e2eb39119b277fd341b5ce31b8994"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0df94e1fa5b7636c274a09ee613dc890" id="r_a0df94e1fa5b7636c274a09ee613dc890"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0df94e1fa5b7636c274a09ee613dc890">MAX_GRID_CONNECT_LEN</a>&#160;&#160;&#160;29</td></tr>
-<tr class="memdesc:a0df94e1fa5b7636c274a09ee613dc890"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum length of a GridConnect message.  <br /></td></tr>
+<tr class="memdesc:a0df94e1fa5b7636c274a09ee613dc890"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max GridConnect string length: :X(8)N(16); + NUL = 29 bytes.  <br /></td></tr>
 <tr class="separator:a0df94e1fa5b7636c274a09ee613dc890"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -142,17 +142,17 @@ Typedefs</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a82a8ee605795f44a733eeef5552fc746" id="r_a82a8ee605795f44a733eeef5552fc746"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82a8ee605795f44a733eeef5552fc746">OpenLcbGridConnect_copy_out_gridconnect_when_done</a> (uint8_t next_byte, <a class="el" href="#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect_buffer)</td></tr>
-<tr class="memdesc:a82a8ee605795f44a733eeef5552fc746"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes incoming GridConnect byte stream and extracts complete message.  <br /></td></tr>
+<tr class="memdesc:a82a8ee605795f44a733eeef5552fc746"><td class="mdescLeft">&#160;</td><td class="mdescRight">Feeds one byte into the streaming GridConnect parser.  <br /></td></tr>
 <tr class="separator:a82a8ee605795f44a733eeef5552fc746"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3e0b7b9ac71d9305e9481a35be9c452" id="r_ac3e0b7b9ac71d9305e9481a35be9c452"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3e0b7b9ac71d9305e9481a35be9c452">OpenLcbGridConnect_to_can_msg</a> (<a class="el" href="#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect_buffer, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:ac3e0b7b9ac71d9305e9481a35be9c452"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a GridConnect message to a CAN message structure.  <br /></td></tr>
+<tr class="memdesc:ac3e0b7b9ac71d9305e9481a35be9c452"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a validated GridConnect string to a <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>.  <br /></td></tr>
 <tr class="separator:ac3e0b7b9ac71d9305e9481a35be9c452"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adde8b0f53e353940974e4624ed1b32c2" id="r_adde8b0f53e353940974e4624ed1b32c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adde8b0f53e353940974e4624ed1b32c2">OpenLcbGridConnect_from_can_msg</a> (<a class="el" href="#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect_buffer, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:adde8b0f53e353940974e4624ed1b32c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a CAN message structure to GridConnect format.  <br /></td></tr>
+<tr class="memdesc:adde8b0f53e353940974e4624ed1b32c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> to a null-terminated GridConnect string.  <br /></td></tr>
 <tr class="separator:adde8b0f53e353940974e4624ed1b32c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>GridConnect protocol implementation for CAN message conversion. </p>
+<div class="textblock"><p>Bidirectional conversion between CAN messages and GridConnect ASCII format (:X&lt;8-hex-ID&gt;N&lt;hex-data&gt;;). Includes a streaming byte-at-a-time parser with automatic error recovery. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -160,26 +160,8 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>This module provides bidirectional conversion between CAN messages and GridConnect protocol format, commonly used for serial and TCP/IP communication in OpenLCB systems. GridConnect is a human-readable ASCII protocol that encodes CAN frames as colon-delimited strings with hexadecimal identifiers and data.</p>
-<p>GridConnect Format: </p><div class="fragment"><div class="line">:X12345678N0102030405;</div>
-<div class="line"> │└──────┘││└───────┘│</div>
-<div class="line"> │   ID   ││  Data   │</div>
-<div class="line"> Start  Normal  Terminator</div>
-</div><!-- fragment --><p>The protocol provides:</p><ul>
-<li>Streaming parser for incoming byte-by-byte reception</li>
-<li>Automatic error recovery and synchronization</li>
-<li>Bidirectional CAN ↔ GridConnect conversion</li>
-<li>Support for variable-length data payloads (0-8 bytes)</li>
-</ul>
-<p>Use cases:</p><ul>
-<li>Serial port communication with OpenLCB tools</li>
-<li>TCP/IP bridges for network-based OpenLCB systems</li>
-<li>Debugging and monitoring OpenLCB traffic</li>
-<li>Gateway applications between CAN and Ethernet</li>
-</ul>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__types_8h.html" title="Type definitions and constants for CAN operations.">can_types.h</a> - CAN message structures </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ab27ebc3b11ce279634207f5e87802baa" name="ab27ebc3b11ce279634207f5e87802baa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab27ebc3b11ce279634207f5e87802baa">&#9670;&#160;</a></span>GRIDCONNECT_STATE_SYNC_START</h2>
@@ -321,15 +303,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Maximum length of a GridConnect message. </p>
-<p>Calculation:</p><ul>
-<li>':' (1) + 'X' (1) = 2 chars</li>
-<li>Identifier (8 hex chars) = 8 chars</li>
-<li>'N' flag (1) = 1 char</li>
-<li>Data (max 8 bytes × 2 hex chars) = 16 chars</li>
-<li>';' terminator (1) = 1 char</li>
-<li>Null terminator (1) = 1 char Total: 2 + 8 + 1 + 16 + 1 + 1 = 29 bytes </li>
-</ul>
+<p>Max GridConnect string length: :X(8)N(16); + NUL = 29 bytes. </p>
 
 </div>
 </div>
@@ -378,91 +352,33 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Processes incoming GridConnect byte stream and extracts complete message. </p>
-<p>This function implements a state machine parser that processes GridConnect protocol data one byte at a time. It automatically handles synchronization and error recovery, validating message framing, hexadecimal characters, identifier length, and data byte counts.</p>
-<p>The parser maintains internal state between calls, making it suitable for byte-by-byte processing from serial ports or network streams. It will return true when a complete valid message has been extracted, and false while still collecting data or recovering from errors.</p>
-<p>Use cases:</p><ul>
-<li>Serial port receive interrupt handlers</li>
-<li>TCP/IP socket data processing</li>
-<li>File parsing of GridConnect logs</li>
-<li>Real-time stream processing</li>
-</ul>
+<p>Feeds one byte into the streaming GridConnect parser. </p>
+<p>Uses static state — NOT thread-safe, single context only. Malformed input resets the parser automatically.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">next_byte</td><td>Next byte from the incoming GridConnect stream </td></tr>
-    <tr><td class="paramname">gridconnect_buffer</td><td>Pointer to buffer where complete message will be stored</td></tr>
+    <tr><td class="paramname">next_byte</td><td>Next byte from the incoming stream. </td></tr>
+    <tr><td class="paramname">gridconnect_buffer</td><td>Destination for the completed message.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true when a complete and valid GridConnect message has been extracted </dd>
-<dd>
-false while still collecting data or after recovering from errors</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Buffer pointer must point to a valid gridconnect_buffer_t array. NULL pointer will cause undefined behavior.</dd>
-<dd>
-This function uses static variables to maintain parser state. It is NOT thread-safe and must be called from a single context only.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>After receiving true, caller must process the message before the next call, as the internal state will be reset for the next message.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The parser automatically recovers from malformed messages by resetting to SYNC_START state. No explicit reset function is needed.</dd>
-<dd>
-Invalid hex characters, wrong lengths, or buffer overflows are silently handled by resetting the parser. The function does not report error types.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__gridconnect_8c.html#ac3e0b7b9ac71d9305e9481a35be9c452" title="Converts a GridConnect message to a CAN message structure.">OpenLcbGridConnect_to_can_msg</a> - Convert extracted GridConnect to CAN message </dd>
-<dd>
-<a class="el" href="#ab27ebc3b11ce279634207f5e87802baa" title="Parser state: Looking for start of GridConnect message (&#39;:X&#39; or &#39;:x&#39;)">GRIDCONNECT_STATE_SYNC_START</a> - Initial parser state</dd></dl>
-<p>Algorithm: Implements a three-state parser that processes GridConnect protocol data one byte at a time. The state machine ensures proper message framing and data validation:</p>
-<ol type="1">
-<li>SYNC_START state:<ul>
-<li>Wait for 'X' or 'x' character</li>
-<li>When found, store ':X' prefix and advance to SYNC_FIND_HEADER</li>
-<li>All other characters are ignored (auto-sync)</li>
-</ul>
-</li>
-<li>SYNC_FIND_HEADER state:<ul>
-<li>Collect exactly 8 hexadecimal characters for CAN identifier</li>
-<li>Validate each character is valid hex (0-9, A-F, a-f)</li>
-<li>Expect 'N' or 'n' at position 10</li>
-<li>On 'N' at correct position, advance to SYNC_FIND_DATA</li>
-<li>On any error, reset to SYNC_START</li>
-</ul>
-</li>
-<li>SYNC_FIND_DATA state:<ul>
-<li>Collect hexadecimal data characters until ';' terminator</li>
-<li>Validate all characters are valid hex</li>
-<li>Ensure even character count (2 hex chars = 1 byte)</li>
-<li>On ';', validate and copy to output buffer, return true</li>
-<li>On buffer overflow or invalid char, reset to SYNC_START</li>
-</ul>
-</li>
+<dl class="section return"><dt>Returns</dt><dd>true when a complete, valid GridConnect message is ready.</dd></dl>
+<p>Feeds one byte into the streaming GridConnect parser.</p>
+<p>Algorithm: Implements a three-state parser that processes GridConnect protocol data one byte at a time:</p><ol type="1">
+<li>SYNC_START: Wait for 'X'/'x', store ':X' prefix, advance to FIND_HEADER</li>
+<li>SYNC_FIND_HEADER: Collect 8 hex chars for CAN ID, expect 'N' at position 10</li>
+<li>SYNC_FIND_DATA: Collect hex data until ';', validate even count, copy to output</li>
 </ol>
-<p>Error handling:</p><ul>
-<li>Invalid hex characters → Reset to SYNC_START</li>
-<li>Wrong identifier length → Reset to SYNC_START</li>
-<li>Odd data character count → Reset to SYNC_START</li>
-<li>Buffer overflow → Reset to SYNC_START</li>
-<li>All errors are silent; parser automatically recovers</li>
-</ul>
-<p>The parser maintains internal state between calls using static variables, enabling byte-by-byte processing suitable for interrupt-driven serial reception or network socket data streams.</p>
 <p>Use cases:</p><ul>
 <li>Serial port receive interrupt handlers calling once per received byte</li>
 <li>TCP/IP socket data processing with partial packet reception</li>
-<li>File parsing of GridConnect log files</li>
-<li>Real-time monitoring applications</li>
 </ul>
 <pre class="fragment">* @param next_byte Next byte from the incoming GridConnect stream
 * @param gridconnect_buffer Pointer to buffer where complete message will be stored
-* </pre><dl class="section return"><dt>Returns</dt><dd>true when a complete and valid GridConnect message has been extracted and copied to gridconnect_buffer </dd>
+* </pre><dl class="section return"><dt>Returns</dt><dd>true when a complete valid GridConnect message has been extracted </dd>
 <dd>
 false while still collecting data or after recovering from errors</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Buffer pointer must point to a valid gridconnect_buffer_t array. NULL pointer will cause undefined behavior on message completion.</dd>
-<dd>
-This function uses static variables (_current_state, _receive_buffer_index, _receive_buffer) to maintain parser state. It is NOT thread-safe and must be called from a single context only.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>After receiving true, caller must process the message before the next call, as the internal state will be reset for the next message and _receive_buffer may be overwritten.</dd>
-<dd>
-The function modifies output buffer only when returning true. The buffer contents are undefined when the function returns false.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The parser is designed for continuous streaming operation. Feed bytes sequentially and check for true return on each call.</dd>
-<dd>
-Invalid messages are silently discarded. The function does not report error types or counts; it simply resynchronizes to the next valid message.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__gridconnect_8c.html#ac3e0b7b9ac71d9305e9481a35be9c452" title="Converts a GridConnect message to a CAN message structure.">OpenLcbGridConnect_to_can_msg</a> - Convert extracted GridConnect to CAN message </dd>
-<dd>
-_is_valid_hex_char - Hexadecimal character validation helper </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe — uses static variables for parser state</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ac3e0b7b9ac71d9305e9481a35be9c452" title="Converts a validated GridConnect string to a can_msg_t.">OpenLcbGridConnect_to_can_msg</a> - Convert extracted GridConnect to CAN message </dd></dl>
 
 </div>
 </div>
@@ -493,95 +409,34 @@ _is_valid_hex_char - Hexadecimal character validation helper </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Converts a GridConnect message to a CAN message structure. </p>
-<p>Parses a complete GridConnect format message and populates a CAN message structure with the extracted identifier and payload data. The function extracts the hexadecimal identifier string, converts it to a 32-bit integer, calculates the payload length from the data section, and converts each pair of hex characters to data bytes.</p>
-<p>GridConnect format example: </p><div class="fragment"><div class="line">:X19170640N0501010107015555;</div>
-<div class="line">  ^^^^^^^^ ^^^^^^^^^^^^^^^</div>
-<div class="line">  ID (8)   Data (variable, even count)</div>
-</div><!-- fragment --><p>Use cases:</p><ul>
-<li>Processing received GridConnect messages from serial/TCP</li>
-<li>Converting logged GridConnect data to CAN for replay</li>
-<li>Bridging GridConnect protocol to native CAN bus</li>
-</ul>
+<p>Converts a validated GridConnect string to a <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>. </p>
+<p>Input must come from the parser; no format validation is done here.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">gridconnect_buffer</td><td>Pointer to GridConnect message buffer (null-terminated string) </td></tr>
-    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message structure to populate with converted data</td></tr>
+    <tr><td class="paramname">gridconnect_buffer</td><td>Completed GridConnect string. </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Destination CAN message.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Input buffer must contain a valid, complete GridConnect message as produced by <a class="el" href="openlcb__gridconnect_8c.html#a82a8ee605795f44a733eeef5552fc746" title="Processes incoming GridConnect byte stream and extracts complete message.">OpenLcbGridConnect_copy_out_gridconnect_when_done()</a>. Passing malformed data may produce incorrect CAN messages or undefined behavior.</dd>
-<dd>
-Input buffer must be at least 12 characters long (header minimum). Shorter buffers will cause buffer underflow when calculating data length.</dd>
-<dd>
-Output CAN message pointer must not be NULL. No NULL check is performed, dereferencing NULL will cause immediate crash.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This function does not validate the GridConnect format. It assumes the input has been validated by the parser. Always use messages from <a class="el" href="openlcb__gridconnect_8c.html#a82a8ee605795f44a733eeef5552fc746" title="Processes incoming GridConnect byte stream and extracts complete message.">OpenLcbGridConnect_copy_out_gridconnect_when_done()</a> or equivalent.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The function uses strtoul() for hex string conversion, which is not the most efficient method but provides robust parsing with automatic base detection.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__gridconnect_8c.html#a82a8ee605795f44a733eeef5552fc746" title="Processes incoming GridConnect byte stream and extracts complete message.">OpenLcbGridConnect_copy_out_gridconnect_when_done</a> - Extract valid GridConnect messages </dd>
-<dd>
-<a class="el" href="openlcb__gridconnect_8c.html#adde8b0f53e353940974e4624ed1b32c2" title="Converts a CAN message structure to GridConnect format.">OpenLcbGridConnect_from_can_msg</a> - Reverse conversion (CAN to GridConnect) </dd>
-<dd>
-<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> - CAN message structure definition</dd></dl>
-<p>Algorithm: Parses a complete GridConnect format message and populates a CAN message structure with the extracted identifier and payload data:</p>
-<ol type="1">
-<li>Validate message length is at least GRIDCONNECT_HEADER_LEN characters</li>
-<li>Extract identifier (8 hex characters starting at position GRIDCONNECT_IDENTIFIER_START_POS):<ul>
-<li>Copy characters to temporary string buffer</li>
-<li>Null-terminate the string</li>
-<li>Convert hex string to uint32_t using strtoul()</li>
-<li>Store in can_msg-&gt;identifier</li>
-</ul>
-</li>
-<li>Calculate payload length:<ul>
-<li>Get total message length with strlen()</li>
-<li>Subtract GRIDCONNECT_HEADER_LEN (accounts for ":X", 8-char ID, "N", ";")</li>
-<li>Divide by 2 (each byte is 2 hex characters)</li>
-<li>Store in can_msg-&gt;payload_count</li>
-</ul>
-</li>
-<li>Extract data bytes:<ul>
-<li>Start at position GRIDCONNECT_DATA_START_POS</li>
-<li>For each pair of hex characters:<ul>
-<li>Copy pair to temporary buffer with "0x" prefix</li>
-<li>Convert to byte using strtoul()</li>
-<li>Store in can_msg-&gt;payload[]</li>
-<li>Advance by 2 characters</li>
-</ul>
-</li>
-</ul>
-</li>
+<p>Converts a validated GridConnect string to a <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Validate message length is at least GRIDCONNECT_HEADER_LEN</li>
+<li>Extract 8-char hex identifier via strtoul()</li>
+<li>Calculate payload byte count from remaining hex characters</li>
+<li>Extract data bytes in pairs via strtoul()</li>
 </ol>
-<p>Example parsing: </p><div class="fragment"><div class="line">Input:  <span class="stringliteral">&quot;:X19170640N0501;&quot;</span></div>
-<div class="line">         ^^19170640^0501^</div>
-<div class="line">         ||   ID   | Data|</div>
-<div class="line">Output: can_msg-&gt;identifier = 0x19170640</div>
-<div class="line">        can_msg-&gt;payload_count = 2</div>
-<div class="line">        can_msg-&gt;payload[0] = 0x05</div>
-<div class="line">        can_msg-&gt;payload[1] = 0x01</div>
-</div><!-- fragment --><p>Use cases:</p><ul>
+<p>Use cases:</p><ul>
 <li>Processing received GridConnect messages from serial/TCP</li>
 <li>Converting logged GridConnect data to CAN for replay</li>
-<li>Bridging GridConnect protocol to native CAN bus</li>
-<li>Testing and simulation environments</li>
 </ul>
-<pre class="fragment"> * @param gridconnect_buffer Pointer to GridConnect message buffer (null-terminated string)
- * @param can_msg Pointer to CAN message structure to populate with converted data
- * </pre><dl class="section warning"><dt>Warning</dt><dd>Input buffer must contain a valid, complete GridConnect message as produced by <a class="el" href="openlcb__gridconnect_8c.html#a82a8ee605795f44a733eeef5552fc746" title="Processes incoming GridConnect byte stream and extracts complete message.">OpenLcbGridConnect_copy_out_gridconnect_when_done()</a>. Passing malformed data may produce incorrect CAN messages or undefined behavior.</dd>
+<pre class="fragment">* @param gridconnect_buffer Pointer to GridConnect message buffer (null-terminated)
+* @param can_msg Pointer to CAN message structure to populate
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Input must be a valid GridConnect message from the parser </dd>
 <dd>
-Input buffer must be at least GRIDCONNECT_HEADER_LEN characters long. Shorter buffers will cause strlen() underflow when calculating data length.</dd>
+Pointers must NOT be NULL</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a82a8ee605795f44a733eeef5552fc746" title="Feeds one byte into the streaming GridConnect parser.">OpenLcbGridConnect_copy_out_gridconnect_when_done</a> - Extract valid messages </dd>
 <dd>
-Output CAN message pointer must not be NULL. No NULL check is performed, dereferencing NULL will cause immediate crash.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This function does not validate the GridConnect format. It assumes the input has been validated by the parser. Always use messages from <a class="el" href="openlcb__gridconnect_8c.html#a82a8ee605795f44a733eeef5552fc746" title="Processes incoming GridConnect byte stream and extracts complete message.">OpenLcbGridConnect_copy_out_gridconnect_when_done()</a> or equivalent.</dd>
-<dd>
-The function will attempt to process any string passed to it. For safety, a length check is performed before parsing begins.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The function uses strtoul() for hex string conversion with automatic base detection. While not the most efficient method, it provides robust parsing.</dd>
-<dd>
-Temporary stack buffers are used for string conversion operations to avoid dynamic memory allocation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__gridconnect_8c.html#a82a8ee605795f44a733eeef5552fc746" title="Processes incoming GridConnect byte stream and extracts complete message.">OpenLcbGridConnect_copy_out_gridconnect_when_done</a> - Extract valid GridConnect messages </dd>
-<dd>
-<a class="el" href="openlcb__gridconnect_8c.html#adde8b0f53e353940974e4624ed1b32c2" title="Converts a CAN message structure to GridConnect format.">OpenLcbGridConnect_from_can_msg</a> - Reverse conversion (CAN to GridConnect) </dd>
-<dd>
-<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> - CAN message structure definition </dd></dl>
+<a class="el" href="#adde8b0f53e353940974e4624ed1b32c2" title="Converts a can_msg_t to a null-terminated GridConnect string.">OpenLcbGridConnect_from_can_msg</a> - Reverse conversion </dd></dl>
 
 </div>
 </div>
@@ -612,110 +467,34 @@ Temporary stack buffers are used for string conversion operations to avoid dynam
 </table>
 </div><div class="memdoc">
 
-<p>Converts a CAN message structure to GridConnect format. </p>
-<p>Generates a complete GridConnect protocol message from a CAN message structure. The function formats the message start sequence, converts the 32-bit identifier to uppercase hexadecimal with leading zeros, adds the normal flag, converts each payload byte to uppercase hexadecimal, and adds the terminator.</p>
-<p>Output format: <code>:X&lt;8-hex-ID&gt;N&lt;2-hex-byte&gt;...&lt;2-hex-byte&gt;;</code></p>
-<p>Example conversions:</p><ul>
-<li>ID=0x19170640, Data={0x05,0x01} → ":X19170640N0501;"</li>
-<li>ID=0x00000001, Data={} → ":X00000001N;"</li>
-</ul>
-<p>Use cases:</p><ul>
-<li>Transmitting CAN messages over serial/TCP connections</li>
-<li>Logging CAN traffic in human-readable format</li>
-<li>Debugging and monitoring OpenLCB bus activity</li>
-<li>Gateway applications forwarding CAN to GridConnect clients</li>
-</ul>
+<p>Converts a <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> to a null-terminated GridConnect string. </p>
+<p>Output is uppercase hex with leading zeros on the 8-char ID.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">gridconnect_buffer</td><td>Pointer to buffer where GridConnect message will be stored </td></tr>
-    <tr><td class="paramname">can_msg</td><td>Pointer to source CAN message structure to convert</td></tr>
+    <tr><td class="paramname">gridconnect_buffer</td><td>Destination buffer (&gt;= MAX_GRID_CONNECT_LEN). </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Source CAN message.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Output buffer must point to a valid gridconnect_buffer_t array (minimum 29 bytes). Buffer overflow will occur if smaller.</dd>
-<dd>
-Source CAN message pointer must not be NULL. No NULL check is performed, dereferencing NULL will cause immediate crash.</dd>
-<dd>
-Payload count must be accurate and not exceed 8. Values &gt; 8 will cause buffer overflow when writing data bytes.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>The output buffer is null-terminated and safe to use as a C string for transmission or logging.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>All hexadecimal output is uppercase (A-F, not a-f) for consistency.</dd>
-<dd>
-The identifier is always formatted with leading zeros to maintain the 8-character width required by GridConnect protocol.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__gridconnect_8c.html#ac3e0b7b9ac71d9305e9481a35be9c452" title="Converts a GridConnect message to a CAN message structure.">OpenLcbGridConnect_to_can_msg</a> - Reverse conversion (GridConnect to CAN) </dd>
-<dd>
-<a class="el" href="openlcb__gridconnect_8c.html#a82a8ee605795f44a733eeef5552fc746" title="Processes incoming GridConnect byte stream and extracts complete message.">OpenLcbGridConnect_copy_out_gridconnect_when_done</a> - Parse received GridConnect </dd>
-<dd>
-<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> - CAN message structure definition</dd></dl>
-<p>Algorithm: Generates a complete GridConnect protocol message from a CAN message structure:</p>
-<ol type="1">
-<li>Initialize output buffer:<ul>
-<li>Clear first byte to ensure clean start</li>
-<li>Append ":X" start sequence</li>
-</ul>
-</li>
-<li>Format CAN identifier:<ul>
-<li>Convert 32-bit identifier to 8-character uppercase hexadecimal</li>
-<li>Use sprintf with "%08lX" format (8 digits, leading zeros, uppercase)</li>
-<li>Append to output buffer</li>
-</ul>
-</li>
-<li>Append normal priority flag:<ul>
-<li>Add "N" character</li>
-</ul>
-</li>
-<li>Format payload data:<ul>
-<li>For each byte in payload (0 to payload_count - 1):<ul>
-<li>Convert byte to 2-character uppercase hexadecimal</li>
-<li>Use sprintf with "%02X" format (2 digits, leading zero if needed)</li>
-<li>Append to output buffer</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Append terminator:<ul>
-<li>Add ";" character</li>
-<li>Result is null-terminated string ready for transmission</li>
-</ul>
-</li>
+<dl class="section warning"><dt>Warning</dt><dd>Payload count must not exceed 8 or buffer overflow will occur.</dd></dl>
+<p>Converts a <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> to a null-terminated GridConnect string.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Write ":X" start sequence</li>
+<li>Format 32-bit CAN identifier as 8-char uppercase hex</li>
+<li>Append "N" normal priority flag</li>
+<li>Format each payload byte as 2-char uppercase hex</li>
+<li>Append ";" terminator</li>
 </ol>
-<p>Example conversions: </p><div class="fragment"><div class="line">CAN message 1:</div>
-<div class="line">  ID = 0x19170640</div>
-<div class="line">  Payload = {0x05, 0x01, 0x01, 0x01, 0x07, 0x01, 0x55, 0x55}</div>
-<div class="line">  Count = 8</div>
-<div class="line">GridConnect: <span class="stringliteral">&quot;:X19170640N0501010107015555;&quot;</span></div>
-<div class="line"> </div>
-<div class="line">CAN message 2:</div>
-<div class="line">  ID = 0x00000001</div>
-<div class="line">  Payload = {} (empty)</div>
-<div class="line">  Count = 0</div>
-<div class="line">GridConnect: <span class="stringliteral">&quot;:X00000001N;&quot;</span></div>
-</div><!-- fragment --><p>Use cases:</p><ul>
+<p>Use cases:</p><ul>
 <li>Transmitting CAN messages over serial/TCP connections</li>
 <li>Logging CAN traffic in human-readable format</li>
-<li>Debugging and monitoring OpenLCB bus activity</li>
-<li>Gateway applications forwarding CAN to GridConnect clients</li>
-<li>Recording CAN data for later analysis</li>
 </ul>
-<pre class="fragment"> * @param gridconnect_buffer Pointer to buffer where GridConnect message will be stored
- * @param can_msg Pointer to source CAN message structure to convert
- * </pre><dl class="section warning"><dt>Warning</dt><dd>Output buffer must point to a valid gridconnect_buffer_t array (minimum MAX_GRID_CONNECT_LEN = 29 bytes). Buffer overflow will occur if a smaller buffer is provided.</dd>
+<pre class="fragment">* @param gridconnect_buffer Pointer to buffer where GridConnect message will be stored
+* @param can_msg Pointer to source CAN message structure to convert
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointers must NOT be NULL </dd>
 <dd>
-Source CAN message pointer must not be NULL. No NULL check is performed, dereferencing NULL will cause immediate crash.</dd>
-<dd>
-Payload count must be accurate and not exceed 8. Values &gt; 8 will cause buffer overflow when writing data bytes. The function does not validate this constraint.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>The output buffer is null-terminated and safe to use as a C string for transmission, logging, or display purposes.</dd>
-<dd>
-This function uses sprintf() internally, which requires a properly sized temporary buffer. Stack overflow is possible on very small embedded systems with limited stack space.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>All hexadecimal output is uppercase (A-F, not a-f) for consistency with standard GridConnect implementations.</dd>
-<dd>
-The identifier is always formatted with leading zeros to maintain the 8-character width required by GridConnect protocol, even for small values.</dd>
-<dd>
-The function uses strcat() for string building, which requires string operations. For performance-critical applications, consider using direct buffer manipulation instead.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__gridconnect_8c.html#ac3e0b7b9ac71d9305e9481a35be9c452" title="Converts a GridConnect message to a CAN message structure.">OpenLcbGridConnect_to_can_msg</a> - Reverse conversion (GridConnect to CAN) </dd>
-<dd>
-<a class="el" href="openlcb__gridconnect_8c.html#a82a8ee605795f44a733eeef5552fc746" title="Processes incoming GridConnect byte stream and extracts complete message.">OpenLcbGridConnect_copy_out_gridconnect_when_done</a> - Parse received GridConnect </dd>
-<dd>
-<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> - CAN message structure definition </dd></dl>
+Payload count must not exceed 8</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ac3e0b7b9ac71d9305e9481a35be9c452" title="Converts a validated GridConnect string to a can_msg_t.">OpenLcbGridConnect_to_can_msg</a> - Reverse conversion </dd></dl>
 
 </div>
 </div>

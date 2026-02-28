@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Event transport protocol implementation.  
+<p>Event Transport protocol — producer/consumer identification, event reports, and learn/teach operations. All callbacks are optional.  
 <a href="#details">More...</a></p>
 
 <p><a href="protocol__event__transport_8h_source.html">Go to the source code of this file.</a></p>
@@ -105,74 +105,74 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html">interface_openlcb_protocol_event_transport_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface structure for Event Transport protocol callbacks.  <a href="structinterface__openlcb__protocol__event__transport__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Application callbacks for event transport notifications. All optional (NULL = ignored).  <a href="structinterface__openlcb__protocol__event__transport__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a13504f9f3de03215c9717b8dcaf363d8" id="r_a13504f9f3de03215c9717b8dcaf363d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13504f9f3de03215c9717b8dcaf363d8">ProtocolEventTransport_initialize</a> (const <a class="el" href="structinterface__openlcb__protocol__event__transport__t.html">interface_openlcb_protocol_event_transport_t</a> *interface_openlcb_protocol_event_transport)</td></tr>
-<tr class="memdesc:a13504f9f3de03215c9717b8dcaf363d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the Event Transport protocol layer.  <br /></td></tr>
+<tr class="memdesc:a13504f9f3de03215c9717b8dcaf363d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface. Call once at startup.  <br /></td></tr>
 <tr class="separator:a13504f9f3de03215c9717b8dcaf363d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb1be0b7e2081a031609849ebc876d71" id="r_afb1be0b7e2081a031609849ebc876d71"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb1be0b7e2081a031609849ebc876d71">ProtocolEventTransport_handle_consumer_identify</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:afb1be0b7e2081a031609849ebc876d71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Identify message.  <br /></td></tr>
+<tr class="memdesc:afb1be0b7e2081a031609849ebc876d71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Responds with Consumer Identified if this node consumes the requested event.  <br /></td></tr>
 <tr class="separator:afb1be0b7e2081a031609849ebc876d71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c92a4094b3226a294930de68446ab3c" id="r_a9c92a4094b3226a294930de68446ab3c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c92a4094b3226a294930de68446ab3c">ProtocolEventTransport_handle_consumer_range_identified</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a9c92a4094b3226a294930de68446ab3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Range Identified message.  <br /></td></tr>
+<tr class="memdesc:a9c92a4094b3226a294930de68446ab3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Consumer Range Identified to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:a9c92a4094b3226a294930de68446ab3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a007dbd80061d2cdb1b9963ba8da8ea09" id="r_a007dbd80061d2cdb1b9963ba8da8ea09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a007dbd80061d2cdb1b9963ba8da8ea09">ProtocolEventTransport_handle_consumer_identified_unknown</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a007dbd80061d2cdb1b9963ba8da8ea09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Identified Unknown message.  <br /></td></tr>
+<tr class="memdesc:a007dbd80061d2cdb1b9963ba8da8ea09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Consumer Identified Unknown to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:a007dbd80061d2cdb1b9963ba8da8ea09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d355cd6d9b89e3e556d5ccb3595e0ab" id="r_a2d355cd6d9b89e3e556d5ccb3595e0ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d355cd6d9b89e3e556d5ccb3595e0ab">ProtocolEventTransport_handle_consumer_identified_set</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a2d355cd6d9b89e3e556d5ccb3595e0ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Identified Set message.  <br /></td></tr>
+<tr class="memdesc:a2d355cd6d9b89e3e556d5ccb3595e0ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Consumer Identified Set to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:a2d355cd6d9b89e3e556d5ccb3595e0ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c21e80d4ee1d344e00ed20f0b31c0fc" id="r_a1c21e80d4ee1d344e00ed20f0b31c0fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c21e80d4ee1d344e00ed20f0b31c0fc">ProtocolEventTransport_handle_consumer_identified_clear</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a1c21e80d4ee1d344e00ed20f0b31c0fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Identified Clear message.  <br /></td></tr>
+<tr class="memdesc:a1c21e80d4ee1d344e00ed20f0b31c0fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Consumer Identified Clear to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:a1c21e80d4ee1d344e00ed20f0b31c0fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4db9e7259a0ab51f56f82f3fd46e3cc0" id="r_a4db9e7259a0ab51f56f82f3fd46e3cc0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4db9e7259a0ab51f56f82f3fd46e3cc0">ProtocolEventTransport_handle_consumer_identified_reserved</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a4db9e7259a0ab51f56f82f3fd46e3cc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Identified Reserved message.  <br /></td></tr>
+<tr class="memdesc:a4db9e7259a0ab51f56f82f3fd46e3cc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Consumer Identified Reserved to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:a4db9e7259a0ab51f56f82f3fd46e3cc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a190aa050c233838afbf8b13cce8f04cf" id="r_a190aa050c233838afbf8b13cce8f04cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a190aa050c233838afbf8b13cce8f04cf">ProtocolEventTransport_handle_producer_identify</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a190aa050c233838afbf8b13cce8f04cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Identify message.  <br /></td></tr>
+<tr class="memdesc:a190aa050c233838afbf8b13cce8f04cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Responds with Producer Identified if this node produces the requested event.  <br /></td></tr>
 <tr class="separator:a190aa050c233838afbf8b13cce8f04cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad72129eda4bd4ad30e641004fe3484c9" id="r_ad72129eda4bd4ad30e641004fe3484c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad72129eda4bd4ad30e641004fe3484c9">ProtocolEventTransport_handle_producer_range_identified</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ad72129eda4bd4ad30e641004fe3484c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Range Identified message.  <br /></td></tr>
+<tr class="memdesc:ad72129eda4bd4ad30e641004fe3484c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Producer Range Identified to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:ad72129eda4bd4ad30e641004fe3484c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabd4c8e176e511f24472dc6793f59dc7" id="r_aabd4c8e176e511f24472dc6793f59dc7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aabd4c8e176e511f24472dc6793f59dc7">ProtocolEventTransport_handle_producer_identified_unknown</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aabd4c8e176e511f24472dc6793f59dc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Identified Unknown message.  <br /></td></tr>
+<tr class="memdesc:aabd4c8e176e511f24472dc6793f59dc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Producer Identified Unknown to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:aabd4c8e176e511f24472dc6793f59dc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e71394fcf36cc5d99b327cdd4001ac7" id="r_a1e71394fcf36cc5d99b327cdd4001ac7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e71394fcf36cc5d99b327cdd4001ac7">ProtocolEventTransport_handle_producer_identified_set</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a1e71394fcf36cc5d99b327cdd4001ac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Identified Set message.  <br /></td></tr>
+<tr class="memdesc:a1e71394fcf36cc5d99b327cdd4001ac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Producer Identified Set to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:a1e71394fcf36cc5d99b327cdd4001ac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afdff7c7109ea8a3aaf1573075aaebadd" id="r_afdff7c7109ea8a3aaf1573075aaebadd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afdff7c7109ea8a3aaf1573075aaebadd">ProtocolEventTransport_handle_producer_identified_clear</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:afdff7c7109ea8a3aaf1573075aaebadd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Identified Clear message.  <br /></td></tr>
+<tr class="memdesc:afdff7c7109ea8a3aaf1573075aaebadd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Producer Identified Clear to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:afdff7c7109ea8a3aaf1573075aaebadd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f2b21811e9e91661c063489618c5250" id="r_a2f2b21811e9e91661c063489618c5250"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f2b21811e9e91661c063489618c5250">ProtocolEventTransport_handle_producer_identified_reserved</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a2f2b21811e9e91661c063489618c5250"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Identified Reserved message.  <br /></td></tr>
+<tr class="memdesc:a2f2b21811e9e91661c063489618c5250"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Producer Identified Reserved to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:a2f2b21811e9e91661c063489618c5250"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38a7d9aaf31f6c47e7d0b393258b4a61" id="r_a38a7d9aaf31f6c47e7d0b393258b4a61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38a7d9aaf31f6c47e7d0b393258b4a61">ProtocolEventTransport_handle_events_identify_dest</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a38a7d9aaf31f6c47e7d0b393258b4a61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles addressed Identify Events message.  <br /></td></tr>
+<tr class="memdesc:a38a7d9aaf31f6c47e7d0b393258b4a61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks addressing then delegates to handle_events_identify for addressed variant.  <br /></td></tr>
 <tr class="separator:a38a7d9aaf31f6c47e7d0b393258b4a61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1fd18aec6a8fca64435b14d94c0752b" id="r_ab1fd18aec6a8fca64435b14d94c0752b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1fd18aec6a8fca64435b14d94c0752b">ProtocolEventTransport_handle_events_identify</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ab1fd18aec6a8fca64435b14d94c0752b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles global Identify Events message.  <br /></td></tr>
+<tr class="memdesc:ab1fd18aec6a8fca64435b14d94c0752b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates all producer then consumer events, responding with Identified messages. Uses the enumerate flag for multi-message sequencing.  <br /></td></tr>
 <tr class="separator:ab1fd18aec6a8fca64435b14d94c0752b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a342736e386595db173e0aab6d14edf72" id="r_a342736e386595db173e0aab6d14edf72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a342736e386595db173e0aab6d14edf72">ProtocolEventTransport_handle_event_learn</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a342736e386595db173e0aab6d14edf72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Event Learn message.  <br /></td></tr>
+<tr class="memdesc:a342736e386595db173e0aab6d14edf72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards Learn Event to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:a342736e386595db173e0aab6d14edf72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0871e8dff19e3b845da96bcc208af0ac" id="r_a0871e8dff19e3b845da96bcc208af0ac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0871e8dff19e3b845da96bcc208af0ac">ProtocolEventTransport_handle_pc_event_report</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a0871e8dff19e3b845da96bcc208af0ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer/Consumer Event Report message.  <br /></td></tr>
+<tr class="memdesc:a0871e8dff19e3b845da96bcc208af0ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards PC Event Report to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:a0871e8dff19e3b845da96bcc208af0ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a766f9f46309f4aea60e279d233dfef4d" id="r_a766f9f46309f4aea60e279d233dfef4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a766f9f46309f4aea60e279d233dfef4d">ProtocolEventTransport_handle_pc_event_report_with_payload</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a766f9f46309f4aea60e279d233dfef4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer/Consumer Event Report message with payload.  <br /></td></tr>
+<tr class="memdesc:a766f9f46309f4aea60e279d233dfef4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards PC Event Report with payload to the app callback. No automatic response.  <br /></td></tr>
 <tr class="separator:a766f9f46309f4aea60e279d233dfef4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6a16c27e84c729162ce66cc0ec4f4dd" id="r_af6a16c27e84c729162ce66cc0ec4f4dd"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6a16c27e84c729162ce66cc0ec4f4dd">ProtocolEventTransport_extract_consumer_event_status_mti</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t event_index)</td></tr>
-<tr class="memdesc:af6a16c27e84c729162ce66cc0ec4f4dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the appropriate MTI for consumer event status.  <br /></td></tr>
+<tr class="memitem:af6a16c27e84c729162ce66cc0ec4f4dd" id="r_af6a16c27e84c729162ce66cc0ec4f4dd"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6a16c27e84c729162ce66cc0ec4f4dd">ProtocolEventTransport_extract_consumer_event_status_mti</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t event_index)</td></tr>
+<tr class="memdesc:af6a16c27e84c729162ce66cc0ec4f4dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Consumer Identified MTI (Unknown/Set/Clear) for consumers.list[event_index].  <br /></td></tr>
 <tr class="separator:af6a16c27e84c729162ce66cc0ec4f4dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42953b23ecc6b49992a048e53abf9c9a" id="r_a42953b23ecc6b49992a048e53abf9c9a"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42953b23ecc6b49992a048e53abf9c9a">ProtocolEventTransport_extract_producer_event_status_mti</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t event_index)</td></tr>
-<tr class="memdesc:a42953b23ecc6b49992a048e53abf9c9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the appropriate MTI for producer event status.  <br /></td></tr>
+<tr class="memitem:a42953b23ecc6b49992a048e53abf9c9a" id="r_a42953b23ecc6b49992a048e53abf9c9a"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42953b23ecc6b49992a048e53abf9c9a">ProtocolEventTransport_extract_producer_event_status_mti</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t event_index)</td></tr>
+<tr class="memdesc:a42953b23ecc6b49992a048e53abf9c9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Producer Identified MTI (Unknown/Set/Clear) for producers.list[event_index].  <br /></td></tr>
 <tr class="separator:a42953b23ecc6b49992a048e53abf9c9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Event transport protocol implementation. </p>
+<div class="textblock"><p>Event Transport protocol — producer/consumer identification, event reports, and learn/teach operations. All callbacks are optional. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -181,7 +181,7 @@ Functions</h2></td></tr>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a13504f9f3de03215c9717b8dcaf363d8" name="a13504f9f3de03215c9717b8dcaf363d8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a13504f9f3de03215c9717b8dcaf363d8">&#9670;&#160;</a></span>ProtocolEventTransport_initialize()</h2>
@@ -206,23 +206,14 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the Event Transport protocol layer. </p>
-<p>Registers the application's callback interface with the Event Transport protocol handler. Must be called once during system initialization before any event-related messages are processed.</p>
-<p>Use cases:</p><ul>
-<li>Called during application startup</li>
-<li>Required before processing any event messages</li>
-</ul>
+<p>Stores the callback interface. Call once at startup. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_openlcb_protocol_event_transport</td><td>Pointer to callback interface structure</td></tr>
+    <tr><td class="paramname">interface_openlcb_protocol_event_transport</td><td>Pointer to <a class="el" href="structinterface__openlcb__protocol__event__transport__t.html">interface_openlcb_protocol_event_transport_t</a> (must remain valid for application lifetime).</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>interface_openlcb_protocol_event_transport must remain valid for lifetime of application </dd>
-<dd>
-NOT thread-safe - call during single-threaded initialization only</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call before enabling CAN message reception</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback interface structure</dd></dl>
+<p>Stores the callback interface. Call once at startup.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Store pointer to callback interface in static variable</li>
 <li>Interface remains valid for application lifetime</li>
@@ -236,7 +227,7 @@ NOT thread-safe - call during single-threaded initialization only</dd></dl>
 <dd>
 NOT thread-safe - call during single-threaded initialization only</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Call before enabling CAN message reception</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback interface structure </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback interface structure </dd></dl>
 
 </div>
 </div>
@@ -263,25 +254,15 @@ NOT thread-safe - call during single-threaded initialization only</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Consumer Identify message. </p>
-<p>Processes a request to identify if this node consumes a specific event. Checks if the requested event is in the node's consumer list and responds with the current state (unknown/set/clear).</p>
-<p>Use cases:</p><ul>
-<li>Remote node querying if this node consumes an event</li>
-<li>Configuration tools discovering event consumers</li>
-</ul>
+<p>Responds with Consumer Identified if this node consumes the requested event. </p>
+<p>No response if the event is not in this node's consumer list.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL </dd>
-<dd>
-Incoming message must have valid event ID payload</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>If event not consumed by this node, no response is generated </dd>
-<dd>
-Response MTI depends on current event state (unknown/set/clear)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#af6a16c27e84c729162ce66cc0ec4f4dd" title="Extracts the appropriate MTI for consumer event status.">ProtocolEventTransport_extract_consumer_event_status_mti</a> - Determines response MTI</dd></dl>
+<p>Responds with Consumer Identified if this node consumes the requested event.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Extract target event ID from incoming message payload</li>
 <li>Search node's consumer list for matching event</li>
@@ -311,7 +292,7 @@ Incoming message must have valid event ID payload</dd></dl>
 Response MTI depends on current event state (unknown/set/clear) </dd>
 <dd>
 Payload count is set automatically by OpenLcbUtilities_copy_event_id_to_openlcb_payload</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#af6a16c27e84c729162ce66cc0ec4f4dd" title="Extracts the appropriate MTI for consumer event status.">ProtocolEventTransport_extract_consumer_event_status_mti</a> - Determines response MTI </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#af6a16c27e84c729162ce66cc0ec4f4dd" title="Returns the Consumer Identified MTI (Unknown/Set/Clear) for consumers.list[event_index].">ProtocolEventTransport_extract_consumer_event_status_mti</a> - Determines response MTI </dd></dl>
 
 </div>
 </div>
@@ -338,23 +319,14 @@ Payload count is set automatically by OpenLcbUtilities_copy_event_id_to_openlcb_
 </table>
 </div><div class="memdoc">
 
-<p>Handles Consumer Range Identified message. </p>
-<p>Processes notification that a remote node has identified itself as consuming a range of events. Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Discovering event consumers on the network</li>
-<li>Building event routing tables</li>
-</ul>
+<p>Forwards Consumer Range Identified to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
-<dd>
-Callback receives the base event ID of the range</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Consumer Range Identified to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -373,7 +345,7 @@ Callback receives the base event ID of the range</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
 <dd>
 Callback receives the base event ID of the range</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -400,21 +372,14 @@ Callback receives the base event ID of the range</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Consumer Identified Unknown message. </p>
-<p>Processes notification that a remote node consumes an event but its current state is unknown. Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Tracking consumer states on the network</li>
-<li>Updating event state displays</li>
-</ul>
+<p>Forwards Consumer Identified Unknown to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Consumer Identified Unknown to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -431,7 +396,7 @@ Callback receives the base event ID of the range</dd></dl>
 <pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
 * </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must NOT be NULL</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -458,21 +423,14 @@ Callback receives the base event ID of the range</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Consumer Identified Set message. </p>
-<p>Processes notification that a remote node consumes an event and its current state is SET (active/true). Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Tracking consumer states on the network</li>
-<li>Updating event state displays</li>
-</ul>
+<p>Forwards Consumer Identified Set to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Consumer Identified Set to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -489,7 +447,7 @@ Callback receives the base event ID of the range</dd></dl>
 <pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
 * </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must NOT be NULL</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -516,21 +474,14 @@ Callback receives the base event ID of the range</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Consumer Identified Clear message. </p>
-<p>Processes notification that a remote node consumes an event and its current state is CLEAR (inactive/false). Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Tracking consumer states on the network</li>
-<li>Updating event state displays</li>
-</ul>
+<p>Forwards Consumer Identified Clear to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Consumer Identified Clear to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -547,7 +498,7 @@ Callback receives the base event ID of the range</dd></dl>
 <pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
 * </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must NOT be NULL</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -574,21 +525,14 @@ Callback receives the base event ID of the range</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Consumer Identified Reserved message. </p>
-<p>Processes notification that a remote node consumes an event with a reserved state indicator. Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Supporting future protocol extensions</li>
-<li>Handling special event types</li>
-</ul>
+<p>Forwards Consumer Identified Reserved to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Consumer Identified Reserved to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -607,7 +551,7 @@ Callback receives the base event ID of the range</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
 <dd>
 Reserved states are defined by future OpenLCB specifications</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -634,25 +578,15 @@ Reserved states are defined by future OpenLCB specifications</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Producer Identify message. </p>
-<p>Processes a request to identify if this node produces a specific event. Checks if the requested event is in the node's producer list and responds with the current state (unknown/set/clear).</p>
-<p>Use cases:</p><ul>
-<li>Remote node querying if this node produces an event</li>
-<li>Configuration tools discovering event producers</li>
-</ul>
+<p>Responds with Producer Identified if this node produces the requested event. </p>
+<p>No response if the event is not in this node's producer list.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL </dd>
-<dd>
-Incoming message must have valid event ID payload</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>If event not produced by this node, no response is generated </dd>
-<dd>
-Response MTI depends on current event state (unknown/set/clear)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a42953b23ecc6b49992a048e53abf9c9a" title="Extracts the appropriate MTI for producer event status.">ProtocolEventTransport_extract_producer_event_status_mti</a> - Determines response MTI</dd></dl>
+<p>Responds with Producer Identified if this node produces the requested event.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Extract target event ID from incoming message payload</li>
 <li>Search node's producer list for matching event</li>
@@ -682,7 +616,7 @@ Incoming message must have valid event ID payload</dd></dl>
 Response MTI depends on current event state (unknown/set/clear) </dd>
 <dd>
 Payload count is set automatically by OpenLcbUtilities_copy_event_id_to_openlcb_payload</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a42953b23ecc6b49992a048e53abf9c9a" title="Extracts the appropriate MTI for producer event status.">ProtocolEventTransport_extract_producer_event_status_mti</a> - Determines response MTI </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a42953b23ecc6b49992a048e53abf9c9a" title="Returns the Producer Identified MTI (Unknown/Set/Clear) for producers.list[event_index].">ProtocolEventTransport_extract_producer_event_status_mti</a> - Determines response MTI </dd></dl>
 
 </div>
 </div>
@@ -709,23 +643,14 @@ Payload count is set automatically by OpenLcbUtilities_copy_event_id_to_openlcb_
 </table>
 </div><div class="memdoc">
 
-<p>Handles Producer Range Identified message. </p>
-<p>Processes notification that a remote node has identified itself as producing a range of events. Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Discovering event producers on the network</li>
-<li>Building event routing tables</li>
-</ul>
+<p>Forwards Producer Range Identified to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
-<dd>
-Callback receives the base event ID of the range</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Producer Range Identified to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -744,7 +669,7 @@ Callback receives the base event ID of the range</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
 <dd>
 Callback receives the base event ID of the range</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -771,21 +696,14 @@ Callback receives the base event ID of the range</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Producer Identified Unknown message. </p>
-<p>Processes notification that a remote node produces an event but its current state is unknown. Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Tracking producer states on the network</li>
-<li>Updating event state displays</li>
-</ul>
+<p>Forwards Producer Identified Unknown to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Producer Identified Unknown to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -802,7 +720,7 @@ Callback receives the base event ID of the range</dd></dl>
 <pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
 * </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must NOT be NULL</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -829,21 +747,14 @@ Callback receives the base event ID of the range</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Producer Identified Set message. </p>
-<p>Processes notification that a remote node produces an event and its current state is SET (active/true). Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Tracking producer states on the network</li>
-<li>Updating event state displays</li>
-</ul>
+<p>Forwards Producer Identified Set to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Producer Identified Set to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -860,7 +771,7 @@ Callback receives the base event ID of the range</dd></dl>
 <pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
 * </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must NOT be NULL</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -887,21 +798,14 @@ Callback receives the base event ID of the range</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Producer Identified Clear message. </p>
-<p>Processes notification that a remote node produces an event and its current state is CLEAR (inactive/false). Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Tracking producer states on the network</li>
-<li>Updating event state displays</li>
-</ul>
+<p>Forwards Producer Identified Clear to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Producer Identified Clear to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -918,7 +822,7 @@ Callback receives the base event ID of the range</dd></dl>
 <pre class="fragment">* @param statemachine_info Pointer to state machine context containing incoming message
 * </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must NOT be NULL</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -945,21 +849,14 @@ Callback receives the base event ID of the range</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Producer Identified Reserved message. </p>
-<p>Processes notification that a remote node produces an event with a reserved state indicator. Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Supporting future protocol extensions</li>
-<li>Handling special event types</li>
-</ul>
+<p>Forwards Producer Identified Reserved to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Producer Identified Reserved to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -978,7 +875,7 @@ Callback receives the base event ID of the range</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
 <dd>
 Reserved states are defined by future OpenLCB specifications</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -1005,28 +902,18 @@ Reserved states are defined by future OpenLCB specifications</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles addressed Identify Events message. </p>
-<p>Processes an addressed request to identify all events this node produces and consumes. Verifies the message is addressed to this node before delegating to the actual event identification logic.</p>
-<p>Use cases:</p><ul>
-<li>Targeted event discovery for a specific node</li>
-<li>Configuration tools querying this node's events</li>
-</ul>
+<p>Checks addressing then delegates to handle_events_identify for addressed variant. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Checks message destination before processing </dd>
-<dd>
-If not addressed to this node, no response is generated</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify</a> - Actual event identification logic</dd></dl>
-<p>Handles addressed Identify Events message.</p>
+<p>Checks addressing then delegates to handle_events_identify for addressed variant.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if incoming message is addressed to this node</li>
 <li>If addressed to this node:<ul>
-<li>Call <a class="el" href="#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify()</a> for processing</li>
+<li>Call <a class="el" href="#ab1fd18aec6a8fca64435b14d94c0752b" title="Enumerates all producer then consumer events, responding with Identified messages....">ProtocolEventTransport_handle_events_identify()</a> for processing</li>
 <li>Return to caller</li>
 </ul>
 </li>
@@ -1044,7 +931,7 @@ If not addressed to this node, no response is generated</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Checks message destination before processing </dd>
 <dd>
 If not addressed to this node, no response is generated</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify</a> - Actual event identification logic </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ab1fd18aec6a8fca64435b14d94c0752b" title="Enumerates all producer then consumer events, responding with Identified messages....">ProtocolEventTransport_handle_events_identify</a> - Actual event identification logic </dd></dl>
 
 </div>
 </div>
@@ -1071,28 +958,14 @@ If not addressed to this node, no response is generated</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles global Identify Events message. </p>
-<p>Processes a global request to identify all events this node produces and consumes. Responds with Producer/Consumer Identified messages for each event in the node's event lists.</p>
-<p>Use cases:</p><ul>
-<li>Network-wide event discovery</li>
-<li>Configuration tools building complete event maps</li>
-<li>Node initialization and announcement</li>
-</ul>
+<p>Enumerates all producer then consumer events, responding with Identified messages. Uses the enumerate flag for multi-message sequencing. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Enumerates all producer events first, then all consumer events </dd>
-<dd>
-Uses enumeration state machine to handle multiple responses </dd>
-<dd>
-Responses are generated incrementally across multiple calls</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a42953b23ecc6b49992a048e53abf9c9a" title="Extracts the appropriate MTI for producer event status.">ProtocolEventTransport_extract_producer_event_status_mti</a> - Get producer response MTI </dd>
-<dd>
-<a class="el" href="protocol__event__transport_8c.html#af6a16c27e84c729162ce66cc0ec4f4dd" title="Extracts the appropriate MTI for consumer event status.">ProtocolEventTransport_extract_consumer_event_status_mti</a> - Get consumer response MTI</dd></dl>
+<p>Enumerates all producer then consumer events, responding with Identified messages. Uses the enumerate flag for multi-message sequencing.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if more producer events need enumeration (enum_index &lt; count):<ul>
 <li>If yes: Call _identify_producers() to handle next producer event</li>
@@ -1129,9 +1002,9 @@ Uses enumeration state machine to handle multiple responses </dd>
 Responses are generated incrementally across multiple calls </dd>
 <dd>
 Caller must continue calling until enumerate flag becomes false</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a42953b23ecc6b49992a048e53abf9c9a" title="Extracts the appropriate MTI for producer event status.">ProtocolEventTransport_extract_producer_event_status_mti</a> - Get producer response MTI </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a42953b23ecc6b49992a048e53abf9c9a" title="Returns the Producer Identified MTI (Unknown/Set/Clear) for producers.list[event_index].">ProtocolEventTransport_extract_producer_event_status_mti</a> - Get producer response MTI </dd>
 <dd>
-<a class="el" href="protocol__event__transport_8c.html#af6a16c27e84c729162ce66cc0ec4f4dd" title="Extracts the appropriate MTI for consumer event status.">ProtocolEventTransport_extract_consumer_event_status_mti</a> - Get consumer response MTI </dd></dl>
+<a class="el" href="#af6a16c27e84c729162ce66cc0ec4f4dd" title="Returns the Consumer Identified MTI (Unknown/Set/Clear) for consumers.list[event_index].">ProtocolEventTransport_extract_consumer_event_status_mti</a> - Get consumer response MTI </dd></dl>
 
 </div>
 </div>
@@ -1158,24 +1031,14 @@ Caller must continue calling until enumerate flag becomes false</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Event Learn message. </p>
-<p>Processes a teach/learn message for event configuration. The node can use this to learn a new event ID from a producer or consumer. Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Teaching this node a new event to produce or consume</li>
-<li>Configuration mode for event learning</li>
-<li>Dynamic event configuration</li>
-</ul>
+<p>Forwards Learn Event to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
-<dd>
-Callback must implement actual event learning logic</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards Learn Event to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -1195,7 +1058,7 @@ Callback must implement actual event learning logic</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
 <dd>
 Callback must implement actual event learning logic</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -1222,26 +1085,14 @@ Callback must implement actual event learning logic</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Producer/Consumer Event Report message. </p>
-<p>Processes an event report indicating that an event has occurred on the network. This is the fundamental event notification mechanism in OpenLCB. Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Receiving event notifications from producers</li>
-<li>Triggering consumer actions in response to events</li>
-<li>Event logging and monitoring</li>
-</ul>
+<p>Forwards PC Event Report to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
-<dd>
-Callback is responsible for consuming the event and taking action</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a766f9f46309f4aea60e279d233dfef4d" title="Handles Producer/Consumer Event Report message with payload.">ProtocolEventTransport_handle_pc_event_report_with_payload</a> - Event report with additional data </dd>
-<dd>
-<a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards PC Event Report to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
 <li>If callback registered:<ul>
@@ -1261,9 +1112,9 @@ Callback is responsible for consuming the event and taking action</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
 <dd>
 Callback is responsible for consuming the event and taking action</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a766f9f46309f4aea60e279d233dfef4d" title="Handles Producer/Consumer Event Report message with payload.">ProtocolEventTransport_handle_pc_event_report_with_payload</a> - Event report with additional data </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a766f9f46309f4aea60e279d233dfef4d" title="Forwards PC Event Report with payload to the app callback. No automatic response.">ProtocolEventTransport_handle_pc_event_report_with_payload</a> - Event report with additional data </dd>
 <dd>
-<a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -1290,30 +1141,14 @@ Callback is responsible for consuming the event and taking action</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Producer/Consumer Event Report message with payload. </p>
-<p>Processes an event report that includes additional payload data beyond the event ID. The payload can contain sensor readings, state information, or other data associated with the event. Invokes the registered callback if configured.</p>
-<p>Use cases:</p><ul>
-<li>Receiving event reports with sensor data</li>
-<li>Events carrying configuration or state information</li>
-<li>Extended event notifications with context</li>
-</ul>
+<p>Forwards PC Event Report with payload to the app callback. No automatic response. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL </dd>
-<dd>
-Payload must be at least sizeof(event_id_t) + 1 bytes</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
-<dd>
-Callback receives payload data pointer and byte count </dd>
-<dd>
-Payload count excludes the event ID (8 bytes)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a0871e8dff19e3b845da96bcc208af0ac" title="Handles Producer/Consumer Event Report message.">ProtocolEventTransport_handle_pc_event_report</a> - Event report without payload </dd>
-<dd>
-<a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
+<p>Forwards PC Event Report with payload to the app callback. No automatic response.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if payload count is greater than event ID size (8 bytes)</li>
 <li>If payload too small:<ul>
@@ -1345,9 +1180,9 @@ Payload must be at least sizeof(event_id_t) + 1 bytes</dd></dl>
 Callback receives payload data pointer and byte count </dd>
 <dd>
 Payload count excludes the event ID (8 bytes)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a0871e8dff19e3b845da96bcc208af0ac" title="Handles Producer/Consumer Event Report message.">ProtocolEventTransport_handle_pc_event_report</a> - Event report without payload </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0871e8dff19e3b845da96bcc208af0ac" title="Forwards PC Event Report to the app callback. No automatic response.">ProtocolEventTransport_handle_pc_event_report</a> - Event report without payload </dd>
 <dd>
-<a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
+<a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Application callbacks for event transport notifications. All optional (NULL = ignored).">interface_openlcb_protocol_event_transport_t</a> - Callback registration </dd></dl>
 
 </div>
 </div>
@@ -1363,7 +1198,7 @@ Payload count excludes the event ID (8 bytes)</dd></dl>
         <tr>
           <td class="memname">uint16_t ProtocolEventTransport_extract_consumer_event_status_mti </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1378,30 +1213,16 @@ Payload count excludes the event ID (8 bytes)</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Extracts the appropriate MTI for consumer event status. </p>
-<p>Determines the correct Message Type Indicator (MTI) to use when responding to a consumer identification request, based on the current state of the consumer event (unknown/set/clear).</p>
-<p>Use cases:</p><ul>
-<li>Responding to consumer identify requests</li>
-<li>Event enumeration responses</li>
-</ul>
+<p>Returns the Consumer Identified MTI (Unknown/Set/Clear) for consumers.list[event_index]. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing consumer event list </td></tr>
-    <tr><td class="paramname">event_index</td><td>Index into the node's consumer event list</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> with the consumer list. </td></tr>
+    <tr><td class="paramname">event_index</td><td>Index into consumers.list. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>MTI value corresponding to event state:<ul>
-<li>MTI_CONSUMER_IDENTIFIED_UNKNOWN for unknown state</li>
-<li>MTI_CONSUMER_IDENTIFIED_SET for set state</li>
-<li>MTI_CONSUMER_IDENTIFIED_CLEAR for clear state</li>
-</ul>
-</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>openlcb_node must NOT be NULL </dd>
-<dd>
-event_index must be valid (&lt; consumer.count)</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Caller must ensure event_index is within bounds</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a42953b23ecc6b49992a048e53abf9c9a" title="Extracts the appropriate MTI for producer event status.">ProtocolEventTransport_extract_producer_event_status_mti</a> - Producer equivalent</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Appropriate MTI_CONSUMER_IDENTIFIED_xxx value.</dd></dl>
+<p>Returns the Consumer Identified MTI (Unknown/Set/Clear) for consumers.list[event_index].</p>
 <p>Algorithm:</p><ol type="1">
 <li>Access consumer event at specified index</li>
 <li>Switch on event status field:<ul>
@@ -1427,7 +1248,7 @@ event_index must be valid (&lt; consumer.count)</dd></dl>
 <dd>
 Index must be valid (&lt; consumer.count)</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Caller must ensure event_index is within bounds</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a42953b23ecc6b49992a048e53abf9c9a" title="Extracts the appropriate MTI for producer event status.">ProtocolEventTransport_extract_producer_event_status_mti</a> - Producer equivalent </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a42953b23ecc6b49992a048e53abf9c9a" title="Returns the Producer Identified MTI (Unknown/Set/Clear) for producers.list[event_index].">ProtocolEventTransport_extract_producer_event_status_mti</a> - Producer equivalent </dd></dl>
 
 </div>
 </div>
@@ -1443,7 +1264,7 @@ Index must be valid (&lt; consumer.count)</dd></dl>
         <tr>
           <td class="memname">uint16_t ProtocolEventTransport_extract_producer_event_status_mti </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1458,30 +1279,16 @@ Index must be valid (&lt; consumer.count)</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Extracts the appropriate MTI for producer event status. </p>
-<p>Determines the correct Message Type Indicator (MTI) to use when responding to a producer identification request, based on the current state of the producer event (unknown/set/clear).</p>
-<p>Use cases:</p><ul>
-<li>Responding to producer identify requests</li>
-<li>Event enumeration responses</li>
-</ul>
+<p>Returns the Producer Identified MTI (Unknown/Set/Clear) for producers.list[event_index]. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing producer event list </td></tr>
-    <tr><td class="paramname">event_index</td><td>Index into the node's producer event list</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> with the producer list. </td></tr>
+    <tr><td class="paramname">event_index</td><td>Index into producers.list. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>MTI value corresponding to event state:<ul>
-<li>MTI_PRODUCER_IDENTIFIED_UNKNOWN for unknown state</li>
-<li>MTI_PRODUCER_IDENTIFIED_SET for set state</li>
-<li>MTI_PRODUCER_IDENTIFIED_CLEAR for clear state</li>
-</ul>
-</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>openlcb_node must NOT be NULL </dd>
-<dd>
-event_index must be valid (&lt; producer.count)</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Caller must ensure event_index is within bounds</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#af6a16c27e84c729162ce66cc0ec4f4dd" title="Extracts the appropriate MTI for consumer event status.">ProtocolEventTransport_extract_consumer_event_status_mti</a> - Consumer equivalent</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Appropriate MTI_PRODUCER_IDENTIFIED_xxx value.</dd></dl>
+<p>Returns the Producer Identified MTI (Unknown/Set/Clear) for producers.list[event_index].</p>
 <p>Algorithm:</p><ol type="1">
 <li>Access producer event at specified index</li>
 <li>Switch on event status field:<ul>
@@ -1507,7 +1314,7 @@ event_index must be valid (&lt; producer.count)</dd></dl>
 <dd>
 Index must be valid (&lt; producer.count)</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Caller must ensure event_index is within bounds</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#af6a16c27e84c729162ce66cc0ec4f4dd" title="Extracts the appropriate MTI for consumer event status.">ProtocolEventTransport_extract_consumer_event_status_mti</a> - Consumer equivalent </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#af6a16c27e84c729162ce66cc0ec4f4dd" title="Returns the Consumer Identified MTI (Unknown/Set/Clear) for consumers.list[event_index].">ProtocolEventTransport_extract_consumer_event_status_mti</a> - Consumer equivalent </dd></dl>
 
 </div>
 </div>

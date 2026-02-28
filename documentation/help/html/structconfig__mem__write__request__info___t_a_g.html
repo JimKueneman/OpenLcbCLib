@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">config_mem_write_request_info_TAG Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Request info for a configuration memory write operation.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -109,7 +112,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:aaff1ed3da2b460c762ad607af17ab4ef" id="r_aaff1ed3da2b460c762ad607af17ab4ef"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a20b38f8882ef79b433f7461000ac1d12">write_config_mem_space_func_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaff1ed3da2b460c762ad607af17ab4ef">write_space_func</a></td></tr>
 <tr class="separator:aaff1ed3da2b460c762ad607af17ab4ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Request info for a configuration memory write operation. </p>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad85ba467c219a6f999e386cd454f1d02" name="ad85ba467c219a6f999e386cd454f1d02"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad85ba467c219a6f999e386cd454f1d02">&#9670;&#160;</a></span>encoding</h2>
 
@@ -121,7 +126,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Address space encoding method </p>
 
 </div>
 </div>
@@ -136,7 +140,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Starting address </p>
 
 </div>
 </div>
@@ -151,7 +154,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of bytes to write </p>
 
 </div>
 </div>
@@ -166,7 +168,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Buffer with data to write </p>
 
 </div>
 </div>
@@ -181,7 +182,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Offset into the payload to insert the data being requested </p>
+<p>Offset into write_buffer where data begins </p>
 
 </div>
 </div>
@@ -196,7 +197,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Address space information </p>
 
 </div>
 </div>
@@ -211,7 +211,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Write callback function </p>
 
 </div>
 </div>

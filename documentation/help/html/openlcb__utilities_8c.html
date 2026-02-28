@@ -96,167 +96,173 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Implementation of common utility functions for OpenLCB message and buffer manipulation.  
+<p>Common utility functions for OpenLCB message and buffer manipulation.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a57d58211f6431a39ab1f505e650e87be" id="r_a57d58211f6431a39ab1f505e650e87be"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57d58211f6431a39ab1f505e650e87be">OpenLcbUtilities_payload_type_to_len</a> (<a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> payload_type)</td></tr>
-<tr class="memdesc:a57d58211f6431a39ab1f505e650e87be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts payload type enum to byte length.  <br /></td></tr>
+<tr class="memdesc:a57d58211f6431a39ab1f505e650e87be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> to its maximum byte length.  <br /></td></tr>
 <tr class="separator:a57d58211f6431a39ab1f505e650e87be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a539043042b27fa7a28f82ff4f20278cd" id="r_a539043042b27fa7a28f82ff4f20278cd"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a539043042b27fa7a28f82ff4f20278cd">OpenLcbUtilities_calculate_memory_offset_into_node_space</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
-<tr class="memdesc:a539043042b27fa7a28f82ff4f20278cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the memory offset for a node's configuration space.  <br /></td></tr>
+<tr class="memitem:a539043042b27fa7a28f82ff4f20278cd" id="r_a539043042b27fa7a28f82ff4f20278cd"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a539043042b27fa7a28f82ff4f20278cd">OpenLcbUtilities_calculate_memory_offset_into_node_space</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a539043042b27fa7a28f82ff4f20278cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the byte offset into global config memory where this node's space begins.  <br /></td></tr>
 <tr class="separator:a539043042b27fa7a28f82ff4f20278cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b320eb92f3b9990fb78b35e4a93b8c0" id="r_a6b320eb92f3b9990fb78b35e4a93b8c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b320eb92f3b9990fb78b35e4a93b8c0">OpenLcbUtilities_load_openlcb_message</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti)</td></tr>
-<tr class="memdesc:a6b320eb92f3b9990fb78b35e4a93b8c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes an OpenLCB message structure with source, destination, and MTI.  <br /></td></tr>
+<tr class="memdesc:a6b320eb92f3b9990fb78b35e4a93b8c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads message header fields and clears the payload to zeros.  <br /></td></tr>
 <tr class="separator:a6b320eb92f3b9990fb78b35e4a93b8c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20a0aa6ddbb623d5cab4308765c47477" id="r_a20a0aa6ddbb623d5cab4308765c47477"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20a0aa6ddbb623d5cab4308765c47477">OpenLcbUtilities_clear_openlcb_message_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
-<tr class="memdesc:a20a0aa6ddbb623d5cab4308765c47477"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears only the payload portion of a message structure.  <br /></td></tr>
+<tr class="memdesc:a20a0aa6ddbb623d5cab4308765c47477"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros all payload bytes and resets payload_count. Header preserved.  <br /></td></tr>
 <tr class="separator:a20a0aa6ddbb623d5cab4308765c47477"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae9c2b155851377c1ce5eadca6a64a17" id="r_aae9c2b155851377c1ce5eadca6a64a17"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae9c2b155851377c1ce5eadca6a64a17">OpenLcbUtilities_clear_openlcb_message</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
-<tr class="memdesc:aae9c2b155851377c1ce5eadca6a64a17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Completely clears and resets a message structure.  <br /></td></tr>
+<tr class="memdesc:aae9c2b155851377c1ce5eadca6a64a17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros entire message including header, state flags, and reference count.  <br /></td></tr>
 <tr class="separator:aae9c2b155851377c1ce5eadca6a64a17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e94dfb13e33b2d191f446a38364b7e5" id="r_a5e94dfb13e33b2d191f446a38364b7e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e94dfb13e33b2d191f446a38364b7e5">OpenLcbUtilities_copy_event_id_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
-<tr class="memdesc:a5e94dfb13e33b2d191f446a38364b7e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies an 8-byte event ID into the message payload.  <br /></td></tr>
+<tr class="memdesc:a5e94dfb13e33b2d191f446a38364b7e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies an 8-byte event ID to payload at offset 0.  <br /></td></tr>
 <tr class="separator:a5e94dfb13e33b2d191f446a38364b7e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cef78b21287a901f256be421c689e0d" id="r_a8cef78b21287a901f256be421c689e0d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cef78b21287a901f256be421c689e0d">OpenLcbUtilities_copy_byte_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint8_t byte, uint16_t offset)</td></tr>
-<tr class="memdesc:a8cef78b21287a901f256be421c689e0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a single byte into the message payload at a specified offset.  <br /></td></tr>
+<tr class="memdesc:a8cef78b21287a901f256be421c689e0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies one byte to payload at the given offset.  <br /></td></tr>
 <tr class="separator:a8cef78b21287a901f256be421c689e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a153e53986f01cd7fb995277efcd5f022" id="r_a153e53986f01cd7fb995277efcd5f022"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a153e53986f01cd7fb995277efcd5f022">OpenLcbUtilities_copy_word_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t word, uint16_t offset)</td></tr>
-<tr class="memdesc:a153e53986f01cd7fb995277efcd5f022"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 16-bit word into the message payload at a specified offset.  <br /></td></tr>
+<tr class="memdesc:a153e53986f01cd7fb995277efcd5f022"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 16-bit word (big-endian) to payload at the given offset.  <br /></td></tr>
 <tr class="separator:a153e53986f01cd7fb995277efcd5f022"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad234f0e994829310371761dde2a0fa1e" id="r_ad234f0e994829310371761dde2a0fa1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad234f0e994829310371761dde2a0fa1e">OpenLcbUtilities_copy_dword_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint32_t doubleword, uint16_t offset)</td></tr>
-<tr class="memdesc:ad234f0e994829310371761dde2a0fa1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 32-bit doubleword into the message payload at a specified offset.  <br /></td></tr>
+<tr class="memdesc:ad234f0e994829310371761dde2a0fa1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 32-bit doubleword (big-endian) to payload at the given offset.  <br /></td></tr>
 <tr class="separator:ad234f0e994829310371761dde2a0fa1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a30b8e79173b3eb1f1e36f620b2e7e4c4" id="r_a30b8e79173b3eb1f1e36f620b2e7e4c4"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30b8e79173b3eb1f1e36f620b2e7e4c4">OpenLcbUtilities_copy_string_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, const char string[], uint16_t offset)</td></tr>
-<tr class="memdesc:a30b8e79173b3eb1f1e36f620b2e7e4c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a null-terminated string into the message payload.  <br /></td></tr>
+<tr class="memdesc:a30b8e79173b3eb1f1e36f620b2e7e4c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a null-terminated string into the payload.  <br /></td></tr>
 <tr class="separator:a30b8e79173b3eb1f1e36f620b2e7e4c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39d5ca6fda22ae42d9b6efa8ca6dd81c" id="r_a39d5ca6fda22ae42d9b6efa8ca6dd81c"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39d5ca6fda22ae42d9b6efa8ca6dd81c">OpenLcbUtilities_copy_byte_array_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, const uint8_t byte_array[], uint16_t offset, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a39d5ca6fda22ae42d9b6efa8ca6dd81c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a byte array into the message payload.  <br /></td></tr>
+<tr class="memdesc:a39d5ca6fda22ae42d9b6efa8ca6dd81c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a byte array into the payload. May copy fewer bytes if payload space is exhausted.  <br /></td></tr>
 <tr class="separator:a39d5ca6fda22ae42d9b6efa8ca6dd81c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebdc740485642f016371b4604b93aa7f" id="r_aebdc740485642f016371b4604b93aa7f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebdc740485642f016371b4604b93aa7f">OpenLcbUtilities_copy_node_id_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint16_t offset)</td></tr>
-<tr class="memdesc:aebdc740485642f016371b4604b93aa7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 6-byte node ID into the message payload at a specified offset.  <br /></td></tr>
+<tr class="memdesc:aebdc740485642f016371b4604b93aa7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 6-byte node ID (big-endian) to payload at the given offset.  <br /></td></tr>
 <tr class="separator:aebdc740485642f016371b4604b93aa7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a040663f01e6536b8f9fb5a77181e6015" id="r_a040663f01e6536b8f9fb5a77181e6015"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a040663f01e6536b8f9fb5a77181e6015">OpenLcbUtilities_extract_node_id_from_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t offset)</td></tr>
-<tr class="memdesc:a040663f01e6536b8f9fb5a77181e6015"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 6-byte node ID from the message payload.  <br /></td></tr>
+<tr class="memdesc:a040663f01e6536b8f9fb5a77181e6015"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 6-byte node ID from payload at the given offset.  <br /></td></tr>
 <tr class="separator:a040663f01e6536b8f9fb5a77181e6015"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac06eeb0060f209fa2a094e252473eb3e" id="r_ac06eeb0060f209fa2a094e252473eb3e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac06eeb0060f209fa2a094e252473eb3e">OpenLcbUtilities_extract_event_id_from_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
-<tr class="memdesc:ac06eeb0060f209fa2a094e252473eb3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts an 8-byte event ID from the message payload.  <br /></td></tr>
+<tr class="memdesc:ac06eeb0060f209fa2a094e252473eb3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts an 8-byte event ID from payload at offset 0.  <br /></td></tr>
 <tr class="separator:ac06eeb0060f209fa2a094e252473eb3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a665fc960f303e05a649d58ccd848e4" id="r_a6a665fc960f303e05a649d58ccd848e4"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a665fc960f303e05a649d58ccd848e4">OpenLcbUtilities_extract_byte_from_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t offset)</td></tr>
-<tr class="memdesc:a6a665fc960f303e05a649d58ccd848e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a single byte from the message payload.  <br /></td></tr>
+<tr class="memdesc:a6a665fc960f303e05a649d58ccd848e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts one byte from payload at the given offset.  <br /></td></tr>
 <tr class="separator:a6a665fc960f303e05a649d58ccd848e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f9a0c01d0fc5ca782be6b10773aceb4" id="r_a1f9a0c01d0fc5ca782be6b10773aceb4"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f9a0c01d0fc5ca782be6b10773aceb4">OpenLcbUtilities_extract_word_from_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t offset)</td></tr>
-<tr class="memdesc:a1f9a0c01d0fc5ca782be6b10773aceb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 16-bit word from the message payload.  <br /></td></tr>
+<tr class="memdesc:a1f9a0c01d0fc5ca782be6b10773aceb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 16-bit word (big-endian) from payload at the given offset.  <br /></td></tr>
 <tr class="separator:a1f9a0c01d0fc5ca782be6b10773aceb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb46cc32b7e4fef78d264d5bc56ed08c" id="r_abb46cc32b7e4fef78d264d5bc56ed08c"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb46cc32b7e4fef78d264d5bc56ed08c">OpenLcbUtilities_extract_dword_from_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t offset)</td></tr>
-<tr class="memdesc:abb46cc32b7e4fef78d264d5bc56ed08c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 32-bit doubleword from the message payload.  <br /></td></tr>
+<tr class="memdesc:abb46cc32b7e4fef78d264d5bc56ed08c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 32-bit doubleword (big-endian) from payload at the given offset.  <br /></td></tr>
 <tr class="separator:abb46cc32b7e4fef78d264d5bc56ed08c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ce2d7da1a094193ee6b5bc327911910" id="r_a8ce2d7da1a094193ee6b5bc327911910"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ce2d7da1a094193ee6b5bc327911910">OpenLcbUtilities_set_multi_frame_flag</a> (uint8_t *target, uint8_t flag)</td></tr>
-<tr class="memdesc:a8ce2d7da1a094193ee6b5bc327911910"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the multi-frame flag in a target byte.  <br /></td></tr>
+<tr class="memdesc:a8ce2d7da1a094193ee6b5bc327911910"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the multi-frame control flag in the upper nibble of target, preserving the lower nibble.  <br /></td></tr>
 <tr class="separator:a8ce2d7da1a094193ee6b5bc327911910"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa13f6427e7abf03d5253dc0b95312da" id="r_aaa13f6427e7abf03d5253dc0b95312da"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa13f6427e7abf03d5253dc0b95312da">OpenLcbUtilities_is_addressed_openlcb_message</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
-<tr class="memdesc:aaa13f6427e7abf03d5253dc0b95312da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines if a message is addressed (not global)  <br /></td></tr>
+<tr class="memdesc:aaa13f6427e7abf03d5253dc0b95312da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the MTI has the destination-address-present bit set.  <br /></td></tr>
 <tr class="separator:aaa13f6427e7abf03d5253dc0b95312da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a763ed68f05ad99a4902de3826c2e005f" id="r_a763ed68f05ad99a4902de3826c2e005f"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a763ed68f05ad99a4902de3826c2e005f">OpenLcbUtilities_count_nulls_in_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
-<tr class="memdesc:a763ed68f05ad99a4902de3826c2e005f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counts the number of null bytes (0x00) in the message payload.  <br /></td></tr>
+<tr class="memdesc:a763ed68f05ad99a4902de3826c2e005f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the count of null bytes (0x00) in the payload. Used for SNIP validation.  <br /></td></tr>
 <tr class="separator:a763ed68f05ad99a4902de3826c2e005f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9204bcb0afbada951297d5be1d719b33" id="r_a9204bcb0afbada951297d5be1d719b33"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9204bcb0afbada951297d5be1d719b33">OpenLcbUtilities_is_addressed_message_for_node</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
-<tr class="memdesc:a9204bcb0afbada951297d5be1d719b33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an addressed message is for a specific node.  <br /></td></tr>
+<tr class="memitem:a9204bcb0afbada951297d5be1d719b33" id="r_a9204bcb0afbada951297d5be1d719b33"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9204bcb0afbada951297d5be1d719b33">OpenLcbUtilities_is_addressed_message_for_node</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
+<tr class="memdesc:a9204bcb0afbada951297d5be1d719b33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the message destination matches this node's alias or ID.  <br /></td></tr>
 <tr class="separator:a9204bcb0afbada951297d5be1d719b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed21415edc11d38433021fca34e0d60d" id="r_aed21415edc11d38433021fca34e0d60d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed21415edc11d38433021fca34e0d60d">OpenLcbUtilities_is_producer_event_assigned_to_node</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t *event_index)</td></tr>
-<tr class="memdesc:aed21415edc11d38433021fca34e0d60d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a producer event is assigned to a node.  <br /></td></tr>
+<tr class="memitem:aed21415edc11d38433021fca34e0d60d" id="r_aed21415edc11d38433021fca34e0d60d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed21415edc11d38433021fca34e0d60d">OpenLcbUtilities_is_producer_event_assigned_to_node</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t *event_index)</td></tr>
+<tr class="memdesc:aed21415edc11d38433021fca34e0d60d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Searches the node's producer list for a matching event ID.  <br /></td></tr>
 <tr class="separator:aed21415edc11d38433021fca34e0d60d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cf19f4c15949979c691d4141278ee22" id="r_a6cf19f4c15949979c691d4141278ee22"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cf19f4c15949979c691d4141278ee22">OpenLcbUtilities_is_consumer_event_assigned_to_node</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t *event_index)</td></tr>
-<tr class="memdesc:a6cf19f4c15949979c691d4141278ee22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a consumer event is assigned to a node.  <br /></td></tr>
+<tr class="memitem:a6cf19f4c15949979c691d4141278ee22" id="r_a6cf19f4c15949979c691d4141278ee22"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cf19f4c15949979c691d4141278ee22">OpenLcbUtilities_is_consumer_event_assigned_to_node</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t *event_index)</td></tr>
+<tr class="memdesc:a6cf19f4c15949979c691d4141278ee22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Searches the node's consumer list for a matching event ID.  <br /></td></tr>
 <tr class="separator:a6cf19f4c15949979c691d4141278ee22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8adb3fe5dc4d64da02e252d5bfea2922" id="r_a8adb3fe5dc4d64da02e252d5bfea2922"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8adb3fe5dc4d64da02e252d5bfea2922">OpenLcbUtilities_extract_node_id_from_config_mem_buffer</a> (<a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer, uint8_t index)</td></tr>
-<tr class="memdesc:a8adb3fe5dc4d64da02e252d5bfea2922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 6-byte node ID from a configuration memory buffer.  <br /></td></tr>
+<tr class="memdesc:a8adb3fe5dc4d64da02e252d5bfea2922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 6-byte node ID from a config memory buffer at the given index.  <br /></td></tr>
 <tr class="separator:a8adb3fe5dc4d64da02e252d5bfea2922"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43ad8d02f8415a5ae8563b5f01dd26ad" id="r_a43ad8d02f8415a5ae8563b5f01dd26ad"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a43ad8d02f8415a5ae8563b5f01dd26ad">OpenLcbUtilities_extract_word_from_config_mem_buffer</a> (<a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer, uint8_t index)</td></tr>
-<tr class="memdesc:a43ad8d02f8415a5ae8563b5f01dd26ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 16-bit word from a configuration memory buffer.  <br /></td></tr>
+<tr class="memdesc:a43ad8d02f8415a5ae8563b5f01dd26ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 16-bit word from a config memory buffer at the given index.  <br /></td></tr>
 <tr class="separator:a43ad8d02f8415a5ae8563b5f01dd26ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af892a2ef64dfd26cb36667a62ae0f8dc" id="r_af892a2ef64dfd26cb36667a62ae0f8dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af892a2ef64dfd26cb36667a62ae0f8dc">OpenLcbUtilities_copy_node_id_to_config_mem_buffer</a> (<a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t index)</td></tr>
-<tr class="memdesc:af892a2ef64dfd26cb36667a62ae0f8dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 6-byte node ID into a configuration memory buffer.  <br /></td></tr>
+<tr class="memdesc:af892a2ef64dfd26cb36667a62ae0f8dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 6-byte node ID into a config memory buffer at the given index.  <br /></td></tr>
 <tr class="separator:af892a2ef64dfd26cb36667a62ae0f8dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad0305cbd41a639ad54ff12bd599cce9" id="r_aad0305cbd41a639ad54ff12bd599cce9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad0305cbd41a639ad54ff12bd599cce9">OpenLcbUtilities_copy_event_id_to_config_mem_buffer</a> (<a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint8_t index)</td></tr>
-<tr class="memdesc:aad0305cbd41a639ad54ff12bd599cce9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies an 8-byte event ID into a configuration memory buffer.  <br /></td></tr>
+<tr class="memdesc:aad0305cbd41a639ad54ff12bd599cce9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies an 8-byte event ID into a config memory buffer at the given index.  <br /></td></tr>
 <tr class="separator:aad0305cbd41a639ad54ff12bd599cce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28f602cb5ef7385e117f152614bd613b" id="r_a28f602cb5ef7385e117f152614bd613b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28f602cb5ef7385e117f152614bd613b">OpenLcbUtilities_copy_config_mem_buffer_to_event_id</a> (<a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer, uint8_t index)</td></tr>
-<tr class="memdesc:a28f602cb5ef7385e117f152614bd613b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts an 8-byte event ID from a configuration memory buffer.  <br /></td></tr>
+<tr class="memdesc:a28f602cb5ef7385e117f152614bd613b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts an 8-byte event ID from a config memory buffer at the given index.  <br /></td></tr>
 <tr class="separator:a28f602cb5ef7385e117f152614bd613b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2c25886675aad1efa582cf2fc318833" id="r_aa2c25886675aad1efa582cf2fc318833"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2c25886675aad1efa582cf2fc318833">OpenLcbUtilities_load_config_mem_reply_write_ok_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:aa2c25886675aad1efa582cf2fc318833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a configuration memory write success reply message header.  <br /></td></tr>
+<tr class="memitem:aa2c25886675aad1efa582cf2fc318833" id="r_aa2c25886675aad1efa582cf2fc318833"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2c25886675aad1efa582cf2fc318833">OpenLcbUtilities_load_config_mem_reply_write_ok_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:aa2c25886675aad1efa582cf2fc318833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a config memory write-success reply datagram header.  <br /></td></tr>
 <tr class="separator:aa2c25886675aad1efa582cf2fc318833"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06296be3f07fd80febe7dec58eaa5028" id="r_a06296be3f07fd80febe7dec58eaa5028"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06296be3f07fd80febe7dec58eaa5028">OpenLcbUtilities_load_config_mem_reply_write_fail_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *config_mem_write_request_info, uint16_t error_code)</td></tr>
-<tr class="memdesc:a06296be3f07fd80febe7dec58eaa5028"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a configuration memory write failure reply message header.  <br /></td></tr>
+<tr class="memitem:a06296be3f07fd80febe7dec58eaa5028" id="r_a06296be3f07fd80febe7dec58eaa5028"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06296be3f07fd80febe7dec58eaa5028">OpenLcbUtilities_load_config_mem_reply_write_fail_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info, uint16_t error_code)</td></tr>
+<tr class="memdesc:a06296be3f07fd80febe7dec58eaa5028"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a config memory write-failure reply datagram header.  <br /></td></tr>
 <tr class="separator:a06296be3f07fd80febe7dec58eaa5028"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add25f972525f3d14f22f4657a74e0c9c" id="r_add25f972525f3d14f22f4657a74e0c9c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add25f972525f3d14f22f4657a74e0c9c">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:add25f972525f3d14f22f4657a74e0c9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a configuration memory read success reply message header.  <br /></td></tr>
+<tr class="memitem:add25f972525f3d14f22f4657a74e0c9c" id="r_add25f972525f3d14f22f4657a74e0c9c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add25f972525f3d14f22f4657a74e0c9c">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:add25f972525f3d14f22f4657a74e0c9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a config memory read-success reply datagram header only.  <br /></td></tr>
 <tr class="separator:add25f972525f3d14f22f4657a74e0c9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0acbbfd410c33c725f1be639783dbf7" id="r_ad0acbbfd410c33c725f1be639783dbf7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0acbbfd410c33c725f1be639783dbf7">OpenLcbUtilities_load_config_mem_reply_read_fail_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info, uint16_t error_code)</td></tr>
-<tr class="memdesc:ad0acbbfd410c33c725f1be639783dbf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a configuration memory read failure reply message header.  <br /></td></tr>
+<tr class="memitem:ad0acbbfd410c33c725f1be639783dbf7" id="r_ad0acbbfd410c33c725f1be639783dbf7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0acbbfd410c33c725f1be639783dbf7">OpenLcbUtilities_load_config_mem_reply_read_fail_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info, uint16_t error_code)</td></tr>
+<tr class="memdesc:ad0acbbfd410c33c725f1be639783dbf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a config memory read-failure reply datagram header.  <br /></td></tr>
 <tr class="separator:ad0acbbfd410c33c725f1be639783dbf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac96b7768edfeaf28e8a9474455f93659" id="r_ac96b7768edfeaf28e8a9474455f93659"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac96b7768edfeaf28e8a9474455f93659">OpenLcbUtilities_is_event_id_in_consumer_ranges</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memitem:ac96b7768edfeaf28e8a9474455f93659" id="r_ac96b7768edfeaf28e8a9474455f93659"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac96b7768edfeaf28e8a9474455f93659">OpenLcbUtilities_is_event_id_in_consumer_ranges</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:ac96b7768edfeaf28e8a9474455f93659"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the event ID falls within any of the node's consumer ranges.  <br /></td></tr>
 <tr class="separator:ac96b7768edfeaf28e8a9474455f93659"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad3895e8e4933d384cf8c626fa00f51c" id="r_aad3895e8e4933d384cf8c626fa00f51c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad3895e8e4933d384cf8c626fa00f51c">OpenLcbUtilities_is_event_id_in_producer_ranges</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memitem:aad3895e8e4933d384cf8c626fa00f51c" id="r_aad3895e8e4933d384cf8c626fa00f51c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad3895e8e4933d384cf8c626fa00f51c">OpenLcbUtilities_is_event_id_in_producer_ranges</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:aad3895e8e4933d384cf8c626fa00f51c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the event ID falls within any of the node's producer ranges.  <br /></td></tr>
 <tr class="separator:aad3895e8e4933d384cf8c626fa00f51c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47b6a34610057c9cc23e130ddc33617f" id="r_a47b6a34610057c9cc23e130ddc33617f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47b6a34610057c9cc23e130ddc33617f">OpenLcbUtilities_generate_event_range_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> base_event_id, <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a> count)</td></tr>
+<tr class="memdesc:a47b6a34610057c9cc23e130ddc33617f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a masked Event ID covering a range of consecutive events.  <br /></td></tr>
 <tr class="separator:a47b6a34610057c9cc23e130ddc33617f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d3dedeec93238f781376e67143c010c" id="r_a9d3dedeec93238f781376e67143c010c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d3dedeec93238f781376e67143c010c">OpenLcbUtilities_is_broadcast_time_event</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
-<tr class="memdesc:a9d3dedeec93238f781376e67143c010c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines if an Event ID is a broadcast time event.  <br /></td></tr>
+<tr class="memdesc:a9d3dedeec93238f781376e67143c010c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the event ID belongs to the broadcast time event space.  <br /></td></tr>
 <tr class="separator:a9d3dedeec93238f781376e67143c010c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f31c219624dab8c2aa02e39c2bca96e" id="r_a2f31c219624dab8c2aa02e39c2bca96e"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f31c219624dab8c2aa02e39c2bca96e">OpenLcbUtilities_extract_clock_id_from_time_event</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
-<tr class="memdesc:a2f31c219624dab8c2aa02e39c2bca96e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts clock ID from broadcast time Event ID.  <br /></td></tr>
+<tr class="memdesc:a2f31c219624dab8c2aa02e39c2bca96e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the 48-bit clock ID (upper 6 bytes) from a broadcast time event ID.  <br /></td></tr>
 <tr class="separator:a2f31c219624dab8c2aa02e39c2bca96e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf584d752ad0787034618a14f69c4a11" id="r_aaf584d752ad0787034618a14f69c4a11"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf584d752ad0787034618a14f69c4a11">OpenLcbUtilities_get_broadcast_time_event_type</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
-<tr class="memdesc:aaf584d752ad0787034618a14f69c4a11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines the type of broadcast time event from Event ID.  <br /></td></tr>
+<tr class="memdesc:aaf584d752ad0787034618a14f69c4a11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> for a broadcast time event ID.  <br /></td></tr>
 <tr class="separator:aaf584d752ad0787034618a14f69c4a11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed514896d5573d06d6b41b5753091a08" id="r_aed514896d5573d06d6b41b5753091a08"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed514896d5573d06d6b41b5753091a08">OpenLcbUtilities_extract_time_from_event_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint8_t *hour, uint8_t *minute)</td></tr>
-<tr class="memdesc:aed514896d5573d06d6b41b5753091a08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts time (hour/minute) from broadcast time Event ID.  <br /></td></tr>
+<tr class="memdesc:aed514896d5573d06d6b41b5753091a08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts hour and minute from a broadcast time event ID. Returns false if out of range.  <br /></td></tr>
 <tr class="separator:aed514896d5573d06d6b41b5753091a08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa3b8179b16d53d28e90c3a5e1340193" id="r_afa3b8179b16d53d28e90c3a5e1340193"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa3b8179b16d53d28e90c3a5e1340193">OpenLcbUtilities_extract_date_from_event_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint8_t *month, uint8_t *day)</td></tr>
-<tr class="memdesc:afa3b8179b16d53d28e90c3a5e1340193"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts date (month/day) from broadcast time Event ID.  <br /></td></tr>
+<tr class="memdesc:afa3b8179b16d53d28e90c3a5e1340193"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts month and day from a broadcast time event ID. Returns false if out of range.  <br /></td></tr>
 <tr class="separator:afa3b8179b16d53d28e90c3a5e1340193"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc10b4f6a222e95a620a12d193a27c69" id="r_abc10b4f6a222e95a620a12d193a27c69"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc10b4f6a222e95a620a12d193a27c69">OpenLcbUtilities_extract_year_from_event_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t *year)</td></tr>
-<tr class="memdesc:abc10b4f6a222e95a620a12d193a27c69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts year from broadcast time Event ID.  <br /></td></tr>
+<tr class="memdesc:abc10b4f6a222e95a620a12d193a27c69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts year from a broadcast time event ID. Returns false if out of range.  <br /></td></tr>
 <tr class="separator:abc10b4f6a222e95a620a12d193a27c69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25a2546a9cd1f6caf4fefc7c9471847e" id="r_a25a2546a9cd1f6caf4fefc7c9471847e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a25a2546a9cd1f6caf4fefc7c9471847e">OpenLcbUtilities_extract_rate_from_event_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, int16_t *rate)</td></tr>
-<tr class="memdesc:a25a2546a9cd1f6caf4fefc7c9471847e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts clock rate from broadcast time Event ID.  <br /></td></tr>
+<tr class="memdesc:a25a2546a9cd1f6caf4fefc7c9471847e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the 12-bit signed fixed-point rate from a broadcast time event ID.  <br /></td></tr>
 <tr class="separator:a25a2546a9cd1f6caf4fefc7c9471847e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0749230cbe60928a3f601a0d919fdd46" id="r_a0749230cbe60928a3f601a0d919fdd46"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0749230cbe60928a3f601a0d919fdd46">OpenLcbUtilities_create_time_event_id</a> (uint64_t clock_id, uint8_t hour, uint8_t minute, bool is_set)</td></tr>
-<tr class="memdesc:a0749230cbe60928a3f601a0d919fdd46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a broadcast time Event ID for time events.  <br /></td></tr>
+<tr class="memdesc:a0749230cbe60928a3f601a0d919fdd46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a Report/Set Time event ID from clock_id, hour, minute.  <br /></td></tr>
 <tr class="separator:a0749230cbe60928a3f601a0d919fdd46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3316cbf73ccec04d15b6f4a2285a7729" id="r_a3316cbf73ccec04d15b6f4a2285a7729"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3316cbf73ccec04d15b6f4a2285a7729">OpenLcbUtilities_create_date_event_id</a> (uint64_t clock_id, uint8_t month, uint8_t day, bool is_set)</td></tr>
-<tr class="memdesc:a3316cbf73ccec04d15b6f4a2285a7729"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a broadcast time Event ID for date events.  <br /></td></tr>
+<tr class="memdesc:a3316cbf73ccec04d15b6f4a2285a7729"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a Report/Set Date event ID from clock_id, month, day.  <br /></td></tr>
 <tr class="separator:a3316cbf73ccec04d15b6f4a2285a7729"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57fc8ec6df0324d5a8a2b96872fb999c" id="r_a57fc8ec6df0324d5a8a2b96872fb999c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57fc8ec6df0324d5a8a2b96872fb999c">OpenLcbUtilities_create_year_event_id</a> (uint64_t clock_id, uint16_t year, bool is_set)</td></tr>
-<tr class="memdesc:a57fc8ec6df0324d5a8a2b96872fb999c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a broadcast time Event ID for year events.  <br /></td></tr>
+<tr class="memdesc:a57fc8ec6df0324d5a8a2b96872fb999c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a Report/Set Year event ID from clock_id, year.  <br /></td></tr>
 <tr class="separator:a57fc8ec6df0324d5a8a2b96872fb999c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4075cb9bc1895bda34727a603915c342" id="r_a4075cb9bc1895bda34727a603915c342"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4075cb9bc1895bda34727a603915c342">OpenLcbUtilities_create_rate_event_id</a> (uint64_t clock_id, int16_t rate, bool is_set)</td></tr>
-<tr class="memdesc:a4075cb9bc1895bda34727a603915c342"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a broadcast time Event ID for rate events.  <br /></td></tr>
+<tr class="memdesc:a4075cb9bc1895bda34727a603915c342"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a Report/Set Rate event ID from clock_id, rate.  <br /></td></tr>
 <tr class="separator:a4075cb9bc1895bda34727a603915c342"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cfdd3213341ea2e3aa3c04f1a991205" id="r_a4cfdd3213341ea2e3aa3c04f1a991205"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4cfdd3213341ea2e3aa3c04f1a991205">OpenLcbUtilities_create_command_event_id</a> (uint64_t clock_id, <a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> command)</td></tr>
-<tr class="memdesc:a4cfdd3213341ea2e3aa3c04f1a991205"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a broadcast time Event ID for command events.  <br /></td></tr>
+<tr class="memdesc:a4cfdd3213341ea2e3aa3c04f1a991205"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a command event ID (Query, Start, Stop, Date Rollover) for the given clock.  <br /></td></tr>
 <tr class="separator:a4cfdd3213341ea2e3aa3c04f1a991205"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72ea82898e834d55b36e11e07a83c04a" id="r_a72ea82898e834d55b36e11e07a83c04a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72ea82898e834d55b36e11e07a83c04a">OpenLcbUtilities_is_train_search_event</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
-<tr class="memdesc:a72ea82898e834d55b36e11e07a83c04a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests whether an event ID belongs to the Train Search space.  <br /></td></tr>
+<tr class="memdesc:a72ea82898e834d55b36e11e07a83c04a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the event ID belongs to the train search space.  <br /></td></tr>
 <tr class="separator:a72ea82898e834d55b36e11e07a83c04a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac16df99aa78e31a3d04339e23d1f9db8" id="r_ac16df99aa78e31a3d04339e23d1f9db8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac16df99aa78e31a3d04339e23d1f9db8">OpenLcbUtilities_extract_train_search_digits</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint8_t *digits)</td></tr>
-<tr class="memdesc:ac16df99aa78e31a3d04339e23d1f9db8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts 6 search-query nibbles from a train search event ID.  <br /></td></tr>
+<tr class="memdesc:ac16df99aa78e31a3d04339e23d1f9db8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts 6 search-query nibbles from a train search event ID into digits[].  <br /></td></tr>
 <tr class="separator:ac16df99aa78e31a3d04339e23d1f9db8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5eda1bd2c9a26747d3d239661d99b8a" id="r_aa5eda1bd2c9a26747d3d239661d99b8a"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5eda1bd2c9a26747d3d239661d99b8a">OpenLcbUtilities_extract_train_search_flags</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
 <tr class="memdesc:aa5eda1bd2c9a26747d3d239661d99b8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the flags byte (byte 7) from a train search event ID.  <br /></td></tr>
 <tr class="separator:aa5eda1bd2c9a26747d3d239661d99b8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe285d8d2b51616c319f1e98983e1f7b" id="r_afe285d8d2b51616c319f1e98983e1f7b"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe285d8d2b51616c319f1e98983e1f7b">OpenLcbUtilities_train_search_digits_to_address</a> (const uint8_t *digits)</td></tr>
-<tr class="memdesc:afe285d8d2b51616c319f1e98983e1f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts 6-nibble digit array to a numeric DCC address.  <br /></td></tr>
+<tr class="memdesc:afe285d8d2b51616c319f1e98983e1f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a 6-nibble digit array to a numeric DCC address, skipping leading 0xF nibbles.  <br /></td></tr>
 <tr class="separator:afe285d8d2b51616c319f1e98983e1f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1601d2fefb6a3693e58b50956e42376a" id="r_a1601d2fefb6a3693e58b50956e42376a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1601d2fefb6a3693e58b50956e42376a">OpenLcbUtilities_create_train_search_event_id</a> (uint16_t address, uint8_t flags)</td></tr>
-<tr class="memdesc:a1601d2fefb6a3693e58b50956e42376a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a train search event ID from address and flags.  <br /></td></tr>
+<tr class="memdesc:a1601d2fefb6a3693e58b50956e42376a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a train search event ID from a DCC address and flags byte.  <br /></td></tr>
 <tr class="separator:a1601d2fefb6a3693e58b50956e42376a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6eabc0b8b8f5efe024df4657619d173" id="r_ac6eabc0b8b8f5efe024df4657619d173"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6eabc0b8b8f5efe024df4657619d173">OpenLcbUtilities_is_emergency_event</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:ac6eabc0b8b8f5efe024df4657619d173"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the event ID is one of the 4 well-known emergency events.  <br /></td></tr>
+<tr class="separator:ac6eabc0b8b8f5efe024df4657619d173"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implementation of common utility functions for OpenLCB message and buffer manipulation. </p>
+<div class="textblock"><p>Common utility functions for OpenLCB message and buffer manipulation. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -264,17 +270,9 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>This module implements utility functions for working with OpenLCB messages, payloads, configuration memory buffers, and node structures. These are helper functions used throughout the OpenLCB library for data conversion, message construction, and buffer operations.</p>
-<p>The implementation provides:</p><ul>
-<li>Big-endian byte order handling per OpenLCB specification</li>
-<li>Safe message construction with automatic payload counting</li>
-<li>Configuration memory buffer manipulation</li>
-<li>Message classification and routing helpers</li>
-<li>Configuration memory protocol reply construction</li>
-</ul>
-<p>All byte manipulation follows OpenLCB's big-endian (network byte order) convention. Multi-byte values are stored with the most significant byte first.</p>
+<p>All multi-byte values follow OpenLCB big-endian (network byte order) convention. Payload insert functions increment payload_count; extract functions do not modify it.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a57d58211f6431a39ab1f505e650e87be" name="a57d58211f6431a39ab1f505e650e87be"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a57d58211f6431a39ab1f505e650e87be">&#9670;&#160;</a></span>OpenLcbUtilities_payload_type_to_len()</h2>
@@ -291,32 +289,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Converts payload type enum to byte length. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Switch on payload_type enum value</li>
-<li>Return corresponding LEN_MESSAGE_BYTES_* constant</li>
-<li>Return 0 for unknown types</li>
-</ol>
-<p>Use cases:</p><ul>
-<li>Allocating message buffers</li>
-<li>Validating payload operations</li>
-<li>Determining maximum data capacity</li>
-</ul>
-<pre class="fragment">* @param payload_type The payload type enum value
-* </pre> <dl class="section return"><dt>Returns</dt><dd>Maximum payload size in bytes, or 0 for unknown types</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Return values per OpenLCB specification:<ul>
-<li>BASIC: LEN_MESSAGE_BYTES_BASIC</li>
-<li>DATAGRAM: LEN_MESSAGE_BYTES_DATAGRAM <br  />
-</li>
-<li>SNIP: LEN_MESSAGE_BYTES_SNIP</li>
-<li>STREAM: LEN_MESSAGE_BYTES_STREAM</li>
-<li>default: 0</li>
-</ul>
-</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> - Defines the LEN_MESSAGE_BYTES_* constants </dd>
-<dd>
-<a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467" title="Message buffer payload type enumeration.">payload_type_enum</a> - Enum definition in <a class="el" href="openlcb__types_8h.html" title="Core type definitions, structures, and configuration constants for OpenLCB library.">openlcb_types.h</a> </dd></dl>
+<p>Converts a <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> to its maximum byte length. </p>
+<p>Converts a <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> to its maximum byte length. Returns 0 for unknown types. </p>
 
 </div>
 </div>
@@ -329,37 +303,13 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculates the memory offset for a node's configuration space. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Read highest_address from node parameters</li>
-<li>If low_address_valid is true, compute size as (highest - lowest)</li>
-<li>If low_address_valid is false, use highest_address as size</li>
-<li>Multiply size by node index to get offset</li>
-<li>Return the calculated offset</li>
-</ol>
-<p>This allows multiple nodes to share a contiguous configuration memory space, with each node occupying a sequential block of memory determined by its index.</p>
-<p>Use cases:</p><ul>
-<li>Multi-node configuration memory implementations</li>
-<li>Mapping node index to memory address</li>
-<li>Validating configuration memory access requests</li>
-</ul>
-<pre class="fragment">* @param openlcb_node Pointer to the node structure
-* </pre> <dl class="section return"><dt>Returns</dt><dd>Byte offset into global configuration memory for this node</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-openlcb_node-&gt;parameters must not be NULL. No NULL check performed.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>If low_address_valid is true, uses (highest - lowest) as size. </dd>
-<dd>
-If low_address_valid is false, uses highest_address as size.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Result is node_size * node_index, allowing sequential allocation.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>protocol_config_mem_*.c - Uses this for address space calculations </dd></dl>
+<p>Returns the byte offset into global config memory where this node's space begins. </p>
 
 </div>
 </div>
@@ -402,36 +352,19 @@ If low_address_valid is false, uses highest_address as size.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes an OpenLCB message structure with source, destination, and MTI. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Store dest_alias and dest_id</li>
-<li>Store source_alias and source_id</li>
-<li>Store mti (Message Type Indicator)</li>
-<li>Set payload_count to 0</li>
-<li>Set timerticks to 0</li>
-<li>Get payload length from payload_type</li>
-<li>Zero all payload bytes</li>
-</ol>
-<p>This is the primary function for preparing a new message for transmission.</p>
-<p>Use cases:</p><ul>
-<li>Preparing outgoing messages in protocol handlers</li>
-<li>Initializing reply messages in response to received messages</li>
-<li>Setting up event producer/consumer messages</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure to initialize
-* </pre> <pre class="fragment">* @param source_alias 12-bit CAN alias of the source node
-* </pre> <pre class="fragment">* @param source_id 48-bit unique Node ID of the source node
-* </pre> <pre class="fragment">* @param dest_alias 12-bit CAN alias of the destination node (0 for global messages)
-* </pre> <pre class="fragment">* @param dest_id 48-bit unique Node ID of the destination node (0 for global messages)
-* </pre> <pre class="fragment">* @param mti Message Type Indicator defining the message type
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-The buffer size is determined by openlcb_msg-&gt;payload_type.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Always call this before manually setting payload bytes to ensure the payload starts in a known cleared state.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Linear time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aae9c2b155851377c1ce5eadca6a64a17" title="Completely clears and resets a message structure.">OpenLcbUtilities_clear_openlcb_message</a> - Complete message reset </dd>
-<dd>
-<a class="el" href="#a20a0aa6ddbb623d5cab4308765c47477" title="Clears only the payload portion of a message structure.">OpenLcbUtilities_clear_openlcb_message_payload</a> - Payload-only reset </dd></dl>
+<p>Loads message header fields and clears the payload to zeros. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to initialize </td></tr>
+    <tr><td class="paramname">source_alias</td><td>12-bit CAN alias of the source node </td></tr>
+    <tr><td class="paramname">source_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the source node </td></tr>
+    <tr><td class="paramname">dest_alias</td><td>12-bit CAN alias of the destination (0 for global) </td></tr>
+    <tr><td class="paramname">dest_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the destination (0 for global) </td></tr>
+    <tr><td class="paramname">mti</td><td>Message Type Indicator</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes undefined behavior. </dd></dl>
 
 </div>
 </div>
@@ -450,27 +383,7 @@ The buffer size is determined by openlcb_msg-&gt;payload_type.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Clears only the payload portion of a message structure. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Get payload length from payload_type</li>
-<li>Loop through all payload bytes</li>
-<li>Set each byte to 0</li>
-<li>Set payload_count to 0</li>
-</ol>
-<p>Does not modify message header fields (source, dest, MTI).</p>
-<p>Use cases:</p><ul>
-<li>Reusing a message structure for a new reply</li>
-<li>Clearing payload before building multi-part response</li>
-<li>Resetting payload between retry attempts</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Preserves message header (aliases, IDs, MTI). Use OpenLcbUtilities_clear_openlcb_message to clear everything.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Payload size is determined by openlcb_msg-&gt;payload_type.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Linear time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aae9c2b155851377c1ce5eadca6a64a17" title="Completely clears and resets a message structure.">OpenLcbUtilities_clear_openlcb_message</a> - Clears entire message </dd>
-<dd>
-<a class="el" href="#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message</a> - Initializes message with values </dd></dl>
+<p>Zeros all payload bytes and resets payload_count. Header preserved. </p>
 
 </div>
 </div>
@@ -489,35 +402,7 @@ The buffer size is determined by openlcb_msg-&gt;payload_type.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Completely clears and resets a message structure. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Set dest_alias to 0</li>
-<li>Set dest_id to 0</li>
-<li>Set source_alias to 0</li>
-<li>Set source_id to 0</li>
-<li>Set mti to 0</li>
-<li>Set payload_count to 0</li>
-<li>Set timerticks to 0</li>
-<li>Set reference_count to 0</li>
-<li>Set allocated flag to false</li>
-<li>Set inprocess flag to false</li>
-</ol>
-<p>Zeros all header fields, clears payload, and resets all state flags.</p>
-<p>Use cases:</p><ul>
-<li>Returning a message buffer to the pool</li>
-<li>Preparing a buffer for initial allocation</li>
-<li>Recovering from error conditions</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This clears ALL fields including state flags and reference count. Only use when completely discarding message context.</dd>
-<dd>
-After calling this, the message should be considered unallocated and should not be used until properly initialized again.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Does NOT zero the payload bytes themselves, only the header and state.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a20a0aa6ddbb623d5cab4308765c47477" title="Clears only the payload portion of a message structure.">OpenLcbUtilities_clear_openlcb_message_payload</a> - Clears only payload </dd>
-<dd>
-<a class="el" href="#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message</a> - Initializes message with values </dd></dl>
+<p>Zeros entire message including header, state flags, and reference count. </p>
 
 </div>
 </div>
@@ -540,32 +425,7 @@ After calling this, the message should be considered unallocated and should not 
       </table>
 </div><div class="memdoc">
 
-<p>Copies an 8-byte event ID into the message payload. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Loop from byte index 7 down to 0 (big-endian order)</li>
-<li>Extract least significant byte of event_id</li>
-<li>Write byte to payload[i]</li>
-<li>Increment payload_count</li>
-<li>Right-shift event_id by 8 bits</li>
-<li>Repeat for all 8 bytes</li>
-</ol>
-<p>Writes the event ID in big-endian format to the payload starting at offset 0. Event IDs are 64-bit values that identify producer and consumer events per the Event Transport protocol.</p>
-<p>Use cases:</p><ul>
-<li>Building Producer Identified messages</li>
-<li>Building Consumer Identified messages</li>
-<li>Building Producer/Consumer Event Report messages</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param event_id 64-bit event identifier
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes payload has at least 8 bytes available.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This function always writes to offset 0. For events at other positions, manually copy bytes or use a different function.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Updates payload_count to reflect the added bytes (increments by 8).</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ac06eeb0060f209fa2a094e252473eb3e" title="Extracts an 8-byte event ID from the message payload.">OpenLcbUtilities_extract_event_id_from_openlcb_payload</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#aad0305cbd41a639ad54ff12bd599cce9" title="Copies an 8-byte event ID into a configuration memory buffer.">OpenLcbUtilities_copy_event_id_to_config_mem_buffer</a> - Config memory version </dd></dl>
+<p>Copies an 8-byte event ID to payload at offset 0. </p>
 
 </div>
 </div>
@@ -593,27 +453,7 @@ Assumes payload has at least 8 bytes available.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Copies a single byte into the message payload at a specified offset. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Write byte to payload[offset]</li>
-<li>Increment payload_count by 1</li>
-</ol>
-<p>Use cases:</p><ul>
-<li>Writing command codes in datagrams</li>
-<li>Writing status flags in protocol messages</li>
-<li>Writing individual configuration bytes</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param byte The byte value to write
-* </pre> <pre class="fragment">* @param offset Byte offset in the payload where the byte should be written
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Does not validate offset bounds against payload size.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Updates payload_count to reflect the added byte.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a6a665fc960f303e05a649d58ccd848e4" title="Extracts a single byte from the message payload.">OpenLcbUtilities_extract_byte_from_openlcb_payload</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#a153e53986f01cd7fb995277efcd5f022" title="Copies a 16-bit word into the message payload at a specified offset.">OpenLcbUtilities_copy_word_to_openlcb_payload</a> - For 16-bit values </dd></dl>
+<p>Copies one byte to payload at the given offset. </p>
 
 </div>
 </div>
@@ -641,35 +481,7 @@ Does not validate offset bounds against payload size.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Copies a 16-bit word into the message payload at a specified offset. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Extract high byte (bits 15-8) by right-shifting 8 bits</li>
-<li>Write high byte to payload[offset]</li>
-<li>Extract low byte (bits 7-0) by masking with 0xFF</li>
-<li>Write low byte to payload[offset + 1]</li>
-<li>Increment payload_count by 2</li>
-</ol>
-<p>Writes the word in big-endian format (MSB first).</p>
-<p>Use cases:</p><ul>
-<li>Writing memory addresses in configuration memory protocol</li>
-<li>Writing error codes in datagram replies</li>
-<li>Writing 16-bit configuration values</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param word The 16-bit value to write
-* </pre> <pre class="fragment">* @param offset Byte offset in the payload where the word should be written
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes payload has at least (offset + 2) bytes available. </dd>
-<dd>
-Does not validate offset bounds.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Updates payload_count to reflect the added bytes. </dd>
-<dd>
-Byte order is big-endian per OpenLCB specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a1f9a0c01d0fc5ca782be6b10773aceb4" title="Extracts a 16-bit word from the message payload.">OpenLcbUtilities_extract_word_from_openlcb_payload</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#ad234f0e994829310371761dde2a0fa1e" title="Copies a 32-bit doubleword into the message payload at a specified offset.">OpenLcbUtilities_copy_dword_to_openlcb_payload</a> - For 32-bit values </dd></dl>
+<p>Copies a 16-bit word (big-endian) to payload at the given offset. </p>
 
 </div>
 </div>
@@ -697,39 +509,7 @@ Byte order is big-endian per OpenLCB specification.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Copies a 32-bit doubleword into the message payload at a specified offset. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Extract byte 3 (bits 31-24) by right-shifting 24 bits</li>
-<li>Write byte 3 to payload[offset]</li>
-<li>Extract byte 2 (bits 23-16) by right-shifting 16 bits</li>
-<li>Write byte 2 to payload[offset + 1]</li>
-<li>Extract byte 1 (bits 15-8) by right-shifting 8 bits</li>
-<li>Write byte 1 to payload[offset + 2]</li>
-<li>Extract byte 0 (bits 7-0) by masking with 0xFF</li>
-<li>Write byte 0 to payload[offset + 3]</li>
-<li>Increment payload_count by 4</li>
-</ol>
-<p>Writes the doubleword in big-endian format (MSB first).</p>
-<p>Use cases:</p><ul>
-<li>Writing 32-bit memory addresses in configuration memory protocol</li>
-<li>Writing large numeric values in protocol messages</li>
-<li>Writing timestamps or counters</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param doubleword The 32-bit value to write
-* </pre> <pre class="fragment">* @param offset Byte offset in the payload where the doubleword should be written
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes payload has at least (offset + 4) bytes available. </dd>
-<dd>
-Does not validate offset bounds.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Updates payload_count to reflect the added bytes. </dd>
-<dd>
-Byte order is big-endian per OpenLCB specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#abb46cc32b7e4fef78d264d5bc56ed08c" title="Extracts a 32-bit doubleword from the message payload.">OpenLcbUtilities_extract_dword_from_openlcb_payload</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#a153e53986f01cd7fb995277efcd5f022" title="Copies a 16-bit word into the message payload at a specified offset.">OpenLcbUtilities_copy_word_to_openlcb_payload</a> - For 16-bit values </dd></dl>
+<p>Copies a 32-bit doubleword (big-endian) to payload at the given offset. </p>
 
 </div>
 </div>
@@ -757,45 +537,8 @@ Byte order is big-endian per OpenLCB specification.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Copies a null-terminated string into the message payload. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Initialize counter to 0</li>
-<li>Get payload length from payload_type</li>
-<li>While source string[counter] is not null:<ol type="a">
-<li>If (counter + offset) &lt; (payload_len - 1):<ol type="i">
-<li>Copy string[counter] to payload[counter + offset]</li>
-<li>Increment payload_count</li>
-<li>Increment counter</li>
-</ol>
-</li>
-<li>Else break (no more space)</li>
-</ol>
-</li>
-<li>Write null terminator to payload[counter + offset]</li>
-<li>Increment payload_count and counter for null</li>
-<li>Return total bytes written (counter)</li>
-</ol>
-<p>Copies characters from the string until null terminator is found or payload space is exhausted. Always appends a null terminator.</p>
-<p>Use cases:</p><ul>
-<li>Building Simple Node Ident Info (SNIP) replies with manufacturer/model strings</li>
-<li>Writing user-defined strings in configuration data</li>
-<li>Building text-based protocol messages</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param string Null-terminated C string to copy
-* </pre> <pre class="fragment">* @param offset Byte offset in the payload where string should start
-* </pre> <dl class="section return"><dt>Returns</dt><dd>Number of bytes written including the null terminator</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-string must be null-terminated or buffer overflow may occur. </dd>
-<dd>
-Truncates string if payload space is insufficient, but always adds null terminator (may overwrite last character).</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Always reserves one byte for null terminator. Maximum string length is (payload_size - offset - 1).</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Updates payload_count to include all bytes written plus null terminator. </dd>
-<dd>
-Return value can be used to calculate offset for next data in payload.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Linear time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a39d5ca6fda22ae42d9b6efa8ca6dd81c" title="Copies a byte array into the message payload.">OpenLcbUtilities_copy_byte_array_to_openlcb_payload</a> - For binary data </dd></dl>
+<p>Copies a null-terminated string into the payload. </p>
+<p>Truncates if payload space is insufficient but always adds a null terminator. </p>
 
 </div>
 </div>
@@ -828,46 +571,8 @@ Return value can be used to calculate offset for next data in payload.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Copies a byte array into the message payload. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Initialize counter to 0</li>
-<li>Get payload length from payload_type</li>
-<li>For i = 0 to requested_bytes - 1:<ol type="a">
-<li>If (i + offset) &lt; payload_len:<ol type="i">
-<li>Copy byte_array[i] to payload[i + offset]</li>
-<li>Increment payload_count</li>
-<li>Increment counter</li>
-</ol>
-</li>
-<li>Else break (no more space)</li>
-</ol>
-</li>
-<li>Return counter (actual bytes copied)</li>
-</ol>
-<p>Copies the requested number of bytes from the array, or until payload space is exhausted. Returns the actual number of bytes copied.</p>
-<p>Use cases:</p><ul>
-<li>Copying configuration memory data into read reply datagrams</li>
-<li>Building multi-byte protocol responses</li>
-<li>Transferring binary data blocks</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param byte_array Array of bytes to copy
-* </pre> <pre class="fragment">* @param offset Byte offset in the payload where array should start
-* </pre> <pre class="fragment">* @param requested_bytes Number of bytes to attempt to copy
-* </pre> <dl class="section return"><dt>Returns</dt><dd>Actual number of bytes copied (may be less if payload full)</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-byte_array must have at least requested_bytes available. </dd>
-<dd>
-May copy fewer bytes than requested if payload space exhausted.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Check return value to determine if all requested bytes were copied. </dd>
-<dd>
-Does not add null terminator (unlike copy_string).</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Updates payload_count to reflect bytes actually copied. </dd>
-<dd>
-Return value indicates actual bytes written, useful for multi-frame messages.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Linear time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a30b8e79173b3eb1f1e36f620b2e7e4c4" title="Copies a null-terminated string into the message payload.">OpenLcbUtilities_copy_string_to_openlcb_payload</a> - For null-terminated strings </dd></dl>
+<p>Copies a byte array into the payload. May copy fewer bytes if payload space is exhausted. </p>
+<p>Copies a byte array into the payload. </p>
 
 </div>
 </div>
@@ -895,34 +600,8 @@ Return value indicates actual bytes written, useful for multi-frame messages.</d
       </table>
 </div><div class="memdoc">
 
-<p>Copies a 6-byte node ID into the message payload at a specified offset. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Loop from byte index 5 down to 0 (big-endian order)</li>
-<li>Extract least significant byte of node_id</li>
-<li>Write byte to payload[i + offset]</li>
-<li>Increment payload_count</li>
-<li>Right-shift node_id by 8 bits</li>
-<li>Repeat for all 6 bytes</li>
-</ol>
-<p>Writes the node ID in big-endian format to the payload. Node IDs are 48-bit unique identifiers per the OpenLCB specification.</p>
-<p>Use cases:</p><ul>
-<li>Building Verified Node ID messages</li>
-<li>Building Simple Node Ident Info replies</li>
-<li>Building protocol support inquiry responses</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param node_id 48-bit unique node identifier
-* </pre> <pre class="fragment">* @param offset Byte offset in the payload where node ID should be written
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes payload has at least (offset + 6) bytes available. </dd>
-<dd>
-Does not validate offset bounds.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Updates payload_count to reflect the added bytes (increments by 6).</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a040663f01e6536b8f9fb5a77181e6015" title="Extracts a 6-byte node ID from the message payload.">OpenLcbUtilities_extract_node_id_from_openlcb_payload</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#af892a2ef64dfd26cb36667a62ae0f8dc" title="Copies a 6-byte node ID into a configuration memory buffer.">OpenLcbUtilities_copy_node_id_to_config_mem_buffer</a> - Config memory version </dd></dl>
+<p>Copies a 6-byte node ID (big-endian) to payload at the given offset. </p>
+<p>Copies a 6-byte node ID to payload at the given offset. </p>
 
 </div>
 </div>
@@ -945,38 +624,7 @@ Does not validate offset bounds.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts a 6-byte node ID from the message payload. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Initialize result to 0</li>
-<li>Read payload[0 + offset], shift left 40 bits, OR into result</li>
-<li>Read payload[1 + offset], shift left 32 bits, OR into result</li>
-<li>Read payload[2 + offset], shift left 24 bits, OR into result</li>
-<li>Read payload[3 + offset], shift left 16 bits, OR into result</li>
-<li>Read payload[4 + offset], shift left 8 bits, OR into result</li>
-<li>Read payload[5 + offset], OR into result</li>
-<li>Return assembled 48-bit node ID</li>
-</ol>
-<p>Reads 6 bytes in big-endian format starting at the specified offset and assembles them into a 48-bit node_id_t value.</p>
-<p>Use cases:</p><ul>
-<li>Parsing Verified Node ID messages</li>
-<li>Extracting node IDs from protocol inquiry responses</li>
-<li>Reading node IDs from configuration memory</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param offset Byte offset in the payload where node ID starts
-* </pre> <dl class="section return"><dt>Returns</dt><dd>The assembled 48-bit node ID</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes payload has at least (offset + 6) bytes available. </dd>
-<dd>
-Does not validate offset bounds. </dd>
-<dd>
-Reading beyond payload bounds returns undefined values.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Does not modify payload_count.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aebdc740485642f016371b4604b93aa7f" title="Copies a 6-byte node ID into the message payload at a specified offset.">OpenLcbUtilities_copy_node_id_to_openlcb_payload</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#a8adb3fe5dc4d64da02e252d5bfea2922" title="Extracts a 6-byte node ID from a configuration memory buffer.">OpenLcbUtilities_extract_node_id_from_config_mem_buffer</a> - Config memory version </dd></dl>
+<p>Extracts a 6-byte node ID from payload at the given offset. </p>
 
 </div>
 </div>
@@ -995,38 +643,7 @@ Reading beyond payload bounds returns undefined values.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts an 8-byte event ID from the message payload. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Initialize result to 0</li>
-<li>Read payload[0], shift left 56 bits, OR into result</li>
-<li>Read payload[1], shift left 48 bits, OR into result</li>
-<li>Read payload[2], shift left 40 bits, OR into result</li>
-<li>Read payload[3], shift left 32 bits, OR into result</li>
-<li>Read payload[4], shift left 24 bits, OR into result</li>
-<li>Read payload[5], shift left 16 bits, OR into result</li>
-<li>Read payload[6], shift left 8 bits, OR into result</li>
-<li>Read payload[7], OR into result</li>
-<li>Return assembled 64-bit event ID</li>
-</ol>
-<p>Reads 8 bytes in big-endian format starting at offset 0 and assembles them into a 64-bit event_id_t value.</p>
-<p>Use cases:</p><ul>
-<li>Parsing Producer/Consumer Event Report messages</li>
-<li>Extracting event IDs from Identify messages</li>
-<li>Reading event IDs from protocol queries</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <dl class="section return"><dt>Returns</dt><dd>The assembled 64-bit event ID</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes payload has at least 8 bytes available. </dd>
-<dd>
-Reading from empty payload returns undefined values.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Always reads from offset 0. For events at other positions, manually extract bytes or modify this function.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Does not modify payload_count.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID into the message payload.">OpenLcbUtilities_copy_event_id_to_openlcb_payload</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#a28f602cb5ef7385e117f152614bd613b" title="Extracts an 8-byte event ID from a configuration memory buffer.">OpenLcbUtilities_copy_config_mem_buffer_to_event_id</a> - Config memory version </dd></dl>
+<p>Extracts an 8-byte event ID from payload at offset 0. </p>
 
 </div>
 </div>
@@ -1049,28 +666,7 @@ Reading from empty payload returns undefined values.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts a single byte from the message payload. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Read and return payload[offset]</li>
-</ol>
-<p>Use cases:</p><ul>
-<li>Reading command codes from datagrams</li>
-<li>Extracting status flags from protocol messages</li>
-<li>Reading individual configuration bytes</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param offset Byte offset in the payload to read from
-* </pre> <dl class="section return"><dt>Returns</dt><dd>The byte value at the specified offset</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Does not validate offset bounds against payload size. </dd>
-<dd>
-Reading beyond payload bounds returns undefined values.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Does not modify payload_count.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8cef78b21287a901f256be421c689e0d" title="Copies a single byte into the message payload at a specified offset.">OpenLcbUtilities_copy_byte_to_openlcb_payload</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#a1f9a0c01d0fc5ca782be6b10773aceb4" title="Extracts a 16-bit word from the message payload.">OpenLcbUtilities_extract_word_from_openlcb_payload</a> - For 16-bit values </dd></dl>
+<p>Extracts one byte from payload at the given offset. </p>
 
 </div>
 </div>
@@ -1093,36 +689,7 @@ Reading beyond payload bounds returns undefined values.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts a 16-bit word from the message payload. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Read payload[0 + offset], shift left 8 bits</li>
-<li>Read payload[1 + offset]</li>
-<li>OR the two bytes together</li>
-<li>Return assembled 16-bit value</li>
-</ol>
-<p>Reads 2 bytes in big-endian format (MSB first) starting at the specified offset and assembles them into a 16-bit value.</p>
-<p>Use cases:</p><ul>
-<li>Reading memory addresses from configuration memory protocol</li>
-<li>Extracting error codes from datagram replies</li>
-<li>Reading 16-bit configuration values</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param offset Byte offset in the payload where word starts
-* </pre> <dl class="section return"><dt>Returns</dt><dd>The assembled 16-bit value</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes payload has at least (offset + 2) bytes available. </dd>
-<dd>
-Does not validate offset bounds. </dd>
-<dd>
-Reading beyond payload bounds returns undefined values.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Does not modify payload_count. </dd>
-<dd>
-Byte order is big-endian per OpenLCB specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a153e53986f01cd7fb995277efcd5f022" title="Copies a 16-bit word into the message payload at a specified offset.">OpenLcbUtilities_copy_word_to_openlcb_payload</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#abb46cc32b7e4fef78d264d5bc56ed08c" title="Extracts a 32-bit doubleword from the message payload.">OpenLcbUtilities_extract_dword_from_openlcb_payload</a> - For 32-bit values </dd></dl>
+<p>Extracts a 16-bit word (big-endian) from payload at the given offset. </p>
 
 </div>
 </div>
@@ -1145,38 +712,7 @@ Byte order is big-endian per OpenLCB specification.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts a 32-bit doubleword from the message payload. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Read payload[0 + offset], shift left 24 bits</li>
-<li>Read payload[1 + offset], shift left 16 bits</li>
-<li>Read payload[2 + offset], shift left 8 bits</li>
-<li>Read payload[3 + offset]</li>
-<li>OR all four bytes together</li>
-<li>Return assembled 32-bit value</li>
-</ol>
-<p>Reads 4 bytes in big-endian format (MSB first) starting at the specified offset and assembles them into a 32-bit value.</p>
-<p>Use cases:</p><ul>
-<li>Reading 32-bit memory addresses from configuration memory protocol</li>
-<li>Extracting large numeric values from protocol messages</li>
-<li>Reading timestamps or counters</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <pre class="fragment">* @param offset Byte offset in the payload where doubleword starts
-* </pre> <dl class="section return"><dt>Returns</dt><dd>The assembled 32-bit value</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes payload has at least (offset + 4) bytes available. </dd>
-<dd>
-Does not validate offset bounds. </dd>
-<dd>
-Reading beyond payload bounds returns undefined values.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Does not modify payload_count. </dd>
-<dd>
-Byte order is big-endian per OpenLCB specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ad234f0e994829310371761dde2a0fa1e" title="Copies a 32-bit doubleword into the message payload at a specified offset.">OpenLcbUtilities_copy_dword_to_openlcb_payload</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#a1f9a0c01d0fc5ca782be6b10773aceb4" title="Extracts a 16-bit word from the message payload.">OpenLcbUtilities_extract_word_from_openlcb_payload</a> - For 16-bit values </dd></dl>
+<p>Extracts a 32-bit doubleword (big-endian) from payload at the given offset. </p>
 
 </div>
 </div>
@@ -1199,28 +735,7 @@ Byte order is big-endian per OpenLCB specification.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Sets the multi-frame flag in a target byte. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Clear upper nibble by ANDing with 0x0F (preserves lower nibble)</li>
-<li>Set flag in upper nibble by ORing with flag value</li>
-</ol>
-<p>Modifies the upper nibble of the target byte to set the multi-frame control flag while preserving the lower nibble. Used in datagram and stream protocols for frame sequencing.</p>
-<p>Use cases:</p><ul>
-<li>Marking first frame in multi-frame datagram</li>
-<li>Marking middle frames in sequence</li>
-<li>Marking final frame in sequence</li>
-<li>Marking single-frame (only) messages</li>
-</ul>
-<pre class="fragment">* @param target Pointer to the byte to modify
-* </pre> <pre class="fragment">* @param flag Multi-frame flag value (MULTIFRAME_ONLY, MULTIFRAME_FIRST,
-* </pre><p> MULTIFRAME_MIDDLE, or MULTIFRAME_FINAL)</p>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Upper nibble is completely replaced. Lower nibble is preserved. </dd>
-<dd>
-Valid flag values are defined in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a>.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This is typically used on the first byte of configuration memory or datagram protocol command bytes.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>protocol_config_mem_*.c - Uses for multi-frame config operations </dd></dl>
+<p>Sets the multi-frame control flag in the upper nibble of target, preserving the lower nibble. </p>
 
 </div>
 </div>
@@ -1239,29 +754,7 @@ Valid flag values are defined in <a class="el" href="openlcb__defines_8h.html" t
       </table>
 </div><div class="memdoc">
 
-<p>Determines if a message is addressed (not global) </p>
-<p>Algorithm:</p><ol type="1">
-<li>Read mti field from message</li>
-<li>AND with MASK_DEST_ADDRESS_PRESENT</li>
-<li>Return true if result equals MASK_DEST_ADDRESS_PRESENT</li>
-<li>Return false otherwise</li>
-</ol>
-<p>Checks the MTI (Message Type Indicator) for the destination address present bit. Addressed messages have a specific destination node, while global messages are broadcast to all nodes.</p>
-<p>Use cases:</p><ul>
-<li>Routing messages in the main state machine</li>
-<li>Determining if a message requires alias resolution</li>
-<li>Filtering messages for specific node handling</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <dl class="section return"><dt>Returns</dt><dd>true if message is addressed to a specific node, false if global</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Global messages have dest_alias = 0 and MTI without address bit set. </dd>
-<dd>
-Addressed messages require valid dest_alias or dest_ID.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a9204bcb0afbada951297d5be1d719b33" title="Checks if an addressed message is for a specific node.">OpenLcbUtilities_is_addressed_message_for_node</a> - Checks specific node match </dd>
-<dd>
-<a class="el" href="group__mti__field__masks.html#ga515226f6c2fb12b929379b4e5004ab1a" title="Destination address present indicator.">MASK_DEST_ADDRESS_PRESENT</a> - MTI bit mask used for check </dd></dl>
+<p>Returns true if the MTI has the destination-address-present bit set. </p>
 
 </div>
 </div>
@@ -1280,31 +773,7 @@ Addressed messages require valid dest_alias or dest_ID.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Counts the number of null bytes (0x00) in the message payload. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Initialize count to 0</li>
-<li>For i = 0 to payload_count - 1:<ol type="a">
-<li>If payload[i] equals 0x00:<ol type="i">
-<li>Increment count</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>Return count</li>
-</ol>
-<p>Scans through payload_count bytes and counts occurrences of 0x00. Used primarily for validating SNIP (Simple Node Ident Info) message format, which requires exactly 4 null terminators for the 4 string fields.</p>
-<p>Use cases:</p><ul>
-<li>Validating received SNIP messages have correct format</li>
-<li>Verifying string-based protocol messages</li>
-<li>Detecting malformed messages</li>
-</ul>
-<pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <dl class="section return"><dt>Returns</dt><dd>Count of null bytes found in the payload</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Only scans up to payload_count bytes, not the entire buffer.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>For SNIP messages, exactly 4 nulls are expected (manufacturer, model, hardware version, software version).</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Linear time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__snip_8c.html" title="Implementation of Simple Node Information Protocol (SNIP)">protocol_snip.c</a> - Uses this for <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c">SNIP</a> validation </dd></dl>
+<p>Returns the count of null bytes (0x00) in the payload. Used for SNIP validation. </p>
 
 </div>
 </div>
@@ -1317,7 +786,7 @@ Addressed messages require valid dest_alias or dest_ID.</dd></dl>
         <tr>
           <td class="memname">bool OpenLcbUtilities_is_addressed_message_for_node </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1327,30 +796,7 @@ Addressed messages require valid dest_alias or dest_ID.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Checks if an addressed message is for a specific node. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Compare message dest_alias with node alias</li>
-<li>If match, return true</li>
-<li>Compare message dest_id with node ID</li>
-<li>If match, return true</li>
-<li>Return false if neither matches</li>
-</ol>
-<p>Compares the message destination (alias or ID) against the node's alias and ID. Returns true if either matches, meaning this node is the intended recipient.</p>
-<p>Use cases:</p><ul>
-<li>Filtering incoming addressed messages in state machine</li>
-<li>Determining if node should process a protocol message</li>
-<li>Validating message routing in multi-node systems</li>
-</ul>
-<pre class="fragment">* @param openlcb_node Pointer to the node structure to check
-* </pre> <pre class="fragment">* @param openlcb_msg Pointer to the message structure
-* </pre> <dl class="section return"><dt>Returns</dt><dd>true if message is addressed to this node, false otherwise</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Pointer must not be NULL. No NULL check performed.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Matches on EITHER alias OR node ID. A match on either field is sufficient to return true.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Global messages (dest_alias = 0, dest_id = 0) will return false unless the node somehow has alias or ID = 0 (invalid state).</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aaa13f6427e7abf03d5253dc0b95312da" title="Determines if a message is addressed (not global)">OpenLcbUtilities_is_addressed_openlcb_message</a> - Checks if message is addressed at all </dd></dl>
+<p>Returns true if the message destination matches this node's alias or ID. </p>
 
 </div>
 </div>
@@ -1363,7 +809,7 @@ Pointer must not be NULL. No NULL check performed.</dd></dl>
         <tr>
           <td class="memname">bool OpenLcbUtilities_is_producer_event_assigned_to_node </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1378,38 +824,16 @@ Pointer must not be NULL. No NULL check performed.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Checks if a producer event is assigned to a node. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Loop through node's producer list (i = 0 to producers.count - 1)</li>
-<li>Compare producers.list[i].event with event_id</li>
-<li>If match found:<ol type="a">
-<li>Store i in *event_index</li>
-<li>Return true</li>
-</ol>
-</li>
-<li>If loop completes without match, return false</li>
-</ol>
-<p>Searches the node's producer event list for a matching event ID. If found, returns true and stores the list index in event_index.</p>
-<p>Use cases:</p><ul>
-<li>Processing Producer Identify requests</li>
-<li>Validating event ownership before sending reports</li>
-<li>Looking up producer state information</li>
-</ul>
-<pre class="fragment">* @param openlcb_node Pointer to the node structure to search
-* </pre> <pre class="fragment">* @param event_id The 64-bit event ID to search for
-* </pre> <pre class="fragment">* @param event_index Pointer to store the list index if found
-* </pre> <dl class="section return"><dt>Returns</dt><dd>true if event found in producer list, false otherwise</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-event_index is only valid when function returns true.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>event_index is NOT modified if event is not found.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Linear search with O(n) complexity where n = producer count.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>O(n) worst case, where n = producer count.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a6cf19f4c15949979c691d4141278ee22" title="Checks if a consumer event is assigned to a node.">OpenLcbUtilities_is_consumer_event_assigned_to_node</a> - Consumer version </dd>
-<dd>
-<a class="el" href="protocol__event__transport_8c.html" title="Implementation of event transport protocol.">protocol_event_transport.c</a> - Uses this for event identification </dd></dl>
+<p>Searches the node's producer list for a matching event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Node to search </td></tr>
+    <tr><td class="paramname">event_id</td><td>Event ID to find </td></tr>
+    <tr><td class="paramname">event_index</td><td>Receives the list index if found (undefined on false return)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if event found in producer list. </dd></dl>
 
 </div>
 </div>
@@ -1422,7 +846,7 @@ event_index is only valid when function returns true.</dd></dl>
         <tr>
           <td class="memname">bool OpenLcbUtilities_is_consumer_event_assigned_to_node </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1437,38 +861,16 @@ event_index is only valid when function returns true.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Checks if a consumer event is assigned to a node. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Loop through node's consumer list (i = 0 to consumers.count - 1)</li>
-<li>Compare consumers.list[i].event with event_id</li>
-<li>If match found:<ol type="a">
-<li>Store i in *event_index</li>
-<li>Return true</li>
-</ol>
-</li>
-<li>If loop completes without match, return false</li>
-</ol>
-<p>Searches the node's consumer event list for a matching event ID. If found, returns true and stores the list index in event_index.</p>
-<p>Use cases:</p><ul>
-<li>Processing Consumer Identify requests</li>
-<li>Validating event subscriptions</li>
-<li>Looking up consumer state information</li>
-</ul>
-<pre class="fragment">* @param openlcb_node Pointer to the node structure to search
-* </pre> <pre class="fragment">* @param event_id The 64-bit event ID to search for
-* </pre> <pre class="fragment">* @param event_index Pointer to store the list index if found
-* </pre> <dl class="section return"><dt>Returns</dt><dd>true if event found in consumer list, false otherwise</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-event_index is only valid when function returns true.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>event_index is NOT modified if event is not found.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Linear search with O(n) complexity where n = consumer count.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>O(n) worst case, where n = consumer count.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aed21415edc11d38433021fca34e0d60d" title="Checks if a producer event is assigned to a node.">OpenLcbUtilities_is_producer_event_assigned_to_node</a> - Producer version </dd>
-<dd>
-<a class="el" href="protocol__event__transport_8c.html" title="Implementation of event transport protocol.">protocol_event_transport.c</a> - Uses this for event identification </dd></dl>
+<p>Searches the node's consumer list for a matching event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Node to search </td></tr>
+    <tr><td class="paramname">event_id</td><td>Event ID to find </td></tr>
+    <tr><td class="paramname">event_index</td><td>Receives the list index if found (undefined on false return)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if event found in consumer list. </dd></dl>
 
 </div>
 </div>
@@ -1491,37 +893,7 @@ event_index is only valid when function returns true.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts a 6-byte node ID from a configuration memory buffer. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Read buffer[0 + index], shift left 40 bits</li>
-<li>Read buffer[1 + index], shift left 32 bits</li>
-<li>Read buffer[2 + index], shift left 24 bits</li>
-<li>Read buffer[3 + index], shift left 16 bits</li>
-<li>Read buffer[4 + index], shift left 8 bits</li>
-<li>Read buffer[5 + index]</li>
-<li>OR all six bytes together</li>
-<li>Return assembled 48-bit node ID</li>
-</ol>
-<p>Reads 6 bytes in big-endian format from the buffer starting at the specified index and assembles them into a 48-bit node_id_t value.</p>
-<p>Use cases:</p><ul>
-<li>Reading node IDs from configuration memory</li>
-<li>Parsing configuration data structures</li>
-<li>Extracting stored node identifiers</li>
-</ul>
-<pre class="fragment">* @param buffer Pointer to the configuration memory buffer
-* </pre> <pre class="fragment">* @param index Byte offset in the buffer where node ID starts
-* </pre> <dl class="section return"><dt>Returns</dt><dd>The assembled 48-bit node ID</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes buffer has at least (index + 6) bytes available. </dd>
-<dd>
-Does not validate index bounds. </dd>
-<dd>
-Reading beyond buffer bounds returns undefined values.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#af892a2ef64dfd26cb36667a62ae0f8dc" title="Copies a 6-byte node ID into a configuration memory buffer.">OpenLcbUtilities_copy_node_id_to_config_mem_buffer</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#a040663f01e6536b8f9fb5a77181e6015" title="Extracts a 6-byte node ID from the message payload.">OpenLcbUtilities_extract_node_id_from_openlcb_payload</a> - Payload version </dd></dl>
+<p>Extracts a 6-byte node ID from a config memory buffer at the given index. </p>
 
 </div>
 </div>
@@ -1544,32 +916,7 @@ Reading beyond buffer bounds returns undefined values.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts a 16-bit word from a configuration memory buffer. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Read buffer[0 + index], shift left 8 bits</li>
-<li>Read buffer[1 + index]</li>
-<li>OR the two bytes together</li>
-<li>Return assembled 16-bit value</li>
-</ol>
-<p>Reads 2 bytes in big-endian format from the buffer starting at the specified index and assembles them into a 16-bit value.</p>
-<p>Use cases:</p><ul>
-<li>Reading configuration parameters</li>
-<li>Extracting stored addresses or offsets</li>
-<li>Parsing configuration data structures</li>
-</ul>
-<pre class="fragment">* @param buffer Pointer to the configuration memory buffer
-* </pre> <pre class="fragment">* @param index Byte offset in the buffer where word starts
-* </pre> <dl class="section return"><dt>Returns</dt><dd>The assembled 16-bit value</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes buffer has at least (index + 2) bytes available. </dd>
-<dd>
-Does not validate index bounds. </dd>
-<dd>
-Reading beyond buffer bounds returns undefined values.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Byte order is big-endian per OpenLCB specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a1f9a0c01d0fc5ca782be6b10773aceb4" title="Extracts a 16-bit word from the message payload.">OpenLcbUtilities_extract_word_from_openlcb_payload</a> - Payload version </dd></dl>
+<p>Extracts a 16-bit word from a config memory buffer at the given index. </p>
 
 </div>
 </div>
@@ -1597,33 +944,7 @@ Reading beyond buffer bounds returns undefined values.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Copies a 6-byte node ID into a configuration memory buffer. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Loop from byte index 5 down to 0 (big-endian order)</li>
-<li>Extract least significant byte of node_id</li>
-<li>Write byte to buffer[i + index]</li>
-<li>Right-shift node_id by 8 bits</li>
-<li>Repeat for all 6 bytes</li>
-</ol>
-<p>Writes the node ID in big-endian format to the buffer starting at the specified index.</p>
-<p>Use cases:</p><ul>
-<li>Storing node IDs in configuration memory</li>
-<li>Writing configuration data structures</li>
-<li>Persisting node identifiers</li>
-</ul>
-<pre class="fragment">* @param buffer Pointer to the configuration memory buffer
-* </pre> <pre class="fragment">* @param node_id The 48-bit node ID to write
-* </pre> <pre class="fragment">* @param index Byte offset in the buffer where node ID should be written
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes buffer has at least (index + 6) bytes available. </dd>
-<dd>
-Does not validate index bounds.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Byte order is big-endian per OpenLCB specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8adb3fe5dc4d64da02e252d5bfea2922" title="Extracts a 6-byte node ID from a configuration memory buffer.">OpenLcbUtilities_extract_node_id_from_config_mem_buffer</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#aebdc740485642f016371b4604b93aa7f" title="Copies a 6-byte node ID into the message payload at a specified offset.">OpenLcbUtilities_copy_node_id_to_openlcb_payload</a> - Payload version </dd></dl>
+<p>Copies a 6-byte node ID into a config memory buffer at the given index. </p>
 
 </div>
 </div>
@@ -1651,33 +972,7 @@ Does not validate index bounds.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Copies an 8-byte event ID into a configuration memory buffer. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Loop from byte index 7 down to 0 (big-endian order)</li>
-<li>Extract least significant byte of event_id</li>
-<li>Write byte to buffer[i + index]</li>
-<li>Right-shift event_id by 8 bits</li>
-<li>Repeat for all 8 bytes</li>
-</ol>
-<p>Writes the event ID in big-endian format to the buffer starting at the specified index.</p>
-<p>Use cases:</p><ul>
-<li>Storing event IDs in configuration memory</li>
-<li>Writing producer/consumer event configurations</li>
-<li>Persisting event identifiers</li>
-</ul>
-<pre class="fragment">* @param buffer Pointer to the configuration memory buffer
-* </pre> <pre class="fragment">* @param event_id The 64-bit event ID to write
-* </pre> <pre class="fragment">* @param index Byte offset in the buffer where event ID should be written
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes buffer has at least (index + 8) bytes available. </dd>
-<dd>
-Does not validate index bounds.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Byte order is big-endian per OpenLCB specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a28f602cb5ef7385e117f152614bd613b" title="Extracts an 8-byte event ID from a configuration memory buffer.">OpenLcbUtilities_copy_config_mem_buffer_to_event_id</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID into the message payload.">OpenLcbUtilities_copy_event_id_to_openlcb_payload</a> - Payload version </dd></dl>
+<p>Copies an 8-byte event ID into a config memory buffer at the given index. </p>
 
 </div>
 </div>
@@ -1700,37 +995,7 @@ Does not validate index bounds.</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts an 8-byte event ID from a configuration memory buffer. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Initialize retval to 0</li>
-<li>For i = 0 to 7:<ol type="a">
-<li>Shift retval left by 8 bits</li>
-<li>OR with buffer[i + index] masked with 0xFF</li>
-</ol>
-</li>
-<li>Return assembled event ID</li>
-</ol>
-<p>Reads 8 bytes in big-endian format from the buffer starting at the specified index and assembles them into a 64-bit event_id_t value.</p>
-<p>Use cases:</p><ul>
-<li>Reading event IDs from configuration memory</li>
-<li>Loading producer/consumer event configurations</li>
-<li>Retrieving stored event identifiers</li>
-</ul>
-<pre class="fragment">* @param buffer Pointer to the configuration memory buffer
-* </pre> <pre class="fragment">* @param index Byte offset in the buffer where event ID starts
-* </pre> <dl class="section return"><dt>Returns</dt><dd>The assembled 64-bit event ID</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Assumes buffer has at least (index + 8) bytes available. </dd>
-<dd>
-Does not validate index bounds. </dd>
-<dd>
-Reading beyond buffer bounds returns undefined values.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Byte order is big-endian per OpenLCB specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aad0305cbd41a639ad54ff12bd599cce9" title="Copies an 8-byte event ID into a configuration memory buffer.">OpenLcbUtilities_copy_event_id_to_config_mem_buffer</a> - Reverse operation </dd>
-<dd>
-<a class="el" href="#ac06eeb0060f209fa2a094e252473eb3e" title="Extracts an 8-byte event ID from the message payload.">OpenLcbUtilities_extract_event_id_from_openlcb_payload</a> - Payload version </dd></dl>
+<p>Extracts an 8-byte event ID from a config memory buffer at the given index. </p>
 
 </div>
 </div>
@@ -1748,46 +1013,12 @@ Reading beyond buffer bounds returns undefined values.</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_write_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_write_request_info</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Loads a configuration memory write success reply message header. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Clear outgoing message payload_count to 0</li>
-<li>Load message header with source/dest from state machine info</li>
-<li>Set MTI to MTI_DATAGRAM</li>
-<li>Copy CONFIG_MEM_CONFIGURATION to payload offset 0</li>
-<li>Copy original command byte + OK_OFFSET to payload offset 1</li>
-<li>Copy write request address (4 bytes) to payload offset 2</li>
-<li>If encoding is ADDRESS_SPACE_IN_BYTE_6:<ol type="a">
-<li>Copy address space byte from incoming message to payload offset 6</li>
-</ol>
-</li>
-<li>Set outgoing_msg_info.valid to false (caller must enable)</li>
-</ol>
-<p>Constructs a datagram reply message indicating a configuration memory write operation succeeded. Includes the original request address. Handles both 4-byte and 6-byte address encoding formats.</p>
-<p>Use cases:</p><ul>
-<li>Acknowledging successful configuration memory writes</li>
-<li>Confirming data was stored correctly</li>
-<li>Completing write request transactions</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context with message buffers
-* </pre> <pre class="fragment">* @param config_mem_write_request_info Pointer to original write request details
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-statemachine_info-&gt;outgoing_msg_info.msg_ptr must be valid.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Sets outgoing_msg_info.valid to false by default. Application must set to true to actually send the reply.</dd>
-<dd>
-Address space byte (byte 6) only included if encoding is ADDRESS_SPACE_IN_BYTE_6.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Reply format follows OpenLCB Configuration Memory protocol specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a06296be3f07fd80febe7dec58eaa5028" title="Loads a configuration memory write failure reply message header.">OpenLcbUtilities_load_config_mem_reply_write_fail_message_header</a> - Failure version </dd>
-<dd>
-protocol_config_mem_*.c - Uses this for success responses </dd></dl>
+<p>Builds a config memory write-success reply datagram header. </p>
 
 </div>
 </div>
@@ -1805,7 +1036,7 @@ protocol_config_mem_*.c - Uses this for success responses </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__write__request__info__t.html">config_mem_write_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_write_request_info</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_write_request_info</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1815,51 +1046,8 @@ protocol_config_mem_*.c - Uses this for success responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Loads a configuration memory write failure reply message header. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Clear outgoing message payload_count to 0</li>
-<li>Load message header with source/dest from state machine info</li>
-<li>Set MTI to MTI_DATAGRAM</li>
-<li>Copy CONFIG_MEM_CONFIGURATION to payload offset 0</li>
-<li>Copy original command byte + FAIL_OFFSET to payload offset 1</li>
-<li>Copy write request address (4 bytes) to payload offset 2</li>
-<li>If encoding is ADDRESS_SPACE_IN_BYTE_6:<ol type="a">
-<li>Copy address space byte from incoming message to payload offset 6</li>
-<li>Copy error_code (2 bytes) to payload offset 7</li>
-</ol>
-</li>
-<li>Else:<ol type="a">
-<li>Copy error_code (2 bytes) to payload offset 6</li>
-</ol>
-</li>
-<li>Set outgoing_msg_info.valid to false (caller must enable)</li>
-</ol>
-<p>Constructs a datagram reply message indicating a configuration memory write operation failed. Includes the error code and original request address. Handles both 4-byte and 6-byte address encoding formats.</p>
-<p>Use cases:</p><ul>
-<li>Responding to write requests for read-only memory spaces</li>
-<li>Indicating invalid address ranges</li>
-<li>Reporting configuration memory errors</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context with message buffers
-* </pre> <pre class="fragment">* @param config_mem_write_request_info Pointer to original write request details
-* </pre> <pre class="fragment">* @param error_code 16-bit error code indicating failure reason
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-statemachine_info-&gt;outgoing_msg_info.msg_ptr must be valid.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Sets outgoing_msg_info.valid to false by default. Application must set to true to actually send the reply.</dd>
-<dd>
-Error code placement depends on address encoding:<ul>
-<li>ADDRESS_SPACE_IN_BYTE_6: error at offset 7</li>
-<li>Other encoding: error at offset 6</li>
-</ul>
-</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Reply format follows OpenLCB Configuration Memory protocol specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa2c25886675aad1efa582cf2fc318833" title="Loads a configuration memory write success reply message header.">OpenLcbUtilities_load_config_mem_reply_write_ok_message_header</a> - Success version </dd>
-<dd>
-protocol_config_mem_*.c - Uses this for error responses </dd></dl>
+<p>Builds a config memory write-failure reply datagram header. </p>
+<p>Error code placement depends on address encoding: ADDRESS_SPACE_IN_BYTE_6 places it at offset 7, otherwise offset 6. </p>
 
 </div>
 </div>
@@ -1877,50 +1065,13 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Loads a configuration memory read success reply message header. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Clear outgoing message payload_count to 0</li>
-<li>Load message header with source/dest from state machine info</li>
-<li>Set MTI to MTI_DATAGRAM</li>
-<li>Copy CONFIG_MEM_CONFIGURATION to payload offset 0</li>
-<li>Copy original command byte + OK_OFFSET to payload offset 1</li>
-<li>Copy read request address (4 bytes) to payload offset 2</li>
-<li>If encoding is ADDRESS_SPACE_IN_BYTE_6:<ol type="a">
-<li>Copy address space byte from incoming message to payload offset 6</li>
-</ol>
-</li>
-<li>Set outgoing_msg_info.valid to false (caller must enable)</li>
-</ol>
-<p>Constructs a datagram reply message header indicating a configuration memory read operation succeeded. Sets up the header fields; actual data bytes must be added separately by the caller. Handles both 4-byte and 6-byte address encoding formats.</p>
-<p>Use cases:</p><ul>
-<li>Preparing successful configuration memory read replies</li>
-<li>Setting up header before copying data bytes</li>
-<li>Acknowledging valid read requests</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context with message buffers
-* </pre> <pre class="fragment">* @param config_mem_read_request_info Pointer to original read request details
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-statemachine_info-&gt;outgoing_msg_info.msg_ptr must be valid.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This function only loads the HEADER. The caller must append the actual data bytes using copy_byte_array or similar functions.</dd>
-<dd>
-Sets outgoing_msg_info.valid to false by default. Application must set to true after adding data to actually send the reply.</dd>
-<dd>
-Address space byte (byte 6) only included if encoding is ADDRESS_SPACE_IN_BYTE_6.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Reply format follows OpenLCB Configuration Memory protocol specification.</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ad0acbbfd410c33c725f1be639783dbf7" title="Loads a configuration memory read failure reply message header.">OpenLcbUtilities_load_config_mem_reply_read_fail_message_header</a> - Failure version </dd>
-<dd>
-<a class="el" href="#a39d5ca6fda22ae42d9b6efa8ca6dd81c" title="Copies a byte array into the message payload.">OpenLcbUtilities_copy_byte_array_to_openlcb_payload</a> - For adding data </dd>
-<dd>
-protocol_config_mem_*.c - Uses this for success responses </dd></dl>
+<p>Builds a config memory read-success reply datagram header only. </p>
+<p>Caller must append actual data bytes separately after this call. </p>
 
 </div>
 </div>
@@ -1938,7 +1089,7 @@ protocol_config_mem_*.c - Uses this for success responses </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1948,44 +1099,8 @@ protocol_config_mem_*.c - Uses this for success responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Loads a configuration memory read failure reply message header. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Clear outgoing message payload_count to 0</li>
-<li>Load message header with source/dest from state machine info</li>
-<li>Set MTI to MTI_DATAGRAM</li>
-<li>Copy CONFIG_MEM_CONFIGURATION to payload offset 0</li>
-<li>Copy original command byte + FAIL_OFFSET to payload offset 1</li>
-<li>Copy read request address (4 bytes) to payload offset 2</li>
-<li>If encoding is ADDRESS_SPACE_IN_BYTE_6:<ol type="a">
-<li>Copy address space byte from incoming message to payload offset 6</li>
-</ol>
-</li>
-<li>Copy error_code (2 bytes) to payload at config_mem_read_request_info-&gt;data_start</li>
-</ol>
-<p>Constructs a datagram reply message indicating a configuration memory read operation failed. Includes the error code at the data start position where data would have been placed. Handles both 4-byte and 6-byte address encoding formats.</p>
-<p>Use cases:</p><ul>
-<li>Responding to read requests for invalid addresses</li>
-<li>Indicating unavailable memory spaces</li>
-<li>Reporting configuration memory errors</li>
-</ul>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context with message buffers
-* </pre> <pre class="fragment">* @param config_mem_read_request_info Pointer to original read request details
-* </pre> <pre class="fragment">* @param error_code 16-bit error code indicating failure reason
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-Pointer must not be NULL. No NULL check performed. </dd>
-<dd>
-statemachine_info-&gt;outgoing_msg_info.msg_ptr must be valid.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Error code is placed at config_mem_read_request_info-&gt;data_start offset, where the actual data would have been.</dd>
-<dd>
-Address space byte (byte 6) only included if encoding is ADDRESS_SPACE_IN_BYTE_6.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Reply format follows OpenLCB Configuration Memory protocol specification. </dd>
-<dd>
-Does NOT set outgoing_msg_info.valid (differs from write functions).</dd></dl>
-<dl class="section remark"><dt>Remarks</dt><dd>Constant time operation.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#add25f972525f3d14f22f4657a74e0c9c" title="Loads a configuration memory read success reply message header.">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> - Success version </dd>
-<dd>
-protocol_config_mem_*.c - Uses this for error responses </dd></dl>
+<p>Builds a config memory read-failure reply datagram header. </p>
+<p>Error code is placed at the data_start offset where actual data would have been. </p>
 
 </div>
 </div>
@@ -1998,7 +1113,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
         <tr>
           <td class="memname">bool OpenLcbUtilities_is_event_id_in_consumer_ranges </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -2007,6 +1122,8 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns true if the event ID falls within any of the node's consumer ranges. </p>
 
 </div>
 </div>
@@ -2019,7 +1136,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
         <tr>
           <td class="memname">bool OpenLcbUtilities_is_event_id_in_producer_ranges </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -2028,6 +1145,8 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Returns true if the event ID falls within any of the node's producer ranges. </p>
 
 </div>
 </div>
@@ -2050,6 +1169,16 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
+<p>Generates a masked Event ID covering a range of consecutive events. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">base_event_id</td><td>Starting <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> of the range </td></tr>
+    <tr><td class="paramname">count</td><td>Number of events in the range (<a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a>)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Masked <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for a Range Identified message. </dd></dl>
+
 </div>
 </div>
 <a id="a9d3dedeec93238f781376e67143c010c" name="a9d3dedeec93238f781376e67143c010c"></a>
@@ -2067,18 +1196,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Determines if an Event ID is a broadcast time event. </p>
-<p>Checks if the upper 6 bytes of the Event ID match any of the well-known broadcast time clock IDs. This is used to detect time events before passing them to the broadcast time protocol handler.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">event_id</td><td>64-bit Event ID to check</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if Event ID is a broadcast time event, false otherwise</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__utilities_8h.html#aaf584d752ad0787034618a14f69c4a11" title="Determines the type of broadcast time event from Event ID.">OpenLcbUtilities_get_broadcast_time_event_type</a> - Determines event type </dd>
-<dd>
-<a class="el" href="group__broadcast__time__events.html#gaa660f0e811458386f2e21f644ac0aade" title="Mask for extracting clock ID (upper 6 bytes) from Event ID.">BROADCAST_TIME_MASK_CLOCK_ID</a> - Mask for extracting clock ID </dd></dl>
+<p>Returns true if the event ID belongs to the broadcast time event space. </p>
 
 </div>
 </div>
@@ -2097,16 +1215,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts clock ID from broadcast time Event ID. </p>
-<p>Extracts the upper 6 bytes of the Event ID which identify which clock this event belongs to.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>48-bit clock identifier (upper 6 bytes of Event ID)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__broadcast__time__events.html#gaa660f0e811458386f2e21f644ac0aade" title="Mask for extracting clock ID (upper 6 bytes) from Event ID.">BROADCAST_TIME_MASK_CLOCK_ID</a> - Mask used for extraction </dd></dl>
+<p>Extracts the 48-bit clock ID (upper 6 bytes) from a broadcast time event ID. </p>
 
 </div>
 </div>
@@ -2125,16 +1234,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Determines the type of broadcast time event from Event ID. </p>
-<p>Examines the lower 2 bytes of the Event ID to determine which type of broadcast time event it represents (time, date, year, rate, command).</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Enumerated event type, or BROADCAST_TIME_EVENT_UNKNOWN if invalid</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a" title="Broadcast Time Protocol event type enumeration.">broadcast_time_event_type_enum</a> - Return value enumeration </dd></dl>
+<p>Returns the <a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> for a broadcast time event ID. </p>
 
 </div>
 </div>
@@ -2162,18 +1262,8 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts time (hour/minute) from broadcast time Event ID. </p>
-<p>Decodes hour and minute from the lower 2 bytes of a Report Time or Set Time Event ID.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID </td></tr>
-    <tr><td class="paramname">hour</td><td>Pointer to store extracted hour (0-23) </td></tr>
-    <tr><td class="paramname">minute</td><td>Pointer to store extracted minute (0-59)</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if extraction successful and values valid, false otherwise</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Returns false if hour &gt;= 24 or minute &gt;= 60 </dd></dl>
+<p>Extracts hour and minute from a broadcast time event ID. Returns false if out of range. </p>
+<p>Extracts hour and minute from a broadcast time event ID. </p>
 
 </div>
 </div>
@@ -2201,18 +1291,8 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts date (month/day) from broadcast time Event ID. </p>
-<p>Decodes month and day from the lower 2 bytes of a Report Date or Set Date Event ID.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID </td></tr>
-    <tr><td class="paramname">month</td><td>Pointer to store extracted month (1-12) </td></tr>
-    <tr><td class="paramname">day</td><td>Pointer to store extracted day (1-31)</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if extraction successful and values valid, false otherwise</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Returns false if month &lt; 1 or month &gt; 12 or day &lt; 1 or day &gt; 31 </dd></dl>
+<p>Extracts month and day from a broadcast time event ID. Returns false if out of range. </p>
+<p>Extracts month and day from a broadcast time event ID. </p>
 
 </div>
 </div>
@@ -2235,16 +1315,8 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts year from broadcast time Event ID. </p>
-<p>Decodes year from the lower 2 bytes of a Report Year or Set Year Event ID.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID </td></tr>
-    <tr><td class="paramname">year</td><td>Pointer to store extracted year (0-4095 AD)</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if extraction successful, false otherwise </dd></dl>
+<p>Extracts year from a broadcast time event ID. Returns false if out of range. </p>
+<p>Extracts year from a broadcast time event ID. </p>
 
 </div>
 </div>
@@ -2267,17 +1339,8 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts clock rate from broadcast time Event ID. </p>
-<p>Decodes the 12-bit signed fixed-point rate value from a Report Rate or Set Rate Event ID. Rate format is 10.2 fixed point (2 fractional bits).</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID </td></tr>
-    <tr><td class="paramname">rate</td><td>Pointer to store extracted rate (12-bit signed fixed point)</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if extraction successful, false otherwise</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Rate examples: 0x0004=1.00 (real-time), 0x0010=4.00 (4x speed) </dd></dl>
+<p>Extracts the 12-bit signed fixed-point rate from a broadcast time event ID. </p>
+<p>Rate format is 10.2 fixed point. Sign-extends bit 11 for negative rates. </p>
 
 </div>
 </div>
@@ -2310,19 +1373,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a broadcast time Event ID for time events. </p>
-<p>Constructs a Report Time or Set Time Event ID by encoding hour and minute into the lower 2 bytes of the specified clock ID.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier (upper 6 bytes) </td></tr>
-    <tr><td class="paramname">hour</td><td>Hour value (0-23) </td></tr>
-    <tr><td class="paramname">minute</td><td>Minute value (0-59) </td></tr>
-    <tr><td class="paramname">is_set</td><td>true for Set Time, false for Report Time</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>64-bit broadcast time Event ID</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>No validation - caller must ensure hour &lt; 24 and minute &lt; 60 </dd></dl>
+<p>Creates a Report/Set Time event ID from clock_id, hour, minute. </p>
 
 </div>
 </div>
@@ -2355,19 +1406,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a broadcast time Event ID for date events. </p>
-<p>Constructs a Report Date or Set Date Event ID by encoding month and day into the lower 2 bytes of the specified clock ID.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier (upper 6 bytes) </td></tr>
-    <tr><td class="paramname">month</td><td>Month value (1-12) </td></tr>
-    <tr><td class="paramname">day</td><td>Day value (1-31) </td></tr>
-    <tr><td class="paramname">is_set</td><td>true for Set Date, false for Report Date</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>64-bit broadcast time Event ID</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>No validation - caller must ensure valid month/day values </dd></dl>
+<p>Creates a Report/Set Date event ID from clock_id, month, day. </p>
 
 </div>
 </div>
@@ -2395,18 +1434,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a broadcast time Event ID for year events. </p>
-<p>Constructs a Report Year or Set Year Event ID by encoding year into the lower 2 bytes of the specified clock ID.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier (upper 6 bytes) </td></tr>
-    <tr><td class="paramname">year</td><td>Year value (0-4095 AD) </td></tr>
-    <tr><td class="paramname">is_set</td><td>true for Set Year, false for Report Year</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>64-bit broadcast time Event ID</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>No validation - caller must ensure year &lt;= 4095 </dd></dl>
+<p>Creates a Report/Set Year event ID from clock_id, year. </p>
 
 </div>
 </div>
@@ -2434,18 +1462,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a broadcast time Event ID for rate events. </p>
-<p>Constructs a Report Rate or Set Rate Event ID by encoding the 12-bit signed fixed-point rate into the lower 2 bytes.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier (upper 6 bytes) </td></tr>
-    <tr><td class="paramname">rate</td><td>12-bit signed fixed point rate value </td></tr>
-    <tr><td class="paramname">is_set</td><td>true for Set Rate, false for Report Rate</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>64-bit broadcast time Event ID</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Rate format: 10.2 fixed point (e.g., 0x0004 = 1.00) </dd></dl>
+<p>Creates a Report/Set Rate event ID from clock_id, rate. </p>
 
 </div>
 </div>
@@ -2468,16 +1485,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a broadcast time Event ID for command events. </p>
-<p>Constructs a command Event ID (Query, Start, Stop, Date Rollover) for the specified clock.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier (upper 6 bytes) </td></tr>
-    <tr><td class="paramname">command</td><td>Command type (QUERY, START, STOP, DATE_ROLLOVER)</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>64-bit broadcast time Event ID </dd></dl>
+<p>Creates a command event ID (Query, Start, Stop, Date Rollover) for the given clock. </p>
 
 </div>
 </div>
@@ -2496,14 +1504,8 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Tests whether an event ID belongs to the Train Search space. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">event_id</td><td>64-bit Event ID to test </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if upper 4 bytes are 0x090099FF </dd></dl>
+<p>Returns true if the event ID belongs to the train search space. </p>
+<p>Returns true if the event ID belongs to the train search space (upper 4 bytes = 0x090099FF). </p>
 
 </div>
 </div>
@@ -2526,14 +1528,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Extracts 6 search-query nibbles from a train search event ID. </p>
-<p>Nibbles are in bytes 4-6 (bits 31-8). Each nibble is 0-9 for a digit or 0xF for empty/wildcard. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">event_id</td><td>The search event ID </td></tr>
-    <tr><td class="paramname">digits</td><td>Output array of 6 uint8_t values </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Extracts 6 search-query nibbles from a train search event ID into digits[]. </p>
 
 </div>
 </div>
@@ -2553,13 +1548,6 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
 </div><div class="memdoc">
 
 <p>Extracts the flags byte (byte 7) from a train search event ID. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">event_id</td><td>The search event ID </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The 8-bit flags byte </dd></dl>
 
 </div>
 </div>
@@ -2578,14 +1566,7 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Converts 6-nibble digit array to a numeric DCC address. </p>
-<p>Skips leading 0xF nibbles. E.g. {F,F,F,0,0,3} -&gt; 3 </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">digits</td><td>Array of 6 nibble values </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The numeric address (0 if all empty) </dd></dl>
+<p>Converts a 6-nibble digit array to a numeric DCC address, skipping leading 0xF nibbles. </p>
 
 </div>
 </div>
@@ -2608,15 +1589,26 @@ protocol_config_mem_*.c - Uses this for error responses </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a train search event ID from address and flags. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">address</td><td>DCC address to encode (0-9999) </td></tr>
-    <tr><td class="paramname">flags</td><td>Flags byte </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>64-bit train search event ID </dd></dl>
+<p>Creates a train search event ID from a DCC address and flags byte. </p>
+
+</div>
+</div>
+<a id="ac6eabc0b8b8f5efe024df4657619d173" name="ac6eabc0b8b8f5efe024df4657619d173"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6eabc0b8b8f5efe024df4657619d173">&#9670;&#160;</a></span>OpenLcbUtilities_is_emergency_event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbUtilities_is_emergency_event </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns true if the event ID is one of the 4 well-known emergency events. </p>
 
 </div>
 </div>

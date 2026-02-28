@@ -27,7 +27,7 @@
 * @file protocol_event_transport.c
 * @brief Implementation of event transport protocol
 * @author Jim Kueneman
-* @date 17 Jan 2026
+* @date 28 Feb 2026
 */
 
 #include "protocol_event_transport.h"
@@ -39,8 +39,7 @@
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 
-// Interface reserved for future callbacks and configuration
-// Currently stores callback pointers for event notifications
+    /** @brief Stored callback interface pointer. */
 static const interface_openlcb_protocol_event_transport_t *_interface;
 
     /**
@@ -295,6 +294,7 @@ static bool _identify_consumers(openlcb_statemachine_info_t *statemachine_info) 
 
 }
 
+    /** @brief Fire consumed-event-identified callback if event matches this node. */
 static void _test_for_consumed_event(openlcb_statemachine_info_t *statemachine_info, event_status_enum status, event_payload_t *payload)
 {
 
@@ -323,6 +323,7 @@ static void _test_for_consumed_event(openlcb_statemachine_info_t *statemachine_i
 
 }
 
+    /** @brief Fire consumed-event PCER callback if event matches this node. */
 static void _test_for_consumed_event_pcer(openlcb_statemachine_info_t *statemachine_info, event_payload_t *payload)
 {
 

@@ -91,31 +91,14 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">can_msg_state_struct Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>Structure to hold information needed to track the state of a CAN message/frame.  
- <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a2f6e1ef9ab9da4be83ad9239cbfac13e" id="r_a2f6e1ef9ab9da4be83ad9239cbfac13e"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f6e1ef9ab9da4be83ad9239cbfac13e">allocated</a>: 1</td></tr>
-<tr class="memdesc:a2f6e1ef9ab9da4be83ad9239cbfac13e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag to define if the can message buffer is allocated or not.  <br /></td></tr>
+<tr class="memdesc:a2f6e1ef9ab9da4be83ad9239cbfac13e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set while the buffer is owned by the pool allocator.  <br /></td></tr>
 <tr class="separator:a2f6e1ef9ab9da4be83ad9239cbfac13e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Structure to hold information needed to track the state of a CAN message/frame. </p>
-<p>This structure uses bit fields to efficiently track the allocation status of CAN message buffers. The allocated flag indicates whether a buffer is currently in use by the system.</p>
-<p>Use cases:</p><ul>
-<li>Tracking buffer allocation in the CAN buffer store</li>
-<li>Determining if a CAN message buffer is available for reuse</li>
-<li>Managing buffer lifecycle during message processing</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>Uses bit fields to minimize memory footprint</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> - Contains this state structure </dd>
-<dd>
-<a class="el" href="can__buffer__store_8c.html#afd3358d37ab07ff0f8ec918c00fffe99" title="Allocates a new CAN buffer from the pool.">CanBufferStore_allocate_buffer</a> - Sets the <a class="el" href="#a2f6e1ef9ab9da4be83ad9239cbfac13e" title="Flag to define if the can message buffer is allocated or not.">allocated</a> flag </dd>
-<dd>
-<a class="el" href="can__buffer__store_8c.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Frees a CAN buffer back to the pool.">CanBufferStore_free_buffer</a> - Clears the <a class="el" href="#a2f6e1ef9ab9da4be83ad9239cbfac13e" title="Flag to define if the can message buffer is allocated or not.">allocated</a> flag </dd></dl>
-</div><h2 class="groupheader">Field Documentation</h2>
+<h2 class="groupheader">Field Documentation</h2>
 <a id="a2f6e1ef9ab9da4be83ad9239cbfac13e" name="a2f6e1ef9ab9da4be83ad9239cbfac13e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2f6e1ef9ab9da4be83ad9239cbfac13e">&#9670;&#160;</a></span>allocated</h2>
 
@@ -128,7 +111,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Flag to define if the can message buffer is allocated or not. </p>
+<p>Set while the buffer is owned by the pool allocator. </p>
 
 </div>
 </div>

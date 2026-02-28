@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>State definitions for CAN bus alias allocation and node login sequence.  
+<p>CAN alias allocation sequence: CID → RID → AMD → Init Complete → Run.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -144,27 +144,7 @@ Macros</h2></td></tr>
 <tr class="separator:gaf6eaeb155cdfde837a166bac521293a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>State definitions for CAN bus alias allocation and node login sequence. </p>
-<p>These states control the multi-step process of allocating a CAN alias and logging a node onto the OpenLCB network. The sequence ensures collision-free alias assignment through the Check ID (CID) process.</p>
-<p>Normal login sequence:</p><ol type="1">
-<li>RUNSTATE_INIT - Initialize with Node ID as seed</li>
-<li>RUNSTATE_GENERATE_ALIAS - Generate 12-bit alias from seed</li>
-<li>RUNSTATE_LOAD_CHECK_ID_07 through 04 - Send CID frames with Node ID fragments</li>
-<li>RUNSTATE_WAIT_200ms - Wait for collision detection period</li>
-<li>RUNSTATE_LOAD_RESERVE_ID - Send RID frame to claim alias</li>
-<li>RUNSTATE_LOAD_ALIAS_MAP_DEFINITION - Send AMD frame, mark node as Permitted</li>
-<li>RUNSTATE_LOAD_INITIALIZATION_COMPLETE - Send Initialization Complete message</li>
-<li>RUNSTATE_LOAD_CONSUMER_EVENTS - Broadcast consumer event IDs</li>
-<li>RUNSTATE_LOAD_PRODUCER_EVENTS - Broadcast producer event IDs</li>
-<li>RUNSTATE_LOGIN_COMPLETE - Optional callback for final setup before normal operation</li>
-<li>RUNSTATE_RUN - Normal operation mode</li>
-</ol>
-<p>If alias collision is detected during CID or wait period, state returns to RUNSTATE_GENERATE_SEED to create a new alias.</p>
-<dl class="section note"><dt>Note</dt><dd>States are stored in 5-bit field, limiting to 32 possible states </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>State transitions must follow the sequence defined in CAN Frame Transfer Standard</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>openlcb_node_t.state.run_state </dd>
-<dd>
-OpenLCB CAN Frame Transfer Standard S-9.7.3 </dd></dl>
+<p>CAN alias allocation sequence: CID → RID → AMD → Init Complete → Run. </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ga78bb04ebef2f0ee7fe6f15a27a8f8be0" name="ga78bb04ebef2f0ee7fe6f15a27a8f8be0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga78bb04ebef2f0ee7fe6f15a27a8f8be0">&#9670;&#160;</a></span>RUNSTATE_INIT</h2>

@@ -33,7 +33,7 @@
  * callbacks.
  *
  * @author Jim Kueneman
- * @date 17 Feb 2026
+ * @date 28 Feb 2026
  */
 
 #include "protocol_train_handler.h"
@@ -46,9 +46,17 @@
 #include "openlcb_float16.h"
 
 
+    /** @brief Stored callback interface pointer. */
 static const interface_protocol_train_handler_t *_interface;
 
 
+    /**
+     * @brief Stores the callback interface.  Call once at startup.
+     *
+     * @verbatim
+     * @param interface  Populated callback table (may be NULL).
+     * @endverbatim
+     */
 void ProtocolTrainHandler_initialize(const interface_protocol_train_handler_t *interface) {
 
     _interface = interface;
@@ -59,6 +67,7 @@ void ProtocolTrainHandler_initialize(const interface_protocol_train_handler_t *i
 // Listener management
 // ============================================================================
 
+    /** @brief Attach a listener to the train node, or update flags if already attached. */
 static bool _attach_listener(train_state_t *state, node_id_t node_id, uint8_t flags)
 {
 
@@ -95,6 +104,7 @@ static bool _attach_listener(train_state_t *state, node_id_t node_id, uint8_t fl
 
 }
 
+    /** @brief Remove a listener from the train node by shifting remaining entries. */
 static bool _detach_listener(train_state_t *state, node_id_t node_id) {
 
     if (!state || node_id == 0) {
@@ -131,6 +141,7 @@ static bool _detach_listener(train_state_t *state, node_id_t node_id) {
 }
 
 
+    /** @brief Return the current listener count. */
 static uint8_t _get_listener_count(train_state_t *state) {
 
     if (!state) {
@@ -143,6 +154,7 @@ static uint8_t _get_listener_count(train_state_t *state) {
 
 }
 
+    /** @brief Return listener entry at index, or NULL if out of range. */
 static train_listener_entry_t* _get_listener_by_index(train_state_t *state, uint8_t index) {
 
     if (!state || index >= state->listener_count) {
@@ -160,6 +172,7 @@ static train_listener_entry_t* _get_listener_by_index(train_state_t *state, uint
 // Reply builder helpers (static — only used internally)
 // ============================================================================
 
+    /** @brief Load common MTI_TRAIN_REPLY header fields into the outgoing message. */
 static void _load_reply_header(openlcb_statemachine_info_t *statemachine_info) {
 
     OpenLcbUtilities_load_openlcb_message(
@@ -172,6 +185,7 @@ static void _load_reply_header(openlcb_statemachine_info_t *statemachine_info) {
 
 }
 
+    /** @brief Build a Query Speeds reply. */
 static void _load_query_speeds_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t set_speed, uint8_t status, uint16_t commanded_speed, uint16_t actual_speed) {
 
     _load_reply_header(statemachine_info);
@@ -188,6 +202,7 @@ static void _load_query_speeds_reply(openlcb_statemachine_info_t *statemachine_i
 
 }
 
+    /** @brief Build a Query Function reply. */
 static void _load_query_function_reply(openlcb_statemachine_info_t *statemachine_info, uint32_t fn_address, uint16_t fn_value) {
 
     _load_reply_header(statemachine_info);
@@ -204,6 +219,7 @@ static void _load_query_function_reply(openlcb_statemachine_info_t *statemachine
 
 }
 
+    /** @brief Build a Controller Assign reply. */
 static void _load_controller_assign_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t result) {
 
     _load_reply_header(statemachine_info);
@@ -218,6 +234,7 @@ static void _load_controller_assign_reply(openlcb_statemachine_info_t *statemach
 
 }
 
+    /** @brief Build a Controller Query reply. */
 static void _load_controller_query_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t flags, node_id_t controller_node_id)
 {
 
@@ -233,6 +250,7 @@ static void _load_controller_query_reply(openlcb_statemachine_info_t *statemachi
     statemachine_info->outgoing_msg_info.valid = true;
 }
 
+    /** @brief Build a Controller Changed Notify reply. */
 static void _load_controller_changed_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t result) {
 
     _load_reply_header(statemachine_info);
@@ -247,6 +265,7 @@ static void _load_controller_changed_reply(openlcb_statemachine_info_t *statemac
 
 }
 
+    /** @brief Build a Listener Attach reply. */
 static void _load_listener_attach_reply(openlcb_statemachine_info_t *statemachine_info,node_id_t node_id, uint8_t result)
 {
 
@@ -262,6 +281,7 @@ static void _load_listener_attach_reply(openlcb_statemachine_info_t *statemachin
     statemachine_info->outgoing_msg_info.valid = true;
 }
 
+    /** @brief Build a Listener Detach reply. */
 static void _load_listener_detach_reply(openlcb_statemachine_info_t *statemachine_info, node_id_t node_id, uint8_t result)
 {
 
@@ -277,6 +297,7 @@ static void _load_listener_detach_reply(openlcb_statemachine_info_t *statemachin
     statemachine_info->outgoing_msg_info.valid = true;
 }
 
+    /** @brief Build a Listener Query reply. */
 static void _load_listener_query_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t count, uint8_t index, uint8_t flags, node_id_t node_id)
 {
 
@@ -294,6 +315,7 @@ static void _load_listener_query_reply(openlcb_statemachine_info_t *statemachine
     statemachine_info->outgoing_msg_info.valid = true;
 }
 
+    /** @brief Build a Reserve/Release reply. */
 static void _load_reserve_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t result) {
 
     _load_reply_header(statemachine_info);
@@ -313,6 +335,7 @@ static void _load_reserve_reply(openlcb_statemachine_info_t *statemachine_info, 
 // Payload extraction helpers
 // ============================================================================
 
+    /** @brief Extract 24-bit function address from payload at offset. */
 static uint32_t _extract_fn_address(openlcb_msg_t *msg, uint16_t offset) {
 
     uint32_t addr;
@@ -330,6 +353,7 @@ static uint32_t _extract_fn_address(openlcb_msg_t *msg, uint16_t offset) {
 // Command handlers (train-node side, MTI 0x05EB)
 // ============================================================================
 
+    /** @brief Handle Set Speed command — update state and fire callback. */
 static void _handle_set_speed(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_node_t *node = statemachine_info->openlcb_node;
@@ -352,6 +376,7 @@ static void _handle_set_speed(openlcb_statemachine_info_t *statemachine_info) {
 
 }
 
+    /** @brief Handle Set Function command — update state and fire callback. */
 static void _handle_set_function(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_node_t *node = statemachine_info->openlcb_node;
@@ -374,6 +399,7 @@ static void _handle_set_function(openlcb_statemachine_info_t *statemachine_info)
 
 }
 
+    /** @brief Handle Emergency Stop command — zero speed, set estop flag, fire callback. */
 static void _handle_emergency_stop(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_node_t *node = statemachine_info->openlcb_node;
@@ -397,6 +423,7 @@ static void _handle_emergency_stop(openlcb_statemachine_info_t *statemachine_inf
 
 }
 
+    /** @brief Handle Query Speeds command — build and send reply. */
 static void _handle_query_speeds(openlcb_statemachine_info_t *statemachine_info) {
 
     train_state_t *state = statemachine_info->openlcb_node->train_state;
@@ -419,6 +446,7 @@ static void _handle_query_speeds(openlcb_statemachine_info_t *statemachine_info)
 
 }
 
+    /** @brief Handle Query Function command — build and send reply. */
 static void _handle_query_function(openlcb_statemachine_info_t *statemachine_info) {
 
     train_state_t *state = statemachine_info->openlcb_node->train_state;
@@ -437,6 +465,7 @@ static void _handle_query_function(openlcb_statemachine_info_t *statemachine_inf
 
 }
 
+    /** @brief Handle Controller Config sub-commands (assign, release, query, changed). */
 static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
@@ -557,6 +586,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
 }
 
+    /** @brief Handle Listener Config sub-commands (attach, detach, query). */
 static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
@@ -687,6 +717,7 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 
 }
 
+    /** @brief Handle Management sub-commands (reserve, release, noop/heartbeat). */
 static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
@@ -760,6 +791,7 @@ static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
 // Reply handlers (throttle side, MTI 0x01E9)
 // ============================================================================
 
+    /** @brief Forward Query Speeds reply to throttle-side callback. */
 static void _handle_query_speeds_reply(openlcb_statemachine_info_t *statemachine_info) {
 
     if (_interface && _interface->on_query_speeds_reply) {
@@ -777,6 +809,7 @@ static void _handle_query_speeds_reply(openlcb_statemachine_info_t *statemachine
 
 }
 
+    /** @brief Forward Query Function reply to throttle-side callback. */
 static void _handle_query_function_reply(openlcb_statemachine_info_t *statemachine_info) {
 
     if (_interface && _interface->on_query_function_reply) {
@@ -792,6 +825,7 @@ static void _handle_query_function_reply(openlcb_statemachine_info_t *statemachi
 
 }
 
+    /** @brief Forward Controller Config reply sub-commands to throttle-side callbacks. */
 static void _handle_controller_config_reply(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
@@ -843,6 +877,7 @@ static void _handle_controller_config_reply(openlcb_statemachine_info_t *statema
 
 }
 
+    /** @brief Forward Listener Config reply sub-commands to throttle-side callbacks. */
 static void _handle_listener_config_reply(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
@@ -898,6 +933,7 @@ static void _handle_listener_config_reply(openlcb_statemachine_info_t *statemach
 
 }
 
+    /** @brief Forward Management reply sub-commands to throttle-side callbacks. */
 static void _handle_management_reply(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
@@ -946,6 +982,13 @@ static void _handle_management_reply(openlcb_statemachine_info_t *statemachine_i
 // Public dispatch functions
 // ============================================================================
 
+    /**
+     * @brief Dispatches an incoming Train Control command by sub-command byte.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @endverbatim
+     */
 void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *statemachine_info) {
 
     if (!statemachine_info) { return; }
@@ -1003,6 +1046,13 @@ void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *stat
 
 }
 
+    /**
+     * @brief Dispatches an incoming Train Control reply by sub-command byte.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @endverbatim
+     */
 void ProtocolTrainHandler_handle_train_reply(openlcb_statemachine_info_t *statemachine_info) {
 
     if (!statemachine_info)
@@ -1055,6 +1105,17 @@ void ProtocolTrainHandler_handle_train_reply(openlcb_statemachine_info_t *statem
 
 }
 
+    /**
+     * @brief Handles a global or addressed emergency event for a train node.
+     *
+     * @details Sets or clears emergency flags based on the well-known Event ID
+     * and fires the appropriate notifier callback.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param event_id           Well-known event_id_t for the emergency condition.
+     * @endverbatim
+     */
 void ProtocolTrainHandler_handle_emergency_event(
         openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
 

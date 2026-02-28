@@ -92,86 +92,50 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Interface structure for login state machine callback functions.  
+<p>Callback interface for the login state machine. All pointers are REQUIRED unless noted. Internal function pointers are exposed for unit testing.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a216efd7bdc468e6395aa0e5ba04f1060" id="r_a216efd7bdc468e6395aa0e5ba04f1060"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a216efd7bdc468e6395aa0e5ba04f1060">send_openlcb_msg</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg)</td></tr>
-<tr class="memdesc:a216efd7bdc468e6395aa0e5ba04f1060"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to send an OpenLCB message to the network.  <br /></td></tr>
+<tr class="memdesc:a216efd7bdc468e6395aa0e5ba04f1060"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue a message for transmission. Return false if buffer full (retried next tick). REQUIRED.  <br /></td></tr>
 <tr class="separator:a216efd7bdc468e6395aa0e5ba04f1060"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a642f075eed427764e99bda659f1fd22f" id="r_a642f075eed427764e99bda659f1fd22f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a642f075eed427764e99bda659f1fd22f">openlcb_node_get_first</a> )(uint8_t key)</td></tr>
-<tr class="memdesc:a642f075eed427764e99bda659f1fd22f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to get the first OpenLCB node for enumeration.  <br /></td></tr>
+<tr class="memitem:a642f075eed427764e99bda659f1fd22f" id="r_a642f075eed427764e99bda659f1fd22f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a642f075eed427764e99bda659f1fd22f">openlcb_node_get_first</a> )(uint8_t key)</td></tr>
+<tr class="memdesc:a642f075eed427764e99bda659f1fd22f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the first node in the pool (NULL if empty). key separates iteration contexts. REQUIRED.  <br /></td></tr>
 <tr class="separator:a642f075eed427764e99bda659f1fd22f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae198d49b6505cbba8429aeb49fa3879e" id="r_ae198d49b6505cbba8429aeb49fa3879e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e">openlcb_node_get_next</a> )(uint8_t key)</td></tr>
-<tr class="memdesc:ae198d49b6505cbba8429aeb49fa3879e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to get the next OpenLCB node for enumeration.  <br /></td></tr>
+<tr class="memitem:ae198d49b6505cbba8429aeb49fa3879e" id="r_ae198d49b6505cbba8429aeb49fa3879e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e">openlcb_node_get_next</a> )(uint8_t key)</td></tr>
+<tr class="memdesc:ae198d49b6505cbba8429aeb49fa3879e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the next node in the pool (NULL at end). REQUIRED.  <br /></td></tr>
 <tr class="separator:ae198d49b6505cbba8429aeb49fa3879e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1423a4675d09949c3d5c0fa2416a0410" id="r_a1423a4675d09949c3d5c0fa2416a0410"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1423a4675d09949c3d5c0fa2416a0410">load_initialization_complete</a> )(<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td></tr>
-<tr class="memdesc:a1423a4675d09949c3d5c0fa2416a0410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load an Initialization Complete message.  <br /></td></tr>
+<tr class="memdesc:a1423a4675d09949c3d5c0fa2416a0410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build Initialization Complete message for the current node. REQUIRED.  <br /></td></tr>
 <tr class="separator:a1423a4675d09949c3d5c0fa2416a0410"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3a77556d4cfa484a8541292be3000c2" id="r_ad3a77556d4cfa484a8541292be3000c2"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3a77556d4cfa484a8541292be3000c2">load_producer_events</a> )(<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td></tr>
-<tr class="memdesc:ad3a77556d4cfa484a8541292be3000c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load Producer Event Identified messages.  <br /></td></tr>
+<tr class="memdesc:ad3a77556d4cfa484a8541292be3000c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the next Producer Identified message; set enumerate flag if more remain. REQUIRED.  <br /></td></tr>
 <tr class="separator:ad3a77556d4cfa484a8541292be3000c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a580f2ad00e2adbd8091236f015cd1f3c" id="r_a580f2ad00e2adbd8091236f015cd1f3c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a580f2ad00e2adbd8091236f015cd1f3c">load_consumer_events</a> )(<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td></tr>
-<tr class="memdesc:a580f2ad00e2adbd8091236f015cd1f3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load Consumer Event Identified messages.  <br /></td></tr>
+<tr class="memdesc:a580f2ad00e2adbd8091236f015cd1f3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the next Consumer Identified message; set enumerate flag if more remain. REQUIRED.  <br /></td></tr>
 <tr class="separator:a580f2ad00e2adbd8091236f015cd1f3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13334393662839a3c993f198ad5bce8e" id="r_a13334393662839a3c993f198ad5bce8e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13334393662839a3c993f198ad5bce8e">process_login_statemachine</a> )(<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a13334393662839a3c993f198ad5bce8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for state machine processing.  <br /></td></tr>
+<tr class="memdesc:a13334393662839a3c993f198ad5bce8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatches to the handler matching node-&gt;run_state.  <br /></td></tr>
 <tr class="separator:a13334393662839a3c993f198ad5bce8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21e0289f2a6d968d59d8f2392e7238d9" id="r_a21e0289f2a6d968d59d8f2392e7238d9"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21e0289f2a6d968d59d8f2392e7238d9">handle_outgoing_openlcb_message</a> )(void)</td></tr>
-<tr class="memdesc:a21e0289f2a6d968d59d8f2392e7238d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for message transmission handling.  <br /></td></tr>
+<tr class="memdesc:a21e0289f2a6d968d59d8f2392e7238d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to send the pending outgoing message; return true if one was pending.  <br /></td></tr>
 <tr class="separator:a21e0289f2a6d968d59d8f2392e7238d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87d0bb10ab97a4dfb5cc19819656c7db" id="r_a87d0bb10ab97a4dfb5cc19819656c7db"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87d0bb10ab97a4dfb5cc19819656c7db">handle_try_reenumerate</a> )(void)</td></tr>
-<tr class="memdesc:a87d0bb10ab97a4dfb5cc19819656c7db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for re-enumeration handling.  <br /></td></tr>
+<tr class="memdesc:a87d0bb10ab97a4dfb5cc19819656c7db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-enter the state processor if the enumerate flag is set.  <br /></td></tr>
 <tr class="separator:a87d0bb10ab97a4dfb5cc19819656c7db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace54b5c03eafd093615c3de2f76587b1" id="r_ace54b5c03eafd093615c3de2f76587b1"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace54b5c03eafd093615c3de2f76587b1">handle_try_enumerate_first_node</a> )(void)</td></tr>
-<tr class="memdesc:ace54b5c03eafd093615c3de2f76587b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for first node enumeration.  <br /></td></tr>
+<tr class="memdesc:ace54b5c03eafd093615c3de2f76587b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start enumeration from the first node if no current node is active.  <br /></td></tr>
 <tr class="separator:ace54b5c03eafd093615c3de2f76587b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41dbaa73eb2229932ffc76416db879e7" id="r_a41dbaa73eb2229932ffc76416db879e7"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41dbaa73eb2229932ffc76416db879e7">handle_try_enumerate_next_node</a> )(void)</td></tr>
-<tr class="memdesc:a41dbaa73eb2229932ffc76416db879e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for next node enumeration.  <br /></td></tr>
+<tr class="memdesc:a41dbaa73eb2229932ffc76416db879e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advance to the next node that needs login processing.  <br /></td></tr>
 <tr class="separator:a41dbaa73eb2229932ffc76416db879e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a867b36c22557d8dfff3fc10dbf0b69e4" id="r_a867b36c22557d8dfff3fc10dbf0b69e4"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a867b36c22557d8dfff3fc10dbf0b69e4">on_login_complete</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
-<tr class="memdesc:a867b36c22557d8dfff3fc10dbf0b69e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback after login sequence completes.  <br /></td></tr>
+<tr class="memitem:a867b36c22557d8dfff3fc10dbf0b69e4" id="r_a867b36c22557d8dfff3fc10dbf0b69e4"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a867b36c22557d8dfff3fc10dbf0b69e4">on_login_complete</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a867b36c22557d8dfff3fc10dbf0b69e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called after login completes, just before RUNSTATE_RUN. Optional (may be NULL).  <br /></td></tr>
 <tr class="separator:a867b36c22557d8dfff3fc10dbf0b69e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Interface structure for login state machine callback functions. </p>
-<p>This structure defines the callback interface for the OpenLCB login state machine, which orchestrates the complete node initialization sequence after successful CAN alias allocation. The login state machine manages the four-phase process of announcing nodes on the network:</p>
-<ol type="1">
-<li>Send Initialization Complete message</li>
-<li>Send Producer Event Identified messages for all produced events</li>
-<li>Send Consumer Event Identified messages for all consumed events</li>
-<li>Call on_login_complete callback (optional) for final setup before entering RUNSTATE_RUN</li>
-</ol>
-<p>The interface provides callbacks organized into several functional categories:</p>
-<p><b>Required Message Transmission Callbacks:</b></p><ul>
-<li>send_openlcb_msg: Transmit OpenLCB messages to the network</li>
-</ul>
-<p><b>Required Node Enumeration Callbacks:</b></p><ul>
-<li>openlcb_node_get_first: Begin node enumeration</li>
-<li>openlcb_node_get_next: Continue node enumeration</li>
-</ul>
-<p><b>Required Message Handler Callbacks:</b></p><ul>
-<li>load_initialization_complete: Construct Initialization Complete message</li>
-<li>load_producer_events: Construct Producer Event Identified messages</li>
-<li>load_consumer_events: Construct Consumer Event Identified messages</li>
-</ul>
-<p><b>Internal Functions (for testing):</b></p><ul>
-<li>process_login_statemachine: State dispatcher</li>
-<li>handle_outgoing_openlcb_message: Message transmission handler</li>
-<li>handle_try_reenumerate: Re-enumeration controller</li>
-<li>handle_try_enumerate_first_node: First node enumerator</li>
-<li>handle_try_enumerate_next_node: Next node enumerator</li>
-</ul>
-<p>The state machine operates in a non-blocking manner, performing one step of processing per call to <a class="el" href="openlcb__login__statemachine_8c.html#a48302fcd398ed4abdc719d2c883b382d" title="Main state machine processing loop - call repeatedly from application loop.">OpenLcbLoginMainStatemachine_run()</a>. It automatically enumerates all nodes that require login processing and dispatches them through the appropriate handlers based on their run_state.</p>
-<dl class="section note"><dt>Note</dt><dd>All required callbacks must be set before calling OpenLcbLoginStateMachine_initialize </dd>
-<dd>
-Internal function pointers are for unit testing - they reference module functions</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a3f2b3309b14784eba7f14e9e87a0fe09" title="Initializes the login state machine with callback interface.">OpenLcbLoginStateMachine_initialize</a> </dd>
-<dd>
-<a class="el" href="openlcb__login__statemachine_8c.html#a48302fcd398ed4abdc719d2c883b382d" title="Main state machine processing loop - call repeatedly from application loop.">OpenLcbLoginMainStatemachine_run</a> </dd>
-<dd>
-<a class="el" href="openlcb__login__statemachine__handler_8h.html" title="Login state machine message handler for OpenLCB initialization and event broadcasting.">openlcb_login_statemachine_handler.h</a> - Message construction handlers </dd></dl>
+<div class="textblock"><p>Callback interface for the login state machine. All pointers are REQUIRED unless noted. Internal function pointers are exposed for unit testing. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a216efd7bdc468e6395aa0e5ba04f1060" name="a216efd7bdc468e6395aa0e5ba04f1060"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a216efd7bdc468e6395aa0e5ba04f1060">&#9670;&#160;</a></span>send_openlcb_msg</h2>
@@ -185,10 +149,7 @@ Internal function pointers are for unit testing - they reference module function
       </table>
 </div><div class="memdoc">
 
-<p>Callback to send an OpenLCB message to the network. </p>
-<p>This required callback transmits an OpenLCB message to the network. The implementation should attempt to queue the message for transmission and return true if successful. If the transmission buffer is full or transmission fails, the callback should return false, causing the state machine to retry on the next iteration.</p>
-<p>The message includes source alias, source Node ID, MTI, and payload data. The callback is responsible for converting the OpenLCB message to the appropriate CAN frames via the CAN TX state machine.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Queue a message for transmission. Return false if buffer full (retried next tick). REQUIRED. </p>
 
 </div>
 </div>
@@ -199,16 +160,12 @@ Internal function pointers are for unit testing - they reference module function
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_get_first) (uint8_t key)</td>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(* openlcb_node_get_first) (uint8_t key)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to get the first OpenLCB node for enumeration. </p>
-<p>This required callback initiates node enumeration by returning the first node in the node list. The enumeration uses a key parameter to maintain separate iteration contexts for different state machines (login vs main state machine).</p>
-<p>The callback should return the first allocated node in the node pool, or NULL if no nodes exist. The login state machine will process nodes that are in initialization states (not yet in RUNSTATE_RUN).</p>
-<p>Typical implementation: Return first entry from node pool array.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Return the first node in the pool (NULL if empty). key separates iteration contexts. REQUIRED. </p>
 
 </div>
 </div>
@@ -219,16 +176,12 @@ Internal function pointers are for unit testing - they reference module function
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_get_next) (uint8_t key)</td>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(* openlcb_node_get_next) (uint8_t key)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback to get the next OpenLCB node for enumeration. </p>
-<p>This required callback continues node enumeration by returning the next node in the node list. The enumeration uses a key parameter to maintain separate iteration contexts for different state machines.</p>
-<p>The callback should return the next allocated node in the node pool, or NULL when the end of the list is reached. The login state machine will process nodes that are in initialization states (not yet in RUNSTATE_RUN).</p>
-<p>Typical implementation: Increment index and return next entry from node pool array.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Return the next node in the pool (NULL at end). REQUIRED. </p>
 
 </div>
 </div>
@@ -244,17 +197,7 @@ Internal function pointers are for unit testing - they reference module function
       </table>
 </div><div class="memdoc">
 
-<p>Callback to load an Initialization Complete message. </p>
-<p>This required callback constructs an Initialization Complete message for the node currently being processed. The message announces the node's presence on the network and signals readiness to participate in OpenLCB operations.</p>
-<p>The callback should:</p><ul>
-<li>Build the message with MTI 0x0100 (Full) or 0x0101 (Simple)</li>
-<li>Include the node's 6-byte Node ID in the payload</li>
-<li>Set outgoing_msg_info.valid to true to trigger transmission</li>
-<li>Mark the node as initialized</li>
-<li>Transition to RUNSTATE_LOAD_PRODUCER_EVENTS</li>
-</ul>
-<p>Typical implementation: OpenLcbLoginMessageHandler_load_initialization_complete</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Build Initialization Complete message for the current node. REQUIRED. </p>
 
 </div>
 </div>
@@ -270,18 +213,7 @@ Internal function pointers are for unit testing - they reference module function
       </table>
 </div><div class="memdoc">
 
-<p>Callback to load Producer Event Identified messages. </p>
-<p>This required callback constructs Producer Identified messages for the node's produced events. The callback may be invoked multiple times via the enumeration mechanism to send one message per produced event.</p>
-<p>The callback should:</p><ul>
-<li>Check if producers exist (count &gt; 0)</li>
-<li>Get MTI for current event state (Valid/Invalid/Unknown)</li>
-<li>Build message with 8-byte Event ID in payload</li>
-<li>Increment enum_index</li>
-<li>Set enumerate flag if more events remain</li>
-<li>Transition to RUNSTATE_LOAD_CONSUMER_EVENTS when complete</li>
-</ul>
-<p>Typical implementation: OpenLcbLoginMessageHandler_load_producer_event</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Build the next Producer Identified message; set enumerate flag if more remain. REQUIRED. </p>
 
 </div>
 </div>
@@ -297,18 +229,7 @@ Internal function pointers are for unit testing - they reference module function
       </table>
 </div><div class="memdoc">
 
-<p>Callback to load Consumer Event Identified messages. </p>
-<p>This required callback constructs Consumer Identified messages for the node's consumed events. The callback may be invoked multiple times via the enumeration mechanism to send one message per consumed event. This is the final step in the login sequence.</p>
-<p>The callback should:</p><ul>
-<li>Check if consumers exist (count &gt; 0)</li>
-<li>Get MTI for current event state (Valid/Invalid/Unknown)</li>
-<li>Build message with 8-byte Event ID in payload</li>
-<li>Increment enum_index</li>
-<li>Set enumerate flag if more events remain</li>
-<li>Transition to RUNSTATE_LOGIN_COMPLETE when complete</li>
-</ul>
-<p>Typical implementation: OpenLcbLoginMessageHandler_load_consumer_event</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Build the next Consumer Identified message; set enumerate flag if more remain. REQUIRED. </p>
 
 </div>
 </div>
@@ -324,16 +245,7 @@ Internal function pointers are for unit testing - they reference module function
       </table>
 </div><div class="memdoc">
 
-<p>Internal function pointer for state machine processing. </p>
-<p>This callback dispatches to the appropriate message handler based on the node's current run_state. It is exposed through the interface to enable unit testing of the state dispatch logic.</p>
-<p>Typical implementation: OpenLcbLoginStateMachine_process</p>
-<p>This callback examines node-&gt;run_state and calls:</p><ul>
-<li>load_initialization_complete if RUNSTATE_LOAD_INITIALIZATION_COMPLETE</li>
-<li>load_producer_events if RUNSTATE_LOAD_PRODUCER_EVENTS</li>
-<li>load_consumer_events if RUNSTATE_LOAD_CONSUMER_EVENTS</li>
-<li>on_login_complete if RUNSTATE_LOGIN_COMPLETE (then transitions to RUNSTATE_RUN)</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
+<p>Dispatches to the handler matching node-&gt;run_state. </p>
 
 </div>
 </div>
@@ -349,16 +261,7 @@ Internal function pointers are for unit testing - they reference module function
       </table>
 </div><div class="memdoc">
 
-<p>Internal function pointer for message transmission handling. </p>
-<p>This callback attempts to transmit any pending outgoing message by checking the valid flag and calling send_openlcb_msg. It is exposed through the interface to enable unit testing of transmission logic.</p>
-<p>Typical implementation: OpenLcbLoginStatemachine_handle_outgoing_openlcb_message</p>
-<p>The callback should:</p><ul>
-<li>Check if outgoing_msg_info.valid is true</li>
-<li>Call send_openlcb_msg if message is pending</li>
-<li>Clear valid flag if transmission succeeds</li>
-<li>Keep valid flag set if transmission fails (retry on next iteration)</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
+<p>Try to send the pending outgoing message; return true if one was pending. </p>
 
 </div>
 </div>
@@ -374,15 +277,7 @@ Internal function pointers are for unit testing - they reference module function
       </table>
 </div><div class="memdoc">
 
-<p>Internal function pointer for re-enumeration handling. </p>
-<p>This callback handles the re-enumeration mechanism for multi-message sequences. When message handlers set the enumerate flag, this callback re-invokes the handler to generate the next message in the sequence. It is exposed through the interface to enable unit testing.</p>
-<p>Typical implementation: OpenLcbLoginStatemachine_handle_try_reenumerate</p>
-<p>The callback should:</p><ul>
-<li>Check if outgoing_msg_info.enumerate is true</li>
-<li>Call process_login_statemachine if enumerate flag is set</li>
-<li>Return true if re-enumeration occurred</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
+<p>Re-enter the state processor if the enumerate flag is set. </p>
 
 </div>
 </div>
@@ -398,16 +293,7 @@ Internal function pointers are for unit testing - they reference module function
       </table>
 </div><div class="memdoc">
 
-<p>Internal function pointer for first node enumeration. </p>
-<p>This callback attempts to get and process the first node in the node pool. If no current node is being processed, it calls openlcb_node_get_first and dispatches the node if it requires login processing. It is exposed through the interface to enable unit testing.</p>
-<p>Typical implementation: OpenLcbLoginStatemachine_handle_try_enumerate_first_node</p>
-<p>The callback should:</p><ul>
-<li>Check if openlcb_node is NULL (no current node)</li>
-<li>Call openlcb_node_get_first if needed</li>
-<li>Skip nodes already in RUNSTATE_RUN</li>
-<li>Call process_login_statemachine for nodes needing initialization</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
+<p>Start enumeration from the first node if no current node is active. </p>
 
 </div>
 </div>
@@ -423,17 +309,7 @@ Internal function pointers are for unit testing - they reference module function
       </table>
 </div><div class="memdoc">
 
-<p>Internal function pointer for next node enumeration. </p>
-<p>This callback attempts to get and process the next node in the node pool. If a current node exists, it calls openlcb_node_get_next and dispatches the node if it requires login processing. It is exposed through the interface to enable unit testing.</p>
-<p>Typical implementation: OpenLcbLoginStatemachine_handle_try_enumerate_next_node</p>
-<p>The callback should:</p><ul>
-<li>Check if openlcb_node is not NULL (current node exists)</li>
-<li>Call openlcb_node_get_next to advance enumeration</li>
-<li>Skip nodes already in RUNSTATE_RUN</li>
-<li>Call process_login_statemachine for nodes needing initialization</li>
-<li>Clear openlcb_node to NULL when end of list reached</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
+<p>Advance to the next node that needs login processing. </p>
 
 </div>
 </div>
@@ -444,13 +320,12 @@ Internal function pointers are for unit testing - they reference module function
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool(* on_login_complete) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td>
+          <td class="memname">bool(* on_login_complete) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback after login sequence completes. </p>
-<p>This optional callback is invoked after the login sequence completes for a node, just before transitioning to RUNSTATE_RUN. It allows the application to perform any final setup or send any final messages before the node enters normal operation mode. </p>
+<p>Called after login completes, just before RUNSTATE_RUN. Optional (may be NULL). </p>
 
 </div>
 </div>

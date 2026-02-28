@@ -25,19 +25,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file can_buffer_fifo.h
- * @brief FIFO buffer implementation for CAN message structures
+ * @brief Circular FIFO queue for @ref can_msg_t pointers.
  *
- * @details Provides a circular queue for managing CAN message pointers. Messages
- * are allocated from the CAN Buffer Store and pushed into the FIFO for ordered
- * processing. The FIFO uses a circular buffer with one extra slot to distinguish
- * between empty and full states.
+ * @details Messages are allocated from CanBufferStore and pushed here for
+ * ordered processing. Uses one extra slot so head == tail always means empty.
  *
  * @author Jim Kueneman
- * @date 17 Jan 2026
+ * @date 28 Feb 2026
  */
 
-// This is a guard condition so that contents of this file are not included
-// more than once.
 #ifndef __DRIVERS_CANBUS_CAN_BUFFER_FIFO__
 #define __DRIVERS_CANBUS_CAN_BUFFER_FIFO__
 
@@ -51,114 +47,50 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    /**
-     * @brief Initializes the CAN Message Buffer FIFO
-     *
-     * @details Clears all FIFO slots and resets head and tail pointers to zero.
-     * Must be called once during application startup before any FIFO operations.
-     *
-     * Use cases:
-     * - Called during system initialization
-     * - Required before any push or pop operations
-     *
-     * @warning MUST be called exactly once during initialization
-     * @warning NOT thread-safe
-     *
-     * @attention Call before CanBufferFifo_push() or CanBufferFifo_pop()
-     *
-     * @see CanBufferFifo_push - Adds message to FIFO
-     * @see CanBufferStore_initialize - Must be called before this function
-     */
+        /**
+         * @brief Clears all FIFO slots and resets head and tail to zero.
+         *
+         * @warning Must be called once at startup before any push or pop.
+         * @warning NOT thread-safe.
+         *
+         * @see CanBufferStore_initialize - must be called first
+         */
     extern void CanBufferFifo_initialize(void);
 
-    /**
-     * @brief Pushes a new CAN message into the FIFO buffer
-     *
-     * @details Adds a CAN message pointer to the FIFO queue. The message must be
-     * allocated from the CAN Buffer Store before pushing. The FIFO stores pointers
-     * only, not the message structures themselves.
-     *
-     * Use cases:
-     * - Hardware CAN receive interrupt/callback
-     * - Queueing incoming CAN frames for processing
-     *
-     * @param new_msg Pointer to allocated CAN message from CanBufferStore_allocate_buffer()
-     *
-     * @return true if message successfully added to FIFO, false if FIFO is full
-     *
-     * @warning FIFO full condition returns false - caller must handle this error
-     * @warning NOT thread-safe - use shared resource locking
-     *
-     * @attention Always check return value - dropped messages when FIFO full
-     * @attention Message must be allocated before pushing
-     *
-     * @see CanBufferStore_allocate_buffer - Allocates message before push
-     * @see CanBufferFifo_pop - Removes message from FIFO
-     */
+        /**
+         * @brief Pushes a @ref can_msg_t pointer onto the tail of the FIFO.
+         *
+         * @param new_msg Pointer to an allocated @ref can_msg_t.
+         *
+         * @return true on success, false if the FIFO is full.
+         *
+         * @warning Returns false when full - dropped messages are not recoverable.
+         * @warning NOT thread-safe - use shared resource locking.
+         *
+         * @see CanBufferFifo_pop
+         */
     extern bool CanBufferFifo_push(can_msg_t *new_msg);
 
-    /**
-     * @brief Pops a CAN message off the FIFO buffer
-     *
-     * @details Removes and returns the oldest message from the FIFO queue.
-     * The caller is responsible for freeing the message when processing is complete.
-     *
-     * Use cases:
-     * - Main processing loop
-     * - CAN receive state machine
-     *
-     * @return Pointer to the oldest CAN message, or NULL if FIFO is empty
-     *
-     * @warning Returns NULL when FIFO empty - caller MUST check for NULL
-     * @warning Caller MUST free message with CanBufferStore_free_buffer() when done
-     * @warning NOT thread-safe - use shared resource locking
-     *
-     * @attention Always check return value for NULL before use
-     * @attention Remember to free message after processing
-     *
-     * @see CanBufferStore_free_buffer - Must call when done with message
-     * @see CanBufferFifo_is_empty - Check before popping
-     */
+        /**
+         * @brief Removes and returns the oldest @ref can_msg_t from the FIFO.
+         *
+         * @details Caller is responsible for freeing the returned buffer with
+         * CanBufferStore_free_buffer() when processing is complete.
+         *
+         * @return Pointer to the oldest @ref can_msg_t, or NULL if the FIFO is empty.
+         *
+         * @warning Returns NULL when empty - caller MUST check before use.
+         * @warning Caller MUST free the buffer after processing.
+         * @warning NOT thread-safe - use shared resource locking.
+         *
+         * @see CanBufferStore_free_buffer
+         */
     extern can_msg_t *CanBufferFifo_pop(void);
 
-    /**
-     * @brief Tests if the FIFO buffer is empty
-     *
-     * @details Checks whether any messages are currently in the FIFO queue.
-     * Useful for polling-based processing loops.
-     *
-     * Use cases:
-     * - Checking before calling pop to avoid NULL
-     * - Polling for incoming messages
-     *
-     * @return Non-zero (true) if FIFO is empty, zero (false) if messages present
-     *
-     * @note Return value is non-zero for true, zero for false
-     *
-     * @see CanBufferFifo_pop - Removes message from FIFO
-     * @see CanBufferFifo_get_allocated_count - Get exact count
-     */
+        /** @brief Returns non-zero if the FIFO is empty, zero if messages are present. */
     extern uint8_t CanBufferFifo_is_empty(void);
 
-    /**
-     * @brief Returns the number of messages currently in the FIFO buffer
-     *
-     * @details Calculates the current FIFO occupancy by comparing head and tail
-     * pointers. Accounts for circular buffer wraparound.
-     *
-     * Use cases:
-     * - Monitoring FIFO usage
-     * - Detecting near-full conditions
-     * - Performance analysis
-     *
-     * @return Number of messages currently in FIFO (0 to USER_DEFINED_CAN_MSG_BUFFER_DEPTH)
-     *
-     * @note Count changes dynamically as messages are pushed and popped
-     *
-     * @see CanBufferFifo_is_empty - Quick empty check
-     * @see CanBufferFifo_push - Adds to count
-     * @see CanBufferFifo_pop - Decrements count
-     */
+        /** @brief Returns the number of @ref can_msg_t pointers currently in the FIFO. */
     extern uint16_t CanBufferFifo_get_allocated_count(void);
 
 #ifdef __cplusplus

@@ -5,7 +5,7 @@ var searchData=
   ['enumerate_2',['enumerate',['../structopenlcb__outgoing__stream__msg__info__t.html#aa9e03a2e1cca34ab9248657f4848379c',1,'openlcb_outgoing_stream_msg_info_t::enumerate'],['../structopenlcb__incoming__msg__info__t.html#aa9e03a2e1cca34ab9248657f4848379c',1,'openlcb_incoming_msg_info_t::enumerate'],['../structopenlcb__outgoing__basic__msg__info__t.html#aa9e03a2e1cca34ab9248657f4848379c',1,'openlcb_outgoing_basic_msg_info_t::enumerate']]],
   ['enumerating_3',['enumerating',['../structcan__statemachine__info__struct.html#ad862e0d64d0b66257c1046a48ef92cd9',1,'can_statemachine_info_struct']]],
   ['enumerator_4',['enumerator',['../structevent__id__consumer__list__t.html#acd253a298de10c97b9b0e55dfb5c0562',1,'event_id_consumer_list_t::enumerator'],['../structevent__id__producer__list__t.html#acd253a298de10c97b9b0e55dfb5c0562',1,'event_id_producer_list_t::enumerator']]],
-  ['estop_5factive_5',['estop_active',['../structtrain__state___t_a_g.html#a8aa217d63f4c5560ec157707259a4abf',1,'train_state_TAG']]],
+  ['estop_5factive_5',['estop_active',['../structtrain__state___t_a_g.html#a933cfe7fd6b47e6f196a06e7f16ba8f7',1,'train_state_TAG']]],
   ['event_6',['event',['../structevent__id__struct__t.html#a4712ca8f6b3fe6d1dfa6b8b9d09993b0',1,'event_id_struct_t']]],
   ['event_5fcount_7',['event_count',['../structevent__id__range__t.html#a16ec4fd4500b0a444196c5100b2d9baa',1,'event_id_range_t']]],
   ['event_5ftransport_5fconsumer_5fidentified_5fclear_8',['event_transport_consumer_identified_clear',['../structinterface__openlcb__main__statemachine__t.html#a4e335317804b06c0cc68975c4e2c49e6',1,'interface_openlcb_main_statemachine_t']]],

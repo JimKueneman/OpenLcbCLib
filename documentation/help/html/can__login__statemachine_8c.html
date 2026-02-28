@@ -96,20 +96,20 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Implementation of the CAN login state machine.  
+<p>Implementation of the CAN login state machine dispatcher.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a2837c06613e89097db3602bf773332a8" id="r_a2837c06613e89097db3602bf773332a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize</a> (const <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> *interface_can_login_state_machine)</td></tr>
-<tr class="memdesc:a2837c06613e89097db3602bf773332a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Login State Machine.  <br /></td></tr>
+<tr class="memdesc:a2837c06613e89097db3602bf773332a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the dependency-injection interface pointer.  <br /></td></tr>
 <tr class="separator:a2837c06613e89097db3602bf773332a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19d57826974209f27f8883a2fa443aae" id="r_a19d57826974209f27f8883a2fa443aae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19d57826974209f27f8883a2fa443aae">CanLoginStateMachine_run</a> (<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:a19d57826974209f27f8883a2fa443aae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the CAN login state machine.  <br /></td></tr>
+<tr class="memdesc:a19d57826974209f27f8883a2fa443aae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatches to the appropriate login state handler based on the node's run_state.  <br /></td></tr>
 <tr class="separator:a19d57826974209f27f8883a2fa443aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implementation of the CAN login state machine. </p>
+<div class="textblock"><p>Implementation of the CAN login state machine dispatcher. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -117,9 +117,8 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Implements the main dispatcher for the 10-state CAN login sequence. Uses a switch statement to route execution to the appropriate state handler based on the node's current run_state value.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a2837c06613e89097db3602bf773332a8" name="a2837c06613e89097db3602bf773332a8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2837c06613e89097db3602bf773332a8">&#9670;&#160;</a></span>CanLoginStateMachine_initialize()</h2>
@@ -136,26 +135,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes the CAN Login State Machine. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Cast away const qualifier from interface pointer</li>
-<li>Store interface pointer in static variable</li>
-</ol>
-<p>Use cases:</p><ul>
-<li>Called once during application initialization</li>
-<li>Must be called before CanLoginStateMachine_run</li>
-</ul>
-<pre class="fragment">* @param interface_can_login_state_machine Pointer to a
-* interface_can_login_state_machine_t struct containing the functions that this module requires
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Interface pointer must remain valid for lifetime of application </dd>
-<dd>
-All state handler function pointers must be non-NULL </dd>
-<dd>
-NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a5c515891dde09e1d2376e0d0ecc392ec" title="Initializes the CAN Login Message Handler module.">CanLoginMessageHandler_initialize</a> - Initialize the message handlers </dd>
-<dd>
-<a class="el" href="#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a> - Main state machine execution function </dd></dl>
+<p>Stores the dependency-injection interface pointer. </p>
+<p>Registers the dependency-injection interface for this module. </p>
 
 </div>
 </div>
@@ -174,41 +155,10 @@ NOT thread-safe</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Runs the CAN login state machine. </p>
-<p>Runs the CAN login state machine for one iteration.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Read node's current run_state</li>
-<li>Switch on run_state value</li>
-<li>For each state case:<ul>
-<li>Call appropriate state handler via interface</li>
-<li>Return immediately after handler completes</li>
-</ul>
-</li>
-<li>Default case returns without action</li>
-</ol>
-<p>Use cases:</p><ul>
-<li>Called from main application loop for nodes in login sequence</li>
-<li>Called repeatedly until node reaches permitted state</li>
-</ul>
-<pre class="fragment">* @param can_statemachine_info Pointer to a structure that contains the node
-* and output message buffer for the login sequence
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
-<dd>
-Node pointer within structure must not be NULL </dd>
-<dd>
-Outgoing message buffer must be valid </dd>
-<dd>
-NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Modifies node run_state as it progresses through sequence </dd>
-<dd>
-May set login_outgoing_can_msg_valid flag</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Call from the main application loop as fast as possible </dd>
-<dd>
-State machine returns immediately after dispatching to handler</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a15578ce7b04e385b036135db0fe04248" title="Handles the first state in the CAN login sequence.">CanLoginMessageHandler_state_init</a> - First state handler </dd>
-<dd>
-<a class="el" href="can__login__message__handler_8c.html#a86ceb4c89ce3880a1a34fcd8805b4064" title="Handles the tenth and final state in the CAN login sequence.">CanLoginMessageHandler_state_load_amd</a> - Final state handler </dd></dl>
-
+<p>Dispatches to the appropriate login state handler based on the node's run_state. </p>
+<p>Dispatches to the handler for the node's current run_state.</p>
+<pre class="fragment">* @param can_statemachine_info State machine context (node + login frame buffer).
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

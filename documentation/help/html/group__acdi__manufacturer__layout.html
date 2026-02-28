@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Memory addresses and lengths for ACDI manufacturer information.  
+<p>Space 0xFC: read-only manufacturer strings (version, name, model, hw, sw).  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -129,14 +129,7 @@ Macros</h2></td></tr>
 <tr class="separator:gad6fd798122b2a24013083108bfecc35b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Memory addresses and lengths for ACDI manufacturer information. </p>
-<p>The ACDI Manufacturer space (0xFC) contains read-only strings set at manufacturing time. Layout:</p><ul>
-<li>Byte 0: Version (always 1)</li>
-<li>Bytes 1-41: Manufacturer name (null-terminated, max 41 bytes including null)</li>
-<li>Bytes 42-82: Model name (null-terminated, max 41 bytes including null)</li>
-<li>Bytes 83-103: Hardware version (null-terminated, max 21 bytes including null)</li>
-<li>Bytes 104-124: Software version (null-terminated, max 21 bytes including null) </li>
-</ul>
+<p>Space 0xFC: read-only manufacturer strings (version, name, model, hw, sw). </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ga01150a7e804e36fddc7b27eb217a9c81" name="ga01150a7e804e36fddc7b27eb217a9c81"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga01150a7e804e36fddc7b27eb217a9c81">&#9670;&#160;</a></span>CONFIG_MEM_ACDI_MANUFACTURER_VERSION_ADDRESS</h2>

@@ -1,15 +1,23 @@
 # OpenLCB C Library - Complete Doxygen Documentation Guide
 
-**Version:** 1.7  
-**Date:** January 18, 2026  
+**Version:** 2.1  
+**Date:** 28 Feb 2026  
 **Author:** Documentation Standards for Jim Kueneman's OpenLCB Implementation  
+**Changes in v2.1:**
+- Added RULE #10: Header extern declarations MUST include @param with @ref links to library types; interface struct callback members are exempt
+**Changes in v2.0:**
+- Clarified RULE #4: indentation is always relative (code column + 4), not tied to fixed column numbers or file type
+**Changes in v1.9:**
+- Added RULE #9: Use @ref to link custom types in @param and @return descriptions
+**Changes in v1.8:**
+- Added CRITICAL RULE #8: ALWAYS update the @date in the file header to the current date when modifying a file
 **Changes in v1.7:** 
 - Added CRITICAL RULE #6: ALWAYS wrap @param tags in @verbatim/@endverbatim in .c files when documentation exists in both .h and .c files
 - Added CRITICAL RULE #7: NEVER change the names of any code identifiers without asking
 **Changes in v1.6:** 
 - Added CRITICAL RULE #5: NEVER mention parameter names (anything assigned with a @param tag) within any @warning, @note, @retval, @exception, @throw, @attention, or @remark sections to avoid duplicate @param detection
 **Changes in v1.5:** 
-- Added CRITICAL RULE #4: ALWAYS indent Doxygen blocks 4 spaces from function code in BOTH .c AND .h files. If the c code that Doxygen block is documented is at column N then the Doxygen documentation shall be at N+4
+- Added CRITICAL RULE #4: ALWAYS indent Doxygen blocks 4 spaces MORE than the code they document. The rule is relative: if code starts at column N, the block starts at column N+4.
 **Changes in v1.4:** 
 - Added CRITICAL RULE #3: NEVER include algorithm details in header files
 **Changes in v1.3:** 
@@ -192,74 +200,78 @@ openlcb_msg_t* BufferStore_allocate(void) {
 - Data structure manipulation
 - Processing flow details
 
-### ⚠️ RULE #4: ALWAYS INDENT DOXYGEN BLOCKS 4 SPACES IN ALL FILES
+### ⚠️ RULE #4: DOXYGEN BLOCK IS ALWAYS AT CODE COLUMN + 4
 
-**CRITICAL: In ALL files (.c AND .h), Doxygen comment blocks MUST be indented 4 spaces from the left margin**
+**CRITICAL: The Doxygen block must always be indented 4 spaces MORE than the code
+it documents.  The rule is purely relative — find the column where the code starts,
+add 4, and put the `/**` there.  File type (.c or .h) does not change this.**
 
-**WRONG - DO NOT DO THIS:**
+If the code (function definition, declaration, variable, struct member) starts at
+column N, the opening `/**` of its Doxygen block starts at column N + 4.
+
+**Examples:**
+
+Code at column 0 → block at column 4:
 ```c
-// NO indentation - WRONG!
-/**
- * @brief Allocates a new buffer from the pool
- *
- * @details Algorithm:
- * -# Iterate through buffer pool array
- * -# Check each buffer's allocated flag
- * -# Return pointer to buffer
- *
- * @return Pointer to allocated buffer, or NULL if pool is exhausted
- */
-openlcb_msg_t* BufferStore_allocate(void) {
-    // Implementation...
-}
-```
-
-**CORRECT - ALL FILES (.c AND .h):**
-```c
-// CORRECT! 4-space indentation for readability
     /**
      * @brief Allocates a new buffer from the pool
      *
-     * @details Algorithm:
-     * -# Iterate through buffer pool array
-     * -# Check each buffer's allocated flag
-     * -# When unallocated buffer found:
-     *    - Set allocated flag to true
-     *    - Set reference count to 1
-     *    - Clear message structure
-     *    - Return pointer to buffer
-     * -# If no free buffers, return NULL
-     *
-     * Use cases:
-     * - Creating new outgoing messages
-     * - Assembling received multi-frame messages
-     *
-     * @return Pointer to allocated buffer, or NULL if pool is exhausted
+     * @return Pointer to @ref openlcb_msg_t buffer, or NULL if pool exhausted
      *
      * @warning Returns NULL when pool exhausted - caller MUST check
-     * @warning NOT thread-safe
-     *
-     * @attention Always check return value for NULL
-     *
-     * @see BufferStore_free - Frees allocated buffer
      */
 openlcb_msg_t* BufferStore_allocate(void) {
     // Implementation...
 }
 ```
 
-**Why indent Doxygen blocks:**
-- Improves visual distinction between documentation and code
-- Makes code structure easier to scan and read
-- Provides consistent, professional appearance
-- Helps identify function boundaries at a glance
-- Matches the indentation level of the function body
+Code at column 4 → block at column 8:
+```c
+extern "C"
+{
+        /**
+         * @brief Allocates a new buffer from the pool
+         *
+         * @return Pointer to @ref openlcb_msg_t buffer, or NULL if pool exhausted
+         *
+         * @warning Returns NULL when pool exhausted - caller MUST check
+         */
+    openlcb_msg_t* BufferStore_allocate(void);
+}
+```
 
-**Indentation Rules:**
-- Header files (.h): 4 spaces indentation for ALL Doxygen blocks
-- Implementation files (.c): 4 spaces indentation for ALL Doxygen blocks
-- This applies to: public functions, static functions, helper functions, typedef structs
-- The function definition itself remains at column 0 (no indentation)
+Code at column 8 → block at column 12:
+```c
+            /**
+             * @brief Does something at a deeper nesting level.
+             */
+        extern void SomeModule_nested(void);
+```
+
+**WRONG — block at same level as code (no +4 offset):**
+```c
+    /**                                  <- WRONG! Block at 4 spaces...
+     * @brief Allocates a new buffer
+     */
+    openlcb_msg_t* BufferStore_allocate(void);  <- ...code also at 4 spaces
+```
+
+**WRONG — block at column 0 when code is also at column 0:**
+```c
+/**                                      <- WRONG! No separation from code
+ * @brief Allocates a new buffer
+ */
+openlcb_msg_t* BufferStore_allocate(void) {    <- code also at column 0
+```
+
+**Quick lookup:**
+
+| Code column | Block column |
+|---|---|
+| 0  | 4  |
+| 4  | 8  |
+| 8  | 12 |
+| 12 | 16 |
 
 ### ⚠️ RULE #5: NEVER USE DOCUMENTATION SECTIONS WITH PARAMETER NAMES
 
@@ -473,9 +485,114 @@ uint16_t add(uint16_t a, uint16_t b);
 
 ---
 
+### ⚠️ RULE #10: HEADER EXTERN DECLARATIONS MUST INCLUDE @param WITH TYPE LINKS
+
+**CRITICAL: All `extern` function declarations and `extern` variable declarations in header files MUST include `@param` tags for every parameter.  Any parameter whose type is defined by the library (a typedef, struct, or enum from the project) MUST use `@ref` to link to that type.**
+
+**This rule does NOT apply to interface struct function-pointer members.**  Callback pointers inside `typedef struct { ... } interface_xxx_t;` structs use Size 1 inline doc (a single `/** @brief ... */` line).  They do not need `@param` tags — the brief is sufficient.
+
+**CORRECT — extern function in .h with @param and @ref links:**
+```c
+        /**
+         * @brief Handle incoming Get Address Space Info command.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolConfigMemOperationsHandler_get_address_space_info(
+            openlcb_statemachine_info_t *statemachine_info);
+```
+
+**CORRECT — extern function with multiple params:**
+```c
+        /**
+         * @brief Build outgoing Lock/Reserve command datagram.
+         *
+         * @param statemachine_info                   Pointer to @ref openlcb_statemachine_info_t context.
+         * @param config_mem_operations_request_info   Pointer to @ref config_mem_operations_request_info_t request.
+         */
+    extern void ProtocolConfigMemOperationsHandler_request_reserve_lock(
+            openlcb_statemachine_info_t *statemachine_info,
+            config_mem_operations_request_info_t *config_mem_operations_request_info);
+```
+
+**CORRECT — interface struct member (NO @param needed):**
+```c
+        /** @brief Optional — Handle Lock/Reserve command. */
+    void (*operations_request_reserve_lock)(
+            openlcb_statemachine_info_t *statemachine_info,
+            config_mem_operations_request_info_t *config_mem_operations_request_info);
+```
+
+**WRONG — extern declaration missing @param:**
+```c
+        /** @brief Handle incoming Get Address Space Info command. */
+    extern void ProtocolConfigMemOperationsHandler_get_address_space_info(
+            openlcb_statemachine_info_t *statemachine_info);   // ← WRONG: no @param!
+```
+
+**WRONG — @param present but missing @ref for library type:**
+```c
+        /**
+         * @brief Handle incoming Get Address Space Info command.
+         *
+         * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+         *                            ← WRONG: needs @ref openlcb_statemachine_info_t
+         */
+```
+
+**When to use @ref:**
+- Use `@ref TypeName` for any type defined in the library (`_t` typedefs, `_enum` enums, struct tags)
+- Do NOT use `@ref` for standard C types (`uint8_t`, `uint16_t`, `bool`, `int`, `void`, etc.)
+- Do NOT use `@ref` for types from standard headers (`size_t`, `FILE`, etc.)
+
+**Summary:**
+
+| Location | @param required? | @ref for library types? |
+|---|---|---|
+| `extern` function in `.h` | YES | YES |
+| `extern` variable in `.h` | N/A (no params) | YES in @brief if type is library-defined |
+| Interface struct callback member | NO (Size 1 brief only) | NO |
+| Function definition in `.c` | YES (wrapped in @verbatim) | YES |
+
+---
+
 ### ⚠️ RULE #7: NEVER CHANGE THE NAMES OF ANY CODE IDENTIFIERS WITHOUT ASKING
 
 **CRITICAL: In ALL files (.c AND .h), Do not change constants, function names, variables, etc. without a discussion**
+
+### ⚠️ RULE #8: ALWAYS UPDATE THE @date IN THE FILE HEADER WHEN MODIFYING A FILE
+
+**CRITICAL: Every time a .c or .h file is modified, the @date field in the file header MUST be updated to the current date.**
+
+The `@date` field records when the file was last changed, not when it was originally created.  Leaving a stale date makes it impossible to tell at a glance which files have been recently worked on.
+
+**WRONG - stale date after modification:**
+```c
+/**
+ * @file alias_mappings.h
+ * @brief Fixed-size buffer mapping CAN aliases to Node IDs.
+ *
+ * @author Jim Kueneman
+ * @date 17 Jan 2026        ← WRONG if file was modified later
+ */
+```
+
+**CORRECT - date updated on modification:**
+```c
+/**
+ * @file alias_mappings.h
+ * @brief Fixed-size buffer mapping CAN aliases to Node IDs.
+ *
+ * @author Jim Kueneman
+ * @date 27 Feb 2026        ← Updated to the date the file was changed
+ */
+```
+
+**Rules:**
+- Update `@date` in BOTH the `.h` and `.c` file whenever either is modified
+- Use the format: DD Mon YYYY (e.g. 27 Feb 2026)
+- The `@date` appears ONLY in the file header — not in individual function blocks
+- When running a documentation update pass over multiple files, each file gets today's date
 
 ## Documentation Standards Summary
 
@@ -519,7 +636,7 @@ uint16_t add(uint16_t a, uint16_t b);
 return_type function_name(param_type param1, param_type param2);
 ```
 
-**Note the 4-space indentation for the entire Doxygen block!**
+**Note: declaration is at 4 spaces inside `extern "C"`, so block is at 8 spaces (4 + 4).**
 
 **For Implementation Files (.c):**
 ```c
@@ -551,7 +668,7 @@ return_type function_name(param_type param1, param_type param2) {
 }
 ```
 
-**Note the 4-space indentation for the entire Doxygen block in .c files!**
+**Note: function definition is at column 0, so block is at 4 spaces (0 + 4).**
 
 ---
 
@@ -783,7 +900,7 @@ openlcb_msg_t* OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type
 ## Summary Checklist
 
 **Header Files (.h) Documentation Must Have:**
-- [ ] **4-space indentation for ALL Doxygen blocks**
+- [ ] **Doxygen block at declaration column + 4 (e.g. declaration at 4 → block at 8)**
 - [ ] @brief with one-line summary
 - [ ] @details with WHAT and WHEN (NO HOW/Algorithm)
 - [ ] Use cases list
@@ -800,7 +917,7 @@ openlcb_msg_t* OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type
 - [ ] NO parameter names at start of @warning, @note, @retval, @exception, @throw, @attention, or @remark
 
 **Implementation Files (.c) Documentation Must Have:**
-- [ ] **4-space indentation for ALL Doxygen blocks**
+- [ ] **Doxygen block at function column + 4 (e.g. function at column 0 → block at 4)**
 - [ ] @brief with one-line summary
 - [ ] @details with "Algorithm:" and step-by-step HOW
 - [ ] Use cases list
@@ -825,5 +942,6 @@ openlcb_msg_t* OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type
 - Never use @param None or @return None
 - Never start @warning, @note, @retval, @exception, @throw, @attention, or @remark with parameter names
 - **ALWAYS wrap @param in @verbatim/@endverbatim in .c files when .h file has @param**
-- Function definitions remain at column 0
-- ALL Doxygen blocks in ALL files get 4-space indentation
+- Doxygen block is always at code column + 4 — the rule is relative, not fixed to any particular column
+- **ALWAYS update @date in the file header to the current date when modifying a file**
+- Use `@ref TypeName` for any project-defined type appearing in `@param` or `@return`

@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Message state flags.  
+<p>Message buffer allocation/assembly state flags.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -103,14 +103,7 @@ Data Fields</h2></td></tr>
 <tr class="separator:a6db0c09032acfed6152272e0851576e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Message state flags. </p>
-<p>Tracks the allocation and processing state of a message buffer.</p>
-<p><b>State Transitions:</b></p><ul>
-<li>Unallocated: allocated=0, inprocess=0</li>
-<li>Allocated, complete: allocated=1, inprocess=0</li>
-<li>Allocated, assembling: allocated=1, inprocess=1</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structopenlcb__msg__t.html#a94263e86a8ad051c8fc1fea1ba29f300">openlcb_msg_t.state</a> </dd></dl>
+<div class="textblock"><p>Message buffer allocation/assembly state flags. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a1bdc374dc38908c70ed24a978ecfd22e" name="a1bdc374dc38908c70ed24a978ecfd22e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1bdc374dc38908c70ed24a978ecfd22e">&#9670;&#160;</a></span>allocated</h2>
@@ -123,7 +116,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Message buffer is allocated and in use </p>
+<p>Buffer is in use </p>
 
 </div>
 </div>
@@ -138,7 +131,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Multi-frame message being assembled, not yet complete </p>
+<p>Multi-frame message being assembled </p>
 
 </div>
 </div>

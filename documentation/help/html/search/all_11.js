@@ -1,7 +1,7 @@
 var searchData=
 [
   ['s_5fok_0',['S_OK',['../group__error__codes.html#ga14bc2dfa42241600d567369cd25ddc70',1,'openlcb_defines.h']]],
-  ['seed_1',['seed',['../structopenlcb__node__t.html#a13dfa5fcb8e1184f1f7756e717fd2807',1,'openlcb_node_t']]],
+  ['seed_1',['seed',['../structopenlcb__node___t_a_g.html#a13dfa5fcb8e1184f1f7756e717fd2807',1,'openlcb_node_TAG']]],
   ['send_5fcan_5fmessage_2',['send_can_message',['../structinterface__can__main__statemachine__t.html#af0bbea8088c0d628d4e066570baf35f3',1,'interface_can_main_statemachine_t']]],
   ['send_5fopenlcb_5fmsg_3',['send_openlcb_msg',['../structinterface__openlcb__application__t.html#a552e03ff9ca4d801cb74d04c100946e0',1,'interface_openlcb_application_t::send_openlcb_msg'],['../structinterface__openlcb__application__train__t.html#a552e03ff9ca4d801cb74d04c100946e0',1,'interface_openlcb_application_train_t::send_openlcb_msg'],['../structinterface__openlcb__login__state__machine__t.html#a216efd7bdc468e6395aa0e5ba04f1060',1,'interface_openlcb_login_state_machine_t::send_openlcb_msg'],['../structinterface__openlcb__main__statemachine__t.html#a216efd7bdc468e6395aa0e5ba04f1060',1,'interface_openlcb_main_statemachine_t::send_openlcb_msg']]],
   ['set_5fspeed_4',['set_speed',['../structtrain__state___t_a_g.html#a93eba1c6df23be744adae901f81f4ac6',1,'train_state_TAG']]],
@@ -31,7 +31,7 @@ var searchData=
   ['spaces_28',['Configuration Memory Address Spaces',['../group__address__spaces.html',1,'']]],
   ['speed_5fsteps_29',['speed_steps',['../structtrain__state___t_a_g.html#a8763ce7d33dc8d6f7a6a52fbd52990e1',1,'train_state_TAG']]],
   ['start_5fbase_30',['start_base',['../structevent__id__range__t.html#a2d1babec642480966314056cafaf018f',1,'event_id_range_t']]],
-  ['state_31',['state',['../structbroadcast__clock__t.html#a76739f44e9b17bbf8d1ad41a17da4cc5',1,'broadcast_clock_t::state'],['../structopenlcb__msg__t.html#a94263e86a8ad051c8fc1fea1ba29f300',1,'openlcb_msg_t::state'],['../structopenlcb__node__t.html#aa60d5d8aea0a8827fabcf551363fcbd1',1,'openlcb_node_t::state'],['../structcan__msg__struct.html#a28efd41a3e318718f0f5153d8d65988f',1,'can_msg_struct::state']]],
+  ['state_31',['state',['../structbroadcast__clock__t.html#a76739f44e9b17bbf8d1ad41a17da4cc5',1,'broadcast_clock_t::state'],['../structopenlcb__msg__t.html#a94263e86a8ad051c8fc1fea1ba29f300',1,'openlcb_msg_t::state'],['../structopenlcb__node___t_a_g.html#aa60d5d8aea0a8827fabcf551363fcbd1',1,'openlcb_node_TAG::state'],['../structcan__msg__struct.html#a28efd41a3e318718f0f5153d8d65988f',1,'can_msg_struct::state']]],
   ['state_20machine_20states_32',['Node Login State Machine States',['../group__node__login__states.html',1,'']]],
   ['state_5fgenerate_5falias_33',['state_generate_alias',['../structinterface__can__login__state__machine__t.html#a95703898648991c51af730d12235365b',1,'interface_can_login_state_machine_t']]],
   ['state_5fgenerate_5fseed_34',['state_generate_seed',['../structinterface__can__login__state__machine__t.html#ab19e13db45965fc6703f29194456f226',1,'interface_can_login_state_machine_t']]],
@@ -56,7 +56,7 @@ var searchData=
   ['stream_5finitiate_5frequest_53',['stream_initiate_request',['../structinterface__openlcb__main__statemachine__t.html#a344d21148e7e4aea207e7f2499de359e',1,'interface_openlcb_main_statemachine_t']]],
   ['stream_5fread_5fwrite_5fsupported_54',['stream_read_write_supported',['../structuser__configuration__options.html#ab2b7e8d91f3d7ee3e9186f21cea2c192',1,'user_configuration_options']]],
   ['stream_5fsend_5fdata_55',['stream_send_data',['../structinterface__openlcb__main__statemachine__t.html#a317047b3f7f1050dd011108a4a3322eb',1,'interface_openlcb_main_statemachine_t']]],
-  ['strnew_56',['strnew',['../mustangpeak__string__helper_8c.html#a867415822c3a17912757d3a18cdb461f',1,'strnew(unsigned long char_count):&#160;mustangpeak_string_helper.c'],['../mustangpeak__string__helper_8h.html#a0ec731843d0c9c5047b19e1083292a2c',1,'strnew(int char_count):&#160;mustangpeak_string_helper.h']]],
+  ['strnew_56',['strnew',['../mustangpeak__string__helper_8c.html#a0ec731843d0c9c5047b19e1083292a2c',1,'strnew(int char_count):&#160;mustangpeak_string_helper.c'],['../mustangpeak__string__helper_8h.html#a0ec731843d0c9c5047b19e1083292a2c',1,'strnew(int char_count):&#160;mustangpeak_string_helper.c']]],
   ['strnew_5finitialized_57',['strnew_initialized',['../mustangpeak__string__helper_8c.html#a7c4c66b4641c2438ed949941fe26d0a5',1,'strnew_initialized(int char_count):&#160;mustangpeak_string_helper.c'],['../mustangpeak__string__helper_8h.html#a7c4c66b4641c2438ed949941fe26d0a5',1,'strnew_initialized(int char_count):&#160;mustangpeak_string_helper.c']]],
   ['support_20indicator_20bits_58',['Protocol Support Indicator Bits',['../group__protocol__support__bits.html',1,'']]],
   ['swap_5fendian16_59',['swap_endian16',['../mustangpeak__endian__helper_8c.html#a11e51f45a22085d09e55d271b938ff46',1,'swap_endian16(uint16_t x):&#160;mustangpeak_endian_helper.c'],['../mustangpeak__endian__helper_8h.html#a11e51f45a22085d09e55d271b938ff46',1,'swap_endian16(uint16_t x):&#160;mustangpeak_endian_helper.c']]],

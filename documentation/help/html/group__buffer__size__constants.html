@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Fixed-size buffer lengths for different message and data types.  
+<p>Number of BASIC message buffers (16 bytes each) in the pool.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -110,22 +110,22 @@ Macros</h2></td></tr>
 <tr class="memdesc:gaf63a7a752ba5898e5a4b59eef8e6d951"><td class="mdescLeft">&#160;</td><td class="mdescRight">NULL/unassigned Event ID value.  <br /></td></tr>
 <tr class="separator:gaf63a7a752ba5898e5a4b59eef8e6d951"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga77cd82810167389f642c4030544031dc" id="r_ga77cd82810167389f642c4030544031dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga77cd82810167389f642c4030544031dc">LEN_SNIP_NAME_BUFFER</a>&#160;&#160;&#160;41</td></tr>
-<tr class="memdesc:ga77cd82810167389f642c4030544031dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP manufacturer name field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga77cd82810167389f642c4030544031dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP manufacturer name field length (including null)  <br /></td></tr>
 <tr class="separator:ga77cd82810167389f642c4030544031dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3bd54aaddbf4feda12720cc8385415eb" id="r_ga3bd54aaddbf4feda12720cc8385415eb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga3bd54aaddbf4feda12720cc8385415eb">LEN_SNIP_MODEL_BUFFER</a>&#160;&#160;&#160;41</td></tr>
-<tr class="memdesc:ga3bd54aaddbf4feda12720cc8385415eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP model name field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga3bd54aaddbf4feda12720cc8385415eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP model name field length (including null)  <br /></td></tr>
 <tr class="separator:ga3bd54aaddbf4feda12720cc8385415eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4e745356596632b27544ab341b95576e" id="r_ga4e745356596632b27544ab341b95576e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga4e745356596632b27544ab341b95576e">LEN_SNIP_HARDWARE_VERSION_BUFFER</a>&#160;&#160;&#160;21</td></tr>
-<tr class="memdesc:ga4e745356596632b27544ab341b95576e"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP hardware version field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga4e745356596632b27544ab341b95576e"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP hardware version field length (including null)  <br /></td></tr>
 <tr class="separator:ga4e745356596632b27544ab341b95576e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga99e88f7c4205c5961dcf0ed0c9234fe9" id="r_ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga99e88f7c4205c5961dcf0ed0c9234fe9">LEN_SNIP_SOFTWARE_VERSION_BUFFER</a>&#160;&#160;&#160;21</td></tr>
-<tr class="memdesc:ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP software version field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP software version field length (including null)  <br /></td></tr>
 <tr class="separator:ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga242f93351655c7e25ea4ad9610a5e725" id="r_ga242f93351655c7e25ea4ad9610a5e725"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a>&#160;&#160;&#160;63</td></tr>
-<tr class="memdesc:ga242f93351655c7e25ea4ad9610a5e725"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user-assigned name field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga242f93351655c7e25ea4ad9610a5e725"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user-assigned name field length (including null)  <br /></td></tr>
 <tr class="separator:ga242f93351655c7e25ea4ad9610a5e725"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga47bd085b568f0923f5c136ef54d891dc" id="r_ga47bd085b568f0923f5c136ef54d891dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga47bd085b568f0923f5c136ef54d891dc">LEN_SNIP_USER_DESCRIPTION_BUFFER</a>&#160;&#160;&#160;64</td></tr>
-<tr class="memdesc:ga47bd085b568f0923f5c136ef54d891dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user description field length (including null terminator)  <br /></td></tr>
+<tr class="memdesc:ga47bd085b568f0923f5c136ef54d891dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user description field length (including null)  <br /></td></tr>
 <tr class="separator:ga47bd085b568f0923f5c136ef54d891dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3ff44f2af02b36fd0bab26613ec89a4e" id="r_ga3ff44f2af02b36fd0bab26613ec89a4e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga3ff44f2af02b36fd0bab26613ec89a4e">LEN_SNIP_USER_DATA</a>&#160;&#160;&#160;(<a class="el" href="#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a> + <a class="el" href="#ga47bd085b568f0923f5c136ef54d891dc">LEN_SNIP_USER_DESCRIPTION_BUFFER</a>)</td></tr>
 <tr class="memdesc:ga3ff44f2af02b36fd0bab26613ec89a4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total SNIP user data size (name + description)  <br /></td></tr>
@@ -137,10 +137,10 @@ Macros</h2></td></tr>
 <tr class="memdesc:gac6d8748df026e898855dd0c267044883"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user version field length (1 byte)  <br /></td></tr>
 <tr class="separator:gac6d8748df026e898855dd0c267044883"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga99690385a9084bfc460c7c1e84a1d064" id="r_ga99690385a9084bfc460c7c1e84a1d064"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga99690385a9084bfc460c7c1e84a1d064">LEN_SNIP_STRUCTURE</a>&#160;&#160;&#160;264</td></tr>
-<tr class="memdesc:ga99690385a9084bfc460c7c1e84a1d064"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum SNIP structure size (Event with Payload: 256 payload + 8 Event ID)  <br /></td></tr>
+<tr class="memdesc:ga99690385a9084bfc460c7c1e84a1d064"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum SNIP structure size (256 payload + 8 Event ID)  <br /></td></tr>
 <tr class="separator:ga99690385a9084bfc460c7c1e84a1d064"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa9aea12772addc152d586bbaf6e10056" id="r_gaa9aea12772addc152d586bbaf6e10056"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaa9aea12772addc152d586bbaf6e10056">LEN_MESSAGE_BYTES_BASIC</a>&#160;&#160;&#160;16</td></tr>
-<tr class="memdesc:gaa9aea12772addc152d586bbaf6e10056"><td class="mdescLeft">&#160;</td><td class="mdescRight">BASIC message payload size (most messages fit in 8 bytes, some use 2 frames)  <br /></td></tr>
+<tr class="memdesc:gaa9aea12772addc152d586bbaf6e10056"><td class="mdescLeft">&#160;</td><td class="mdescRight">BASIC message payload size.  <br /></td></tr>
 <tr class="separator:gaa9aea12772addc152d586bbaf6e10056"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gacd6144764073997710bc0bb846c261fc" id="r_gacd6144764073997710bc0bb846c261fc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gacd6144764073997710bc0bb846c261fc">LEN_MESSAGE_BYTES_DATAGRAM</a>&#160;&#160;&#160;72</td></tr>
 <tr class="memdesc:gacd6144764073997710bc0bb846c261fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">DATAGRAM message maximum payload size.  <br /></td></tr>
@@ -154,26 +154,34 @@ Macros</h2></td></tr>
 <tr class="memitem:ga12eb42fe9afe213aa8690aff0c9e4ee6" id="r_ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga12eb42fe9afe213aa8690aff0c9e4ee6">LEN_EVENT_ID</a>&#160;&#160;&#160;8</td></tr>
 <tr class="memdesc:ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID size in bytes.  <br /></td></tr>
 <tr class="separator:ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga871c59e021446d9f2fd97f1e81bfa76a" id="r_ga871c59e021446d9f2fd97f1e81bfa76a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>&#160;&#160;&#160;(<a class="el" href="group__user__config__constants.html#ga9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#gadf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#ga615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#gaca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>)</td></tr>
+<tr class="memitem:ga871c59e021446d9f2fd97f1e81bfa76a" id="r_ga871c59e021446d9f2fd97f1e81bfa76a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>&#160;&#160;&#160;(USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH)</td></tr>
 <tr class="memdesc:ga871c59e021446d9f2fd97f1e81bfa76a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of message buffers (sum of all buffer types)  <br /></td></tr>
 <tr class="separator:ga871c59e021446d9f2fd97f1e81bfa76a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga618f018d15b1ec2975b19e67383bb7e6" id="r_ga618f018d15b1ec2975b19e67383bb7e6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga618f018d15b1ec2975b19e67383bb7e6">LEN_DATAGRAM_MAX_PAYLOAD</a>&#160;&#160;&#160;64</td></tr>
-<tr class="memdesc:ga618f018d15b1ec2975b19e67383bb7e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum datagram payload after subtracting protocol overhead.  <br /></td></tr>
+<tr class="memdesc:ga618f018d15b1ec2975b19e67383bb7e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum datagram payload after protocol overhead.  <br /></td></tr>
 <tr class="separator:ga618f018d15b1ec2975b19e67383bb7e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7f1dc0e13c22505bd0cdbcbcd1257aaf" id="r_ga7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga7f1dc0e13c22505bd0cdbcbcd1257aaf">LEN_EVENT_PAYLOAD</a>&#160;&#160;&#160;<a class="el" href="#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td></tr>
 <tr class="memdesc:ga7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event payload maximum size (uses SNIP buffer)  <br /></td></tr>
 <tr class="separator:ga7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Fixed-size buffer lengths for different message and data types. </p>
-<p>These constants define the payload sizes for different message types and SNIP (Simple Node Information Protocol) data fields.</p>
-<p><b>Message Payload Sizes:</b></p><ul>
-<li>BASIC (16 bytes): Handles most OpenLCB messages; some protocols like Train may use two consecutive frames</li>
-<li>DATAGRAM (72 bytes): Maximum datagram payload after protocol overhead</li>
-<li>SNIP (256 bytes): Supports SNIP replies and Events with Payload</li>
-<li>STREAM (512 bytes): Stream protocol bulk data transfer</li>
-</ul>
-<p><b>SNIP Field Sizes:</b> Per OpenLCB SNIP specification, these are the maximum lengths including the null terminator, so actual string content is one byte less. </p>
+<p>Number of BASIC message buffers (16 bytes each) in the pool. </p>
+<p>Number of DATAGRAM message buffers (72 bytes each) in the pool</p>
+<p>Number of SNIP message buffers (256 bytes each) in the pool</p>
+<p>Number of STREAM message buffers (512 bytes each) in the pool</p>
+<p>Maximum number of virtual nodes that can be allocated</p>
+<p>Size of CDI buffer in bytes</p>
+<p>Size of FDI buffer in bytes (train nodes)</p>
+<p>Maximum number of events a node can produce</p>
+<p>Maximum number of producer event ranges (must be &gt;= 1)</p>
+<p>Maximum number of events a node can consume</p>
+<p>Maximum number of consumer event ranges (must be &gt;= 1)</p>
+<p>Config Memory address for user-defined node name</p>
+<p>Config Memory address for user description</p>
+<p>Maximum number of train nodes that can be allocated</p>
+<p>Maximum number of listeners (consist members) per train node</p>
+<p>Number of DCC functions supported per train (29 = F0-F28)  </p>
+<p>Fixed payload sizes and SNIP field lengths. </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ga37cd38742a23b040e5cd7f3483bef546" name="ga37cd38742a23b040e5cd7f3483bef546"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga37cd38742a23b040e5cd7f3483bef546">&#9670;&#160;</a></span>LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</h2>
@@ -251,7 +259,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>SNIP manufacturer name field length (including null terminator) </p>
+<p>SNIP manufacturer name field length (including null) </p>
 
 </div>
 </div>
@@ -267,7 +275,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>SNIP model name field length (including null terminator) </p>
+<p>SNIP model name field length (including null) </p>
 
 </div>
 </div>
@@ -283,7 +291,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>SNIP hardware version field length (including null terminator) </p>
+<p>SNIP hardware version field length (including null) </p>
 
 </div>
 </div>
@@ -299,7 +307,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>SNIP software version field length (including null terminator) </p>
+<p>SNIP software version field length (including null) </p>
 
 </div>
 </div>
@@ -315,7 +323,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>SNIP user-assigned name field length (including null terminator) </p>
+<p>SNIP user-assigned name field length (including null) </p>
 
 </div>
 </div>
@@ -331,7 +339,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>SNIP user description field length (including null terminator) </p>
+<p>SNIP user description field length (including null) </p>
 
 </div>
 </div>
@@ -395,7 +403,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Maximum SNIP structure size (Event with Payload: 256 payload + 8 Event ID) </p>
+<p>Maximum SNIP structure size (256 payload + 8 Event ID) </p>
 
 </div>
 </div>
@@ -411,7 +419,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>BASIC message payload size (most messages fit in 8 bytes, some use 2 frames) </p>
+<p>BASIC message payload size. </p>
 
 </div>
 </div>
@@ -486,7 +494,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define LEN_MESSAGE_BUFFER&#160;&#160;&#160;(<a class="el" href="group__user__config__constants.html#ga9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#gadf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#ga615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#gaca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>)</td>
+          <td class="memname">#define LEN_MESSAGE_BUFFER&#160;&#160;&#160;(USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -507,7 +515,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Maximum datagram payload after subtracting protocol overhead. </p>
+<p>Maximum datagram payload after protocol overhead. </p>
 
 </div>
 </div>

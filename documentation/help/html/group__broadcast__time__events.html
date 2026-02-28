@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Well-known Event IDs for clock synchronization and fast time.  
+<p>Clock IDs (upper 6 bytes) + time/date/year/rate/command (lower 2 bytes).  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -156,48 +156,7 @@ Macros</h2></td></tr>
 <tr class="separator:gae72fb454718791ffa79bff7fda19edd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Well-known Event IDs for clock synchronization and fast time. </p>
-<p>The Broadcast Time Protocol uses well-known Event IDs to distribute time information across the OpenLCB network. Time is encoded directly in the Event ID itself (no payload data). This allows fast clock synchronization for model railroad operations where time runs faster than real-time.</p>
-<p><b>Event ID Structure (64 bits):</b></p><ul>
-<li>Bits 63-16 (6 bytes): Clock Identifier - identifies which clock</li>
-<li>Bits 15-0 (2 bytes): Time/Date/Year/Rate/Command Data</li>
-</ul>
-<p><b>Well-Known Clock Identifiers (Upper 6 bytes):</b></p><ul>
-<li>01.01.00.00.01.00 - Default Fast Clock</li>
-<li>01.01.00.00.01.01 - Default Real-time Clock</li>
-<li>01.01.00.00.01.02 - Alternate Clock 1</li>
-<li>01.01.00.00.01.03 - Alternate Clock 2</li>
-<li>Custom unique IDs for additional clocks</li>
-</ul>
-<p><b>Event Types (Lower 2 bytes encoding):</b></p><ul>
-<li>0x0000-0x17FF: Report Time (hour 0-23, minute 0-59)</li>
-<li>0x2100-0x2CFF: Report Date (month 1-12, day 1-31)</li>
-<li>0x3000-0x3FFF: Report Year (year 0-4095 AD)</li>
-<li>0x4000-0x4FFF: Report Rate (12-bit signed fixed point)</li>
-<li>0x8000-0x97FF: Set Time (offset +0x8000 from Report Time)</li>
-<li>0xA100-0xACFF: Set Date (offset +0x8000 from Report Date)</li>
-<li>0xB000-0xBFFF: Set Year (offset +0x8000 from Report Year)</li>
-<li>0xC000-0xCFFF: Set Rate (offset +0x8000 from Report Rate)</li>
-<li>0xF000: Query (request clock synchronization)</li>
-<li>0xF001: Stop (stop clock)</li>
-<li>0xF002: Start (start clock)</li>
-<li>0xF003: Date Rollover (midnight crossing notification)</li>
-</ul>
-<p><b>Rate Format:</b> Rate is a 12-bit signed fixed point value: rrrrrrrrrr.rr (2 fractional bits)</p><ul>
-<li>Range: -512.00 to +511.75 in 0.25 increments</li>
-<li>Examples: 0x0004 = 1.00 (real-time), 0x0010 = 4.00 (4x speed)</li>
-<li>Negative values in 2's complement (e.g., 0xFFFC = -1.00)</li>
-</ul>
-<p><b>Protocol Behaviors:</b></p><ul>
-<li>Report Time sent maximum once per real-world minute</li>
-<li>Report Time sent minimum once per real-world hour</li>
-<li>Date Rollover sent before midnight, Year/Date 3 seconds after</li>
-<li>Query triggers full synchronization sequence from producers</li>
-<li>Set commands echo as Report events, full sync 3 seconds later</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd>OpenLCB Broadcast Time Protocol Standard </dd>
-<dd>
-<a class="el" href="group__mti__event__transport.html#ga97dcdd50b1752b3520283a046a1b24af" title="Producer/Consumer Event Report - event has occurred.">MTI_PC_EVENT_REPORT</a> - Transport MTI for time events </dd></dl>
+<p>Clock IDs (upper 6 bytes) + time/date/year/rate/command (lower 2 bytes). </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="gaa87b955873986a06589e0739b1c421c9" name="gaa87b955873986a06589e0739b1c421c9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaa87b955873986a06589e0739b1c421c9">&#9670;&#160;</a></span>BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK</h2>

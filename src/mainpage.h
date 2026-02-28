@@ -8,7 +8,7 @@
  *   <img src="Diesel.png" alt="Image" align="left" style="margin-right: 15px; width: 128px;">
  *   <span>
  *     <h2>OpenLcbCLib - create OpenLcb (or NMRA LCC) node firmware in C easily.</h2>      
- *   <span/>
+ *   </span>
  * 
  *   <p style="margin-left: 50px; margin-right: 50px;">
  *     <h4>The OpenLcbCLib library handles all low level interactions required to be compliant on the OpenLcb/LCC network for you to allow the developer to focus on writing application specific code.</h4>

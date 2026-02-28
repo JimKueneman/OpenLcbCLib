@@ -1,12 +1,12 @@
 var searchData=
 [
-  ['id_0',['id',['../structopenlcb__node__t.html#a7e290573ef1be67b92a2c745e3b00d1d',1,'openlcb_node_t']]],
+  ['id_0',['id',['../structopenlcb__node___t_a_g.html#a7e290573ef1be67b92a2c745e3b00d1d',1,'openlcb_node_TAG']]],
   ['identifier_1',['identifier',['../structcan__msg__struct.html#a69cce241723713fbb29eec527865ce3b',1,'can_msg_struct']]],
   ['identifier_20field_20masks_2',['CAN Identifier Field Masks',['../group__can__identifier__masks.html',1,'']]],
   ['identifiers_3',['CAN Control Frame Identifiers',['../group__can__control__frames.html',1,'']]],
   ['ids_4',['IDs',['../group__broadcast__time__events.html',1,'Broadcast Time Protocol Event IDs'],['../group__well__known__events.html',1,'Well-Known Event IDs']]],
   ['incoming_5fmsg_5finfo_5',['incoming_msg_info',['../structopenlcb__statemachine__info__t.html#ac344e1481aeef01899a189f5a6469f39',1,'openlcb_statemachine_info_t']]],
-  ['index_6',['index',['../structopenlcb__node__t.html#aae5a12e607d0f782506d9e6ec6179c64',1,'openlcb_node_t']]],
+  ['index_6',['index',['../structopenlcb__node___t_a_g.html#aae5a12e607d0f782506d9e6ec6179c64',1,'openlcb_node_TAG']]],
   ['indicator_20bits_7',['Protocol Support Indicator Bits',['../group__protocol__support__bits.html',1,'']]],
   ['information_20flags_8',['Address Space Information Flags',['../group__address__space__info__flags.html',1,'']]],
   ['information_20protocol_20mti_20codes_9',['Simple Node Information Protocol MTI Codes',['../group__mti__snip.html',1,'']]],
@@ -39,10 +39,10 @@ var searchData=
   ['is_5fallocated_36',['is_allocated',['../structbroadcast__clock__t.html#a46e75766403b17e73e356109aee081c7',1,'broadcast_clock_t']]],
   ['is_5fconsumer_37',['is_consumer',['../structbroadcast__clock__t.html#a5d71a55f741db3daa42ad443b6a0c4fd',1,'broadcast_clock_t']]],
   ['is_5fduplicate_38',['is_duplicate',['../structalias__mapping__struct.html#a70cebb5663459ea9444b61f00f1e3998',1,'alias_mapping_struct']]],
-  ['is_5flong_5faddress_39',['is_long_address',['../structtrain__state___t_a_g.html#aaa806246b019f6c7eddfd79e19ddf4bf',1,'train_state_TAG']]],
+  ['is_5flong_5faddress_39',['is_long_address',['../structtrain__state___t_a_g.html#a9231569054cae5f2bd081aaf0978b75e',1,'train_state_TAG']]],
   ['is_5fpermitted_40',['is_permitted',['../structalias__mapping__struct.html#a1c19fd4ba1ee0bc1f0d7def30ede49a2',1,'alias_mapping_struct']]],
   ['is_5fproducer_41',['is_producer',['../structbroadcast__clock__t.html#ad6dd46df120573b4540c49bfc3e67895',1,'broadcast_clock_t']]],
-  ['is_5frunning_42',['is_running',['../structbroadcast__clock__state__t.html#ab21d8ab042b1bce7f47522d91408f0dc',1,'broadcast_clock_state_t']]],
+  ['is_5frunning_42',['is_running',['../structbroadcast__clock__state__t.html#a95cbd6b99430748422cc048b4f29dc52',1,'broadcast_clock_state_t']]],
   ['is_5ftx_5fbuffer_5fclear_43',['is_tx_buffer_clear',['../structcan__config__t.html#a600ed23c9d8e12fbcbb70a922e21be15',1,'can_config_t']]],
   ['is_5ftx_5fbuffer_5fempty_44',['is_tx_buffer_empty',['../structinterface__can__tx__statemachine__t.html#a2e9d4e2d961ae1797f5a9877b4771b15',1,'interface_can_tx_statemachine_t']]]
 ];

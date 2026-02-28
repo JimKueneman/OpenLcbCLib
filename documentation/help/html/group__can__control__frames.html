@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Special CAN control frames for alias allocation.  
+<p>CID, RID, AMD, AME, AMR frames for alias allocation and mapping.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -144,20 +144,7 @@ Macros</h2></td></tr>
 <tr class="separator:gad74f68658b2541b0fa175e487d26a706"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Special CAN control frames for alias allocation. </p>
-<p>CAN control frames (bit 27 = 0) are used during node login:</p>
-<p>Check ID (CID) frames:</p><ul>
-<li>CID7-CID4 carry fragments of the 48-bit Node ID</li>
-<li>Sent during alias allocation to detect collisions</li>
-<li>Other nodes check if the Node ID conflicts with their alias</li>
-</ul>
-<p>Other control frames:</p><ul>
-<li>RID: Reserve ID - claims alias after CID sequence</li>
-<li>AMD: Alias Map Definition - maps alias to Node ID</li>
-<li>AME: Alias Mapping Enquiry - query alias ownership</li>
-<li>AMR: Alias Map Reset - node is releasing alias</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd>OpenLCB CAN Frame Transfer Standard S-9.7.3 </dd></dl>
+<p>CID, RID, AMD, AME, AMR frames for alias allocation and mapping. </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="gaf0ab5961668d168c17d6cb9e6f590cc7" name="gaf0ab5961668d168c17d6cb9e6f590cc7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaf0ab5961668d168c17d6cb9e6f590cc7">&#9670;&#160;</a></span>CAN_CONTROL_FRAME_CID7</h2>

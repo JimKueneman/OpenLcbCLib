@@ -106,6 +106,7 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__openlcb__application__broadcast__time__t.html">interface_openlcb_application_broadcast_time_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Application-provided callbacks for broadcast time events.  <a href="structinterface__openlcb__application__broadcast__time__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -120,52 +121,76 @@ Macros</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a590240e4a3899b14dc5c7311fda32f5c" id="r_a590240e4a3899b14dc5c7311fda32f5c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a590240e4a3899b14dc5c7311fda32f5c">OpenLcbApplicationBroadcastTime_initialize</a> (const <a class="el" href="structinterface__openlcb__application__broadcast__time__t.html">interface_openlcb_application_broadcast_time_t</a> *interface)</td></tr>
+<tr class="memdesc:a590240e4a3899b14dc5c7311fda32f5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialises the broadcast time module and stores the callback interface.  <br /></td></tr>
 <tr class="separator:a590240e4a3899b14dc5c7311fda32f5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a023ae0e1ce631431f0c339698165f2" id="r_a5a023ae0e1ce631431f0c339698165f2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a023ae0e1ce631431f0c339698165f2">OpenLcbApplicationBroadcastTime_setup_consumer</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memitem:a5a023ae0e1ce631431f0c339698165f2" id="r_a5a023ae0e1ce631431f0c339698165f2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a023ae0e1ce631431f0c339698165f2">OpenLcbApplicationBroadcastTime_setup_consumer</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a5a023ae0e1ce631431f0c339698165f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a clock slot as a consumer and registers event ranges on the node.  <br /></td></tr>
 <tr class="separator:a5a023ae0e1ce631431f0c339698165f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a850e6501323873f11a5ab22cbdadc656" id="r_a850e6501323873f11a5ab22cbdadc656"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a850e6501323873f11a5ab22cbdadc656">OpenLcbApplicationBroadcastTime_setup_producer</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memitem:a850e6501323873f11a5ab22cbdadc656" id="r_a850e6501323873f11a5ab22cbdadc656"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a850e6501323873f11a5ab22cbdadc656">OpenLcbApplicationBroadcastTime_setup_producer</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a850e6501323873f11a5ab22cbdadc656"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a clock slot as a producer and registers event ranges on the node.  <br /></td></tr>
 <tr class="separator:a850e6501323873f11a5ab22cbdadc656"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af12f92953b0863a49000d51d7ac17ff8" id="r_af12f92953b0863a49000d51d7ac17ff8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af12f92953b0863a49000d51d7ac17ff8">OpenLcbApplicationBroadcastTime_get_clock</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:af12f92953b0863a49000d51d7ac17ff8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the state for a registered clock.  <br /></td></tr>
 <tr class="separator:af12f92953b0863a49000d51d7ac17ff8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52cc879d06bc0f636d0dc7e7b79b29e9" id="r_a52cc879d06bc0f636d0dc7e7b79b29e9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a52cc879d06bc0f636d0dc7e7b79b29e9">OpenLcbApplicationBroadcastTime_is_consumer</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a52cc879d06bc0f636d0dc7e7b79b29e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the given clock is registered as a consumer.  <br /></td></tr>
 <tr class="separator:a52cc879d06bc0f636d0dc7e7b79b29e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cb1b59941efc6c2ebdda67e68f6ea5c" id="r_a5cb1b59941efc6c2ebdda67e68f6ea5c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cb1b59941efc6c2ebdda67e68f6ea5c">OpenLcbApplicationBroadcastTime_is_producer</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a5cb1b59941efc6c2ebdda67e68f6ea5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the given clock is registered as a producer.  <br /></td></tr>
 <tr class="separator:a5cb1b59941efc6c2ebdda67e68f6ea5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a079c53068b16f0304c9385deb01dc318" id="r_a079c53068b16f0304c9385deb01dc318"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a079c53068b16f0304c9385deb01dc318">OpenLcbApplicationBroadcastTime_start</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a079c53068b16f0304c9385deb01dc318"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the given clock as running so the 100 ms tick will advance it.  <br /></td></tr>
 <tr class="separator:a079c53068b16f0304c9385deb01dc318"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3a7d61bd351949af58ecefaf5f51cf0" id="r_ac3a7d61bd351949af58ecefaf5f51cf0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3a7d61bd351949af58ecefaf5f51cf0">OpenLcbApplicationBroadcastTime_stop</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:ac3a7d61bd351949af58ecefaf5f51cf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the given clock as stopped so the 100 ms tick will not advance it.  <br /></td></tr>
 <tr class="separator:ac3a7d61bd351949af58ecefaf5f51cf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abfaef7ea917eeba45f5ef9406a6c3887" id="r_abfaef7ea917eeba45f5ef9406a6c3887"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfaef7ea917eeba45f5ef9406a6c3887">OpenLcbApplicationBroadcastTime_100ms_time_tick</a> (void)</td></tr>
+<tr class="memdesc:abfaef7ea917eeba45f5ef9406a6c3887"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advances all running consumer clocks by one 100 ms step.  <br /></td></tr>
 <tr class="separator:abfaef7ea917eeba45f5ef9406a6c3887"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab456de14c8773717289c8f9da85bb39a" id="r_ab456de14c8773717289c8f9da85bb39a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab456de14c8773717289c8f9da85bb39a">OpenLcbApplicationBroadcastTime_send_report_time</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint8_t hour, uint8_t minute)</td></tr>
+<tr class="memitem:ab456de14c8773717289c8f9da85bb39a" id="r_ab456de14c8773717289c8f9da85bb39a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab456de14c8773717289c8f9da85bb39a">OpenLcbApplicationBroadcastTime_send_report_time</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint8_t hour, uint8_t minute)</td></tr>
+<tr class="memdesc:ab456de14c8773717289c8f9da85bb39a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Report Time event (Producer Identified Set) for a producer clock.  <br /></td></tr>
 <tr class="separator:ab456de14c8773717289c8f9da85bb39a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af275eb9e62481e355a9d5e7428913ea7" id="r_af275eb9e62481e355a9d5e7428913ea7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af275eb9e62481e355a9d5e7428913ea7">OpenLcbApplicationBroadcastTime_send_report_date</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint8_t month, uint8_t day)</td></tr>
+<tr class="memitem:af275eb9e62481e355a9d5e7428913ea7" id="r_af275eb9e62481e355a9d5e7428913ea7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af275eb9e62481e355a9d5e7428913ea7">OpenLcbApplicationBroadcastTime_send_report_date</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint8_t month, uint8_t day)</td></tr>
+<tr class="memdesc:af275eb9e62481e355a9d5e7428913ea7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Report Date event (Producer Identified Set) for a producer clock.  <br /></td></tr>
 <tr class="separator:af275eb9e62481e355a9d5e7428913ea7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d9a22c8234de496c6340d2372d3271d" id="r_a3d9a22c8234de496c6340d2372d3271d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d9a22c8234de496c6340d2372d3271d">OpenLcbApplicationBroadcastTime_send_report_year</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint16_t year)</td></tr>
+<tr class="memitem:a3d9a22c8234de496c6340d2372d3271d" id="r_a3d9a22c8234de496c6340d2372d3271d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d9a22c8234de496c6340d2372d3271d">OpenLcbApplicationBroadcastTime_send_report_year</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint16_t year)</td></tr>
+<tr class="memdesc:a3d9a22c8234de496c6340d2372d3271d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Report Year event (Producer Identified Set) for a producer clock.  <br /></td></tr>
 <tr class="separator:a3d9a22c8234de496c6340d2372d3271d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63ba35d9b89600ee5567c660dd0d60ba" id="r_a63ba35d9b89600ee5567c660dd0d60ba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63ba35d9b89600ee5567c660dd0d60ba">OpenLcbApplicationBroadcastTime_send_report_rate</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, int16_t rate)</td></tr>
+<tr class="memitem:a63ba35d9b89600ee5567c660dd0d60ba" id="r_a63ba35d9b89600ee5567c660dd0d60ba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63ba35d9b89600ee5567c660dd0d60ba">OpenLcbApplicationBroadcastTime_send_report_rate</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, int16_t rate)</td></tr>
+<tr class="memdesc:a63ba35d9b89600ee5567c660dd0d60ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Report Rate event (Producer Identified Set) for a producer clock.  <br /></td></tr>
 <tr class="separator:a63ba35d9b89600ee5567c660dd0d60ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9358490524b29e1c6ea36ca5fde8edce" id="r_a9358490524b29e1c6ea36ca5fde8edce"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9358490524b29e1c6ea36ca5fde8edce">OpenLcbApplicationBroadcastTime_send_start</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memitem:a9358490524b29e1c6ea36ca5fde8edce" id="r_a9358490524b29e1c6ea36ca5fde8edce"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9358490524b29e1c6ea36ca5fde8edce">OpenLcbApplicationBroadcastTime_send_start</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a9358490524b29e1c6ea36ca5fde8edce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Start event for a producer clock.  <br /></td></tr>
 <tr class="separator:a9358490524b29e1c6ea36ca5fde8edce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d54e28092106a644ce6a83516db3df8" id="r_a9d54e28092106a644ce6a83516db3df8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d54e28092106a644ce6a83516db3df8">OpenLcbApplicationBroadcastTime_send_stop</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memitem:a9d54e28092106a644ce6a83516db3df8" id="r_a9d54e28092106a644ce6a83516db3df8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d54e28092106a644ce6a83516db3df8">OpenLcbApplicationBroadcastTime_send_stop</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a9d54e28092106a644ce6a83516db3df8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Stop event for a producer clock.  <br /></td></tr>
 <tr class="separator:a9d54e28092106a644ce6a83516db3df8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cc4e43f0f44ffa8dbd73bcefe8f65b2" id="r_a2cc4e43f0f44ffa8dbd73bcefe8f65b2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cc4e43f0f44ffa8dbd73bcefe8f65b2">OpenLcbApplicationBroadcastTime_send_date_rollover</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memitem:a2cc4e43f0f44ffa8dbd73bcefe8f65b2" id="r_a2cc4e43f0f44ffa8dbd73bcefe8f65b2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cc4e43f0f44ffa8dbd73bcefe8f65b2">OpenLcbApplicationBroadcastTime_send_date_rollover</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a2cc4e43f0f44ffa8dbd73bcefe8f65b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Date Rollover event for a producer clock.  <br /></td></tr>
 <tr class="separator:a2cc4e43f0f44ffa8dbd73bcefe8f65b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af801525aa924c5ebbcdf9796cb89bc60" id="r_af801525aa924c5ebbcdf9796cb89bc60"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af801525aa924c5ebbcdf9796cb89bc60">OpenLcbApplicationBroadcastTime_send_query_reply</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint8_t next_hour, uint8_t next_minute)</td></tr>
+<tr class="memitem:af801525aa924c5ebbcdf9796cb89bc60" id="r_af801525aa924c5ebbcdf9796cb89bc60"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af801525aa924c5ebbcdf9796cb89bc60">OpenLcbApplicationBroadcastTime_send_query_reply</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint8_t next_hour, uint8_t next_minute)</td></tr>
+<tr class="memdesc:af801525aa924c5ebbcdf9796cb89bc60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends the full query reply sequence for a producer clock.  <br /></td></tr>
 <tr class="separator:af801525aa924c5ebbcdf9796cb89bc60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b8ef0e6bbabffb2ff6cda0cbd8e8027" id="r_a8b8ef0e6bbabffb2ff6cda0cbd8e8027"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b8ef0e6bbabffb2ff6cda0cbd8e8027">OpenLcbApplicationBroadcastTime_send_query</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memitem:a8b8ef0e6bbabffb2ff6cda0cbd8e8027" id="r_a8b8ef0e6bbabffb2ff6cda0cbd8e8027"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b8ef0e6bbabffb2ff6cda0cbd8e8027">OpenLcbApplicationBroadcastTime_send_query</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a8b8ef0e6bbabffb2ff6cda0cbd8e8027"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Query event for a consumer clock.  <br /></td></tr>
 <tr class="separator:a8b8ef0e6bbabffb2ff6cda0cbd8e8027"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb0022faa60fd98df680731af4ce1d84" id="r_adb0022faa60fd98df680731af4ce1d84"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb0022faa60fd98df680731af4ce1d84">OpenLcbApplicationBroadcastTime_send_set_time</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint8_t hour, uint8_t minute)</td></tr>
+<tr class="memitem:adb0022faa60fd98df680731af4ce1d84" id="r_adb0022faa60fd98df680731af4ce1d84"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb0022faa60fd98df680731af4ce1d84">OpenLcbApplicationBroadcastTime_send_set_time</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint8_t hour, uint8_t minute)</td></tr>
+<tr class="memdesc:adb0022faa60fd98df680731af4ce1d84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Set Time command to a clock generator.  <br /></td></tr>
 <tr class="separator:adb0022faa60fd98df680731af4ce1d84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51ddb8ad32925b15f269064baf6e87a0" id="r_a51ddb8ad32925b15f269064baf6e87a0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51ddb8ad32925b15f269064baf6e87a0">OpenLcbApplicationBroadcastTime_send_set_date</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint8_t month, uint8_t day)</td></tr>
+<tr class="memitem:a51ddb8ad32925b15f269064baf6e87a0" id="r_a51ddb8ad32925b15f269064baf6e87a0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51ddb8ad32925b15f269064baf6e87a0">OpenLcbApplicationBroadcastTime_send_set_date</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint8_t month, uint8_t day)</td></tr>
+<tr class="memdesc:a51ddb8ad32925b15f269064baf6e87a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Set Date command to a clock generator.  <br /></td></tr>
 <tr class="separator:a51ddb8ad32925b15f269064baf6e87a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80066c555a72acca16bbcc5365abe3c2" id="r_a80066c555a72acca16bbcc5365abe3c2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80066c555a72acca16bbcc5365abe3c2">OpenLcbApplicationBroadcastTime_send_set_year</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint16_t year)</td></tr>
+<tr class="memitem:a80066c555a72acca16bbcc5365abe3c2" id="r_a80066c555a72acca16bbcc5365abe3c2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80066c555a72acca16bbcc5365abe3c2">OpenLcbApplicationBroadcastTime_send_set_year</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, uint16_t year)</td></tr>
+<tr class="memdesc:a80066c555a72acca16bbcc5365abe3c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Set Year command to a clock generator.  <br /></td></tr>
 <tr class="separator:a80066c555a72acca16bbcc5365abe3c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bc527bb002a1ae306767f43befb5540" id="r_a9bc527bb002a1ae306767f43befb5540"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9bc527bb002a1ae306767f43befb5540">OpenLcbApplicationBroadcastTime_send_set_rate</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, int16_t rate)</td></tr>
+<tr class="memitem:a9bc527bb002a1ae306767f43befb5540" id="r_a9bc527bb002a1ae306767f43befb5540"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9bc527bb002a1ae306767f43befb5540">OpenLcbApplicationBroadcastTime_send_set_rate</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id, int16_t rate)</td></tr>
+<tr class="memdesc:a9bc527bb002a1ae306767f43befb5540"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Set Rate command to a clock generator.  <br /></td></tr>
 <tr class="separator:a9bc527bb002a1ae306767f43befb5540"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87472243fad1268ac25ee429194712e7" id="r_a87472243fad1268ac25ee429194712e7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87472243fad1268ac25ee429194712e7">OpenLcbApplicationBroadcastTime_send_command_start</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memitem:a87472243fad1268ac25ee429194712e7" id="r_a87472243fad1268ac25ee429194712e7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87472243fad1268ac25ee429194712e7">OpenLcbApplicationBroadcastTime_send_command_start</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a87472243fad1268ac25ee429194712e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Start command to a clock generator.  <br /></td></tr>
 <tr class="separator:a87472243fad1268ac25ee429194712e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06f2abf657d70792d9154e34121b3ba6" id="r_a06f2abf657d70792d9154e34121b3ba6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06f2abf657d70792d9154e34121b3ba6">OpenLcbApplicationBroadcastTime_send_command_stop</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memitem:a06f2abf657d70792d9154e34121b3ba6" id="r_a06f2abf657d70792d9154e34121b3ba6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06f2abf657d70792d9154e34121b3ba6">OpenLcbApplicationBroadcastTime_send_command_stop</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a06f2abf657d70792d9154e34121b3ba6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Stop command to a clock generator.  <br /></td></tr>
 <tr class="separator:a06f2abf657d70792d9154e34121b3ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -177,11 +202,10 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Provides a singleton clock array and application API for the OpenLCB Broadcast Time Protocol. This module owns the clock state and provides setup, accessor, send, and time-tick functions.</p>
-<p>The protocol handler (<a class="el" href="protocol__broadcast__time__handler_8c.html" title="Broadcast Time Protocol message handler implementation.">protocol_broadcast_time_handler.c</a>) updates state in this module when events are received from the network.</p>
-<p>This module is optional — applications that don't need broadcast time should not include it.</p>
+<p>Provides a fixed-size array of clock slots and the API for the OpenLCB Broadcast Time Protocol. Supports up to BROADCAST_TIME_TOTAL_CLOCK_COUNT simultaneous clocks (four well-known plus BROADCAST_TIME_MAX_CUSTOM_CLOCKS user-defined clocks).</p>
+<p>The protocol handler (<a class="el" href="protocol__broadcast__time__handler_8c.html" title="Broadcast Time Protocol message handler implementation.">protocol_broadcast_time_handler.c</a>) updates clock state when time events are received from the network. This module is optional — applications that do not use broadcast time should not include it.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>14 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ab1478d89f7775866bb89c44d33dc6407" name="ab1478d89f7775866bb89c44d33dc6407"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab1478d89f7775866bb89c44d33dc6407">&#9670;&#160;</a></span>BROADCAST_TIME_MAX_CUSTOM_CLOCKS</h2>
@@ -249,6 +273,23 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Initialises the broadcast time module and stores the callback interface. </p>
+<p>Clears all clock slots to zero and stores the interface pointer. Must be called once before any other function in this module.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface</td><td>Pointer to a <a class="el" href="structinterface__openlcb__application__broadcast__time__t.html">interface_openlcb_application_broadcast_time_t</a> with the desired callbacks (NULL callbacks are safe).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Must be called before any setup or send functions.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Zero all clock slots with memset.</li>
+<li>Store the interface pointer in the static _interface variable.</li>
+</ol>
+<pre class="fragment">* @param interface  Pointer to a interface_openlcb_application_broadcast_time_t
+*                   with the desired callbacks (NULL callbacks are safe).
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Must be called before any other function in this module. </dd></dl>
+
 </div>
 </div>
 <a id="a5a023ae0e1ce631431f0c339698165f2" name="a5a023ae0e1ce631431f0c339698165f2"></a>
@@ -263,7 +304,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> * OpenLcbApplicationBroadcastTime_setup_consumer </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -277,6 +318,28 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Allocates a clock slot as a consumer and registers event ranges on the node. </p>
+<p>Finds or allocates a clock slot for clock_id and marks it as a consumer. Registers the full 32 768-event consumer and producer ranges on the node so the node can receive Report events and send the Query event.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> that will consume this clock. May be NULL to allocate the slot without registering ranges. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> that identifies the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the clock's <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a>, or NULL if the clock array is full.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if no free clock slots are available.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _find_or_allocate_clock() for clock_id.</li>
+<li>If NULL, return NULL.</li>
+<li>Set clock-&gt;is_consumer = 1.</li>
+<li>If openlcb_node is non-NULL, register consumer and producer ranges for both halves of the clock's 65536-event range.</li>
+<li>Return pointer to the clock state.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t; may be NULL to skip range registration.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="structbroadcast__clock__state__t.html" title="Complete state for one Broadcast Time clock.">broadcast_clock_state_t</a>, or NULL if no free slots. </dd></dl>
 
 </div>
 </div>
@@ -292,7 +355,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> * OpenLcbApplicationBroadcastTime_setup_producer </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -306,6 +369,28 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Allocates a clock slot as a producer and registers event ranges on the node. </p>
+<p>Finds or allocates a clock slot for clock_id and marks it as a producer. Registers the full 32 768-event producer and consumer ranges on the node so the node can send Report events and receive Set/Query commands.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> that will produce this clock. May be NULL to allocate the slot without registering ranges. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> that identifies the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the clock's <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a>, or NULL if the clock array is full.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if no free clock slots are available.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _find_or_allocate_clock() for clock_id.</li>
+<li>If NULL, return NULL.</li>
+<li>Set clock-&gt;is_producer = 1.</li>
+<li>If openlcb_node is non-NULL, register producer and consumer ranges for both halves of the clock's 65536-event range.</li>
+<li>Return pointer to the clock state.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t; may be NULL to skip range registration.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="structbroadcast__clock__state__t.html" title="Complete state for one Broadcast Time clock.">broadcast_clock_state_t</a>, or NULL if no free slots. </dd></dl>
 
 </div>
 </div>
@@ -332,6 +417,21 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Returns the state for a registered clock. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> that identifies the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a>, or NULL if not found.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _find_clock_by_id(); if found, return &amp;clock-&gt;state.</li>
+<li>Otherwise return NULL.</li>
+</ol>
+<pre class="fragment">* @param clock_id  64-bit event_id_t identifying the clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="structbroadcast__clock__state__t.html" title="Complete state for one Broadcast Time clock.">broadcast_clock_state_t</a>, or NULL if not found. </dd></dl>
+
 </div>
 </div>
 <a id="a52cc879d06bc0f636d0dc7e7b79b29e9" name="a52cc879d06bc0f636d0dc7e7b79b29e9"></a>
@@ -356,6 +456,21 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Returns whether the given clock is registered as a consumer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> that identifies the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if registered as a consumer, false if not found or not a consumer.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock slot; if not found, return false.</li>
+<li>Return clock-&gt;is_consumer.</li>
+</ol>
+<pre class="fragment">* @param clock_id  64-bit event_id_t identifying the clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if registered as a consumer, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -382,6 +497,21 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Returns whether the given clock is registered as a producer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> that identifies the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if registered as a producer, false if not found or not a producer.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock slot; if not found, return false.</li>
+<li>Return clock-&gt;is_producer.</li>
+</ol>
+<pre class="fragment">* @param clock_id  64-bit event_id_t identifying the clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if registered as a producer, false otherwise. </dd></dl>
+
 </div>
 </div>
 <a id="a079c53068b16f0304c9385deb01dc318" name="a079c53068b16f0304c9385deb01dc318"></a>
@@ -407,6 +537,20 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Marks the given clock as running so the 100 ms tick will advance it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> that identifies the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Marks the given clock as running so the 100 ms tick will advance it.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock slot for clock_id; if not found, return immediately.</li>
+<li>Set state.is_running = true.</li>
+</ol>
+<pre class="fragment">* @param clock_id  64-bit event_id_t identifying the clock.
+* </pre> 
 </div>
 </div>
 <a id="ac3a7d61bd351949af58ecefaf5f51cf0" name="ac3a7d61bd351949af58ecefaf5f51cf0"></a>
@@ -432,6 +576,20 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Marks the given clock as stopped so the 100 ms tick will not advance it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> that identifies the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Marks the given clock as stopped so the 100 ms tick will not advance it.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock slot for clock_id; if not found, return immediately.</li>
+<li>Set state.is_running = false.</li>
+</ol>
+<pre class="fragment">* @param clock_id  64-bit event_id_t identifying the clock.
+* </pre> 
 </div>
 </div>
 <a id="abfaef7ea917eeba45f5ef9406a6c3887" name="abfaef7ea917eeba45f5ef9406a6c3887"></a>
@@ -457,6 +615,26 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Advances all running consumer clocks by one 100 ms step. </p>
+<p>Must be called every 100 ms from the application's timer interrupt or main loop. Uses fixed-point accumulation to handle fractional rates without floating-point arithmetic. Fires the on_time_changed callback each time a fast-clock minute boundary is crossed.</p>
+<dl class="section note"><dt>Note</dt><dd>Clocks with rate 0 or that are stopped are skipped. </dd>
+<dd>
+Only consumer clocks are advanced; producer clocks manage their own time.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>For each allocated, running consumer clock with a non-zero rate:<ul>
+<li>Compute abs_rate from the signed rate.</li>
+<li>Add 100 * abs_rate to state.ms_accumulator.</li>
+<li>While accumulator &gt;= BROADCAST_TIME_MS_PER_MINUTE_FIXED_POINT (240,000):<ul>
+<li>Subtract the threshold from the accumulator.</li>
+<li>Call _advance_minute_forward() or _advance_minute_backward() depending on rate sign.</li>
+<li>Fire the on_time_changed callback.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>The threshold 240,000 equals 4 * 60 * 1000, which at rate=4 (1.0x) yields exactly one fast-minute per real minute. See the accumulator math comment above for details. </p>
+
 </div>
 </div>
 <a id="ab456de14c8773717289c8f9da85bb39a" name="ab456de14c8773717289c8f9da85bb39a"></a>
@@ -471,7 +649,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_report_time </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -496,6 +674,29 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Report Time event (Producer Identified Set) for a producer clock. </p>
+<p>Builds a time event ID from the given hour and minute and sends it as a PC Event Report. No-op if the clock is not found or is not a producer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the clock. </td></tr>
+    <tr><td class="paramname">hour</td><td>Hour value to report (0–23). </td></tr>
+    <tr><td class="paramname">minute</td><td>Minute value to report (0–59).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued or clock not a producer, false if the transmit buffer is full.</dd></dl>
+<p>Sends a Report Time event (Producer Identified Set) for a producer clock.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock; if not found or not a producer, return true (nothing to do).</li>
+<li>Build the time event ID and send it as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* @param hour          Hour value to report (0-23).
+* @param minute        Minute value to report (0-59).
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued or clock not applicable, false if the transmit buffer is full. </dd></dl>
+
 </div>
 </div>
 <a id="af275eb9e62481e355a9d5e7428913ea7" name="af275eb9e62481e355a9d5e7428913ea7"></a>
@@ -510,7 +711,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_report_date </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -535,6 +736,29 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Report Date event (Producer Identified Set) for a producer clock. </p>
+<p>Builds a date event ID from the given month and day and sends it as a PC Event Report. No-op if the clock is not found or is not a producer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the clock. </td></tr>
+    <tr><td class="paramname">month</td><td>Month value to report (1–12). </td></tr>
+    <tr><td class="paramname">day</td><td>Day value to report (1–31).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued or clock not a producer, false if the transmit buffer is full.</dd></dl>
+<p>Sends a Report Date event (Producer Identified Set) for a producer clock.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock; if not found or not a producer, return true (nothing to do).</li>
+<li>Build the date event ID and send it as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* @param month         Month value to report (1-12).
+* @param day           Day value to report (1-31).
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued or clock not applicable, false if the transmit buffer is full. </dd></dl>
+
 </div>
 </div>
 <a id="a3d9a22c8234de496c6340d2372d3271d" name="a3d9a22c8234de496c6340d2372d3271d"></a>
@@ -549,7 +773,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_report_year </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -569,6 +793,27 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Report Year event (Producer Identified Set) for a producer clock. </p>
+<p>Builds a year event ID and sends it as a PC Event Report. No-op if the clock is not found or is not a producer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the clock. </td></tr>
+    <tr><td class="paramname">year</td><td>Year value to report.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued or clock not a producer, false if the transmit buffer is full.</dd></dl>
+<p>Sends a Report Year event (Producer Identified Set) for a producer clock.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock; if not found or not a producer, return true (nothing to do).</li>
+<li>Build the year event ID and send it as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* @param year          Year value to report.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued or clock not applicable, false if the transmit buffer is full. </dd></dl>
+
 </div>
 </div>
 <a id="a63ba35d9b89600ee5567c660dd0d60ba" name="a63ba35d9b89600ee5567c660dd0d60ba"></a>
@@ -583,7 +828,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_report_rate </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -603,6 +848,27 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Report Rate event (Producer Identified Set) for a producer clock. </p>
+<p>Builds a rate event ID from the 12-bit fixed-point rate and sends it as a PC Event Report. No-op if the clock is not found or is not a producer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the clock. </td></tr>
+    <tr><td class="paramname">rate</td><td>12-bit signed fixed-point rate (4 = 1.0x real-time).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued or clock not a producer, false if the transmit buffer is full.</dd></dl>
+<p>Sends a Report Rate event (Producer Identified Set) for a producer clock.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock; if not found or not a producer, return true (nothing to do).</li>
+<li>Build the rate event ID and send it as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* @param rate          12-bit signed fixed-point rate (4 = 1.0x real-time).
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued or clock not applicable, false if the transmit buffer is full. </dd></dl>
+
 </div>
 </div>
 <a id="a9358490524b29e1c6ea36ca5fde8edce" name="a9358490524b29e1c6ea36ca5fde8edce"></a>
@@ -617,7 +883,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_start </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -631,6 +897,25 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sends a Start event for a producer clock. </p>
+<p>Tells all consumers on the network that this clock is now running. No-op if the clock is not found or is not a producer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued or clock not a producer, false if the transmit buffer is full.</dd></dl>
+<p>Sends a Start event for a producer clock.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock; if not found or not a producer, return true (nothing to do).</li>
+<li>Build the Start command event ID and send it as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued or clock not applicable, false if the transmit buffer is full. </dd></dl>
 
 </div>
 </div>
@@ -646,7 +931,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_stop </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -660,6 +945,25 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sends a Stop event for a producer clock. </p>
+<p>Tells all consumers on the network that this clock has stopped. No-op if the clock is not found or is not a producer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued or clock not a producer, false if the transmit buffer is full.</dd></dl>
+<p>Sends a Stop event for a producer clock.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock; if not found or not a producer, return true (nothing to do).</li>
+<li>Build the Stop command event ID and send it as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued or clock not applicable, false if the transmit buffer is full. </dd></dl>
 
 </div>
 </div>
@@ -675,7 +979,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_date_rollover </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -689,6 +993,25 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sends a Date Rollover event for a producer clock. </p>
+<p>Notifies consumers that the clock has crossed midnight and the date has changed. No-op if the clock is not found or is not a producer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued or clock not a producer, false if the transmit buffer is full.</dd></dl>
+<p>Sends a Date Rollover event for a producer clock.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock; if not found or not a producer, return true (nothing to do).</li>
+<li>Build the Date Rollover command event ID and send it as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued or clock not applicable, false if the transmit buffer is full. </dd></dl>
 
 </div>
 </div>
@@ -704,7 +1027,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_query_reply </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -729,6 +1052,34 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends the full query reply sequence for a producer clock. </p>
+<p>The reply sequence (per the OpenLCB Broadcast Time Standard) consists of six messages: Start/Stop, Rate, Year, Date, current Time (all as Producer Identified Set), and the next-minute Time as a PC Event Report. Because the transmit buffer may fill during the sequence, this function uses a static state variable and must be called repeatedly until it returns true.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the clock. </td></tr>
+    <tr><td class="paramname">next_hour</td><td>Hour of the next scheduled time event (0–23). </td></tr>
+    <tr><td class="paramname">next_minute</td><td>Minute of the next scheduled time event (0–59).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true when all six messages have been queued, false if more calls are needed.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Uses a static state variable — only one query reply may be in progress at a time across the entire application.</dd></dl>
+<p>Algorithm: Uses a static state variable (_send_query_reply_state) to send messages one per call, allowing the caller to retry when the transmit buffer is full. The sequence is:</p><ol type="1">
+<li>State 0: Start or Stop (Producer Identified Set).</li>
+<li>State 1: Rate (Producer Identified Set).</li>
+<li>State 2: Year (Producer Identified Set).</li>
+<li>State 3: Date (Producer Identified Set).</li>
+<li>State 4: Current Time (Producer Identified Set).</li>
+<li>State 5: Next minute Time (PC Event Report). Each state advances only when the send succeeds. Returns true when state 5 completes.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* @param next_hour     Hour of the next scheduled time event (0-23).
+* @param next_minute   Minute of the next scheduled time event (0-59).
+* </pre><dl class="section return"><dt>Returns</dt><dd>true when all six messages have been queued, false if more calls are needed.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Uses a static state variable — only one query reply may be in progress at a time across the entire application. </dd></dl>
+
 </div>
 </div>
 <a id="a8b8ef0e6bbabffb2ff6cda0cbd8e8027" name="a8b8ef0e6bbabffb2ff6cda0cbd8e8027"></a>
@@ -743,7 +1094,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_query </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -757,6 +1108,25 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sends a Query event for a consumer clock. </p>
+<p>Asks the clock generator to respond with its full current state (start/stop, rate, year, date, time). The generator replies with a six-message sequence. No-op if the clock is not found or is not a consumer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued or clock not a consumer, false if the transmit buffer is full.</dd></dl>
+<p>Sends a Query event for a consumer clock.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Find the clock; if not found or not a consumer, return true (nothing to do).</li>
+<li>Build the Query command event ID and send it as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued or clock not applicable, false if the transmit buffer is full. </dd></dl>
 
 </div>
 </div>
@@ -772,7 +1142,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_set_time </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -797,6 +1167,28 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Set Time command to a clock generator. </p>
+<p>Asks the clock generator to change its current time to the given hour and minute. The generator will broadcast the updated time to all consumers.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the target clock. </td></tr>
+    <tr><td class="paramname">hour</td><td>Desired hour (0–23). </td></tr>
+    <tr><td class="paramname">minute</td><td>Desired minute (0–59).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Build the time event ID with the set flag.</li>
+<li>Send as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the target clock.
+* @param hour          Desired hour (0-23).
+* @param minute        Desired minute (0-59).
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full. </dd></dl>
+
 </div>
 </div>
 <a id="a51ddb8ad32925b15f269064baf6e87a0" name="a51ddb8ad32925b15f269064baf6e87a0"></a>
@@ -811,7 +1203,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_set_date </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -836,6 +1228,28 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Set Date command to a clock generator. </p>
+<p>Asks the clock generator to change its current date to the given month and day. The generator will broadcast the updated date to all consumers.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the target clock. </td></tr>
+    <tr><td class="paramname">month</td><td>Desired month (1–12). </td></tr>
+    <tr><td class="paramname">day</td><td>Desired day (1–31).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Build the date event ID with the set flag.</li>
+<li>Send as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the target clock.
+* @param month         Desired month (1-12).
+* @param day           Desired day (1-31).
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full. </dd></dl>
+
 </div>
 </div>
 <a id="a80066c555a72acca16bbcc5365abe3c2" name="a80066c555a72acca16bbcc5365abe3c2"></a>
@@ -850,7 +1264,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_set_year </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -870,6 +1284,26 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Set Year command to a clock generator. </p>
+<p>Asks the clock generator to change its current year. The generator will broadcast the updated year to all consumers.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the target clock. </td></tr>
+    <tr><td class="paramname">year</td><td>Desired year.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Build the year event ID with the set flag.</li>
+<li>Send as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the target clock.
+* @param year          Desired year.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full. </dd></dl>
+
 </div>
 </div>
 <a id="a9bc527bb002a1ae306767f43befb5540" name="a9bc527bb002a1ae306767f43befb5540"></a>
@@ -884,7 +1318,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_set_rate </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -904,6 +1338,26 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Set Rate command to a clock generator. </p>
+<p>Asks the clock generator to change its fast-clock rate. The rate is a 12-bit signed fixed-point value where 4 means 1.0x real-time and negative values run the clock backward.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the target clock. </td></tr>
+    <tr><td class="paramname">rate</td><td>12-bit signed fixed-point rate (4 = 1.0x real-time).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Build the rate event ID with the set flag.</li>
+<li>Send as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the target clock.
+* @param rate          12-bit signed fixed-point rate (4 = 1.0x real-time).
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full. </dd></dl>
+
 </div>
 </div>
 <a id="a87472243fad1268ac25ee429194712e7" name="a87472243fad1268ac25ee429194712e7"></a>
@@ -918,7 +1372,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_command_start </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -932,6 +1386,24 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sends a Start command to a clock generator. </p>
+<p>Asks the clock generator to start running. The generator will broadcast a Start event to all consumers when it complies.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the target clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Build the Start command event ID.</li>
+<li>Send as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the target clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full. </dd></dl>
 
 </div>
 </div>
@@ -947,7 +1419,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationBroadcastTime_send_command_stop </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -961,6 +1433,24 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sends a Stop command to a clock generator. </p>
+<p>Asks the clock generator to stop running. The generator will broadcast a Stop event to all consumers when it complies.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">clock_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> identifying the target clock.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Build the Stop command event ID.</li>
+<li>Send as a PC Event Report.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
+* @param clock_id      64-bit event_id_t identifying the target clock.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full. </dd></dl>
 
 </div>
 </div>

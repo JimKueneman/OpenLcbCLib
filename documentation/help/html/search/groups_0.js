@@ -6,6 +6,6 @@ var searchData=
   ['address_20spaces_3',['Configuration Memory Address Spaces',['../group__address__spaces.html',1,'']]],
   ['and_20masks_4',['CAN Frame Format and Masks',['../group__can__frame__format.html',1,'']]],
   ['and_20values_5',['Data Field Bit Masks and Values',['../group__data__field__masks.html',1,'']]],
-  ['array_20definitions_6',['Payload Buffer Pool Array Definitions',['../group__payload__pool__types.html',1,'']]],
+  ['arrays_6',['Payload Buffer Pool Arrays',['../group__payload__pool__types.html',1,'']]],
   ['auto_20routed_20well_20known_20events_7',['Auto Routed Well Known Events',['../group__well__known__events__auto.html',1,'Auto-Routed Well-Known Events'],['../group__well__known__events__local.html',1,'Non-Auto-Routed Well-Known Events']]]
 ];

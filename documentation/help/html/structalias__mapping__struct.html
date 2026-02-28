@@ -91,57 +91,23 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">alias_mapping_struct Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>Structure to hold a shadow buffer of Node ID/Alias pairs for Nodes that have been allocated and logged into the network.  
- <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a26b9b3fc98a16e1a7ec6501b9c5395cc" id="r_a26b9b3fc98a16e1a7ec6501b9c5395cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26b9b3fc98a16e1a7ec6501b9c5395cc">node_id</a></td></tr>
-<tr class="memdesc:a26b9b3fc98a16e1a7ec6501b9c5395cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node ID of the mapping pair.  <br /></td></tr>
+<tr class="memdesc:a26b9b3fc98a16e1a7ec6501b9c5395cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Permanent 48-bit Node ID.  <br /></td></tr>
 <tr class="separator:a26b9b3fc98a16e1a7ec6501b9c5395cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2059ac00d0625a5b402587002c764c5b" id="r_a2059ac00d0625a5b402587002c764c5b"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2059ac00d0625a5b402587002c764c5b">alias</a></td></tr>
-<tr class="memdesc:a2059ac00d0625a5b402587002c764c5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The CAN frame receiving interrupt or thread has detected a duplicate Alias being used and sets this flag so the main loop can handle it.  <br /></td></tr>
+<tr class="memdesc:a2059ac00d0625a5b402587002c764c5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temporary 12-bit CAN alias (0x001-0xFFF).  <br /></td></tr>
 <tr class="separator:a2059ac00d0625a5b402587002c764c5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70cebb5663459ea9444b61f00f1e3998" id="r_a70cebb5663459ea9444b61f00f1e3998"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70cebb5663459ea9444b61f00f1e3998">is_duplicate</a>: 1</td></tr>
-<tr class="memdesc:a70cebb5663459ea9444b61f00f1e3998"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main loop Login has successfully logged the Node ID/Alias ID pair into the network.  <br /></td></tr>
+<tr class="memdesc:a70cebb5663459ea9444b61f00f1e3998"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set by ISR when another node claims this alias.  <br /></td></tr>
 <tr class="separator:a70cebb5663459ea9444b61f00f1e3998"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c19fd4ba1ee0bc1f0d7def30ede49a2" id="r_a1c19fd4ba1ee0bc1f0d7def30ede49a2"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c19fd4ba1ee0bc1f0d7def30ede49a2">is_permitted</a>: 1</td></tr>
+<tr class="memdesc:a1c19fd4ba1ee0bc1f0d7def30ede49a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set after successful login (AMD transmitted).  <br /></td></tr>
 <tr class="separator:a1c19fd4ba1ee0bc1f0d7def30ede49a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Structure to hold a shadow buffer of Node ID/Alias pairs for Nodes that have been allocated and logged into the network. </p>
-<p>This structure maintains the mapping between a node's permanent 48-bit Node ID and its temporary 12-bit CAN alias. The mapping is critical for CAN bus communication where the compact alias is used in frame headers instead of the full Node ID.</p>
-<p>The structure tracks two important states:</p><ul>
-<li>Duplicate detection: Set when another node claims the same alias</li>
-<li>Permission status: Set when node successfully completes login sequence</li>
-</ul>
-<p>This design allows interrupt/thread contexts to safely set flags while the main loop handles the actual response processing using lock/unlock mechanisms.</p>
-<p>Use cases:</p><ul>
-<li>Tracking alias allocation during node login</li>
-<li>Detecting alias conflicts on the CAN bus</li>
-<li>Translating between Node IDs and aliases during message processing</li>
-<li>Managing node permission state transitions</li>
-</ul>
-<dl class="section warning"><dt>Warning</dt><dd>Duplicate detection requires immediate handling to prevent bus conflicts </dd>
-<dd>
-NOT thread-safe - use lock/unlock when accessing from multiple contexts</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Flags are set in interrupt context, processed in main loop </dd>
-<dd>
-Valid aliases range from 0x001 to 0xFFF (0x000 is invalid)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Node ID is the permanent 48-bit identifier </dd>
-<dd>
-Alias is temporary and may change between power cycles </dd>
-<dd>
-is_duplicate flag triggers alias conflict resolution </dd>
-<dd>
-is_permitted indicates successful network login</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8h.html" title="Alias/NodeID mapping buffer for tracking internal node aliases.">alias_mappings.h</a> - Manages array of these structures </dd>
-<dd>
-<a class="el" href="can__login__statemachine_8h.html" title="State machine for logging nodes into the OpenLCB/LCC network.">can_login_statemachine.h</a> - Sets <a class="el" href="#a1c19fd4ba1ee0bc1f0d7def30ede49a2">is_permitted</a> flag </dd>
-<dd>
-<a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register</a> - Registers new mappings </dd></dl>
-</div><h2 class="groupheader">Field Documentation</h2>
+<h2 class="groupheader">Field Documentation</h2>
 <a id="a26b9b3fc98a16e1a7ec6501b9c5395cc" name="a26b9b3fc98a16e1a7ec6501b9c5395cc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a26b9b3fc98a16e1a7ec6501b9c5395cc">&#9670;&#160;</a></span>node_id</h2>
 
@@ -154,9 +120,7 @@ is_permitted indicates successful network login</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Node ID of the mapping pair. </p>
-<p>&lt;</p>
-<p>Alias ID of the mapping pair </p>
+<p>Permanent 48-bit Node ID. </p>
 
 </div>
 </div>
@@ -172,7 +136,7 @@ is_permitted indicates successful network login</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>The CAN frame receiving interrupt or thread has detected a duplicate Alias being used and sets this flag so the main loop can handle it. </p>
+<p>Temporary 12-bit CAN alias (0x001-0xFFF). </p>
 
 </div>
 </div>
@@ -188,7 +152,7 @@ is_permitted indicates successful network login</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Main loop Login has successfully logged the Node ID/Alias ID pair into the network. </p>
+<p>Set by ISR when another node claims this alias. </p>
 
 </div>
 </div>
@@ -203,6 +167,8 @@ is_permitted indicates successful network login</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Set after successful login (AMD transmitted). </p>
 
 </div>
 </div>

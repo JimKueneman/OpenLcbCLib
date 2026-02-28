@@ -105,44 +105,61 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__openlcb__application__train__t.html">interface_openlcb_application_train_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Application interface for train module.  <a href="structinterface__openlcb__application__train__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Application-provided callbacks for the train module.  <a href="structinterface__openlcb__application__train__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a39e73ffa95b7478a16a9f116f951c12a" id="r_a39e73ffa95b7478a16a9f116f951c12a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39e73ffa95b7478a16a9f116f951c12a">OpenLcbApplicationTrain_initialize</a> (const <a class="el" href="structinterface__openlcb__application__train__t.html">interface_openlcb_application_train_t</a> *interface)</td></tr>
+<tr class="memdesc:a39e73ffa95b7478a16a9f116f951c12a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialises the train module and stores the callback interface.  <br /></td></tr>
 <tr class="separator:a39e73ffa95b7478a16a9f116f951c12a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae17ef6101bcfddf2d9debadb6c11d8d0" id="r_ae17ef6101bcfddf2d9debadb6c11d8d0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae17ef6101bcfddf2d9debadb6c11d8d0">OpenLcbApplicationTrain_setup</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:ae17ef6101bcfddf2d9debadb6c11d8d0" id="r_ae17ef6101bcfddf2d9debadb6c11d8d0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae17ef6101bcfddf2d9debadb6c11d8d0">OpenLcbApplicationTrain_setup</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:ae17ef6101bcfddf2d9debadb6c11d8d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a train state slot and assigns it to the node.  <br /></td></tr>
 <tr class="separator:ae17ef6101bcfddf2d9debadb6c11d8d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4463eb39695b2c8c669755c173fc13e0" id="r_a4463eb39695b2c8c669755c173fc13e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4463eb39695b2c8c669755c173fc13e0">OpenLcbApplicationTrain_get_state</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:a4463eb39695b2c8c669755c173fc13e0" id="r_a4463eb39695b2c8c669755c173fc13e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4463eb39695b2c8c669755c173fc13e0">OpenLcbApplicationTrain_get_state</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a4463eb39695b2c8c669755c173fc13e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the train state for a node.  <br /></td></tr>
 <tr class="separator:a4463eb39695b2c8c669755c173fc13e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7cb4aede47088d4c929b0721a5747521" id="r_a7cb4aede47088d4c929b0721a5747521"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cb4aede47088d4c929b0721a5747521">OpenLcbApplicationTrain_100ms_timer_tick</a> (void)</td></tr>
+<tr class="memdesc:a7cb4aede47088d4c929b0721a5747521"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrements the heartbeat countdown for all active train nodes.  <br /></td></tr>
 <tr class="separator:a7cb4aede47088d4c929b0721a5747521"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86e23b68c107f3a2ff570351f9c1b675" id="r_a86e23b68c107f3a2ff570351f9c1b675"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86e23b68c107f3a2ff570351f9c1b675">OpenLcbApplicationTrain_send_set_speed</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id, uint16_t speed)</td></tr>
+<tr class="memitem:a86e23b68c107f3a2ff570351f9c1b675" id="r_a86e23b68c107f3a2ff570351f9c1b675"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86e23b68c107f3a2ff570351f9c1b675">OpenLcbApplicationTrain_send_set_speed</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id, uint16_t speed)</td></tr>
+<tr class="memdesc:a86e23b68c107f3a2ff570351f9c1b675"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Set Speed/Direction command to a train node.  <br /></td></tr>
 <tr class="separator:a86e23b68c107f3a2ff570351f9c1b675"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fe6944f2e7dea98696c4f2c272872b0" id="r_a6fe6944f2e7dea98696c4f2c272872b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fe6944f2e7dea98696c4f2c272872b0">OpenLcbApplicationTrain_send_set_function</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id, uint32_t fn_address, uint16_t fn_value)</td></tr>
+<tr class="memitem:a6fe6944f2e7dea98696c4f2c272872b0" id="r_a6fe6944f2e7dea98696c4f2c272872b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fe6944f2e7dea98696c4f2c272872b0">OpenLcbApplicationTrain_send_set_function</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id, uint32_t fn_address, uint16_t fn_value)</td></tr>
+<tr class="memdesc:a6fe6944f2e7dea98696c4f2c272872b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Set Function command to a train node.  <br /></td></tr>
 <tr class="separator:a6fe6944f2e7dea98696c4f2c272872b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36f78f8ec61b4933646ed49359bdb379" id="r_a36f78f8ec61b4933646ed49359bdb379"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36f78f8ec61b4933646ed49359bdb379">OpenLcbApplicationTrain_send_emergency_stop</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id)</td></tr>
+<tr class="memitem:a36f78f8ec61b4933646ed49359bdb379" id="r_a36f78f8ec61b4933646ed49359bdb379"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36f78f8ec61b4933646ed49359bdb379">OpenLcbApplicationTrain_send_emergency_stop</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id)</td></tr>
+<tr class="memdesc:a36f78f8ec61b4933646ed49359bdb379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an Emergency Stop command to a train node.  <br /></td></tr>
 <tr class="separator:a36f78f8ec61b4933646ed49359bdb379"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcf7976c32fc01f594bdedecceb10e36" id="r_abcf7976c32fc01f594bdedecceb10e36"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abcf7976c32fc01f594bdedecceb10e36">OpenLcbApplicationTrain_send_query_speeds</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id)</td></tr>
+<tr class="memitem:abcf7976c32fc01f594bdedecceb10e36" id="r_abcf7976c32fc01f594bdedecceb10e36"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abcf7976c32fc01f594bdedecceb10e36">OpenLcbApplicationTrain_send_query_speeds</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id)</td></tr>
+<tr class="memdesc:abcf7976c32fc01f594bdedecceb10e36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Query Speeds command to a train node.  <br /></td></tr>
 <tr class="separator:abcf7976c32fc01f594bdedecceb10e36"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10a8b7c4ef64664612b15f49107bc412" id="r_a10a8b7c4ef64664612b15f49107bc412"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10a8b7c4ef64664612b15f49107bc412">OpenLcbApplicationTrain_send_query_function</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id, uint32_t fn_address)</td></tr>
+<tr class="memitem:a10a8b7c4ef64664612b15f49107bc412" id="r_a10a8b7c4ef64664612b15f49107bc412"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10a8b7c4ef64664612b15f49107bc412">OpenLcbApplicationTrain_send_query_function</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id, uint32_t fn_address)</td></tr>
+<tr class="memdesc:a10a8b7c4ef64664612b15f49107bc412"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Query Function command to a train node.  <br /></td></tr>
 <tr class="separator:a10a8b7c4ef64664612b15f49107bc412"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8c6b5043e55a5c6bb5052ee5ed73953" id="r_ae8c6b5043e55a5c6bb5052ee5ed73953"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8c6b5043e55a5c6bb5052ee5ed73953">OpenLcbApplicationTrain_send_assign_controller</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id)</td></tr>
+<tr class="memitem:ae8c6b5043e55a5c6bb5052ee5ed73953" id="r_ae8c6b5043e55a5c6bb5052ee5ed73953"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8c6b5043e55a5c6bb5052ee5ed73953">OpenLcbApplicationTrain_send_assign_controller</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id)</td></tr>
+<tr class="memdesc:ae8c6b5043e55a5c6bb5052ee5ed73953"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an Assign Controller command to a train node.  <br /></td></tr>
 <tr class="separator:ae8c6b5043e55a5c6bb5052ee5ed73953"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64a6d0bcbde9b8ec8830860cab51e505" id="r_a64a6d0bcbde9b8ec8830860cab51e505"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64a6d0bcbde9b8ec8830860cab51e505">OpenLcbApplicationTrain_send_release_controller</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id)</td></tr>
+<tr class="memitem:a64a6d0bcbde9b8ec8830860cab51e505" id="r_a64a6d0bcbde9b8ec8830860cab51e505"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64a6d0bcbde9b8ec8830860cab51e505">OpenLcbApplicationTrain_send_release_controller</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id)</td></tr>
+<tr class="memdesc:a64a6d0bcbde9b8ec8830860cab51e505"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Release Controller command to a train node.  <br /></td></tr>
 <tr class="separator:a64a6d0bcbde9b8ec8830860cab51e505"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87486c1c4b7ffcb49fc800b799976a3f" id="r_a87486c1c4b7ffcb49fc800b799976a3f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87486c1c4b7ffcb49fc800b799976a3f">OpenLcbApplicationTrain_send_noop</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id)</td></tr>
+<tr class="memitem:a87486c1c4b7ffcb49fc800b799976a3f" id="r_a87486c1c4b7ffcb49fc800b799976a3f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87486c1c4b7ffcb49fc800b799976a3f">OpenLcbApplicationTrain_send_noop</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id)</td></tr>
+<tr class="memdesc:a87486c1c4b7ffcb49fc800b799976a3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a NOOP (no-operation) management command to a train node.  <br /></td></tr>
 <tr class="separator:a87486c1c4b7ffcb49fc800b799976a3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae832540d79d7e9d0af6850868abd8231" id="r_ae832540d79d7e9d0af6850868abd8231"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae832540d79d7e9d0af6850868abd8231">OpenLcbApplicationTrain_set_dcc_address</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t dcc_address, bool is_long_address)</td></tr>
+<tr class="memitem:ae832540d79d7e9d0af6850868abd8231" id="r_ae832540d79d7e9d0af6850868abd8231"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae832540d79d7e9d0af6850868abd8231">OpenLcbApplicationTrain_set_dcc_address</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t dcc_address, bool is_long_address)</td></tr>
+<tr class="memdesc:ae832540d79d7e9d0af6850868abd8231"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the DCC address and address type for a train node.  <br /></td></tr>
 <tr class="separator:ae832540d79d7e9d0af6850868abd8231"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2b6f8b225806a8b1204aba8678217a1" id="r_ac2b6f8b225806a8b1204aba8678217a1"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2b6f8b225806a8b1204aba8678217a1">OpenLcbApplicationTrain_get_dcc_address</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:ac2b6f8b225806a8b1204aba8678217a1" id="r_ac2b6f8b225806a8b1204aba8678217a1"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2b6f8b225806a8b1204aba8678217a1">OpenLcbApplicationTrain_get_dcc_address</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:ac2b6f8b225806a8b1204aba8678217a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the DCC address for a train node.  <br /></td></tr>
 <tr class="separator:ac2b6f8b225806a8b1204aba8678217a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63bf501bc1ec37e2938a029d3544e025" id="r_a63bf501bc1ec37e2938a029d3544e025"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63bf501bc1ec37e2938a029d3544e025">OpenLcbApplicationTrain_is_long_address</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:a63bf501bc1ec37e2938a029d3544e025" id="r_a63bf501bc1ec37e2938a029d3544e025"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63bf501bc1ec37e2938a029d3544e025">OpenLcbApplicationTrain_is_long_address</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a63bf501bc1ec37e2938a029d3544e025"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the train node uses long DCC addressing.  <br /></td></tr>
 <tr class="separator:a63bf501bc1ec37e2938a029d3544e025"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63e28fce0e6822e06293794935f52752" id="r_a63e28fce0e6822e06293794935f52752"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63e28fce0e6822e06293794935f52752">OpenLcbApplicationTrain_set_speed_steps</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t speed_steps)</td></tr>
+<tr class="memitem:a63e28fce0e6822e06293794935f52752" id="r_a63e28fce0e6822e06293794935f52752"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63e28fce0e6822e06293794935f52752">OpenLcbApplicationTrain_set_speed_steps</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t speed_steps)</td></tr>
+<tr class="memdesc:a63e28fce0e6822e06293794935f52752"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the speed-step mode for a train node.  <br /></td></tr>
 <tr class="separator:a63e28fce0e6822e06293794935f52752"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a975fa0984828245d2dd93e179b6135b5" id="r_a975fa0984828245d2dd93e179b6135b5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a975fa0984828245d2dd93e179b6135b5">OpenLcbApplicationTrain_get_speed_steps</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:a975fa0984828245d2dd93e179b6135b5" id="r_a975fa0984828245d2dd93e179b6135b5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a975fa0984828245d2dd93e179b6135b5">OpenLcbApplicationTrain_get_speed_steps</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a975fa0984828245d2dd93e179b6135b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the speed-step mode for a train node.  <br /></td></tr>
 <tr class="separator:a975fa0984828245d2dd93e179b6135b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -154,12 +171,11 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Provides per-node train state, a static allocation pool, listener management, send helpers, and heartbeat timer for the OpenLCB Train Control Protocol.</p>
-<p>The protocol handler (<a class="el" href="protocol__train__handler_8c.html" title="Train Control Protocol message handler implementation (Layer 1)">protocol_train_handler.c</a>) automatically handles incoming commands: updating state, building replies, and firing notifiers. This module provides the application developer API: state access, listener management, throttle-side send functions, and the heartbeat timer.</p>
-<p>State is allocated from a fixed pool sized by USER_DEFINED_TRAIN_NODE_COUNT. Each train node gets state via <a class="el" href="#ae17ef6101bcfddf2d9debadb6c11d8d0">OpenLcbApplicationTrain_setup()</a>, which assigns a pool slot to node-&gt;train_state. Non-train nodes have train_state == NULL.</p>
+<p>Provides per-node train state, a fixed-size allocation pool, throttle-side send helpers, and a heartbeat countdown timer for the OpenLCB Train Control Protocol.</p>
+<p>The protocol handler (<a class="el" href="protocol__train__handler_8c.html" title="Train Control Protocol message handler implementation (Layer 1)">protocol_train_handler.c</a>) handles incoming commands automatically. This module provides the application developer API: state allocation, state access, throttle send functions, and the heartbeat tick. State is drawn from a pool sized by USER_DEFINED_TRAIN_NODE_COUNT. Each train node gets a slot via <a class="el" href="#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>, which stores a pointer in node-&gt;train_state. Non-train nodes have train_state == NULL.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Feb 2026</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__train__handler_8h.html" title="Train Control Protocol message handler (Layer 1)">protocol_train_handler.h</a> - Layer 1 protocol handler </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__train__handler_8h.html" title="Train Control Protocol message handler (Layer 1)">protocol_train_handler.h</a> </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a39e73ffa95b7478a16a9f116f951c12a" name="a39e73ffa95b7478a16a9f116f951c12a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a39e73ffa95b7478a16a9f116f951c12a">&#9670;&#160;</a></span>OpenLcbApplicationTrain_initialize()</h2>
@@ -184,6 +200,23 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Initialises the train module and stores the callback interface. </p>
+<p>Clears the train state pool and stores the interface pointer. Must be called once before any other function in this module.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface</td><td>Pointer to a <a class="el" href="structinterface__openlcb__application__train__t.html">interface_openlcb_application_train_t</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Must be called before <a class="el" href="openlcb__application__train_8c.html#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Zero the train state pool.</li>
+<li>Reset _train_pool_count to 0.</li>
+<li>Store the interface pointer.</li>
+</ol>
+<pre class="fragment">* @param interface  Pointer to a interface_openlcb_application_train_t.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Must be called before any other function in this module. </dd></dl>
+
 </div>
 </div>
 <a id="ae17ef6101bcfddf2d9debadb6c11d8d0" name="ae17ef6101bcfddf2d9debadb6c11d8d0"></a>
@@ -198,7 +231,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> * OpenLcbApplicationTrain_setup </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -208,6 +241,29 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Allocates a train state slot and assigns it to the node. </p>
+<p>Draws the next free slot from the pool, zeroes it, stores a pointer in openlcb_node-&gt;train_state, and registers the standard train event IDs on the node (Train, Emergency Off/Stop, Clear Emergency Off/Stop).</p>
+<p>Returns the existing slot immediately if the node already has one.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> to configure as a train.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a>, or NULL if the node pointer is NULL or the pool is exhausted.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if the pool is full (USER_DEFINED_TRAIN_NODE_COUNT slots used).</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return NULL if openlcb_node is NULL.</li>
+<li>If the node already has train_state set, return the existing pointer.</li>
+<li>Return NULL if the pool is exhausted.</li>
+<li>Take the next pool slot, zero it, and store a pointer in openlcb_node-&gt;train_state.</li>
+<li>Set state-&gt;owner_node back to the node.</li>
+<li>Register the standard train event IDs: Train producer, Emergency Off/Stop consumers, Clear Emergency Off/Stop consumers.</li>
+<li>Return the new state pointer.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t to configure as a train.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the train_state_t, or NULL if the node is NULL or the pool is full. </dd></dl>
 
 </div>
 </div>
@@ -223,7 +279,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> * OpenLcbApplicationTrain_get_state </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -233,6 +289,21 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Returns the train state for a node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a>, or NULL if the node pointer is NULL or the node has no train state assigned.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return NULL if openlcb_node is NULL.</li>
+<li>Return openlcb_node-&gt;train_state.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the train_state_t, or NULL. </dd></dl>
 
 </div>
 </div>
@@ -259,6 +330,18 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Decrements the heartbeat countdown for all active train nodes. </p>
+<p>Must be called every 100 ms. At the halfway point of each node's heartbeat timeout, a NOOP request is sent to the controller. When the counter reaches zero the train is emergency-stopped and the on_heartbeat_timeout callback is fired.</p>
+<dl class="section note"><dt>Note</dt><dd>Nodes with heartbeat_timeout_s == 0 are skipped.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>For each pool slot with heartbeat_timeout_s &gt; 0:<ul>
+<li>Decrement heartbeat_counter_100ms if &gt; 0.</li>
+<li>At the halfway point, call _send_heartbeat_request() to ping the controller.</li>
+<li>At zero, set estop_active = true, set_speed = 0, and fire on_heartbeat_timeout. </li>
+</ul>
+</li>
+</ol>
+
 </div>
 </div>
 <a id="a86e23b68c107f3a2ff570351f9c1b675" name="a86e23b68c107f3a2ff570351f9c1b675"></a>
@@ -273,7 +356,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_send_set_speed </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -293,6 +376,26 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Set Speed/Direction command to a train node. </p>
+<p>Builds and sends an addressed Train Protocol message that sets the speed and direction of a target train. The speed value uses the OpenLCB float16 encoding where the sign bit encodes direction.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending (throttle) <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
+    <tr><td class="paramname">speed</td><td>16-bit speed/direction value in OpenLCB float16 format.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _prepare_train_command(); return if it fails.</li>
+<li>Set payload byte 0 to TRAIN_SET_SPEED_DIRECTION.</li>
+<li>Set payload bytes 1-2 to the 16-bit speed value.</li>
+<li>Call send_openlcb_msg().</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
+* @param train_node_id   48-bit node_id_t of the target train node.
+* @param speed           16-bit speed/direction in OpenLCB float16 format.
+* </pre> 
 </div>
 </div>
 <a id="a6fe6944f2e7dea98696c4f2c272872b0" name="a6fe6944f2e7dea98696c4f2c272872b0"></a>
@@ -307,7 +410,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_send_set_function </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -332,6 +435,29 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Set Function command to a train node. </p>
+<p>Builds and sends an addressed Train Protocol message that sets a DCC function on the target train. Function 0 is the headlight; higher numbers follow the NMRA function mapping.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
+    <tr><td class="paramname">fn_address</td><td>24-bit function address. </td></tr>
+    <tr><td class="paramname">fn_value</td><td>16-bit function value (0 = off, non-zero = on or analog value).</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _prepare_train_command(); return if it fails.</li>
+<li>Set payload byte 0 to TRAIN_SET_FUNCTION.</li>
+<li>Set payload bytes 1-3 to the 24-bit function address.</li>
+<li>Set payload bytes 4-5 to the 16-bit function value.</li>
+<li>Call send_openlcb_msg().</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
+* @param train_node_id   48-bit node_id_t of the target train node.
+* @param fn_address      24-bit function address.
+* @param fn_value        16-bit function value.
+* </pre> 
 </div>
 </div>
 <a id="a36f78f8ec61b4933646ed49359bdb379" name="a36f78f8ec61b4933646ed49359bdb379"></a>
@@ -346,7 +472,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_send_emergency_stop </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -361,6 +487,23 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends an Emergency Stop command to a train node. </p>
+<p>Commands the target train to stop immediately. The train node sets its speed to zero and activates its emergency-stop flag.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _prepare_train_command(); return if it fails.</li>
+<li>Set payload byte 0 to TRAIN_EMERGENCY_STOP.</li>
+<li>Call send_openlcb_msg().</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
+* @param train_node_id   48-bit node_id_t of the target train node.
+* </pre> 
 </div>
 </div>
 <a id="abcf7976c32fc01f594bdedecceb10e36" name="abcf7976c32fc01f594bdedecceb10e36"></a>
@@ -375,7 +518,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_send_query_speeds </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -390,6 +533,23 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Query Speeds command to a train node. </p>
+<p>Asks the train node to reply with its current set speed, actual speed (if available), and emergency-stop status.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _prepare_train_command(); return if it fails.</li>
+<li>Set payload byte 0 to TRAIN_QUERY_SPEEDS.</li>
+<li>Call send_openlcb_msg().</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
+* @param train_node_id   48-bit node_id_t of the target train node.
+* </pre> 
 </div>
 </div>
 <a id="a10a8b7c4ef64664612b15f49107bc412" name="a10a8b7c4ef64664612b15f49107bc412"></a>
@@ -404,7 +564,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_send_query_function </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -424,6 +584,26 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Query Function command to a train node. </p>
+<p>Asks the train node to reply with the current value of the specified function address.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
+    <tr><td class="paramname">fn_address</td><td>24-bit function address to query.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _prepare_train_command(); return if it fails.</li>
+<li>Set payload byte 0 to TRAIN_QUERY_FUNCTION.</li>
+<li>Set payload bytes 1-3 to the 24-bit function address.</li>
+<li>Call send_openlcb_msg().</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
+* @param train_node_id   48-bit node_id_t of the target train node.
+* @param fn_address      24-bit function address to query.
+* </pre> 
 </div>
 </div>
 <a id="ae8c6b5043e55a5c6bb5052ee5ed73953" name="ae8c6b5043e55a5c6bb5052ee5ed73953"></a>
@@ -438,7 +618,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_send_assign_controller </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -453,6 +633,24 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends an Assign Controller command to a train node. </p>
+<p>Sends the throttle node's own Node ID as the controller to assign. Once assigned, the train node accepts speed/function commands only from the assigned controller and begins heartbeat monitoring.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending (throttle) <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _prepare_train_command(); return if it fails.</li>
+<li>Set payload byte 0 to TRAIN_CONTROLLER_CONFIG, byte 1 to TRAIN_CONTROLLER_ASSIGN.</li>
+<li>Set payload bytes 2-7 to openlcb_node-&gt;id (the throttle's Node ID).</li>
+<li>Call send_openlcb_msg().</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the sending (throttle) openlcb_node_t.
+* @param train_node_id   48-bit node_id_t of the target train node.
+* </pre> 
 </div>
 </div>
 <a id="a64a6d0bcbde9b8ec8830860cab51e505" name="a64a6d0bcbde9b8ec8830860cab51e505"></a>
@@ -467,7 +665,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_send_release_controller </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -482,6 +680,24 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Release Controller command to a train node. </p>
+<p>Sends the throttle node's own Node ID as the controller to release. The train node clears its controller assignment and stops heartbeat monitoring.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending (throttle) <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _prepare_train_command(); return if it fails.</li>
+<li>Set payload byte 0 to TRAIN_CONTROLLER_CONFIG, byte 1 to TRAIN_CONTROLLER_RELEASE.</li>
+<li>Set payload bytes 2-7 to openlcb_node-&gt;id (the throttle's Node ID).</li>
+<li>Call send_openlcb_msg().</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the sending (throttle) openlcb_node_t.
+* @param train_node_id   48-bit node_id_t of the target train node.
+* </pre> 
 </div>
 </div>
 <a id="a87486c1c4b7ffcb49fc800b799976a3f" name="a87486c1c4b7ffcb49fc800b799976a3f"></a>
@@ -496,7 +712,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_send_noop </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -511,6 +727,24 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a NOOP (no-operation) management command to a train node. </p>
+<p>Resets the train's heartbeat countdown timer without changing speed, functions, or any other state. Throttle applications should send this periodically to prevent heartbeat timeout and emergency stop.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Sends a NOOP (no-operation) management command to a train node.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Call _prepare_train_command(); return if it fails.</li>
+<li>Set payload byte 0 to TRAIN_MANAGEMENT, byte 1 to TRAIN_MGMT_NOOP.</li>
+<li>Call send_openlcb_msg().</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
+* @param train_node_id   48-bit node_id_t of the target train node.
+* </pre> 
 </div>
 </div>
 <a id="ae832540d79d7e9d0af6850868abd8231" name="ae832540d79d7e9d0af6850868abd8231"></a>
@@ -525,7 +759,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_set_dcc_address </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -545,6 +779,24 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sets the DCC address and address type for a train node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> with an assigned train state. </td></tr>
+    <tr><td class="paramname">dcc_address</td><td>DCC address (1–9999 for long, 1–127 for short). </td></tr>
+    <tr><td class="paramname">is_long_address</td><td>true for long (four-digit) addressing, false for short.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Silently ignored if the node pointer or train_state pointer is NULL.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return if openlcb_node or train_state is NULL.</li>
+<li>Store dcc_address and is_long_address in the train state.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node    Pointer to the openlcb_node_t.
+* @param dcc_address     DCC address value.
+* @param is_long_address true for long addressing, false for short.
+* </pre> 
 </div>
 </div>
 <a id="ac2b6f8b225806a8b1204aba8678217a1" name="ac2b6f8b225806a8b1204aba8678217a1"></a>
@@ -559,7 +811,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint16_t OpenLcbApplicationTrain_get_dcc_address </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -569,6 +821,21 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Returns the DCC address for a train node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>DCC address, or 0 if the node has no train state.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return 0 if openlcb_node or train_state is NULL.</li>
+<li>Return train_state-&gt;dcc_address.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t.
+* </pre><dl class="section return"><dt>Returns</dt><dd>DCC address, or 0 if the node has no train state. </dd></dl>
 
 </div>
 </div>
@@ -584,7 +851,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool OpenLcbApplicationTrain_is_long_address </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -594,6 +861,21 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Returns true if the train node uses long DCC addressing. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true for long addressing, false if short or node has no train state.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return false if openlcb_node or train_state is NULL.</li>
+<li>Return train_state-&gt;is_long_address.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true for long addressing, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -609,7 +891,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_set_speed_steps </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -624,6 +906,22 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sets the speed-step mode for a train node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> with an assigned train state. </td></tr>
+    <tr><td class="paramname">speed_steps</td><td>Speed-step count (14, 28, or 128).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Silently ignored if the node pointer or train_state pointer is NULL.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return if openlcb_node or train_state is NULL.</li>
+<li>Store speed_steps in train_state-&gt;speed_steps.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t.
+* @param speed_steps   Speed-step count (14, 28, or 128).
+* </pre> 
 </div>
 </div>
 <a id="a975fa0984828245d2dd93e179b6135b5" name="a975fa0984828245d2dd93e179b6135b5"></a>
@@ -638,7 +936,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint8_t OpenLcbApplicationTrain_get_speed_steps </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -648,6 +946,21 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Returns the speed-step mode for a train node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Speed-step count (14, 28, or 128), or 0 if the node has no train state.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return 0 if openlcb_node or train_state is NULL.</li>
+<li>Return train_state-&gt;speed_steps.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Speed-step count, or 0 if the node has no train state. </dd></dl>
 
 </div>
 </div>

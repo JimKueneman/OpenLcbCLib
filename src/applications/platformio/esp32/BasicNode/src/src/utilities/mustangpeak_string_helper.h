@@ -24,16 +24,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file mustangpeak_string_helper.h
+ * @file mustangpeak_string_helper.h
+ * @brief Dynamic string allocation helpers using malloc.
  *
- * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are
- * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
- * so care must be taken to Pause and Resume those calls if the main loop needs to
- * access the buffers.
+ * @details Provides convenience wrappers around malloc for creating new
+ * null-terminated C strings and for concatenating two strings into a newly
+ * allocated buffer.  Every string returned by these functions must be freed
+ * by the caller with free().
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 28 Feb 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -47,11 +47,53 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-extern char *strnew(int char_count);
+        /**
+         * @brief Allocates a new uninitialized string buffer.
+         *
+         * @details Allocates char_count + 1 bytes via malloc (the extra byte is for
+         * the null terminator).  The contents of the buffer are uninitialized.
+         * The caller is responsible for calling free() when finished.
+         *
+         * @param char_count  Number of usable characters (excluding the null terminator).
+         *
+         * @return Pointer to the allocated buffer, or NULL if malloc fails.
+         *
+         * @warning The caller must free() the returned pointer when finished.
+         */
+    extern char *strnew(int char_count);
 
-extern char *strnew_initialized(int char_count);
+        /**
+         * @brief Allocates a new zero-initialized string buffer.
+         *
+         * @details Allocates char_count + 1 bytes via malloc and fills every byte
+         * with '\\0'.  The caller is responsible for calling free() when finished.
+         *
+         * @param char_count  Number of usable characters (excluding the null terminator).
+         *
+         * @return Pointer to the allocated and zeroed buffer, or NULL if malloc fails.
+         *
+         * @warning The caller must free() the returned pointer when finished.
+         */
+    extern char *strnew_initialized(int char_count);
 
-extern char *strcatnew(char *str1, char *str2);
+        /**
+         * @brief Concatenates two strings into a newly allocated buffer.
+         *
+         * @details Allocates a new buffer large enough to hold the concatenation of
+         * str1 and str2 plus a null terminator, copies both strings into it, and
+         * returns the result.  The caller is responsible for calling free() when
+         * finished.
+         *
+         * @param str1  Pointer to the first null-terminated string.
+         * @param str2  Pointer to the second null-terminated string.
+         *
+         * @return Pointer to the newly allocated concatenated string, or NULL if
+         *         malloc fails.
+         *
+         * @warning The caller must free() the returned pointer when finished.
+         * @warning NULL pointers for either argument cause undefined behavior.
+         */
+    extern char *strcatnew(char *str1, char *str2);
 
 #ifdef __cplusplus
 }

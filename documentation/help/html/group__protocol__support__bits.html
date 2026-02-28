@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Bit flags for Protocol Support Inquiry/Reply messages.  
+<p>48-bit field returned in Protocol Support Reply.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -159,15 +159,7 @@ Macros</h2></td></tr>
 <tr class="separator:ga9b4d74412962432caf90735f4a5fca8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Bit flags for Protocol Support Inquiry/Reply messages. </p>
-<p>The Protocol Support Reply message contains a 6-byte (48-bit) bit field indicating which optional protocols the node implements. Bits are numbered with bit 0 as the LSB of byte 0.</p>
-<p>Required protocols (always supported):</p><ul>
-<li>Protocol Support Protocol itself</li>
-<li>Simple Node Information Protocol (SNIP)</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__mti__message__network.html#ga4001f962df7a9c2c2540b5b4d20f8137" title="Query what protocols a node supports.">MTI_PROTOCOL_SUPPORT_INQUIRY</a> </dd>
-<dd>
-<a class="el" href="group__mti__message__network.html#gaecfec0daef3f4a2a5b4b74579457d248" title="Response indicating supported protocols (6-byte bit field)">MTI_PROTOCOL_SUPPORT_REPLY</a> </dd></dl>
+<p>48-bit field returned in Protocol Support Reply. </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="gab06d4b86811617a9b268efcb391249bf" name="gab06d4b86811617a9b268efcb391249bf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gab06d4b86811617a9b268efcb391249bf">&#9670;&#160;</a></span>PSI_SIMPLE</h2>

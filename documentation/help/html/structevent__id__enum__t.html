@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Event ID enumeration state.  
+<p>Event list enumeration state.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -105,18 +105,8 @@ Data Fields</h2></td></tr>
 <tr class="separator:a872f823af527a36627648c77883fde67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Event ID enumeration state. </p>
-<p>Tracks enumeration state when iterating through event lists. Used by protocol handlers when responding to Event Identify messages.</p>
-<p><b>Usage Pattern:</b></p><ol type="1">
-<li>Set running=1, enum_index=0 to start enumeration</li>
-<li>Process event at enum_index</li>
-<li>Increment enum_index</li>
-<li>When finished: Set running=0</li>
-</ol>
-<dl class="section warning"><dt>Warning</dt><dd>Always, always, always reset these to false when you have finished processing a message</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structevent__id__consumer__list__t.html#acd253a298de10c97b9b0e55dfb5c0562">event_id_consumer_list_t.enumerator</a> </dd>
-<dd>
-<a class="el" href="structevent__id__producer__list__t.html#acd253a298de10c97b9b0e55dfb5c0562">event_id_producer_list_t.enumerator</a> </dd></dl>
+<div class="textblock"><p>Event list enumeration state. </p>
+<dl class="section warning"><dt>Warning</dt><dd>Always reset running to false when finished processing a message. </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a36f7b6be7108281af77939ceaec42fd6" name="a36f7b6be7108281af77939ceaec42fd6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a36f7b6be7108281af77939ceaec42fd6">&#9670;&#160;</a></span>running</h2>

@@ -129,7 +129,7 @@ Functions</h2></td></tr>
 <p>Handles incoming train search Event IDs from the network. Decodes the search query (DCC address, flags) and compares against each train node's address. Matching nodes reply with a Producer Identified event containing their own address.</p>
 <p>Called from the main statemachine when a train search event is detected. Unlike broadcast time (node index 0 only), train search is called for every train node so each can check for a match.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Feb 2026</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__application__train_8h.html" title="Application-level Train Control Protocol module.">openlcb_application_train.h</a> - Train state with DCC address </dd>
 <dd>
 <a class="el" href="openlcb__utilities_8h.html" title="Common utility functions for OpenLCB message and buffer manipulation.">openlcb_utilities.h</a> - Event ID encoding/decoding functions </dd></dl>
@@ -160,11 +160,13 @@ Functions</h2></td></tr>
 <p>Initializes the Train Search Protocol handler. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface</td><td>Pointer to callback interface structure (may be NULL) </td></tr>
+    <tr><td class="paramname">interface</td><td>Pointer to <a class="el" href="structinterface__protocol__train__search__handler__t.html">interface_protocol_train_search_handler_t</a> callbacks (may be NULL).</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Initializes the Train Search Protocol handler.</p>
+<pre class="fragment">* @param interface  Populated callback table (may be NULL).
+* </pre> 
 </div>
 </div>
 <a id="a8899d93482a712da1233f16760e95cd3" name="a8899d93482a712da1233f16760e95cd3"></a>
@@ -198,12 +200,15 @@ Functions</h2></td></tr>
 <p>Called from the main statemachine MTI_PC_EVENT_REPORT case for each train node. Decodes the search query, compares against this node's DCC address, and if matching, loads a Producer Identified reply.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>State machine context with incoming message and node </td></tr>
-    <tr><td class="paramname">event_id</td><td>Full 64-bit Event ID containing encoded search query </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> containing encoded search query.</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Decodes the search query, compares against this node's DCC address, and loads a Producer Identified reply if matched.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param event_id           Full 64-bit event_id_t containing encoded search query.
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

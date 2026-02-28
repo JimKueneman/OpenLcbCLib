@@ -97,45 +97,65 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a78fb7841457f7cb05c9bfc653391aa19" id="r_a78fb7841457f7cb05c9bfc653391aa19"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78fb7841457f7cb05c9bfc653391aa19">on_speed_changed</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t speed_float16)</td></tr>
+<tr class="memitem:a78fb7841457f7cb05c9bfc653391aa19" id="r_a78fb7841457f7cb05c9bfc653391aa19"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78fb7841457f7cb05c9bfc653391aa19">on_speed_changed</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t speed_float16)</td></tr>
+<tr class="memdesc:a78fb7841457f7cb05c9bfc653391aa19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Speed was set. State already updated.  <br /></td></tr>
 <tr class="separator:a78fb7841457f7cb05c9bfc653391aa19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a317d544123df617738d3d60062331418" id="r_a317d544123df617738d3d60062331418"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a317d544123df617738d3d60062331418">on_function_changed</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td></tr>
+<tr class="memitem:a317d544123df617738d3d60062331418" id="r_a317d544123df617738d3d60062331418"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a317d544123df617738d3d60062331418">on_function_changed</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td></tr>
+<tr class="memdesc:a317d544123df617738d3d60062331418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function was set. Standard functions stored in train_state.functions[].  <br /></td></tr>
 <tr class="separator:a317d544123df617738d3d60062331418"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad76712d9e64a1b8dfe9d9e682d0d4985" id="r_ad76712d9e64a1b8dfe9d9e682d0d4985"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad76712d9e64a1b8dfe9d9e682d0d4985">on_emergency_stopped</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
-<tr class="separator:ad76712d9e64a1b8dfe9d9e682d0d4985"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0e3b82ad81a312f802f951202165d3e" id="r_ab0e3b82ad81a312f802f951202165d3e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0e3b82ad81a312f802f951202165d3e">on_controller_assigned</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> controller_node_id)</td></tr>
+<tr class="memitem:a082c31743be975d6986af52d8c84f020" id="r_a082c31743be975d6986af52d8c84f020"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a082c31743be975d6986af52d8c84f020">on_emergency_entered</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a3acbf1c296b90bf14d90c4ff499a0113">train_emergency_type_enum</a> emergency_type)</td></tr>
+<tr class="memdesc:a082c31743be975d6986af52d8c84f020"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emergency state entered. State flags already updated.  <br /></td></tr>
+<tr class="separator:a082c31743be975d6986af52d8c84f020"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b3237e15a76892f9c11a73ff6ba3885" id="r_a2b3237e15a76892f9c11a73ff6ba3885"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b3237e15a76892f9c11a73ff6ba3885">on_emergency_exited</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a3acbf1c296b90bf14d90c4ff499a0113">train_emergency_type_enum</a> emergency_type)</td></tr>
+<tr class="memdesc:a2b3237e15a76892f9c11a73ff6ba3885"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emergency state exited. State flags already updated.  <br /></td></tr>
+<tr class="separator:a2b3237e15a76892f9c11a73ff6ba3885"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0e3b82ad81a312f802f951202165d3e" id="r_ab0e3b82ad81a312f802f951202165d3e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0e3b82ad81a312f802f951202165d3e">on_controller_assigned</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> controller_node_id)</td></tr>
+<tr class="memdesc:ab0e3b82ad81a312f802f951202165d3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller assigned or changed. State already updated.  <br /></td></tr>
 <tr class="separator:ab0e3b82ad81a312f802f951202165d3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3406c5d9fd75d7d2810ff21be5b4665e" id="r_a3406c5d9fd75d7d2810ff21be5b4665e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3406c5d9fd75d7d2810ff21be5b4665e">on_controller_released</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:a3406c5d9fd75d7d2810ff21be5b4665e" id="r_a3406c5d9fd75d7d2810ff21be5b4665e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3406c5d9fd75d7d2810ff21be5b4665e">on_controller_released</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a3406c5d9fd75d7d2810ff21be5b4665e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller released. State already cleared.  <br /></td></tr>
 <tr class="separator:a3406c5d9fd75d7d2810ff21be5b4665e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91330db84beb2530c9ade2ab80dc8728" id="r_a91330db84beb2530c9ade2ab80dc8728"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91330db84beb2530c9ade2ab80dc8728">on_listener_changed</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:a91330db84beb2530c9ade2ab80dc8728" id="r_a91330db84beb2530c9ade2ab80dc8728"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91330db84beb2530c9ade2ab80dc8728">on_listener_changed</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a91330db84beb2530c9ade2ab80dc8728"><td class="mdescLeft">&#160;</td><td class="mdescRight">Listener list modified (attach or detach).  <br /></td></tr>
 <tr class="separator:a91330db84beb2530c9ade2ab80dc8728"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95fd67c7a70620eca6d15f5921d7cf56" id="r_a95fd67c7a70620eca6d15f5921d7cf56"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95fd67c7a70620eca6d15f5921d7cf56">on_heartbeat_timeout</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memitem:a95fd67c7a70620eca6d15f5921d7cf56" id="r_a95fd67c7a70620eca6d15f5921d7cf56"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95fd67c7a70620eca6d15f5921d7cf56">on_heartbeat_timeout</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a95fd67c7a70620eca6d15f5921d7cf56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Heartbeat timed out. State already updated.  <br /></td></tr>
 <tr class="separator:a95fd67c7a70620eca6d15f5921d7cf56"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af00fd951d4074c285568f1b15d52a2be" id="r_af00fd951d4074c285568f1b15d52a2be"><td class="memItemLeft" align="right" valign="top">uint8_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af00fd951d4074c285568f1b15d52a2be">on_controller_assign_request</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> current_controller, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> requesting_controller)</td></tr>
-<tr class="separator:af00fd951d4074c285568f1b15d52a2be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4cc715cb16f0c95723caf269f292f062" id="r_a4cc715cb16f0c95723caf269f292f062"><td class="memItemLeft" align="right" valign="top">uint8_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4cc715cb16f0c95723caf269f292f062">on_controller_changed_request</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> new_controller)</td></tr>
-<tr class="separator:a4cc715cb16f0c95723caf269f292f062"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47b98fd99b8e40e6a8a3a20dfe888c09" id="r_a47b98fd99b8e40e6a8a3a20dfe888c09"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47b98fd99b8e40e6a8a3a20dfe888c09">on_query_function_request</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t fn_address)</td></tr>
-<tr class="separator:a47b98fd99b8e40e6a8a3a20dfe888c09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a062125caddb41a39fee907009d428794" id="r_a062125caddb41a39fee907009d428794"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a062125caddb41a39fee907009d428794">on_query_speeds_reply</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t set_speed, uint8_t status, uint16_t commanded_speed, uint16_t actual_speed)</td></tr>
+<tr class="memitem:a723d31061e89ddfbf984821b94e01063" id="r_a723d31061e89ddfbf984821b94e01063"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a723d31061e89ddfbf984821b94e01063">on_controller_assign_request</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> current_controller, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> requesting_controller)</td></tr>
+<tr class="memdesc:a723d31061e89ddfbf984821b94e01063"><td class="mdescLeft">&#160;</td><td class="mdescRight">Another controller wants to take over. Return true to accept. NULL = accept.  <br /></td></tr>
+<tr class="separator:a723d31061e89ddfbf984821b94e01063"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5585d94c9a752545d11235d1d709bf38" id="r_a5585d94c9a752545d11235d1d709bf38"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5585d94c9a752545d11235d1d709bf38">on_controller_changed_request</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> new_controller)</td></tr>
+<tr class="memdesc:a5585d94c9a752545d11235d1d709bf38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller Changed Notify received. Return true to accept handoff. NULL = accept.  <br /></td></tr>
+<tr class="separator:a5585d94c9a752545d11235d1d709bf38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a062125caddb41a39fee907009d428794" id="r_a062125caddb41a39fee907009d428794"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a062125caddb41a39fee907009d428794">on_query_speeds_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t set_speed, uint8_t status, uint16_t commanded_speed, uint16_t actual_speed)</td></tr>
+<tr class="memdesc:a062125caddb41a39fee907009d428794"><td class="mdescLeft">&#160;</td><td class="mdescRight">Query Speeds reply received.  <br /></td></tr>
 <tr class="separator:a062125caddb41a39fee907009d428794"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d823330eceb4441cf7e3f8552ec46d4" id="r_a2d823330eceb4441cf7e3f8552ec46d4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d823330eceb4441cf7e3f8552ec46d4">on_query_function_reply</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td></tr>
+<tr class="memitem:a2d823330eceb4441cf7e3f8552ec46d4" id="r_a2d823330eceb4441cf7e3f8552ec46d4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d823330eceb4441cf7e3f8552ec46d4">on_query_function_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td></tr>
+<tr class="memdesc:a2d823330eceb4441cf7e3f8552ec46d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Query Function reply received.  <br /></td></tr>
 <tr class="separator:a2d823330eceb4441cf7e3f8552ec46d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d8401136fc103af60bad86977c51cb5" id="r_a4d8401136fc103af60bad86977c51cb5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d8401136fc103af60bad86977c51cb5">on_controller_assign_reply</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t result)</td></tr>
+<tr class="memitem:a4d8401136fc103af60bad86977c51cb5" id="r_a4d8401136fc103af60bad86977c51cb5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d8401136fc103af60bad86977c51cb5">on_controller_assign_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t result)</td></tr>
+<tr class="memdesc:a4d8401136fc103af60bad86977c51cb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller Assign reply received.  <br /></td></tr>
 <tr class="separator:a4d8401136fc103af60bad86977c51cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2844e12ac9f995324ec73547b5deda6" id="r_ab2844e12ac9f995324ec73547b5deda6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2844e12ac9f995324ec73547b5deda6">on_controller_query_reply</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t flags, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> controller_node_id)</td></tr>
+<tr class="memitem:ab2844e12ac9f995324ec73547b5deda6" id="r_ab2844e12ac9f995324ec73547b5deda6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2844e12ac9f995324ec73547b5deda6">on_controller_query_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t flags, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> controller_node_id)</td></tr>
+<tr class="memdesc:ab2844e12ac9f995324ec73547b5deda6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller Query reply received.  <br /></td></tr>
 <tr class="separator:ab2844e12ac9f995324ec73547b5deda6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a743725f4a56c43ea98fd7787ac1b5259" id="r_a743725f4a56c43ea98fd7787ac1b5259"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a743725f4a56c43ea98fd7787ac1b5259">on_controller_changed_notify_reply</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t result)</td></tr>
+<tr class="memitem:a743725f4a56c43ea98fd7787ac1b5259" id="r_a743725f4a56c43ea98fd7787ac1b5259"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a743725f4a56c43ea98fd7787ac1b5259">on_controller_changed_notify_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t result)</td></tr>
+<tr class="memdesc:a743725f4a56c43ea98fd7787ac1b5259"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller Changed Notify reply received.  <br /></td></tr>
 <tr class="separator:a743725f4a56c43ea98fd7787ac1b5259"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f4f82f2c2606312458835d2d42a499d" id="r_a7f4f82f2c2606312458835d2d42a499d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f4f82f2c2606312458835d2d42a499d">on_listener_attach_reply</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t result)</td></tr>
+<tr class="memitem:a7f4f82f2c2606312458835d2d42a499d" id="r_a7f4f82f2c2606312458835d2d42a499d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f4f82f2c2606312458835d2d42a499d">on_listener_attach_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t result)</td></tr>
+<tr class="memdesc:a7f4f82f2c2606312458835d2d42a499d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Listener Attach reply received.  <br /></td></tr>
 <tr class="separator:a7f4f82f2c2606312458835d2d42a499d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73411436c24232874e8eff96d7d2f8b3" id="r_a73411436c24232874e8eff96d7d2f8b3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73411436c24232874e8eff96d7d2f8b3">on_listener_detach_reply</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t result)</td></tr>
+<tr class="memitem:a73411436c24232874e8eff96d7d2f8b3" id="r_a73411436c24232874e8eff96d7d2f8b3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73411436c24232874e8eff96d7d2f8b3">on_listener_detach_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t result)</td></tr>
+<tr class="memdesc:a73411436c24232874e8eff96d7d2f8b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Listener Detach reply received.  <br /></td></tr>
 <tr class="separator:a73411436c24232874e8eff96d7d2f8b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62bb2105259300e949cbb712578e64ba" id="r_a62bb2105259300e949cbb712578e64ba"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62bb2105259300e949cbb712578e64ba">on_listener_query_reply</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t count, uint8_t index, uint8_t flags, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memitem:a62bb2105259300e949cbb712578e64ba" id="r_a62bb2105259300e949cbb712578e64ba"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62bb2105259300e949cbb712578e64ba">on_listener_query_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t count, uint8_t index, uint8_t flags, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memdesc:a62bb2105259300e949cbb712578e64ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Listener Query reply received.  <br /></td></tr>
 <tr class="separator:a62bb2105259300e949cbb712578e64ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad543c50f64d778b3271a64a3b3893983" id="r_ad543c50f64d778b3271a64a3b3893983"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad543c50f64d778b3271a64a3b3893983">on_reserve_reply</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t result)</td></tr>
+<tr class="memitem:ad543c50f64d778b3271a64a3b3893983" id="r_ad543c50f64d778b3271a64a3b3893983"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad543c50f64d778b3271a64a3b3893983">on_reserve_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t result)</td></tr>
+<tr class="memdesc:ad543c50f64d778b3271a64a3b3893983"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserve reply received.  <br /></td></tr>
 <tr class="separator:ad543c50f64d778b3271a64a3b3893983"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a255c8556c0ce6d0e91bfeb72b9c7174f" id="r_a255c8556c0ce6d0e91bfeb72b9c7174f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a255c8556c0ce6d0e91bfeb72b9c7174f">on_heartbeat_request</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t timeout_seconds)</td></tr>
+<tr class="memitem:a255c8556c0ce6d0e91bfeb72b9c7174f" id="r_a255c8556c0ce6d0e91bfeb72b9c7174f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a255c8556c0ce6d0e91bfeb72b9c7174f">on_heartbeat_request</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t timeout_seconds)</td></tr>
+<tr class="memdesc:a255c8556c0ce6d0e91bfeb72b9c7174f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Heartbeat request from train node.  <br /></td></tr>
 <tr class="separator:a255c8556c0ce6d0e91bfeb72b9c7174f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -156,10 +176,11 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_speed_changed) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t speed_float16)</td>
+          <td class="memname">void(* on_speed_changed) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t speed_float16)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Speed was set. State already updated. </p>
 
 </div>
@@ -171,26 +192,44 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_function_changed) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td>
+          <td class="memname">void(* on_function_changed) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function was set. Standard functions (F0-F28) stored in train_state.functions[]. </p>
+
+<p>Function was set. Standard functions stored in train_state.functions[]. </p>
 
 </div>
 </div>
-<a id="ad76712d9e64a1b8dfe9d9e682d0d4985" name="ad76712d9e64a1b8dfe9d9e682d0d4985"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad76712d9e64a1b8dfe9d9e682d0d4985">&#9670;&#160;</a></span>on_emergency_stopped</h2>
+<a id="a082c31743be975d6986af52d8c84f020" name="a082c31743be975d6986af52d8c84f020"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a082c31743be975d6986af52d8c84f020">&#9670;&#160;</a></span>on_emergency_entered</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_emergency_stopped) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td>
+          <td class="memname">void(* on_emergency_entered) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a3acbf1c296b90bf14d90c4ff499a0113">train_emergency_type_enum</a> emergency_type)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Emergency stop. estop_active and speed already updated in state. </p>
+
+<p>Emergency state entered. State flags already updated. </p>
+
+</div>
+</div>
+<a id="a2b3237e15a76892f9c11a73ff6ba3885" name="a2b3237e15a76892f9c11a73ff6ba3885"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b3237e15a76892f9c11a73ff6ba3885">&#9670;&#160;</a></span>on_emergency_exited</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* on_emergency_exited) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a3acbf1c296b90bf14d90c4ff499a0113">train_emergency_type_enum</a> emergency_type)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Emergency state exited. State flags already updated. </p>
 
 </div>
 </div>
@@ -201,11 +240,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_controller_assigned) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> controller_node_id)</td>
+          <td class="memname">void(* on_controller_assigned) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> controller_node_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Controller was assigned or changed. State already updated. </p>
+
+<p>Controller assigned or changed. State already updated. </p>
 
 </div>
 </div>
@@ -216,11 +256,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_controller_released) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td>
+          <td class="memname">void(* on_controller_released) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Controller was released. State already cleared. </p>
+
+<p>Controller released. State already cleared. </p>
 
 </div>
 </div>
@@ -231,11 +272,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_listener_changed) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td>
+          <td class="memname">void(* on_listener_changed) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Listener list was modified (attach or detach). </p>
+
+<p>Listener list modified (attach or detach). </p>
 
 </div>
 </div>
@@ -246,56 +288,44 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_heartbeat_timeout) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td>
+          <td class="memname">void(* on_heartbeat_timeout) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Heartbeat timed out. estop_active and speed already updated. </p>
+
+<p>Heartbeat timed out. State already updated. </p>
 
 </div>
 </div>
-<a id="af00fd951d4074c285568f1b15d52a2be" name="af00fd951d4074c285568f1b15d52a2be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af00fd951d4074c285568f1b15d52a2be">&#9670;&#160;</a></span>on_controller_assign_request</h2>
+<a id="a723d31061e89ddfbf984821b94e01063" name="a723d31061e89ddfbf984821b94e01063"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a723d31061e89ddfbf984821b94e01063">&#9670;&#160;</a></span>on_controller_assign_request</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t(* on_controller_assign_request) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> current_controller, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> requesting_controller)</td>
+          <td class="memname">bool(* on_controller_assign_request) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> current_controller, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> requesting_controller)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Another controller wants to take over. Return 0 to accept, non-zero result byte to reject. If NULL, default = accept (0). </p>
+
+<p>Another controller wants to take over. Return true to accept. NULL = accept. </p>
 
 </div>
 </div>
-<a id="a4cc715cb16f0c95723caf269f292f062" name="a4cc715cb16f0c95723caf269f292f062"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4cc715cb16f0c95723caf269f292f062">&#9670;&#160;</a></span>on_controller_changed_request</h2>
+<a id="a5585d94c9a752545d11235d1d709bf38" name="a5585d94c9a752545d11235d1d709bf38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5585d94c9a752545d11235d1d709bf38">&#9670;&#160;</a></span>on_controller_changed_request</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t(* on_controller_changed_request) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> new_controller)</td>
+          <td class="memname">bool(* on_controller_changed_request) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> new_controller)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Old controller receiving Controller Changed Notify from train. Return 0 to accept handoff, non-zero to reject. If NULL, default = accept (0). </p>
 
-</div>
-</div>
-<a id="a47b98fd99b8e40e6a8a3a20dfe888c09" name="a47b98fd99b8e40e6a8a3a20dfe888c09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47b98fd99b8e40e6a8a3a20dfe888c09">&#9670;&#160;</a></span>on_query_function_request</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t(* on_query_function_request) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t fn_address)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Query function value. Return the 16-bit value for the given function address. If NULL, default = return 0. </p>
+<p>Controller Changed Notify received. Return true to accept handoff. NULL = accept. </p>
 
 </div>
 </div>
@@ -306,10 +336,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_query_speeds_reply) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t set_speed, uint8_t status, uint16_t commanded_speed, uint16_t actual_speed)</td>
+          <td class="memname">void(* on_query_speeds_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t set_speed, uint8_t status, uint16_t commanded_speed, uint16_t actual_speed)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Query Speeds reply received. </p>
 
 </div>
 </div>
@@ -320,10 +352,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_query_function_reply) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td>
+          <td class="memname">void(* on_query_function_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Query Function reply received. </p>
 
 </div>
 </div>
@@ -334,10 +368,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_controller_assign_reply) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t result)</td>
+          <td class="memname">void(* on_controller_assign_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t result)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Controller Assign reply received. </p>
 
 </div>
 </div>
@@ -348,10 +384,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_controller_query_reply) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t flags, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> controller_node_id)</td>
+          <td class="memname">void(* on_controller_query_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t flags, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> controller_node_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Controller Query reply received. </p>
 
 </div>
 </div>
@@ -362,10 +400,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_controller_changed_notify_reply) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t result)</td>
+          <td class="memname">void(* on_controller_changed_notify_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t result)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Controller Changed Notify reply received. </p>
 
 </div>
 </div>
@@ -376,10 +416,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_listener_attach_reply) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t result)</td>
+          <td class="memname">void(* on_listener_attach_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t result)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Listener Attach reply received. </p>
 
 </div>
 </div>
@@ -390,10 +432,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_listener_detach_reply) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t result)</td>
+          <td class="memname">void(* on_listener_detach_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t result)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Listener Detach reply received. </p>
 
 </div>
 </div>
@@ -404,10 +448,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_listener_query_reply) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t count, uint8_t index, uint8_t flags, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td>
+          <td class="memname">void(* on_listener_query_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t count, uint8_t index, uint8_t flags, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Listener Query reply received. </p>
 
 </div>
 </div>
@@ -418,10 +464,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_reserve_reply) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint8_t result)</td>
+          <td class="memname">void(* on_reserve_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t result)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Reserve reply received. </p>
 
 </div>
 </div>
@@ -432,10 +480,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_heartbeat_request) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t timeout_seconds)</td>
+          <td class="memname">void(* on_heartbeat_request) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t timeout_seconds)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Heartbeat request from train node. </p>
 
 </div>
 </div>

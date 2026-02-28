@@ -51,8 +51,8 @@ var searchData=
   ['broadcast_5ftime_5ftotal_5fclock_5fcount_48',['BROADCAST_TIME_TOTAL_CLOCK_COUNT',['../openlcb__application__broadcast__time_8h.html#a1d97020c4de2426cbcb4a329226c94cd',1,'openlcb_application_broadcast_time.h']]],
   ['broadcast_5ftime_5fwellknown_5fclock_5fcount_49',['BROADCAST_TIME_WELLKNOWN_CLOCK_COUNT',['../openlcb__application__broadcast__time_8h.html#a3526ea92d7bddbe8307660237ad6790a',1,'openlcb_application_broadcast_time.h']]],
   ['broadcast_5fyear_5ft_50',['broadcast_year_t',['../structbroadcast__year__t.html',1,'']]],
-  ['buffer_20pool_20array_20definitions_51',['Payload Buffer Pool Array Definitions',['../group__payload__pool__types.html',1,'']]],
+  ['buffer_20pool_20arrays_51',['Payload Buffer Pool Arrays',['../group__payload__pool__types.html',1,'']]],
   ['buffer_20size_20constants_52',['Message Buffer Size Constants',['../group__buffer__size__constants.html',1,'']]],
-  ['buffer_20type_20definitions_53',['Message Payload Buffer Type Definitions',['../group__payload__buffer__types.html',1,'']]],
+  ['buffer_20type_20definitions_53',['Payload Buffer Type Definitions',['../group__payload__buffer__types.html',1,'']]],
   ['bytes_54',['bytes',['../structconfig__mem__read__request__info___t_a_g.html#a8ebcca910572bc803ec5975995ff6cd5',1,'config_mem_read_request_info_TAG::bytes'],['../structconfig__mem__write__request__info___t_a_g.html#a8ebcca910572bc803ec5975995ff6cd5',1,'config_mem_write_request_info_TAG::bytes']]]
 ];

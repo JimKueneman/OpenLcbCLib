@@ -92,364 +92,344 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Interface structure for datagram protocol handler callbacks.  
+<p>Callback interface for the datagram handler. lock/unlock are REQUIRED; all memory-operation pointers are optional (NULL = rejected).  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:ad5d977bbc45e071d19d77e261f17b7e7" id="r_ad5d977bbc45e071d19d77e261f17b7e7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7">lock_shared_resources</a> )(void)</td></tr>
-<tr class="memdesc:ad5d977bbc45e071d19d77e261f17b7e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to lock shared resources before buffer access.  <br /></td></tr>
+<tr class="memdesc:ad5d977bbc45e071d19d77e261f17b7e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disable interrupts / acquire mutex. REQUIRED.  <br /></td></tr>
 <tr class="separator:ad5d977bbc45e071d19d77e261f17b7e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a654fa7c6260aa2ac2c0589f57fcd67e9" id="r_a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a654fa7c6260aa2ac2c0589f57fcd67e9">unlock_shared_resources</a> )(void)</td></tr>
-<tr class="memdesc:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to unlock shared resources after buffer access.  <br /></td></tr>
+<tr class="memdesc:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-enable interrupts / release mutex. REQUIRED.  <br /></td></tr>
 <tr class="separator:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a439b0b02d61318d2d1136d24539a5086" id="r_a439b0b02d61318d2d1136d24539a5086"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a439b0b02d61318d2d1136d24539a5086">memory_read_space_config_description_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a439b0b02d61318d2d1136d24539a5086"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Configuration Description Information read via datagram.  <br /></td></tr>
+<tr class="memdesc:a439b0b02d61318d2d1136d24539a5086"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read CDI (0xFF) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a439b0b02d61318d2d1136d24539a5086"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4231bdcb11eaf8e88d98afdc00b617f7" id="r_a4231bdcb11eaf8e88d98afdc00b617f7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4231bdcb11eaf8e88d98afdc00b617f7">memory_read_space_all</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a4231bdcb11eaf8e88d98afdc00b617f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle All Memory Space read via datagram.  <br /></td></tr>
+<tr class="memdesc:a4231bdcb11eaf8e88d98afdc00b617f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read All (0xFD) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a4231bdcb11eaf8e88d98afdc00b617f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e61ffb39e11454c4cd845023cdbec1f" id="r_a9e61ffb39e11454c4cd845023cdbec1f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e61ffb39e11454c4cd845023cdbec1f">memory_read_space_configuration_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a9e61ffb39e11454c4cd845023cdbec1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Configuration Memory read via datagram.  <br /></td></tr>
+<tr class="memdesc:a9e61ffb39e11454c4cd845023cdbec1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read Config (0xFE) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a9e61ffb39e11454c4cd845023cdbec1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedcad83e6d19ce712a0039f896416a32" id="r_aedcad83e6d19ce712a0039f896416a32"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aedcad83e6d19ce712a0039f896416a32">memory_read_space_acdi_manufacturer</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aedcad83e6d19ce712a0039f896416a32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle ACDI Manufacturer Information read via datagram.  <br /></td></tr>
+<tr class="memdesc:aedcad83e6d19ce712a0039f896416a32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read ACDI-Mfg (0xFC) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:aedcad83e6d19ce712a0039f896416a32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4dbcc89684cf53f20c7f3f9446a3110e" id="r_a4dbcc89684cf53f20c7f3f9446a3110e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4dbcc89684cf53f20c7f3f9446a3110e">memory_read_space_acdi_user</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a4dbcc89684cf53f20c7f3f9446a3110e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle ACDI User Information read via datagram.  <br /></td></tr>
+<tr class="memdesc:a4dbcc89684cf53f20c7f3f9446a3110e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read ACDI-User (0xFB) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a4dbcc89684cf53f20c7f3f9446a3110e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fbb3ef8360a8ef4cc9994ebe28680cf" id="r_a2fbb3ef8360a8ef4cc9994ebe28680cf"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fbb3ef8360a8ef4cc9994ebe28680cf">memory_read_space_train_function_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a2fbb3ef8360a8ef4cc9994ebe28680cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Train Function Definition Info read via datagram.  <br /></td></tr>
+<tr class="memdesc:a2fbb3ef8360a8ef4cc9994ebe28680cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read Train FDI (0xFA) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a2fbb3ef8360a8ef4cc9994ebe28680cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab46ca4cb48dfda435307b97aef855915" id="r_ab46ca4cb48dfda435307b97aef855915"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab46ca4cb48dfda435307b97aef855915">memory_read_space_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ab46ca4cb48dfda435307b97aef855915"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Train Function Configuration read via datagram.  <br /></td></tr>
+<tr class="memdesc:ab46ca4cb48dfda435307b97aef855915"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read Train Fn Config (0xF9) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:ab46ca4cb48dfda435307b97aef855915"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa82087482db53ec9435c7190303bf610" id="r_aa82087482db53ec9435c7190303bf610"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa82087482db53ec9435c7190303bf610">memory_read_space_config_description_info_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aa82087482db53ec9435c7190303bf610"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful CDI read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:aa82087482db53ec9435c7190303bf610"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — CDI via datagram. Optional.  <br /></td></tr>
 <tr class="separator:aa82087482db53ec9435c7190303bf610"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a552449f184fa7f86580d19c15fbd63f4" id="r_a552449f184fa7f86580d19c15fbd63f4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a552449f184fa7f86580d19c15fbd63f4">memory_read_space_all_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a552449f184fa7f86580d19c15fbd63f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful All Memory Space read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a552449f184fa7f86580d19c15fbd63f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — All via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a552449f184fa7f86580d19c15fbd63f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6aa663504829e1f6c46c2b3e930f8b2b" id="r_a6aa663504829e1f6c46c2b3e930f8b2b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6aa663504829e1f6c46c2b3e930f8b2b">memory_read_space_configuration_memory_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a6aa663504829e1f6c46c2b3e930f8b2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Configuration Memory read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a6aa663504829e1f6c46c2b3e930f8b2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — Config via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a6aa663504829e1f6c46c2b3e930f8b2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b6659e7eea5d3d6363084f0d4f4caa8" id="r_a6b6659e7eea5d3d6363084f0d4f4caa8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b6659e7eea5d3d6363084f0d4f4caa8">memory_read_space_acdi_manufacturer_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a6b6659e7eea5d3d6363084f0d4f4caa8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful ACDI Manufacturer read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a6b6659e7eea5d3d6363084f0d4f4caa8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — ACDI-Mfg via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a6b6659e7eea5d3d6363084f0d4f4caa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a553ab740fa930bf2f9deaa2cb3f0908b" id="r_a553ab740fa930bf2f9deaa2cb3f0908b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a553ab740fa930bf2f9deaa2cb3f0908b">memory_read_space_acdi_user_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a553ab740fa930bf2f9deaa2cb3f0908b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful ACDI User read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a553ab740fa930bf2f9deaa2cb3f0908b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — ACDI-User via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a553ab740fa930bf2f9deaa2cb3f0908b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b941963020b9b348d9a20ef1530be3b" id="r_a4b941963020b9b348d9a20ef1530be3b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b941963020b9b348d9a20ef1530be3b">memory_read_space_train_function_definition_info_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a4b941963020b9b348d9a20ef1530be3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Train FDI read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a4b941963020b9b348d9a20ef1530be3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — Train FDI via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a4b941963020b9b348d9a20ef1530be3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00131b0d6c446d161524b667e32da65b" id="r_a00131b0d6c446d161524b667e32da65b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a00131b0d6c446d161524b667e32da65b">memory_read_space_train_function_config_memory_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a00131b0d6c446d161524b667e32da65b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Train Function Config read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a00131b0d6c446d161524b667e32da65b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — Train Fn Config via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a00131b0d6c446d161524b667e32da65b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0495705189589c8906071068bdd23bd2" id="r_a0495705189589c8906071068bdd23bd2"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0495705189589c8906071068bdd23bd2">memory_read_space_config_description_info_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a0495705189589c8906071068bdd23bd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed CDI read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a0495705189589c8906071068bdd23bd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — CDI via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a0495705189589c8906071068bdd23bd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc5c5a4af527cd8597f4041467959bba" id="r_abc5c5a4af527cd8597f4041467959bba"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc5c5a4af527cd8597f4041467959bba">memory_read_space_all_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:abc5c5a4af527cd8597f4041467959bba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed All Memory Space read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:abc5c5a4af527cd8597f4041467959bba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — All via datagram. Optional.  <br /></td></tr>
 <tr class="separator:abc5c5a4af527cd8597f4041467959bba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af679d238141d175d07226e697e1383ca" id="r_af679d238141d175d07226e697e1383ca"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af679d238141d175d07226e697e1383ca">memory_read_space_configuration_memory_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:af679d238141d175d07226e697e1383ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Configuration Memory read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:af679d238141d175d07226e697e1383ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — Config via datagram. Optional.  <br /></td></tr>
 <tr class="separator:af679d238141d175d07226e697e1383ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfb53b8a01a205148e9deb91b0014dc3" id="r_acfb53b8a01a205148e9deb91b0014dc3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acfb53b8a01a205148e9deb91b0014dc3">memory_read_space_acdi_manufacturer_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:acfb53b8a01a205148e9deb91b0014dc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed ACDI Manufacturer read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:acfb53b8a01a205148e9deb91b0014dc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — ACDI-Mfg via datagram. Optional.  <br /></td></tr>
 <tr class="separator:acfb53b8a01a205148e9deb91b0014dc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa433b4d539018cef52d549f53127364a" id="r_aa433b4d539018cef52d549f53127364a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa433b4d539018cef52d549f53127364a">memory_read_space_acdi_user_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aa433b4d539018cef52d549f53127364a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed ACDI User read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:aa433b4d539018cef52d549f53127364a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — ACDI-User via datagram. Optional.  <br /></td></tr>
 <tr class="separator:aa433b4d539018cef52d549f53127364a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad71d4d9c428c4a7ae56f0d901e709ec1" id="r_ad71d4d9c428c4a7ae56f0d901e709ec1"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad71d4d9c428c4a7ae56f0d901e709ec1">memory_read_space_train_function_definition_info_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ad71d4d9c428c4a7ae56f0d901e709ec1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Train FDI read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:ad71d4d9c428c4a7ae56f0d901e709ec1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — Train FDI via datagram. Optional.  <br /></td></tr>
 <tr class="separator:ad71d4d9c428c4a7ae56f0d901e709ec1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacc8f90d5823fec244009920701fd65d" id="r_aacc8f90d5823fec244009920701fd65d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aacc8f90d5823fec244009920701fd65d">memory_read_space_train_function_config_memory_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aacc8f90d5823fec244009920701fd65d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Train Function Config read reply via datagram.  <br /></td></tr>
+<tr class="memdesc:aacc8f90d5823fec244009920701fd65d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — Train Fn Config via datagram. Optional.  <br /></td></tr>
 <tr class="separator:aacc8f90d5823fec244009920701fd65d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e9a68684773e8fcbc68808fe42e6d13" id="r_a7e9a68684773e8fcbc68808fe42e6d13"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e9a68684773e8fcbc68808fe42e6d13">memory_read_stream_space_config_description_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a7e9a68684773e8fcbc68808fe42e6d13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Configuration Description Information read via stream.  <br /></td></tr>
+<tr class="memdesc:a7e9a68684773e8fcbc68808fe42e6d13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read CDI (0xFF) via stream. Optional.  <br /></td></tr>
 <tr class="separator:a7e9a68684773e8fcbc68808fe42e6d13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71c87903c2648acf59662a69f328102b" id="r_a71c87903c2648acf59662a69f328102b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71c87903c2648acf59662a69f328102b">memory_read_stream_space_all</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a71c87903c2648acf59662a69f328102b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle All Memory Space read via stream.  <br /></td></tr>
+<tr class="memdesc:a71c87903c2648acf59662a69f328102b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read All (0xFD) via stream. Optional.  <br /></td></tr>
 <tr class="separator:a71c87903c2648acf59662a69f328102b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63200dd3d526fad23c6c7abe070592ec" id="r_a63200dd3d526fad23c6c7abe070592ec"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63200dd3d526fad23c6c7abe070592ec">memory_read_stream_space_configuration_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a63200dd3d526fad23c6c7abe070592ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Configuration Memory read via stream.  <br /></td></tr>
+<tr class="memdesc:a63200dd3d526fad23c6c7abe070592ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read Config (0xFE) via stream. Optional.  <br /></td></tr>
 <tr class="separator:a63200dd3d526fad23c6c7abe070592ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa15cfa1d1727b2da555e310cf628fec5" id="r_aa15cfa1d1727b2da555e310cf628fec5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa15cfa1d1727b2da555e310cf628fec5">memory_read_stream_space_acdi_manufacturer</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aa15cfa1d1727b2da555e310cf628fec5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle ACDI Manufacturer Information read via stream.  <br /></td></tr>
+<tr class="memdesc:aa15cfa1d1727b2da555e310cf628fec5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read ACDI-Mfg (0xFC) via stream. Optional.  <br /></td></tr>
 <tr class="separator:aa15cfa1d1727b2da555e310cf628fec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7cd9d2fe10588e3bc2fe11ac3672be0" id="r_ae7cd9d2fe10588e3bc2fe11ac3672be0"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7cd9d2fe10588e3bc2fe11ac3672be0">memory_read_stream_space_acdi_user</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae7cd9d2fe10588e3bc2fe11ac3672be0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle ACDI User Information read via stream.  <br /></td></tr>
+<tr class="memdesc:ae7cd9d2fe10588e3bc2fe11ac3672be0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read ACDI-User (0xFB) via stream. Optional.  <br /></td></tr>
 <tr class="separator:ae7cd9d2fe10588e3bc2fe11ac3672be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fd87f598695785037e1317c275ca833" id="r_a4fd87f598695785037e1317c275ca833"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4fd87f598695785037e1317c275ca833">memory_read_stream_space_train_function_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a4fd87f598695785037e1317c275ca833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Train Function Definition Info read via stream.  <br /></td></tr>
+<tr class="memdesc:a4fd87f598695785037e1317c275ca833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read Train FDI (0xFA) via stream. Optional.  <br /></td></tr>
 <tr class="separator:a4fd87f598695785037e1317c275ca833"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace96dd105fdb1edada4e8ff6291c031e" id="r_ace96dd105fdb1edada4e8ff6291c031e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace96dd105fdb1edada4e8ff6291c031e">memory_read_stream_space_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ace96dd105fdb1edada4e8ff6291c031e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Train Function Configuration read via stream.  <br /></td></tr>
+<tr class="memdesc:ace96dd105fdb1edada4e8ff6291c031e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read Train Fn Config (0xF9) via stream. Optional.  <br /></td></tr>
 <tr class="separator:ace96dd105fdb1edada4e8ff6291c031e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a760c71abd7a63fd8a71cef103ab5b72e" id="r_a760c71abd7a63fd8a71cef103ab5b72e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a760c71abd7a63fd8a71cef103ab5b72e">memory_read_stream_space_config_description_info_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a760c71abd7a63fd8a71cef103ab5b72e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful CDI read reply via stream.  <br /></td></tr>
+<tr class="memdesc:a760c71abd7a63fd8a71cef103ab5b72e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — CDI via stream. Optional.  <br /></td></tr>
 <tr class="separator:a760c71abd7a63fd8a71cef103ab5b72e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b708ed69c3b67f450d51e47009f503c" id="r_a9b708ed69c3b67f450d51e47009f503c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9b708ed69c3b67f450d51e47009f503c">memory_read_stream_space_all_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a9b708ed69c3b67f450d51e47009f503c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful All Memory Space read reply via stream.  <br /></td></tr>
+<tr class="memdesc:a9b708ed69c3b67f450d51e47009f503c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — All via stream. Optional.  <br /></td></tr>
 <tr class="separator:a9b708ed69c3b67f450d51e47009f503c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a321d19f4918cd7e1b8b403a1ce1f09c9" id="r_a321d19f4918cd7e1b8b403a1ce1f09c9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a321d19f4918cd7e1b8b403a1ce1f09c9">memory_read_stream_space_configuration_memory_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a321d19f4918cd7e1b8b403a1ce1f09c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Configuration Memory read reply via stream.  <br /></td></tr>
+<tr class="memdesc:a321d19f4918cd7e1b8b403a1ce1f09c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — Config via stream. Optional.  <br /></td></tr>
 <tr class="separator:a321d19f4918cd7e1b8b403a1ce1f09c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afcf42236b9e0838961770cbab0bba829" id="r_afcf42236b9e0838961770cbab0bba829"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afcf42236b9e0838961770cbab0bba829">memory_read_stream_space_acdi_manufacturer_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:afcf42236b9e0838961770cbab0bba829"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful ACDI Manufacturer read reply via stream.  <br /></td></tr>
+<tr class="memdesc:afcf42236b9e0838961770cbab0bba829"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — ACDI-Mfg via stream. Optional.  <br /></td></tr>
 <tr class="separator:afcf42236b9e0838961770cbab0bba829"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58c7588c5583c8e222154a27e004c3d9" id="r_a58c7588c5583c8e222154a27e004c3d9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58c7588c5583c8e222154a27e004c3d9">memory_read_stream_space_acdi_user_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a58c7588c5583c8e222154a27e004c3d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful ACDI User read reply via stream.  <br /></td></tr>
+<tr class="memdesc:a58c7588c5583c8e222154a27e004c3d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — ACDI-User via stream. Optional.  <br /></td></tr>
 <tr class="separator:a58c7588c5583c8e222154a27e004c3d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add74d459a54efa3a2bc4d90dd59770e3" id="r_add74d459a54efa3a2bc4d90dd59770e3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add74d459a54efa3a2bc4d90dd59770e3">memory_read_stream_space_train_function_definition_info_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:add74d459a54efa3a2bc4d90dd59770e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Train FDI read reply via stream.  <br /></td></tr>
+<tr class="memdesc:add74d459a54efa3a2bc4d90dd59770e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — Train FDI via stream. Optional.  <br /></td></tr>
 <tr class="separator:add74d459a54efa3a2bc4d90dd59770e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32b6b0b1752fb393159153d2c83fabab" id="r_a32b6b0b1752fb393159153d2c83fabab"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32b6b0b1752fb393159153d2c83fabab">memory_read_stream_space_train_function_config_memory_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a32b6b0b1752fb393159153d2c83fabab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Train Function Config read reply via stream.  <br /></td></tr>
+<tr class="memdesc:a32b6b0b1752fb393159153d2c83fabab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — Train Fn Config via stream. Optional.  <br /></td></tr>
 <tr class="separator:a32b6b0b1752fb393159153d2c83fabab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46f1fc7a9903f4bf0e68a7be2489769a" id="r_a46f1fc7a9903f4bf0e68a7be2489769a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46f1fc7a9903f4bf0e68a7be2489769a">memory_read_stream_space_config_description_info_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a46f1fc7a9903f4bf0e68a7be2489769a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed CDI read reply via stream.  <br /></td></tr>
+<tr class="memdesc:a46f1fc7a9903f4bf0e68a7be2489769a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — CDI via stream. Optional.  <br /></td></tr>
 <tr class="separator:a46f1fc7a9903f4bf0e68a7be2489769a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3442dc3058141e07fefcb3f7adef1c6" id="r_ae3442dc3058141e07fefcb3f7adef1c6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3442dc3058141e07fefcb3f7adef1c6">memory_read_stream_space_all_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae3442dc3058141e07fefcb3f7adef1c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed All Memory Space read reply via stream.  <br /></td></tr>
+<tr class="memdesc:ae3442dc3058141e07fefcb3f7adef1c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — All via stream. Optional.  <br /></td></tr>
 <tr class="separator:ae3442dc3058141e07fefcb3f7adef1c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f08e48ded121be23ee2934e4172d6ac" id="r_a8f08e48ded121be23ee2934e4172d6ac"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f08e48ded121be23ee2934e4172d6ac">memory_read_stream_space_configuration_memory_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a8f08e48ded121be23ee2934e4172d6ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Configuration Memory read reply via stream.  <br /></td></tr>
+<tr class="memdesc:a8f08e48ded121be23ee2934e4172d6ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — Config via stream. Optional.  <br /></td></tr>
 <tr class="separator:a8f08e48ded121be23ee2934e4172d6ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c8836f16c6911a7f015f21f83692e0a" id="r_a9c8836f16c6911a7f015f21f83692e0a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c8836f16c6911a7f015f21f83692e0a">memory_read_stream_space_acdi_manufacturer_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a9c8836f16c6911a7f015f21f83692e0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed ACDI Manufacturer read reply via stream.  <br /></td></tr>
+<tr class="memdesc:a9c8836f16c6911a7f015f21f83692e0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — ACDI-Mfg via stream. Optional.  <br /></td></tr>
 <tr class="separator:a9c8836f16c6911a7f015f21f83692e0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af21f7acb66ecbaf8fba88e8af50d6929" id="r_af21f7acb66ecbaf8fba88e8af50d6929"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af21f7acb66ecbaf8fba88e8af50d6929">memory_read_stream_space_acdi_user_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:af21f7acb66ecbaf8fba88e8af50d6929"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed ACDI User read reply via stream.  <br /></td></tr>
+<tr class="memdesc:af21f7acb66ecbaf8fba88e8af50d6929"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — ACDI-User via stream. Optional.  <br /></td></tr>
 <tr class="separator:af21f7acb66ecbaf8fba88e8af50d6929"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9552859ceecb9094c98e2b9f3963418b" id="r_a9552859ceecb9094c98e2b9f3963418b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9552859ceecb9094c98e2b9f3963418b">memory_read_stream_space_train_function_definition_info_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a9552859ceecb9094c98e2b9f3963418b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Train FDI read reply via stream.  <br /></td></tr>
+<tr class="memdesc:a9552859ceecb9094c98e2b9f3963418b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — Train FDI via stream. Optional.  <br /></td></tr>
 <tr class="separator:a9552859ceecb9094c98e2b9f3963418b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6ebd7d55fc0faf393298b3105f667d2" id="r_af6ebd7d55fc0faf393298b3105f667d2"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6ebd7d55fc0faf393298b3105f667d2">memory_read_stream_space_train_function_config_memory_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:af6ebd7d55fc0faf393298b3105f667d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Train Function Config read reply via stream.  <br /></td></tr>
+<tr class="memdesc:af6ebd7d55fc0faf393298b3105f667d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply FAIL — Train Fn Config via stream. Optional.  <br /></td></tr>
 <tr class="separator:af6ebd7d55fc0faf393298b3105f667d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2f46b1956e32be30347a40f5cfbac11" id="r_aa2f46b1956e32be30347a40f5cfbac11"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2f46b1956e32be30347a40f5cfbac11">memory_write_space_config_description_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aa2f46b1956e32be30347a40f5cfbac11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle CDI write via datagram.  <br /></td></tr>
+<tr class="memdesc:aa2f46b1956e32be30347a40f5cfbac11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write CDI (0xFF) via datagram. Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:aa2f46b1956e32be30347a40f5cfbac11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c7f7fd9ccf519dc24e0c1a3863cee1c" id="r_a5c7f7fd9ccf519dc24e0c1a3863cee1c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c7f7fd9ccf519dc24e0c1a3863cee1c">memory_write_space_all</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a5c7f7fd9ccf519dc24e0c1a3863cee1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle All Memory Space write via datagram.  <br /></td></tr>
+<tr class="memdesc:a5c7f7fd9ccf519dc24e0c1a3863cee1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write All (0xFD) via datagram. Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:a5c7f7fd9ccf519dc24e0c1a3863cee1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d16d65d41f018ae61bd71e2d21342bf" id="r_a9d16d65d41f018ae61bd71e2d21342bf"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d16d65d41f018ae61bd71e2d21342bf">memory_write_space_configuration_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a9d16d65d41f018ae61bd71e2d21342bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Configuration Memory write via datagram.  <br /></td></tr>
+<tr class="memdesc:a9d16d65d41f018ae61bd71e2d21342bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write Config (0xFE) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a9d16d65d41f018ae61bd71e2d21342bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1af0d2bc56c8dfc5dc267a62f3c50316" id="r_a1af0d2bc56c8dfc5dc267a62f3c50316"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1af0d2bc56c8dfc5dc267a62f3c50316">memory_write_space_acdi_manufacturer</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a1af0d2bc56c8dfc5dc267a62f3c50316"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle ACDI Manufacturer write via datagram.  <br /></td></tr>
+<tr class="memdesc:a1af0d2bc56c8dfc5dc267a62f3c50316"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write ACDI-Mfg (0xFC) via datagram. Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:a1af0d2bc56c8dfc5dc267a62f3c50316"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae04909ce279aca7a97aa9a32c2f80994" id="r_ae04909ce279aca7a97aa9a32c2f80994"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae04909ce279aca7a97aa9a32c2f80994">memory_write_space_acdi_user</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae04909ce279aca7a97aa9a32c2f80994"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle ACDI User write via datagram.  <br /></td></tr>
+<tr class="memdesc:ae04909ce279aca7a97aa9a32c2f80994"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write ACDI-User (0xFB) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:ae04909ce279aca7a97aa9a32c2f80994"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa91e6257281f4f1992ac71e970fe7e05" id="r_aa91e6257281f4f1992ac71e970fe7e05"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa91e6257281f4f1992ac71e970fe7e05">memory_write_space_train_function_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aa91e6257281f4f1992ac71e970fe7e05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Train FDI write via datagram.  <br /></td></tr>
+<tr class="memdesc:aa91e6257281f4f1992ac71e970fe7e05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write Train FDI (0xFA) via datagram. Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:aa91e6257281f4f1992ac71e970fe7e05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3abf954e2973be3a64a2094db023120" id="r_ae3abf954e2973be3a64a2094db023120"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3abf954e2973be3a64a2094db023120">memory_write_space_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae3abf954e2973be3a64a2094db023120"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Train Function Config write via datagram.  <br /></td></tr>
+<tr class="memdesc:ae3abf954e2973be3a64a2094db023120"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write Train Fn Config (0xF9) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:ae3abf954e2973be3a64a2094db023120"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bb3202e5587dd9c16acdee5a583acd8" id="r_a6bb3202e5587dd9c16acdee5a583acd8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bb3202e5587dd9c16acdee5a583acd8">memory_write_space_firmware_upgrade</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a6bb3202e5587dd9c16acdee5a583acd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Firmware Upgrade write via datagram.  <br /></td></tr>
+<tr class="memdesc:a6bb3202e5587dd9c16acdee5a583acd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write Firmware Upgrade space via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a6bb3202e5587dd9c16acdee5a583acd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a16fb2a0be35744fc728c20df6c175a07" id="r_a16fb2a0be35744fc728c20df6c175a07"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16fb2a0be35744fc728c20df6c175a07">memory_write_space_config_description_info_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a16fb2a0be35744fc728c20df6c175a07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful CDI write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a16fb2a0be35744fc728c20df6c175a07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — CDI via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a16fb2a0be35744fc728c20df6c175a07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a024c63660b77f94a1efb643cd4716f0f" id="r_a024c63660b77f94a1efb643cd4716f0f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a024c63660b77f94a1efb643cd4716f0f">memory_write_space_all_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a024c63660b77f94a1efb643cd4716f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful All Memory Space write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a024c63660b77f94a1efb643cd4716f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — All via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a024c63660b77f94a1efb643cd4716f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a686b89fcb34060267a0f321c5d36bf2a" id="r_a686b89fcb34060267a0f321c5d36bf2a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a686b89fcb34060267a0f321c5d36bf2a">memory_write_space_configuration_memory_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a686b89fcb34060267a0f321c5d36bf2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Configuration Memory write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a686b89fcb34060267a0f321c5d36bf2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — Config via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a686b89fcb34060267a0f321c5d36bf2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97836c69402ca624b23ca6edda25684e" id="r_a97836c69402ca624b23ca6edda25684e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97836c69402ca624b23ca6edda25684e">memory_write_space_acdi_manufacturer_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a97836c69402ca624b23ca6edda25684e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful ACDI Manufacturer write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a97836c69402ca624b23ca6edda25684e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — ACDI-Mfg via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a97836c69402ca624b23ca6edda25684e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6da3e6a8e483a5ed1bca03bc831b661d" id="r_a6da3e6a8e483a5ed1bca03bc831b661d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6da3e6a8e483a5ed1bca03bc831b661d">memory_write_space_acdi_user_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a6da3e6a8e483a5ed1bca03bc831b661d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful ACDI User write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a6da3e6a8e483a5ed1bca03bc831b661d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — ACDI-User via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a6da3e6a8e483a5ed1bca03bc831b661d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a30ffbcf9df3122b25ed5db619f4774ae" id="r_a30ffbcf9df3122b25ed5db619f4774ae"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30ffbcf9df3122b25ed5db619f4774ae">memory_write_space_train_function_definition_info_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a30ffbcf9df3122b25ed5db619f4774ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Train FDI write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a30ffbcf9df3122b25ed5db619f4774ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — Train FDI via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a30ffbcf9df3122b25ed5db619f4774ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae30129c2d14ad9221fb896c2189fafee" id="r_ae30129c2d14ad9221fb896c2189fafee"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae30129c2d14ad9221fb896c2189fafee">memory_write_space_train_function_config_memory_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae30129c2d14ad9221fb896c2189fafee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Train Function Config write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:ae30129c2d14ad9221fb896c2189fafee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — Train Fn Config via datagram. Optional.  <br /></td></tr>
 <tr class="separator:ae30129c2d14ad9221fb896c2189fafee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc8d941047035903b899c75419a2dc30" id="r_abc8d941047035903b899c75419a2dc30"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc8d941047035903b899c75419a2dc30">memory_write_space_config_description_info_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:abc8d941047035903b899c75419a2dc30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed CDI write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:abc8d941047035903b899c75419a2dc30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — CDI via datagram. Optional.  <br /></td></tr>
 <tr class="separator:abc8d941047035903b899c75419a2dc30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac596d576df6b52d6d87b6bc4cd555171" id="r_ac596d576df6b52d6d87b6bc4cd555171"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac596d576df6b52d6d87b6bc4cd555171">memory_write_space_all_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ac596d576df6b52d6d87b6bc4cd555171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed All Memory Space write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:ac596d576df6b52d6d87b6bc4cd555171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — All via datagram. Optional.  <br /></td></tr>
 <tr class="separator:ac596d576df6b52d6d87b6bc4cd555171"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bbc0a35e876d2b04805d4bdff706bce" id="r_a9bbc0a35e876d2b04805d4bdff706bce"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9bbc0a35e876d2b04805d4bdff706bce">memory_write_space_configuration_memory_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a9bbc0a35e876d2b04805d4bdff706bce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Configuration Memory write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a9bbc0a35e876d2b04805d4bdff706bce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — Config via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a9bbc0a35e876d2b04805d4bdff706bce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae107694a93b34eea4df16a6a11df5a1b" id="r_ae107694a93b34eea4df16a6a11df5a1b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae107694a93b34eea4df16a6a11df5a1b">memory_write_space_acdi_manufacturer_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae107694a93b34eea4df16a6a11df5a1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed ACDI Manufacturer write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:ae107694a93b34eea4df16a6a11df5a1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — ACDI-Mfg via datagram. Optional.  <br /></td></tr>
 <tr class="separator:ae107694a93b34eea4df16a6a11df5a1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c3c813f1c289a4690dca3e15865bca9" id="r_a2c3c813f1c289a4690dca3e15865bca9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c3c813f1c289a4690dca3e15865bca9">memory_write_space_acdi_user_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a2c3c813f1c289a4690dca3e15865bca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed ACDI User write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a2c3c813f1c289a4690dca3e15865bca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — ACDI-User via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a2c3c813f1c289a4690dca3e15865bca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb7b0c92ddb49aa2273c1ccea4b35124" id="r_afb7b0c92ddb49aa2273c1ccea4b35124"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb7b0c92ddb49aa2273c1ccea4b35124">memory_write_space_train_function_definition_info_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:afb7b0c92ddb49aa2273c1ccea4b35124"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Train FDI write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:afb7b0c92ddb49aa2273c1ccea4b35124"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — Train FDI via datagram. Optional.  <br /></td></tr>
 <tr class="separator:afb7b0c92ddb49aa2273c1ccea4b35124"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a000ffa24787cae2afadfb83b7cb5dc75" id="r_a000ffa24787cae2afadfb83b7cb5dc75"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a000ffa24787cae2afadfb83b7cb5dc75">memory_write_space_train_function_config_memory_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a000ffa24787cae2afadfb83b7cb5dc75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Train Function Config write reply via datagram.  <br /></td></tr>
+<tr class="memdesc:a000ffa24787cae2afadfb83b7cb5dc75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — Train Fn Config via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a000ffa24787cae2afadfb83b7cb5dc75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48379a1e0d52d91bb864a9f772f8bac9" id="r_a48379a1e0d52d91bb864a9f772f8bac9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48379a1e0d52d91bb864a9f772f8bac9">memory_write_under_mask_space_config_description_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a48379a1e0d52d91bb864a9f772f8bac9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle CDI write under mask via datagram.  <br /></td></tr>
+<tr class="memdesc:a48379a1e0d52d91bb864a9f772f8bac9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-under-mask CDI (0xFF). Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:a48379a1e0d52d91bb864a9f772f8bac9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4831e51a1fc0854f84d14a88866a4dc" id="r_ac4831e51a1fc0854f84d14a88866a4dc"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4831e51a1fc0854f84d14a88866a4dc">memory_write_under_mask_space_all</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ac4831e51a1fc0854f84d14a88866a4dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle All Memory Space write under mask via datagram.  <br /></td></tr>
+<tr class="memdesc:ac4831e51a1fc0854f84d14a88866a4dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-under-mask All (0xFD). Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:ac4831e51a1fc0854f84d14a88866a4dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac3906c7de5efbd9f5d72018de652d51" id="r_aac3906c7de5efbd9f5d72018de652d51"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac3906c7de5efbd9f5d72018de652d51">memory_write_under_mask_space_configuration_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aac3906c7de5efbd9f5d72018de652d51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Configuration Memory write under mask via datagram.  <br /></td></tr>
+<tr class="memdesc:aac3906c7de5efbd9f5d72018de652d51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-under-mask Config (0xFE). Optional.  <br /></td></tr>
 <tr class="separator:aac3906c7de5efbd9f5d72018de652d51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae6db086a90096d440eb628b8b6e8f21" id="r_aae6db086a90096d440eb628b8b6e8f21"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae6db086a90096d440eb628b8b6e8f21">memory_write_under_mask_space_acdi_manufacturer</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aae6db086a90096d440eb628b8b6e8f21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle ACDI Manufacturer write under mask via datagram.  <br /></td></tr>
+<tr class="memdesc:aae6db086a90096d440eb628b8b6e8f21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-under-mask ACDI-Mfg (0xFC). Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:aae6db086a90096d440eb628b8b6e8f21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21fbaf901e9e01108c9c93177cf53c05" id="r_a21fbaf901e9e01108c9c93177cf53c05"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21fbaf901e9e01108c9c93177cf53c05">memory_write_under_mask_space_acdi_user</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a21fbaf901e9e01108c9c93177cf53c05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle ACDI User write under mask via datagram.  <br /></td></tr>
+<tr class="memdesc:a21fbaf901e9e01108c9c93177cf53c05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-under-mask ACDI-User (0xFB). Optional.  <br /></td></tr>
 <tr class="separator:a21fbaf901e9e01108c9c93177cf53c05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f292c8cae283429b4c8174d4c127730" id="r_a6f292c8cae283429b4c8174d4c127730"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f292c8cae283429b4c8174d4c127730">memory_write_under_mask_space_train_function_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a6f292c8cae283429b4c8174d4c127730"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Train FDI write under mask via datagram.  <br /></td></tr>
+<tr class="memdesc:a6f292c8cae283429b4c8174d4c127730"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-under-mask Train FDI (0xFA). Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:a6f292c8cae283429b4c8174d4c127730"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e7752917c6e1f417884a9b6a0afc2a7" id="r_a6e7752917c6e1f417884a9b6a0afc2a7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e7752917c6e1f417884a9b6a0afc2a7">memory_write_under_mask_space_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a6e7752917c6e1f417884a9b6a0afc2a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Train Function Config write under mask via datagram.  <br /></td></tr>
+<tr class="memdesc:a6e7752917c6e1f417884a9b6a0afc2a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-under-mask Train Fn Config (0xF9). Optional.  <br /></td></tr>
 <tr class="separator:a6e7752917c6e1f417884a9b6a0afc2a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab14bcd5658dbcd7747d15f2312ea616c" id="r_ab14bcd5658dbcd7747d15f2312ea616c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab14bcd5658dbcd7747d15f2312ea616c">memory_write_under_mask_space_firmware_upgrade</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ab14bcd5658dbcd7747d15f2312ea616c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Firmware Upgrade write under mask via datagram.  <br /></td></tr>
+<tr class="memdesc:ab14bcd5658dbcd7747d15f2312ea616c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-under-mask Firmware Upgrade space. Optional.  <br /></td></tr>
 <tr class="separator:ab14bcd5658dbcd7747d15f2312ea616c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fd072abd1386a6c904a8590cb185ab6" id="r_a5fd072abd1386a6c904a8590cb185ab6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5fd072abd1386a6c904a8590cb185ab6">memory_write_stream_space_config_description_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a5fd072abd1386a6c904a8590cb185ab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle CDI write via stream.  <br /></td></tr>
+<tr class="memdesc:a5fd072abd1386a6c904a8590cb185ab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write CDI (0xFF) via stream. Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:a5fd072abd1386a6c904a8590cb185ab6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4449a6615ef778e27c9407d05c25dcbd" id="r_a4449a6615ef778e27c9407d05c25dcbd"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4449a6615ef778e27c9407d05c25dcbd">memory_write_stream_space_all</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a4449a6615ef778e27c9407d05c25dcbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle All Memory Space write via stream.  <br /></td></tr>
+<tr class="memdesc:a4449a6615ef778e27c9407d05c25dcbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write All (0xFD) via stream. Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:a4449a6615ef778e27c9407d05c25dcbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6c3e35244ef48321a554181845aae4d" id="r_af6c3e35244ef48321a554181845aae4d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6c3e35244ef48321a554181845aae4d">memory_write_stream_space_configuration_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:af6c3e35244ef48321a554181845aae4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Configuration Memory write via stream.  <br /></td></tr>
+<tr class="memdesc:af6c3e35244ef48321a554181845aae4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write Config (0xFE) via stream. Optional.  <br /></td></tr>
 <tr class="separator:af6c3e35244ef48321a554181845aae4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e6ac1c3ff9d7f63d9c4437ce9bebe5f" id="r_a2e6ac1c3ff9d7f63d9c4437ce9bebe5f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e6ac1c3ff9d7f63d9c4437ce9bebe5f">memory_write_stream_space_acdi_manufacturer</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a2e6ac1c3ff9d7f63d9c4437ce9bebe5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle ACDI Manufacturer write via stream.  <br /></td></tr>
+<tr class="memdesc:a2e6ac1c3ff9d7f63d9c4437ce9bebe5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write ACDI-Mfg (0xFC) via stream. Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:a2e6ac1c3ff9d7f63d9c4437ce9bebe5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a483970e582e80063b0275f19c853e723" id="r_a483970e582e80063b0275f19c853e723"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a483970e582e80063b0275f19c853e723">memory_write_stream_space_acdi_user</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a483970e582e80063b0275f19c853e723"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle ACDI User write via stream.  <br /></td></tr>
+<tr class="memdesc:a483970e582e80063b0275f19c853e723"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write ACDI-User (0xFB) via stream. Optional.  <br /></td></tr>
 <tr class="separator:a483970e582e80063b0275f19c853e723"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c5f132e26553d6bee4f60d22a8f1210" id="r_a7c5f132e26553d6bee4f60d22a8f1210"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c5f132e26553d6bee4f60d22a8f1210">memory_write_stream_space_train_function_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a7c5f132e26553d6bee4f60d22a8f1210"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Train FDI write via stream.  <br /></td></tr>
+<tr class="memdesc:a7c5f132e26553d6bee4f60d22a8f1210"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write Train FDI (0xFA) via stream. Optional (usually NULL — read-only).  <br /></td></tr>
 <tr class="separator:a7c5f132e26553d6bee4f60d22a8f1210"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4c0b1ea6ba6a571cbd652ebbb24fe46" id="r_ab4c0b1ea6ba6a571cbd652ebbb24fe46"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4c0b1ea6ba6a571cbd652ebbb24fe46">memory_write_stream_space_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ab4c0b1ea6ba6a571cbd652ebbb24fe46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Train Function Config write via stream.  <br /></td></tr>
+<tr class="memdesc:ab4c0b1ea6ba6a571cbd652ebbb24fe46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write Train Fn Config (0xF9) via stream. Optional.  <br /></td></tr>
 <tr class="separator:ab4c0b1ea6ba6a571cbd652ebbb24fe46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c81ddd20da04a23d83de2a4ad95e785" id="r_a6c81ddd20da04a23d83de2a4ad95e785"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c81ddd20da04a23d83de2a4ad95e785">memory_write_stream_space_firmware_upgrade</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a6c81ddd20da04a23d83de2a4ad95e785"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to handle Firmware Upgrade write via stream.  <br /></td></tr>
+<tr class="memdesc:a6c81ddd20da04a23d83de2a4ad95e785"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write Firmware Upgrade space via stream. Optional.  <br /></td></tr>
 <tr class="separator:a6c81ddd20da04a23d83de2a4ad95e785"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3183c3bfdec6cc1f83b1f79b432716e" id="r_ae3183c3bfdec6cc1f83b1f79b432716e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3183c3bfdec6cc1f83b1f79b432716e">memory_write_stream_space_config_description_info_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae3183c3bfdec6cc1f83b1f79b432716e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful CDI write reply via stream.  <br /></td></tr>
+<tr class="memdesc:ae3183c3bfdec6cc1f83b1f79b432716e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — CDI via stream. Optional.  <br /></td></tr>
 <tr class="separator:ae3183c3bfdec6cc1f83b1f79b432716e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af46f7b9109996ddef62fb133660f2fe4" id="r_af46f7b9109996ddef62fb133660f2fe4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af46f7b9109996ddef62fb133660f2fe4">memory_write_stream_space_all_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:af46f7b9109996ddef62fb133660f2fe4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful All Memory Space write reply via stream.  <br /></td></tr>
+<tr class="memdesc:af46f7b9109996ddef62fb133660f2fe4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — All via stream. Optional.  <br /></td></tr>
 <tr class="separator:af46f7b9109996ddef62fb133660f2fe4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c043f4763d31efa2e9253b25a89fdeb" id="r_a9c043f4763d31efa2e9253b25a89fdeb"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c043f4763d31efa2e9253b25a89fdeb">memory_write_stream_space_configuration_memory_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a9c043f4763d31efa2e9253b25a89fdeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Configuration Memory write reply via stream.  <br /></td></tr>
+<tr class="memdesc:a9c043f4763d31efa2e9253b25a89fdeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — Config via stream. Optional.  <br /></td></tr>
 <tr class="separator:a9c043f4763d31efa2e9253b25a89fdeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aecad4c7790b86f6bbeaf06b8611e6834" id="r_aecad4c7790b86f6bbeaf06b8611e6834"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aecad4c7790b86f6bbeaf06b8611e6834">memory_write_stream_space_acdi_manufacturer_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aecad4c7790b86f6bbeaf06b8611e6834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful ACDI Manufacturer write reply via stream.  <br /></td></tr>
+<tr class="memdesc:aecad4c7790b86f6bbeaf06b8611e6834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — ACDI-Mfg via stream. Optional.  <br /></td></tr>
 <tr class="separator:aecad4c7790b86f6bbeaf06b8611e6834"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad553a82f96760c1c99e5f310324f6717" id="r_ad553a82f96760c1c99e5f310324f6717"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad553a82f96760c1c99e5f310324f6717">memory_write_stream_space_acdi_user_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ad553a82f96760c1c99e5f310324f6717"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful ACDI User write reply via stream.  <br /></td></tr>
+<tr class="memdesc:ad553a82f96760c1c99e5f310324f6717"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — ACDI-User via stream. Optional.  <br /></td></tr>
 <tr class="separator:ad553a82f96760c1c99e5f310324f6717"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a015a9cabe29f6efe92e6b9e39c6f3a5a" id="r_a015a9cabe29f6efe92e6b9e39c6f3a5a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a015a9cabe29f6efe92e6b9e39c6f3a5a">memory_write_stream_space_train_function_definition_info_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a015a9cabe29f6efe92e6b9e39c6f3a5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Train FDI write reply via stream.  <br /></td></tr>
+<tr class="memdesc:a015a9cabe29f6efe92e6b9e39c6f3a5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — Train FDI via stream. Optional.  <br /></td></tr>
 <tr class="separator:a015a9cabe29f6efe92e6b9e39c6f3a5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56c1c4682ca9420ca8cdf4addbb6194f" id="r_a56c1c4682ca9420ca8cdf4addbb6194f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56c1c4682ca9420ca8cdf4addbb6194f">memory_write_stream_space_train_function_config_memory_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a56c1c4682ca9420ca8cdf4addbb6194f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process successful Train Function Config write reply via stream.  <br /></td></tr>
+<tr class="memdesc:a56c1c4682ca9420ca8cdf4addbb6194f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply OK — Train Fn Config via stream. Optional.  <br /></td></tr>
 <tr class="separator:a56c1c4682ca9420ca8cdf4addbb6194f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad841939af05fc01787517a06d6211892" id="r_ad841939af05fc01787517a06d6211892"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad841939af05fc01787517a06d6211892">memory_write_stream_space_config_description_info_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ad841939af05fc01787517a06d6211892"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed CDI write reply via stream.  <br /></td></tr>
+<tr class="memdesc:ad841939af05fc01787517a06d6211892"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — CDI via stream. Optional.  <br /></td></tr>
 <tr class="separator:ad841939af05fc01787517a06d6211892"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd5986b9d0ce38e017efbb056b43d6d5" id="r_afd5986b9d0ce38e017efbb056b43d6d5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd5986b9d0ce38e017efbb056b43d6d5">memory_write_stream_space_all_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:afd5986b9d0ce38e017efbb056b43d6d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed All Memory Space write reply via stream.  <br /></td></tr>
+<tr class="memdesc:afd5986b9d0ce38e017efbb056b43d6d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — All via stream. Optional.  <br /></td></tr>
 <tr class="separator:afd5986b9d0ce38e017efbb056b43d6d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5702a0f81c38ed8fee505229d44a3cd" id="r_ad5702a0f81c38ed8fee505229d44a3cd"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5702a0f81c38ed8fee505229d44a3cd">memory_write_stream_space_configuration_memory_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ad5702a0f81c38ed8fee505229d44a3cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Configuration Memory write reply via stream.  <br /></td></tr>
+<tr class="memdesc:ad5702a0f81c38ed8fee505229d44a3cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — Config via stream. Optional.  <br /></td></tr>
 <tr class="separator:ad5702a0f81c38ed8fee505229d44a3cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad946c8b5b19bacd6fce9e3791d5391b1" id="r_ad946c8b5b19bacd6fce9e3791d5391b1"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad946c8b5b19bacd6fce9e3791d5391b1">memory_write_stream_space_acdi_manufacturer_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ad946c8b5b19bacd6fce9e3791d5391b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed ACDI Manufacturer write reply via stream.  <br /></td></tr>
+<tr class="memdesc:ad946c8b5b19bacd6fce9e3791d5391b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — ACDI-Mfg via stream. Optional.  <br /></td></tr>
 <tr class="separator:ad946c8b5b19bacd6fce9e3791d5391b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05876706f1d9b796f3e4d29b8ec7ce46" id="r_a05876706f1d9b796f3e4d29b8ec7ce46"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05876706f1d9b796f3e4d29b8ec7ce46">memory_write_stream_space_acdi_user_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a05876706f1d9b796f3e4d29b8ec7ce46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed ACDI User write reply via stream.  <br /></td></tr>
+<tr class="memdesc:a05876706f1d9b796f3e4d29b8ec7ce46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — ACDI-User via stream. Optional.  <br /></td></tr>
 <tr class="separator:a05876706f1d9b796f3e4d29b8ec7ce46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6427e645989ea040a09f73478aad9ca2" id="r_a6427e645989ea040a09f73478aad9ca2"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6427e645989ea040a09f73478aad9ca2">memory_write_stream_space_train_function_definition_info_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a6427e645989ea040a09f73478aad9ca2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Train FDI write reply via stream.  <br /></td></tr>
+<tr class="memdesc:a6427e645989ea040a09f73478aad9ca2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — Train FDI via stream. Optional.  <br /></td></tr>
 <tr class="separator:a6427e645989ea040a09f73478aad9ca2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d684f89de21e03d8f1e91711f8bda19" id="r_a4d684f89de21e03d8f1e91711f8bda19"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d684f89de21e03d8f1e91711f8bda19">memory_write_stream_space_train_function_config_memory_reply_fail</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a4d684f89de21e03d8f1e91711f8bda19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process failed Train Function Config write reply via stream.  <br /></td></tr>
+<tr class="memdesc:a4d684f89de21e03d8f1e91711f8bda19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write reply FAIL — Train Fn Config via stream. Optional.  <br /></td></tr>
 <tr class="separator:a4d684f89de21e03d8f1e91711f8bda19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab64780dd7b34ad8b6f4d5043e44a34d5" id="r_ab64780dd7b34ad8b6f4d5043e44a34d5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab64780dd7b34ad8b6f4d5043e44a34d5">memory_options_cmd</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ab64780dd7b34ad8b6f4d5043e44a34d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Get Configuration Options command.  <br /></td></tr>
+<tr class="memdesc:ab64780dd7b34ad8b6f4d5043e44a34d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Configuration Options command. Optional.  <br /></td></tr>
 <tr class="separator:ab64780dd7b34ad8b6f4d5043e44a34d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa21f8684d10bf7c5c354d2e6064d289f" id="r_aa21f8684d10bf7c5c354d2e6064d289f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa21f8684d10bf7c5c354d2e6064d289f">memory_options_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:aa21f8684d10bf7c5c354d2e6064d289f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Configuration Options reply.  <br /></td></tr>
+<tr class="memdesc:aa21f8684d10bf7c5c354d2e6064d289f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration Options reply (received). Optional.  <br /></td></tr>
 <tr class="separator:aa21f8684d10bf7c5c354d2e6064d289f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6075a6d0e268369bbf974c3afee33a1a" id="r_a6075a6d0e268369bbf974c3afee33a1a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6075a6d0e268369bbf974c3afee33a1a">memory_get_address_space_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a6075a6d0e268369bbf974c3afee33a1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Get Address Space Information command.  <br /></td></tr>
+<tr class="memdesc:a6075a6d0e268369bbf974c3afee33a1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Address Space Information command. Optional.  <br /></td></tr>
 <tr class="separator:a6075a6d0e268369bbf974c3afee33a1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af675479832769e02d60031779870390b" id="r_af675479832769e02d60031779870390b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af675479832769e02d60031779870390b">memory_get_address_space_info_reply_not_present</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:af675479832769e02d60031779870390b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Address Space Not Present reply.  <br /></td></tr>
+<tr class="memdesc:af675479832769e02d60031779870390b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Address Space Not Present reply (received). Optional.  <br /></td></tr>
 <tr class="separator:af675479832769e02d60031779870390b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6412506cdcb9cef478afb77651348cb" id="r_ab6412506cdcb9cef478afb77651348cb"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6412506cdcb9cef478afb77651348cb">memory_get_address_space_info_reply_present</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ab6412506cdcb9cef478afb77651348cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Address Space Present reply.  <br /></td></tr>
+<tr class="memdesc:ab6412506cdcb9cef478afb77651348cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Address Space Present reply (received). Optional.  <br /></td></tr>
 <tr class="separator:ab6412506cdcb9cef478afb77651348cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a899f8d20f60b2ac83043c56d4e94d872" id="r_a899f8d20f60b2ac83043c56d4e94d872"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a899f8d20f60b2ac83043c56d4e94d872">memory_reserve_lock</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a899f8d20f60b2ac83043c56d4e94d872"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Lock/Reserve command.  <br /></td></tr>
+<tr class="memdesc:a899f8d20f60b2ac83043c56d4e94d872"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lock/Reserve command. Optional.  <br /></td></tr>
 <tr class="separator:a899f8d20f60b2ac83043c56d4e94d872"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f702de93427ff5e029a454e34acf04b" id="r_a7f702de93427ff5e029a454e34acf04b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f702de93427ff5e029a454e34acf04b">memory_reserve_lock_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a7f702de93427ff5e029a454e34acf04b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Lock/Reserve reply.  <br /></td></tr>
+<tr class="memdesc:a7f702de93427ff5e029a454e34acf04b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lock/Reserve reply (received). Optional.  <br /></td></tr>
 <tr class="separator:a7f702de93427ff5e029a454e34acf04b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b93e90a0f5a2ca72d0e699409d47873" id="r_a7b93e90a0f5a2ca72d0e699409d47873"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b93e90a0f5a2ca72d0e699409d47873">memory_get_unique_id</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a7b93e90a0f5a2ca72d0e699409d47873"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Get Unique ID command.  <br /></td></tr>
+<tr class="memdesc:a7b93e90a0f5a2ca72d0e699409d47873"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Unique ID command. Optional.  <br /></td></tr>
 <tr class="separator:a7b93e90a0f5a2ca72d0e699409d47873"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a668aef14c51b5d720692ba70e14a6925" id="r_a668aef14c51b5d720692ba70e14a6925"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a668aef14c51b5d720692ba70e14a6925">memory_get_unique_id_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a668aef14c51b5d720692ba70e14a6925"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Get Unique ID reply.  <br /></td></tr>
+<tr class="memdesc:a668aef14c51b5d720692ba70e14a6925"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Unique ID reply (received). Optional.  <br /></td></tr>
 <tr class="separator:a668aef14c51b5d720692ba70e14a6925"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10ecd7becb17961496b9718961a1c9bd" id="r_a10ecd7becb17961496b9718961a1c9bd"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10ecd7becb17961496b9718961a1c9bd">memory_unfreeze</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a10ecd7becb17961496b9718961a1c9bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Unfreeze command.  <br /></td></tr>
+<tr class="memdesc:a10ecd7becb17961496b9718961a1c9bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unfreeze command. Optional.  <br /></td></tr>
 <tr class="separator:a10ecd7becb17961496b9718961a1c9bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe04acac618d5c6d030d13814b3f7da4" id="r_abe04acac618d5c6d030d13814b3f7da4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe04acac618d5c6d030d13814b3f7da4">memory_freeze</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:abe04acac618d5c6d030d13814b3f7da4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Freeze command.  <br /></td></tr>
+<tr class="memdesc:abe04acac618d5c6d030d13814b3f7da4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Freeze command. Optional.  <br /></td></tr>
 <tr class="separator:abe04acac618d5c6d030d13814b3f7da4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a446b48a637937db51c619ea9dbc06b23" id="r_a446b48a637937db51c619ea9dbc06b23"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a446b48a637937db51c619ea9dbc06b23">memory_update_complete</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a446b48a637937db51c619ea9dbc06b23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Update Complete command.  <br /></td></tr>
+<tr class="memdesc:a446b48a637937db51c619ea9dbc06b23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update Complete notification. Optional.  <br /></td></tr>
 <tr class="separator:a446b48a637937db51c619ea9dbc06b23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ae5a301192cd0e874f090acce11cbb8" id="r_a9ae5a301192cd0e874f090acce11cbb8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ae5a301192cd0e874f090acce11cbb8">memory_reset_reboot</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a9ae5a301192cd0e874f090acce11cbb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Reset/Reboot command.  <br /></td></tr>
+<tr class="memdesc:a9ae5a301192cd0e874f090acce11cbb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset/Reboot command. Optional.  <br /></td></tr>
 <tr class="separator:a9ae5a301192cd0e874f090acce11cbb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74055caf9d2702f2344bd1a5a98336a3" id="r_a74055caf9d2702f2344bd1a5a98336a3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74055caf9d2702f2344bd1a5a98336a3">memory_factory_reset</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a74055caf9d2702f2344bd1a5a98336a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process Factory Reset command.  <br /></td></tr>
+<tr class="memdesc:a74055caf9d2702f2344bd1a5a98336a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory Reset command. Optional.  <br /></td></tr>
 <tr class="separator:a74055caf9d2702f2344bd1a5a98336a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Interface structure for datagram protocol handler callbacks. </p>
-<p>This structure defines the callback interface for handling OpenLCB datagram protocol operations. It contains function pointers for resource management, configuration memory operations, and datagram transport handling as defined in the OpenLCB Datagram Transport and Memory Configuration Protocol specifications.</p>
-<p>The interface allows the application layer to customize behavior for different memory operations and transport methods while the datagram handler manages the message formatting, acknowledgment, rejection, and state machine logic.</p>
-<p>The structure organizes callbacks into functional groups:</p><ul>
-<li>Resource locking (required)</li>
-<li>Memory read operations via datagram transport</li>
-<li>Memory read operations via stream transport</li>
-<li>Memory write operations via datagram transport</li>
-<li>Memory write operations via stream transport</li>
-<li>Write-under-mask operations</li>
-<li>Configuration memory commands</li>
-<li>Reply handlers for client-initiated operations</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>Required callbacks must be set before calling ProtocolDatagramHandler_initialize </dd>
-<dd>
-Optional callbacks can be NULL if the corresponding functionality is not needed </dd>
-<dd>
-Setting an optional callback to NULL will result in datagram rejection with ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN when that operation is requested</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#a87c419434a44020752f0fd815f1a0832" title="Initializes the Protocol Datagram Handler module.">ProtocolDatagramHandler_initialize</a> </dd>
-<dd>
-<a class="el" href="structopenlcb__statemachine__info__t.html" title="State machine context information.">openlcb_statemachine_info_t</a> </dd></dl>
+<div class="textblock"><p>Callback interface for the datagram handler. lock/unlock are REQUIRED; all memory-operation pointers are optional (NULL = rejected). </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>
@@ -463,9 +443,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Callback to lock shared resources before buffer access. </p>
-<p>This required callback provides mutual exclusion protection for shared data structures during datagram processing. Typically disables interrupts or acquires a mutex to prevent concurrent access.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Disable interrupts / acquire mutex. REQUIRED. </p>
 
 </div>
 </div>
@@ -481,9 +459,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Callback to unlock shared resources after buffer access. </p>
-<p>This required callback releases mutual exclusion protection established by lock_shared_resources. Typically re-enables interrupts or releases a mutex.</p>
-<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+<p>Re-enable interrupts / release mutex. REQUIRED. </p>
 
 </div>
 </div>
@@ -499,9 +475,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Configuration Description Information read via datagram. </p>
-<p>Handles incoming datagram requests to read from Configuration Description Information (CDI) address space (0xFF), which contains XML describing the node's configuration structure.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if CDI reads are not supported via datagram </dd></dl>
+<p>Read CDI (0xFF) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -517,9 +491,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle All Memory Space read via datagram. </p>
-<p>Handles incoming datagram requests to read from All Memory Space (0xFD), which provides unified access to all readable memory regions.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if All Memory Space reads are not supported via datagram </dd></dl>
+<p>Read All (0xFD) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -535,9 +507,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Configuration Memory read via datagram. </p>
-<p>Handles incoming datagram requests to read from Configuration Memory address space (0xFE), which contains node configuration variables.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Configuration Memory reads are not supported via datagram </dd></dl>
+<p>Read Config (0xFE) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -553,9 +523,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle ACDI Manufacturer Information read via datagram. </p>
-<p>Handles incoming datagram requests to read from ACDI Manufacturer address space (0xFC), which contains read-only manufacturer identification data.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if ACDI Manufacturer reads are not supported via datagram </dd></dl>
+<p>Read ACDI-Mfg (0xFC) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -571,9 +539,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle ACDI User Information read via datagram. </p>
-<p>Handles incoming datagram requests to read from ACDI User address space (0xFB), which contains user-editable identification data.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if ACDI User reads are not supported via datagram </dd></dl>
+<p>Read ACDI-User (0xFB) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -589,9 +555,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Train Function Definition Info read via datagram. </p>
-<p>Handles incoming datagram requests to read from Train Function Definition Information address space (0xFA), which describes available train control functions.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Train FDI reads are not supported via datagram </dd></dl>
+<p>Read Train FDI (0xFA) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -607,9 +571,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Train Function Configuration read via datagram. </p>
-<p>Handles incoming datagram requests to read from Train Function Configuration address space (0xF9), which contains train function settings.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Train Function Config reads are not supported via datagram </dd></dl>
+<p>Read Train Fn Config (0xF9) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -625,9 +587,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful CDI read reply via datagram. </p>
-<p>Handles incoming successful read reply from Configuration Description Information address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate CDI read operations </dd></dl>
+<p>Read reply OK — CDI via datagram. Optional. </p>
 
 </div>
 </div>
@@ -643,9 +603,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful All Memory Space read reply via datagram. </p>
-<p>Handles incoming successful read reply from All Memory Space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate All Memory reads </dd></dl>
+<p>Read reply OK — All via datagram. Optional. </p>
 
 </div>
 </div>
@@ -661,9 +619,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Configuration Memory read reply via datagram. </p>
-<p>Handles incoming successful read reply from Configuration Memory when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Configuration Memory reads </dd></dl>
+<p>Read reply OK — Config via datagram. Optional. </p>
 
 </div>
 </div>
@@ -679,9 +635,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful ACDI Manufacturer read reply via datagram. </p>
-<p>Handles incoming successful read reply from ACDI Manufacturer address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI Manufacturer reads </dd></dl>
+<p>Read reply OK — ACDI-Mfg via datagram. Optional. </p>
 
 </div>
 </div>
@@ -697,9 +651,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful ACDI User read reply via datagram. </p>
-<p>Handles incoming successful read reply from ACDI User address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI User reads </dd></dl>
+<p>Read reply OK — ACDI-User via datagram. Optional. </p>
 
 </div>
 </div>
@@ -715,9 +667,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Train FDI read reply via datagram. </p>
-<p>Handles incoming successful read reply from Train Function Definition Information address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train FDI reads </dd></dl>
+<p>Read reply OK — Train FDI via datagram. Optional. </p>
 
 </div>
 </div>
@@ -733,9 +683,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Train Function Config read reply via datagram. </p>
-<p>Handles incoming successful read reply from Train Function Configuration address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train Function Config reads </dd></dl>
+<p>Read reply OK — Train Fn Config via datagram. Optional. </p>
 
 </div>
 </div>
@@ -751,9 +699,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed CDI read reply via datagram. </p>
-<p>Handles incoming failed read reply from Configuration Description Information address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate CDI read operations </dd></dl>
+<p>Read reply FAIL — CDI via datagram. Optional. </p>
 
 </div>
 </div>
@@ -769,9 +715,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed All Memory Space read reply via datagram. </p>
-<p>Handles incoming failed read reply from All Memory Space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate All Memory reads </dd></dl>
+<p>Read reply FAIL — All via datagram. Optional. </p>
 
 </div>
 </div>
@@ -787,9 +731,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Configuration Memory read reply via datagram. </p>
-<p>Handles incoming failed read reply from Configuration Memory when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Configuration Memory reads </dd></dl>
+<p>Read reply FAIL — Config via datagram. Optional. </p>
 
 </div>
 </div>
@@ -805,9 +747,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed ACDI Manufacturer read reply via datagram. </p>
-<p>Handles incoming failed read reply from ACDI Manufacturer address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI Manufacturer reads </dd></dl>
+<p>Read reply FAIL — ACDI-Mfg via datagram. Optional. </p>
 
 </div>
 </div>
@@ -823,9 +763,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed ACDI User read reply via datagram. </p>
-<p>Handles incoming failed read reply from ACDI User address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI User reads </dd></dl>
+<p>Read reply FAIL — ACDI-User via datagram. Optional. </p>
 
 </div>
 </div>
@@ -841,9 +779,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Train FDI read reply via datagram. </p>
-<p>Handles incoming failed read reply from Train Function Definition Information address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train FDI reads </dd></dl>
+<p>Read reply FAIL — Train FDI via datagram. Optional. </p>
 
 </div>
 </div>
@@ -859,9 +795,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Train Function Config read reply via datagram. </p>
-<p>Handles incoming failed read reply from Train Function Configuration address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train Function Config reads </dd></dl>
+<p>Read reply FAIL — Train Fn Config via datagram. Optional. </p>
 
 </div>
 </div>
@@ -877,9 +811,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Configuration Description Information read via stream. </p>
-<p>Handles incoming stream-based requests to read from Configuration Description Information (CDI) address space (0xFF), which contains XML describing the node's configuration structure.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if CDI reads are not supported via stream transport </dd></dl>
+<p>Read CDI (0xFF) via stream. Optional. </p>
 
 </div>
 </div>
@@ -895,9 +827,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle All Memory Space read via stream. </p>
-<p>Handles incoming stream-based requests to read from All Memory Space (0xFD), which provides unified access to all readable memory regions.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if All Memory Space reads are not supported via stream transport </dd></dl>
+<p>Read All (0xFD) via stream. Optional. </p>
 
 </div>
 </div>
@@ -913,9 +843,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Configuration Memory read via stream. </p>
-<p>Handles incoming stream-based requests to read from Configuration Memory address space (0xFE), which contains node configuration variables.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Configuration Memory reads are not supported via stream transport </dd></dl>
+<p>Read Config (0xFE) via stream. Optional. </p>
 
 </div>
 </div>
@@ -931,9 +859,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle ACDI Manufacturer Information read via stream. </p>
-<p>Handles incoming stream-based requests to read from ACDI Manufacturer address space (0xFC), which contains read-only manufacturer identification data.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if ACDI Manufacturer reads are not supported via stream transport </dd></dl>
+<p>Read ACDI-Mfg (0xFC) via stream. Optional. </p>
 
 </div>
 </div>
@@ -949,9 +875,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle ACDI User Information read via stream. </p>
-<p>Handles incoming stream-based requests to read from ACDI User address space (0xFB), which contains user-editable identification data.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if ACDI User reads are not supported via stream transport </dd></dl>
+<p>Read ACDI-User (0xFB) via stream. Optional. </p>
 
 </div>
 </div>
@@ -967,9 +891,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Train Function Definition Info read via stream. </p>
-<p>Handles incoming stream-based requests to read from Train Function Definition Information address space (0xFA), which describes available train control functions.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Train FDI reads are not supported via stream transport </dd></dl>
+<p>Read Train FDI (0xFA) via stream. Optional. </p>
 
 </div>
 </div>
@@ -985,9 +907,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Train Function Configuration read via stream. </p>
-<p>Handles incoming stream-based requests to read from Train Function Configuration address space (0xF9), which contains train function settings.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Train Function Config reads are not supported via stream transport </dd></dl>
+<p>Read Train Fn Config (0xF9) via stream. Optional. </p>
 
 </div>
 </div>
@@ -1003,9 +923,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful CDI read reply via stream. </p>
-<p>Handles incoming successful stream-based read reply from Configuration Description Information address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate CDI stream reads </dd></dl>
+<p>Read reply OK — CDI via stream. Optional. </p>
 
 </div>
 </div>
@@ -1021,9 +939,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful All Memory Space read reply via stream. </p>
-<p>Handles incoming successful stream-based read reply from All Memory Space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate All Memory stream reads </dd></dl>
+<p>Read reply OK — All via stream. Optional. </p>
 
 </div>
 </div>
@@ -1039,9 +955,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Configuration Memory read reply via stream. </p>
-<p>Handles incoming successful stream-based read reply from Configuration Memory when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Configuration Memory stream reads </dd></dl>
+<p>Read reply OK — Config via stream. Optional. </p>
 
 </div>
 </div>
@@ -1057,9 +971,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful ACDI Manufacturer read reply via stream. </p>
-<p>Handles incoming successful stream-based read reply from ACDI Manufacturer address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI Manufacturer stream reads </dd></dl>
+<p>Read reply OK — ACDI-Mfg via stream. Optional. </p>
 
 </div>
 </div>
@@ -1075,9 +987,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful ACDI User read reply via stream. </p>
-<p>Handles incoming successful stream-based read reply from ACDI User address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI User stream reads </dd></dl>
+<p>Read reply OK — ACDI-User via stream. Optional. </p>
 
 </div>
 </div>
@@ -1093,9 +1003,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Train FDI read reply via stream. </p>
-<p>Handles incoming successful stream-based read reply from Train Function Definition Information address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train FDI stream reads </dd></dl>
+<p>Read reply OK — Train FDI via stream. Optional. </p>
 
 </div>
 </div>
@@ -1111,9 +1019,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Train Function Config read reply via stream. </p>
-<p>Handles incoming successful stream-based read reply from Train Function Configuration address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train Function Config stream reads </dd></dl>
+<p>Read reply OK — Train Fn Config via stream. Optional. </p>
 
 </div>
 </div>
@@ -1129,9 +1035,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed CDI read reply via stream. </p>
-<p>Handles incoming failed stream-based read reply from Configuration Description Information address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate CDI stream reads </dd></dl>
+<p>Read reply FAIL — CDI via stream. Optional. </p>
 
 </div>
 </div>
@@ -1147,9 +1051,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed All Memory Space read reply via stream. </p>
-<p>Handles incoming failed stream-based read reply from All Memory Space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate All Memory stream reads </dd></dl>
+<p>Read reply FAIL — All via stream. Optional. </p>
 
 </div>
 </div>
@@ -1165,9 +1067,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Configuration Memory read reply via stream. </p>
-<p>Handles incoming failed stream-based read reply from Configuration Memory when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Configuration Memory stream reads </dd></dl>
+<p>Read reply FAIL — Config via stream. Optional. </p>
 
 </div>
 </div>
@@ -1183,9 +1083,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed ACDI Manufacturer read reply via stream. </p>
-<p>Handles incoming failed stream-based read reply from ACDI Manufacturer address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI Manufacturer stream reads </dd></dl>
+<p>Read reply FAIL — ACDI-Mfg via stream. Optional. </p>
 
 </div>
 </div>
@@ -1201,9 +1099,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed ACDI User read reply via stream. </p>
-<p>Handles incoming failed stream-based read reply from ACDI User address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI User stream reads </dd></dl>
+<p>Read reply FAIL — ACDI-User via stream. Optional. </p>
 
 </div>
 </div>
@@ -1219,9 +1115,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Train FDI read reply via stream. </p>
-<p>Handles incoming failed stream-based read reply from Train Function Definition Information address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train FDI stream reads </dd></dl>
+<p>Read reply FAIL — Train FDI via stream. Optional. </p>
 
 </div>
 </div>
@@ -1237,9 +1131,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Train Function Config read reply via stream. </p>
-<p>Handles incoming failed stream-based read reply from Train Function Configuration address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train Function Config stream reads </dd></dl>
+<p>Read reply FAIL — Train Fn Config via stream. Optional. </p>
 
 </div>
 </div>
@@ -1255,9 +1147,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle CDI write via datagram. </p>
-<p>Handles incoming datagram write requests to Configuration Description Information address space (0xFF). Typically NULL as CDI is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as CDI is usually a read-only address space </dd></dl>
+<p>Write CDI (0xFF) via datagram. Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1273,9 +1163,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle All Memory Space write via datagram. </p>
-<p>Handles incoming datagram write requests to All Memory Space (0xFD). Typically NULL as All Memory Space is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as All Memory Space is usually read-only </dd></dl>
+<p>Write All (0xFD) via datagram. Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1291,9 +1179,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Configuration Memory write via datagram. </p>
-<p>Handles incoming datagram write requests to Configuration Memory address space (0xFE), which contains user-configurable node settings and parameters.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Configuration Memory writes are not supported via datagram </dd></dl>
+<p>Write Config (0xFE) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1309,9 +1195,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle ACDI Manufacturer write via datagram. </p>
-<p>Handles incoming datagram write requests to ACDI Manufacturer address space (0xFC). Typically NULL as manufacturer data is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as ACDI Manufacturer is usually a read-only address space </dd></dl>
+<p>Write ACDI-Mfg (0xFC) via datagram. Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1327,9 +1211,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle ACDI User write via datagram. </p>
-<p>Handles incoming datagram write requests to ACDI User address space (0xFB), which contains user-editable node identification and description information.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if ACDI User writes are not supported via datagram </dd></dl>
+<p>Write ACDI-User (0xFB) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1345,9 +1227,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Train FDI write via datagram. </p>
-<p>Handles incoming datagram write requests to Train Function Definition Information address space (0xFA). Typically NULL as FDI is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as Train FDI is usually a read-only address space </dd></dl>
+<p>Write Train FDI (0xFA) via datagram. Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1363,9 +1243,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Train Function Config write via datagram. </p>
-<p>Handles incoming datagram write requests to Train Function Configuration address space (0xF9), which contains train control function settings.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Train Function Config writes are not supported via datagram </dd></dl>
+<p>Write Train Fn Config (0xF9) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1381,9 +1259,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Firmware Upgrade write via datagram. </p>
-<p>Handles incoming datagram write requests to Firmware Upgrade address space, which is used for firmware update operations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if firmware upgrades are not supported via datagram </dd></dl>
+<p>Write Firmware Upgrade space via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1399,9 +1275,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful CDI write reply via datagram. </p>
-<p>Handles incoming successful write reply from CDI address space. Typically never called as CDI is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as CDI is usually a read-only address space </dd></dl>
+<p>Write reply OK — CDI via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1417,9 +1291,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful All Memory Space write reply via datagram. </p>
-<p>Handles incoming successful write reply from All Memory Space. Typically never called as All Memory Space is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as All Memory Space is usually read-only </dd></dl>
+<p>Write reply OK — All via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1435,9 +1307,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Configuration Memory write reply via datagram. </p>
-<p>Handles incoming successful write reply from Configuration Memory when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Configuration Memory writes </dd></dl>
+<p>Write reply OK — Config via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1453,9 +1323,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful ACDI Manufacturer write reply via datagram. </p>
-<p>Handles incoming successful write reply from ACDI Manufacturer address space. Typically never called as manufacturer data is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as ACDI Manufacturer is usually a read-only address space </dd></dl>
+<p>Write reply OK — ACDI-Mfg via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1471,9 +1339,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful ACDI User write reply via datagram. </p>
-<p>Handles incoming successful write reply from ACDI User address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI User writes </dd></dl>
+<p>Write reply OK — ACDI-User via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1489,9 +1355,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Train FDI write reply via datagram. </p>
-<p>Handles incoming successful write reply from Train FDI address space. Typically never called as FDI is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as Train FDI is usually a read-only address space </dd></dl>
+<p>Write reply OK — Train FDI via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1507,9 +1371,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Train Function Config write reply via datagram. </p>
-<p>Handles incoming successful write reply from Train Function Configuration address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train Function Config writes </dd></dl>
+<p>Write reply OK — Train Fn Config via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1525,9 +1387,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed CDI write reply via datagram. </p>
-<p>Handles incoming failed write reply from CDI address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate CDI write operations </dd></dl>
+<p>Write reply FAIL — CDI via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1543,9 +1403,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed All Memory Space write reply via datagram. </p>
-<p>Handles incoming failed write reply from All Memory Space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate All Memory writes </dd></dl>
+<p>Write reply FAIL — All via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1561,9 +1419,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Configuration Memory write reply via datagram. </p>
-<p>Handles incoming failed write reply from Configuration Memory when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Configuration Memory writes </dd></dl>
+<p>Write reply FAIL — Config via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1579,9 +1435,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed ACDI Manufacturer write reply via datagram. </p>
-<p>Handles incoming failed write reply from ACDI Manufacturer address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI Manufacturer writes </dd></dl>
+<p>Write reply FAIL — ACDI-Mfg via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1597,9 +1451,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed ACDI User write reply via datagram. </p>
-<p>Handles incoming failed write reply from ACDI User address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI User writes </dd></dl>
+<p>Write reply FAIL — ACDI-User via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1615,9 +1467,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Train FDI write reply via datagram. </p>
-<p>Handles incoming failed write reply from Train FDI address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train FDI writes </dd></dl>
+<p>Write reply FAIL — Train FDI via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1633,9 +1483,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Train Function Config write reply via datagram. </p>
-<p>Handles incoming failed write reply from Train Function Configuration address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train Function Config writes </dd></dl>
+<p>Write reply FAIL — Train Fn Config via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1651,9 +1499,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle CDI write under mask via datagram. </p>
-<p>Handles incoming datagram write-under-mask requests to CDI address space. Typically NULL as CDI is read-only in most implementations. Write-under-mask allows bit-level modification using alternating mask and value bytes.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as CDI is usually a read-only address space </dd></dl>
+<p>Write-under-mask CDI (0xFF). Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1669,9 +1515,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle All Memory Space write under mask via datagram. </p>
-<p>Handles incoming datagram write-under-mask requests to All Memory Space. Typically NULL as All Memory Space is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as All Memory Space is usually read-only </dd></dl>
+<p>Write-under-mask All (0xFD). Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1687,9 +1531,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Configuration Memory write under mask via datagram. </p>
-<p>Handles incoming datagram write-under-mask requests to Configuration Memory. Allows bit-level modification using alternating mask and value bytes for precise control.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if write-under-mask is not supported for Configuration Memory </dd></dl>
+<p>Write-under-mask Config (0xFE). Optional. </p>
 
 </div>
 </div>
@@ -1705,9 +1547,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle ACDI Manufacturer write under mask via datagram. </p>
-<p>Handles incoming datagram write-under-mask requests to ACDI Manufacturer space. Typically NULL as manufacturer data is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as ACDI Manufacturer is usually a read-only address space </dd></dl>
+<p>Write-under-mask ACDI-Mfg (0xFC). Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1723,9 +1563,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle ACDI User write under mask via datagram. </p>
-<p>Handles incoming datagram write-under-mask requests to ACDI User address space. Allows bit-level modification of user identification data.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if write-under-mask is not supported for ACDI User </dd></dl>
+<p>Write-under-mask ACDI-User (0xFB). Optional. </p>
 
 </div>
 </div>
@@ -1741,9 +1579,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Train FDI write under mask via datagram. </p>
-<p>Handles incoming datagram write-under-mask requests to Train FDI space. Typically NULL as FDI is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as Train FDI is usually a read-only address space </dd></dl>
+<p>Write-under-mask Train FDI (0xFA). Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1759,9 +1595,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Train Function Config write under mask via datagram. </p>
-<p>Handles incoming datagram write-under-mask requests to Train Function Configuration space. Allows bit-level modification of function settings.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if write-under-mask is not supported for Train Function Config </dd></dl>
+<p>Write-under-mask Train Fn Config (0xF9). Optional. </p>
 
 </div>
 </div>
@@ -1777,9 +1611,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Firmware Upgrade write under mask via datagram. </p>
-<p>Handles incoming datagram write-under-mask requests to Firmware Upgrade address space. Used for firmware update operations with bit-level control.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if firmware upgrades do not support write-under-mask </dd></dl>
+<p>Write-under-mask Firmware Upgrade space. Optional. </p>
 
 </div>
 </div>
@@ -1795,9 +1627,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle CDI write via stream. </p>
-<p>Handles incoming stream-based write requests to CDI address space. Typically NULL as CDI is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as CDI is usually a read-only address space </dd></dl>
+<p>Write CDI (0xFF) via stream. Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1813,9 +1643,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle All Memory Space write via stream. </p>
-<p>Handles incoming stream-based write requests to All Memory Space. Typically NULL as All Memory Space is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as All Memory Space is usually read-only </dd></dl>
+<p>Write All (0xFD) via stream. Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1831,9 +1659,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Configuration Memory write via stream. </p>
-<p>Handles incoming stream-based write requests to Configuration Memory. Streams enable efficient transfer of large configuration blocks.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Configuration Memory writes are not supported via stream </dd></dl>
+<p>Write Config (0xFE) via stream. Optional. </p>
 
 </div>
 </div>
@@ -1849,9 +1675,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle ACDI Manufacturer write via stream. </p>
-<p>Handles incoming stream-based write requests to ACDI Manufacturer space. Typically NULL as manufacturer data is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as ACDI Manufacturer is usually a read-only address space </dd></dl>
+<p>Write ACDI-Mfg (0xFC) via stream. Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1867,9 +1691,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle ACDI User write via stream. </p>
-<p>Handles incoming stream-based write requests to ACDI User address space. Streams enable efficient transfer of user identification data.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if ACDI User writes are not supported via stream </dd></dl>
+<p>Write ACDI-User (0xFB) via stream. Optional. </p>
 
 </div>
 </div>
@@ -1885,9 +1707,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Train FDI write via stream. </p>
-<p>Handles incoming stream-based write requests to Train FDI space. Typically NULL as FDI is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as Train FDI is usually a read-only address space </dd></dl>
+<p>Write Train FDI (0xFA) via stream. Optional (usually NULL — read-only). </p>
 
 </div>
 </div>
@@ -1903,9 +1723,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Train Function Config write via stream. </p>
-<p>Handles incoming stream-based write requests to Train Function Configuration. Streams enable efficient transfer of function configuration blocks.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Train Function Config writes are not supported via stream </dd></dl>
+<p>Write Train Fn Config (0xF9) via stream. Optional. </p>
 
 </div>
 </div>
@@ -1921,9 +1739,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to handle Firmware Upgrade write via stream. </p>
-<p>Handles incoming stream-based write requests to Firmware Upgrade address space. Streams are typically preferred for large firmware image transfers.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if firmware upgrades are not supported via stream </dd></dl>
+<p>Write Firmware Upgrade space via stream. Optional. </p>
 
 </div>
 </div>
@@ -1939,9 +1755,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful CDI write reply via stream. </p>
-<p>Handles incoming successful stream-based write reply from CDI address space. Typically never called as CDI is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as CDI is usually a read-only address space </dd></dl>
+<p>Write reply OK — CDI via stream. Optional. </p>
 
 </div>
 </div>
@@ -1957,9 +1771,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful All Memory Space write reply via stream. </p>
-<p>Handles incoming successful stream-based write reply from All Memory Space. Typically never called as All Memory Space is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as All Memory Space is usually read-only </dd></dl>
+<p>Write reply OK — All via stream. Optional. </p>
 
 </div>
 </div>
@@ -1975,9 +1787,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Configuration Memory write reply via stream. </p>
-<p>Handles incoming successful stream-based write reply from Configuration Memory when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Configuration Memory stream writes </dd></dl>
+<p>Write reply OK — Config via stream. Optional. </p>
 
 </div>
 </div>
@@ -1993,9 +1803,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful ACDI Manufacturer write reply via stream. </p>
-<p>Handles incoming successful stream-based write reply from ACDI Manufacturer space. Typically never called as manufacturer data is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as ACDI Manufacturer is usually a read-only address space </dd></dl>
+<p>Write reply OK — ACDI-Mfg via stream. Optional. </p>
 
 </div>
 </div>
@@ -2011,9 +1819,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful ACDI User write reply via stream. </p>
-<p>Handles incoming successful stream-based write reply from ACDI User address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI User stream writes </dd></dl>
+<p>Write reply OK — ACDI-User via stream. Optional. </p>
 
 </div>
 </div>
@@ -2029,9 +1835,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Train FDI write reply via stream. </p>
-<p>Handles incoming successful stream-based write reply from Train FDI space. Typically never called as FDI is read-only in most implementations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - typically NULL as Train FDI is usually a read-only address space </dd></dl>
+<p>Write reply OK — Train FDI via stream. Optional. </p>
 
 </div>
 </div>
@@ -2047,9 +1851,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process successful Train Function Config write reply via stream. </p>
-<p>Handles incoming successful stream-based write reply from Train Function Configuration when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train Function Config stream writes </dd></dl>
+<p>Write reply OK — Train Fn Config via stream. Optional. </p>
 
 </div>
 </div>
@@ -2065,9 +1867,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed CDI write reply via stream. </p>
-<p>Handles incoming failed stream-based write reply from CDI address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate CDI stream writes </dd></dl>
+<p>Write reply FAIL — CDI via stream. Optional. </p>
 
 </div>
 </div>
@@ -2083,9 +1883,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed All Memory Space write reply via stream. </p>
-<p>Handles incoming failed stream-based write reply from All Memory Space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate All Memory stream writes </dd></dl>
+<p>Write reply FAIL — All via stream. Optional. </p>
 
 </div>
 </div>
@@ -2101,9 +1899,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Configuration Memory write reply via stream. </p>
-<p>Handles incoming failed stream-based write reply from Configuration Memory when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Configuration Memory stream writes </dd></dl>
+<p>Write reply FAIL — Config via stream. Optional. </p>
 
 </div>
 </div>
@@ -2119,9 +1915,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed ACDI Manufacturer write reply via stream. </p>
-<p>Handles incoming failed stream-based write reply from ACDI Manufacturer space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI Manufacturer stream writes </dd></dl>
+<p>Write reply FAIL — ACDI-Mfg via stream. Optional. </p>
 
 </div>
 </div>
@@ -2137,9 +1931,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed ACDI User write reply via stream. </p>
-<p>Handles incoming failed stream-based write reply from ACDI User address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate ACDI User stream writes </dd></dl>
+<p>Write reply FAIL — ACDI-User via stream. Optional. </p>
 
 </div>
 </div>
@@ -2155,9 +1947,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Train FDI write reply via stream. </p>
-<p>Handles incoming failed stream-based write reply from Train FDI space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train FDI stream writes </dd></dl>
+<p>Write reply FAIL — Train FDI via stream. Optional. </p>
 
 </div>
 </div>
@@ -2173,9 +1963,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process failed Train Function Config write reply via stream. </p>
-<p>Handles incoming failed stream-based write reply from Train Function Configuration when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Train Function Config stream writes </dd></dl>
+<p>Write reply FAIL — Train Fn Config via stream. Optional. </p>
 
 </div>
 </div>
@@ -2191,9 +1979,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Get Configuration Options command. </p>
-<p>Handles incoming Configuration Memory Options command datagram, which queries the node's configuration capabilities and supported features.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Configuration Memory Options queries are not supported </dd></dl>
+<p>Get Configuration Options command. Optional. </p>
 
 </div>
 </div>
@@ -2209,9 +1995,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Configuration Options reply. </p>
-<p>Handles incoming reply to Configuration Memory Options query when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate Configuration Memory operations </dd></dl>
+<p>Configuration Options reply (received). Optional. </p>
 
 </div>
 </div>
@@ -2227,9 +2011,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Get Address Space Information command. </p>
-<p>Handles incoming request for information about a specific address space, including size, flags, and description.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Address Space Information queries are not supported </dd></dl>
+<p>Get Address Space Information command. Optional. </p>
 
 </div>
 </div>
@@ -2245,9 +2027,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Address Space Not Present reply. </p>
-<p>Handles incoming reply indicating that the requested address space does not exist on the target node.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate configuration operations </dd></dl>
+<p>Address Space Not Present reply (received). Optional. </p>
 
 </div>
 </div>
@@ -2263,9 +2043,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Address Space Present reply. </p>
-<p>Handles incoming reply containing information about a requested address space when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate configuration operations </dd></dl>
+<p>Address Space Present reply (received). Optional. </p>
 
 </div>
 </div>
@@ -2281,9 +2059,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Lock/Reserve command. </p>
-<p>Handles incoming request to lock or reserve the node's configuration for exclusive access during configuration operations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if configuration locking is not supported </dd></dl>
+<p>Lock/Reserve command. Optional. </p>
 
 </div>
 </div>
@@ -2299,9 +2075,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Lock/Reserve reply. </p>
-<p>Handles incoming reply to lock/reserve request when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate configuration operations </dd></dl>
+<p>Lock/Reserve reply (received). Optional. </p>
 
 </div>
 </div>
@@ -2317,9 +2091,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Get Unique ID command. </p>
-<p>Handles incoming request for the node's unique event ID, used in configuration protocols.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if unique ID queries are not supported </dd></dl>
+<p>Get Unique ID command. Optional. </p>
 
 </div>
 </div>
@@ -2335,9 +2107,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Get Unique ID reply. </p>
-<p>Handles incoming reply containing the unique ID when this node is acting as a configuration tool.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate configuration operations </dd></dl>
+<p>Get Unique ID reply (received). Optional. </p>
 
 </div>
 </div>
@@ -2353,9 +2123,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Unfreeze command. </p>
-<p>Handles incoming request to resume operations in a specific address space after configuration updates.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if freeze/unfreeze operations are not supported </dd></dl>
+<p>Unfreeze command. Optional. </p>
 
 </div>
 </div>
@@ -2371,9 +2139,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Freeze command. </p>
-<p>Handles incoming request to suspend operations in a specific address space during configuration updates.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if freeze/unfreeze operations are not supported </dd></dl>
+<p>Freeze command. Optional. </p>
 
 </div>
 </div>
@@ -2389,9 +2155,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Update Complete command. </p>
-<p>Handles incoming notification that configuration updates are complete and the node should apply changes or reset as appropriate.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Update Complete handling is not needed </dd></dl>
+<p>Update Complete notification. Optional. </p>
 
 </div>
 </div>
@@ -2407,9 +2171,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Reset/Reboot command. </p>
-<p>Handles incoming request to reset or reboot the node, typically after configuration changes that require a restart.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if reset/reboot commands are not supported </dd></dl>
+<p>Reset/Reboot command. Optional. </p>
 
 </div>
 </div>
@@ -2425,9 +2187,7 @@ Setting an optional callback to NULL will result in datagram rejection with ERRO
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback to process Factory Reset command. </p>
-<p>Handles incoming request to reset the node to factory default configuration, erasing all user settings and customizations.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if factory reset is not supported </dd></dl>
+<p>Factory Reset command. Optional. </p>
 
 </div>
 </div>

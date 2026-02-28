@@ -92,77 +92,59 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Interface structure for Event Transport protocol callbacks.  
+<p>Application callbacks for event transport notifications. All optional (NULL = ignored).  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:acd175ca6a2189943def77d179b4d70f4" id="r_acd175ca6a2189943def77d179b4d70f4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd175ca6a2189943def77d179b4d70f4">on_consumed_event_identified</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> status, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td></tr>
+<tr class="memitem:acd175ca6a2189943def77d179b4d70f4" id="r_acd175ca6a2189943def77d179b4d70f4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd175ca6a2189943def77d179b4d70f4">on_consumed_event_identified</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> status, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td></tr>
+<tr class="memdesc:acd175ca6a2189943def77d179b4d70f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consumer event identified with status. Optional.  <br /></td></tr>
 <tr class="separator:acd175ca6a2189943def77d179b4d70f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a013d004bc16d4fb128a3160bde27191c" id="r_a013d004bc16d4fb128a3160bde27191c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a013d004bc16d4fb128a3160bde27191c">on_consumed_event_pcer</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td></tr>
+<tr class="memitem:a013d004bc16d4fb128a3160bde27191c" id="r_a013d004bc16d4fb128a3160bde27191c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a013d004bc16d4fb128a3160bde27191c">on_consumed_event_pcer</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td></tr>
+<tr class="memdesc:a013d004bc16d4fb128a3160bde27191c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consumer event report (PCER) received. Optional.  <br /></td></tr>
 <tr class="separator:a013d004bc16d4fb128a3160bde27191c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4893226a2fd15405ef5d823b4cbbd97" id="r_aa4893226a2fd15405ef5d823b4cbbd97"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4893226a2fd15405ef5d823b4cbbd97">on_consumer_range_identified</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:aa4893226a2fd15405ef5d823b4cbbd97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Consumer Range Identified notification.  <br /></td></tr>
+<tr class="memitem:aa4893226a2fd15405ef5d823b4cbbd97" id="r_aa4893226a2fd15405ef5d823b4cbbd97"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4893226a2fd15405ef5d823b4cbbd97">on_consumer_range_identified</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:aa4893226a2fd15405ef5d823b4cbbd97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consumer Range Identified from a remote node. Optional.  <br /></td></tr>
 <tr class="separator:aa4893226a2fd15405ef5d823b4cbbd97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0ffff87cdc98d4b5ff7f96360286799" id="r_ab0ffff87cdc98d4b5ff7f96360286799"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0ffff87cdc98d4b5ff7f96360286799">on_consumer_identified_unknown</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:ab0ffff87cdc98d4b5ff7f96360286799"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Consumer Identified Unknown notification.  <br /></td></tr>
+<tr class="memitem:ab0ffff87cdc98d4b5ff7f96360286799" id="r_ab0ffff87cdc98d4b5ff7f96360286799"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0ffff87cdc98d4b5ff7f96360286799">on_consumer_identified_unknown</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:ab0ffff87cdc98d4b5ff7f96360286799"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consumer Identified Unknown from a remote node. Optional.  <br /></td></tr>
 <tr class="separator:ab0ffff87cdc98d4b5ff7f96360286799"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4c8164daf8cdbfded4ba66096670e7e" id="r_aa4c8164daf8cdbfded4ba66096670e7e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4c8164daf8cdbfded4ba66096670e7e">on_consumer_identified_set</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:aa4c8164daf8cdbfded4ba66096670e7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Consumer Identified Set notification.  <br /></td></tr>
+<tr class="memitem:aa4c8164daf8cdbfded4ba66096670e7e" id="r_aa4c8164daf8cdbfded4ba66096670e7e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4c8164daf8cdbfded4ba66096670e7e">on_consumer_identified_set</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:aa4c8164daf8cdbfded4ba66096670e7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consumer Identified Set from a remote node. Optional.  <br /></td></tr>
 <tr class="separator:aa4c8164daf8cdbfded4ba66096670e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae46e70a06c24d63a7634d14d8fc241a3" id="r_ae46e70a06c24d63a7634d14d8fc241a3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae46e70a06c24d63a7634d14d8fc241a3">on_consumer_identified_clear</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:ae46e70a06c24d63a7634d14d8fc241a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Consumer Identified Clear notification.  <br /></td></tr>
+<tr class="memitem:ae46e70a06c24d63a7634d14d8fc241a3" id="r_ae46e70a06c24d63a7634d14d8fc241a3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae46e70a06c24d63a7634d14d8fc241a3">on_consumer_identified_clear</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:ae46e70a06c24d63a7634d14d8fc241a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consumer Identified Clear from a remote node. Optional.  <br /></td></tr>
 <tr class="separator:ae46e70a06c24d63a7634d14d8fc241a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2406ca3f557b31d151113390f074b4ec" id="r_a2406ca3f557b31d151113390f074b4ec"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2406ca3f557b31d151113390f074b4ec">on_consumer_identified_reserved</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:a2406ca3f557b31d151113390f074b4ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Consumer Identified Reserved notification.  <br /></td></tr>
+<tr class="memitem:a2406ca3f557b31d151113390f074b4ec" id="r_a2406ca3f557b31d151113390f074b4ec"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2406ca3f557b31d151113390f074b4ec">on_consumer_identified_reserved</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:a2406ca3f557b31d151113390f074b4ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Consumer Identified Reserved from a remote node. Optional.  <br /></td></tr>
 <tr class="separator:a2406ca3f557b31d151113390f074b4ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a969f032d02044ff9dcc46e53fda1f80c" id="r_a969f032d02044ff9dcc46e53fda1f80c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a969f032d02044ff9dcc46e53fda1f80c">on_producer_range_identified</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:a969f032d02044ff9dcc46e53fda1f80c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Producer Range Identified notification.  <br /></td></tr>
+<tr class="memitem:a969f032d02044ff9dcc46e53fda1f80c" id="r_a969f032d02044ff9dcc46e53fda1f80c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a969f032d02044ff9dcc46e53fda1f80c">on_producer_range_identified</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:a969f032d02044ff9dcc46e53fda1f80c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Producer Range Identified from a remote node. Optional.  <br /></td></tr>
 <tr class="separator:a969f032d02044ff9dcc46e53fda1f80c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac009dcf425d29420bea1a78688f225f" id="r_aac009dcf425d29420bea1a78688f225f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac009dcf425d29420bea1a78688f225f">on_producer_identified_unknown</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:aac009dcf425d29420bea1a78688f225f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Producer Identified Unknown notification.  <br /></td></tr>
+<tr class="memitem:aac009dcf425d29420bea1a78688f225f" id="r_aac009dcf425d29420bea1a78688f225f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac009dcf425d29420bea1a78688f225f">on_producer_identified_unknown</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:aac009dcf425d29420bea1a78688f225f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Producer Identified Unknown from a remote node. Optional.  <br /></td></tr>
 <tr class="separator:aac009dcf425d29420bea1a78688f225f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8617d1be93cf998500d770e12f7528ce" id="r_a8617d1be93cf998500d770e12f7528ce"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8617d1be93cf998500d770e12f7528ce">on_producer_identified_set</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:a8617d1be93cf998500d770e12f7528ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Producer Identified Set notification.  <br /></td></tr>
+<tr class="memitem:a8617d1be93cf998500d770e12f7528ce" id="r_a8617d1be93cf998500d770e12f7528ce"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8617d1be93cf998500d770e12f7528ce">on_producer_identified_set</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:a8617d1be93cf998500d770e12f7528ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Producer Identified Set from a remote node. Optional.  <br /></td></tr>
 <tr class="separator:a8617d1be93cf998500d770e12f7528ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd7677bfcec95482ea8bea942f249462" id="r_acd7677bfcec95482ea8bea942f249462"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd7677bfcec95482ea8bea942f249462">on_producer_identified_clear</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:acd7677bfcec95482ea8bea942f249462"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Producer Identified Clear notification.  <br /></td></tr>
+<tr class="memitem:acd7677bfcec95482ea8bea942f249462" id="r_acd7677bfcec95482ea8bea942f249462"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd7677bfcec95482ea8bea942f249462">on_producer_identified_clear</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:acd7677bfcec95482ea8bea942f249462"><td class="mdescLeft">&#160;</td><td class="mdescRight">Producer Identified Clear from a remote node. Optional.  <br /></td></tr>
 <tr class="separator:acd7677bfcec95482ea8bea942f249462"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09e0934b6185fe7c95daed3819fbe404" id="r_a09e0934b6185fe7c95daed3819fbe404"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09e0934b6185fe7c95daed3819fbe404">on_producer_identified_reserved</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:a09e0934b6185fe7c95daed3819fbe404"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Producer Identified Reserved notification.  <br /></td></tr>
+<tr class="memitem:a09e0934b6185fe7c95daed3819fbe404" id="r_a09e0934b6185fe7c95daed3819fbe404"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09e0934b6185fe7c95daed3819fbe404">on_producer_identified_reserved</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:a09e0934b6185fe7c95daed3819fbe404"><td class="mdescLeft">&#160;</td><td class="mdescRight">Producer Identified Reserved from a remote node. Optional.  <br /></td></tr>
 <tr class="separator:a09e0934b6185fe7c95daed3819fbe404"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5ef996419107f53ab1dff5960b64c79" id="r_ab5ef996419107f53ab1dff5960b64c79"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5ef996419107f53ab1dff5960b64c79">on_event_learn</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:ab5ef996419107f53ab1dff5960b64c79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Event Learn notification.  <br /></td></tr>
+<tr class="memitem:ab5ef996419107f53ab1dff5960b64c79" id="r_ab5ef996419107f53ab1dff5960b64c79"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5ef996419107f53ab1dff5960b64c79">on_event_learn</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:ab5ef996419107f53ab1dff5960b64c79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Learn Event received — app must store the event ID if in learn mode. Optional.  <br /></td></tr>
 <tr class="separator:ab5ef996419107f53ab1dff5960b64c79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1294ea6e55ac8a116b94b2dffd0d4eaf" id="r_a1294ea6e55ac8a116b94b2dffd0d4eaf"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1294ea6e55ac8a116b94b2dffd0d4eaf">on_pc_event_report</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
-<tr class="memdesc:a1294ea6e55ac8a116b94b2dffd0d4eaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Producer/Consumer Event Report notification.  <br /></td></tr>
+<tr class="memitem:a1294ea6e55ac8a116b94b2dffd0d4eaf" id="r_a1294ea6e55ac8a116b94b2dffd0d4eaf"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1294ea6e55ac8a116b94b2dffd0d4eaf">on_pc_event_report</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
+<tr class="memdesc:a1294ea6e55ac8a116b94b2dffd0d4eaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">PC Event Report — an event occurred on the network. Optional.  <br /></td></tr>
 <tr class="separator:a1294ea6e55ac8a116b94b2dffd0d4eaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a050ed71050b1f4872476c5f0a636607b" id="r_a050ed71050b1f4872476c5f0a636607b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a050ed71050b1f4872476c5f0a636607b">on_pc_event_report_with_payload</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, uint16_t count, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td></tr>
-<tr class="memdesc:a050ed71050b1f4872476c5f0a636607b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Producer/Consumer Event Report with payload notification.  <br /></td></tr>
+<tr class="memitem:a050ed71050b1f4872476c5f0a636607b" id="r_a050ed71050b1f4872476c5f0a636607b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a050ed71050b1f4872476c5f0a636607b">on_pc_event_report_with_payload</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, uint16_t count, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td></tr>
+<tr class="memdesc:a050ed71050b1f4872476c5f0a636607b"><td class="mdescLeft">&#160;</td><td class="mdescRight">PC Event Report with payload — event plus additional data bytes. Optional.  <br /></td></tr>
 <tr class="separator:a050ed71050b1f4872476c5f0a636607b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Interface structure for Event Transport protocol callbacks. </p>
-<p>This structure defines the callback interface for handling OpenLCB Event Transport protocol notifications. It contains function pointers for receiving notifications about producer and consumer events on the OpenLCB network as defined in the OpenLCB Event Transport Protocol specification.</p>
-<p>The interface allows the application layer to receive notifications about:</p><ul>
-<li>Consumer event identifications and state changes</li>
-<li>Producer event identifications and state changes</li>
-<li>Event learn/teach operations</li>
-<li>Producer/Consumer event reports (with or without payload)</li>
-</ul>
-<p>All callback functions are optional and may be set to NULL if the application does not need to handle that particular event type. The protocol layer will check for NULL before invoking any callback.</p>
-<dl class="section note"><dt>Note</dt><dd>All callbacks are optional - can be NULL if notification is not needed </dd>
-<dd>
-Callbacks receive the node context and event ID that triggered the notification </dd>
-<dd>
-Callbacks are invoked from within the protocol handler - keep processing brief </dd>
-<dd>
-Callbacks must not block or perform lengthy operations</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a13504f9f3de03215c9717b8dcaf363d8" title="Initializes the Event Transport protocol layer.">ProtocolEventTransport_initialize</a> - Registers this interface with the protocol </dd>
-<dd>
-<a class="el" href="structopenlcb__node__t.html" title="OpenLCB virtual node structure.">openlcb_node_t</a> - Node context structure </dd>
-<dd>
-<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c" title="Event ID type (64-bit unsigned integer)">event_id_t</a> - Event identifier type </dd></dl>
+<div class="textblock"><p>Application callbacks for event transport notifications. All optional (NULL = ignored). </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="acd175ca6a2189943def77d179b4d70f4" name="acd175ca6a2189943def77d179b4d70f4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acd175ca6a2189943def77d179b4d70f4">&#9670;&#160;</a></span>on_consumed_event_identified</h2>
@@ -171,10 +153,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_consumed_event_identified) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> status, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td>
+          <td class="memname">void(* on_consumed_event_identified) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> status, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Consumer event identified with status. Optional. </p>
 
 </div>
 </div>
@@ -185,10 +169,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_consumed_event_pcer) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td>
+          <td class="memname">void(* on_consumed_event_pcer) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Consumer event report (PCER) received. Optional. </p>
 
 </div>
 </div>
@@ -199,14 +185,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_consumer_range_identified) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_consumer_range_identified) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Consumer Range Identified notification. </p>
-<p>Invoked when a remote node on the network identifies itself as consuming a range of events. The event_id parameter contains the base event ID of the range. Applications can use this to build event routing tables or discover consumers.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Consumer Range Identified notifications are not needed </dd></dl>
+<p>Consumer Range Identified from a remote node. Optional. </p>
 
 </div>
 </div>
@@ -217,14 +201,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_consumer_identified_unknown) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_consumer_identified_unknown) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Consumer Identified Unknown notification. </p>
-<p>Invoked when a remote node identifies itself as consuming an event but reports the current state as unknown. This typically occurs during node initialization or when state cannot be determined.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Consumer Identified Unknown notifications are not needed </dd></dl>
+<p>Consumer Identified Unknown from a remote node. Optional. </p>
 
 </div>
 </div>
@@ -235,14 +217,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_consumer_identified_set) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_consumer_identified_set) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Consumer Identified Set notification. </p>
-<p>Invoked when a remote node identifies itself as consuming an event and reports the current state as SET (active/true). Applications can use this to track consumer states and update displays or control logic.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Consumer Identified Set notifications are not needed </dd></dl>
+<p>Consumer Identified Set from a remote node. Optional. </p>
 
 </div>
 </div>
@@ -253,14 +233,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_consumer_identified_clear) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_consumer_identified_clear) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Consumer Identified Clear notification. </p>
-<p>Invoked when a remote node identifies itself as consuming an event and reports the current state as CLEAR (inactive/false). Applications can use this to track consumer states and update displays or control logic.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Consumer Identified Clear notifications are not needed </dd></dl>
+<p>Consumer Identified Clear from a remote node. Optional. </p>
 
 </div>
 </div>
@@ -271,14 +249,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_consumer_identified_reserved) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_consumer_identified_reserved) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Consumer Identified Reserved notification. </p>
-<p>Invoked when a remote node identifies itself as consuming an event with a reserved state indicator. This is for future protocol extensions and special event types.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Consumer Identified Reserved notifications are not needed </dd></dl>
+<p>Consumer Identified Reserved from a remote node. Optional. </p>
 
 </div>
 </div>
@@ -289,14 +265,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_producer_range_identified) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_producer_range_identified) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Producer Range Identified notification. </p>
-<p>Invoked when a remote node on the network identifies itself as producing a range of events. The event_id parameter contains the base event ID of the range. Applications can use this to build event routing tables or discover producers.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Producer Range Identified notifications are not needed </dd></dl>
+<p>Producer Range Identified from a remote node. Optional. </p>
 
 </div>
 </div>
@@ -307,14 +281,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_producer_identified_unknown) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_producer_identified_unknown) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Producer Identified Unknown notification. </p>
-<p>Invoked when a remote node identifies itself as producing an event but reports the current state as unknown. This typically occurs during node initialization or when state cannot be determined.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Producer Identified Unknown notifications are not needed </dd></dl>
+<p>Producer Identified Unknown from a remote node. Optional. </p>
 
 </div>
 </div>
@@ -325,14 +297,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_producer_identified_set) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_producer_identified_set) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Producer Identified Set notification. </p>
-<p>Invoked when a remote node identifies itself as producing an event and reports the current state as SET (active/true). Applications can use this to track producer states and update displays or anticipate future events.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Producer Identified Set notifications are not needed </dd></dl>
+<p>Producer Identified Set from a remote node. Optional. </p>
 
 </div>
 </div>
@@ -343,14 +313,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_producer_identified_clear) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_producer_identified_clear) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Producer Identified Clear notification. </p>
-<p>Invoked when a remote node identifies itself as producing an event and reports the current state as CLEAR (inactive/false). Applications can use this to track producer states and update displays or anticipate future events.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Producer Identified Clear notifications are not needed </dd></dl>
+<p>Producer Identified Clear from a remote node. Optional. </p>
 
 </div>
 </div>
@@ -361,14 +329,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_producer_identified_reserved) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_producer_identified_reserved) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Producer Identified Reserved notification. </p>
-<p>Invoked when a remote node identifies itself as producing an event with a reserved state indicator. This is for future protocol extensions and special event types.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Producer Identified Reserved notifications are not needed </dd></dl>
+<p>Producer Identified Reserved from a remote node. Optional. </p>
 
 </div>
 </div>
@@ -379,15 +345,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_event_learn) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_event_learn) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Event Learn notification. </p>
-<p>Invoked when a teach/learn message is received for event configuration. The application can implement logic to learn a new event ID from a producer or consumer, typically used during configuration mode or blue/gold button programming.</p>
-<p>The callback must implement the actual event learning logic, such as storing the event ID in the node's producer or consumer list and saving to non-volatile memory.</p>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Event Learn operations are not supported </dd></dl>
+<p>Learn Event received — app must store the event ID if in learn mode. Optional. </p>
 
 </div>
 </div>
@@ -398,20 +361,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_pc_event_report) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
+          <td class="memname">void(* on_pc_event_report) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Producer/Consumer Event Report notification. </p>
-<p>Invoked when an event report is received indicating that an event has occurred on the network. This is the fundamental event notification mechanism in OpenLCB. The callback is responsible for consuming the event and taking appropriate action based on the application's requirements.</p>
-<p>Common actions include:</p><ul>
-<li>Checking if this node consumes the reported event</li>
-<li>Triggering outputs, relays, or other hardware</li>
-<li>Updating display state or logging the event</li>
-<li>Forwarding the event to other systems</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Event Report notifications are not needed </dd></dl>
+<p>PC Event Report — an event occurred on the network. Optional. </p>
 
 </div>
 </div>
@@ -422,20 +377,12 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_pc_event_report_with_payload) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, uint16_t count, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td>
+          <td class="memname">void(* on_pc_event_report_with_payload) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, uint16_t count, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional callback for Producer/Consumer Event Report with payload notification. </p>
-<p>Invoked when an event report with additional payload data is received. The payload can contain sensor readings, state information, or other data associated with the event. The count parameter indicates the number of payload bytes (excluding the 8-byte event ID), and the payload parameter points to the payload data.</p>
-<p>Common payload uses include:</p><ul>
-<li>Sensor readings (temperature, voltage, current)</li>
-<li>Multi-state event information</li>
-<li>Configuration or context data</li>
-<li>Extended event notifications</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if Event Report with payload notifications are not needed </dd></dl>
+<p>PC Event Report with payload — event plus additional data bytes. Optional. </p>
 
 </div>
 </div>

@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['payload_20buffer_20pool_20array_20definitions_0',['Payload Buffer Pool Array Definitions',['../group__payload__pool__types.html',1,'']]],
-  ['payload_20buffer_20type_20definitions_1',['Message Payload Buffer Type Definitions',['../group__payload__buffer__types.html',1,'']]],
-  ['pool_20array_20definitions_2',['Payload Buffer Pool Array Definitions',['../group__payload__pool__types.html',1,'']]],
+  ['payload_20buffer_20pool_20arrays_0',['Payload Buffer Pool Arrays',['../group__payload__pool__types.html',1,'']]],
+  ['payload_20buffer_20type_20definitions_1',['Payload Buffer Type Definitions',['../group__payload__buffer__types.html',1,'']]],
+  ['pool_20arrays_2',['Payload Buffer Pool Arrays',['../group__payload__pool__types.html',1,'']]],
   ['protocol_20commands_3',['Configuration Memory Protocol Commands',['../group__config__mem__protocol.html',1,'']]],
   ['protocol_20defines_4',['Train Control Protocol Defines',['../group__train__protocol.html',1,'']]],
   ['protocol_20event_20ids_5',['Broadcast Time Protocol Event IDs',['../group__broadcast__time__events.html',1,'']]],

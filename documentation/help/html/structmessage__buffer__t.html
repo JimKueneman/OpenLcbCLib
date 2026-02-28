@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Complete message buffer storage.  
+<p>Master buffer storage: message structures + segregated payload pools.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -109,19 +109,7 @@ Data Fields</h2></td></tr>
 <tr class="separator:a3eb19d1fe54dc7859f9fb52c0f2924e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Complete message buffer storage. </p>
-<p>Master structure containing all message structures and segregated payload buffers. One instance of this exists in the buffer store.</p>
-<p><b>Buffer Organization:</b></p><ul>
-<li>messages[]: Array of all message structures</li>
-<li>basic[]: BASIC payload buffers (16 bytes each)</li>
-<li>datagram[]: DATAGRAM payload buffers (72 bytes each)</li>
-<li>snip[]: SNIP payload buffers (256 bytes each)</li>
-<li>stream[]: STREAM payload buffers (512 bytes each)</li>
-</ul>
-<p><b>Allocation Strategy:</b> When allocating a message, the store finds an unallocated message structure and links it to an appropriate payload buffer based on requested type.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#aaa929fa9f3796aa554fb29771116b864" title="Initializes the OpenLcb Buffer Store.">OpenLcbBufferStore_initialize</a> </dd>
-<dd>
-<a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> </dd></dl>
+<div class="textblock"><p>Master buffer storage: message structures + segregated payload pools. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a7a79adf87f17dff602aa818396f891e7" name="a7a79adf87f17dff602aa818396f891e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7a79adf87f17dff602aa818396f891e7">&#9670;&#160;</a></span>messages</h2>

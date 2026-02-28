@@ -91,21 +91,33 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">interface_openlcb_application_broadcast_time_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Application-provided callbacks for broadcast time events.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a5e43f44e4756a9cb123a34bbd23f4ed1" id="r_a5e43f44e4756a9cb123a34bbd23f4ed1"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e43f44e4756a9cb123a34bbd23f4ed1">on_time_changed</a> )(<a class="el" href="structbroadcast__clock__t.html">broadcast_clock_t</a> *clock)</td></tr>
+<tr class="memdesc:a5e43f44e4756a9cb123a34bbd23f4ed1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called each time the fast clock advances by one minute.  <br /></td></tr>
 <tr class="separator:a5e43f44e4756a9cb123a34bbd23f4ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a670759ce4a1c2ae104b58912cb47a27a" id="r_a670759ce4a1c2ae104b58912cb47a27a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a670759ce4a1c2ae104b58912cb47a27a">on_time_received</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td></tr>
+<tr class="memitem:a670759ce4a1c2ae104b58912cb47a27a" id="r_a670759ce4a1c2ae104b58912cb47a27a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a670759ce4a1c2ae104b58912cb47a27a">on_time_received</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td></tr>
+<tr class="memdesc:a670759ce4a1c2ae104b58912cb47a27a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a Report Time event is received from the network.  <br /></td></tr>
 <tr class="separator:a670759ce4a1c2ae104b58912cb47a27a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa3eb50d031cecbfc29c859e6e4c0fcf" id="r_afa3eb50d031cecbfc29c859e6e4c0fcf"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa3eb50d031cecbfc29c859e6e4c0fcf">on_date_received</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td></tr>
+<tr class="memitem:afa3eb50d031cecbfc29c859e6e4c0fcf" id="r_afa3eb50d031cecbfc29c859e6e4c0fcf"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa3eb50d031cecbfc29c859e6e4c0fcf">on_date_received</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td></tr>
+<tr class="memdesc:afa3eb50d031cecbfc29c859e6e4c0fcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a Report Date event is received from the network.  <br /></td></tr>
 <tr class="separator:afa3eb50d031cecbfc29c859e6e4c0fcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a817f6605ab8189da14bbec355a7b7a11" id="r_a817f6605ab8189da14bbec355a7b7a11"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a817f6605ab8189da14bbec355a7b7a11">on_year_received</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td></tr>
+<tr class="memitem:a817f6605ab8189da14bbec355a7b7a11" id="r_a817f6605ab8189da14bbec355a7b7a11"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a817f6605ab8189da14bbec355a7b7a11">on_year_received</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td></tr>
+<tr class="memdesc:a817f6605ab8189da14bbec355a7b7a11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a Report Year event is received from the network.  <br /></td></tr>
 <tr class="separator:a817f6605ab8189da14bbec355a7b7a11"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0fce7e91dc0866597f36bd9537cbf22" id="r_aa0fce7e91dc0866597f36bd9537cbf22"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0fce7e91dc0866597f36bd9537cbf22">on_date_rollover</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td></tr>
+<tr class="memitem:aa0fce7e91dc0866597f36bd9537cbf22" id="r_aa0fce7e91dc0866597f36bd9537cbf22"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0fce7e91dc0866597f36bd9537cbf22">on_date_rollover</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td></tr>
+<tr class="memdesc:aa0fce7e91dc0866597f36bd9537cbf22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when the clock rolls over from 23:59 to 00:00.  <br /></td></tr>
 <tr class="separator:aa0fce7e91dc0866597f36bd9537cbf22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Application-provided callbacks for broadcast time events. </p>
+<p>Any callback that is not needed may be left NULL. The module checks each pointer before calling it.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__application__broadcast__time_8c.html#a590240e4a3899b14dc5c7311fda32f5c" title="Initialises the broadcast time module and stores the callback interface.">OpenLcbApplicationBroadcastTime_initialize</a> </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="a5e43f44e4756a9cb123a34bbd23f4ed1" name="a5e43f44e4756a9cb123a34bbd23f4ed1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5e43f44e4756a9cb123a34bbd23f4ed1">&#9670;&#160;</a></span>on_time_changed</h2>
 
@@ -118,6 +130,8 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Called each time the fast clock advances by one minute. </p>
+
 </div>
 </div>
 <a id="a670759ce4a1c2ae104b58912cb47a27a" name="a670759ce4a1c2ae104b58912cb47a27a"></a>
@@ -127,10 +141,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_time_received) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td>
+          <td class="memname">void(* on_time_received) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Called when a Report Time event is received from the network. </p>
 
 </div>
 </div>
@@ -141,10 +157,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_date_received) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td>
+          <td class="memname">void(* on_date_received) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Called when a Report Date event is received from the network. </p>
 
 </div>
 </div>
@@ -155,10 +173,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_year_received) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td>
+          <td class="memname">void(* on_year_received) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Called when a Report Year event is received from the network. </p>
 
 </div>
 </div>
@@ -169,10 +189,12 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_date_rollover) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td>
+          <td class="memname">void(* on_date_rollover) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structbroadcast__clock__state__t.html">broadcast_clock_state_t</a> *clock_state)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Called when the clock rolls over from 23:59 to 00:00. </p>
 
 </div>
 </div>

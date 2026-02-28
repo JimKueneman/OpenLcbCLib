@@ -129,7 +129,7 @@ Functions</h2></td></tr>
 <p>Handles incoming broadcast time Event IDs from the network. Decodes time/date/year/rate/command data and updates the singleton clock state in openlcb_application_broadcast_time module.</p>
 <p>Called from the main statemachine when a broadcast time event is detected. Only processes events for node index 0 (broadcast time events are global).</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>14 Feb 2026</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__application__broadcast__time_8h.html" title="Application-level Broadcast Time Protocol module.">openlcb_application_broadcast_time.h</a> - Singleton clock state and API </dd>
 <dd>
 <a class="el" href="openlcb__utilities_8h.html" title="Common utility functions for OpenLCB message and buffer manipulation.">openlcb_utilities.h</a> - Event ID encoding/decoding functions </dd></dl>
@@ -160,11 +160,13 @@ Functions</h2></td></tr>
 <p>Initializes the Broadcast Time Protocol handler. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_openlcb_protocol_broadcast_time_handler</td><td>Pointer to callback interface structure </td></tr>
+    <tr><td class="paramname">interface_openlcb_protocol_broadcast_time_handler</td><td>Pointer to <a class="el" href="structinterface__openlcb__protocol__broadcast__time__handler__t.html">interface_openlcb_protocol_broadcast_time_handler_t</a> (must remain valid for application lifetime).</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Initializes the Broadcast Time Protocol handler.</p>
+<pre class="fragment">* @param interface_openlcb_protocol_broadcast_time_handler  Populated callback table.
+* </pre> 
 </div>
 </div>
 <a id="a56545d916bd644bc5b3e8c8a6f86ef53" name="a56545d916bd644bc5b3e8c8a6f86ef53"></a>
@@ -198,12 +200,15 @@ Functions</h2></td></tr>
 <p>Decodes the Event ID and updates the singleton clock state. Only processes if the node has index == 0 and a matching clock is registered in the application broadcast time module.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>State machine context with incoming message and node </td></tr>
-    <tr><td class="paramname">event_id</td><td>Full 64-bit Event ID containing encoded time data </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> containing encoded time data.</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Decodes the event type, looks up the matching clock, and dispatches to the appropriate sub-handler.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param event_id           Full 64-bit event_id_t containing encoded time data.
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Node state flags.  
+<p>Bit-packed node state flags.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -115,27 +115,7 @@ Data Fields</h2></td></tr>
 <tr class="separator:a274d38d2727121dd5f49a0748e7dd04c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Node state flags. </p>
-<p>Bit-packed state flags for an OpenLCB node.</p>
-<p><b>Login State:</b></p><ul>
-<li>run_state: Current position in login state machine (0-13)</li>
-<li>allocated: Node structure is in use</li>
-<li>permitted: CAN alias allocated, node can send messages</li>
-<li>initialized: Node login complete, fully operational</li>
-</ul>
-<p><b>Error Conditions:</b></p><ul>
-<li>duplicate_id_detected: Another node has same Node ID</li>
-</ul>
-<p><b>Protocol State:</b></p><ul>
-<li>openlcb_datagram_ack_sent: Datagram ACK sent, awaiting reply</li>
-<li>resend_datagram: Retry last datagram instead of pulling from FIFO</li>
-<li>firmware_upgrade_active: Node in firmware upgrade mode</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__node__login__states.html#ga78bb04ebef2f0ee7fe6f15a27a8f8be0" title="General boot initialization - sets Node ID as initial seed.">RUNSTATE_INIT</a> </dd>
-<dd>
-<a class="el" href="group__node__login__states.html#gaf6eaeb155cdfde837a166bac521293a8" title="Normal operation mode - process messages from FIFO.">RUNSTATE_RUN</a> </dd>
-<dd>
-<a class="el" href="structopenlcb__node__t.html#aa60d5d8aea0a8827fabcf551363fcbd1">openlcb_node_t.state</a> </dd></dl>
+<div class="textblock"><p>Bit-packed node state flags. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ac19567045b318f16df3206eb95f4a2f9" name="ac19567045b318f16df3206eb95f4a2f9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac19567045b318f16df3206eb95f4a2f9">&#9670;&#160;</a></span>run_state</h2>
@@ -178,7 +158,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>CAN alias allocated, permitted to send </p>
+<p>CAN alias allocated </p>
 
 </div>
 </div>
@@ -193,7 +173,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Node fully initialized and operational </p>
+<p>Node fully initialized </p>
 
 </div>
 </div>
@@ -208,7 +188,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Duplicate Node ID conflict detected </p>
+<p>Duplicate Node ID conflict </p>
 
 </div>
 </div>
@@ -223,7 +203,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Datagram ACK sent, awaiting actual reply </p>
+<p>Datagram ACK sent, awaiting reply </p>
 
 </div>
 </div>

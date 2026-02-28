@@ -99,26 +99,17 @@ $(function(){ initResizable(false); });
 Data Fields</h2></td></tr>
 <tr class="memitem:af6a39bfc7e1dc3b6f9c997c1c43fa996" id="r_af6a39bfc7e1dc3b6f9c997c1c43fa996"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6a39bfc7e1dc3b6f9c997c1c43fa996">count</a></td></tr>
 <tr class="separator:af6a39bfc7e1dc3b6f9c997c1c43fa996"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a428f9679f791e54103d45453619d75f8" id="r_a428f9679f791e54103d45453619d75f8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structevent__id__struct__t.html">event_id_struct_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a428f9679f791e54103d45453619d75f8">list</a> [<a class="el" href="group__user__config__constants.html#ga7f808bc3e97eec5e6a726f2b9b4698bd">USER_DEFINED_CONSUMER_COUNT</a>]</td></tr>
+<tr class="memitem:a428f9679f791e54103d45453619d75f8" id="r_a428f9679f791e54103d45453619d75f8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structevent__id__struct__t.html">event_id_struct_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a428f9679f791e54103d45453619d75f8">list</a> [USER_DEFINED_CONSUMER_COUNT]</td></tr>
 <tr class="separator:a428f9679f791e54103d45453619d75f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a672af46869cb7c91d311eddedbd3c1a6" id="r_a672af46869cb7c91d311eddedbd3c1a6"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a672af46869cb7c91d311eddedbd3c1a6">range_count</a></td></tr>
 <tr class="separator:a672af46869cb7c91d311eddedbd3c1a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0539cfce48d7525038533564fd804b8" id="r_ad0539cfce48d7525038533564fd804b8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structevent__id__range__t.html">event_id_range_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0539cfce48d7525038533564fd804b8">range_list</a> [<a class="el" href="group__user__config__constants.html#ga5de4baa8c4feab25b756b8ff800f906e">USER_DEFINED_CONSUMER_RANGE_COUNT</a>]</td></tr>
+<tr class="memitem:ad0539cfce48d7525038533564fd804b8" id="r_ad0539cfce48d7525038533564fd804b8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structevent__id__range__t.html">event_id_range_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0539cfce48d7525038533564fd804b8">range_list</a> [USER_DEFINED_CONSUMER_RANGE_COUNT]</td></tr>
 <tr class="separator:ad0539cfce48d7525038533564fd804b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd253a298de10c97b9b0e55dfb5c0562" id="r_acd253a298de10c97b9b0e55dfb5c0562"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structevent__id__enum__t.html">event_id_enum_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd253a298de10c97b9b0e55dfb5c0562">enumerator</a></td></tr>
 <tr class="separator:acd253a298de10c97b9b0e55dfb5c0562"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>List of events consumed by a node. </p>
-<p>Maintains the array of Event IDs that this node consumes.</p>
-<p><b>List Management:</b></p><ul>
-<li>count: Number of valid entries in list</li>
-<li>list[]: Array of event IDs with status</li>
-<li>enumerator: State for iterating through list</li>
-</ul>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__mti__event__transport.html#gaa500a05a3a8f9424542326dac28d5c84" title="Request: Identify all consumers of specified Event ID.">MTI_CONSUMER_IDENTIFY</a> </dd>
-<dd>
-<a class="el" href="structopenlcb__node__t.html#adde44499f16d534a9d8fffa9eb81d2ae">openlcb_node_t.consumers</a> </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="af6a39bfc7e1dc3b6f9c997c1c43fa996" name="af6a39bfc7e1dc3b6f9c997c1c43fa996"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af6a39bfc7e1dc3b6f9c997c1c43fa996">&#9670;&#160;</a></span>count</h2>
@@ -131,7 +122,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of events in list </p>
 
 </div>
 </div>
@@ -142,11 +132,10 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structevent__id__struct__t.html">event_id_struct_t</a> list[<a class="el" href="group__user__config__constants.html#ga7f808bc3e97eec5e6a726f2b9b4698bd">USER_DEFINED_CONSUMER_COUNT</a>]</td>
+          <td class="memname"><a class="el" href="structevent__id__struct__t.html">event_id_struct_t</a> list[USER_DEFINED_CONSUMER_COUNT]</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Array of consumed Event IDs </p>
 
 </div>
 </div>
@@ -161,7 +150,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of ranges in list </p>
 
 </div>
 </div>
@@ -172,11 +160,10 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structevent__id__range__t.html">event_id_range_t</a> range_list[<a class="el" href="group__user__config__constants.html#ga5de4baa8c4feab25b756b8ff800f906e">USER_DEFINED_CONSUMER_RANGE_COUNT</a>]</td>
+          <td class="memname"><a class="el" href="structevent__id__range__t.html">event_id_range_t</a> range_list[USER_DEFINED_CONSUMER_RANGE_COUNT]</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Array of consumed Event ID ranges </p>
 
 </div>
 </div>
@@ -191,7 +178,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Enumeration state </p>
 
 </div>
 </div>

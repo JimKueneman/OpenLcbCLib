@@ -102,37 +102,37 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ab698af75d6fd66d8f68cc5a1b122eadc" id="r_ab698af75d6fd66d8f68cc5a1b122eadc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab698af75d6fd66d8f68cc5a1b122eadc">OpenLcbMainStatemachine_initialize</a> (const <a class="el" href="structinterface__openlcb__main__statemachine__t.html">interface_openlcb_main_statemachine_t</a> *interface_openlcb_main_statemachine)</td></tr>
-<tr class="memdesc:ab698af75d6fd66d8f68cc5a1b122eadc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the main OpenLCB state machine.  <br /></td></tr>
+<tr class="memdesc:ab698af75d6fd66d8f68cc5a1b122eadc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface and wires up the outgoing message buffer.  <br /></td></tr>
 <tr class="separator:ab698af75d6fd66d8f68cc5a1b122eadc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32f1ff60e7b248efcd4b6d3e626715f4" id="r_a32f1ff60e7b248efcd4b6d3e626715f4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32f1ff60e7b248efcd4b6d3e626715f4">OpenLcbMainStatemachine_does_node_process_msg</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a32f1ff60e7b248efcd4b6d3e626715f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines if current node should process the message.  <br /></td></tr>
+<tr class="memdesc:a32f1ff60e7b248efcd4b6d3e626715f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the node should process this message.  <br /></td></tr>
 <tr class="separator:a32f1ff60e7b248efcd4b6d3e626715f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f2678343f0776860a12e30479ead703" id="r_a5f2678343f0776860a12e30479ead703"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f2678343f0776860a12e30479ead703">OpenLcbMainStatemachine_load_interaction_rejected</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a5f2678343f0776860a12e30479ead703"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads an Optional Interaction Rejected response message.  <br /></td></tr>
+<tr class="memdesc:a5f2678343f0776860a12e30479ead703"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds an Optional Interaction Rejected response for the current message.  <br /></td></tr>
 <tr class="separator:a5f2678343f0776860a12e30479ead703"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf6127bfd2ace2fc6d83e5b9a8834569" id="r_acf6127bfd2ace2fc6d83e5b9a8834569"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf6127bfd2ace2fc6d83e5b9a8834569">OpenLcbMainStatemachine_process_main_statemachine</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:acf6127bfd2ace2fc6d83e5b9a8834569"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes incoming message through protocol handlers.  <br /></td></tr>
+<tr class="memdesc:acf6127bfd2ace2fc6d83e5b9a8834569"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routes incoming message to the correct protocol handler based on MTI.  <br /></td></tr>
 <tr class="separator:acf6127bfd2ace2fc6d83e5b9a8834569"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7188254864ad6f2e9ab7f654a1000ae" id="r_ae7188254864ad6f2e9ab7f654a1000ae"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7188254864ad6f2e9ab7f654a1000ae">OpenLcbMainStatemachine_handle_outgoing_openlcb_message</a> (void)</td></tr>
-<tr class="memdesc:ae7188254864ad6f2e9ab7f654a1000ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles transmission of pending outgoing messages.  <br /></td></tr>
+<tr class="memdesc:ae7188254864ad6f2e9ab7f654a1000ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends the pending outgoing message if one is valid.  <br /></td></tr>
 <tr class="separator:ae7188254864ad6f2e9ab7f654a1000ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b1a62ec85f81070f1766b82d5acbd8d" id="r_a2b1a62ec85f81070f1766b82d5acbd8d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b1a62ec85f81070f1766b82d5acbd8d">OpenLcbMainStatemachine_handle_try_reenumerate</a> (void)</td></tr>
-<tr class="memdesc:a2b1a62ec85f81070f1766b82d5acbd8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles re-enumeration for multi-message responses.  <br /></td></tr>
+<tr class="memdesc:a2b1a62ec85f81070f1766b82d5acbd8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-dispatches the current message when a handler requests multi-message enumeration.  <br /></td></tr>
 <tr class="separator:a2b1a62ec85f81070f1766b82d5acbd8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad33e639d0a19fa75a7baf215069dc532" id="r_ad33e639d0a19fa75a7baf215069dc532"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad33e639d0a19fa75a7baf215069dc532">OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message</a> (void)</td></tr>
-<tr class="memdesc:ad33e639d0a19fa75a7baf215069dc532"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pops next incoming message from receive queue.  <br /></td></tr>
+<tr class="memdesc:ad33e639d0a19fa75a7baf215069dc532"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pops the next incoming message from the receive FIFO when idle.  <br /></td></tr>
 <tr class="separator:ad33e639d0a19fa75a7baf215069dc532"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03ab477b926644a184090fd827a2e2c3" id="r_a03ab477b926644a184090fd827a2e2c3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03ab477b926644a184090fd827a2e2c3">OpenLcbMainStatemachine_handle_try_enumerate_first_node</a> (void)</td></tr>
-<tr class="memdesc:a03ab477b926644a184090fd827a2e2c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates first node for message processing.  <br /></td></tr>
+<tr class="memdesc:a03ab477b926644a184090fd827a2e2c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins node enumeration by fetching the first node and dispatching the message.  <br /></td></tr>
 <tr class="separator:a03ab477b926644a184090fd827a2e2c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a637df8a2395f30856f318fc06d9f8540" id="r_a637df8a2395f30856f318fc06d9f8540"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a637df8a2395f30856f318fc06d9f8540">OpenLcbMainStatemachine_handle_try_enumerate_next_node</a> (void)</td></tr>
-<tr class="memdesc:a637df8a2395f30856f318fc06d9f8540"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates next node for message processing.  <br /></td></tr>
+<tr class="memdesc:a637df8a2395f30856f318fc06d9f8540"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advances to the next node and dispatches the current message.  <br /></td></tr>
 <tr class="separator:a637df8a2395f30856f318fc06d9f8540"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ff85d07b2775d7df84787073306b731" id="r_a8ff85d07b2775d7df84787073306b731"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ff85d07b2775d7df84787073306b731">OpenLcbMainStatemachine_run</a> (void)</td></tr>
-<tr class="memdesc:a8ff85d07b2775d7df84787073306b731"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main state machine processing loop.  <br /></td></tr>
+<tr class="memdesc:a8ff85d07b2775d7df84787073306b731"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs one iteration of the main state machine dispatch loop.  <br /></td></tr>
 <tr class="separator:a8ff85d07b2775d7df84787073306b731"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf7b6cc6f65e6982f71cc9d9ae145775" id="r_adf7b6cc6f65e6982f71cc9d9ae145775"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf7b6cc6f65e6982f71cc9d9ae145775">OpenLcbMainStatemachine_get_statemachine_info</a> (void)</td></tr>
-<tr class="memdesc:adf7b6cc6f65e6982f71cc9d9ae145775"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns pointer to internal state machine information structure.  <br /></td></tr>
+<tr class="memdesc:adf7b6cc6f65e6982f71cc9d9ae145775"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns pointer to internal state. For unit testing only.  <br /></td></tr>
 <tr class="separator:adf7b6cc6f65e6982f71cc9d9ae145775"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -164,10 +164,10 @@ Functions</h2></td></tr>
 </ul>
 <p>Thread safety: Resource locking callbacks protect access to shared buffer pools and FIFOs.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8h.html" title="Main OpenLCB protocol state machine interface and dispatcher.">openlcb_main_statemachine.h</a> - Public interface </dd>
+<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8h.html" title="Central MTI-based message dispatcher. Pops messages from the FIFO, enumerates all nodes,...">openlcb_main_statemachine.h</a> - Public interface </dd>
 <dd>
-<a class="el" href="openlcb__types_8h.html" title="Core type definitions, structures, and configuration constants for OpenLCB library.">openlcb_types.h</a> - Core data structures </dd>
+<a class="el" href="openlcb__types_8h.html" title="Core type definitions, structures, and configuration constants for the OpenLCB library.">openlcb_types.h</a> - Core data structures </dd>
 <dd>
 OpenLCB Standard S-9.7.3 - Message Network Protocol </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -186,36 +186,16 @@ OpenLCB Standard S-9.7.3 - Message Network Protocol </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes the main OpenLCB state machine. </p>
+<p>Stores the callback interface and wires up the outgoing message buffer. </p>
+<p>Stores the callback interface and prepares internal state.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Store interface pointer for later use</li>
-<li>Initialize outgoing message buffer pointer structure</li>
-<li>Configure outgoing payload pointer and type (STREAM)</li>
-<li>Clear outgoing message and payload structures</li>
-<li>Mark outgoing buffer as allocated</li>
-<li>Initialize incoming message pointer to NULL</li>
-<li>Clear enumerate flag</li>
-<li>Initialize node pointer to NULL</li>
+<li>Store interface pointer</li>
+<li>Link outgoing message buffer pointers, set payload type to STREAM</li>
+<li>Clear message and payload, mark buffer as allocated</li>
+<li>Set incoming message to NULL, clear enumerate flag, set node to NULL</li>
 </ol>
-<p>The outgoing message buffer is pre-allocated within the state machine context to avoid dynamic allocation during message processing. This buffer is reused for all outgoing responses.</p>
-<p>Use cases:</p><ul>
-<li>Application startup initialization</li>
-<li>System configuration during boot</li>
-<li>Test harness setup</li>
-</ul>
 <pre class="fragment">* @param interface_openlcb_main_statemachine Pointer to populated interface structure
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Must be called before the specified function </dd>
-<dd>
-The interface structure must remain valid for application lifetime </dd>
-<dd>
-All required function pointers must be non-NULL</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call only once during initialization </dd>
-<dd>
-Assumes interface parameter is non-NULL (caller responsibility)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8ff85d07b2775d7df84787073306b731" title="Main state machine processing loop.">OpenLcbMainStatemachine_run</a> - Main processing loop </dd>
-<dd>
-<a class="el" href="structinterface__openlcb__main__statemachine__t.html" title="Dependency injection interface for OpenLCB Main State Machine operations.">interface_openlcb_main_statemachine_t</a> - Interface structure definition </dd></dl>
-
+* </pre> 
 </div>
 </div>
 <a id="a32f1ff60e7b248efcd4b6d3e626715f4" name="a32f1ff60e7b248efcd4b6d3e626715f4"></a>
@@ -233,37 +213,16 @@ Assumes interface parameter is non-NULL (caller responsibility)</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Determines if current node should process the message. </p>
-<p>Determines if node should process incoming message.</p>
+<p>Returns true if the node should process this message. </p>
+<p>Address filter. Returns true if the node should process this message.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Check if node pointer is NULL (return false if so)</li>
-<li>Evaluate node initialized state</li>
-<li>Check if message is global (not addressed)</li>
-<li>Check if message is addressed to this node (alias or ID match)</li>
-<li>Special case: allow Verify Node ID Global through</li>
-<li>Return true if any condition allows processing</li>
+<li>Return false if node is NULL or not initialized</li>
+<li>Accept global (unaddressed) messages</li>
+<li>Accept addressed messages whose dest alias/ID matches this node</li>
+<li>Special case: always accept MTI_VERIFY_NODE_ID_GLOBAL</li>
 </ol>
-<p>Message processing logic: A node processes a message if ALL of these are true:</p><ul>
-<li>Node is initialized AND any of:<ul>
-<li>Message has no destination address (global message)</li>
-<li>Message destination matches node alias or ID</li>
-<li>Message is MTI_VERIFY_NODE_ID_GLOBAL (special case)</li>
-</ul>
-</li>
-</ul>
-<p>The Verify Node ID Global is special because the handler determines whether to respond based on optional node ID in the payload.</p>
-<p>Use cases:</p><ul>
-<li>Message filtering in main state machine</li>
-<li>Unit testing address matching</li>
-<li>Custom routing logic</li>
-</ul>
 <pre class="fragment">* @param statemachine_info Pointer to state machine context
-* </pre><dl class="section return"><dt>Returns</dt><dd>true if node should process message, false otherwise</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Returns false if statemachine_info or openlcb_node is NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Returns false for uninitialized nodes</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8h.html#acf6127bfd2ace2fc6d83e5b9a8834569" title="Processes message through appropriate protocol handler.">OpenLcbMainStatemachine_process_main_statemachine</a> - Uses this for filtering </dd>
-<dd>
-<a class="el" href="group__mti__field__masks.html#ga515226f6c2fb12b929379b4e5004ab1a" title="Destination address present indicator.">MASK_DEST_ADDRESS_PRESENT</a> - MTI addressing bit mask </dd></dl>
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if node should process message, false otherwise </dd></dl>
 
 </div>
 </div>
@@ -282,39 +241,15 @@ Assumes interface parameter is non-NULL (caller responsibility)</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Loads an Optional Interaction Rejected response message. </p>
-<p>Constructs Optional Interaction Rejected message.</p>
+<p>Builds an Optional Interaction Rejected response for the current message. </p>
+<p>Builds an Interaction Rejected response for the current incoming message. Internal use.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Validate statemachine_info is not NULL (return if NULL)</li>
-<li>Validate openlcb_node is not NULL (return if NULL)</li>
-<li>Validate outgoing message pointer is not NULL (return if NULL)</li>
-<li>Validate incoming message pointer is not NULL (return if NULL)</li>
-<li>Load base Optional Interaction Rejected message with source/dest info</li>
-<li>Copy error code to payload at offset 0</li>
-<li>Copy triggering MTI to payload at offset 2</li>
-<li>Mark outgoing message as valid for transmission</li>
+<li>Validate all required pointers (return early if NULL)</li>
+<li>Load OIR message with error code and triggering MTI in payload</li>
+<li>Set valid flag for transmission</li>
 </ol>
-<p>Error code used: ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL This indicates the MTI is not implemented or the transport protocol is unknown.</p>
-<p>Payload structure:</p><ul>
-<li>Bytes 0-1: Error code (16-bit)</li>
-<li>Bytes 2-3: MTI that triggered rejection (16-bit)</li>
-</ul>
-<p>Use cases:</p><ul>
-<li>Default handler for unimplemented optional protocols</li>
-<li>Response to unknown addressed messages</li>
-<li>Protocol capability advertisement</li>
-</ul>
 <pre class="fragment">* @param statemachine_info Pointer to state machine context
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Returns early if any required pointers are NULL </dd>
-<dd>
-Assumes pointer message buffer is available</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Used automatically by state machine for unhandled MTIs</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8h.html#acf6127bfd2ace2fc6d83e5b9a8834569" title="Processes message through appropriate protocol handler.">OpenLcbMainStatemachine_process_main_statemachine</a> - Calls this for unhandled MTIs </dd>
-<dd>
-<a class="el" href="group__mti__message__network.html#ga37ba087609990ffef85aeca449c07a8e" title="Node cannot or will not process the received message.">MTI_OPTIONAL_INTERACTION_REJECTED</a> - Response MTI value </dd>
-<dd>
-<a class="el" href="group__error__codes.html#ga600e59d7d00f2d68c9fcd96fad12186b" title="Permanent: MTI or transport protocol not supported.">ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL</a> - Error code </dd></dl>
-
+* </pre> 
 </div>
 </div>
 <a id="acf6127bfd2ace2fc6d83e5b9a8834569" name="acf6127bfd2ace2fc6d83e5b9a8834569"></a>
@@ -332,102 +267,16 @@ Assumes pointer message buffer is available</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Processes incoming message through protocol handlers. </p>
-<p>Processes message through appropriate protocol handler.</p>
+<p>Routes incoming message to the correct protocol handler based on MTI. </p>
+<p>MTI dispatcher. Routes incoming message to the correct handler.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Validate statemachine_info parameter (return if NULL)</li>
-<li>Check if node should process message via does_node_process_msg</li>
-<li>If node should not process, return early</li>
-<li>Switch on incoming message MTI value</li>
-<li>For each MTI case:<ul>
-<li>Check if corresponding handler exists (non-NULL)</li>
-<li>If handler exists, invoke it with statemachine_info</li>
-<li>If handler is NULL (optional protocol):<ul>
-<li>For request MTIs: call load_interaction_rejected</li>
-<li>For reply/indication MTIs: ignore (no action)</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Default case: If message is addressed to node, send Interaction Rejected</li>
+<li>Return early if NULL or does_node_process_msg() is false</li>
+<li>Switch on MTI (40 message types: SNIP, Message Network, PIP, Event Transport, Train, Datagram, Stream)</li>
+<li>For optional handlers that are NULL: send Interaction Rejected on request MTIs, silently ignore reply/indication MTIs</li>
+<li>Default: reject unknown addressed MTIs, ignore unknown global MTIs</li>
 </ol>
-<p>MTI Dispatch Table (40 message types supported):</p>
-<p>SNIP Protocol:</p><ul>
-<li>MTI_SIMPLE_NODE_INFO_REQUEST → snip_simple_node_info_request (or reject)</li>
-<li>MTI_SIMPLE_NODE_INFO_REPLY → snip_simple_node_info_reply</li>
-</ul>
-<p>Message Network Protocol (required):</p><ul>
-<li>MTI_INITIALIZATION_COMPLETE → message_network_initialization_complete</li>
-<li>MTI_INITIALIZATION_COMPLETE_SIMPLE → message_network_initialization_complete_simple</li>
-<li>MTI_VERIFY_NODE_ID_ADDRESSED → message_network_verify_node_id_addressed</li>
-<li>MTI_VERIFY_NODE_ID_GLOBAL → message_network_verify_node_id_global</li>
-<li>MTI_VERIFIED_NODE_ID → message_network_verified_node_id</li>
-<li>MTI_OPTIONAL_INTERACTION_REJECTED → message_network_optional_interaction_rejected</li>
-<li>MTI_TERMINATE_DO_TO_ERROR → message_network_terminate_due_to_error</li>
-</ul>
-<p>Protocol Support Protocol/PIP (required):</p><ul>
-<li>MTI_PROTOCOL_SUPPORT_INQUIRY → message_network_protocol_support_inquiry</li>
-<li>MTI_PROTOCOL_SUPPORT_REPLY → message_network_protocol_support_reply</li>
-</ul>
-<p>Event Transport Protocol:</p><ul>
-<li>MTI_CONSUMER_IDENTIFY → event_transport_consumer_identify</li>
-<li>MTI_CONSUMER_RANGE_IDENTIFIED → event_transport_consumer_range_identified</li>
-<li>MTI_CONSUMER_IDENTIFIED_UNKNOWN → event_transport_consumer_identified_unknown</li>
-<li>MTI_CONSUMER_IDENTIFIED_SET → event_transport_consumer_identified_set</li>
-<li>MTI_CONSUMER_IDENTIFIED_CLEAR → event_transport_consumer_identified_clear</li>
-<li>MTI_CONSUMER_IDENTIFIED_RESERVED → event_transport_consumer_identified_reserved</li>
-<li>MTI_PRODUCER_IDENTIFY → event_transport_producer_identify</li>
-<li>MTI_PRODUCER_RANGE_IDENTIFIED → event_transport_producer_range_identified</li>
-<li>MTI_PRODUCER_IDENTIFIED_UNKNOWN → event_transport_producer_identified_unknown</li>
-<li>MTI_PRODUCER_IDENTIFIED_SET → event_transport_producer_identified_set</li>
-<li>MTI_PRODUCER_IDENTIFIED_CLEAR → event_transport_producer_identified_clear</li>
-<li>MTI_PRODUCER_IDENTIFIED_RESERVED → event_transport_producer_identified_reserved</li>
-<li>MTI_EVENTS_IDENTIFY_DEST → event_transport_identify_dest</li>
-<li>MTI_EVENTS_IDENTIFY → event_transport_identify</li>
-<li>MTI_EVENT_LEARN → event_transport_learn</li>
-<li>MTI_PC_EVENT_REPORT → event_transport_pc_report</li>
-<li>MTI_PC_EVENT_REPORT_WITH_PAYLOAD → event_transport_pc_report_with_payload</li>
-</ul>
-<p>Train Protocol:</p><ul>
-<li>MTI_TRAIN_PROTOCOL → train_control_command (or reject)</li>
-<li>MTI_TRAIN_REPLY → train_control_reply</li>
-<li>MTI_SIMPLE_TRAIN_INFO_REQUEST → simple_train_node_ident_info_request (or reject)</li>
-<li>MTI_SIMPLE_TRAIN_INFO_REPLY → simple_train_node_ident_info_reply</li>
-</ul>
-<p>Datagram Protocol:</p><ul>
-<li>MTI_DATAGRAM → datagram</li>
-<li>MTI_DATAGRAM_OK_REPLY → datagram_ok_reply</li>
-<li>MTI_DATAGRAM_REJECTED_REPLY → datagram_rejected_reply</li>
-</ul>
-<p>Stream Protocol:</p><ul>
-<li>MTI_STREAM_INIT_REQUEST → stream_initiate_request</li>
-<li>MTI_STREAM_INIT_REPLY → stream_initiate_reply</li>
-<li>MTI_STREAM_SEND → stream_send_data</li>
-<li>MTI_STREAM_PROCEED → stream_data_proceed</li>
-<li>MTI_STREAM_COMPLETE → stream_data_complete</li>
-</ul>
-<p>Interaction Rejected behavior:</p><ul>
-<li>Request messages (SNIP request, Train command, Train info request): Generate Interaction Rejected if handler is NULL</li>
-<li>Reply/indication messages: Silently ignored if handler is NULL</li>
-<li>Unknown addressed MTIs: Generate Interaction Rejected</li>
-<li>Unknown global MTIs: Silently ignored</li>
-</ul>
-<p>Use cases:</p><ul>
-<li>Internal message dispatching (called by run)</li>
-<li>Unit testing of message handling</li>
-<li>Custom message processing scenarios</li>
-</ul>
 <pre class="fragment">* @param statemachine_info Pointer to state machine context with message and node information
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Dereferences statemachine_info - must not be NULL </dd>
-<dd>
-Calls interface function pointers - interface must be initialized</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Typically called internally by run function</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8h.html#a8ff85d07b2775d7df84787073306b731" title="Executes one iteration of main OpenLCB protocol state machine.">OpenLcbMainStatemachine_run</a> - Main caller of this function </dd>
-<dd>
-<a class="el" href="openlcb__main__statemachine_8h.html#a32f1ff60e7b248efcd4b6d3e626715f4" title="Determines if node should process incoming message.">OpenLcbMainStatemachine_does_node_process_msg</a> - Message filtering </dd>
-<dd>
-<a class="el" href="openlcb__main__statemachine_8h.html#a5f2678343f0776860a12e30479ead703" title="Constructs Optional Interaction Rejected message.">OpenLcbMainStatemachine_load_interaction_rejected</a> - Rejection handler </dd></dl>
-
+* </pre> 
 </div>
 </div>
 <a id="ae7188254864ad6f2e9ab7f654a1000ae" name="ae7188254864ad6f2e9ab7f654a1000ae"></a>
@@ -445,26 +294,14 @@ Calls interface function pointers - interface must be initialized</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Handles transmission of pending outgoing messages. </p>
+<p>Sends the pending outgoing message if one is valid. </p>
+<p>Tries to send the pending message. Returns true if one was pending.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Check if outgoing message is marked as valid</li>
-<li>If valid, attempt to send via interface send_openlcb_msg callback</li>
-<li>If send succeeds, clear the valid flag (message sent)</li>
-<li>Return true if message was pending (caller should keep trying)</li>
-<li>Return false if no message to send</li>
+<li>If outgoing valid flag is set, call send_openlcb_msg callback</li>
+<li>On success clear the valid flag</li>
+<li>Return true if a message was pending, false if idle</li>
 </ol>
-<p>This function implements a simple retry mechanism. If the send function returns false (unable to send), the valid flag remains set and the caller will retry on the next iteration.</p>
-<p>Use cases:</p><ul>
-<li>Outgoing message transmission in run loop</li>
-<li>Response message handling</li>
-<li>Unit testing of send logic</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>true if message pending (keep calling), false if no message to send</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Keeps trying until message is successfully transmitted</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Exposed for testing, normally called by run function</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8ff85d07b2775d7df84787073306b731" title="Main state machine processing loop.">OpenLcbMainStatemachine_run</a> - Main caller </dd>
-<dd>
-<a class="el" href="structinterface__openlcb__main__statemachine__t.html" title="Dependency injection interface for OpenLCB Main State Machine operations.">interface_openlcb_main_statemachine_t</a> - send_openlcb_msg callback </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if message pending (caller should retry), false if nothing to send </dd></dl>
 
 </div>
 </div>
@@ -483,26 +320,13 @@ Calls interface function pointers - interface must be initialized</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Handles re-enumeration for multi-message responses. </p>
+<p>Re-dispatches the current message when a handler requests multi-message enumeration. </p>
+<p>Re-enters the state processor if the enumerate flag is set.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Check if enumerate flag is set in incoming message info</li>
-<li>If set, call process_main_statemachine with current context</li>
-<li>Return true (continue enumeration until handler clears flag)</li>
-<li>If not set, return false (enumeration complete)</li>
+<li>If enumerate flag is set, call process_main_statemachine again</li>
+<li>Return true while flag remains set, false when enumeration is complete</li>
 </ol>
-<p>The enumerate flag is set by protocol handlers when they need to send multiple response messages for a single incoming message. The handler sets the flag, sends one message, and returns. On the next iteration, this function calls the handler again with the same incoming message until the handler clears the flag.</p>
-<p>Example: Event identification might need to send multiple Producer Identified messages, one per event.</p>
-<p>Use cases:</p><ul>
-<li>Multi-message protocol responses</li>
-<li>Event identification with multiple events</li>
-<li>Large data transfers requiring segmentation</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>true if re-enumeration active (keep calling), false if complete</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Handler must clear enumerate flag when done</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Exposed for testing, normally called by run function</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8ff85d07b2775d7df84787073306b731" title="Main state machine processing loop.">OpenLcbMainStatemachine_run</a> - Main caller </dd>
-<dd>
-<a class="el" href="#acf6127bfd2ace2fc6d83e5b9a8834569" title="Processes incoming message through protocol handlers.">OpenLcbMainStatemachine_process_main_statemachine</a> - Message processor </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if re-enumeration active, false if complete </dd></dl>
 
 </div>
 </div>
@@ -521,30 +345,14 @@ Calls interface function pointers - interface must be initialized</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Pops next incoming message from receive queue. </p>
+<p>Pops the next incoming message from the receive FIFO when idle. </p>
+<p>Pops the next message from the FIFO (thread-safe). Returns true if popped.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Check if incoming message pointer is already set</li>
-<li>If already have message, return false (keep processing current)</li>
-<li>Acquire resource lock</li>
-<li>Pop message from buffer FIFO</li>
-<li>Release resource lock</li>
-<li>Return true if no message popped (continue to next step)</li>
-<li>Return false if still processing message</li>
+<li>If already holding a message, return false</li>
+<li>Lock shared resources, pop from FIFO, unlock</li>
+<li>Return true if pop attempted (even if queue was empty), false if busy</li>
 </ol>
-<p>The function only pops a new message when the current message pointer is NULL, indicating the previous message has been fully processed and freed.</p>
-<p>Use cases:</p><ul>
-<li>Message queue management in run loop</li>
-<li>Incoming message retrieval</li>
-<li>Unit testing message flow</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>true if message popped or attempted (continue processing), false if already have message</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Uses lock/unlock callbacks for thread safety </dd>
-<dd>
-Returns true when no message available to signal continuation</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Exposed for testing, normally called by run function</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8ff85d07b2775d7df84787073306b731" title="Main state machine processing loop.">OpenLcbMainStatemachine_run</a> - Main caller </dd>
-<dd>
-<a class="el" href="openlcb__buffer__fifo_8c.html#a1b754f3f1d498fbaa62d1b0c80015232" title="Pops an OpenLcb message off the FIFO buffer.">OpenLcbBufferFifo_pop</a> - FIFO access function </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if pop attempted, false if still processing previous message </dd></dl>
 
 </div>
 </div>
@@ -563,36 +371,15 @@ Returns true when no message available to signal continuation</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Enumerates first node for message processing. </p>
+<p>Begins node enumeration by fetching the first node and dispatching the message. </p>
+<p>Starts node enumeration from the first node. Returns true if processed.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Check if node pointer is already set</li>
-<li>If already set, return false (continue to next node enum)</li>
-<li>Get first node from node list using OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX</li>
-<li>If no nodes exist (NULL returned):<ul>
-<li>Free the incoming message (no nodes to process it)</li>
-<li>Return true (enumeration complete)</li>
-</ul>
-</li>
-<li>If node is in RUNSTATE_RUN:<ul>
-<li>Process message through state machine</li>
-</ul>
-</li>
-<li>Return true (first node enumeration complete)</li>
+<li>If node pointer already set, return false (already enumerating)</li>
+<li>Get first node; if NULL free the message and return true</li>
+<li>If node is in RUNSTATE_RUN, dispatch message via process_main_statemachine</li>
+<li>Return true</li>
 </ol>
-<p>This begins the node enumeration process. Nodes not in RUN state are skipped silently as they are not ready to process messages.</p>
-<p>Use cases:</p><ul>
-<li>Node enumeration in run loop</li>
-<li>First node message processing</li>
-<li>Unit testing enumeration logic</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>true if enumeration step complete (stop or continue to next), false if no action taken</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Skips nodes not in RUNSTATE_RUN </dd>
-<dd>
-Frees message if no nodes allocated</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Exposed for testing, normally called by run function</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8ff85d07b2775d7df84787073306b731" title="Main state machine processing loop.">OpenLcbMainStatemachine_run</a> - Main caller </dd>
-<dd>
-<a class="el" href="#a637df8a2395f30856f318fc06d9f8540" title="Enumerates next node for message processing.">OpenLcbMainStatemachine_handle_try_enumerate_next_node</a> - Continues enumeration </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if enumeration step taken, false if no action needed </dd></dl>
 
 </div>
 </div>
@@ -611,36 +398,15 @@ Frees message if no nodes allocated</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Enumerates next node for message processing. </p>
+<p>Advances to the next node and dispatches the current message. </p>
+<p>Advances to the next node; frees message at end. Returns true if processed.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Check if current node pointer is set</li>
-<li>If not set, return false (no enumeration in progress)</li>
-<li>Get next node from node list using OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX</li>
-<li>If no more nodes (NULL returned):<ul>
-<li>Free the incoming message (all nodes processed)</li>
-<li>Return true (enumeration complete)</li>
-</ul>
-</li>
-<li>If node is in RUNSTATE_RUN:<ul>
-<li>Process message through state machine</li>
-</ul>
-</li>
-<li>Return true (next node enumeration complete)</li>
+<li>If no current node, return false</li>
+<li>Get next node; if NULL free the message and return true</li>
+<li>If node is in RUNSTATE_RUN, dispatch message via process_main_statemachine</li>
+<li>Return true</li>
 </ol>
-<p>This continues the node enumeration started by enumerate_first_node. The function is called repeatedly until all nodes have been enumerated and the incoming message has been offered to each active node.</p>
-<p>Use cases:</p><ul>
-<li>Node enumeration continuation in run loop</li>
-<li>Multi-node message processing</li>
-<li>Unit testing enumeration logic</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>true if enumeration active (keep calling), false if no current node</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Skips nodes not in RUNSTATE_RUN </dd>
-<dd>
-Frees message when enumeration complete</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Exposed for testing, normally called by run function</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8ff85d07b2775d7df84787073306b731" title="Main state machine processing loop.">OpenLcbMainStatemachine_run</a> - Main caller </dd>
-<dd>
-<a class="el" href="#a03ab477b926644a184090fd827a2e2c3" title="Enumerates first node for message processing.">OpenLcbMainStatemachine_handle_try_enumerate_first_node</a> - Starts enumeration </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if enumeration active, false if no current node </dd></dl>
 
 </div>
 </div>
@@ -659,50 +425,15 @@ Frees message when enumeration complete</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Main state machine processing loop. </p>
-<p>Executes one iteration of main OpenLCB protocol state machine.</p>
+<p>Runs one iteration of the main state machine dispatch loop. </p>
+<p>Runs one non-blocking step of protocol processing.</p>
 <p>Algorithm:</p><ol type="1">
-<li>Attempt to send any pending outgoing messages (highest priority)</li>
-<li>If outgoing message pending, return (retry send next iteration)</li>
-<li>Handle multi-message response re-enumeration</li>
-<li>If re-enumeration active, return (continue same message)</li>
-<li>Pop next incoming message from queue</li>
-<li>If message pop attempted, return (process message next iteration)</li>
-<li>Enumerate first node for message processing</li>
-<li>If first node enumeration done, return</li>
-<li>Enumerate next node for message processing</li>
-<li>If next node enumeration done, return</li>
+<li>Send pending outgoing message (highest priority), return if busy</li>
+<li>Handle multi-message re-enumeration, return if active</li>
+<li>Pop next incoming message from FIFO, return if attempted</li>
+<li>Enumerate first node for the message, return if acted</li>
+<li>Enumerate next node, return if acted </li>
 </ol>
-<p>Processing priority (early return on work):</p><ol type="1">
-<li>Outgoing message transmission - Ensures responses go out promptly</li>
-<li>Re-enumeration - Complete multi-message sequences before new messages</li>
-<li>Incoming message retrieval - Get new work when idle</li>
-<li>First node enumeration - Start processing new message</li>
-<li>Next node enumeration - Continue processing across all nodes</li>
-</ol>
-<p>This design ensures fair processing where each step gets a chance to execute before moving to the next. Early returns prevent any single operation from blocking others.</p>
-<p>Use cases:</p><ul>
-<li>Called repeatedly from main application loop</li>
-<li>Invoked from RTOS task</li>
-<li>Triggered by timer interrupt</li>
-</ul>
-<dl class="section warning"><dt>Warning</dt><dd>Call as fast as possible for low latency </dd>
-<dd>
-Do not block in this function or callbacks</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Requires OpenLcbMainStatemachine_initialize called first</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8h.html#ab698af75d6fd66d8f68cc5a1b122eadc" title="Initializes the main OpenLCB state machine.">OpenLcbMainStatemachine_initialize</a> - Must be called first </dd>
-<dd>
-<a class="el" href="openlcb__main__statemachine_8h.html#acf6127bfd2ace2fc6d83e5b9a8834569" title="Processes message through appropriate protocol handler.">OpenLcbMainStatemachine_process_main_statemachine</a> - Message dispatcher </dd>
-<dd>
-<a class="el" href="openlcb__main__statemachine_8h.html#ae7188254864ad6f2e9ab7f654a1000ae" title="Handles transmission of pending outgoing messages.">OpenLcbMainStatemachine_handle_outgoing_openlcb_message</a> - Step 1 </dd>
-<dd>
-<a class="el" href="openlcb__main__statemachine_8h.html#a2b1a62ec85f81070f1766b82d5acbd8d" title="Handles re-enumeration for multi-message responses.">OpenLcbMainStatemachine_handle_try_reenumerate</a> - Step 2 </dd>
-<dd>
-<a class="el" href="openlcb__main__statemachine_8h.html#ad33e639d0a19fa75a7baf215069dc532" title="Pops next incoming message from receive queue.">OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message</a> - Step 3 </dd>
-<dd>
-<a class="el" href="openlcb__main__statemachine_8h.html#a03ab477b926644a184090fd827a2e2c3" title="Enumerates first node for message processing.">OpenLcbMainStatemachine_handle_try_enumerate_first_node</a> - Step 4 </dd>
-<dd>
-<a class="el" href="openlcb__main__statemachine_8h.html#a637df8a2395f30856f318fc06d9f8540" title="Enumerates next node for message processing.">OpenLcbMainStatemachine_handle_try_enumerate_next_node</a> - Step 5 </dd></dl>
 
 </div>
 </div>
@@ -721,48 +452,8 @@ Do not block in this function or callbacks</dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Returns pointer to internal state machine information structure. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Return address of static _statemachine_info structure</li>
-</ol>
-<p>This function provides controlled access to the internal state machine context for testing and debugging purposes. The structure contains all state information including current node, incoming/outgoing messages, and enumeration flags.</p>
-<p>Typical testing workflow:</p><ol type="1">
-<li>Initialize state machine normally</li>
-<li>Get pointer to state structure</li>
-<li>Manually set flags or messages for test scenario</li>
-<li>Call function under test</li>
-<li>Verify state changes and results</li>
-<li>Reset state for next test</li>
-</ol>
-<p>State structure contents:</p><ul>
-<li>openlcb_node: Currently processing node</li>
-<li>incoming_msg_info.msg_ptr: Incoming message being processed</li>
-<li>incoming_msg_info.enumerate: Multi-message response flag</li>
-<li>outgoing_msg_info.msg_ptr: Outgoing message buffer</li>
-<li>outgoing_msg_info.valid: Outgoing message pending flag</li>
-</ul>
-<p>Use cases:</p><ul>
-<li>Unit testing handle_outgoing_openlcb_message()</li>
-<li>Unit testing handle_try_reenumerate()</li>
-<li>Unit testing handle_try_pop_next_incoming_openlcb_message()</li>
-<li>Unit testing handle_try_enumerate_first_node()</li>
-<li>Unit testing handle_try_enumerate_next_node()</li>
-<li>Integration testing of run() function</li>
-<li>Debugging state machine behavior</li>
-</ul>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to internal static _statemachine_info structure</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>For testing/debugging only - not for production use </dd>
-<dd>
-Direct state modification bypasses normal validation</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Tests must restore state to valid condition after use </dd>
-<dd>
-Do not cache pointer across initialize() calls</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Similar to <a class="el" href="openlcb__login__statemachine_8c.html#aca5f902fc1cfc55ba719220fa39f3e84" title="Returns pointer to internal state machine info structure.">OpenLcbLoginStatemachine_get_statemachine_info()</a></dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structopenlcb__statemachine__info__t.html" title="State machine context information.">openlcb_statemachine_info_t</a> - Structure definition </dd>
-<dd>
-<a class="el" href="#ab698af75d6fd66d8f68cc5a1b122eadc" title="Initializes the main OpenLCB state machine.">OpenLcbMainStatemachine_initialize</a> - State initialization </dd>
-<dd>
-<a class="el" href="#a8ff85d07b2775d7df84787073306b731" title="Main state machine processing loop.">OpenLcbMainStatemachine_run</a> - Main state consumer </dd></dl>
+<p>Returns pointer to internal state. For unit testing only. </p>
+<p>Returns pointer to internal static state machine info. For unit testing only — do not modify. </p>
 
 </div>
 </div>
