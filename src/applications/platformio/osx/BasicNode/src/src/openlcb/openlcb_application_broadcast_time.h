@@ -178,17 +178,19 @@ extern "C" {
     extern void OpenLcbApplicationBroadcastTime_stop(event_id_t clock_id);
 
         /**
-         * @brief Advances all running consumer clocks by one 100 ms step.
+         * @brief Advances all running consumer clocks based on elapsed ticks.
          *
-         * @details Must be called every 100 ms from the application's timer interrupt or
-         * main loop.  Uses fixed-point accumulation to handle fractional rates without
+         * @details Called from the main loop with the current global tick.
+         * Uses fixed-point accumulation to handle fractional rates without
          * floating-point arithmetic.  Fires the on_time_changed callback each time a
          * fast-clock minute boundary is crossed.
+         *
+         * @param current_tick  Current value of the global 100ms tick counter.
          *
          * @note Clocks with rate 0 or that are stopped are skipped.
          * @note Only consumer clocks are advanced; producer clocks manage their own time.
          */
-    extern void OpenLcbApplicationBroadcastTime_100ms_time_tick(void);
+    extern void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick);
 
         /**
          * @brief Sends a Report Time event (Producer Identified Set) for a producer clock.

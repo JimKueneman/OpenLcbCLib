@@ -275,8 +275,10 @@ MemoryConfigurationS.pdf </dd></dl>
 <p>Build outgoing Lock/Reserve command datagram.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Extract requester Node ID from payload</li>
-<li>If unlocked: grant to requester. If locked and ID == 0: release.</li>
-<li>Reply with LOCK_REPLY + current owner Node ID</li>
+<li>If unlocked: grant to requester</li>
+<li>If locked and ID == 0: release (standard release)</li>
+<li>If locked and ID == current owner: release (owner self-release per MemoryConfigurationS §4.11)</li>
+<li>Otherwise: deny — reply with current owner Node ID</li>
 </ol>
 <pre class="fragment">* @param statemachine_info                   Context.
 * @param config_mem_operations_request_info   Request info.
@@ -539,7 +541,8 @@ MemoryConfigurationS.pdf </dd></dl>
 </div><div class="memdoc">
 
 <p>Dispatch Reset/Reboot command to two-phase handler. </p>
-<p>Handle incoming Reset/Reboot command. </p>
+<p>Handle incoming Reset/Reboot command.</p>
+<p>Per MemoryConfigurationS Section 4.24, the Reset/Reboot command is only [0x20, 0xA9] with no Node ID in the payload. Unlike Factory Reset (0xAA, Section 4.25) which requires a Node ID as a safety guard, Reset/Reboot applies unconditionally to the addressed node. </p>
 
 </div>
 </div>
@@ -559,7 +562,8 @@ MemoryConfigurationS.pdf </dd></dl>
 </div><div class="memdoc">
 
 <p>Dispatch Factory Reset command to two-phase handler. </p>
-<p>Handle incoming Factory Reset command (destructive). </p>
+<p>Handle incoming Factory Reset command (destructive).</p>
+<p>Per MemoryConfigurationS Section 4.25, the Reinitialize/Factory Reset command includes a 6-byte Node ID (bytes 2-7) as a safety guard. The target Node ID must match or the command is silently ignored. </p>
 
 </div>
 </div>

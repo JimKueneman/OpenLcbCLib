@@ -3496,12 +3496,12 @@ TEST(ProtocolDatagramHandler, load_datagram_received_ok)
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 0x0000);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, false, 0x0000);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM_OK_REPLY);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 1);
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x00 | DATAGRAM_OK_REPLY_PENDING);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x00);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->dest_alias, statemachine_info.incoming_msg_info.msg_ptr->source_alias);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->dest_id, statemachine_info.incoming_msg_info.msg_ptr->source_id);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->source_alias, statemachine_info.incoming_msg_info.msg_ptr->dest_alias);
@@ -3906,7 +3906,7 @@ TEST(ProtocolDatagramHandler, _100ms_timer_tick)
     _reset_variables();
     _global_initialize();
 
-    ProtocolDatagramHandler_100ms_timer_tick();
+    ProtocolDatagramHandler_100ms_timer_tick(1);
 }
 
 TEST(ProtocolDatagramHandler, handle_datagram_ok_with_delay_time)
@@ -3938,7 +3938,7 @@ TEST(ProtocolDatagramHandler, handle_datagram_ok_with_delay_time)
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 2);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 2);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM_OK_REPLY);
@@ -3949,47 +3949,310 @@ TEST(ProtocolDatagramHandler, handle_datagram_ok_with_delay_time)
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->source_alias, statemachine_info.incoming_msg_info.msg_ptr->dest_alias);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->source_id, statemachine_info.incoming_msg_info.msg_ptr->dest_id);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 4);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 4);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x02 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 8);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 8);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x03 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 16);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 16);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x04 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 32);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 32);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x05 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 64);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 64);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x06 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 128);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 128);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x07 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 256);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 256);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x08 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 512);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 512);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x09 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 1024);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 1024);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0A | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 2048);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 2048);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0B | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 4096);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 4096);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0C | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 8192);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 8192);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0D | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 16384);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 16384);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0E | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 32769);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 32769);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0F | DATAGRAM_OK_REPLY_PENDING);
+
+    // Test reply_pending=true with time=0 (Reply Pending bit set, exponent 0)
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 0);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x00 | DATAGRAM_OK_REPLY_PENDING);
+}
+
+// ============================================================================
+// SECTION 1B: DATAGRAM TIMEOUT AND RETRY TESTS (Item 2+6)
+// @details Tests for datagram timeout detection and retry limiting
+// @coverage ProtocolDatagramHandler_check_timeouts, updated datagram_rejected
+// ============================================================================
+
+// @details Verifies that check_timeouts does nothing when no nodes exist
+// @coverage ProtocolDatagramHandler_check_timeouts empty node list
+
+TEST(ProtocolDatagramHandler, check_timeouts_no_nodes)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    ProtocolDatagramHandler_check_timeouts(0);
+
+    EXPECT_TRUE(lock_shared_resources_called);
+    EXPECT_TRUE(unlock_shared_resources_called);
+}
+
+// @details Verifies that check_timeouts does nothing when node has no pending datagram
+// @coverage ProtocolDatagramHandler_check_timeouts NULL last_received_datagram
+
+TEST(ProtocolDatagramHandler, check_timeouts_no_pending_datagram)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_EQ(node1->last_received_datagram, nullptr);
+
+    ProtocolDatagramHandler_check_timeouts(10);
+
+    EXPECT_EQ(node1->last_received_datagram, nullptr);
+    EXPECT_TRUE(lock_shared_resources_called);
+    EXPECT_TRUE(unlock_shared_resources_called);
+}
+
+// @details Verifies that check_timeouts does NOT free a datagram that has not timed out
+// @coverage ProtocolDatagramHandler_check_timeouts elapsed < DATAGRAM_TIMEOUT_TICKS
+
+TEST(ProtocolDatagramHandler, check_timeouts_not_expired)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *datagram_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    node1->last_received_datagram = datagram_msg;
+    node1->state.resend_datagram = true;
+
+    // Stamp with tick snapshot = 5, retry count = 0
+    datagram_msg->timerticks = 5;
+
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
+
+    // Call check_timeouts at tick 10 (elapsed = 5, less than 30)
+    ProtocolDatagramHandler_check_timeouts(10);
+
+    EXPECT_NE(node1->last_received_datagram, nullptr);
+    EXPECT_TRUE(node1->state.resend_datagram);
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
+}
+
+// @details Verifies that check_timeouts frees a datagram whose elapsed time >= DATAGRAM_TIMEOUT_TICKS
+// @coverage ProtocolDatagramHandler_check_timeouts elapsed >= DATAGRAM_TIMEOUT_TICKS
+
+TEST(ProtocolDatagramHandler, check_timeouts_expired)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *datagram_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    node1->last_received_datagram = datagram_msg;
+    node1->state.resend_datagram = true;
+
+    // Stamp with tick snapshot = 0, retry count = 0
+    datagram_msg->timerticks = 0;
+
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
+
+    // Call check_timeouts at tick 30 (elapsed = 30, equals DATAGRAM_TIMEOUT_TICKS)
+    ProtocolDatagramHandler_check_timeouts(30);
+
+    EXPECT_EQ(node1->last_received_datagram, nullptr);
+    EXPECT_FALSE(node1->state.resend_datagram);
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
+}
+
+// @details Verifies that check_timeouts frees a datagram when retry count >= DATAGRAM_MAX_RETRIES
+// @coverage ProtocolDatagramHandler_check_timeouts retries >= DATAGRAM_MAX_RETRIES
+
+TEST(ProtocolDatagramHandler, check_timeouts_max_retries_reached)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *datagram_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    node1->last_received_datagram = datagram_msg;
+    node1->state.resend_datagram = true;
+
+    // Stamp with retry count = 3 (>= DATAGRAM_MAX_RETRIES), tick snapshot = 0
+    // retry count 3 in upper 3 bits: 3 << 5 = 0x60
+    datagram_msg->timerticks = 0x60;
+
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
+
+    // Call check_timeouts at tick 0 (elapsed = 0, but retries >= max)
+    ProtocolDatagramHandler_check_timeouts(0);
+
+    EXPECT_EQ(node1->last_received_datagram, nullptr);
+    EXPECT_FALSE(node1->state.resend_datagram);
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
+}
+
+// @details Verifies that datagram_rejected increments retry count and stamps fresh tick
+// @coverage ProtocolDatagramHandler_datagram_rejected retry count increment
+
+TEST(ProtocolDatagramHandler, datagram_rejected_retry_increment)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_msg_t *datagram_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    node1->last_received_datagram = datagram_msg;
+
+    // Start with retry count = 0, tick snapshot = 5
+    datagram_msg->timerticks = 5;
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.current_tick = 10;
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info.incoming_msg_info.msg_ptr, ERROR_TEMPORARY_BUFFER_UNAVAILABLE, 0);
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM_REJECTED_REPLY;
+    statemachine_info.incoming_msg_info.msg_ptr->payload_count = 2;
+
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+
+    ProtocolDatagramHandler_datagram_rejected(&statemachine_info);
+
+    // After first rejection: retry count = 1, tick snapshot = 10 (current_tick & 0x1F = 10)
+    // Expected timerticks: (1 << 5) | 10 = 0x2A
+    EXPECT_NE(node1->last_received_datagram, nullptr);
+    EXPECT_TRUE(node1->state.resend_datagram);
+    EXPECT_EQ(datagram_msg->timerticks, 0x2A);
+}
+
+// @details Verifies that datagram_rejected abandons after DATAGRAM_MAX_RETRIES
+// @coverage ProtocolDatagramHandler_datagram_rejected retries >= DATAGRAM_MAX_RETRIES
+
+TEST(ProtocolDatagramHandler, datagram_rejected_max_retries_abandon)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_msg_t *datagram_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    node1->last_received_datagram = datagram_msg;
+
+    // Start with retry count = 2 (one more rejection will reach max of 3)
+    // retry count 2 in upper 3 bits: 2 << 5 = 0x40, tick snapshot = 0
+    datagram_msg->timerticks = 0x40;
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.current_tick = 15;
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info.incoming_msg_info.msg_ptr, ERROR_TEMPORARY_BUFFER_UNAVAILABLE, 0);
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM_REJECTED_REPLY;
+    statemachine_info.incoming_msg_info.msg_ptr->payload_count = 2;
+
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
+
+    ProtocolDatagramHandler_datagram_rejected(&statemachine_info);
+
+    // After 3rd rejection: retries = 3 >= DATAGRAM_MAX_RETRIES, should abandon
+    EXPECT_EQ(node1->last_received_datagram, nullptr);
+    EXPECT_FALSE(node1->state.resend_datagram);
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
+}
+
+// @details Verifies that check_timeouts handles tick wraparound correctly
+// @coverage ProtocolDatagramHandler_check_timeouts unsigned subtraction wraparound
+
+TEST(ProtocolDatagramHandler, check_timeouts_tick_wraparound)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *datagram_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    node1->last_received_datagram = datagram_msg;
+    node1->state.resend_datagram = true;
+
+    // Stamp with tick snapshot = 30 (0x1E), retry count = 0
+    datagram_msg->timerticks = 30;
+
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
+
+    // Current tick = 5 (wrapped around from 31 -> 0 -> 1 -> ... -> 5)
+    // Elapsed = (5 - 30) & 0x1F = (-25) & 0x1F = 7
+    // 7 < 30 so should NOT expire
+    ProtocolDatagramHandler_check_timeouts(5);
+
+    EXPECT_NE(node1->last_received_datagram, nullptr);
+    EXPECT_TRUE(node1->state.resend_datagram);
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
 }
 
 // ============================================================================
@@ -4270,7 +4533,7 @@ TEST(ProtocolDatagramHandler, datagram_timeout_mechanism)
 
     // Simulate multiple timer ticks to trigger timeout
     for (int i = 0; i < 100; i++) {
-        ProtocolDatagramHandler_100ms_timer_tick();
+        ProtocolDatagramHandler_100ms_timer_tick((uint8_t)(i + 1));
     }
 
     // Verify timeout occurred (implementation dependent)
@@ -4305,7 +4568,7 @@ TEST(ProtocolDatagramHandler, datagram_retry_mechanism)
 
     // First timeout should trigger retry
     for (int i = 0; i < 100; i++) {
-        ProtocolDatagramHandler_100ms_timer_tick();
+        ProtocolDatagramHandler_100ms_timer_tick((uint8_t)(i + 1));
     }
 
     // Verify retry mechanism (implementation dependent)

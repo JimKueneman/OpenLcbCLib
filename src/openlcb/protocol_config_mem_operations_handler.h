@@ -52,8 +52,8 @@
      */
 typedef struct {
 
-        /** @brief REQUIRED — Send Datagram Received OK with reply-pending time. */
-    void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
+        /** @brief REQUIRED — Send Datagram Received OK with reply-pending flag and time. */
+    void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds);
 
         /** @brief REQUIRED — Send Datagram Received Rejected with error code. */
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);

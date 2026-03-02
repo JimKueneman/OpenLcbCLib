@@ -196,22 +196,25 @@ void CanLoginMessageHandler_state_load_cid05(can_statemachine_info_t *can_statem
 
 }
 
-    /** @brief State 7: Loads a CID4 frame (Node ID bits 11-0) and resets the 200 ms timer. */
+    /** @brief State 7: Loads a CID4 frame (Node ID bits 11-0) and snapshots current_tick for the 200 ms wait. */
 void CanLoginMessageHandler_state_load_cid04(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID4 | (((can_statemachine_info->openlcb_node->id << 12) & 0xFFF000) | can_statemachine_info->openlcb_node->alias);
-    can_statemachine_info->openlcb_node->timerticks = 0;
+    can_statemachine_info->openlcb_node->timerticks = can_statemachine_info->current_tick;
     can_statemachine_info->login_outgoing_can_msg_valid = true;
 
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_WAIT_200ms;
 
 }
 
-    /** @brief State 8: Waits until timerticks > 2, then transitions to LOAD_RESERVE_ID. */
+    /** @brief State 8: Waits until 200ms have elapsed (via elapsed-time subtraction on current_tick), then transitions to LOAD_RESERVE_ID. */
 void CanLoginMessageHandler_state_wait_200ms(can_statemachine_info_t *can_statemachine_info) {
 
-    if (can_statemachine_info->openlcb_node->timerticks > 2) {
+    uint8_t elapsed = (uint8_t)(can_statemachine_info->current_tick
+            - (uint8_t) can_statemachine_info->openlcb_node->timerticks);
+
+    if (elapsed > 2) {
 
         can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_RESERVE_ID;
 

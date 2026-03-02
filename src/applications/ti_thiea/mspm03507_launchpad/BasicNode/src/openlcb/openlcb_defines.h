@@ -457,7 +457,7 @@
  * @{
  */
 
-    /** @brief Simple Node Protocol support (required for all nodes) */
+    /** @brief Simple Node Protocol support (not used by this library) */
 #define PSI_SIMPLE 0x800000
 
     /** @brief Datagram Protocol support */
@@ -490,7 +490,7 @@
     /** @brief Display Protocol support */
 #define PSI_DISPLAY 0x002000
 
-    /** @brief Simple Node Information Protocol support (required) */
+    /** @brief Simple Node Information Protocol (SNIP) support */
 #define PSI_SIMPLE_NODE_INFORMATION 0x001000
 
     /** @brief Configuration Description Information (CDI) Protocol support */
@@ -635,6 +635,9 @@
 #define TRAIN_SEARCH_FLAG_LONG_ADDR    0x04
     /** @brief Train search flags byte — speed step mode mask (bits 1-0) */
 #define TRAIN_SEARCH_SPEED_STEP_MASK   0x03
+
+    /** @brief Maximum DCC short (7-bit) address; addresses >= this are long */
+#define TRAIN_MAX_DCC_SHORT_ADDRESS          128
 
     /** @} */ // end of well_known_events_local
     /** @} */ // end of well_known_events
@@ -1184,6 +1187,9 @@
 
     /** @brief Enumeration key used by CAN state machine */
 #define CAN_STATEMACHINE_NODE_ENUMRATOR_KEY (MAX_USER_ENUM_KEYS_VALUES + 2)
+
+    /** @brief Enumeration key used by datagram timeout scanner */
+#define DATAGRAM_TIMEOUT_ENUM_KEY (MAX_USER_ENUM_KEYS_VALUES + 3)
 
     /** @} */ // end of node_enum_keys
 

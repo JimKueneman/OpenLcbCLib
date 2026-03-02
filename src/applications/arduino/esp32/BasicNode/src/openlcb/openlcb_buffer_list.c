@@ -45,6 +45,9 @@
 #include "openlcb_types.h"
 #include "openlcb_buffer_store.h"
 
+    /** @brief Multi-frame assembly timeout in 100ms ticks (3 seconds). */
+#define BUFFER_LIST_INPROCESS_TIMEOUT_TICKS 30
+
 /** @brief Static array of message pointers for the list */
 static openlcb_msg_t *_openlcb_msg_buffer_list[LEN_MESSAGE_BUFFER];
 
@@ -193,4 +196,27 @@ bool OpenLcbBufferList_is_empty(void) {
     }
 
     return true;
+}
+
+void OpenLcbBufferList_check_timeouts(uint8_t current_tick) {
+
+    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+
+        openlcb_msg_t *msg = _openlcb_msg_buffer_list[i];
+
+        if (msg && msg->state.inprocess) {
+
+            uint8_t elapsed = (uint8_t) (current_tick - msg->timerticks);
+
+            if (elapsed >= BUFFER_LIST_INPROCESS_TIMEOUT_TICKS) {
+
+                _openlcb_msg_buffer_list[i] = NULL;
+                OpenLcbBufferStore_free_buffer(msg);
+
+            }
+
+        }
+
+    }
+
 }

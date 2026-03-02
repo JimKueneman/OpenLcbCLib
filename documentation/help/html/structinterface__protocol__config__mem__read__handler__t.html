@@ -97,9 +97,9 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:acbb0b05b4b90f1f8851f976ed278089d" id="r_acbb0b05b4b90f1f8851f976ed278089d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbb0b05b4b90f1f8851f976ed278089d">load_datagram_received_ok_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td></tr>
-<tr class="memdesc:acbb0b05b4b90f1f8851f976ed278089d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build Datagram Received OK with reply-pending time. REQUIRED.  <br /></td></tr>
-<tr class="separator:acbb0b05b4b90f1f8851f976ed278089d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a873fe428cb8efe42b0bc937f2c1e8b20" id="r_a873fe428cb8efe42b0bc937f2c1e8b20"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a873fe428cb8efe42b0bc937f2c1e8b20">load_datagram_received_ok_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds)</td></tr>
+<tr class="memdesc:a873fe428cb8efe42b0bc937f2c1e8b20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build Datagram Received OK with reply-pending flag and time. REQUIRED.  <br /></td></tr>
+<tr class="separator:a873fe428cb8efe42b0bc937f2c1e8b20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1a9f28156897e98626879c442a13a8c" id="r_ae1a9f28156897e98626879c442a13a8c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1a9f28156897e98626879c442a13a8c">load_datagram_received_rejected_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t return_code)</td></tr>
 <tr class="memdesc:ae1a9f28156897e98626879c442a13a8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build Datagram Rejected with error code. REQUIRED.  <br /></td></tr>
 <tr class="separator:ae1a9f28156897e98626879c442a13a8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -158,19 +158,19 @@ Data Fields</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Callback interface for config memory reads. Datagram ACK and config_memory_read are REQUIRED; SNIP loaders and per-space handlers are optional. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a id="acbb0b05b4b90f1f8851f976ed278089d" name="acbb0b05b4b90f1f8851f976ed278089d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acbb0b05b4b90f1f8851f976ed278089d">&#9670;&#160;</a></span>load_datagram_received_ok_message</h2>
+<a id="a873fe428cb8efe42b0bc937f2c1e8b20" name="a873fe428cb8efe42b0bc937f2c1e8b20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a873fe428cb8efe42b0bc937f2c1e8b20">&#9670;&#160;</a></span>load_datagram_received_ok_message</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* load_datagram_received_ok_message) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td>
+          <td class="memname">void(* load_datagram_received_ok_message) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Build Datagram Received OK with reply-pending time. REQUIRED. </p>
+<p>Build Datagram Received OK with reply-pending flag and time. REQUIRED. </p>
 
 </div>
 </div>

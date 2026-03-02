@@ -51,6 +51,7 @@
 #include "openlcb_buffer_store.h"
 #include "openlcb_buffer_fifo.h"
 #include "protocol_train_handler.h"
+#include "openlcb_float16.h"
 
 
 // ============================================================================
@@ -576,7 +577,7 @@ TEST(ApplicationTrain, heartbeat_timer_countdown)
     // Tick 29 times — should not timeout
     for (int i = 0; i < 29; i++) {
 
-        OpenLcbApplicationTrain_100ms_timer_tick();
+        OpenLcbApplicationTrain_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 
@@ -584,13 +585,49 @@ TEST(ApplicationTrain, heartbeat_timer_countdown)
     EXPECT_FALSE(mock_heartbeat_timeout_called);
 
     // Tick once more — counter reaches 0, estop fires
-    OpenLcbApplicationTrain_100ms_timer_tick();
+    OpenLcbApplicationTrain_100ms_timer_tick(30);
 
     EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
     EXPECT_TRUE(mock_heartbeat_timeout_called);
     EXPECT_EQ(mock_heartbeat_timeout_node, node);
     EXPECT_TRUE(state->estop_active);
-    EXPECT_EQ(state->set_speed, 0);
+    EXPECT_EQ(state->set_speed, FLOAT16_POSITIVE_ZERO);
+
+}
+
+TEST(ApplicationTrain, heartbeat_timer_countdown_reverse)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    // Set heartbeat: 3 seconds = 30 ticks of 100ms
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 30;
+
+    // Simulate reverse movement: set_speed has the sign bit set
+    state->set_speed = FLOAT16_NEGATIVE_ZERO | 0x3C00;  // Reverse, ~1.0 mph
+
+    // Tick 30 times -- counter reaches 0, estop fires
+    for (int i = 0; i < 30; i++) {
+
+        OpenLcbApplicationTrain_100ms_timer_tick((uint8_t)(i + 1));
+
+    }
+
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
+    EXPECT_TRUE(mock_heartbeat_timeout_called);
+    EXPECT_EQ(mock_heartbeat_timeout_node, node);
+    EXPECT_TRUE(state->estop_active);
+
+    // Direction must be preserved: reverse, stopped
+    EXPECT_EQ(state->set_speed, FLOAT16_NEGATIVE_ZERO);
 
 }
 
@@ -610,7 +647,7 @@ TEST(ApplicationTrain, heartbeat_disabled)
 
     for (int i = 0; i < 100; i++) {
 
-        OpenLcbApplicationTrain_100ms_timer_tick();
+        OpenLcbApplicationTrain_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 
@@ -628,7 +665,7 @@ TEST(ApplicationTrain, heartbeat_no_nodes)
     // No train nodes set up — timer should not crash
     for (int i = 0; i < 10; i++) {
 
-        OpenLcbApplicationTrain_100ms_timer_tick();
+        OpenLcbApplicationTrain_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 
@@ -656,7 +693,7 @@ TEST(ApplicationTrain, heartbeat_sends_request_at_halfway)
     // Tick 50 times to reach halfway (100 - 50 = 50 = halfway of 10s * 10 / 2)
     for (int i = 0; i < 50; i++) {
 
-        OpenLcbApplicationTrain_100ms_timer_tick();
+        OpenLcbApplicationTrain_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 
@@ -694,7 +731,7 @@ TEST(ApplicationTrain, heartbeat_no_request_without_controller)
     // Tick to halfway — no controller, should not send
     for (int i = 0; i < 50; i++) {
 
-        OpenLcbApplicationTrain_100ms_timer_tick();
+        OpenLcbApplicationTrain_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 

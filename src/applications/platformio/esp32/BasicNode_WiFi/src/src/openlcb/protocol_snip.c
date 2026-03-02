@@ -77,7 +77,7 @@ void ProtocolSnip_initialize(const interface_openlcb_protocol_snip_t *interface_
      * @details Algorithm:
      * -# Clamp string length to max_str_len − 1
      * -# If full string fits, copy + append null terminator
-     * -# Otherwise copy only byte_count bytes (no terminator)
+     * -# Otherwise truncate to byte_count - 1 chars + null terminator
      * -# Update *payload_offset and outgoing_msg->payload_count
      *
      * @verbatim
@@ -114,9 +114,12 @@ static void _process_snip_string(openlcb_msg_t* outgoing_msg, uint16_t *payload_
 
     } else {
 
-        memcpy(&outgoing_msg->payload[*payload_offset], str, byte_count);
-        *payload_offset = *payload_offset + byte_count;
-        outgoing_msg->payload_count += byte_count;
+        uint16_t copy_len = (byte_count > 0) ? byte_count - 1 : 0;
+        memcpy(&outgoing_msg->payload[*payload_offset], str, copy_len);
+        *payload_offset = *payload_offset + copy_len;
+        *outgoing_msg->payload[*payload_offset] = 0x00;
+        (*payload_offset)++;
+        outgoing_msg->payload_count += (copy_len + 1);
 
     }
 
@@ -237,9 +240,17 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
 
     }
 
-    _interface->config_memory_read(openlcb_node, data_address, requested_bytes, &configuration_memory_buffer);
+    if (_interface->config_memory_read) {
 
-    _process_snip_string(outgoing_msg, &offset, (char*) (&configuration_memory_buffer[0]), LEN_SNIP_USER_NAME_BUFFER, requested_bytes);
+        _interface->config_memory_read(openlcb_node, data_address, requested_bytes, &configuration_memory_buffer);
+
+        _process_snip_string(outgoing_msg, &offset, (char*) (&configuration_memory_buffer[0]), LEN_SNIP_USER_NAME_BUFFER, requested_bytes);
+
+    } else {
+
+        _process_snip_string(outgoing_msg, &offset, "", LEN_SNIP_USER_NAME_BUFFER, requested_bytes);
+
+    }
 
     return offset;
 
@@ -273,9 +284,17 @@ uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlc
 
     }
 
-    _interface->config_memory_read(openlcb_node, data_address, requested_bytes, &configuration_memory_buffer); // grab string from config memory
+    if (_interface->config_memory_read) {
 
-    _process_snip_string(outgoing_msg, &offset, (char*) (&configuration_memory_buffer[0]), LEN_SNIP_USER_DESCRIPTION_BUFFER, requested_bytes);
+        _interface->config_memory_read(openlcb_node, data_address, requested_bytes, &configuration_memory_buffer); // grab string from config memory
+
+        _process_snip_string(outgoing_msg, &offset, (char*) (&configuration_memory_buffer[0]), LEN_SNIP_USER_DESCRIPTION_BUFFER, requested_bytes);
+
+    } else {
+
+        _process_snip_string(outgoing_msg, &offset, "", LEN_SNIP_USER_DESCRIPTION_BUFFER, requested_bytes);
+
+    }
 
     return offset;
 

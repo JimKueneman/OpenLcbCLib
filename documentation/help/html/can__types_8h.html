@@ -138,15 +138,15 @@ Macros</h2></td></tr>
 <tr class="memitem:abc9edd7d95f78d23e4db197856dcc424" id="r_abc9edd7d95f78d23e4db197856dcc424"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc9edd7d95f78d23e4db197856dcc424">OFFSET_CAN_WITH_DEST_ADDRESS</a>&#160;&#160;&#160;2</td></tr>
 <tr class="memdesc:abc9edd7d95f78d23e4db197856dcc424"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass to functions when bytes 0-1 carry a destination alias; data starts at byte 2.  <br /></td></tr>
 <tr class="separator:abc9edd7d95f78d23e4db197856dcc424"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4b999c799cbe89d7af62fa1e85dfa62" id="r_ab4b999c799cbe89d7af62fa1e85dfa62"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4b999c799cbe89d7af62fa1e85dfa62">_OPENLCB_GLOBAL_ADDRESSED</a>&#160;&#160;&#160;(<a class="el" href="group__can__frame__format.html#ga97e367b03f496622abf8b1ee6c316ade">RESERVED_TOP_BIT</a> | <a class="el" href="group__can__frame__format.html#gab23013938b89003d8959b803bf74bd35">CAN_OPENLCB_MSG</a> | CAN_FRAME_TYPE_GLOBAL_ADDRESSED)</td></tr>
-<tr class="memdesc:ab4b999c799cbe89d7af62fa1e85dfa62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit mask for building global/addressed OpenLCB CAN identifiers.  <br /></td></tr>
-<tr class="separator:ab4b999c799cbe89d7af62fa1e85dfa62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a403540b91c9477fe85a51af99c654301" id="r_a403540b91c9477fe85a51af99c654301"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a403540b91c9477fe85a51af99c654301">_DATAGRAM_REJECT_REPLY</a>&#160;&#160;&#160;(<a class="el" href="#ab4b999c799cbe89d7af62fa1e85dfa62">_OPENLCB_GLOBAL_ADDRESSED</a> | ((uint32_t) (<a class="el" href="group__mti__datagram.html#ga1b82388dd579d4dadd24e6f90f7cf79d">MTI_DATAGRAM_REJECTED_REPLY</a> &amp; 0x0FFF) &lt;&lt; 12))</td></tr>
-<tr class="memdesc:a403540b91c9477fe85a51af99c654301"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-built upper bits for a Datagram Rejected reply CAN identifier.  <br /></td></tr>
-<tr class="separator:a403540b91c9477fe85a51af99c654301"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14098b1b0b294c193f8bcb5e4fed6e27" id="r_a14098b1b0b294c193f8bcb5e4fed6e27"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14098b1b0b294c193f8bcb5e4fed6e27">_OPTIONAL_INTERACTION_REJECT_REPLY</a>&#160;&#160;&#160;(<a class="el" href="#ab4b999c799cbe89d7af62fa1e85dfa62">_OPENLCB_GLOBAL_ADDRESSED</a> | ((uint32_t) (<a class="el" href="group__mti__message__network.html#ga37ba087609990ffef85aeca449c07a8e">MTI_OPTIONAL_INTERACTION_REJECTED</a> &amp; 0x0FFF) &lt;&lt; 12))</td></tr>
-<tr class="memdesc:a14098b1b0b294c193f8bcb5e4fed6e27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-built upper bits for an Optional Interaction Rejected reply CAN identifier.  <br /></td></tr>
-<tr class="separator:a14098b1b0b294c193f8bcb5e4fed6e27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac286659a58fc0e1c14b2de378eeaaf15" id="r_ac286659a58fc0e1c14b2de378eeaaf15"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac286659a58fc0e1c14b2de378eeaaf15">CAN_MTI_PCER_WITH_PAYLOAD_FIRST</a>&#160;&#160;&#160;0x0F16</td></tr>
+<tr class="memdesc:ac286659a58fc0e1c14b2de378eeaaf15"><td class="mdescLeft">&#160;</td><td class="mdescRight">CAN framing MTI for first frame of segmented PCER-with-payload.  <br /></td></tr>
+<tr class="separator:ac286659a58fc0e1c14b2de378eeaaf15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb1df51231a5cbc78cd982f872079447" id="r_adb1df51231a5cbc78cd982f872079447"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb1df51231a5cbc78cd982f872079447">CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE</a>&#160;&#160;&#160;0x0F15</td></tr>
+<tr class="memdesc:adb1df51231a5cbc78cd982f872079447"><td class="mdescLeft">&#160;</td><td class="mdescRight">CAN framing MTI for middle frame of segmented PCER-with-payload.  <br /></td></tr>
+<tr class="separator:adb1df51231a5cbc78cd982f872079447"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44e6d0a4d6cdaaabc0c77f3845e7cadc" id="r_a44e6d0a4d6cdaaabc0c77f3845e7cadc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a44e6d0a4d6cdaaabc0c77f3845e7cadc">CAN_MTI_PCER_WITH_PAYLOAD_LAST</a>&#160;&#160;&#160;0x0F14</td></tr>
+<tr class="memdesc:a44e6d0a4d6cdaaabc0c77f3845e7cadc"><td class="mdescLeft">&#160;</td><td class="mdescRight">CAN framing MTI for last frame of segmented PCER-with-payload.  <br /></td></tr>
+<tr class="separator:a44e6d0a4d6cdaaabc0c77f3845e7cadc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -283,51 +283,51 @@ Typedefs</h2></td></tr>
 
 </div>
 </div>
-<a id="ab4b999c799cbe89d7af62fa1e85dfa62" name="ab4b999c799cbe89d7af62fa1e85dfa62"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4b999c799cbe89d7af62fa1e85dfa62">&#9670;&#160;</a></span>_OPENLCB_GLOBAL_ADDRESSED</h2>
+<a id="ac286659a58fc0e1c14b2de378eeaaf15" name="ac286659a58fc0e1c14b2de378eeaaf15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac286659a58fc0e1c14b2de378eeaaf15">&#9670;&#160;</a></span>CAN_MTI_PCER_WITH_PAYLOAD_FIRST</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _OPENLCB_GLOBAL_ADDRESSED&#160;&#160;&#160;(<a class="el" href="group__can__frame__format.html#ga97e367b03f496622abf8b1ee6c316ade">RESERVED_TOP_BIT</a> | <a class="el" href="group__can__frame__format.html#gab23013938b89003d8959b803bf74bd35">CAN_OPENLCB_MSG</a> | CAN_FRAME_TYPE_GLOBAL_ADDRESSED)</td>
+          <td class="memname">#define CAN_MTI_PCER_WITH_PAYLOAD_FIRST&#160;&#160;&#160;0x0F16</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Bit mask for building global/addressed OpenLCB CAN identifiers. </p>
+<p>CAN framing MTI for first frame of segmented PCER-with-payload. </p>
 
 </div>
 </div>
-<a id="a403540b91c9477fe85a51af99c654301" name="a403540b91c9477fe85a51af99c654301"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a403540b91c9477fe85a51af99c654301">&#9670;&#160;</a></span>_DATAGRAM_REJECT_REPLY</h2>
+<a id="adb1df51231a5cbc78cd982f872079447" name="adb1df51231a5cbc78cd982f872079447"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb1df51231a5cbc78cd982f872079447">&#9670;&#160;</a></span>CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _DATAGRAM_REJECT_REPLY&#160;&#160;&#160;(<a class="el" href="#ab4b999c799cbe89d7af62fa1e85dfa62">_OPENLCB_GLOBAL_ADDRESSED</a> | ((uint32_t) (<a class="el" href="group__mti__datagram.html#ga1b82388dd579d4dadd24e6f90f7cf79d">MTI_DATAGRAM_REJECTED_REPLY</a> &amp; 0x0FFF) &lt;&lt; 12))</td>
+          <td class="memname">#define CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE&#160;&#160;&#160;0x0F15</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pre-built upper bits for a Datagram Rejected reply CAN identifier. </p>
+<p>CAN framing MTI for middle frame of segmented PCER-with-payload. </p>
 
 </div>
 </div>
-<a id="a14098b1b0b294c193f8bcb5e4fed6e27" name="a14098b1b0b294c193f8bcb5e4fed6e27"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14098b1b0b294c193f8bcb5e4fed6e27">&#9670;&#160;</a></span>_OPTIONAL_INTERACTION_REJECT_REPLY</h2>
+<a id="a44e6d0a4d6cdaaabc0c77f3845e7cadc" name="a44e6d0a4d6cdaaabc0c77f3845e7cadc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44e6d0a4d6cdaaabc0c77f3845e7cadc">&#9670;&#160;</a></span>CAN_MTI_PCER_WITH_PAYLOAD_LAST</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _OPTIONAL_INTERACTION_REJECT_REPLY&#160;&#160;&#160;(<a class="el" href="#ab4b999c799cbe89d7af62fa1e85dfa62">_OPENLCB_GLOBAL_ADDRESSED</a> | ((uint32_t) (<a class="el" href="group__mti__message__network.html#ga37ba087609990ffef85aeca449c07a8e">MTI_OPTIONAL_INTERACTION_REJECTED</a> &amp; 0x0FFF) &lt;&lt; 12))</td>
+          <td class="memname">#define CAN_MTI_PCER_WITH_PAYLOAD_LAST&#160;&#160;&#160;0x0F14</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pre-built upper bits for an Optional Interaction Rejected reply CAN identifier. </p>
+<p>CAN framing MTI for last frame of segmented PCER-with-payload. </p>
 
 </div>
 </div>

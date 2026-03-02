@@ -259,17 +259,20 @@ TEST(OpenLcbNode, timer_100ms_tick)
     EXPECT_EQ(node1->timerticks, 0);
     EXPECT_EQ(node2->timerticks, 0);
 
-    // Call timer tick 5 times
-    OpenLcbNode_100ms_timer_tick();
+    // Call timer tick with incrementing tick values — callback fires once per unique tick
+    OpenLcbNode_100ms_timer_tick(1);
     EXPECT_TRUE(on_100ms_timer_tick_called);
-    OpenLcbNode_100ms_timer_tick();
-    OpenLcbNode_100ms_timer_tick();
-    OpenLcbNode_100ms_timer_tick();
-    OpenLcbNode_100ms_timer_tick();
 
-    // Verify timer ticks incremented for both nodes
-    EXPECT_EQ(node1->timerticks, 5);
-    EXPECT_EQ(node2->timerticks, 5);
+    // Calling again with same tick should NOT fire callback again
+    on_100ms_timer_tick_called = false;
+    OpenLcbNode_100ms_timer_tick(1);
+    EXPECT_FALSE(on_100ms_timer_tick_called);
+
+    // Calling with new tick values fires callback each time
+    OpenLcbNode_100ms_timer_tick(2);
+    EXPECT_TRUE(on_100ms_timer_tick_called);
+    OpenLcbNode_100ms_timer_tick(3);
+    OpenLcbNode_100ms_timer_tick(4);
 }
 
 // ============================================================================
@@ -434,6 +437,80 @@ TEST(OpenLcbNode, get_next_end_of_list)
 }
 
 // ============================================================================
+// TEST: Is Last - Single Node
+// @details Verifies is_last returns true for a single allocated node
+// @coverage OpenLcbNode_is_last()
+// ============================================================================
+
+TEST(OpenLcbNode, is_last_single_node)
+{
+    _global_initialize();
+    _reset_variables();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
+    ASSERT_NE(node1, nullptr);
+
+    EXPECT_EQ(OpenLcbNode_get_first(USER_ENUM_KEYS_VALUES_1), node1);
+    EXPECT_TRUE(OpenLcbNode_is_last(USER_ENUM_KEYS_VALUES_1));
+}
+
+// ============================================================================
+// TEST: Is Last - Multiple Nodes
+// @details Verifies is_last returns false for non-last, true for last
+// @coverage OpenLcbNode_is_last()
+// ============================================================================
+
+TEST(OpenLcbNode, is_last_multiple_nodes)
+{
+    _global_initialize();
+    _reset_variables();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
+    openlcb_node_t *node2 = OpenLcbNode_allocate(0x010203040507, &_node_parameters_main_node);
+    openlcb_node_t *node3 = OpenLcbNode_allocate(0x010203040508, &_node_parameters_main_node);
+
+    EXPECT_EQ(OpenLcbNode_get_first(USER_ENUM_KEYS_VALUES_1), node1);
+    EXPECT_FALSE(OpenLcbNode_is_last(USER_ENUM_KEYS_VALUES_1));
+
+    EXPECT_EQ(OpenLcbNode_get_next(USER_ENUM_KEYS_VALUES_1), node2);
+    EXPECT_FALSE(OpenLcbNode_is_last(USER_ENUM_KEYS_VALUES_1));
+
+    EXPECT_EQ(OpenLcbNode_get_next(USER_ENUM_KEYS_VALUES_1), node3);
+    EXPECT_TRUE(OpenLcbNode_is_last(USER_ENUM_KEYS_VALUES_1));
+}
+
+// ============================================================================
+// TEST: Is Last - Invalid Key
+// @details Verifies is_last returns false for out-of-range key
+// @coverage OpenLcbNode_is_last()
+// ============================================================================
+
+TEST(OpenLcbNode, is_last_invalid_key)
+{
+    _global_initialize();
+    _reset_variables();
+
+    OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
+
+    EXPECT_FALSE(OpenLcbNode_is_last(MAX_NODE_ENUM_KEY_VALUES));
+    EXPECT_FALSE(OpenLcbNode_is_last(MAX_NODE_ENUM_KEY_VALUES + 1));
+}
+
+// ============================================================================
+// TEST: Is Last - Empty Pool
+// @details Verifies is_last returns false when no nodes allocated
+// @coverage OpenLcbNode_is_last()
+// ============================================================================
+
+TEST(OpenLcbNode, is_last_empty_pool)
+{
+    _global_initialize();
+    _reset_variables();
+
+    EXPECT_FALSE(OpenLcbNode_is_last(USER_ENUM_KEYS_VALUES_1));
+}
+
+// ============================================================================
 // TEST: Find by Alias - Empty List
 // @details Verifies find returns NULL when no nodes exist
 // ============================================================================
@@ -503,7 +580,7 @@ TEST(OpenLcbNode, timer_tick_no_nodes)
     _reset_variables();
 
     // Should not crash with no nodes allocated
-    OpenLcbNode_100ms_timer_tick();
+    OpenLcbNode_100ms_timer_tick(1);
     EXPECT_TRUE(on_100ms_timer_tick_called);
 }
 
@@ -569,13 +646,10 @@ TEST(OpenLcbNode, initialize_null_interface)
     ASSERT_NE(node, nullptr);
 
     // Timer tick should work without crashing (NULL interface check)
-    OpenLcbNode_100ms_timer_tick();
-    
+    OpenLcbNode_100ms_timer_tick(1);
+
     // Callback should NOT be called (NULL interface)
     EXPECT_FALSE(on_100ms_timer_tick_called);
-    
-    // Timer ticks should still increment
-    EXPECT_EQ(node->timerticks, 1);
 }
 */
 
@@ -598,13 +672,10 @@ TEST(OpenLcbNode, timer_tick_null_callback)
     EXPECT_EQ(node->timerticks, 0);
 
     // Timer tick should work without crashing (NULL callback check)
-    OpenLcbNode_100ms_timer_tick();
-    
+    OpenLcbNode_100ms_timer_tick(1);
+
     // Callback should NOT be called (NULL callback)
     EXPECT_FALSE(on_100ms_timer_tick_called);
-    
-    // Timer ticks should still increment
-    EXPECT_EQ(node->timerticks, 1);
 }
 */
 

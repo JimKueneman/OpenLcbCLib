@@ -42,8 +42,7 @@
 #include "stm32_driverlib_can_driver.h"
 #include "../src/openlcb/openlcb_types.h"
 #include "../src/drivers/canbus/can_types.h"
-#include "../src/openlcb/openlcb_node.h"
-#include "../src/openlcb/protocol_datagram_handler.h"
+#include "../src/openlcb/openlcb_config.h"
 
 static TIM_HandleTypeDef *_htim7;
 
@@ -127,7 +126,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if (htim == _htim7)
 	{
 
-		OpenLcbNode_100ms_timer_tick();
-		ProtocolDatagramHandler_100ms_timer_tick();
+		OpenLcb_100ms_timer_tick();
 	}
 }

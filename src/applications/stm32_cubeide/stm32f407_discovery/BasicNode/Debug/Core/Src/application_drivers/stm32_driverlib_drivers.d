@@ -37,13 +37,13 @@ Core/Src/application_drivers/stm32_driverlib_drivers.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../Core/Src/application_drivers/../src/openlcb/openlcb_types.h \
+ ../Core/Inc/openlcb_user_config.h \
  ../Core/Src/application_drivers/stm32_driverlib_can_driver.h \
  ../Core/Src/application_drivers/../src/drivers/canbus/can_types.h \
  ../Core/Src/application_drivers/../src/drivers/canbus/../../openlcb/openlcb_defines.h \
  ../Core/Src/application_drivers/../src/drivers/canbus/../../openlcb/openlcb_types.h \
- ../Core/Src/application_drivers/../src/openlcb/openlcb_node.h \
- ../Core/Src/application_drivers/../src/openlcb/openlcb_types.h \
- ../Core/Src/application_drivers/../src/openlcb/protocol_datagram_handler.h
+ ../Core/Src/application_drivers/../src/openlcb/openlcb_config.h \
+ ../Core/Src/application_drivers/../src/openlcb/openlcb_types.h
 ../Core/Src/application_drivers/stm32_driverlib_drivers.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -81,10 +81,10 @@ Core/Src/application_drivers/stm32_driverlib_drivers.o: \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 ../Core/Src/application_drivers/../src/openlcb/openlcb_types.h:
+../Core/Inc/openlcb_user_config.h:
 ../Core/Src/application_drivers/stm32_driverlib_can_driver.h:
 ../Core/Src/application_drivers/../src/drivers/canbus/can_types.h:
 ../Core/Src/application_drivers/../src/drivers/canbus/../../openlcb/openlcb_defines.h:
 ../Core/Src/application_drivers/../src/drivers/canbus/../../openlcb/openlcb_types.h:
-../Core/Src/application_drivers/../src/openlcb/openlcb_node.h:
+../Core/Src/application_drivers/../src/openlcb/openlcb_config.h:
 ../Core/Src/application_drivers/../src/openlcb/openlcb_types.h:
-../Core/Src/application_drivers/../src/openlcb/protocol_datagram_handler.h:

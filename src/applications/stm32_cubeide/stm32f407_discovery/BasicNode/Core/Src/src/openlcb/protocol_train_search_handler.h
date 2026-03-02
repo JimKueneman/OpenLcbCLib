@@ -90,6 +90,19 @@ extern "C" {
      */
     extern void ProtocolTrainSearch_handle_search_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
+    /**
+     * @brief Handles the no-match case after full train search enumeration.
+     *
+     * @details If the ALLOCATE flag is set and on_search_no_match is registered,
+     * invokes the callback to create a new virtual train node.
+     *
+     * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+     * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
+     */
+    extern void ProtocolTrainSearch_handle_search_no_match(
+            openlcb_statemachine_info_t *statemachine_info,
+            event_id_t event_id);
+
 #ifdef __cplusplus
 }
 #endif

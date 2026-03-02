@@ -105,10 +105,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:a6de2e392dcc8fc3e752b535e822ad275"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface. Call once at startup.  <br /></td></tr>
 <tr class="separator:a6de2e392dcc8fc3e752b535e822ad275"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae44398b4a2a77c1dd13e6ce579e4c45b" id="r_ae44398b4a2a77c1dd13e6ce579e4c45b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae44398b4a2a77c1dd13e6ce579e4c45b">ProtocolMessageNetwork_handle_initialization_complete</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae44398b4a2a77c1dd13e6ce579e4c45b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle Initialization Complete (full node). No automatic response.  <br /></td></tr>
+<tr class="memdesc:ae44398b4a2a77c1dd13e6ce579e4c45b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle Initialization Complete (full node). Check for duplicate Node ID.  <br /></td></tr>
 <tr class="separator:ae44398b4a2a77c1dd13e6ce579e4c45b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94fa4c988fd24bfc527f373ef3c89e2b" id="r_a94fa4c988fd24bfc527f373ef3c89e2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94fa4c988fd24bfc527f373ef3c89e2b">ProtocolMessageNetwork_handle_initialization_complete_simple</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a94fa4c988fd24bfc527f373ef3c89e2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle Initialization Complete Simple. No automatic response.  <br /></td></tr>
+<tr class="memdesc:a94fa4c988fd24bfc527f373ef3c89e2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle Initialization Complete Simple. Check for duplicate Node ID.  <br /></td></tr>
 <tr class="separator:a94fa4c988fd24bfc527f373ef3c89e2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c1bd7d18c6b20c915f1ff93d953687d" id="r_a2c1bd7d18c6b20c915f1ff93d953687d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c1bd7d18c6b20c915f1ff93d953687d">ProtocolMessageNetwork_handle_protocol_support_inquiry</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:a2c1bd7d18c6b20c915f1ff93d953687d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reply to Protocol Support Inquiry with this node’s PSI flags.  <br /></td></tr>
@@ -126,10 +126,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:a6cc5050fc4c003790bd5deb876fcf842"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle Verified Node ID — fires duplicate-ID event if IDs match.  <br /></td></tr>
 <tr class="separator:a6cc5050fc4c003790bd5deb876fcf842"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28784d330fe4b9dc5edaae0e0ed25970" id="r_a28784d330fe4b9dc5edaae0e0ed25970"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28784d330fe4b9dc5edaae0e0ed25970">ProtocolMessageNetwork_handle_optional_interaction_rejected</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a28784d330fe4b9dc5edaae0e0ed25970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle Optional Interaction Rejected. No automatic response.  <br /></td></tr>
+<tr class="memdesc:a28784d330fe4b9dc5edaae0e0ed25970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle Optional Interaction Rejected (MessageNetworkS Section 3.5.2).  <br /></td></tr>
 <tr class="separator:a28784d330fe4b9dc5edaae0e0ed25970"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5696bf1ec10b7d0d07097a6cbc33fc4" id="r_ad5696bf1ec10b7d0d07097a6cbc33fc4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5696bf1ec10b7d0d07097a6cbc33fc4">ProtocolMessageNetwork_handle_terminate_due_to_error</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ad5696bf1ec10b7d0d07097a6cbc33fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle Terminate Due To Error. No automatic response.  <br /></td></tr>
+<tr class="memdesc:ad5696bf1ec10b7d0d07097a6cbc33fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle Terminate Due To Error (MessageNetworkS Section 3.5.2).  <br /></td></tr>
 <tr class="separator:ad5696bf1ec10b7d0d07097a6cbc33fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -182,13 +182,8 @@ MessageNetworkS.pdf </dd></dl>
       </table>
 </div><div class="memdoc">
 
+<p>Handle Initialization Complete (full node). Check for duplicate Node ID. </p>
 <p>Handle Initialization Complete (full node). No automatic response. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -207,13 +202,8 @@ MessageNetworkS.pdf </dd></dl>
       </table>
 </div><div class="memdoc">
 
+<p>Handle Initialization Complete Simple. Check for duplicate Node ID. </p>
 <p>Handle Initialization Complete Simple. No automatic response. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -348,13 +338,9 @@ MessageNetworkS.pdf </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Handle Optional Interaction Rejected. No automatic response. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Handle Optional Interaction Rejected (MessageNetworkS Section 3.5.2). </p>
+<p>Handle Optional Interaction Rejected. No automatic response.</p>
+<p>Parses error code (bytes 0-1) and rejected MTI (bytes 2-3). Invokes the application callback if non-NULL. No automatic response. </p>
 
 </div>
 </div>
@@ -373,13 +359,9 @@ MessageNetworkS.pdf </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Handle Terminate Due To Error. No automatic response. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Handle Terminate Due To Error (MessageNetworkS Section 3.5.2). </p>
+<p>Handle Terminate Due To Error. No automatic response.</p>
+<p>Parses error code (bytes 0-1) and rejected MTI (bytes 2-3). Invokes the application callback if non-NULL. No automatic response. </p>
 
 </div>
 </div>

@@ -58,6 +58,7 @@
 // Cross-layer includes
 #include "../../openlcb/openlcb_buffer_store.h"
 #include "../../openlcb/openlcb_node.h"
+#include "../../openlcb/openlcb_config.h"
 
 // ---- Internal storage for built interface structs ----
 
@@ -132,6 +133,7 @@ static void _build_rx_message_handler(void) {
     _rx_msg.alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id;
     _rx_msg.alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info;
     _rx_msg.alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag;
+    _rx_msg.get_current_tick = &OpenLcb_get_global_100ms_tick;
 
 }
 
@@ -209,6 +211,9 @@ static void _build_main_statemachine(void) {
     _main_sm.login_statemachine_run = &CanLoginStateMachine_run;
     _main_sm.alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info;
     _main_sm.alias_mapping_unregister = &AliasMappings_unregister;
+
+    // Clock access (injected to maintain decoupling)
+    _main_sm.get_current_tick = &OpenLcb_get_global_100ms_tick;
 
     // Internal handlers (exposed for testability)
     _main_sm.handle_duplicate_aliases = &CanMainStatemachine_handle_duplicate_aliases;

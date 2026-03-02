@@ -47,8 +47,8 @@
 // Compile-time feature dependency validation
 // =============================================================================
 
-#if defined(OPENLCB_COMPILE_CONFIG_MEMORY) && !defined(OPENLCB_COMPILE_DATAGRAMS)
-#error "OPENLCB_COMPILE_CONFIG_MEMORY requires OPENLCB_COMPILE_DATAGRAMS"
+#if defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION) && !defined(OPENLCB_COMPILE_DATAGRAMS)
+#error "OPENLCB_COMPILE_MEMORY_CONFIGURATION requires OPENLCB_COMPILE_DATAGRAMS"
 #endif
 
 #if defined(OPENLCB_COMPILE_BROADCAST_TIME) && !defined(OPENLCB_COMPILE_EVENTS)
@@ -61,6 +61,10 @@
 
 #if defined(OPENLCB_COMPILE_TRAIN_SEARCH) && !defined(OPENLCB_COMPILE_TRAIN)
 #error "OPENLCB_COMPILE_TRAIN_SEARCH requires OPENLCB_COMPILE_TRAIN"
+#endif
+
+#if defined(OPENLCB_COMPILE_FIRMWARE) && !defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION)
+#error "OPENLCB_COMPILE_FIRMWARE requires OPENLCB_COMPILE_MEMORY_CONFIGURATION"
 #endif
 
 // =============================================================================
@@ -99,10 +103,16 @@
 #pragma message "OpenLcbCLib: DATAGRAMS = OFF"
 #endif
 
-#ifdef OPENLCB_COMPILE_CONFIG_MEMORY
-#pragma message "OpenLcbCLib: CONFIG_MEMORY = ON"
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#pragma message "OpenLcbCLib: MEMORY_CONFIGURATION = ON"
 #else
-#pragma message "OpenLcbCLib: CONFIG_MEMORY = OFF"
+#pragma message "OpenLcbCLib: MEMORY_CONFIGURATION = OFF"
+#endif
+
+#ifdef OPENLCB_COMPILE_FIRMWARE
+#pragma message "OpenLcbCLib: FIRMWARE = ON"
+#else
+#pragma message "OpenLcbCLib: FIRMWARE = OFF"
 #endif
 
 #ifdef OPENLCB_COMPILE_BROADCAST_TIME
@@ -189,35 +199,11 @@ typedef struct {
          */
     void (*reboot)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-#ifdef OPENLCB_COMPILE_CONFIG_MEMORY
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
 
     // =========================================================================
-    // OPTIONAL: Hardware Driver Extensions (requires CONFIG_MEMORY)
+    // OPTIONAL: Memory Configuration Extensions (requires MEMORY_CONFIGURATION)
     // =========================================================================
-
-        /**
-         * @brief Freeze the node for firmware upgrade. Optional.
-         *
-         * @param statemachine_info @ref openlcb_statemachine_info_t context
-         * @param config_mem_operations_request_info @ref config_mem_operations_request_info_t context
-         */
-    void (*freeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-
-        /**
-         * @brief Unfreeze the node after firmware upgrade. Optional.
-         *
-         * @param statemachine_info @ref openlcb_statemachine_info_t context
-         * @param config_mem_operations_request_info @ref config_mem_operations_request_info_t context
-         */
-    void (*unfreeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-
-        /**
-         * @brief Write firmware data during upgrade. Optional.
-         *
-         * @param statemachine_info @ref openlcb_statemachine_info_t context
-         * @param config_mem_write_request_info @ref config_mem_write_request_info_t context
-         */
-    void (*firmware_write)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
         /**
          * @brief Factory reset -- erase user config and restore defaults. Optional.
@@ -249,11 +235,53 @@ typedef struct {
          */
     uint16_t (*config_mem_write_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
-#endif /* OPENLCB_COMPILE_CONFIG_MEMORY */
+#endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
+
+#ifdef OPENLCB_COMPILE_FIRMWARE
+
+    // =========================================================================
+    // OPTIONAL: Firmware Upgrade Callbacks (requires FIRMWARE)
+    // =========================================================================
+
+        /**
+         * @brief Freeze the node for firmware upgrade. Optional.
+         *
+         * @param statemachine_info @ref openlcb_statemachine_info_t context
+         * @param config_mem_operations_request_info @ref config_mem_operations_request_info_t context
+         */
+    void (*freeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+
+        /**
+         * @brief Unfreeze the node after firmware upgrade. Optional.
+         *
+         * @param statemachine_info @ref openlcb_statemachine_info_t context
+         * @param config_mem_operations_request_info @ref config_mem_operations_request_info_t context
+         */
+    void (*unfreeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+
+        /**
+         * @brief Write firmware data during upgrade. Optional.
+         *
+         * @param statemachine_info @ref openlcb_statemachine_info_t context
+         * @param config_mem_write_request_info @ref config_mem_write_request_info_t context
+         */
+    void (*firmware_write)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
+
+#endif /* OPENLCB_COMPILE_FIRMWARE */
 
     // =========================================================================
     // OPTIONAL: Core Application Callbacks
     // =========================================================================
+
+        /** @brief Optional Interaction Rejected received. Optional.
+         *  Notifies the application that a message was rejected by a remote node.
+         *  @see MessageNetworkS Section 3.5.2. */
+    void (*on_optional_interaction_rejected)(openlcb_node_t *openlcb_node, node_id_t source_node_id, uint16_t error_code, uint16_t rejected_mti);
+
+        /** @brief Terminate Due To Error received. Optional.
+         *  Notifies the application that a remote node terminated with an error.
+         *  @see MessageNetworkS Section 3.5.2. */
+    void (*on_terminate_due_to_error)(openlcb_node_t *openlcb_node, node_id_t source_node_id, uint16_t error_code, uint16_t rejected_mti);
 
         /** @brief 100ms periodic timer callback. Optional. */
     void (*on_100ms_timer)(void);
@@ -460,12 +488,25 @@ extern "C" {
 extern void OpenLcb_initialize(const openlcb_config_t *config);
 
     /**
-     * @brief Drives all time-dependent protocol modules.
+     * @brief Increments the global 100ms tick counter.
      *
      * @details Call from a 100ms hardware timer interrupt or periodic task.
-     * Dispatches to all compiled-in modules that require regular timer ticks.
+     * This is the ONLY action performed by the timer context -- all real
+     * protocol work runs in the main loop via OpenLcb_run().
      */
 extern void OpenLcb_100ms_timer_tick(void);
+
+    /**
+     * @brief Returns the current value of the global 100ms tick counter.
+     *
+     * @details Used by wiring code (openlcb_config.c, can_config.c) to read
+     * the clock and inject it into modules via parameters or interface
+     * function pointers. Individual modules should NOT call this directly —
+     * they receive the tick through their function parameters or interface.
+     *
+     * @return Current tick count (wraps at 255).
+     */
+extern uint8_t OpenLcb_get_global_100ms_tick(void);
 
     /**
      * @brief Allocates and registers a new node on the OpenLCB network.

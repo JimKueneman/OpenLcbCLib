@@ -51,6 +51,7 @@
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_utilities.h"
 #include "../../openlcb/openlcb_buffer_store.h"
+#include "../../openlcb/openlcb_buffer_list.h"
 
 // Note: This include provides access to openlcb_node_t structure for _reset_node()
 // Used when handling duplicate alias errors
@@ -296,6 +297,7 @@ bool CanMainStatemachine_handle_try_enumerate_first_node(void) {
 
         if (_can_statemachine_info.openlcb_node->state.run_state < RUNSTATE_LOAD_INITIALIZATION_COMPLETE) {
 
+            _can_statemachine_info.current_tick = _interface->get_current_tick();
             _interface->login_statemachine_run(&_can_statemachine_info);
 
         }
@@ -330,6 +332,7 @@ bool CanMainStatemachine_handle_try_enumerate_next_node(void) {
 
     if (_can_statemachine_info.openlcb_node->state.run_state < RUNSTATE_LOAD_INITIALIZATION_COMPLETE) {
 
+        _can_statemachine_info.current_tick = _interface->get_current_tick();
         _interface->login_statemachine_run(&_can_statemachine_info);
 
     }
@@ -346,6 +349,10 @@ bool CanMainStatemachine_handle_try_enumerate_next_node(void) {
      * login frame → enumerate first node → enumerate next node.
      */
 void CanMainStateMachine_run(void) {
+
+    _interface->lock_shared_resources();
+    OpenLcbBufferList_check_timeouts(_interface->get_current_tick());
+    _interface->unlock_shared_resources();
 
     if (_interface->handle_duplicate_aliases()) {
 

@@ -97,15 +97,18 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:acbb0b05b4b90f1f8851f976ed278089d" id="r_acbb0b05b4b90f1f8851f976ed278089d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbb0b05b4b90f1f8851f976ed278089d">load_datagram_received_ok_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td></tr>
-<tr class="memdesc:acbb0b05b4b90f1f8851f976ed278089d"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED — Send Datagram Received OK with reply-pending time.  <br /></td></tr>
-<tr class="separator:acbb0b05b4b90f1f8851f976ed278089d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a873fe428cb8efe42b0bc937f2c1e8b20" id="r_a873fe428cb8efe42b0bc937f2c1e8b20"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a873fe428cb8efe42b0bc937f2c1e8b20">load_datagram_received_ok_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds)</td></tr>
+<tr class="memdesc:a873fe428cb8efe42b0bc937f2c1e8b20"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED — Send Datagram Received OK with reply-pending flag and time.  <br /></td></tr>
+<tr class="separator:a873fe428cb8efe42b0bc937f2c1e8b20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1a9f28156897e98626879c442a13a8c" id="r_ae1a9f28156897e98626879c442a13a8c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1a9f28156897e98626879c442a13a8c">load_datagram_received_rejected_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t return_code)</td></tr>
 <tr class="memdesc:ae1a9f28156897e98626879c442a13a8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED — Send Datagram Received Rejected with error code.  <br /></td></tr>
 <tr class="separator:ae1a9f28156897e98626879c442a13a8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a72d0c9e692e2bdefb9cbaa347f1514" id="r_a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a72d0c9e692e2bdefb9cbaa347f1514">config_memory_write</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
 <tr class="memdesc:a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED — Write bytes to config memory; returns bytes written.  <br /></td></tr>
 <tr class="separator:a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4ad220ab7a2676bb10369163fcb0ba2" id="r_ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4ad220ab7a2676bb10369163fcb0ba2">config_memory_read</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL — Read bytes from config memory; needed for write-under-mask read-modify-write.  <br /></td></tr>
+<tr class="separator:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a545751219d325aa68a2b1273413cf878" id="r_a545751219d325aa68a2b1273413cf878"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a545751219d325aa68a2b1273413cf878">write_request_config_definition_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
 <tr class="memdesc:a545751219d325aa68a2b1273413cf878"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — CDI (0xFF) write handler (normally read-only).  <br /></td></tr>
 <tr class="separator:a545751219d325aa68a2b1273413cf878"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,19 +144,19 @@ Data Fields</h2></td></tr>
 <div class="textblock"><p>Callback interface for memory-config write operations. </p>
 <p>Required: load_datagram_received_ok_message, load_datagram_received_rejected_message, config_memory_write. All per-space handlers and delayed_reply_time are optional (NULL). </p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a id="acbb0b05b4b90f1f8851f976ed278089d" name="acbb0b05b4b90f1f8851f976ed278089d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acbb0b05b4b90f1f8851f976ed278089d">&#9670;&#160;</a></span>load_datagram_received_ok_message</h2>
+<a id="a873fe428cb8efe42b0bc937f2c1e8b20" name="a873fe428cb8efe42b0bc937f2c1e8b20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a873fe428cb8efe42b0bc937f2c1e8b20">&#9670;&#160;</a></span>load_datagram_received_ok_message</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* load_datagram_received_ok_message) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td>
+          <td class="memname">void(* load_datagram_received_ok_message) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>REQUIRED — Send Datagram Received OK with reply-pending time. </p>
+<p>REQUIRED — Send Datagram Received OK with reply-pending flag and time. </p>
 
 </div>
 </div>
@@ -186,6 +189,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>REQUIRED — Write bytes to config memory; returns bytes written. </p>
+
+</div>
+</div>
+<a id="ab4ad220ab7a2676bb10369163fcb0ba2" name="ab4ad220ab7a2676bb10369163fcb0ba2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4ad220ab7a2676bb10369163fcb0ba2">&#9670;&#160;</a></span>config_memory_read</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t(* config_memory_read) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL — Read bytes from config memory; needed for write-under-mask read-modify-write. </p>
 
 </div>
 </div>

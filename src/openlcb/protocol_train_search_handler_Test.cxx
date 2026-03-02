@@ -36,6 +36,9 @@
 * - Section 6: Handler — Address Matching Tests
 * - Section 7: Handler — Reply Generation Tests
 * - Section 8: Handler — Callback Tests
+* - Section 9: Handler — Prefix / Exact Match Tests
+* - Section 10: Handler — Name Match Tests
+* - Section 11: Handler — Short/Long Address Disambiguation Tests
 *
 * @author Jim Kueneman
 * @date 17 Feb 2026
@@ -80,12 +83,32 @@ static void _test_on_search_matched(openlcb_node_t *openlcb_node,
 
 }
 
+static int _no_match_count;
+static uint16_t _no_match_address;
+static uint8_t _no_match_flags;
+static openlcb_node_t *_no_match_return_node;
+
+static openlcb_node_t* _test_on_search_no_match(uint16_t search_address, uint8_t flags) {
+
+    _no_match_count++;
+    _no_match_address = search_address;
+    _no_match_flags = flags;
+
+    return _no_match_return_node;
+
+}
+
 static void _reset_tracking(void) {
 
     _search_matched_count = 0;
     _search_matched_node = NULL;
     _search_matched_address = 0;
     _search_matched_flags = 0;
+
+    _no_match_count = 0;
+    _no_match_address = 0;
+    _no_match_flags = 0;
+    _no_match_return_node = NULL;
 
 }
 
@@ -105,6 +128,13 @@ static interface_protocol_train_search_handler_t _interface_nulls = {
 
     .on_search_matched = NULL,
     .on_search_no_match = NULL,
+
+};
+
+static interface_protocol_train_search_handler_t _interface_with_no_match = {
+
+    .on_search_matched = &_test_on_search_matched,
+    .on_search_no_match = &_test_on_search_no_match,
 
 };
 
@@ -168,6 +198,18 @@ static node_parameters_t _test_node_parameters_named = {
 static void _global_initialize(void) {
 
     ProtocolTrainSearch_initialize(&_interface_all);
+    ProtocolTrainHandler_initialize(&_interface_train);
+    OpenLcbApplicationTrain_initialize(&_interface_app_train);
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+    _reset_tracking();
+
+}
+
+static void _global_initialize_with_no_match(void) {
+
+    ProtocolTrainSearch_initialize(&_interface_with_no_match);
     ProtocolTrainHandler_initialize(&_interface_train);
     OpenLcbApplicationTrain_initialize(&_interface_app_train);
     OpenLcbNode_initialize(&_interface_openlcb_node);
@@ -548,7 +590,7 @@ TEST(TrainSearch, handler_exact_match)
     _global_initialize();
 
     openlcb_node_t *node = _create_train_node();
-    OpenLcbApplicationTrain_set_dcc_address(node, 1234, false);
+    OpenLcbApplicationTrain_set_dcc_address(node, 1234, true);
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -556,7 +598,7 @@ TEST(TrainSearch, handler_exact_match)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    // Search for address 1234, DCC short
+    // Search for address 1234, DCC long (address >= 128 implies long)
     event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
             1234, TRAIN_SEARCH_FLAG_DCC);
 
@@ -574,7 +616,7 @@ TEST(TrainSearch, handler_no_match)
     _global_initialize();
 
     openlcb_node_t *node = _create_train_node();
-    OpenLcbApplicationTrain_set_dcc_address(node, 1234, false);
+    OpenLcbApplicationTrain_set_dcc_address(node, 1234, true);
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -653,7 +695,7 @@ TEST(TrainSearch, handler_reply_contains_train_address)
     _global_initialize();
 
     openlcb_node_t *node = _create_train_node();
-    OpenLcbApplicationTrain_set_dcc_address(node, 1234, false);
+    OpenLcbApplicationTrain_set_dcc_address(node, 1234, true);
     OpenLcbApplicationTrain_set_speed_steps(node, 3); // 128 speed steps
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -681,9 +723,10 @@ TEST(TrainSearch, handler_reply_contains_train_address)
     OpenLcbUtilities_extract_train_search_digits(reply_event, reply_digits);
     EXPECT_EQ(OpenLcbUtilities_train_search_digits_to_address(reply_digits), 1234);
 
-    // Reply flags should include DCC + speed steps 128 (0x03)
+    // Reply flags should include DCC + LONG_ADDR + speed steps 128 (0x03)
     uint8_t reply_flags = OpenLcbUtilities_extract_train_search_flags(reply_event);
     EXPECT_EQ(reply_flags & TRAIN_SEARCH_FLAG_DCC, TRAIN_SEARCH_FLAG_DCC);
+    EXPECT_EQ(reply_flags & TRAIN_SEARCH_FLAG_LONG_ADDR, TRAIN_SEARCH_FLAG_LONG_ADDR);
     EXPECT_EQ(reply_flags & TRAIN_SEARCH_SPEED_STEP_MASK, 0x03);
 
 }
@@ -906,7 +949,7 @@ TEST(TrainSearch, handler_exact_flag_full_match)
     _global_initialize();
 
     openlcb_node_t *node = _create_train_node();
-    OpenLcbApplicationTrain_set_dcc_address(node, 1234, false);
+    OpenLcbApplicationTrain_set_dcc_address(node, 1234, true);
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -914,7 +957,7 @@ TEST(TrainSearch, handler_exact_flag_full_match)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    // Search for "1234" WITH EXACT — should match train 1234
+    // Search for "1234" WITH EXACT — should match train 1234 (long address)
     event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
             1234, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_EXACT);
 
@@ -1051,5 +1094,500 @@ TEST(TrainSearch, handler_name_exact_full_match)
     ProtocolTrainSearch_handle_search_event(&sm, search_event);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+
+// ============================================================================
+// Section 11: Handler — Short/Long Address Disambiguation Tests (Item 18)
+// ============================================================================
+
+TEST(TrainSearch, handler_disambig_short_search_matches_short_train)
+{
+
+    _global_initialize();
+
+    // Short address search (< 128) should match a short-address train
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 42, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 42, DCC flag set, no LONG_ADDR flag
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Short search + short train — should match
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_short_search_rejects_long_train)
+{
+
+    _global_initialize();
+
+    // Short address search (< 128) should reject a long-address train
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 42, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 42, DCC flag set, no LONG_ADDR flag
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Short search + long train — should reject
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_high_search_matches_long_train)
+{
+
+    _global_initialize();
+
+    // High address (>= 128) should match a long-address train
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 200, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 200, DCC flag set, no LONG_ADDR flag
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // High search + long train — should match
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_high_search_rejects_short_train)
+{
+
+    _global_initialize();
+
+    // High address (>= 128) should reject a short-address train — THE BUG FIX
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 200, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 200, DCC flag set, no LONG_ADDR flag
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // High search + short train — should reject
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_boundary_128_rejects_short_train)
+{
+
+    _global_initialize();
+
+    // Boundary: address exactly 128, short train — rejected
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 128, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 128, DCC flag set, no LONG_ADDR flag
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            128, TRAIN_SEARCH_FLAG_DCC);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Address 128 is >= TRAIN_MAX_DCC_SHORT_ADDRESS, short train — should reject
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_boundary_127_allows_short_train)
+{
+
+    _global_initialize();
+
+    // Boundary: address exactly 127, short train — allowed
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 127, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 127, DCC flag set, no LONG_ADDR flag
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            127, TRAIN_SEARCH_FLAG_DCC);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Address 127 is < TRAIN_MAX_DCC_SHORT_ADDRESS, short train — should match
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_boundary_128_allows_long_train)
+{
+
+    _global_initialize();
+
+    // Boundary: address exactly 128, long train — allowed
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 128, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 128, DCC flag set, no LONG_ADDR flag
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            128, TRAIN_SEARCH_FLAG_DCC);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Address 128 is >= TRAIN_MAX_DCC_SHORT_ADDRESS, long train — should match
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_allocate_bypasses_high_search_short_train)
+{
+
+    _global_initialize();
+
+    // ALLOCATE flag should bypass disambiguation for high address + short train
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 200, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 200, DCC + ALLOCATE flags
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // ALLOCATE bypasses disambiguation — should match
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_allocate_bypasses_short_search_long_train)
+{
+
+    _global_initialize();
+
+    // ALLOCATE flag should bypass disambiguation for low address + long train
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 42, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 42, DCC + ALLOCATE flags
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // ALLOCATE bypasses disambiguation — should match
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_explicit_long_flag_matches_long_train)
+{
+
+    _global_initialize();
+
+    // Explicit LONG_ADDR flag should match a long-address train
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 5000, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 5000, DCC + LONG_ADDR flags
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            5000, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Explicit LONG_ADDR + long train — should match
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_explicit_long_flag_rejects_short_train)
+{
+
+    _global_initialize();
+
+    // Explicit LONG_ADDR flag should reject a short-address train
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 42, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 42, DCC + LONG_ADDR flags
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Explicit LONG_ADDR + short train — should reject
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_disambig_non_dcc_search_ignores_address_type)
+{
+
+    _global_initialize();
+
+    // Non-DCC search (flags = 0x00) should ignore disambiguation entirely
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 200, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 200, no DCC flag — protocol=any
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(200, 0x00);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Non-DCC ignores address type — should match
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+
+// ============================================================================
+// SECTION 12: HANDLER -- No-Match Callback Tests
+// @details Tests for ProtocolTrainSearch_handle_search_no_match()
+// ============================================================================
+
+// ============================================================================
+// TEST: No-match handler invokes callback when ALLOCATE flag set
+// @coverage ProtocolTrainSearch_handle_search_no_match()
+// ============================================================================
+
+TEST(TrainSearch, no_match_allocate_flag_set)
+{
+
+    _global_initialize_with_no_match();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search with ALLOCATE flag
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    _no_match_return_node = NULL;  // application returns NULL (no allocation)
+
+    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+
+    // Callback must be invoked
+    EXPECT_EQ(_no_match_count, 1);
+    EXPECT_EQ(_no_match_address, (uint16_t) 200);
+    EXPECT_EQ(_no_match_flags & TRAIN_SEARCH_FLAG_ALLOCATE, TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    // No reply since callback returned NULL
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: No-match handler does NOT invoke callback without ALLOCATE flag
+// @coverage ProtocolTrainSearch_handle_search_no_match()
+// ============================================================================
+
+TEST(TrainSearch, no_match_allocate_flag_clear)
+{
+
+    _global_initialize_with_no_match();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search WITHOUT ALLOCATE flag
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC);
+
+    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+
+    // Callback must NOT be invoked
+    EXPECT_EQ(_no_match_count, 0);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: No-match handler graceful with NULL interface
+// @coverage ProtocolTrainSearch_handle_search_no_match()
+// ============================================================================
+
+TEST(TrainSearch, no_match_null_interface)
+{
+
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    OpenLcbApplicationTrain_setup(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search with ALLOCATE flag but NULL interface callback
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    // Must not crash
+    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+
+    EXPECT_EQ(_no_match_count, 0);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: No-match handler loads reply when callback returns valid node
+// @coverage ProtocolTrainSearch_handle_search_no_match()
+// ============================================================================
+
+TEST(TrainSearch, no_match_returns_node_with_train_state)
+{
+
+    _global_initialize_with_no_match();
+
+    // Create a node that the no-match callback will "allocate"
+    openlcb_node_t *new_node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(new_node, 200, true);
+
+    // Use a separate node as the statemachine context (last enumerated node)
+    openlcb_node_t *current_node = OpenLcbNode_allocate(0x050101010A00ULL, &_test_node_parameters);
+    current_node->alias = 0x0CCC;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, current_node, incoming, outgoing);
+
+    // Set up callback to return the new node
+    _no_match_return_node = new_node;
+
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+
+    // Callback invoked
+    EXPECT_EQ(_no_match_count, 1);
+
+    // Reply loaded from the NEW node
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(outgoing->source_alias, new_node->alias);
+    EXPECT_EQ(outgoing->source_id, (uint64_t) new_node->id);
+    EXPECT_EQ(outgoing->mti, MTI_PRODUCER_IDENTIFIED_SET);
+
+}
+
+// ============================================================================
+// TEST: No-match handler does not load reply when callback returns NULL
+// @coverage ProtocolTrainSearch_handle_search_no_match()
+// ============================================================================
+
+TEST(TrainSearch, no_match_returns_null)
+{
+
+    _global_initialize_with_no_match();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    _no_match_return_node = NULL;
+
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+
+    // Callback invoked but returned NULL
+    EXPECT_EQ(_no_match_count, 1);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
 
 }

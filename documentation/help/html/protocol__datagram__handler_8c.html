@@ -91,6 +91,7 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">protocol_datagram_handler.c File Reference</div></div>
 </div><!--header-->
@@ -99,6 +100,22 @@ $(function(){ initResizable(false); });
 <p>Datagram protocol handler — reliable 0–72 byte addressed transfers.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a8f6b9668dee6fc9c68a0d3a9810be3c6" id="r_a8f6b9668dee6fc9c68a0d3a9810be3c6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f6b9668dee6fc9c68a0d3a9810be3c6">DATAGRAM_TIMEOUT_TICKS</a>&#160;&#160;&#160;30</td></tr>
+<tr class="memdesc:a8f6b9668dee6fc9c68a0d3a9810be3c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default datagram timeout in 100ms ticks (3 seconds).  <br /></td></tr>
+<tr class="separator:a8f6b9668dee6fc9c68a0d3a9810be3c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e4c6ef944646b9cf80cab875a351559" id="r_a4e4c6ef944646b9cf80cab875a351559"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e4c6ef944646b9cf80cab875a351559">DATAGRAM_MAX_RETRIES</a>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:a4e4c6ef944646b9cf80cab875a351559"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum datagram retry attempts before abandoning.  <br /></td></tr>
+<tr class="separator:a4e4c6ef944646b9cf80cab875a351559"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd3a34128b5768d362c46bf1de9856f8" id="r_abd3a34128b5768d362c46bf1de9856f8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd3a34128b5768d362c46bf1de9856f8">DATAGRAM_RETRY_SHIFT</a>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:abd3a34128b5768d362c46bf1de9856f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit masks and shifts for packing retry count + tick snapshot into timerticks.  <br /></td></tr>
+<tr class="separator:abd3a34128b5768d362c46bf1de9856f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41d5e91952569aafc49865090a68a704" id="r_a41d5e91952569aafc49865090a68a704"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41d5e91952569aafc49865090a68a704">DATAGRAM_RETRY_MASK</a>&#160;&#160;&#160;0xE0</td></tr>
+<tr class="separator:a41d5e91952569aafc49865090a68a704"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadb4ac4cf9c754110ca64c70af2fcedc" id="r_aadb4ac4cf9c754110ca64c70af2fcedc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aadb4ac4cf9c754110ca64c70af2fcedc">DATAGRAM_TICK_MASK</a>&#160;&#160;&#160;0x1F</td></tr>
+<tr class="separator:aadb4ac4cf9c754110ca64c70af2fcedc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a87c419434a44020752f0fd815f1a0832" id="r_a87c419434a44020752f0fd815f1a0832"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87c419434a44020752f0fd815f1a0832">ProtocolDatagramHandler_initialize</a> (const <a class="el" href="structinterface__protocol__datagram__handler__t.html">interface_protocol_datagram_handler_t</a> *interface_protocol_datagram_handler)</td></tr>
@@ -107,9 +124,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a4d034624deb9c413c4977afa8987a6df" id="r_a4d034624deb9c413c4977afa8987a6df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d034624deb9c413c4977afa8987a6df">ProtocolDatagramHandler_datagram</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:a4d034624deb9c413c4977afa8987a6df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main entry point — switches on payload[0] command byte.  <br /></td></tr>
 <tr class="separator:a4d034624deb9c413c4977afa8987a6df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe5f21fda782ce61534588d89163ccff" id="r_abe5f21fda782ce61534588d89163ccff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe5f21fda782ce61534588d89163ccff">ProtocolDatagramHandler_load_datagram_received_ok_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td></tr>
-<tr class="memdesc:abe5f21fda782ce61534588d89163ccff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a Datagram Received OK message (MTI 0x0A28).  <br /></td></tr>
-<tr class="separator:abe5f21fda782ce61534588d89163ccff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f0eb99ef0c40403f62e20643506c6fb" id="r_a8f0eb99ef0c40403f62e20643506c6fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f0eb99ef0c40403f62e20643506c6fb">ProtocolDatagramHandler_load_datagram_received_ok_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds)</td></tr>
+<tr class="memdesc:a8f0eb99ef0c40403f62e20643506c6fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a Datagram Received OK message (MTI 0x0A28).  <br /></td></tr>
+<tr class="separator:a8f0eb99ef0c40403f62e20643506c6fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74c7ab99bff8408f9a00f77ed79da9f4" id="r_a74c7ab99bff8408f9a00f77ed79da9f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74c7ab99bff8408f9a00f77ed79da9f4">ProtocolDatagramHandler_load_datagram_rejected_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t return_code)</td></tr>
 <tr class="memdesc:a74c7ab99bff8408f9a00f77ed79da9f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a Datagram Rejected message (MTI 0x0A48).  <br /></td></tr>
 <tr class="separator:a74c7ab99bff8408f9a00f77ed79da9f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -122,9 +139,12 @@ Functions</h2></td></tr>
 <tr class="memitem:af7b23593b33a3a3c66f3afcd6886ebce" id="r_af7b23593b33a3a3c66f3afcd6886ebce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7b23593b33a3a3c66f3afcd6886ebce">ProtocolDatagramHandler_clear_resend_datagram_message</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
 <tr class="memdesc:af7b23593b33a3a3c66f3afcd6886ebce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free stored datagram and clear resend flag for a node.  <br /></td></tr>
 <tr class="separator:af7b23593b33a3a3c66f3afcd6886ebce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bab92fd769c43b46c7254b8a8ed4e79" id="r_a6bab92fd769c43b46c7254b8a8ed4e79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bab92fd769c43b46c7254b8a8ed4e79">ProtocolDatagramHandler_100ms_timer_tick</a> (void)</td></tr>
-<tr class="memdesc:a6bab92fd769c43b46c7254b8a8ed4e79"><td class="mdescLeft">&#160;</td><td class="mdescRight">100 ms timer tick — placeholder for datagram timeout management.  <br /></td></tr>
-<tr class="separator:a6bab92fd769c43b46c7254b8a8ed4e79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33b24d15c177ca7ec6989f431986524b" id="r_a33b24d15c177ca7ec6989f431986524b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a33b24d15c177ca7ec6989f431986524b">ProtocolDatagramHandler_100ms_timer_tick</a> (uint8_t current_tick)</td></tr>
+<tr class="memdesc:a33b24d15c177ca7ec6989f431986524b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Periodic timer tick for datagram timeout tracking.  <br /></td></tr>
+<tr class="separator:a33b24d15c177ca7ec6989f431986524b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82d0fe791b04fb2636b023ec52ee7aad" id="r_a82d0fe791b04fb2636b023ec52ee7aad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82d0fe791b04fb2636b023ec52ee7aad">ProtocolDatagramHandler_check_timeouts</a> (uint8_t current_tick)</td></tr>
+<tr class="memdesc:a82d0fe791b04fb2636b023ec52ee7aad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scans for timed-out or max-retried pending datagrams and frees them.  <br /></td></tr>
+<tr class="separator:a82d0fe791b04fb2636b023ec52ee7aad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Datagram protocol handler — reliable 0–72 byte addressed transfers. </p>
@@ -144,7 +164,85 @@ Functions</h2></td></tr>
 DatagramTransportS.pdf </dd>
 <dd>
 MemoryConfigurationS.pdf </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a8f6b9668dee6fc9c68a0d3a9810be3c6" name="a8f6b9668dee6fc9c68a0d3a9810be3c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f6b9668dee6fc9c68a0d3a9810be3c6">&#9670;&#160;</a></span>DATAGRAM_TIMEOUT_TICKS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DATAGRAM_TIMEOUT_TICKS&#160;&#160;&#160;30</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default datagram timeout in 100ms ticks (3 seconds). </p>
+
+</div>
+</div>
+<a id="a4e4c6ef944646b9cf80cab875a351559" name="a4e4c6ef944646b9cf80cab875a351559"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e4c6ef944646b9cf80cab875a351559">&#9670;&#160;</a></span>DATAGRAM_MAX_RETRIES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DATAGRAM_MAX_RETRIES&#160;&#160;&#160;3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Maximum datagram retry attempts before abandoning. </p>
+
+</div>
+</div>
+<a id="abd3a34128b5768d362c46bf1de9856f8" name="abd3a34128b5768d362c46bf1de9856f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd3a34128b5768d362c46bf1de9856f8">&#9670;&#160;</a></span>DATAGRAM_RETRY_SHIFT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DATAGRAM_RETRY_SHIFT&#160;&#160;&#160;5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bit masks and shifts for packing retry count + tick snapshot into timerticks. </p>
+<p>Bits 7-5: retry count (0-7) Bits 4-0: tick snapshot (snapshot of current_tick at start of attempt) </p>
+
+</div>
+</div>
+<a id="a41d5e91952569aafc49865090a68a704" name="a41d5e91952569aafc49865090a68a704"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41d5e91952569aafc49865090a68a704">&#9670;&#160;</a></span>DATAGRAM_RETRY_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DATAGRAM_RETRY_MASK&#160;&#160;&#160;0xE0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aadb4ac4cf9c754110ca64c70af2fcedc" name="aadb4ac4cf9c754110ca64c70af2fcedc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aadb4ac4cf9c754110ca64c70af2fcedc">&#9670;&#160;</a></span>DATAGRAM_TICK_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DATAGRAM_TICK_MASK&#160;&#160;&#160;0x1F</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
 <a id="a87c419434a44020752f0fd815f1a0832" name="a87c419434a44020752f0fd815f1a0832"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a87c419434a44020752f0fd815f1a0832">&#9670;&#160;</a></span>ProtocolDatagramHandler_initialize()</h2>
 
@@ -195,8 +293,8 @@ MemoryConfigurationS.pdf </dd></dl>
 * </pre> 
 </div>
 </div>
-<a id="abe5f21fda782ce61534588d89163ccff" name="abe5f21fda782ce61534588d89163ccff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe5f21fda782ce61534588d89163ccff">&#9670;&#160;</a></span>ProtocolDatagramHandler_load_datagram_received_ok_message()</h2>
+<a id="a8f0eb99ef0c40403f62e20643506c6fb" name="a8f0eb99ef0c40403f62e20643506c6fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f0eb99ef0c40403f62e20643506c6fb">&#9670;&#160;</a></span>ProtocolDatagramHandler_load_datagram_received_ok_message()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -209,6 +307,11 @@ MemoryConfigurationS.pdf </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>reply_pending</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>reply_pending_time_in_seconds</em></span>&#160;)</td>
         </tr>
       </table>
@@ -217,14 +320,15 @@ MemoryConfigurationS.pdf </dd></dl>
 <p>Build a Datagram Received OK message (MTI 0x0A28). </p>
 <p>Builds a Datagram Received OK message (MTI 0x0A28).</p>
 <p>Algorithm:</p><ol type="1">
-<li>Convert reply_pending_time_in_seconds to a 4-bit power-of-2 exponent (0 = no reply pending, 1 = 2 s, 2 = 4 s, … 15 = 32768 s)</li>
+<li>Convert reply_pending_time_in_seconds to a 4-bit power-of-2 exponent (1 = 2 s, 2 = 4 s, … 15 = 32768 s)</li>
 <li>Build MTI_DATAGRAM_OK_REPLY addressed back to the sender</li>
-<li>Store DATAGRAM_OK_REPLY_PENDING | exponent in payload[0]</li>
+<li>If reply_pending, store DATAGRAM_OK_REPLY_PENDING | exponent in payload[0]</li>
 <li>Mark outgoing message valid</li>
 </ol>
 <pre class="fragment">* @param statemachine_info               Current context.
-* @param reply_pending_time_in_seconds   0 for simple OK, else seconds until
-*                                        reply (rounded up to 2^N).
+* @param reply_pending                   true if a reply datagram will follow.
+* @param reply_pending_time_in_seconds   Seconds until reply (rounded up to 2^N).
+*                                        Ignored when reply_pending is false.
 * </pre> 
 </div>
 </div>
@@ -303,7 +407,7 @@ MemoryConfigurationS.pdf </dd></dl>
 <p>Handles an incoming Datagram Rejected reply. Sets the resend flag for temporary errors; clears retry state for permanent errors.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Extract error code from payload word 0</li>
-<li>If ERROR_TEMPORARY bit set and a stored datagram exists, set resend_datagram flag for retry</li>
+<li>If ERROR_TEMPORARY bit set and a stored datagram exists: a. Extract retry count from upper 3 bits of timerticks b. Increment retry count c. If retries &lt; DATAGRAM_MAX_RETRIES, pack new retry count + fresh tick snapshot and set resend_datagram flag d. If retries &gt;= DATAGRAM_MAX_RETRIES, abandon (clear and free)</li>
 <li>If permanent error, clear resend flag and free stored buffer</li>
 <li>Set outgoing_msg_info.valid = false</li>
 </ol>
@@ -337,8 +441,8 @@ MemoryConfigurationS.pdf </dd></dl>
 
 </div>
 </div>
-<a id="a6bab92fd769c43b46c7254b8a8ed4e79" name="a6bab92fd769c43b46c7254b8a8ed4e79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6bab92fd769c43b46c7254b8a8ed4e79">&#9670;&#160;</a></span>ProtocolDatagramHandler_100ms_timer_tick()</h2>
+<a id="a33b24d15c177ca7ec6989f431986524b" name="a33b24d15c177ca7ec6989f431986524b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33b24d15c177ca7ec6989f431986524b">&#9670;&#160;</a></span>ProtocolDatagramHandler_100ms_timer_tick()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -346,14 +450,46 @@ MemoryConfigurationS.pdf </dd></dl>
         <tr>
           <td class="memname">void ProtocolDatagramHandler_100ms_timer_tick </td>
           <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>current_tick</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>100 ms timer tick — placeholder for datagram timeout management. </p>
-<p>100 ms timer tick for datagram timeout management (placeholder). </p>
+<p>Periodic timer tick for datagram timeout tracking. </p>
+<p>Called from the main loop with the current global tick. Currently a placeholder — timeout scanning is done by <a class="el" href="#a82d0fe791b04fb2636b023ec52ee7aad" title="Scans for timed-out or max-retried pending datagrams and frees them.">ProtocolDatagramHandler_check_timeouts()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a82d0fe791b04fb2636b023ec52ee7aad" name="a82d0fe791b04fb2636b023ec52ee7aad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82d0fe791b04fb2636b023ec52ee7aad">&#9670;&#160;</a></span>ProtocolDatagramHandler_check_timeouts()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolDatagramHandler_check_timeouts </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>current_tick</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Scans for timed-out or max-retried pending datagrams and frees them. </p>
+<p>Must be called from the main processing loop, not from an interrupt. Acquires the shared resource lock internally.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick, passed from the main loop. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -38,10 +38,10 @@ static const openlcb_config_t openlcb_config = {
     .reboot                  = &OSxDrivers_reboot,
 
     // Optional hardware extensions
+    .factory_reset           = &Callbacks_operations_request_factory_reset,
     .freeze                  = &OSxDrivers_freeze,
     .unfreeze                = &OSxDrivers_unfreeze,
-    .firmware_write          = &OSxDrivers_write_firemware,
-    .factory_reset           = &Callbacks_operations_request_factory_reset,
+    .firmware_write          = &OSxDrivers_write_firmware,
 
     // Core application callbacks
     .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,

@@ -100,7 +100,7 @@ void Callbacks_operations_request_factory_reset(
 					statemachine_info->incoming_msg_info.msg_ptr, 0));
 }
 
-void Callbacks_write_firemware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
+void Callbacks_write_firmware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
 {
 
 	printf("Firmware Write, buffer is in config_mem_write_request_info->writebuffer ");

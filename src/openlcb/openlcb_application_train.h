@@ -118,14 +118,16 @@ extern "C" {
         /**
          * @brief Decrements the heartbeat countdown for all active train nodes.
          *
-         * @details Must be called every 100 ms.  At the halfway point of each node's
-         * heartbeat timeout, a NOOP request is sent to the controller.  When the
-         * counter reaches zero the train is emergency-stopped and the on_heartbeat_timeout
-         * callback is fired.
+         * @details Called from the main loop with the current global tick.
+         * At the halfway point of each node's heartbeat timeout, a NOOP request
+         * is sent to the controller. When the counter reaches zero the train is
+         * emergency-stopped and the on_heartbeat_timeout callback is fired.
+         *
+         * @param current_tick  Current value of the global 100ms tick counter.
          *
          * @note Nodes with heartbeat_timeout_s == 0 are skipped.
          */
-    extern void OpenLcbApplicationTrain_100ms_timer_tick(void);
+    extern void OpenLcbApplicationTrain_100ms_timer_tick(uint8_t current_tick);
 
         /**
          * @brief Sends a Set Speed/Direction command to a train node.

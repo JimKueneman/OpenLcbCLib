@@ -91,6 +91,7 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">can_rx_message_handler.c File Reference</div></div>
 </div><!--header-->
@@ -99,6 +100,12 @@ $(function(){ initResizable(false); });
 <p>Implementation of message handlers for CAN receive operations.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a73c1c8d9d88ec0da070ff30ada2ac6e0" id="r_a73c1c8d9d88ec0da070ff30ada2ac6e0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73c1c8d9d88ec0da070ff30ada2ac6e0">CAN_RX_INPROCESS_TIMEOUT_TICKS</a>&#160;&#160;&#160;30</td></tr>
+<tr class="memdesc:a73c1c8d9d88ec0da070ff30ada2ac6e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multi-frame assembly timeout in 100ms ticks (3 seconds).  <br /></td></tr>
+<tr class="separator:a73c1c8d9d88ec0da070ff30ada2ac6e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:aaa035b3a9b3535b413f441c4cb6d741f" id="r_aaa035b3a9b3535b413f441c4cb6d741f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa035b3a9b3535b413f441c4cb6d741f">CanRxMessageHandler_initialize</a> (const <a class="el" href="structinterface__can__rx__message__handler__t.html">interface_can_rx_message_handler_t</a> *interface_can_frame_message_handler)</td></tr>
@@ -123,7 +130,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a9d39c6d3d8fa18b4db3a844222f8d721"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream frame handler — reserved for future use, not yet implemented.  <br /></td></tr>
 <tr class="separator:a9d39c6d3d8fa18b4db3a844222f8d721"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa958ec2e603dabb8eed0c6c0e0bacc94" id="r_aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa958ec2e603dabb8eed0c6c0e0bacc94">CanRxMessageHandler_cid_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles CID frames: sends an RID reply if the claimed alias is already ours.  <br /></td></tr>
+<tr class="memdesc:aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles CID frames per CanFrameTransferS Section 3.5.3.  <br /></td></tr>
 <tr class="separator:aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5ab163a26257b020cff610f592a13d4" id="r_af5ab163a26257b020cff610f592a13d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5ab163a26257b020cff610f592a13d4">CanRxMessageHandler_rid_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
 <tr class="memdesc:af5ab163a26257b020cff610f592a13d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles RID frames: checks for a duplicate alias and flags it if found.  <br /></td></tr>
@@ -152,7 +159,24 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a73c1c8d9d88ec0da070ff30ada2ac6e0" name="a73c1c8d9d88ec0da070ff30ada2ac6e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73c1c8d9d88ec0da070ff30ada2ac6e0">&#9670;&#160;</a></span>CAN_RX_INPROCESS_TIMEOUT_TICKS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CAN_RX_INPROCESS_TIMEOUT_TICKS&#160;&#160;&#160;30</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Multi-frame assembly timeout in 100ms ticks (3 seconds). </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
 <a id="aaa035b3a9b3535b413f441c4cb6d741f" name="aaa035b3a9b3535b413f441c4cb6d741f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaa035b3a9b3535b413f441c4cb6d741f">&#9670;&#160;</a></span>CanRxMessageHandler_initialize()</h2>
 
@@ -406,10 +430,17 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Handles CID frames: sends an RID reply if the claimed alias is already ours. </p>
-<p>Handles CID (Check ID) CAN control frames.</p>
-<pre class="fragment">* @param can_msg Received CID frame.
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Silently drops the RID reply if buffer allocation fails. </dd></dl>
+<p>Handles CID frames per CanFrameTransferS Section 3.5.3. </p>
+<p>Handles CID (Check ID) CAN control frames (CanFrameTransferS 3.5.3).</p>
+<p>Per the standard: "Nodes that receive a CID frame that contains
+the alias they are using or have reserved shall respond with an RID frame." CID is a probe during alias reservation — the correct defence is always RID, regardless of whether the node is permitted or still claiming. This differs from RID/AMD/AMR receipt which indicates an active alias collision and is handled by _check_for_duplicate_alias().</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg</td><td>Received CID frame.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Silently drops the reply if buffer allocation fails. </dd></dl>
 
 </div>
 </div>

@@ -43,9 +43,26 @@
 
 #include "openlcb_types.h"
 
-    /** @brief Callback interface (reserved — currently empty, kept for API symmetry). */
+    /** @brief Callback interface for message network protocol notifications. */
 typedef struct {
 
+        /** @brief Optional. Called when an Optional Interaction Rejected
+         *         message is received (MessageNetworkS Section 3.5.2).
+         *
+         * @param openlcb_node     The node that received the rejection.
+         * @param source_node_id   The Node ID of the rejecting node.
+         * @param error_code       The 2-byte error code from payload bytes 0-1.
+         * @param rejected_mti     The MTI of the rejected message from payload bytes 2-3. */
+    void (*on_optional_interaction_rejected)(openlcb_node_t *openlcb_node, node_id_t source_node_id, uint16_t error_code, uint16_t rejected_mti);
+
+        /** @brief Optional. Called when a Terminate Due To Error message is
+         *         received (MessageNetworkS Section 3.5.2).
+         *
+         * @param openlcb_node     The node that received the error.
+         * @param source_node_id   The Node ID of the error-sending node.
+         * @param error_code       The 2-byte error code from payload bytes 0-1.
+         * @param rejected_mti     The MTI of the terminated message from payload bytes 2-3. */
+    void (*on_terminate_due_to_error)(openlcb_node_t *openlcb_node, node_id_t source_node_id, uint16_t error_code, uint16_t rejected_mti);
 
 } interface_openlcb_protocol_message_network_t;
 
@@ -112,12 +129,22 @@ extern "C" {
         /**
          * @brief Handle Optional Interaction Rejected.  No automatic response.
          *
+         * @details Parses the 2-byte error code (payload bytes 0-1) and 2-byte
+         * rejected MTI (payload bytes 2-3).  If the interface callback
+         * @c on_optional_interaction_rejected is non-NULL, it is invoked with the
+         * parsed values.  Per MessageNetworkS Section 3.5.2.
+         *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
     extern void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handle Terminate Due To Error.  No automatic response.
+         *
+         * @details Parses the 2-byte error code (payload bytes 0-1) and 2-byte
+         * rejected MTI (payload bytes 2-3).  If the interface callback
+         * @c on_terminate_due_to_error is non-NULL, it is invoked with the
+         * parsed values.  Per MessageNetworkS Section 3.5.2.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */

@@ -235,8 +235,54 @@ node_parameters_t _node_parameters_main_node_simple = {
 // INTERFACE CONFIGURATION
 // ============================================================================
 
-// Interface is currently empty but initialized for consistency
+// ============================================================================
+// MOCK CALLBACK STATE
+// ============================================================================
+
+static bool _oir_callback_called = false;
+static openlcb_node_t *_oir_callback_node = nullptr;
+static node_id_t _oir_callback_source_node_id = 0;
+static uint16_t _oir_callback_error_code = 0;
+static uint16_t _oir_callback_rejected_mti = 0;
+
+static bool _tde_callback_called = false;
+static openlcb_node_t *_tde_callback_node = nullptr;
+static node_id_t _tde_callback_source_node_id = 0;
+static uint16_t _tde_callback_error_code = 0;
+static uint16_t _tde_callback_rejected_mti = 0;
+
+    /** @brief Mock OIR callback — captures parameters for verification. */
+void _mock_on_optional_interaction_rejected(openlcb_node_t *openlcb_node, node_id_t source_node_id, uint16_t error_code, uint16_t rejected_mti) {
+
+    _oir_callback_called = true;
+    _oir_callback_node = openlcb_node;
+    _oir_callback_source_node_id = source_node_id;
+    _oir_callback_error_code = error_code;
+    _oir_callback_rejected_mti = rejected_mti;
+
+}
+
+    /** @brief Mock TDE callback — captures parameters for verification. */
+void _mock_on_terminate_due_to_error(openlcb_node_t *openlcb_node, node_id_t source_node_id, uint16_t error_code, uint16_t rejected_mti) {
+
+    _tde_callback_called = true;
+    _tde_callback_node = openlcb_node;
+    _tde_callback_source_node_id = source_node_id;
+    _tde_callback_error_code = error_code;
+    _tde_callback_rejected_mti = rejected_mti;
+
+}
+
+// NULL-callback interface (existing behavior — no callbacks wired)
 interface_openlcb_protocol_message_network_t interface_openlcb_protocol_message_network = {};
+
+// Callback-wired interface for OIR/TDE tests
+interface_openlcb_protocol_message_network_t interface_openlcb_protocol_message_network_with_callbacks = {
+
+    .on_optional_interaction_rejected = &_mock_on_optional_interaction_rejected,
+    .on_terminate_due_to_error = &_mock_on_terminate_due_to_error,
+
+};
 
 interface_openlcb_node_t interface_openlcb_node = {};
 
@@ -249,8 +295,19 @@ interface_openlcb_node_t interface_openlcb_node = {};
  */
 void _reset_variables(void)
 {
-    // Currently no state variables to reset
-    // Placeholder for future expansion
+
+    _oir_callback_called = false;
+    _oir_callback_node = nullptr;
+    _oir_callback_source_node_id = 0;
+    _oir_callback_error_code = 0;
+    _oir_callback_rejected_mti = 0;
+
+    _tde_callback_called = false;
+    _tde_callback_node = nullptr;
+    _tde_callback_source_node_id = 0;
+    _tde_callback_error_code = 0;
+    _tde_callback_rejected_mti = 0;
+
 }
 
 /**
@@ -320,16 +377,17 @@ TEST(ProtocolMessageNetwork, handle_protocol_support_inquiry_full)
     EXPECT_EQ(outgoing_msg->mti, MTI_PROTOCOL_SUPPORT_REPLY);
     EXPECT_EQ(outgoing_msg->payload_count, 6);
     
-    // Verify protocol support flags are correctly encoded
-    // Implementation uses: byte 0 = bits 16-23, byte 1 = bits 8-15, byte 2 = bits 0-7
+    // Verify protocol support flags are correctly encoded in all 48 bits
+    // Bytes 0-2: bits 16-23, 8-15, 0-7 (lower 24 bits)
+    // Bytes 3-5: bits 40-47, 32-39, 24-31 (upper 24 bits)
     uint64_t support_flags = node1->parameters->protocol_support;
     uint8_t *payload_ptr = (uint8_t *)outgoing_msg->payload;
     EXPECT_EQ(payload_ptr[0], (uint8_t)((support_flags >> 16) & 0xFF));
     EXPECT_EQ(payload_ptr[1], (uint8_t)((support_flags >> 8) & 0xFF));
     EXPECT_EQ(payload_ptr[2], (uint8_t)((support_flags >> 0) & 0xFF));
-    EXPECT_EQ(payload_ptr[3], 0x00);
-    EXPECT_EQ(payload_ptr[4], 0x00);
-    EXPECT_EQ(payload_ptr[5], 0x00);
+    EXPECT_EQ(payload_ptr[3], (uint8_t)((support_flags >> 40) & 0xFF));
+    EXPECT_EQ(payload_ptr[4], (uint8_t)((support_flags >> 32) & 0xFF));
+    EXPECT_EQ(payload_ptr[5], (uint8_t)((support_flags >> 24) & 0xFF));
 }
 
 // ============================================================================
@@ -425,9 +483,9 @@ TEST(ProtocolMessageNetwork, handle_protocol_support_inquiry_firmware_upgrade_ac
     EXPECT_EQ(payload_ptr[0], (uint8_t)((expected_flags >> 16) & 0xFF));
     EXPECT_EQ(payload_ptr[1], (uint8_t)((expected_flags >> 8) & 0xFF));
     EXPECT_EQ(payload_ptr[2], (uint8_t)((expected_flags >> 0) & 0xFF));
-    EXPECT_EQ(payload_ptr[3], 0x00);
-    EXPECT_EQ(payload_ptr[4], 0x00);
-    EXPECT_EQ(payload_ptr[5], 0x00);
+    EXPECT_EQ(payload_ptr[3], (uint8_t)((expected_flags >> 40) & 0xFF));
+    EXPECT_EQ(payload_ptr[4], (uint8_t)((expected_flags >> 32) & 0xFF));
+    EXPECT_EQ(payload_ptr[5], (uint8_t)((expected_flags >> 24) & 0xFF));
     
     // Verify the bit manipulation worked correctly
     EXPECT_FALSE((expected_flags & PSI_FIRMWARE_UPGRADE) != 0);  // Should be cleared
@@ -511,11 +569,13 @@ TEST(ProtocolMessageNetwork, handle_verify_node_id_global_empty_payload)
     // Test verify node ID global with empty payload (responds unconditionally)
     OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL);
     openlcb_msg->payload_count = 0;
-    
+
     ProtocolMessageNetwork_handle_verify_node_id_global(&statemachine_info);
-    
+
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID);
+    EXPECT_EQ(outgoing_msg->dest_alias, 0);
+    EXPECT_EQ(outgoing_msg->dest_id, (uint64_t) 0);
     EXPECT_EQ(outgoing_msg->payload_count, 6);
     EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0), DEST_ID);
 }
@@ -553,11 +613,13 @@ TEST(ProtocolMessageNetwork, handle_verify_node_id_global_matching_payload)
     OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL);
     openlcb_msg->payload_count = 6;
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, DEST_ID, 0);
-    
+
     ProtocolMessageNetwork_handle_verify_node_id_global(&statemachine_info);
-    
+
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID);
+    EXPECT_EQ(outgoing_msg->dest_alias, 0);
+    EXPECT_EQ(outgoing_msg->dest_id, (uint64_t) 0);
     EXPECT_EQ(outgoing_msg->payload_count, 6);
     EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0), DEST_ID);
 }
@@ -633,11 +695,13 @@ TEST(ProtocolMessageNetwork, handle_verify_node_id_addressed_full)
 
     // Test addressed verify node ID (always responds)
     OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_ADDRESSED);
-    
+
     ProtocolMessageNetwork_handle_verify_node_id_addressed(&statemachine_info);
-    
+
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID);
+    EXPECT_EQ(outgoing_msg->dest_alias, SOURCE_ALIAS);
+    EXPECT_EQ(outgoing_msg->dest_id, (uint64_t) SOURCE_ID);
     EXPECT_EQ(outgoing_msg->payload_count, 6);
     EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0), DEST_ID);
 }
@@ -673,11 +737,13 @@ TEST(ProtocolMessageNetwork, handle_verify_node_id_addressed_simple)
 
     // Test addressed verify node ID for simple node
     OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_ADDRESSED);
-    
+
     ProtocolMessageNetwork_handle_verify_node_id_addressed(&statemachine_info);
-    
+
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID_SIMPLE);
+    EXPECT_EQ(outgoing_msg->dest_alias, SOURCE_ALIAS);
+    EXPECT_EQ(outgoing_msg->dest_id, (uint64_t) SOURCE_ID);
     EXPECT_EQ(outgoing_msg->payload_count, 6);
     EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0), DEST_ID);
 }
@@ -1055,6 +1121,238 @@ TEST(ProtocolMessageNetwork, handle_terminate_due_to_error)
 }
 
 // ============================================================================
+// TEST: OIR Callback Invoked With Correct Parameters
+// @details Wires a mock callback and verifies error code, rejected MTI,
+//          source node ID, and node pointer are passed through correctly.
+// @coverage OIR callback dispatch (MessageNetworkS Section 3.5.2)
+// ============================================================================
+
+TEST(ProtocolMessageNetwork, oir_calls_callback)
+{
+
+    _reset_variables();
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+    ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network_with_callbacks);
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_OPTIONAL_INTERACTION_REJECTED);
+    openlcb_msg->payload_count = 4;
+    OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, ERROR_PERMANENT_NOT_IMPLEMENTED, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, MTI_DATAGRAM, 2);
+
+    ProtocolMessageNetwork_handle_optional_interaction_rejected(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_TRUE(_oir_callback_called);
+    EXPECT_EQ(_oir_callback_node, node1);
+    EXPECT_EQ(_oir_callback_source_node_id, SOURCE_ID);
+    EXPECT_EQ(_oir_callback_error_code, ERROR_PERMANENT_NOT_IMPLEMENTED);
+    EXPECT_EQ(_oir_callback_rejected_mti, MTI_DATAGRAM);
+
+}
+
+// ============================================================================
+// TEST: OIR With NULL Callback (no crash)
+// @details Verifies the handler works with NULL callback (existing behavior).
+// @coverage OIR null-safety
+// ============================================================================
+
+TEST(ProtocolMessageNetwork, oir_null_callback)
+{
+
+    _reset_variables();
+    _global_initialize();  // uses interface with NULL callbacks
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_OPTIONAL_INTERACTION_REJECTED);
+    openlcb_msg->payload_count = 4;
+    OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, ERROR_PERMANENT_NOT_IMPLEMENTED, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, 0x00, 2);
+
+    ProtocolMessageNetwork_handle_optional_interaction_rejected(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_FALSE(_oir_callback_called);
+
+}
+
+// ============================================================================
+// TEST: TDE Callback Invoked With Correct Parameters
+// @details Wires a mock callback and verifies error code, rejected MTI,
+//          source node ID, and node pointer are passed through correctly.
+// @coverage TDE callback dispatch (MessageNetworkS Section 3.5.2)
+// ============================================================================
+
+TEST(ProtocolMessageNetwork, tde_calls_callback)
+{
+
+    _reset_variables();
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+    ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network_with_callbacks);
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_TERMINATE_DUE_TO_ERROR);
+    openlcb_msg->payload_count = 4;
+    OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, 0x2000, 0);  // Temporary error
+    OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, MTI_VERIFY_NODE_ID_ADDRESSED, 2);
+
+    ProtocolMessageNetwork_handle_terminate_due_to_error(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_TRUE(_tde_callback_called);
+    EXPECT_EQ(_tde_callback_node, node1);
+    EXPECT_EQ(_tde_callback_source_node_id, SOURCE_ID);
+    EXPECT_EQ(_tde_callback_error_code, 0x2000);
+    EXPECT_EQ(_tde_callback_rejected_mti, MTI_VERIFY_NODE_ID_ADDRESSED);
+
+}
+
+// ============================================================================
+// TEST: TDE With NULL Callback (no crash)
+// @details Verifies the handler works with NULL callback (existing behavior).
+// @coverage TDE null-safety
+// ============================================================================
+
+TEST(ProtocolMessageNetwork, tde_null_callback)
+{
+
+    _reset_variables();
+    _global_initialize();  // uses interface with NULL callbacks
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_TERMINATE_DUE_TO_ERROR);
+    openlcb_msg->payload_count = 4;
+    OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, ERROR_PERMANENT_NOT_IMPLEMENTED, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, 0x00, 2);
+
+    ProtocolMessageNetwork_handle_terminate_due_to_error(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_FALSE(_tde_callback_called);
+
+}
+
+// ============================================================================
+// TEST: OIR Short Payload (< 4 bytes)
+// @details Verifies graceful handling when payload has only 2 bytes (error
+//          code present but no rejected MTI).  Callback should still fire
+//          with rejected_mti = 0.
+// @coverage OIR short payload robustness
+// ============================================================================
+
+TEST(ProtocolMessageNetwork, oir_short_payload)
+{
+
+    _reset_variables();
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+    ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network_with_callbacks);
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_OPTIONAL_INTERACTION_REJECTED);
+    openlcb_msg->payload_count = 2;
+    OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, 0x1043, 0);
+
+    ProtocolMessageNetwork_handle_optional_interaction_rejected(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_TRUE(_oir_callback_called);
+    EXPECT_EQ(_oir_callback_error_code, 0x1043);
+    EXPECT_EQ(_oir_callback_rejected_mti, 0x0000);  // Not present in payload
+
+}
+
+// ============================================================================
 // SECTION 2: EDGE CASE AND BOUNDARY TESTS
 // ============================================================================
 
@@ -1101,6 +1399,9 @@ TEST(ProtocolMessageNetwork, protocol_support_all_flags)
     EXPECT_EQ(payload_ptr[0], 0xFF);
     EXPECT_EQ(payload_ptr[1], 0xFF);
     EXPECT_EQ(payload_ptr[2], 0xFF);
+    EXPECT_EQ(payload_ptr[3], 0xFF);
+    EXPECT_EQ(payload_ptr[4], 0xFF);
+    EXPECT_EQ(payload_ptr[5], 0xFF);
 }
 
 // ============================================================================
@@ -1146,6 +1447,119 @@ TEST(ProtocolMessageNetwork, protocol_support_no_flags)
     EXPECT_EQ(payload_ptr[0], 0x00);
     EXPECT_EQ(payload_ptr[1], 0x00);
     EXPECT_EQ(payload_ptr[2], 0x00);
+    EXPECT_EQ(payload_ptr[3], 0x00);
+    EXPECT_EQ(payload_ptr[4], 0x00);
+    EXPECT_EQ(payload_ptr[5], 0x00);
+}
+
+// ============================================================================
+// TEST: Protocol Support with Upper 24 Bits Set
+// @details Tests protocol support inquiry encodes bits 24-47 into bytes 3-5
+// @coverage Protocol support 48-bit encoding
+// ============================================================================
+
+TEST(ProtocolMessageNetwork, protocol_support_upper_24_bits)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    node_parameters_t params_upper = _node_parameters_main_node;
+    params_upper.protocol_support = 0x0000AABBCC000000;
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &params_upper);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID,
+            DEST_ALIAS, DEST_ID, MTI_PROTOCOL_SUPPORT_INQUIRY);
+
+    ProtocolMessageNetwork_handle_protocol_support_inquiry(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(outgoing_msg->payload_count, 6);
+
+    uint8_t *payload_ptr = (uint8_t *)outgoing_msg->payload;
+
+    // Bytes 0-2: bits 16-23, 8-15, 0-7 -- all zero (no lower flags set)
+    EXPECT_EQ(payload_ptr[0], 0x00);
+    EXPECT_EQ(payload_ptr[1], 0x00);
+    EXPECT_EQ(payload_ptr[2], 0x00);
+
+    // Bytes 3-5: bits 40-47, 32-39, 24-31 -- should contain AA, BB, CC
+    EXPECT_EQ(payload_ptr[3], 0xAA);
+    EXPECT_EQ(payload_ptr[4], 0xBB);
+    EXPECT_EQ(payload_ptr[5], 0xCC);
+
+}
+
+// ============================================================================
+// TEST: Protocol Support with Mixed Lower and Upper Bits
+// @details Tests protocol support inquiry encodes all 48 bits correctly
+// @coverage Protocol support 48-bit encoding
+// ============================================================================
+
+TEST(ProtocolMessageNetwork, protocol_support_mixed_48_bits)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    node_parameters_t params_mixed = _node_parameters_main_node;
+    params_mixed.protocol_support = 0x0000112233445566;
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &params_mixed);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID,
+            DEST_ALIAS, DEST_ID, MTI_PROTOCOL_SUPPORT_INQUIRY);
+
+    ProtocolMessageNetwork_handle_protocol_support_inquiry(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(outgoing_msg->payload_count, 6);
+
+    uint8_t *payload_ptr = (uint8_t *)outgoing_msg->payload;
+
+    // Bytes 0-2: lower 24 bits (bits 16-23=0x44, 8-15=0x55, 0-7=0x66)
+    EXPECT_EQ(payload_ptr[0], 0x44);
+    EXPECT_EQ(payload_ptr[1], 0x55);
+    EXPECT_EQ(payload_ptr[2], 0x66);
+
+    // Bytes 3-5: upper 24 bits (bits 40-47=0x11, 32-39=0x22, 24-31=0x33)
+    EXPECT_EQ(payload_ptr[3], 0x11);
+    EXPECT_EQ(payload_ptr[4], 0x22);
+    EXPECT_EQ(payload_ptr[5], 0x33);
+
 }
 
 // ============================================================================

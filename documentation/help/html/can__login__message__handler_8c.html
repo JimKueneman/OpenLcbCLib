@@ -123,10 +123,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:a452fa6a87c0be4de318f40958579e72c"><td class="mdescLeft">&#160;</td><td class="mdescRight">State 6: Loads a CID5 frame (Node ID bits 23-12) into the outgoing buffer.  <br /></td></tr>
 <tr class="separator:a452fa6a87c0be4de318f40958579e72c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2d0270b36a9e0b33fb6966d08f1b390" id="r_aa2d0270b36a9e0b33fb6966d08f1b390"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2d0270b36a9e0b33fb6966d08f1b390">CanLoginMessageHandler_state_load_cid04</a> (<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:aa2d0270b36a9e0b33fb6966d08f1b390"><td class="mdescLeft">&#160;</td><td class="mdescRight">State 7: Loads a CID4 frame (Node ID bits 11-0) and resets the 200 ms timer.  <br /></td></tr>
+<tr class="memdesc:aa2d0270b36a9e0b33fb6966d08f1b390"><td class="mdescLeft">&#160;</td><td class="mdescRight">State 7: Loads a CID4 frame (Node ID bits 11-0) and snapshots current_tick for the 200 ms wait.  <br /></td></tr>
 <tr class="separator:aa2d0270b36a9e0b33fb6966d08f1b390"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ceb83bfdd574957d1e8ddc6d820caed" id="r_a3ceb83bfdd574957d1e8ddc6d820caed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ceb83bfdd574957d1e8ddc6d820caed">CanLoginMessageHandler_state_wait_200ms</a> (<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:a3ceb83bfdd574957d1e8ddc6d820caed"><td class="mdescLeft">&#160;</td><td class="mdescRight">State 8: Waits until timerticks &gt; 2, then transitions to LOAD_RESERVE_ID.  <br /></td></tr>
+<tr class="memdesc:a3ceb83bfdd574957d1e8ddc6d820caed"><td class="mdescLeft">&#160;</td><td class="mdescRight">State 8: Waits until 200ms have elapsed (via elapsed-time subtraction on current_tick), then transitions to LOAD_RESERVE_ID.  <br /></td></tr>
 <tr class="separator:a3ceb83bfdd574957d1e8ddc6d820caed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41f40ed325a32cf2f61fb66522c21977" id="r_a41f40ed325a32cf2f61fb66522c21977"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41f40ed325a32cf2f61fb66522c21977">CanLoginMessageHandler_state_load_rid</a> (<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
 <tr class="memdesc:a41f40ed325a32cf2f61fb66522c21977"><td class="mdescLeft">&#160;</td><td class="mdescRight">State 9: Loads an RID frame to claim the alias, then transitions to LOAD_AMD.  <br /></td></tr>
@@ -321,13 +321,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>State 7: Loads a CID4 frame (Node ID bits 11-0) and snapshots current_tick for the 200 ms wait. </p>
 <p>State 7: Loads a CID4 frame (Node ID bits 11-0) and resets the 200 ms timer. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>State machine context. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -346,14 +341,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>State 8: Waits until 200ms have elapsed (via elapsed-time subtraction on current_tick), then transitions to LOAD_RESERVE_ID. </p>
 <p>State 8: Waits until timerticks &gt; 2, then transitions to LOAD_RESERVE_ID. </p>
-<p>Non-blocking — returns immediately each call until the timer expires. timerticks is reset to 0 at the end of State 7 (CID4) and incremented every 100 ms, so this waits at least 300 ms — satisfying the spec minimum of 200 ms (§6.2.1). Requires the 100 ms timer tick to be running (OpenLcbNode_100ms_timer_tick).</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>State machine context. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>

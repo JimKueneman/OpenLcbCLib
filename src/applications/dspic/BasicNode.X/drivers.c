@@ -42,8 +42,7 @@
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "uart_handler.h"
 #include "common_loader_app.h"
-#include "../../../openlcb/openlcb_node.h"
-#include "../../../openlcb/protocol_datagram_handler.h"
+#include "../../../openlcb/openlcb_config.h"
 
 void BasicNodeDrivers_initialize(void) {
 
@@ -239,8 +238,7 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
 
-    OpenLcbNode_100ms_timer_tick();
-    ProtocolDatagramHandler_100ms_timer_tick();
+    OpenLcb_100ms_timer_tick();
 
 }
 

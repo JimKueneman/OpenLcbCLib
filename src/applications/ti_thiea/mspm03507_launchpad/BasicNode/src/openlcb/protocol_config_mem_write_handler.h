@@ -53,14 +53,17 @@ typedef struct {
 
     // ---- Required ----
 
-        /** @brief REQUIRED — Send Datagram Received OK with reply-pending time. */
-    void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
+        /** @brief REQUIRED — Send Datagram Received OK with reply-pending flag and time. */
+    void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds);
 
         /** @brief REQUIRED — Send Datagram Received Rejected with error code. */
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
 
         /** @brief REQUIRED — Write bytes to config memory; returns bytes written. */
     uint16_t(*config_memory_write) (openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+
+        /** @brief OPTIONAL — Read bytes from config memory; needed for write-under-mask read-modify-write. */
+    uint16_t(*config_memory_read) (openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
 
     // ---- Optional per-space write handlers ----
 
@@ -160,15 +163,63 @@ extern "C" {
          */
     extern void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_info_t *statemachine_info);
 
+    // ---- Incoming write-under-mask commands (server side) ----
+
         /**
-         * @brief Write-under-mask command.  Placeholder / stub.
+         * @brief Write-under-mask to CDI space (0xFF).
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
-         * @param space              Address space number.
-         * @param return_msg_ok      MTI for success reply.
-         * @param return_msg_fail    MTI for failure reply.
          */
-    extern void ProtocolConfigMemWriteHandler_write_space_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
+    extern void ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info(openlcb_statemachine_info_t *statemachine_info);
+
+        /**
+         * @brief Write-under-mask to All space (0xFE).
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolConfigMemWriteHandler_write_under_mask_space_all(openlcb_statemachine_info_t *statemachine_info);
+
+        /**
+         * @brief Write-under-mask to Config space (0xFD).
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(openlcb_statemachine_info_t *statemachine_info);
+
+        /**
+         * @brief Write-under-mask to ACDI-Mfg space (0xFC).
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info);
+
+        /**
+         * @brief Write-under-mask to ACDI-User space (0xFB).
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_user(openlcb_statemachine_info_t *statemachine_info);
+
+        /**
+         * @brief Write-under-mask to Train FDI space (0xFA).
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
+
+        /**
+         * @brief Write-under-mask to Train Fn Config space (0xF9).
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
+
+        /**
+         * @brief Write-under-mask to Firmware space (0xEF).
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolConfigMemWriteHandler_write_under_mask_space_firmware(openlcb_statemachine_info_t *statemachine_info);
 
     // ---- Outgoing write requests (client side — writing to another node) ----
 

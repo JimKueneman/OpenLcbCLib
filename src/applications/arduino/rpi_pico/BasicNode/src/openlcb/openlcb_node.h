@@ -114,6 +114,15 @@ extern "C" {
     extern openlcb_node_t *OpenLcbNode_get_next(uint8_t key);
 
         /**
+         * @brief Returns true if the current enumeration position is the last node.
+         *
+         * @param key  Same enumerator index used in the corresponding get_first/get_next calls.
+         *
+         * @return true if current enumeration position is the last allocated node.
+         */
+    extern bool OpenLcbNode_is_last(uint8_t key);
+
+        /**
          * @brief Finds a node by its 12-bit CAN alias.
          *
          * @param alias  12-bit CAN alias to search for.
@@ -140,12 +149,14 @@ extern "C" {
     extern void OpenLcbNode_reset_state(void);
 
         /**
-         * @brief 100ms timer tick handler for all allocated nodes.
+         * @brief 100ms timer tick handler — gates the application callback.
          *
-         * @details Increments each node's timerticks counter and invokes the optional
-         * application callback if registered.
+         * @details Called from the main loop with the current global tick.
+         * Fires the application callback at most once per unique tick value.
+         *
+         * @param current_tick  Current value of the global 100ms tick counter.
          */
-    extern void OpenLcbNode_100ms_timer_tick(void);
+    extern void OpenLcbNode_100ms_timer_tick(uint8_t current_tick);
 
 #ifdef __cplusplus
 }

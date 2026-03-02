@@ -48,6 +48,18 @@
 #include "../../openlcb/openlcb_buffer_list.h"
 
 /*******************************************************************************
+ * Mock tick counter (injected via interface function pointer)
+ ******************************************************************************/
+static uint8_t _test_global_100ms_tick = 0;
+
+uint8_t _mock_get_current_tick(void)
+{
+
+    return _test_global_100ms_tick;
+
+}
+
+/*******************************************************************************
  * Test Constants
  ******************************************************************************/
 #define NODE_ID_1 0x010203040506
@@ -303,12 +315,13 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .lock_shared_resources = &_lock_shared_resources,
     .unlock_shared_resources = &_unlock_shared_resources,
     .send_can_message = &_send_can_message,
-    .openlcb_node_find_by_alias = &_node_find_by_alias,
     .openlcb_node_get_first = &_openlcb_node_get_first,
     .openlcb_node_get_next = &_openlcb_node_get_next,
+    .openlcb_node_find_by_alias = &_node_find_by_alias,
     .login_statemachine_run = &_login_statemachine_run,
     .alias_mapping_get_alias_mapping_info = &_alias_mapping_get_alias_mapping_info,
     .alias_mapping_unregister = &_alias_mapping_unregister,
+    .get_current_tick = &_mock_get_current_tick,
     .handle_duplicate_aliases = &_handle_duplicate_aliases,
     .handle_outgoing_can_message = &_handle_outgoing_can_message,
     .handle_login_outgoing_can_message = &_handle_login_outgoing_can_message,

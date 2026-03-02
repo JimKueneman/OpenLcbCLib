@@ -101,6 +101,18 @@ extern "C"
         /** @brief Returns true if the list contains no messages. */
     extern bool OpenLcbBufferList_is_empty(void);
 
+        /**
+         * @brief Scans for stale in-progress buffers and frees them.
+         *
+         * @details Caller MUST hold the shared resource lock before calling.
+         * Frees any in-progress message whose elapsed time (computed from the
+         * global 100ms tick) has reached the timeout threshold.
+         *
+         * @param current_tick  Current value of the global 100ms tick counter,
+         *        passed as a parameter from the main loop.
+         */
+    extern void OpenLcbBufferList_check_timeouts(uint8_t current_tick);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

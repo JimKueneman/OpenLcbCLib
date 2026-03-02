@@ -69,7 +69,7 @@
 // Implement Application defined for UnFreeze (used during boot-loading)
 #define OPERATIONS_REQUEST_UNFREEZE_FUNC &DependencyInjectors_unfreeze
 // Implement writing of firmware
-#define FIRMWARE_WRITE_FUNC &DependencyInjectors_write_firemware
+#define FIRMWARE_WRITE_FUNC &DependencyInjectors_write_firmware
 
 // ******************************************************************************
 

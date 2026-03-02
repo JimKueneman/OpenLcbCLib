@@ -402,6 +402,7 @@ Functions</h2></td></tr>
 <p>Starts node enumeration from the first node. Returns true if processed.</p>
 <p>Algorithm:</p><ol type="1">
 <li>If node pointer already set, return false (already enumerating)</li>
+<li>Reset train search match flag for new enumeration</li>
 <li>Get first node; if NULL free the message and return true</li>
 <li>If node is in RUNSTATE_RUN, dispatch message via process_main_statemachine</li>
 <li>Return true</li>

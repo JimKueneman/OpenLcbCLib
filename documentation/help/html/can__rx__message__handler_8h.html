@@ -147,7 +147,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a9c11e35eed23a505787d5c49b58dfd83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Error Information Report CAN control frames.  <br /></td></tr>
 <tr class="separator:a9c11e35eed23a505787d5c49b58dfd83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa958ec2e603dabb8eed0c6c0e0bacc94" id="r_aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa958ec2e603dabb8eed0c6c0e0bacc94">CanRxMessageHandler_cid_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles CID (Check ID) CAN control frames.  <br /></td></tr>
+<tr class="memdesc:aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles CID (Check ID) CAN control frames (CanFrameTransferS 3.5.3).  <br /></td></tr>
 <tr class="separator:aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -699,21 +699,28 @@ NOT thread-safe.</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles CID (Check ID) CAN control frames. </p>
-<p>If we already have the claimed alias registered, sends an RID response to signal a conflict to the node performing alias allocation.</p>
+<p>Handles CID (Check ID) CAN control frames (CanFrameTransferS 3.5.3). </p>
+<p>Per the standard, nodes that receive a CID frame containing an alias they are using or have reserved shall respond with an RID frame. This applies regardless of whether the node is permitted or still claiming the alias. CID is a probe during alias reservation — the correct defence is always RID.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">can_msg</td><td>Received CID frame.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Silently drops RID response if buffer allocation fails. </dd>
+<dl class="section warning"><dt>Warning</dt><dd>Silently drops the reply if buffer allocation fails. </dd>
 <dd>
 NOT thread-safe.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#af5ab163a26257b020cff610f592a13d4" title="Handles RID (Reserve ID) CAN control frames.">CanRxMessageHandler_rid_frame</a></dd></dl>
-<p>Handles CID (Check ID) CAN control frames.</p>
-<pre class="fragment">* @param can_msg Received CID frame.
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Silently drops the RID reply if buffer allocation fails. </dd></dl>
+<p>Handles CID (Check ID) CAN control frames (CanFrameTransferS 3.5.3).</p>
+<p>Per the standard: "Nodes that receive a CID frame that contains
+the alias they are using or have reserved shall respond with an RID frame." CID is a probe during alias reservation — the correct defence is always RID, regardless of whether the node is permitted or still claiming. This differs from RID/AMD/AMR receipt which indicates an active alias collision and is handled by _check_for_duplicate_alias().</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg</td><td>Received CID frame.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Silently drops the reply if buffer allocation fails. </dd></dl>
 
 </div>
 </div>

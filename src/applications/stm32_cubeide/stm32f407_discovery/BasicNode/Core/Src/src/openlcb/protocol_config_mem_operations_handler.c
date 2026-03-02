@@ -243,7 +243,7 @@ static uint8_t _available_address_space_info_flags(config_mem_operations_request
     /** @brief Send Datagram Received OK; set flags for phase-2 re-invocation. */
 static void _load_datagram_ok_message(openlcb_statemachine_info_t *statemachine_info) {
 
-    _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
+    _interface->load_datagram_received_ok_message(statemachine_info, true, 0x00);
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
     statemachine_info->incoming_msg_info.enumerate = true; // call this again for the data
@@ -447,8 +447,10 @@ void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_s
      *
      * @details Algorithm:
      * -# Extract requester Node ID from payload
-     * -# If unlocked: grant to requester.  If locked and ID == 0: release.
-     * -# Reply with LOCK_REPLY + current owner Node ID
+     * -# If unlocked: grant to requester
+     * -# If locked and ID == 0: release (standard release)
+     * -# If locked and ID == current owner: release (owner self-release per MemoryConfigurationS §4.11)
+     * -# Otherwise: deny — reply with current owner Node ID
      *
      * @verbatim
      * @param statemachine_info                   Context.
@@ -469,7 +471,7 @@ void ProtocolConfigMemOperationsHandler_request_reserve_lock(openlcb_statemachin
 
     } else {
 
-        if (new_node_id == 0) {
+        if (new_node_id == 0 || new_node_id == statemachine_info->openlcb_node->owner_node) {
 
             statemachine_info->openlcb_node->owner_node = 0;
 
@@ -637,18 +639,13 @@ void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_inf
 
 }
 
-    /** @brief Dispatch Reset/Reboot command to two-phase handler. */
+    /** @brief Dispatch Reset/Reboot command to two-phase handler.
+     *
+     * Per MemoryConfigurationS Section 4.24, the Reset/Reboot command is only
+     * [0x20, 0xA9] with no Node ID in the payload.  Unlike Factory Reset (0xAA,
+     * Section 4.25) which requires a Node ID as a safety guard, Reset/Reboot
+     * applies unconditionally to the addressed node. */
 void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t *statemachine_info) {
-
-    node_id_t target_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(
-            statemachine_info->incoming_msg_info.msg_ptr, 2);
-
-    if (target_node_id != statemachine_info->openlcb_node->id) {
-
-        statemachine_info->outgoing_msg_info.valid = false;
-        return;
-
-    }
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -659,7 +656,11 @@ void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t
 
 }
 
-    /** @brief Dispatch Factory Reset command to two-phase handler. */
+    /** @brief Dispatch Factory Reset command to two-phase handler.
+     *
+     * Per MemoryConfigurationS Section 4.25, the Reinitialize/Factory Reset
+     * command includes a 6-byte Node ID (bytes 2-7) as a safety guard.  The
+     * target Node ID must match or the command is silently ignored. */
 void ProtocolConfigMemOperationsHandler_factory_reset(openlcb_statemachine_info_t *statemachine_info) {
 
     node_id_t target_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(

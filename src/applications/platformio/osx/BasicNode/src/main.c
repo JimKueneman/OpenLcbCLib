@@ -33,10 +33,10 @@ static const openlcb_config_t openlcb_config = {
     .config_mem_read         = &OSxDrivers_config_mem_read,
     .config_mem_write        = &OSxDrivers_config_mem_write,
     .reboot                  = &OSxDrivers_reboot,
+    .factory_reset           = &Callbacks_operations_request_factory_reset,
     .freeze                  = &Callbacks_freeze,
     .unfreeze                = &Callbacks_unfreeze,
-    .firmware_write          = &Callbacks_write_firmmware,
-    .factory_reset           = &Callbacks_operations_request_factory_reset,
+    .firmware_write          = &Callbacks_write_firmware,
     .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,
 };
 

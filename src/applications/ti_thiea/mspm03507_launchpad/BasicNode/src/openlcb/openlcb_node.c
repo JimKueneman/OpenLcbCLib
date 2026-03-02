@@ -58,6 +58,9 @@ static uint8_t _node_enum_index_array[MAX_NODE_ENUM_KEY_VALUES];
 /** @brief Stored interface pointer for optional application callbacks. */
 static const interface_openlcb_node_t *_interface;
 
+    /** @brief Tracks the last tick value to ensure the app callback fires at most once per tick. */
+static uint8_t _last_app_callback_tick = 0;
+
     /**
      * @brief Clears all fields in a single node structure.
      *
@@ -145,6 +148,7 @@ void OpenLcbNode_initialize(const interface_openlcb_node_t *interface)
 {
 
     _interface = interface;
+    _last_app_callback_tick = 0;
 
     for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
@@ -228,6 +232,31 @@ openlcb_node_t *OpenLcbNode_get_next(uint8_t key)
     }
 
     return &_openlcb_nodes.node[_node_enum_index_array[key]];
+}
+
+    /**
+     * @brief Returns true if the current enumeration position is the last node.
+     *
+     * @details Algorithm:
+     * -# Validate key is within range
+     * -# Return false if no nodes allocated
+     * -# Return true if current index equals count minus one
+     *
+     * @verbatim
+     * @param key Same enumerator index used in the corresponding get_first/get_next calls
+     * @endverbatim
+     *
+     * @return true if current enumeration position is the last allocated node
+     */
+bool OpenLcbNode_is_last(uint8_t key)
+{
+
+    if (key >= MAX_NODE_ENUM_KEY_VALUES) { return false; }
+
+    if (_openlcb_nodes.count == 0) { return false; }
+
+    return (_node_enum_index_array[key] >= _openlcb_nodes.count - 1);
+
 }
 
     /**
@@ -389,20 +418,21 @@ openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t node_id)
 }
 
     /**
-     * @brief 100ms timer tick handler for all allocated nodes.
+     * @brief 100ms timer tick handler — gates the application callback.
      *
-     * @details Algorithm:
-     * -# Increment timerticks on each allocated node
-     * -# Call the interface on_100ms_timer_tick callback if registered
+     * @details Called from the main loop with the current global tick. Fires the
+     * application callback at most once per unique tick value. The per-node
+     * timerticks increment has been removed — all modules now use the global
+     * clock via subtraction-based elapsed-time checks.
+     *
+     * @param current_tick  Current value of the global 100ms tick counter.
      */
-void OpenLcbNode_100ms_timer_tick(void)
+void OpenLcbNode_100ms_timer_tick(uint8_t current_tick)
 {
 
-    for (int i = 0; i < _openlcb_nodes.count; i++) {
+    if ((uint8_t)(current_tick - _last_app_callback_tick) == 0) { return; }
 
-        _openlcb_nodes.node[i].timerticks++;
-
-    }
+    _last_app_callback_tick = current_tick;
 
     if (_interface && _interface->on_100ms_timer_tick) {
 

@@ -124,6 +124,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ad579e2c105067c9311bb173b30cd9130" id="r_ad579e2c105067c9311bb173b30cd9130"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad579e2c105067c9311bb173b30cd9130">alias_mapping_unregister</a> )(uint16_t alias)</td></tr>
 <tr class="memdesc:ad579e2c105067c9311bb173b30cd9130"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Remove an alias from the mapping table. Typical: AliasMappings_unregister.  <br /></td></tr>
 <tr class="separator:ad579e2c105067c9311bb173b30cd9130"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab317b73b50825b5354cf9024a035f37a" id="r_ab317b73b50825b5354cf9024a035f37a"><td class="memItemLeft" align="right" valign="top">uint8_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab317b73b50825b5354cf9024a035f37a">get_current_tick</a> )(void)</td></tr>
+<tr class="memdesc:ab317b73b50825b5354cf9024a035f37a"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Return the current value of the global 100ms tick counter. Typical: OpenLcb_get_global_100ms_tick.  <br /></td></tr>
+<tr class="separator:ab317b73b50825b5354cf9024a035f37a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdd549c43e6e2393090daf202ee785cf" id="r_acdd549c43e6e2393090daf202ee785cf"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acdd549c43e6e2393090daf202ee785cf">handle_duplicate_aliases</a> )(void)</td></tr>
 <tr class="memdesc:acdd549c43e6e2393090daf202ee785cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Scan and resolve all duplicate aliases. Typical: CanMainStatemachine_handle_duplicate_aliases.  <br /></td></tr>
 <tr class="separator:acdd549c43e6e2393090daf202ee785cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -286,6 +289,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>REQUIRED. Remove an alias from the mapping table. Typical: AliasMappings_unregister. </p>
+
+</div>
+</div>
+<a id="ab317b73b50825b5354cf9024a035f37a" name="ab317b73b50825b5354cf9024a035f37a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab317b73b50825b5354cf9024a035f37a">&#9670;&#160;</a></span>get_current_tick</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t(* get_current_tick) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>REQUIRED. Return the current value of the global 100ms tick counter. Typical: OpenLcb_get_global_100ms_tick. </p>
 
 </div>
 </div>

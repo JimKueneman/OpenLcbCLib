@@ -179,11 +179,11 @@ static void _dispatch_write_request(openlcb_statemachine_info_t *statemachine_in
 
             if (_interface->delayed_reply_time) {
 
-                _interface->load_datagram_received_ok_message(statemachine_info, _interface->delayed_reply_time(statemachine_info, config_mem_write_request_info));
+                _interface->load_datagram_received_ok_message(statemachine_info, true, _interface->delayed_reply_time(statemachine_info, config_mem_write_request_info));
 
             } else {
 
-                _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
+                _interface->load_datagram_received_ok_message(statemachine_info, false, 0x00);
 
             }
 
@@ -290,35 +290,327 @@ void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_inf
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
 }
 
-// Message handling stub functions are documented in the header file
-// These are intentional stubs reserved for future implementation
+// ============================================================================
+// Write-Under-Mask Implementation
+// ============================================================================
 
     /**
-    * @brief Processes a write command with bit mask (stub)
-    *
-    * @details This stub is reserved for implementing write-under-mask operations
-    * which allow modifying specific bits in memory without affecting other bits.
-    *
-    * @verbatim
-    * @param statemachine_info Pointer to state machine context
-    * @endverbatim
-    * @verbatim
-    * @param space Address space identifier
-    * @endverbatim
-    * @verbatim
-    * @param return_msg_ok Message type for successful write response
-    * @endverbatim
-    * @verbatim
-    * @param return_msg_fail Message type for failed write response
-    * @endverbatim
-    *
-    * @note Intentional stub - reserved for future implementation
-    */
-void ProtocolConfigMemWriteHandler_write_space_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
+     * @brief Parse address, byte count, encoding, and data/mask pointers from
+     *        incoming write-under-mask datagram.
+     *
+     * @details The payload contains N data bytes followed by N mask bytes.
+     * The total data+mask region is (payload_count - header_bytes) and N is
+     * half of that.  The write_buffer pointer is set to the data start;
+     * the mask begins at write_buffer + bytes.
+     *
+     * @verbatim
+     * @param statemachine_info             Context with incoming message.
+     * @param config_mem_write_request_info Output: populated request fields.
+     * @endverbatim
+     */
+static void _extract_write_under_mask_command_parameters(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
-    // Intentional stub - reserved for future implementation
+    uint16_t header_bytes;
+
+    if (*statemachine_info->incoming_msg_info.msg_ptr->payload[1] == CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6) {
+
+        config_mem_write_request_info->encoding = ADDRESS_SPACE_IN_BYTE_6;
+        header_bytes = 7;
+
+    } else {
+
+        config_mem_write_request_info->encoding = ADDRESS_SPACE_IN_BYTE_1;
+        header_bytes = 6;
+
+    }
+
+    uint16_t total_data_mask = statemachine_info->incoming_msg_info.msg_ptr->payload_count - header_bytes;
+    config_mem_write_request_info->bytes = total_data_mask / 2;
+    config_mem_write_request_info->data_start = header_bytes;
+    config_mem_write_request_info->address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
+    config_mem_write_request_info->write_buffer = (configuration_memory_buffer_t*) & statemachine_info->incoming_msg_info.msg_ptr->payload[header_bytes];
 
 }
+
+    /**
+     * @brief Validate write-under-mask parameters: space present, not read-only,
+     *        bounds, 1-64 bytes, even data+mask length.
+     *
+     * @return S_OK or an OpenLCB error code.
+     */
+static uint16_t _is_valid_write_under_mask_parameters(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+
+    if (!config_mem_write_request_info->space_info->present) {
+
+        return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN;
+    }
+
+    if (config_mem_write_request_info->space_info->read_only) {
+
+        return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_WRITE_TO_READ_ONLY;
+    }
+
+    if (config_mem_write_request_info->address > config_mem_write_request_info->space_info->highest_address) {
+
+        return ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS;
+    }
+
+    if (config_mem_write_request_info->bytes > 64) {
+
+        return ERROR_PERMANENT_INVALID_ARGUMENTS;
+    }
+
+    if (config_mem_write_request_info->bytes == 0) {
+
+        return ERROR_PERMANENT_INVALID_ARGUMENTS;
+    }
+
+    // Data+mask region must have even length
+    uint16_t header_bytes = (config_mem_write_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) ? 7 : 6;
+    uint16_t total_data_mask = statemachine_info->incoming_msg_info.msg_ptr->payload_count - header_bytes;
+
+    if (total_data_mask % 2 != 0) {
+
+        return ERROR_PERMANENT_INVALID_ARGUMENTS;
+    }
+
+    return S_OK;
+
+}
+
+    /**
+     * @brief Read-modify-write: read current data, apply mask, write back.
+     *
+     * @details For each byte position i:
+     *   new[i] = (old[i] & ~mask[i]) | (data[i] & mask[i])
+     *
+     * @verbatim
+     * @param statemachine_info             Context for reply messages.
+     * @param config_mem_write_request_info Request with address, bytes, data pointer.
+     * @param mask_bytes                    Pointer to mask bytes (same length as data).
+     * @endverbatim
+     *
+     * @return Number of bytes written, or 0 on failure.
+     */
+static uint16_t _write_data_under_mask(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, uint8_t *mask_bytes) {
+
+    configuration_memory_buffer_t temp;
+    uint16_t read_count = 0;
+    uint16_t write_count = 0;
+
+    if (!_interface->config_memory_read) {
+
+        OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+        statemachine_info->outgoing_msg_info.valid = true;
+
+        return 0;
+
+    }
+
+    // Step 1: Read current values
+    read_count = _interface->config_memory_read(
+            statemachine_info->openlcb_node,
+            config_mem_write_request_info->address,
+            config_mem_write_request_info->bytes,
+            &temp);
+
+    if (read_count < config_mem_write_request_info->bytes) {
+
+        OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_TEMPORARY_TRANSFER_ERROR);
+        statemachine_info->outgoing_msg_info.valid = true;
+
+        return 0;
+
+    }
+
+    // Step 2: Apply mask — new[i] = (old[i] & ~mask[i]) | (data[i] & mask[i])
+    uint8_t *data_bytes = (uint8_t *) config_mem_write_request_info->write_buffer;
+
+    for (uint16_t i = 0; i < config_mem_write_request_info->bytes; i++) {
+
+        temp[i] = (temp[i] & ~mask_bytes[i]) | (data_bytes[i] & mask_bytes[i]);
+
+    }
+
+    // Step 3: Write back merged values
+    if (_interface->config_memory_write) {
+
+        write_count = _interface->config_memory_write(
+                statemachine_info->openlcb_node,
+                config_mem_write_request_info->address,
+                config_mem_write_request_info->bytes,
+                &temp);
+
+        if (write_count < config_mem_write_request_info->bytes) {
+
+            OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_TEMPORARY_TRANSFER_ERROR);
+
+        }
+
+    } else {
+
+        OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+
+    }
+
+    statemachine_info->outgoing_msg_info.valid = true;
+
+    return write_count;
+
+}
+
+    /**
+     * @brief Two-phase dispatcher for write-under-mask: phase 1 validates + ACKs,
+     *        phase 2 reads-modifies-writes.
+     *
+     * @details Algorithm:
+     * -# Extract data/mask parameters from incoming datagram
+     * -# Phase 1: validate → reject or ACK + re-invoke
+     * -# Phase 2: clamp overrun, read current data, apply mask, write back
+     *
+     * @verbatim
+     * @param statemachine_info             Context.
+     * @param config_mem_write_request_info Carries space_info pointer.
+     * @endverbatim
+     */
+static void _dispatch_write_under_mask_request(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+
+    uint16_t error_code = S_OK;
+
+    _extract_write_under_mask_command_parameters(statemachine_info, config_mem_write_request_info);
+
+    // Save mask pointer before any potential clamping of bytes
+    uint8_t *mask_bytes = ((uint8_t *) config_mem_write_request_info->write_buffer) + config_mem_write_request_info->bytes;
+
+    if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
+
+        error_code = _is_valid_write_under_mask_parameters(statemachine_info, config_mem_write_request_info);
+
+        if (error_code) {
+
+            _interface->load_datagram_received_rejected_message(statemachine_info, error_code);
+
+        } else {
+
+            if (_interface->delayed_reply_time) {
+
+                _interface->load_datagram_received_ok_message(statemachine_info, true, _interface->delayed_reply_time(statemachine_info, config_mem_write_request_info));
+
+            } else {
+
+                _interface->load_datagram_received_ok_message(statemachine_info, false, 0x00);
+
+            }
+
+            statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
+            statemachine_info->incoming_msg_info.enumerate = true; // call this again for the data
+
+        }
+
+        return;
+
+    }
+
+    _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
+
+    OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
+    _write_data_under_mask(statemachine_info, config_mem_write_request_info, mask_bytes);
+
+    statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // Done
+    statemachine_info->incoming_msg_info.enumerate = false; // done
+
+}
+
+    /** @brief Dispatch CDI (0xFF) write-under-mask to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_configuration_definition;
+
+    _dispatch_write_under_mask_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
+    /** @brief Dispatch All (0xFE) write-under-mask to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_under_mask_space_all(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_all;
+
+    _dispatch_write_under_mask_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
+    /** @brief Dispatch Config (0xFD) write-under-mask to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_config_memory;
+
+    _dispatch_write_under_mask_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
+    /** @brief Dispatch ACDI-Mfg (0xFC) write-under-mask to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_acdi_manufacturer;
+
+    _dispatch_write_under_mask_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
+    /** @brief Dispatch ACDI-User (0xFB) write-under-mask to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_user(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_acdi_user;
+
+    _dispatch_write_under_mask_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
+    /** @brief Dispatch Train FDI (0xFA) write-under-mask to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_definition_info;
+
+    _dispatch_write_under_mask_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
+    /** @brief Dispatch Train Fn Config (0xF9) write-under-mask to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_config_memory;
+
+    _dispatch_write_under_mask_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
+    /** @brief Dispatch Firmware (0xEF) write-under-mask to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_under_mask_space_firmware(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_firmware;
+
+    _dispatch_write_under_mask_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
+// Message handling stub functions are documented in the header file
+// These are intentional stubs reserved for future implementation
 
     /**
     * @brief Processes a generic write message (stub)

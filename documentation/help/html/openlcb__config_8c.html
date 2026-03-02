@@ -101,6 +101,9 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a135d3ff3afe3f9b5e996051ae85fe3b5" id="r_a135d3ff3afe3f9b5e996051ae85fe3b5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a135d3ff3afe3f9b5e996051ae85fe3b5">OpenLcb_get_global_100ms_tick</a> (void)</td></tr>
+<tr class="memdesc:a135d3ff3afe3f9b5e996051ae85fe3b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current value of the global 100ms tick counter.  <br /></td></tr>
+<tr class="separator:a135d3ff3afe3f9b5e996051ae85fe3b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc5207f2b2fb16cc8ef8cbacac9f71ca" id="r_acc5207f2b2fb16cc8ef8cbacac9f71ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc5207f2b2fb16cc8ef8cbacac9f71ca">OpenLcb_initialize</a> (const <a class="el" href="structopenlcb__config__t.html">openlcb_config_t</a> *config)</td></tr>
 <tr class="memdesc:acc5207f2b2fb16cc8ef8cbacac9f71ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the entire OpenLCB stack from the user configuration.  <br /></td></tr>
 <tr class="separator:acc5207f2b2fb16cc8ef8cbacac9f71ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -108,10 +111,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:a0609edaf85a85ed07c25a5220c11dd27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a node slot and assigns its ID and parameters.  <br /></td></tr>
 <tr class="separator:a0609edaf85a85ed07c25a5220c11dd27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa00d6e3349959d1f1380597cd2f6b311" id="r_aa00d6e3349959d1f1380597cd2f6b311"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa00d6e3349959d1f1380597cd2f6b311">OpenLcb_run</a> (void)</td></tr>
-<tr class="memdesc:aa00d6e3349959d1f1380597cd2f6b311"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs one iteration of the CAN, login, and main state machines.  <br /></td></tr>
+<tr class="memdesc:aa00d6e3349959d1f1380597cd2f6b311"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs one iteration of all state machines and periodic services.  <br /></td></tr>
 <tr class="separator:aa00d6e3349959d1f1380597cd2f6b311"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca7889246e45009fe606cd700fa738d1" id="r_aca7889246e45009fe606cd700fa738d1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca7889246e45009fe606cd700fa738d1">OpenLcb_100ms_timer_tick</a> (void)</td></tr>
-<tr class="memdesc:aca7889246e45009fe606cd700fa738d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatches the 100ms tick to all compiled-in modules that need periodic service.  <br /></td></tr>
+<tr class="memdesc:aca7889246e45009fe606cd700fa738d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increments the global 100ms tick counter. This is the ONLY action performed by the timer interrupt — all real work runs in the main loop.  <br /></td></tr>
 <tr class="separator:aca7889246e45009fe606cd700fa738d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -127,6 +130,27 @@ Functions</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="a135d3ff3afe3f9b5e996051ae85fe3b5" name="a135d3ff3afe3f9b5e996051ae85fe3b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a135d3ff3afe3f9b5e996051ae85fe3b5">&#9670;&#160;</a></span>OpenLcb_get_global_100ms_tick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t OpenLcb_get_global_100ms_tick </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the current value of the global 100ms tick counter. </p>
+<p>Used by wiring code (<a class="el" href="openlcb__config_8c.html" title="Library-internal wiring module for config facade.">openlcb_config.c</a>, <a class="el" href="can__config_8c.html" title="Library-internal wiring module for CAN bus transport.">can_config.c</a>) to read the clock and inject it into modules via parameters or interface function pointers. Individual modules should NOT call this directly — they receive the tick through their function parameters or interface.</p>
+<dl class="section return"><dt>Returns</dt><dd>Current tick count (wraps at 255). </dd></dl>
+
+</div>
+</div>
 <a id="acc5207f2b2fb16cc8ef8cbacac9f71ca" name="acc5207f2b2fb16cc8ef8cbacac9f71ca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acc5207f2b2fb16cc8ef8cbacac9f71ca">&#9670;&#160;</a></span>OpenLcb_initialize()</h2>
 
@@ -196,7 +220,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Runs one iteration of the CAN, login, and main state machines. </p>
+<p>Runs one iteration of all state machines and periodic services. </p>
 <p>Runs one iteration of all state machines. </p>
 
 </div>
@@ -216,8 +240,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Dispatches the 100ms tick to all compiled-in modules that need periodic service. </p>
-<p>Drives all time-dependent protocol modules. </p>
+<p>Increments the global 100ms tick counter. This is the ONLY action performed by the timer interrupt — all real work runs in the main loop. </p>
+<p>Increments the global 100ms tick counter. </p>
 
 </div>
 </div>

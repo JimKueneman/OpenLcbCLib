@@ -47,8 +47,7 @@
 
 #include "../src/openlcb/openlcb_types.h"
 #include "../src/drivers/canbus/can_types.h"
-#include "../src/openlcb/openlcb_node.h"
-#include "../src/openlcb/protocol_datagram_handler.h"
+#include "../src/openlcb/openlcb_config.h"
 
 void TI_DriverLibDrivers_initialize(void)
 {
@@ -121,6 +120,5 @@ void TI_DriverLibDrivers_unlock_shared_resources(void)
 void SysTick_Handler(void)
 {
 
-   OpenLcbNode_100ms_timer_tick();
-   ProtocolDatagramHandler_100ms_timer_tick();
+   OpenLcb_100ms_timer_tick();
 }

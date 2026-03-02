@@ -276,7 +276,9 @@ bool CanTxMessageHandler_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* c
      *
      * @details Algorithm:
      * -# If payload fits in one frame (<= 8 bytes): copy payload, build identifier, transmit.
-     * -# On success, advance *openlcb_start_index. Multi-frame unaddressed not yet implemented.
+     * -# On success, advance *openlcb_start_index.
+     * -# Assert on oversized payloads -- no standard unaddressed message exceeds 8 bytes.
+     *    PCER-with-Payload uses dedicated CAN MTIs (FIRST/MIDDLE/LAST), not this path.
      * -# Return transmission result.
      *
      * @verbatim
@@ -285,9 +287,7 @@ bool CanTxMessageHandler_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* c
      * @param openlcb_start_index  Current payload position; updated on success.
      * @endverbatim
      *
-     * @return true if transmitted, false on hardware failure.
-     *
-     * @warning Multi-frame unaddressed messages are not yet implemented.
+     * @return true if transmitted, false on hardware failure or oversized payload.
      */
 bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
 
@@ -306,9 +306,11 @@ bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_m
 
         }
 
-    } else { // multi frame
+    } else {
 
-        // TODO: Is there such a thing as a unaddressed multi frame?
+        // No standard unaddressed message exceeds 8 bytes on CAN.
+        // PCER-with-Payload uses dedicated CAN MTIs (FIRST/MIDDLE/LAST), not this path.
+        assert(false);
 
     }
 

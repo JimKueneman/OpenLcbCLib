@@ -104,6 +104,9 @@ bool fifo_pop_called = false;
 openlcb_node_t *mock_first_node = nullptr;
 openlcb_node_t *mock_next_node = nullptr;
 
+// Mock tick counter for get_current_tick interface
+static uint8_t _test_global_100ms_tick = 0;
+
 // Handle function call tracking
 bool handle_outgoing_called = false;
 bool handle_reenumerate_called = false;
@@ -190,6 +193,17 @@ node_parameters_t _node_parameters_main_node = {
 void _update_called_function_ptr(void *function_ptr)
 {
     called_function_ptr = (void *)((long long)function_ptr + (long long)called_function_ptr);
+}
+
+// ============================================================================
+// Mock Clock Access
+// ============================================================================
+
+uint8_t _mock_get_current_tick(void)
+{
+
+    return _test_global_100ms_tick;
+
 }
 
 // ============================================================================
@@ -457,6 +471,13 @@ openlcb_node_t *_OpenLcbNode_get_next(uint8_t key)
     return node_get_next;
 }
 
+bool _OpenLcbNode_is_last(uint8_t key)
+{
+    _update_called_function_ptr((void *)&_OpenLcbNode_is_last);
+
+    return false;
+}
+
 // ============================================================================
 // Mock Required Functions - Message Transmission
 // ============================================================================
@@ -721,11 +742,13 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .stream_data_complete = &_ProtocolStream_data_complete,
 
     // Required Functions
-    .openlcb_node_get_first = &_OpenLcbNode_get_first,
-    .openlcb_node_get_next = &_OpenLcbNode_get_next,
-    .send_openlcb_msg = &_CanTxStatemachine_send_openlcb_message,
     .lock_shared_resources = &_ExampleDrivers_lock_shared_resources,
     .unlock_shared_resources = &_ExampleDrivers_unlock_shared_resources,
+    .send_openlcb_msg = &_CanTxStatemachine_send_openlcb_message,
+    .get_current_tick = &_mock_get_current_tick,
+    .openlcb_node_get_first = &_OpenLcbNode_get_first,
+    .openlcb_node_get_next = &_OpenLcbNode_get_next,
+    .openlcb_node_is_last = &_OpenLcbNode_is_last,
     .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
 
     .handle_outgoing_openlcb_message = &_OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
@@ -794,11 +817,13 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .stream_data_complete = nullptr,
 
     // Required functions (same as full interface)
-    .openlcb_node_get_first = &_OpenLcbNode_get_first,
-    .openlcb_node_get_next = &_OpenLcbNode_get_next,
-    .send_openlcb_msg = &_CanTxStatemachine_send_openlcb_message,
     .lock_shared_resources = &_ExampleDrivers_lock_shared_resources,
     .unlock_shared_resources = &_ExampleDrivers_unlock_shared_resources,
+    .send_openlcb_msg = &_CanTxStatemachine_send_openlcb_message,
+    .get_current_tick = &_mock_get_current_tick,
+    .openlcb_node_get_first = &_OpenLcbNode_get_first,
+    .openlcb_node_get_next = &_OpenLcbNode_get_next,
+    .openlcb_node_is_last = &_OpenLcbNode_is_last,
     .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
 
     .handle_outgoing_openlcb_message = &_OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
@@ -3489,8 +3514,8 @@ TEST(OpenLcbMainStatemachine, null_handler_stream_init_request)
 
     load_interaction_rejected_called = false;
     OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
-    
-    EXPECT_FALSE(load_interaction_rejected_called);
+
+    EXPECT_TRUE(load_interaction_rejected_called);
 }
 
 TEST(OpenLcbMainStatemachine, null_handler_stream_init_reply)
@@ -3531,8 +3556,8 @@ TEST(OpenLcbMainStatemachine, null_handler_stream_send)
 
     load_interaction_rejected_called = false;
     OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
-    
-    EXPECT_FALSE(load_interaction_rejected_called);
+
+    EXPECT_TRUE(load_interaction_rejected_called);
 }
 
 TEST(OpenLcbMainStatemachine, null_handler_stream_proceed)
@@ -3571,8 +3596,8 @@ TEST(OpenLcbMainStatemachine, null_handler_stream_complete)
 
     load_interaction_rejected_called = false;
     OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
-    
-    EXPECT_FALSE(load_interaction_rejected_called);
+
+    EXPECT_TRUE(load_interaction_rejected_called);
 }
 
 // ----------------------------------------------------------------------------

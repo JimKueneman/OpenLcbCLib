@@ -153,6 +153,7 @@ extern "C" {
         uint8_t login_outgoing_can_msg_valid : 1; /**< @brief Set when login_outgoing_can_msg needs transmitting. */
         can_msg_t *outgoing_can_msg;              /**< @brief Pool-allocated reply frame; freed after TX. */
         uint8_t enumerating : 1;                  /**< @brief Set when the handler will produce N reply frames. */
+        uint8_t current_tick;                     /**< @brief Snapshot of the global 100ms tick for login timing. */
     } can_statemachine_info_t;
 
     /**

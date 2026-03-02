@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['broadcast_5ftime_5fmax_5fcustom_5fclocks_0',['BROADCAST_TIME_MAX_CUSTOM_CLOCKS',['../openlcb__application__broadcast__time_8h.html#ab1478d89f7775866bb89c44d33dc6407',1,'openlcb_application_broadcast_time.h']]],
-  ['broadcast_5ftime_5fms_5fper_5fminute_5ffixed_5fpoint_1',['BROADCAST_TIME_MS_PER_MINUTE_FIXED_POINT',['../openlcb__application__broadcast__time_8c.html#ac9f8e42d8c5a163bdd061dd615e297a6',1,'openlcb_application_broadcast_time.c']]],
-  ['broadcast_5ftime_5ftotal_5fclock_5fcount_2',['BROADCAST_TIME_TOTAL_CLOCK_COUNT',['../openlcb__application__broadcast__time_8h.html#a1d97020c4de2426cbcb4a329226c94cd',1,'openlcb_application_broadcast_time.h']]],
-  ['broadcast_5ftime_5fwellknown_5fclock_5fcount_3',['BROADCAST_TIME_WELLKNOWN_CLOCK_COUNT',['../openlcb__application__broadcast__time_8h.html#a3526ea92d7bddbe8307660237ad6790a',1,'openlcb_application_broadcast_time.h']]]
+  ['can_5fmti_5fpcer_5fwith_5fpayload_5ffirst_0',['CAN_MTI_PCER_WITH_PAYLOAD_FIRST',['../can__types_8h.html#ac286659a58fc0e1c14b2de378eeaaf15',1,'can_types.h']]],
+  ['can_5fmti_5fpcer_5fwith_5fpayload_5flast_1',['CAN_MTI_PCER_WITH_PAYLOAD_LAST',['../can__types_8h.html#a44e6d0a4d6cdaaabc0c77f3845e7cadc',1,'can_types.h']]],
+  ['can_5fmti_5fpcer_5fwith_5fpayload_5fmiddle_2',['CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE',['../can__types_8h.html#adb1df51231a5cbc78cd982f872079447',1,'can_types.h']]],
+  ['can_5frx_5finprocess_5ftimeout_5fticks_3',['CAN_RX_INPROCESS_TIMEOUT_TICKS',['../can__rx__message__handler_8c.html#a73c1c8d9d88ec0da070ff30ada2ac6e0',1,'can_rx_message_handler.c']]]
 ];

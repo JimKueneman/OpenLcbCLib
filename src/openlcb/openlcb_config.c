@@ -59,7 +59,7 @@
 #include "protocol_datagram_handler.h"
 #endif
 
-#ifdef OPENLCB_COMPILE_CONFIG_MEMORY
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
 #include "protocol_config_mem_read_handler.h"
 #include "protocol_config_mem_write_handler.h"
 #include "protocol_config_mem_operations_handler.h"
@@ -101,7 +101,7 @@ static interface_openlcb_protocol_event_transport_t _event_transport;
 static interface_protocol_datagram_handler_t _datagram;
 #endif
 
-#ifdef OPENLCB_COMPILE_CONFIG_MEMORY
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
 static interface_protocol_config_mem_read_handler_t _config_read;
 static interface_protocol_config_mem_write_handler_t _config_write;
 static interface_protocol_config_mem_operations_handler_t _config_ops;
@@ -122,6 +122,47 @@ static interface_protocol_train_search_handler_t _train_search;
 #endif
 
 static const openlcb_config_t *_config;
+
+    /**
+     * @brief Global 100ms tick counter — the sole action of the timer interrupt.
+     *
+     * @details This counter is the library's timekeeping foundation. It is
+     * incremented once per 100ms timer tick (which may be an interrupt or a
+     * separate thread depending on the platform).
+     *
+     * ALL other modules compute elapsed time by snapshotting this counter at a
+     * start event and later subtracting: elapsed = (current - snapshot). The
+     * uint8_t wraps at 256, and unsigned subtraction handles the wrap correctly
+     * for durations up to 255 ticks (25.5 seconds).
+     *
+     * Platform safety: volatile uint8_t reads and writes are single-instruction
+     * operations on all target architectures (8-bit PIC through 64-bit ARM).
+     * Only the timer interrupt performs the increment (read-modify-write); all
+     * other contexts only read. Timer interrupts do not re-enter, so the
+     * increment is safe without locking.
+     *
+     * Module isolation: no module calls this directly. The wiring code reads it
+     * once per main-loop iteration and passes the value down as a parameter.
+     * The Rx handler receives it via an interface function pointer. This
+     * preserves the library's dependency-injection pattern.
+     */
+static volatile uint8_t _global_100ms_tick = 0;
+
+    /**
+     * @brief Returns the current value of the global 100ms tick counter.
+     *
+     * @details Used by wiring code (openlcb_config.c, can_config.c) to read
+     * the clock and inject it into modules via parameters or interface
+     * function pointers. Individual modules should NOT call this directly —
+     * they receive the tick through their function parameters or interface.
+     *
+     * @return Current tick count (wraps at 255).
+     */
+uint8_t OpenLcb_get_global_100ms_tick(void) {
+
+    return _global_100ms_tick;
+
+}
 
 // ---- Build functions ----
 
@@ -293,6 +334,16 @@ static void _build_login_statemachine(void) {
 
 }
 
+    /** @brief Wires OIR/TDE application callbacks into the message network interface. */
+static void _build_msg_network(void) {
+
+    memset(&_msg_network, 0, sizeof(_msg_network));
+
+    _msg_network.on_optional_interaction_rejected = _config->on_optional_interaction_rejected;
+    _msg_network.on_terminate_due_to_error        = _config->on_terminate_due_to_error;
+
+}
+
     /** @brief Wires the config memory read callback into the SNIP interface struct. */
 static void _build_snip(void) {
 
@@ -302,7 +353,7 @@ static void _build_snip(void) {
 
 }
 
-#ifdef OPENLCB_COMPILE_CONFIG_MEMORY
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
 
     /** @brief Wires read callbacks, SNIP helpers, and address-space handlers into the config read interface. */
 static void _build_config_mem_read(void) {
@@ -349,6 +400,7 @@ static void _build_config_mem_write(void) {
     _config_write.load_datagram_received_ok_message       = &ProtocolDatagramHandler_load_datagram_received_ok_message;
     _config_write.load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message;
     _config_write.config_memory_write                     = _config->config_mem_write;
+    _config_write.config_memory_read                      = _config->config_mem_read;
     _config_write.write_request_config_mem                = &ProtocolConfigMemWriteHandler_write_request_config_mem;
     _config_write.write_request_acdi_user                 =  &ProtocolConfigMemWriteHandler_write_request_acdi_user;
 
@@ -360,7 +412,9 @@ static void _build_config_mem_write(void) {
 #endif
 
     // Firmware write (optional user callback)
+#ifdef OPENLCB_COMPILE_FIRMWARE
     _config_write.write_request_firmware = _config->firmware_write;
+#endif
     _config_write.delayed_reply_time = _config->config_mem_write_delayed_reply_time;
 
 }
@@ -377,14 +431,16 @@ static void _build_config_mem_operations(void) {
     _config_ops.operations_request_get_address_space_info = &ProtocolConfigMemOperationsHandler_request_get_address_space_info;
     _config_ops.operations_request_reserve_lock           = &ProtocolConfigMemOperationsHandler_request_reserve_lock;
 
+#ifdef OPENLCB_COMPILE_FIRMWARE
     _config_ops.operations_request_freeze                 = _config->freeze;
     _config_ops.operations_request_unfreeze               = _config->unfreeze;
+#endif
     _config_ops.operations_request_reset_reboot           = _config->reboot;
     _config_ops.operations_request_factory_reset          = _config->factory_reset;
 
 }
 
-#endif /* OPENLCB_COMPILE_CONFIG_MEMORY */
+#endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
 
 #ifdef OPENLCB_COMPILE_DATAGRAMS
 
@@ -396,7 +452,7 @@ static void _build_datagram_handler(void) {
     _datagram.lock_shared_resources   = _config->lock_shared_resources;
     _datagram.unlock_shared_resources = _config->unlock_shared_resources;
 
-#ifdef OPENLCB_COMPILE_CONFIG_MEMORY
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
 
     // Read address spaces -- standard library implementations
     _datagram.memory_read_space_config_description_info = &ProtocolConfigMemReadHandler_read_space_config_description_info;
@@ -414,7 +470,9 @@ static void _build_datagram_handler(void) {
     // Write address spaces
     _datagram.memory_write_space_configuration_memory = &ProtocolConfigMemWriteHandler_write_space_config_memory;
     _datagram.memory_write_space_acdi_user            = &ProtocolConfigMemWriteHandler_write_space_acdi_user;
+#ifdef OPENLCB_COMPILE_FIRMWARE
     _datagram.memory_write_space_firmware_upgrade     = &ProtocolConfigMemWriteHandler_write_space_firmware;
+#endif
 
     // Train profile: Function Config Memory write space
 #ifdef OPENLCB_COMPILE_TRAIN
@@ -437,9 +495,19 @@ static void _build_datagram_handler(void) {
     _datagram.memory_reset_reboot                               = &ProtocolConfigMemOperationsHandler_reset_reboot;
     _datagram.memory_factory_reset                              = &ProtocolConfigMemOperationsHandler_factory_reset;
 
-#endif /* OPENLCB_COMPILE_CONFIG_MEMORY */
+    // Write-under-mask address spaces
+    _datagram.memory_write_under_mask_space_config_description_info      = &ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info;
+    _datagram.memory_write_under_mask_space_all                          = &ProtocolConfigMemWriteHandler_write_under_mask_space_all;
+    _datagram.memory_write_under_mask_space_configuration_memory         = &ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory;
+    _datagram.memory_write_under_mask_space_acdi_manufacturer            = &ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_manufacturer;
+    _datagram.memory_write_under_mask_space_acdi_user                    = &ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_user;
+    _datagram.memory_write_under_mask_space_train_function_definition_info = &ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info;
+    _datagram.memory_write_under_mask_space_train_function_config_memory = &ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory;
+    _datagram.memory_write_under_mask_space_firmware_upgrade             = &ProtocolConfigMemWriteHandler_write_under_mask_space_firmware;
 
-    // All remaining fields stay NULL (stream ops, reply handlers, write-under-mask, etc.)
+#endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
+
+    // All remaining fields stay NULL (stream ops, reply handlers, etc.)
 
 }
 
@@ -455,9 +523,13 @@ static void _build_main_statemachine(void) {
     _main_sm.unlock_shared_resources = _config->unlock_shared_resources;
     _main_sm.send_openlcb_msg        = &CanTxStatemachine_send_openlcb_message;
 
+    // Clock access (injected to maintain decoupling)
+    _main_sm.get_current_tick = &OpenLcb_get_global_100ms_tick;
+
     // Library-internal wiring -- always the same
     _main_sm.openlcb_node_get_first    = &OpenLcbNode_get_first;
     _main_sm.openlcb_node_get_next     = &OpenLcbNode_get_next;
+    _main_sm.openlcb_node_is_last      = &OpenLcbNode_is_last;
     _main_sm.load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected;
 
     // Required Message Network handlers
@@ -514,6 +586,7 @@ static void _build_main_statemachine(void) {
     _main_sm.datagram                = &ProtocolDatagramHandler_datagram;
     _main_sm.datagram_ok_reply       = &ProtocolDatagramHandler_datagram_received_ok;
     _main_sm.datagram_rejected_reply = &ProtocolDatagramHandler_datagram_rejected;
+    _main_sm.load_datagram_rejected  = &ProtocolDatagramHandler_load_datagram_rejected_message;
 #endif
 
 #ifdef OPENLCB_COMPILE_TRAIN
@@ -523,7 +596,8 @@ static void _build_main_statemachine(void) {
 #endif
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
-    _main_sm.train_search_event_handler = &ProtocolTrainSearch_handle_search_event;
+    _main_sm.train_search_event_handler    = &ProtocolTrainSearch_handle_search_event;
+    _main_sm.train_search_no_match_handler = &ProtocolTrainSearch_handle_search_no_match;
 #endif
 
 }
@@ -569,6 +643,7 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
     _build_login_statemachine();
     _build_application();
     _build_snip();
+    _build_msg_network();
 
 #ifdef OPENLCB_COMPILE_EVENTS
     _build_event_transport();
@@ -578,7 +653,7 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
     _build_datagram_handler();
 #endif
 
-#ifdef OPENLCB_COMPILE_CONFIG_MEMORY
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
     _build_config_mem_read();
     _build_config_mem_write();
     _build_config_mem_operations();
@@ -607,7 +682,7 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
     ProtocolDatagramHandler_initialize(&_datagram);
 #endif
 
-#ifdef OPENLCB_COMPILE_CONFIG_MEMORY
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
     ProtocolConfigMemReadHandler_initialize(&_config_read);
     ProtocolConfigMemWriteHandler_initialize(&_config_write);
     ProtocolConfigMemOperationsHandler_initialize(&_config_ops);
@@ -659,30 +734,49 @@ openlcb_node_t *OpenLcb_create_node(node_id_t node_id, const node_parameters_t *
 
 }
 
-    /** @brief Runs one iteration of the CAN, login, and main state machines. */
+    /**
+     * @brief Runs all periodic service tasks from the main loop.
+     *
+     * @details Reads the global clock once and passes it to each module.
+     * All work happens in the main loop context where it is safe to send
+     * messages, free buffers, and call application callbacks.
+     */
+static void _run_periodic_services(void) {
+
+    uint8_t tick = _global_100ms_tick;
+
+    OpenLcbNode_100ms_timer_tick(tick);
+
+#ifdef OPENLCB_COMPILE_DATAGRAMS
+    ProtocolDatagramHandler_100ms_timer_tick(tick);
+    ProtocolDatagramHandler_check_timeouts(tick);
+#endif
+
+#ifdef OPENLCB_COMPILE_BROADCAST_TIME
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(tick);
+#endif
+
+#ifdef OPENLCB_COMPILE_TRAIN
+    OpenLcbApplicationTrain_100ms_timer_tick(tick);
+#endif
+
+}
+
+    /** @brief Runs one iteration of all state machines and periodic services. */
 void OpenLcb_run(void) {
 
     CanMainStateMachine_run();
     OpenLcbLoginMainStatemachine_run();
     OpenLcbMainStatemachine_run();
 
+    _run_periodic_services();
+
 }
 
-    /** @brief Dispatches the 100ms tick to all compiled-in modules that need periodic service. */
+    /** @brief Increments the global 100ms tick counter. This is the ONLY action
+     *  performed by the timer interrupt — all real work runs in the main loop. */
 void OpenLcb_100ms_timer_tick(void) {
 
-    OpenLcbNode_100ms_timer_tick();
-
-#ifdef OPENLCB_COMPILE_DATAGRAMS
-    ProtocolDatagramHandler_100ms_timer_tick();
-#endif
-
-#ifdef OPENLCB_COMPILE_BROADCAST_TIME
-    OpenLcbApplicationBroadcastTime_100ms_time_tick();
-#endif
-
-#ifdef OPENLCB_COMPILE_TRAIN
-    OpenLcbApplicationTrain_100ms_timer_tick();
-#endif
+    _global_100ms_tick++;
 
 }

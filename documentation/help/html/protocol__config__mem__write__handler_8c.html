@@ -128,9 +128,30 @@ Functions</h2></td></tr>
 <tr class="memitem:a9715d1dfcab9d73fe90edbf27c026ce6" id="r_a9715d1dfcab9d73fe90edbf27c026ce6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9715d1dfcab9d73fe90edbf27c026ce6">ProtocolConfigMemWriteHandler_write_space_firmware</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:a9715d1dfcab9d73fe90edbf27c026ce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Firmware (0xEF) write to two-phase handler.  <br /></td></tr>
 <tr class="separator:a9715d1dfcab9d73fe90edbf27c026ce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50e6bfec7458fac25d7adbd77368af28" id="r_a50e6bfec7458fac25d7adbd77368af28"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50e6bfec7458fac25d7adbd77368af28">ProtocolConfigMemWriteHandler_write_space_under_mask_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)</td></tr>
-<tr class="memdesc:a50e6bfec7458fac25d7adbd77368af28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a write command with bit mask (stub)  <br /></td></tr>
-<tr class="separator:a50e6bfec7458fac25d7adbd77368af28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab05487a977b6736c122a1b41ea3e4502" id="r_ab05487a977b6736c122a1b41ea3e4502"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab05487a977b6736c122a1b41ea3e4502">ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ab05487a977b6736c122a1b41ea3e4502"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch CDI (0xFF) write-under-mask to two-phase handler.  <br /></td></tr>
+<tr class="separator:ab05487a977b6736c122a1b41ea3e4502"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ca89484b897cf1ab21f49719d9ccfdc" id="r_a0ca89484b897cf1ab21f49719d9ccfdc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ca89484b897cf1ab21f49719d9ccfdc">ProtocolConfigMemWriteHandler_write_under_mask_space_all</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a0ca89484b897cf1ab21f49719d9ccfdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch All (0xFE) write-under-mask to two-phase handler.  <br /></td></tr>
+<tr class="separator:a0ca89484b897cf1ab21f49719d9ccfdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe3508c3186c44ee82040af02f503d0b" id="r_abe3508c3186c44ee82040af02f503d0b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe3508c3186c44ee82040af02f503d0b">ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:abe3508c3186c44ee82040af02f503d0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Config (0xFD) write-under-mask to two-phase handler.  <br /></td></tr>
+<tr class="separator:abe3508c3186c44ee82040af02f503d0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30e6566b2e83febe296263c6d35cf9fb" id="r_a30e6566b2e83febe296263c6d35cf9fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30e6566b2e83febe296263c6d35cf9fb">ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_manufacturer</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a30e6566b2e83febe296263c6d35cf9fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch ACDI-Mfg (0xFC) write-under-mask to two-phase handler.  <br /></td></tr>
+<tr class="separator:a30e6566b2e83febe296263c6d35cf9fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14c50151b0fd2d54335ba4065f98911f" id="r_a14c50151b0fd2d54335ba4065f98911f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14c50151b0fd2d54335ba4065f98911f">ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_user</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a14c50151b0fd2d54335ba4065f98911f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch ACDI-User (0xFB) write-under-mask to two-phase handler.  <br /></td></tr>
+<tr class="separator:a14c50151b0fd2d54335ba4065f98911f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a795a716a9d275772d87acc1e4fb4b065" id="r_a795a716a9d275772d87acc1e4fb4b065"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a795a716a9d275772d87acc1e4fb4b065">ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a795a716a9d275772d87acc1e4fb4b065"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Train FDI (0xFA) write-under-mask to two-phase handler.  <br /></td></tr>
+<tr class="separator:a795a716a9d275772d87acc1e4fb4b065"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afde152baad463586fbce7d365403408a" id="r_afde152baad463586fbce7d365403408a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afde152baad463586fbce7d365403408a">ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:afde152baad463586fbce7d365403408a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Train Fn Config (0xF9) write-under-mask to two-phase handler.  <br /></td></tr>
+<tr class="separator:afde152baad463586fbce7d365403408a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae29509094d087240e5873585d4b76888" id="r_ae29509094d087240e5873585d4b76888"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae29509094d087240e5873585d4b76888">ProtocolConfigMemWriteHandler_write_under_mask_space_firmware</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ae29509094d087240e5873585d4b76888"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Firmware (0xEF) write-under-mask to two-phase handler.  <br /></td></tr>
+<tr class="separator:ae29509094d087240e5873585d4b76888"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa5c6caef119721e390732860b3f51e3" id="r_aaa5c6caef119721e390732860b3f51e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa5c6caef119721e390732860b3f51e3">ProtocolConfigMemWriteHandler_write_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)</td></tr>
 <tr class="memdesc:aaa5c6caef119721e390732860b3f51e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes a generic write message (stub)  <br /></td></tr>
 <tr class="separator:aaa5c6caef119721e390732860b3f51e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -346,43 +367,163 @@ MemoryConfigurationS.pdf </dd></dl>
 
 </div>
 </div>
-<a id="a50e6bfec7458fac25d7adbd77368af28" name="a50e6bfec7458fac25d7adbd77368af28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50e6bfec7458fac25d7adbd77368af28">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_write_space_under_mask_message()</h2>
+<a id="ab05487a977b6736c122a1b41ea3e4502" name="ab05487a977b6736c122a1b41ea3e4502"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab05487a977b6736c122a1b41ea3e4502">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ProtocolConfigMemWriteHandler_write_space_under_mask_message </td>
+          <td class="memname">void ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>space</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>return_msg_ok</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>return_msg_fail</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Processes a write command with bit mask (stub) </p>
-<p>Write-under-mask command. Placeholder / stub.</p>
-<p>This stub is reserved for implementing write-under-mask operations which allow modifying specific bits in memory without affecting other bits.</p>
-<pre class="fragment">* @param statemachine_info Pointer to state machine context
-* </pre> <pre class="fragment">* @param space Address space identifier
-* </pre> <pre class="fragment">* @param return_msg_ok Message type for successful write response
-* </pre> <pre class="fragment">* @param return_msg_fail Message type for failed write response
-* </pre><dl class="section note"><dt>Note</dt><dd>Intentional stub - reserved for future implementation </dd></dl>
+<p>Dispatch CDI (0xFF) write-under-mask to two-phase handler. </p>
+<p>Write-under-mask to CDI space (0xFF). </p>
+
+</div>
+</div>
+<a id="a0ca89484b897cf1ab21f49719d9ccfdc" name="a0ca89484b897cf1ab21f49719d9ccfdc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ca89484b897cf1ab21f49719d9ccfdc">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_write_under_mask_space_all()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemWriteHandler_write_under_mask_space_all </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Dispatch All (0xFE) write-under-mask to two-phase handler. </p>
+<p>Write-under-mask to All space (0xFE). </p>
+
+</div>
+</div>
+<a id="abe3508c3186c44ee82040af02f503d0b" name="abe3508c3186c44ee82040af02f503d0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe3508c3186c44ee82040af02f503d0b">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Dispatch Config (0xFD) write-under-mask to two-phase handler. </p>
+<p>Write-under-mask to Config space (0xFD). </p>
+
+</div>
+</div>
+<a id="a30e6566b2e83febe296263c6d35cf9fb" name="a30e6566b2e83febe296263c6d35cf9fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30e6566b2e83febe296263c6d35cf9fb">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_manufacturer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_manufacturer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Dispatch ACDI-Mfg (0xFC) write-under-mask to two-phase handler. </p>
+<p>Write-under-mask to ACDI-Mfg space (0xFC). </p>
+
+</div>
+</div>
+<a id="a14c50151b0fd2d54335ba4065f98911f" name="a14c50151b0fd2d54335ba4065f98911f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14c50151b0fd2d54335ba4065f98911f">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_user()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_user </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Dispatch ACDI-User (0xFB) write-under-mask to two-phase handler. </p>
+<p>Write-under-mask to ACDI-User space (0xFB). </p>
+
+</div>
+</div>
+<a id="a795a716a9d275772d87acc1e4fb4b065" name="a795a716a9d275772d87acc1e4fb4b065"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a795a716a9d275772d87acc1e4fb4b065">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Dispatch Train FDI (0xFA) write-under-mask to two-phase handler. </p>
+<p>Write-under-mask to Train FDI space (0xFA). </p>
+
+</div>
+</div>
+<a id="afde152baad463586fbce7d365403408a" name="afde152baad463586fbce7d365403408a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afde152baad463586fbce7d365403408a">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Dispatch Train Fn Config (0xF9) write-under-mask to two-phase handler. </p>
+<p>Write-under-mask to Train Fn Config space (0xF9). </p>
+
+</div>
+</div>
+<a id="ae29509094d087240e5873585d4b76888" name="ae29509094d087240e5873585d4b76888"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae29509094d087240e5873585d4b76888">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_write_under_mask_space_firmware()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemWriteHandler_write_under_mask_space_firmware </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Dispatch Firmware (0xEF) write-under-mask to two-phase handler. </p>
+<p>Write-under-mask to Firmware space (0xEF). </p>
 
 </div>
 </div>

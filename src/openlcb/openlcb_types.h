@@ -48,6 +48,8 @@
 
 #if __has_include("openlcb_user_config.h")
 #include "openlcb_user_config.h"
+#elif __has_include("../../openlcb_user_config.h")
+#include "../../openlcb_user_config.h"
 #else
 #error "openlcb_user_config.h not found. Copy templates/openlcb_user_config.h to your project include path."
 #endif
@@ -714,6 +716,7 @@
         openlcb_node_t *openlcb_node;
         openlcb_incoming_msg_info_t incoming_msg_info;
         openlcb_outgoing_stream_msg_info_t outgoing_msg_info;
+        uint8_t current_tick;
 
     } openlcb_statemachine_info_t;
 

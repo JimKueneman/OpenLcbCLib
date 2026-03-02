@@ -36,6 +36,7 @@
 
 #include "../src/openlcb/openlcb_types.h"
 #include "../src/utilities/mustangpeak_string_helper.h"
+#include "../src/openlcb/openlcb_config.h"
 #include "../src/openlcb/openlcb_node.h"
 
 #include <stdio.h>
@@ -108,7 +109,7 @@ void *thread_function_timer(void *arg)
         if (_timer_pause == 0)
         {
 
-            OpenLcbNode_100ms_timer_tick();
+            OpenLcb_100ms_timer_tick();
         }
 
         usleep(100000);

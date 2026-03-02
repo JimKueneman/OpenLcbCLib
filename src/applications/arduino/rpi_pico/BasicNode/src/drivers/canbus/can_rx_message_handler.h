@@ -72,6 +72,9 @@ extern "C" {
         /** @brief REQUIRED. Set the global duplicate-alias flag. Typical: AliasMappings_set_has_duplicate_alias_flag. */
         void (*alias_mapping_set_has_duplicate_alias_flag)(void);
 
+        /** @brief Returns the current global 100ms tick. Used to stamp incoming buffers.  Optional. */
+        uint8_t (*get_current_tick)(void);
+
     } interface_can_rx_message_handler_t;
 
 
@@ -255,14 +258,17 @@ extern "C" {
 
 
     /**
-     * @brief Handles CID (Check ID) CAN control frames.
+     * @brief Handles CID (Check ID) CAN control frames (CanFrameTransferS 3.5.3).
      *
-     * @details If we already have the claimed alias registered, sends an RID response
-     * to signal a conflict to the node performing alias allocation.
+     * @details Per the standard, nodes that receive a CID frame containing an
+     * alias they are using or have reserved shall respond with an RID frame.
+     * This applies regardless of whether the node is permitted or still
+     * claiming the alias.  CID is a probe during alias reservation — the
+     * correct defence is always RID.
      *
      * @param can_msg  Received CID frame.
      *
-     * @warning Silently drops RID response if buffer allocation fails.
+     * @warning Silently drops the reply if buffer allocation fails.
      * @warning NOT thread-safe.
      *
      * @see CanRxMessageHandler_rid_frame

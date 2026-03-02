@@ -36,6 +36,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../USB_HOST/App/usb_host.h ../Core/Src/callbacks.h \
  ../Core/Src/src/openlcb/openlcb_types.h \
+ ../Core/Inc/openlcb_user_config.h \
  ../Core/Src/src/drivers/canbus/can_types.h \
  ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_defines.h \
  ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_types.h \
@@ -91,6 +92,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../USB_HOST/App/usb_host.h:
 ../Core/Src/callbacks.h:
 ../Core/Src/src/openlcb/openlcb_types.h:
+../Core/Inc/openlcb_user_config.h:
 ../Core/Src/src/drivers/canbus/can_types.h:
 ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_defines.h:
 ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_types.h:

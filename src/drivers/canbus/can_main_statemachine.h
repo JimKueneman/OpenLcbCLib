@@ -83,6 +83,9 @@ extern "C" {
         /** @brief REQUIRED. Remove an alias from the mapping table. Typical: AliasMappings_unregister. */
         void (*alias_mapping_unregister)(uint16_t alias);
 
+        /** @brief REQUIRED. Return the current value of the global 100ms tick counter. Typical: OpenLcb_get_global_100ms_tick. */
+        uint8_t (*get_current_tick)(void);
+
         /** @brief REQUIRED. Scan and resolve all duplicate aliases. Typical: CanMainStatemachine_handle_duplicate_aliases. */
         bool (*handle_duplicate_aliases)(void);
 

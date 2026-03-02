@@ -56,6 +56,22 @@
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
+#include "openlcb_node.h"
+
+    /** @brief Default datagram timeout in 100ms ticks (3 seconds). */
+#define DATAGRAM_TIMEOUT_TICKS 30
+
+    /** @brief Maximum datagram retry attempts before abandoning. */
+#define DATAGRAM_MAX_RETRIES 3
+
+    /** @brief Bit masks and shifts for packing retry count + tick snapshot into timerticks.
+     *
+     *  Bits 7-5: retry count (0-7)
+     *  Bits 4-0: tick snapshot (snapshot of current_tick at start of attempt)
+     */
+#define DATAGRAM_RETRY_SHIFT  5
+#define DATAGRAM_RETRY_MASK   0xE0
+#define DATAGRAM_TICK_MASK    0x1F
 
 
     /** @brief Stored callback interface pointer; set by _initialize(). */
@@ -1314,18 +1330,19 @@ void ProtocolDatagramHandler_datagram(openlcb_statemachine_info_t *statemachine_
      *
      * @details Algorithm:
      * -# Convert reply_pending_time_in_seconds to a 4-bit power-of-2 exponent
-     *    (0 = no reply pending, 1 = 2 s, 2 = 4 s, … 15 = 32768 s)
+     *    (1 = 2 s, 2 = 4 s, … 15 = 32768 s)
      * -# Build MTI_DATAGRAM_OK_REPLY addressed back to the sender
-     * -# Store DATAGRAM_OK_REPLY_PENDING | exponent in payload[0]
+     * -# If reply_pending, store DATAGRAM_OK_REPLY_PENDING | exponent in payload[0]
      * -# Mark outgoing message valid
      *
      * @verbatim
      * @param statemachine_info               Current context.
-     * @param reply_pending_time_in_seconds   0 for simple OK, else seconds until
-     *                                        reply (rounded up to 2^N).
+     * @param reply_pending                   true if a reply datagram will follow.
+     * @param reply_pending_time_in_seconds   Seconds until reply (rounded up to 2^N).
+     *                                        Ignored when reply_pending is false.
      * @endverbatim
      */
-void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds) {
+void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds) {
 
     uint8_t exponent = 0;
 
@@ -1403,9 +1420,16 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM_OK_REPLY);
 
+    uint8_t flags = exponent;
+    if (reply_pending) {
+
+        flags |= DATAGRAM_OK_REPLY_PENDING;
+
+    }
+
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            DATAGRAM_OK_REPLY_PENDING | exponent,
+            flags,
             0);
 
     statemachine_info->outgoing_msg_info.valid = true;
@@ -1468,8 +1492,12 @@ void ProtocolDatagramHandler_datagram_received_ok(openlcb_statemachine_info_t *s
      *
      * @details Algorithm:
      * -# Extract error code from payload word 0
-     * -# If ERROR_TEMPORARY bit set and a stored datagram exists, set
-     *    resend_datagram flag for retry
+     * -# If ERROR_TEMPORARY bit set and a stored datagram exists:
+     *    a. Extract retry count from upper 3 bits of timerticks
+     *    b. Increment retry count
+     *    c. If retries < DATAGRAM_MAX_RETRIES, pack new retry count + fresh
+     *       tick snapshot and set resend_datagram flag
+     *    d. If retries >= DATAGRAM_MAX_RETRIES, abandon (clear and free)
      * -# If permanent error, clear resend flag and free stored buffer
      * -# Set outgoing_msg_info.valid = false
      *
@@ -1483,7 +1511,20 @@ void ProtocolDatagramHandler_datagram_rejected(openlcb_statemachine_info_t *stat
 
         if (statemachine_info->openlcb_node->last_received_datagram) {
 
-            statemachine_info->openlcb_node->state.resend_datagram = true;
+            uint8_t retries = (statemachine_info->openlcb_node->last_received_datagram->timerticks & DATAGRAM_RETRY_MASK) >> DATAGRAM_RETRY_SHIFT;
+            retries++;
+
+            if (retries < DATAGRAM_MAX_RETRIES) {
+
+                statemachine_info->openlcb_node->last_received_datagram->timerticks =
+                        (uint8_t) ((retries << DATAGRAM_RETRY_SHIFT) | (statemachine_info->current_tick & DATAGRAM_TICK_MASK));
+                statemachine_info->openlcb_node->state.resend_datagram = true;
+
+            } else {
+
+                ProtocolDatagramHandler_clear_resend_datagram_message(statemachine_info->openlcb_node);
+
+            }
 
         }
 
@@ -1526,9 +1567,58 @@ void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t *openl
 
 }
 
-    /** @brief 100 ms timer tick — placeholder for datagram timeout management. */
-void ProtocolDatagramHandler_100ms_timer_tick(void) {
+    /**
+     * @brief Periodic timer tick for datagram timeout tracking.
+     *
+     * @details Called from the main loop with the current global tick.
+     * Currently a placeholder — timeout scanning is done by
+     * ProtocolDatagramHandler_check_timeouts().
+     *
+     * @param current_tick  Current value of the global 100ms tick counter.
+     */
+void ProtocolDatagramHandler_100ms_timer_tick(uint8_t current_tick) {
 
+    // Timeout scanning is done by ProtocolDatagramHandler_check_timeouts().
+
+}
+
+    /**
+     * @brief Scans for timed-out or max-retried pending datagrams and frees them.
+     *
+     * @details Must be called from the main processing loop, not from an
+     * interrupt. Acquires the shared resource lock internally.
+     *
+     * @param current_tick  Current value of the global 100ms tick, passed from the main loop.
+     */
+void ProtocolDatagramHandler_check_timeouts(uint8_t current_tick) {
+
+    _interface->lock_shared_resources();
+
+    openlcb_node_t *node = OpenLcbNode_get_first(DATAGRAM_TIMEOUT_ENUM_KEY);
+
+    while (node) {
+
+        if (node->last_received_datagram) {
+
+            uint8_t snapshot = node->last_received_datagram->timerticks & DATAGRAM_TICK_MASK;
+            uint8_t retries = (node->last_received_datagram->timerticks & DATAGRAM_RETRY_MASK) >> DATAGRAM_RETRY_SHIFT;
+            uint8_t elapsed = (current_tick - snapshot) & DATAGRAM_TICK_MASK;
+
+            if (elapsed >= DATAGRAM_TIMEOUT_TICKS || retries >= DATAGRAM_MAX_RETRIES) {
+
+                OpenLcbBufferStore_free_buffer(node->last_received_datagram);
+                node->last_received_datagram = NULL;
+                node->state.resend_datagram = false;
+
+            }
+
+        }
+
+        node = OpenLcbNode_get_next(DATAGRAM_TIMEOUT_ENUM_KEY);
+
+    }
+
+    _interface->unlock_shared_resources();
 
 }
 

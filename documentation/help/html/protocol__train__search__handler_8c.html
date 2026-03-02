@@ -107,6 +107,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a8899d93482a712da1233f16760e95cd3" id="r_a8899d93482a712da1233f16760e95cd3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8899d93482a712da1233f16760e95cd3">ProtocolTrainSearch_handle_search_event</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
 <tr class="memdesc:a8899d93482a712da1233f16760e95cd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming train search events.  <br /></td></tr>
 <tr class="separator:a8899d93482a712da1233f16760e95cd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78b95a88edf5b53e12cfeb784363a25d" id="r_a78b95a88edf5b53e12cfeb784363a25d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78b95a88edf5b53e12cfeb784363a25d">ProtocolTrainSearch_handle_search_no_match</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a78b95a88edf5b53e12cfeb784363a25d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the no-match case after all train nodes have been checked.  <br /></td></tr>
+<tr class="separator:a78b95a88edf5b53e12cfeb784363a25d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Train Search Protocol message handler implementation. </p>
@@ -163,6 +166,33 @@ Functions</h2></td></tr>
 
 <p>Handles incoming train search events. </p>
 <p>Decodes the search query, compares against this node's DCC address, and loads a Producer Identified reply if matched.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param event_id           Full 64-bit event_id_t containing encoded search query.
+* </pre> 
+</div>
+</div>
+<a id="a78b95a88edf5b53e12cfeb784363a25d" name="a78b95a88edf5b53e12cfeb784363a25d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78b95a88edf5b53e12cfeb784363a25d">&#9670;&#160;</a></span>ProtocolTrainSearch_handle_search_no_match()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolTrainSearch_handle_search_no_match </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Handles the no-match case after all train nodes have been checked. </p>
+<p>Handles the no-match case after full train search enumeration.</p>
+<p>Called by the main statemachine when the last node in the enumeration has been reached and no train node matched the search query. If the ALLOCATE flag is set in the search event and the on_search_no_match callback is registered, invokes it so the application can create a new virtual train node.</p>
 <pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
 * @param event_id           Full 64-bit event_id_t containing encoded search query.
 * </pre> 

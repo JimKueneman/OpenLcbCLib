@@ -73,6 +73,19 @@ can_msg_t *can_buffer_store_allocate_buffer(void)
 }
 
 /*******************************************************************************
+ * Mock Clock Access
+ ******************************************************************************/
+
+static uint8_t _test_global_100ms_tick = 0;
+
+uint8_t _mock_get_current_tick(void)
+{
+
+    return _test_global_100ms_tick;
+
+}
+
+/*******************************************************************************
  * Interface Structure for RX Message Handler
  ******************************************************************************/
 
@@ -83,6 +96,7 @@ const interface_can_rx_message_handler_t _can_rx_message_handler_interface = {
     .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
     .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
     .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag,
+    .get_current_tick = &_mock_get_current_tick,
 };
 
 /*******************************************************************************
@@ -1382,10 +1396,138 @@ TEST(CanRxMessageHandler, ame_global_mixed_permitted_inhibited)
     _test_for_all_buffer_stores_empty();
 }
 
+// ============================================================================
+// TEST: CID Frame — Permitted Node Still Sends RID
+// @details Per CanFrameTransferS Section 3.5.3, "Nodes that receive a CID
+//          frame that contains the alias they are using or have reserved shall
+//          respond with an RID frame."  CID always gets RID, regardless of
+//          permitted status.  No duplicate flag is set (CID is just a probe).
+// @coverage CanRxMessageHandler_cid_frame() — permitted node
+// ============================================================================
+
+TEST(CanRxMessageHandler, cid_frame_permitted_node)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Register a PERMITTED alias
+    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping->is_permitted = true;
+
+    // CID frame using our alias
+    CanUtilities_load_can_message(&can_msg, 0x17000000 | NODE_ALIAS_1, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0);
+
+    CanRxMessageHandler_cid_frame(&can_msg);
+
+    // Should send RID and NOT flag as duplicate (CID is just a probe)
+    EXPECT_FALSE(mapping->is_duplicate);
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 1);
+
+    can_msg_t *response = CanBufferFifo_pop();
+    EXPECT_NE(response, nullptr);
+    if (response) {
+
+        // Verify it's an RID frame, NOT an AMR frame
+        EXPECT_EQ(response->identifier & 0x00FFF000, (uint32_t )CAN_CONTROL_FRAME_RID);
+        CanBufferStore_free_buffer(response);
+
+    }
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+// ============================================================================
+// TEST: CID Frame — Non-Permitted Node Sends RID (defends claim)
+// @details A non-permitted node (still in CID/RID reservation) must send RID
+//          to defend its alias claim.
+// @coverage CanRxMessageHandler_cid_frame() — non-permitted branch
+// ============================================================================
+
+TEST(CanRxMessageHandler, cid_frame_non_permitted_node)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Register a NOT YET PERMITTED alias (default from AliasMappings_register)
+    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping->is_permitted = false;
+
+    // CID frame using our alias
+    CanUtilities_load_can_message(&can_msg, 0x17000000 | NODE_ALIAS_1, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0);
+
+    CanRxMessageHandler_cid_frame(&can_msg);
+
+    // Should send RID to defend the claim
+    EXPECT_FALSE(mapping->is_duplicate);
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 1);
+
+    can_msg_t *response = CanBufferFifo_pop();
+    EXPECT_NE(response, nullptr);
+    if (response) {
+
+        // Verify it's an RID frame (0x00700000), NOT an AMR frame
+        EXPECT_EQ(response->identifier & 0x00FFF000, (uint32_t )CAN_CONTROL_FRAME_RID);
+        CanBufferStore_free_buffer(response);
+
+    }
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+// ============================================================================
+// TEST: CID Frame — Buffer Allocation Failure (permitted node)
+// @details Permitted node cannot allocate a CAN buffer for RID.  Should not
+//          crash and should not flag any duplicate (CID is just a probe).
+// @coverage CanRxMessageHandler_cid_frame() — buffer fail
+// ============================================================================
+
+TEST(CanRxMessageHandler, cid_frame_permitted_buffer_fail)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Register a PERMITTED alias
+    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping->is_permitted = true;
+
+    // Force buffer allocation to fail
+    fail_buffer = true;
+
+    CanUtilities_load_can_message(&can_msg, 0x17000000 | NODE_ALIAS_1, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0);
+
+    CanRxMessageHandler_cid_frame(&can_msg);
+
+    // No duplicate flag, no response (buffer alloc failed)
+    EXPECT_FALSE(mapping->is_duplicate);
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 0);
+
+    fail_buffer = false;
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
 /*******************************************************************************
  * COVERAGE SUMMARY
- * 
- * Active Tests: 36
+ *
+ * Active Tests: 39
  * Coverage: 100% ✅
  * Status: Production Ready
  * 

@@ -221,14 +221,14 @@ Functions</h2></td></tr>
 <p>Transmits one CAN frame for an unaddressed (broadcast) <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a>.</p>
 <p>Algorithm:</p><ol type="1">
 <li>If payload fits in one frame (&lt;= 8 bytes): copy payload, build identifier, transmit.</li>
-<li>On success, advance *openlcb_start_index. Multi-frame unaddressed not yet implemented.</li>
+<li>On success, advance *openlcb_start_index.</li>
+<li>Assert on oversized payloads &ndash; no standard unaddressed message exceeds 8 bytes. PCER-with-Payload uses dedicated CAN MTIs (FIRST/MIDDLE/LAST), not this path.</li>
 <li>Return transmission result.</li>
 </ol>
 <pre class="fragment">* @param openlcb_msg          Source message (no dest_alias needed).
 * @param can_msg_worker       Scratch CAN frame buffer.
 * @param openlcb_start_index  Current payload position; updated on success.
-* </pre><dl class="section return"><dt>Returns</dt><dd>true if transmitted, false on hardware failure.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Multi-frame unaddressed messages are not yet implemented. </dd></dl>
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if transmitted, false on hardware failure or oversized payload. </dd></dl>
 
 </div>
 </div>

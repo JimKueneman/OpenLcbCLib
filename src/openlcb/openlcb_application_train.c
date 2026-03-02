@@ -41,6 +41,7 @@
 
 #include "openlcb_application.h"
 #include "openlcb_defines.h"
+#include "openlcb_float16.h"
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 
@@ -48,6 +49,9 @@
 static train_state_t _train_pool[USER_DEFINED_TRAIN_NODE_COUNT];
 static uint8_t _train_pool_count;
 static const interface_openlcb_application_train_t *_interface;
+
+    /** @brief Tracks the last tick value to gate heartbeat processing. */
+static uint8_t _last_heartbeat_tick = 0;
 
 
     /**
@@ -69,6 +73,7 @@ void OpenLcbApplicationTrain_initialize(const interface_openlcb_application_trai
     memset(_train_pool, 0, sizeof(_train_pool));
     _train_pool_count = 0;
     _interface = interface;
+    _last_heartbeat_tick = 0;
 
 }
 
@@ -207,12 +212,25 @@ static void _send_heartbeat_request(train_state_t *state) {
      * @brief Decrements the heartbeat countdown for all active train nodes.
      *
      * @details Algorithm:
+     * -# Compute ticks elapsed since last call via subtraction.
+     * -# Skip if no time has elapsed (deduplication).
      * -# For each pool slot with heartbeat_timeout_s > 0:
-     *    - Decrement heartbeat_counter_100ms if > 0.
+     *    - Decrement heartbeat_counter_100ms by ticks_elapsed (saturate at 0).
      *    - At the halfway point, call _send_heartbeat_request() to ping the controller.
-     *    - At zero, set estop_active = true, set_speed = 0, and fire on_heartbeat_timeout.
+     *    - At zero, set estop_active = true, zero set_speed preserving direction,
+     *      and fire on_heartbeat_timeout.
+     *
+     * @verbatim
+     * @param current_tick  Current value of the global 100ms tick counter.
+     * @endverbatim
      */
-void OpenLcbApplicationTrain_100ms_timer_tick(void) {
+void OpenLcbApplicationTrain_100ms_timer_tick(uint8_t current_tick) {
+
+    uint8_t ticks_elapsed = (uint8_t)(current_tick - _last_heartbeat_tick);
+
+    if (ticks_elapsed == 0) { return; }
+
+    _last_heartbeat_tick = current_tick;
 
     for (uint8_t i = 0; i < _train_pool_count; i++) {
 
@@ -224,24 +242,33 @@ void OpenLcbApplicationTrain_100ms_timer_tick(void) {
 
         }
 
-        if (state->heartbeat_counter_100ms > 0) {
+        uint32_t old_counter = state->heartbeat_counter_100ms;
 
-            state->heartbeat_counter_100ms--;
+        if (state->heartbeat_counter_100ms > ticks_elapsed) {
+
+            state->heartbeat_counter_100ms -= ticks_elapsed;
+
+        } else {
+
+            state->heartbeat_counter_100ms = 0;
 
         }
 
         uint32_t halfway = (state->heartbeat_timeout_s * 10) / 2;
 
-        if (state->heartbeat_counter_100ms == halfway) {
+        if (old_counter > halfway && state->heartbeat_counter_100ms <= halfway) {
 
             _send_heartbeat_request(state);
 
         }
 
-        if (state->heartbeat_counter_100ms == 0) {
+        if (state->heartbeat_counter_100ms == 0 && old_counter > 0) {
 
             state->estop_active = true;
-            state->set_speed = 0;
+
+            // Preserve direction, set speed magnitude to zero
+            bool reverse = OpenLcbFloat16_get_direction(state->set_speed);
+            state->set_speed = reverse ? FLOAT16_NEGATIVE_ZERO : FLOAT16_POSITIVE_ZERO;
 
             if (_interface && _interface->on_heartbeat_timeout) {
 

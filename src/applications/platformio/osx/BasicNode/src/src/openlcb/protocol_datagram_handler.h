@@ -350,9 +350,10 @@ extern "C" {
          * @brief Builds a Datagram Received OK message (MTI 0x0A28).
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
-         * @param reply_pending_time_in_seconds  0 for simple OK, or Reply Pending + timeout flags.
+         * @param reply_pending  true if a reply datagram will follow.
+         * @param reply_pending_time_in_seconds  Seconds until reply (rounded up to 2^N). Ignored when reply_pending is false.
          */
-    extern void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
+    extern void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds);
 
         /**
          * @brief Builds a Datagram Rejected message (MTI 0x0A48).
@@ -393,8 +394,25 @@ extern "C" {
          */
     extern void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t *openlcb_node);
 
-        /** @brief 100 ms timer tick for datagram timeout management (placeholder). */
-    extern void ProtocolDatagramHandler_100ms_timer_tick(void);
+        /**
+         * @brief Periodic timer tick for datagram timeout tracking.
+         *
+         * @details Called from the main loop with the current global tick.
+         * Currently a placeholder — Item 2 will add timeout handling.
+         *
+         * @param current_tick  Current value of the global 100ms tick counter.
+         */
+    extern void ProtocolDatagramHandler_100ms_timer_tick(uint8_t current_tick);
+
+        /**
+         * @brief Scans for timed-out or max-retried pending datagrams and frees them.
+         *
+         * @details Must be called from the main processing loop, not from an
+         * interrupt. Acquires the shared resource lock internally.
+         *
+         * @param current_tick  Current value of the global 100ms tick, passed from the main loop.
+         */
+    extern void ProtocolDatagramHandler_check_timeouts(uint8_t current_tick);
 
 #ifdef __cplusplus
 }

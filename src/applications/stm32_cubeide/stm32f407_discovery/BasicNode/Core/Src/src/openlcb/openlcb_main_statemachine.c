@@ -89,6 +89,9 @@ static const interface_openlcb_main_statemachine_t *_interface;
     /** @brief Static state machine context for message routing and node enumeration. */
 static openlcb_statemachine_info_t _statemachine_info;
 
+    /** @brief Tracks whether any train node matched during the current enumeration. */
+static bool _train_search_match_found;
+
     /**
     * @brief Stores the callback interface and wires up the outgoing message buffer.
     *
@@ -449,16 +452,34 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
             event_id_t producer_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
 
-            // Train Search intercept -- check ALL train nodes
-            if (_interface->train_search_event_handler && statemachine_info->openlcb_node->train_state) {
+            bool is_train_search = _interface->train_search_event_handler &&
+                                   OpenLcbUtilities_is_train_search_event(producer_event_id);
 
-                if (OpenLcbUtilities_is_train_search_event(producer_event_id)) {
+            if (is_train_search) {
+
+                // Dispatch to train search handler for train nodes only
+                if (statemachine_info->openlcb_node->train_state) {
 
                     _interface->train_search_event_handler(statemachine_info, producer_event_id);
 
-                    break;
+                    if (statemachine_info->outgoing_msg_info.valid) {
+
+                        _train_search_match_found = true;
+
+                    }
 
                 }
+
+                // On last node with no match, invoke no-match handler
+                if (_interface->openlcb_node_is_last(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX) &&
+                    !_train_search_match_found &&
+                    _interface->train_search_no_match_handler) {
+
+                    _interface->train_search_no_match_handler(statemachine_info, producer_event_id);
+
+                }
+
+                break;
 
             }
 
@@ -667,6 +688,14 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
                 _interface->datagram(statemachine_info);
 
+            } else {
+
+                if (_interface->load_datagram_rejected) {
+
+                    _interface->load_datagram_rejected(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED);
+
+                }
+
             }
 
             break;
@@ -697,6 +726,10 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
                 _interface->stream_initiate_request(statemachine_info);
 
+            } else {
+
+                _interface->load_interaction_rejected(statemachine_info);
+
             }
 
             break;
@@ -717,6 +750,10 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
                 _interface->stream_send_data(statemachine_info);
 
+            } else {
+
+                _interface->load_interaction_rejected(statemachine_info);
+
             }
 
             break;
@@ -736,6 +773,10 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
             if (_interface->stream_data_complete) {
 
                 _interface->stream_data_complete(statemachine_info);
+
+            } else {
+
+                _interface->load_interaction_rejected(statemachine_info);
 
             }
 
@@ -828,6 +869,8 @@ bool OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message(void) 
         _statemachine_info.incoming_msg_info.msg_ptr = OpenLcbBufferFifo_pop();
         _interface->unlock_shared_resources();
 
+        _statemachine_info.current_tick = _interface->get_current_tick();
+
         return (!_statemachine_info.incoming_msg_info.msg_ptr);
 
     }
@@ -841,6 +884,7 @@ bool OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message(void) 
     *
     * @details Algorithm:
     * -# If node pointer already set, return false (already enumerating)
+    * -# Reset train search match flag for new enumeration
     * -# Get first node; if NULL free the message and return true
     * -# If node is in RUNSTATE_RUN, dispatch message via process_main_statemachine
     * -# Return true
@@ -851,7 +895,9 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void) {
 
     if (!_statemachine_info.openlcb_node) {
 
-        _statemachine_info.openlcb_node = 
+        _train_search_match_found = false;
+
+        _statemachine_info.openlcb_node =
                     _interface->openlcb_node_get_first(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
 
         if (!_statemachine_info.openlcb_node) {

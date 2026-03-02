@@ -603,7 +603,7 @@ TEST(BroadcastTimeApp, time_tick_skips_inactive_clocks)
     _full_initialize();
 
     // No clocks set up - tick should do nothing (no crash)
-    OpenLcbApplicationBroadcastTime_100ms_time_tick();
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
 
 }
 
@@ -618,7 +618,7 @@ TEST(BroadcastTimeApp, time_tick_skips_non_consumer_clocks)
     clock_state->is_running = true;
     clock_state->rate.rate = 4;  // 1.0x real-time
 
-    OpenLcbApplicationBroadcastTime_100ms_time_tick();
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
 
     // Producer-only clock should not advance
     EXPECT_EQ(clock_state->time.minute, 0);
@@ -636,7 +636,7 @@ TEST(BroadcastTimeApp, time_tick_skips_stopped_clocks)
     clock_state->is_running = false;
     clock_state->rate.rate = 4;
 
-    OpenLcbApplicationBroadcastTime_100ms_time_tick();
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
 
     EXPECT_EQ(clock_state->time.minute, 0);
 
@@ -653,7 +653,7 @@ TEST(BroadcastTimeApp, time_tick_skips_zero_rate)
     clock_state->is_running = true;
     clock_state->rate.rate = 0;
 
-    OpenLcbApplicationBroadcastTime_100ms_time_tick();
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
 
     EXPECT_EQ(clock_state->time.minute, 0);
 
@@ -675,7 +675,7 @@ TEST(BroadcastTimeApp, time_tick_forward_one_minute_at_realtime)
     // 600 ticks at 100ms = 60 seconds = 1 real minute
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -700,7 +700,7 @@ TEST(BroadcastTimeApp, time_tick_forward_hour_rollover)
     // Advance one minute
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -728,7 +728,7 @@ TEST(BroadcastTimeApp, time_tick_forward_day_rollover)
     // Advance one minute -> day rollover
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -758,7 +758,7 @@ TEST(BroadcastTimeApp, time_tick_forward_month_rollover)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -789,7 +789,7 @@ TEST(BroadcastTimeApp, time_tick_forward_year_rollover)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -822,7 +822,7 @@ TEST(BroadcastTimeApp, time_tick_forward_leap_year_feb_28)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -850,7 +850,7 @@ TEST(BroadcastTimeApp, time_tick_forward_non_leap_year_feb_28)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -878,7 +878,7 @@ TEST(BroadcastTimeApp, time_tick_forward_high_rate_multiple_minutes)
     // 100 ticks = 10 fast-minutes
     for (int tick = 0; tick < 100; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -907,7 +907,7 @@ TEST(BroadcastTimeApp, time_tick_backward_one_minute)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -931,7 +931,7 @@ TEST(BroadcastTimeApp, time_tick_backward_hour_rollover)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -958,7 +958,7 @@ TEST(BroadcastTimeApp, time_tick_backward_day_rollover)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -987,7 +987,7 @@ TEST(BroadcastTimeApp, time_tick_backward_month_rollover)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -1018,7 +1018,7 @@ TEST(BroadcastTimeApp, time_tick_backward_year_rollover)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -1051,7 +1051,7 @@ TEST(BroadcastTimeApp, time_tick_backward_leap_year_mar_1)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -1745,7 +1745,7 @@ TEST(BroadcastTimeApp, time_tick_advances_multiple_consumer_clocks)
     // Advance 600 ticks (1 real minute)
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -1784,7 +1784,7 @@ TEST(BroadcastTimeApp, time_tick_null_interface_no_crash)
     // Should advance without crashing even though callbacks are NULL
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -1816,7 +1816,7 @@ TEST(BroadcastTimeApp, days_in_month_invalid_month)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -1844,7 +1844,7 @@ TEST(BroadcastTimeApp, century_leap_year_divisible_by_400)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -1871,7 +1871,7 @@ TEST(BroadcastTimeApp, century_not_leap_year_divisible_by_100)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -1992,7 +1992,7 @@ TEST(BroadcastTimeApp, days_in_month_invalid_month_above_12)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -2022,7 +2022,7 @@ TEST(BroadcastTimeApp, time_tick_forward_30_day_month_rollover)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -2051,7 +2051,7 @@ TEST(BroadcastTimeApp, time_tick_forward_no_month_rollover_at_day_30_in_31_day_m
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -2315,7 +2315,7 @@ TEST(BroadcastTimeApp, time_tick_backward_null_interface_no_crash)
     // Should advance backward through year rollover without crash
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -2441,7 +2441,7 @@ TEST(BroadcastTimeApp, time_tick_backward_month_rollover_to_31_day_month)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -2472,7 +2472,7 @@ TEST(BroadcastTimeApp, time_tick_backward_day_decrement_no_month_change)
 
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -2503,7 +2503,7 @@ TEST(BroadcastTimeApp, time_tick_quarter_speed_forward)
     // Threshold is 240,000, so 2400 ticks = 1 fast-minute (4 real minutes)
     for (int tick = 0; tick < 2400; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -2529,7 +2529,7 @@ TEST(BroadcastTimeApp, time_tick_negative_rate_quarter_speed)
     // 2400 ticks = 1 fast-minute backward
     for (int tick = 0; tick < 2400; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -2559,7 +2559,7 @@ TEST(BroadcastTimeApp, time_tick_super_high_rate_multiple_minutes_per_tick)
     // 60 ticks = 10 fast-minutes
     for (int tick = 0; tick < 60; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
@@ -2589,14 +2589,14 @@ TEST(BroadcastTimeApp, time_tick_accumulator_does_not_lose_fractional_time)
     // Advance 599 ticks (just short of 1 minute)
     for (int tick = 0; tick < 599; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
     EXPECT_EQ(clock_state->time.minute, 0);  // Not yet advanced
 
     // One more tick should trigger the minute
-    OpenLcbApplicationBroadcastTime_100ms_time_tick();
+    OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(599 + 1));
 
     EXPECT_EQ(clock_state->time.minute, 1);
 
@@ -2623,7 +2623,7 @@ TEST(BroadcastTimeApp, start_then_stop_then_tick_does_not_advance)
     // Tick should not advance because clock is stopped
     for (int tick = 0; tick < 600; tick++) {
 
-        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 

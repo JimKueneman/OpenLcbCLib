@@ -903,7 +903,7 @@ TEST(OpenLcbBufferList, exact_capacity_boundary)
     {
         openlcb_msg_t *released = OpenLcbBufferList_release(&msgs[i]);
         EXPECT_EQ(released, &msgs[i]);
-        
+
         // Check is_empty status
         if (i == 0)
         {
@@ -914,4 +914,173 @@ TEST(OpenLcbBufferList, exact_capacity_boundary)
             EXPECT_FALSE(OpenLcbBufferList_is_empty());
         }
     }
+}
+
+// ============================================================================
+// MULTI-FRAME ASSEMBLY TIMEOUT TESTS
+// ============================================================================
+
+/**
+ * @brief Test that check_timeouts reclaims a stale in-process buffer
+ *
+ * Verifies:
+ * - An in-process buffer with elapsed >= 30 ticks is freed
+ * - Buffer is removed from the list
+ */
+TEST(OpenLcbBufferList, timeout_reclaims_stale_inprocess)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferList_initialize();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    msg->source_alias = 0x0100;
+    msg->dest_alias = 0x0200;
+    msg->mti = 0x0300;
+    msg->timerticks = 0;
+    msg->state.inprocess = true;
+
+    OpenLcbBufferList_add(msg);
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+
+    // elapsed = 30 - 0 = 30 >= 30, should timeout
+    OpenLcbBufferList_check_timeouts(30);
+
+    EXPECT_TRUE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferList_find(0x0100, 0x0200, 0x0300), nullptr);
+}
+
+/**
+ * @brief Test that check_timeouts ignores non-inprocess buffers
+ *
+ * Verifies:
+ * - A buffer with inprocess == false is NOT freed regardless of elapsed time
+ */
+TEST(OpenLcbBufferList, timeout_ignores_non_inprocess)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferList_initialize();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    msg->source_alias = 0x0100;
+    msg->dest_alias = 0x0200;
+    msg->mti = 0x0300;
+    msg->timerticks = 0;
+    msg->state.inprocess = false;
+
+    OpenLcbBufferList_add(msg);
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+
+    // elapsed = 100 - 0 = 100 >= 30, but inprocess is false so should NOT timeout
+    OpenLcbBufferList_check_timeouts(100);
+
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferList_find(0x0100, 0x0200, 0x0300), msg);
+
+    // Clean up
+    OpenLcbBufferList_release(msg);
+    OpenLcbBufferStore_free_buffer(msg);
+}
+
+/**
+ * @brief Test that check_timeouts does not timeout before threshold
+ *
+ * Verifies:
+ * - A buffer with elapsed < 30 ticks is NOT freed
+ */
+TEST(OpenLcbBufferList, no_timeout_before_threshold)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferList_initialize();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    msg->source_alias = 0x0100;
+    msg->dest_alias = 0x0200;
+    msg->mti = 0x0300;
+    msg->timerticks = 10;
+    msg->state.inprocess = true;
+
+    OpenLcbBufferList_add(msg);
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+
+    // elapsed = 39 - 10 = 29 < 30, should NOT timeout
+    OpenLcbBufferList_check_timeouts(39);
+
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferList_find(0x0100, 0x0200, 0x0300), msg);
+
+    // Clean up
+    OpenLcbBufferList_release(msg);
+    OpenLcbBufferStore_free_buffer(msg);
+}
+
+/**
+ * @brief Test that check_timeouts wraps correctly with uint8_t arithmetic
+ *
+ * Verifies:
+ * - Unsigned wrap: current_tick=15, timerticks=240, elapsed = (uint8_t)(15-240) = 31
+ * - 31 >= 30 so buffer IS timed out
+ */
+TEST(OpenLcbBufferList, timeout_wraps_correctly)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferList_initialize();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    msg->source_alias = 0x0100;
+    msg->dest_alias = 0x0200;
+    msg->mti = 0x0300;
+    msg->timerticks = 240;
+    msg->state.inprocess = true;
+
+    OpenLcbBufferList_add(msg);
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+
+    // elapsed = (uint8_t)(15 - 240) = (uint8_t)(-225) = 31 >= 30, should timeout
+    OpenLcbBufferList_check_timeouts(15);
+
+    EXPECT_TRUE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferList_find(0x0100, 0x0200, 0x0300), nullptr);
+}
+
+/**
+ * @brief Test that a completed buffer (inprocess=false) is not timed out
+ *
+ * Verifies:
+ * - Simulates LAST frame completing the assembly (inprocess=false)
+ * - Even with large elapsed time, buffer stays in list
+ */
+TEST(OpenLcbBufferList, completed_buffer_not_timed_out)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferList_initialize();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    msg->source_alias = 0x0100;
+    msg->dest_alias = 0x0200;
+    msg->mti = 0x0300;
+    msg->timerticks = 0;
+    msg->state.inprocess = false;
+
+    OpenLcbBufferList_add(msg);
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+
+    // elapsed = 100 - 0 = 100 >= 30, but inprocess is false so should NOT timeout
+    OpenLcbBufferList_check_timeouts(100);
+
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferList_find(0x0100, 0x0200, 0x0300), msg);
+
+    // Clean up
+    OpenLcbBufferList_release(msg);
+    OpenLcbBufferStore_free_buffer(msg);
 }

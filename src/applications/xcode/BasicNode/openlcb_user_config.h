@@ -11,7 +11,8 @@
 
 #define OPENLCB_COMPILE_EVENTS
 #define OPENLCB_COMPILE_DATAGRAMS
-#define OPENLCB_COMPILE_CONFIG_MEMORY
+#define OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#define OPENLCB_COMPILE_FIRMWARE
 #define OPENLCB_COMPILE_BROADCAST_TIME
 
 // =============================================================================
@@ -53,7 +54,7 @@
 #define USER_DEFINED_CONSUMER_RANGE_COUNT            5
 
 // =============================================================================
-// Configuration Memory (requires OPENLCB_COMPILE_CONFIG_MEMORY)
+// Memory Configuration (requires OPENLCB_COMPILE_MEMORY_CONFIGURATION)
 // =============================================================================
 // CDI_LENGTH -- size in bytes of the CDI (Configuration Description Information)
 //   XML buffer.  Must be large enough to hold your node's complete CDI XML.

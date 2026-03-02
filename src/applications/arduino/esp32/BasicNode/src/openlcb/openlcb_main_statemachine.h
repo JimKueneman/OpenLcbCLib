@@ -61,6 +61,13 @@ typedef struct {
     bool (*send_openlcb_msg)(openlcb_msg_t *outgoing_msg);
 
     // =========================================================================
+    // Clock Access (REQUIRED)
+    // =========================================================================
+
+        /** @brief Return current value of the global 100ms tick counter.  REQUIRED. */
+    uint8_t (*get_current_tick)(void);
+
+    // =========================================================================
     // Node Enumeration (all REQUIRED)
     // =========================================================================
 
@@ -69,6 +76,9 @@ typedef struct {
 
         /** @brief Return next node (NULL at end).  REQUIRED. */
     openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
+
+        /** @brief Return true if current enumeration position is the last node.  REQUIRED. */
+    bool (*openlcb_node_is_last)(uint8_t key);
 
     // =========================================================================
     // Core Handlers (all REQUIRED)
@@ -232,6 +242,9 @@ typedef struct {
         /** @brief MTI 0x0A28 — Datagram Received OK (received).  Optional. */
     void (*datagram_ok_reply)(openlcb_statemachine_info_t *statemachine_info);
 
+        /** @brief Build Datagram Rejected reply. Optional — called when datagram handler is NULL. */
+    void (*load_datagram_rejected)(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
+
         /** @brief MTI 0x0A48 — Datagram Rejected (received).  Optional. */
     void (*datagram_rejected_reply)(openlcb_statemachine_info_t *statemachine_info);
 
@@ -267,6 +280,9 @@ typedef struct {
 
         /** @brief Called for train search events; dispatched to every train node.  Optional. */
     void (*train_search_event_handler)(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+
+        /** @brief Called when train search enumeration completes with no match.  Optional. */
+    void (*train_search_no_match_handler)(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
     // =========================================================================
     // Optional Train Emergency Event Handler (NULL = not implemented)

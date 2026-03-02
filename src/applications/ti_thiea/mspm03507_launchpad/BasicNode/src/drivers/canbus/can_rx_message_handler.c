@@ -50,6 +50,8 @@
 #include "../../openlcb/openlcb_buffer_list.h"
 #include "../../openlcb/openlcb_utilities.h"
 
+    /** @brief Multi-frame assembly timeout in 100ms ticks (3 seconds). */
+#define CAN_RX_INPROCESS_TIMEOUT_TICKS 30
 
 static interface_can_rx_message_handler_t *_interface;
 
@@ -209,6 +211,7 @@ void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t offset, payload
             0,
             mti);
 
+    target_openlcb_msg->timerticks = _interface->get_current_tick();
     target_openlcb_msg->state.inprocess = true;
 
     CanUtilities_append_can_payload_to_openlcb_payload(target_openlcb_msg, can_msg, offset);
@@ -226,6 +229,20 @@ void CanRxMessageHandler_middle_frame(can_msg_t* can_msg, uint8_t offset) {
     openlcb_msg_t* target_openlcb_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!target_openlcb_msg) {
+
+        _load_reject_message(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+
+        return;
+
+    }
+
+    uint8_t elapsed = (uint8_t) (_interface->get_current_tick() - target_openlcb_msg->timerticks);
+
+    if (elapsed >= CAN_RX_INPROCESS_TIMEOUT_TICKS) {
+
+        // Stale assembly — free and reject
+        OpenLcbBufferList_release(target_openlcb_msg);
+        OpenLcbBufferStore_free_buffer(target_openlcb_msg);
 
         _load_reject_message(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
@@ -346,19 +363,23 @@ void CanRxMessageHandler_stream_frame(can_msg_t* can_msg, uint8_t offset, payloa
 }
 
     /**
-     * @brief Handles CID frames: sends an RID reply if the claimed alias is already ours.
+     * @brief Handles CID frames per CanFrameTransferS Section 3.5.3.
      *
-     * @verbatim
+     * @details Per the standard: "Nodes that receive a CID frame that contains
+     * the alias they are using or have reserved shall respond with an RID frame."
+     * CID is a probe during alias reservation — the correct defence is always
+     * RID, regardless of whether the node is permitted or still claiming.
+     * This differs from RID/AMD/AMR receipt which indicates an active alias
+     * collision and is handled by @ref _check_for_duplicate_alias().
+     *
      * @param can_msg Received CID frame.
-     * @endverbatim
      *
-     * @warning Silently drops the RID reply if buffer allocation fails.
+     * @warning Silently drops the reply if buffer allocation fails.
      */
 void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
 
     if (!can_msg) { return; }
 
-    // Check for duplicate Alias
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(source_alias);
 

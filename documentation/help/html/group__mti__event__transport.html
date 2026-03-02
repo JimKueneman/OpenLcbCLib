@@ -146,17 +146,8 @@ Macros</h2></td></tr>
 <tr class="memdesc:ga97dcdd50b1752b3520283a046a1b24af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Producer/Consumer Event Report - event has occurred.  <br /></td></tr>
 <tr class="separator:ga97dcdd50b1752b3520283a046a1b24af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadca02bd7909f23abf295f4e966821fcb" id="r_gadca02bd7909f23abf295f4e966821fcb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gadca02bd7909f23abf295f4e966821fcb">MTI_PC_EVENT_REPORT_WITH_PAYLOAD</a>&#160;&#160;&#160;0x0F14</td></tr>
-<tr class="memdesc:gadca02bd7909f23abf295f4e966821fcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event report with payload data (single frame, up to 8 bytes payload)  <br /></td></tr>
+<tr class="memdesc:gadca02bd7909f23abf295f4e966821fcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event report with payload data.  <br /></td></tr>
 <tr class="separator:gadca02bd7909f23abf295f4e966821fcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab08330c180446e14d55edf9994f21483" id="r_gab08330c180446e14d55edf9994f21483"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gab08330c180446e14d55edf9994f21483">MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST</a>&#160;&#160;&#160;0x0F16</td></tr>
-<tr class="memdesc:gab08330c180446e14d55edf9994f21483"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event report with payload - first frame of segmented message.  <br /></td></tr>
-<tr class="separator:gab08330c180446e14d55edf9994f21483"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4e4d76ef39394a87920771b9d3568de9" id="r_ga4e4d76ef39394a87920771b9d3568de9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga4e4d76ef39394a87920771b9d3568de9">MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE</a>&#160;&#160;&#160;0x0F15</td></tr>
-<tr class="memdesc:ga4e4d76ef39394a87920771b9d3568de9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event report with payload - middle frame of segmented message.  <br /></td></tr>
-<tr class="separator:ga4e4d76ef39394a87920771b9d3568de9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga06a3c9fd244f8ec8b3382f96c135149f" id="r_ga06a3c9fd244f8ec8b3382f96c135149f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga06a3c9fd244f8ec8b3382f96c135149f">MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST</a>&#160;&#160;&#160;0x0F14</td></tr>
-<tr class="memdesc:ga06a3c9fd244f8ec8b3382f96c135149f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event report with payload - last frame of segmented message.  <br /></td></tr>
-<tr class="separator:ga06a3c9fd244f8ec8b3382f96c135149f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Producer/Consumer event identification, learning, and PCER. </p>
@@ -429,55 +420,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Event report with payload data (single frame, up to 8 bytes payload) </p>
-
-</div>
-</div>
-<a id="gab08330c180446e14d55edf9994f21483" name="gab08330c180446e14d55edf9994f21483"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab08330c180446e14d55edf9994f21483">&#9670;&#160;</a></span>MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST&#160;&#160;&#160;0x0F16</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Event report with payload - first frame of segmented message. </p>
-
-</div>
-</div>
-<a id="ga4e4d76ef39394a87920771b9d3568de9" name="ga4e4d76ef39394a87920771b9d3568de9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4e4d76ef39394a87920771b9d3568de9">&#9670;&#160;</a></span>MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE&#160;&#160;&#160;0x0F15</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Event report with payload - middle frame of segmented message. </p>
-
-</div>
-</div>
-<a id="ga06a3c9fd244f8ec8b3382f96c135149f" name="ga06a3c9fd244f8ec8b3382f96c135149f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga06a3c9fd244f8ec8b3382f96c135149f">&#9670;&#160;</a></span>MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST&#160;&#160;&#160;0x0F14</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Event report with payload - last frame of segmented message. </p>
+<p>Event report with payload data. </p>
 
 </div>
 </div>

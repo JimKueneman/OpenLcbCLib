@@ -41,8 +41,7 @@
 #include "src/openlcb/openlcb_types.h"
 #include "src/openlcb/openlcb_defines.h"
 #include "src/utilities/mustangpeak_string_helper.h"
-#include "src/openlcb/openlcb_node.h"
-#include "src/openlcb/protocol_datagram_handler.h"
+#include "src/openlcb/openlcb_config.h"
 
 #ifdef ARDUINO_COMPATIBLE
 // TODO:  include any header files the Raspberry Pi Pico need to compile under Arduino/PlatformIO
@@ -59,8 +58,7 @@ static bool timer_unhandled_tick = false;
 
 void _handle_timer_tick(void) {
 
-  OpenLcbNode_100ms_timer_tick();
-  ProtocolDatagramHandler_100ms_timer_tick();
+  OpenLcb_100ms_timer_tick();
 }
 
 bool timer_task_or_interrupt(__unused struct repeating_timer *timer) {

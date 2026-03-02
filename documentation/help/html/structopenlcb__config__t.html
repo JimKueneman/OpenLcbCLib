@@ -112,6 +112,12 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a6e69453bb4a864b0b98fb8be0a06afd4" id="r_a6e69453bb4a864b0b98fb8be0a06afd4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e69453bb4a864b0b98fb8be0a06afd4">reboot</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
 <tr class="memdesc:a6e69453bb4a864b0b98fb8be0a06afd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reboot the processor. REQUIRED.  <br /></td></tr>
 <tr class="separator:a6e69453bb4a864b0b98fb8be0a06afd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9f6d2c1199cd290f9644bcab8128f74" id="r_aa9f6d2c1199cd290f9644bcab8128f74"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9f6d2c1199cd290f9644bcab8128f74">on_optional_interaction_rejected</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> source_node_id, uint16_t error_code, uint16_t rejected_mti)</td></tr>
+<tr class="memdesc:aa9f6d2c1199cd290f9644bcab8128f74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional Interaction Rejected received. Optional. Notifies the application that a message was rejected by a remote node.  <br /></td></tr>
+<tr class="separator:aa9f6d2c1199cd290f9644bcab8128f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9d95e47aad42d2a436400cf5d1f227a" id="r_ac9d95e47aad42d2a436400cf5d1f227a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9d95e47aad42d2a436400cf5d1f227a">on_terminate_due_to_error</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> source_node_id, uint16_t error_code, uint16_t rejected_mti)</td></tr>
+<tr class="memdesc:ac9d95e47aad42d2a436400cf5d1f227a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate Due To Error received. Optional. Notifies the application that a remote node terminated with an error.  <br /></td></tr>
+<tr class="separator:ac9d95e47aad42d2a436400cf5d1f227a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53e562fab863518edb4da67f436116c8" id="r_a53e562fab863518edb4da67f436116c8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53e562fab863518edb4da67f436116c8">on_100ms_timer</a> )(void)</td></tr>
 <tr class="memdesc:a53e562fab863518edb4da67f436116c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">100ms periodic timer callback. Optional.  <br /></td></tr>
 <tr class="separator:a53e562fab863518edb4da67f436116c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,8 +138,8 @@ Data Fields</h2></td></tr>
 <div class="line">    .on_consumed_event_pcer  = &amp;my_event_handler,</div>
 <div class="line">};</div>
 <div class="line"><a class="code hl_function" href="openlcb__config_8h.html#acc5207f2b2fb16cc8ef8cbacac9f71ca">OpenLcb_initialize</a>(&amp;my_config);</div>
-<div class="ttc" id="aopenlcb__config_8h_html_acc5207f2b2fb16cc8ef8cbacac9f71ca"><div class="ttname"><a href="openlcb__config_8h.html#acc5207f2b2fb16cc8ef8cbacac9f71ca">OpenLcb_initialize</a></div><div class="ttdeci">void OpenLcb_initialize(const openlcb_config_t *config)</div><div class="ttdoc">Initializes the entire OpenLCB stack with one call.</div><div class="ttdef"><b>Definition</b> openlcb_config.c:557</div></div>
-<div class="ttc" id="astructopenlcb__config__t_html"><div class="ttname"><a href="structopenlcb__config__t.html">openlcb_config_t</a></div><div class="ttdoc">User configuration for OpenLcbCLib.</div><div class="ttdef"><b>Definition</b> openlcb_config.h:148</div></div>
+<div class="ttc" id="aopenlcb__config_8h_html_acc5207f2b2fb16cc8ef8cbacac9f71ca"><div class="ttname"><a href="openlcb__config_8h.html#acc5207f2b2fb16cc8ef8cbacac9f71ca">OpenLcb_initialize</a></div><div class="ttdeci">void OpenLcb_initialize(const openlcb_config_t *config)</div><div class="ttdoc">Initializes the entire OpenLCB stack with one call.</div><div class="ttdef"><b>Definition</b> openlcb_config.c:631</div></div>
+<div class="ttc" id="astructopenlcb__config__t_html"><div class="ttname"><a href="structopenlcb__config__t.html">openlcb_config_t</a></div><div class="ttdoc">User configuration for OpenLcbCLib.</div><div class="ttdef"><b>Definition</b> openlcb_config.h:158</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>
@@ -239,6 +245,40 @@ Data Fields</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="aa9f6d2c1199cd290f9644bcab8128f74" name="aa9f6d2c1199cd290f9644bcab8128f74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9f6d2c1199cd290f9644bcab8128f74">&#9670;&#160;</a></span>on_optional_interaction_rejected</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* on_optional_interaction_rejected) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> source_node_id, uint16_t error_code, uint16_t rejected_mti)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional Interaction Rejected received. Optional. Notifies the application that a message was rejected by a remote node. </p>
+<dl class="section see"><dt>See also</dt><dd>MessageNetworkS Section 3.5.2. </dd></dl>
+
+</div>
+</div>
+<a id="ac9d95e47aad42d2a436400cf5d1f227a" name="ac9d95e47aad42d2a436400cf5d1f227a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9d95e47aad42d2a436400cf5d1f227a">&#9670;&#160;</a></span>on_terminate_due_to_error</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* on_terminate_due_to_error) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> source_node_id, uint16_t error_code, uint16_t rejected_mti)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Terminate Due To Error received. Optional. Notifies the application that a remote node terminated with an error. </p>
+<dl class="section see"><dt>See also</dt><dd>MessageNetworkS Section 3.5.2. </dd></dl>
 
 </div>
 </div>

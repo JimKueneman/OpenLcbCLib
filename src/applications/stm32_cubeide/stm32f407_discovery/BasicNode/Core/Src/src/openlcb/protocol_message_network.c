@@ -45,7 +45,7 @@
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
 
-    /** @brief Stored callback interface pointer (reserved, currently unused). */
+    /** @brief Stored callback interface pointer. */
 static interface_openlcb_protocol_message_network_t *_interface;
 
     /**
@@ -87,8 +87,21 @@ static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_in
 
 }
 
-    /** @brief Build Verified Node ID (or _SIMPLE) reply with this node’s ID. */
-static void _load_verified_node_id(openlcb_statemachine_info_t *statemachine_info) {
+    /**
+     * @brief Build Verified Node ID (or _SIMPLE) reply with this node’s ID.
+     *
+     * @details For global (unaddressed) responses, dest fields are zeroed so
+     * the message is transport-independent.  For addressed responses, dest
+     * fields are copied from the requester.
+     *
+     * @verbatim
+     * @param statemachine_info  Context.
+     * @param is_addressed       true for addressed reply, false for global.
+     * @endverbatim
+     */
+static void _load_verified_node_id(
+            openlcb_statemachine_info_t *statemachine_info,
+            bool is_addressed) {
 
     uint16_t mti = MTI_VERIFIED_NODE_ID;
 
@@ -98,11 +111,21 @@ static void _load_verified_node_id(openlcb_statemachine_info_t *statemachine_inf
 
     }
 
+    uint16_t dest_alias = 0;
+    uint64_t dest_id = 0;
+
+    if (is_addressed) {
+
+        dest_alias = statemachine_info->incoming_msg_info.msg_ptr->source_alias;
+        dest_id = statemachine_info->incoming_msg_info.msg_ptr->source_id;
+
+    }
+
     OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
-            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            dest_alias,
+            dest_id,
             mti);
 
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(
@@ -167,12 +190,12 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_PROTOCOL_SUPPORT_REPLY);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 16) & 0xFF, 0);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 8) & 0xFF, 1);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 0) & 0xFF, 2);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 3);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 4);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 5);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((support_flags >> 16) & 0xFF), 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((support_flags >> 8) & 0xFF), 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((support_flags >> 0) & 0xFF), 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((support_flags >> 40) & 0xFF), 3);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((support_flags >> 32) & 0xFF), 4);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((support_flags >> 24) & 0xFF), 5);
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -192,7 +215,7 @@ void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_statemachine_in
 
         if (OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) == statemachine_info->openlcb_node->id) {
 
-            _load_verified_node_id(statemachine_info);
+            _load_verified_node_id(statemachine_info, false);
 
             return;
 
@@ -204,14 +227,14 @@ void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_statemachine_in
 
     }
 
-    _load_verified_node_id(statemachine_info);
+    _load_verified_node_id(statemachine_info, false);
 
 }
 
     /** @brief Handle addressed Verify Node ID — always replies. */
 void ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_statemachine_info_t *statemachine_info) {
 
-    _load_verified_node_id(statemachine_info);
+    _load_verified_node_id(statemachine_info, true);
 
 }
 
@@ -230,16 +253,76 @@ void ProtocolMessageNetwork_handle_verified_node_id(openlcb_statemachine_info_t 
 
 }
 
-    /** @brief Handle Optional Interaction Rejected.  No automatic response. */
+    /** @brief Handle Optional Interaction Rejected (MessageNetworkS Section 3.5.2).
+     *
+     * Parses error code (bytes 0-1) and rejected MTI (bytes 2-3).  Invokes
+     * the application callback if non-NULL.  No automatic response. */
 void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_statemachine_info_t *statemachine_info) {
 
     statemachine_info->outgoing_msg_info.valid = false;
 
+    if (_interface->on_optional_interaction_rejected) {
+
+        uint16_t error_code = 0;
+        uint16_t rejected_mti = 0;
+
+        if (statemachine_info->incoming_msg_info.msg_ptr->payload_count >= 2) {
+
+            error_code = OpenLcbUtilities_extract_word_from_openlcb_payload(
+                    statemachine_info->incoming_msg_info.msg_ptr, 0);
+
+        }
+
+        if (statemachine_info->incoming_msg_info.msg_ptr->payload_count >= 4) {
+
+            rejected_mti = OpenLcbUtilities_extract_word_from_openlcb_payload(
+                    statemachine_info->incoming_msg_info.msg_ptr, 2);
+
+        }
+
+        _interface->on_optional_interaction_rejected(
+                statemachine_info->openlcb_node,
+                statemachine_info->incoming_msg_info.msg_ptr->source_id,
+                error_code,
+                rejected_mti);
+
+    }
+
 }
 
-    /** @brief Handle Terminate Due To Error.  No automatic response. */
+    /** @brief Handle Terminate Due To Error (MessageNetworkS Section 3.5.2).
+     *
+     * Parses error code (bytes 0-1) and rejected MTI (bytes 2-3).  Invokes
+     * the application callback if non-NULL.  No automatic response. */
 void ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_statemachine_info_t *statemachine_info) {
 
     statemachine_info->outgoing_msg_info.valid = false;
+
+    if (_interface->on_terminate_due_to_error) {
+
+        uint16_t error_code = 0;
+        uint16_t rejected_mti = 0;
+
+        if (statemachine_info->incoming_msg_info.msg_ptr->payload_count >= 2) {
+
+            error_code = OpenLcbUtilities_extract_word_from_openlcb_payload(
+                    statemachine_info->incoming_msg_info.msg_ptr, 0);
+
+        }
+
+        if (statemachine_info->incoming_msg_info.msg_ptr->payload_count >= 4) {
+
+            rejected_mti = OpenLcbUtilities_extract_word_from_openlcb_payload(
+                    statemachine_info->incoming_msg_info.msg_ptr, 2);
+
+        }
+
+        _interface->on_terminate_due_to_error(
+                statemachine_info->openlcb_node,
+                statemachine_info->incoming_msg_info.msg_ptr->source_id,
+                error_code,
+                rejected_mti);
+
+    }
 
 }

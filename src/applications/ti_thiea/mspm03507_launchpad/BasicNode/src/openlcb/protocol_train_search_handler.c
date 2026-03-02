@@ -257,9 +257,17 @@ static bool _does_train_match(
 
         } else {
 
-            if (search_address < 128 && train_state->is_long_address && !(flags & TRAIN_SEARCH_FLAG_ALLOCATE)) {
+            if (!(flags & TRAIN_SEARCH_FLAG_ALLOCATE)) {
 
-                return false;
+                if (search_address < TRAIN_MAX_DCC_SHORT_ADDRESS && train_state->is_long_address) {
+
+                    return false;
+
+                } else if (search_address >= TRAIN_MAX_DCC_SHORT_ADDRESS && !train_state->is_long_address) {
+
+                    return false;
+
+                }
 
             }
 
@@ -352,6 +360,73 @@ void ProtocolTrainSearch_handle_search_event(
     if (_interface && _interface->on_search_matched) {
 
         _interface->on_search_matched(statemachine_info->openlcb_node, search_address, flags);
+
+    }
+
+}
+
+    /**
+     * @brief Handles the no-match case after all train nodes have been checked.
+     *
+     * @details Called by the main statemachine when the last node in the
+     * enumeration has been reached and no train node matched the search query.
+     * If the ALLOCATE flag is set in the search event and the on_search_no_match
+     * callback is registered, invokes it so the application can create a new
+     * virtual train node.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param event_id           Full 64-bit event_id_t containing encoded search query.
+     * @endverbatim
+     */
+void ProtocolTrainSearch_handle_search_no_match(
+        openlcb_statemachine_info_t *statemachine_info,
+        event_id_t event_id) {
+
+    if (!statemachine_info) { return; }
+
+    uint8_t flags = OpenLcbUtilities_extract_train_search_flags(event_id);
+
+    if (!(flags & TRAIN_SEARCH_FLAG_ALLOCATE)) { return; }
+
+    if (!_interface || !_interface->on_search_no_match) { return; }
+
+    uint8_t digits[6];
+    OpenLcbUtilities_extract_train_search_digits(event_id, digits);
+    uint16_t search_address = OpenLcbUtilities_train_search_digits_to_address(digits);
+
+    openlcb_node_t *new_node = _interface->on_search_no_match(search_address, flags);
+
+    if (new_node && new_node->train_state) {
+
+        // Build Producer Identified reply from the newly allocated node
+        uint8_t reply_flags = 0;
+        if (new_node->train_state->is_long_address) {
+
+            reply_flags |= TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR;
+
+        } else {
+
+            reply_flags |= TRAIN_SEARCH_FLAG_DCC;
+
+        }
+        reply_flags |= (new_node->train_state->speed_steps & TRAIN_SEARCH_SPEED_STEP_MASK);
+
+        event_id_t reply_event = OpenLcbUtilities_create_train_search_event_id(
+                new_node->train_state->dcc_address, reply_flags);
+
+        OpenLcbUtilities_load_openlcb_message(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                new_node->alias,
+                new_node->id,
+                0,
+                0,
+                MTI_PRODUCER_IDENTIFIED_SET);
+
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr, reply_event);
+
+        statemachine_info->outgoing_msg_info.valid = true;
 
     }
 

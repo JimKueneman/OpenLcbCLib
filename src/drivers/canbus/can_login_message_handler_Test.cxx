@@ -226,6 +226,7 @@ void initialize_statemachine_info(can_statemachine_info_t *info)
     info->openlcb_node = OpenLcbNode_allocate(NODE_ID, &_node_parameters_main_node);
     info->openlcb_node->alias = ALIAS;
     
+    info->current_tick = 0;
     info->enumerating = false;
     info->login_outgoing_can_msg_valid = false;
     
@@ -537,35 +538,33 @@ TEST(CanLoginMessageHandler, wait_200ms)
     initialize_statemachine_info(&info);
     
     info.openlcb_node->state.run_state = RUNSTATE_WAIT_200ms;
-    
-    // Tick 0 - should still be waiting
+    info.openlcb_node->timerticks = 0;  // snapshot when CID4 was sent
+
+    // Tick 0 - should still be waiting (elapsed = 0 - 0 = 0, not > 2)
+    info.current_tick = 0;
     CanLoginMessageHandler_state_wait_200ms(&info);
     EXPECT_EQ(info.openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
-    EXPECT_EQ(info.openlcb_node->timerticks, 0);
     EXPECT_FALSE(info.openlcb_node->state.permitted);
     EXPECT_FALSE(info.openlcb_node->state.initialized);
-    
-    // Tick 1 (100ms)
-    OpenLcbNode_100ms_timer_tick();
+
+    // Tick 1 (100ms) - elapsed = 1, not > 2
+    info.current_tick = 1;
     CanLoginMessageHandler_state_wait_200ms(&info);
     EXPECT_EQ(info.openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
-    EXPECT_EQ(info.openlcb_node->timerticks, 1);
     EXPECT_FALSE(info.openlcb_node->state.permitted);
     EXPECT_FALSE(info.openlcb_node->state.initialized);
-    
-    // Tick 2 (200ms)
-    OpenLcbNode_100ms_timer_tick();
+
+    // Tick 2 (200ms) - elapsed = 2, not > 2
+    info.current_tick = 2;
     CanLoginMessageHandler_state_wait_200ms(&info);
     EXPECT_EQ(info.openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
-    EXPECT_EQ(info.openlcb_node->timerticks, 2);
     EXPECT_FALSE(info.openlcb_node->state.permitted);
     EXPECT_FALSE(info.openlcb_node->state.initialized);
-    
-    // Tick 3 (300ms) - should transition
-    OpenLcbNode_100ms_timer_tick();
+
+    // Tick 3 (300ms) - elapsed = 3, > 2, should transition
+    info.current_tick = 3;
     CanLoginMessageHandler_state_wait_200ms(&info);
     EXPECT_EQ(info.openlcb_node->state.run_state, RUNSTATE_LOAD_RESERVE_ID);
-    EXPECT_EQ(info.openlcb_node->timerticks, 3);
     EXPECT_FALSE(info.openlcb_node->state.permitted);
     EXPECT_FALSE(info.openlcb_node->state.initialized);
 }

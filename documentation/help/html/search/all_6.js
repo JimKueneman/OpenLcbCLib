@@ -1,19 +1,15 @@
 var searchData=
 [
-  ['fdi_0',['fdi',['../structnode__parameters__t.html#a4d59ed80eb1f91a808aed4b4377fdfbe',1,'node_parameters_t']]],
-  ['field_20bit_20masks_20and_20values_1',['Data Field Bit Masks and Values',['../group__data__field__masks.html',1,'']]],
-  ['field_20masks_2',['Field Masks',['../group__can__identifier__masks.html',1,'CAN Identifier Field Masks'],['../group__mti__field__masks.html',1,'MTI Bit Field Masks']]],
-  ['firmware_5fupgrade_5factive_3',['firmware_upgrade_active',['../structopenlcb__node__state__t.html#a274d38d2727121dd5f49a0748e7dd04c',1,'openlcb_node_state_t']]],
-  ['flags_4',['Flags',['../group__address__space__info__flags.html',1,'Address Space Information Flags'],['../group__config__options__bits.html',1,'Configuration Options Bit Flags'],['../group__config__write__length__flags.html',1,'Configuration Write Length Flags'],['../group__datagram__flags.html',1,'Datagram Protocol Flags']]],
-  ['flags_5',['flags',['../structtrain__listener__entry__t.html#aa2585d779da0ab21273a8d92de9a0ebe',1,'train_listener_entry_t']]],
-  ['float16_5fexponent_5fmask_6',['FLOAT16_EXPONENT_MASK',['../openlcb__float16_8h.html#aee00ace4f5a5daf960b727c1ae1c1145',1,'openlcb_float16.h']]],
-  ['float16_5fmantissa_5fmask_7',['FLOAT16_MANTISSA_MASK',['../openlcb__float16_8h.html#aa5fe438cb59ce59398cd060652d4a111',1,'openlcb_float16.h']]],
-  ['float16_5fnan_8',['FLOAT16_NAN',['../openlcb__float16_8h.html#a4fa22b558efa1465b7cf675b4398e936',1,'openlcb_float16.h']]],
-  ['float16_5fnegative_5fzero_9',['FLOAT16_NEGATIVE_ZERO',['../openlcb__float16_8h.html#a17e4abbc002afefaeeead655aeb2fbcb',1,'openlcb_float16.h']]],
-  ['float16_5fpositive_5fzero_10',['FLOAT16_POSITIVE_ZERO',['../openlcb__float16_8h.html#a35c99703722746307901892fdc3cdde7',1,'openlcb_float16.h']]],
-  ['float16_5fsign_5fmask_11',['FLOAT16_SIGN_MASK',['../openlcb__float16_8h.html#a54e8c9f630384b06ac3257317620c912',1,'openlcb_float16.h']]],
-  ['format_20and_20masks_12',['CAN Frame Format and Masks',['../group__can__frame__format.html',1,'']]],
-  ['frame_20format_20and_20masks_13',['CAN Frame Format and Masks',['../group__can__frame__format.html',1,'']]],
-  ['frame_20identifiers_14',['CAN Control Frame Identifiers',['../group__can__control__frames.html',1,'']]],
-  ['functions_15',['functions',['../structtrain__state___t_a_g.html#aec825c2a5463ff3857eedd2c5f996bf2',1,'train_state_TAG']]]
+  ['get_5fcurrent_5ftick_0',['get_current_tick',['../structinterface__openlcb__main__statemachine__t.html#ab317b73b50825b5354cf9024a035f37a',1,'interface_openlcb_main_statemachine_t::get_current_tick'],['../structinterface__can__main__statemachine__t.html#ab317b73b50825b5354cf9024a035f37a',1,'interface_can_main_statemachine_t::get_current_tick'],['../structinterface__can__rx__message__handler__t.html#ab317b73b50825b5354cf9024a035f37a',1,'interface_can_rx_message_handler_t::get_current_tick']]],
+  ['global_5feoff_5factive_1',['global_eoff_active',['../structtrain__state___t_a_g.html#ad0cf02437ff5926e3134829f1dbbcf6d',1,'train_state_TAG']]],
+  ['global_5festop_5factive_2',['global_estop_active',['../structtrain__state___t_a_g.html#ae3a7d789d45d8e1eed614c5fd1828d39',1,'train_state_TAG']]],
+  ['gridconnect_5fbuffer_5ft_3',['gridconnect_buffer_t',['../openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8',1,'openlcb_gridconnect.h']]],
+  ['gridconnect_5fdata_5fstart_5fpos_4',['GRIDCONNECT_DATA_START_POS',['../openlcb__gridconnect_8h.html#ab9e2e0278b2f4f98f3131760fa56774b',1,'openlcb_gridconnect.h']]],
+  ['gridconnect_5fheader_5flen_5',['GRIDCONNECT_HEADER_LEN',['../openlcb__gridconnect_8h.html#a427e2eb39119b277fd341b5ce31b8994',1,'openlcb_gridconnect.h']]],
+  ['gridconnect_5fidentifier_5flen_6',['GRIDCONNECT_IDENTIFIER_LEN',['../openlcb__gridconnect_8h.html#a668709c8b569b81e7cf67e1003068f6c',1,'openlcb_gridconnect.h']]],
+  ['gridconnect_5fidentifier_5fstart_5fpos_7',['GRIDCONNECT_IDENTIFIER_START_POS',['../openlcb__gridconnect_8h.html#a6160fa1964be3dc636b75d9452972698',1,'openlcb_gridconnect.h']]],
+  ['gridconnect_5fnormal_5fflag_5fpos_8',['GRIDCONNECT_NORMAL_FLAG_POS',['../openlcb__gridconnect_8h.html#a8516cac8ab902efec96643928a98206e',1,'openlcb_gridconnect.h']]],
+  ['gridconnect_5fstate_5fsync_5ffind_5fdata_9',['GRIDCONNECT_STATE_SYNC_FIND_DATA',['../openlcb__gridconnect_8h.html#a2a5df639f462bb080f9f0b9d78f58053',1,'openlcb_gridconnect.h']]],
+  ['gridconnect_5fstate_5fsync_5ffind_5fheader_10',['GRIDCONNECT_STATE_SYNC_FIND_HEADER',['../openlcb__gridconnect_8h.html#ac84c417874c93be1f4705edab8b64ef3',1,'openlcb_gridconnect.h']]],
+  ['gridconnect_5fstate_5fsync_5fstart_11',['GRIDCONNECT_STATE_SYNC_START',['../openlcb__gridconnect_8h.html#ab27ebc3b11ce279634207f5e87802baa',1,'openlcb_gridconnect.h']]]
 ];

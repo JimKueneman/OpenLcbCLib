@@ -114,8 +114,11 @@ Functions</h2></td></tr>
 <tr class="memdesc:acc5207f2b2fb16cc8ef8cbacac9f71ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the entire OpenLCB stack with one call.  <br /></td></tr>
 <tr class="separator:acc5207f2b2fb16cc8ef8cbacac9f71ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca7889246e45009fe606cd700fa738d1" id="r_aca7889246e45009fe606cd700fa738d1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca7889246e45009fe606cd700fa738d1">OpenLcb_100ms_timer_tick</a> (void)</td></tr>
-<tr class="memdesc:aca7889246e45009fe606cd700fa738d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drives all time-dependent protocol modules.  <br /></td></tr>
+<tr class="memdesc:aca7889246e45009fe606cd700fa738d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increments the global 100ms tick counter.  <br /></td></tr>
 <tr class="separator:aca7889246e45009fe606cd700fa738d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a135d3ff3afe3f9b5e996051ae85fe3b5" id="r_a135d3ff3afe3f9b5e996051ae85fe3b5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a135d3ff3afe3f9b5e996051ae85fe3b5">OpenLcb_get_global_100ms_tick</a> (void)</td></tr>
+<tr class="memdesc:a135d3ff3afe3f9b5e996051ae85fe3b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current value of the global 100ms tick counter.  <br /></td></tr>
+<tr class="separator:a135d3ff3afe3f9b5e996051ae85fe3b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0609edaf85a85ed07c25a5220c11dd27" id="r_a0609edaf85a85ed07c25a5220c11dd27"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0609edaf85a85ed07c25a5220c11dd27">OpenLcb_create_node</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *parameters)</td></tr>
 <tr class="memdesc:a0609edaf85a85ed07c25a5220c11dd27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates and registers a new node on the OpenLCB network.  <br /></td></tr>
 <tr class="separator:a0609edaf85a85ed07c25a5220c11dd27"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -202,9 +205,38 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Drives all time-dependent protocol modules. </p>
-<p>Call from a 100ms hardware timer interrupt or periodic task. Dispatches to all compiled-in modules that require regular timer ticks.</p>
-<p>Drives all time-dependent protocol modules. </p>
+<p>Increments the global 100ms tick counter. </p>
+<p>Call from a 100ms hardware timer interrupt or periodic task. This is the ONLY action performed by the timer context &ndash; all real protocol work runs in the main loop via <a class="el" href="#aa00d6e3349959d1f1380597cd2f6b311" title="Runs one iteration of all state machines.">OpenLcb_run()</a>.</p>
+<p>Increments the global 100ms tick counter. </p>
+
+</div>
+</div>
+<a id="a135d3ff3afe3f9b5e996051ae85fe3b5" name="a135d3ff3afe3f9b5e996051ae85fe3b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a135d3ff3afe3f9b5e996051ae85fe3b5">&#9670;&#160;</a></span>OpenLcb_get_global_100ms_tick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t OpenLcb_get_global_100ms_tick </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the current value of the global 100ms tick counter. </p>
+<p>Used by wiring code (<a class="el" href="openlcb__config_8c.html" title="Library-internal wiring module for config facade.">openlcb_config.c</a>, <a class="el" href="can__config_8c.html" title="Library-internal wiring module for CAN bus transport.">can_config.c</a>) to read the clock and inject it into modules via parameters or interface function pointers. Individual modules should NOT call this directly — they receive the tick through their function parameters or interface.</p>
+<dl class="section return"><dt>Returns</dt><dd>Current tick count (wraps at 255). </dd></dl>
 
 </div>
 </div>

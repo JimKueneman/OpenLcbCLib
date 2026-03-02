@@ -266,7 +266,7 @@ void _update_called_function_ptr(void *function_ptr)
     called_function_ptr = (void *)((long long)function_ptr + (long long)called_function_ptr);
 }
 
-void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code)
+void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, bool reply_pending, uint16_t return_code)
 {
 
     datagram_reply_code = return_code;
@@ -1111,8 +1111,7 @@ TEST(ProtocolConfigMemOperationsHandler, reset_reboot)
     incoming_msg->dest_alias = DEST_ALIAS;
     *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
     *incoming_msg->payload[1] = CONFIG_MEM_RESET_REBOOT;
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, DEST_ID, 2);
-    incoming_msg->payload_count = 8;
+    incoming_msg->payload_count = 2;  // Per MemoryConfigurationS Section 4.24: no Node ID
 
     // *****************************************
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
@@ -1130,14 +1129,6 @@ TEST(ProtocolConfigMemOperationsHandler, reset_reboot)
     EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_reset_reboot);
     EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
 
-    // Wrong Node ID should be ignored
-    _reset_variables();
-    node1->state.openlcb_datagram_ack_sent = false;
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, 0x010203040506, 2);
-    ProtocolConfigMemOperationsHandler_reset_reboot(&statemachine_info);
-
-    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(called_function_ptr, nullptr);
 }
 
 TEST(ProtocolConfigMemOperationsHandler, factory_reset)
@@ -1772,7 +1763,7 @@ TEST(ProtocolConfigMemOperationsHandler, request_reserve_lock)
     config_mem_operations_request_info.operations_func = nullptr;
 
     // *****************************************
-    // Node not previously locked so we lock it
+    // Node not previously locked so we lock it with SOURCE_ID
     // *****************************************
 
     _reset_variables();
@@ -1784,43 +1775,9 @@ TEST(ProtocolConfigMemOperationsHandler, request_reserve_lock)
     EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
     EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), SOURCE_ID);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
 
     // *****************************************
-    // Node not previously locked so we lock it
-    // *****************************************
-
-    _reset_variables();
-    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
-
-    EXPECT_EQ(called_function_ptr, nullptr);
-    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
-    EXPECT_EQ(outgoing_msg->payload_count, 8);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
-    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), SOURCE_ID);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-
-    // *****************************************
-    // Node previously locked by us relock it, should succeed
-    // *****************************************
-
-    _reset_variables();
-    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
-
-    EXPECT_EQ(called_function_ptr, nullptr);
-    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
-    EXPECT_EQ(outgoing_msg->payload_count, 8);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
-    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), SOURCE_ID);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-
-    // *****************************************
-    // Node previously locked by SOURCE_ID so this should fail and return the SOURCE ID
+    // Node locked by SOURCE_ID, different node (DEST_ID) tries to lock — should fail
     // *****************************************
 
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, DEST_ID, 2);
@@ -1834,11 +1791,41 @@ TEST(ProtocolConfigMemOperationsHandler, request_reserve_lock)
     EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
     EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), SOURCE_ID);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
 
     // *****************************************
-    // Clear the Lock
+    // Owner (SOURCE_ID) sends own ID to release (MemoryConfigurationS §4.11)
+    // *****************************************
+
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, SOURCE_ID, 2);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), NULL_NODE_ID);
+
+    // *****************************************
+    // Re-lock the node with SOURCE_ID (was just released)
+    // *****************************************
+
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, SOURCE_ID, 2);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), SOURCE_ID);
+
+    // *****************************************
+    // Clear the Lock with NULL_NODE_ID (standard release method)
     // *****************************************
 
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, NULL_NODE_ID, 2);
@@ -1852,8 +1839,76 @@ TEST(ProtocolConfigMemOperationsHandler, request_reserve_lock)
     EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
     EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), NULL_NODE_ID);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+}
+
+// ============================================================================
+// TEST: Lock/Reserve Release by Owner Node ID
+// @details Verifies that sending the current owner's Node ID releases the lock
+//          per MemoryConfigurationS Section 4.11.
+// @coverage ProtocolConfigMemOperationsHandler_request_reserve_lock()
+// ============================================================================
+
+TEST(ProtocolConfigMemOperationsHandler, request_reserve_lock_release_by_owner_id)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_RESERVE_LOCK;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, SOURCE_ID, 2);
+    incoming_msg->payload_count = 8;
+
+    config_mem_operations_request_info_t config_mem_operations_request_info;
+
+    config_mem_operations_request_info.space_info = nullptr;
+    config_mem_operations_request_info.operations_func = nullptr;
+
+    // *****************************************
+    // Lock the node with SOURCE_ID
+    // *****************************************
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(node1->owner_node, SOURCE_ID);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), SOURCE_ID);
+
+    // *****************************************
+    // Release by sending the owner's own Node ID (not zero)
+    // Per MemoryConfigurationS Section 4.11
+    // *****************************************
+
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, SOURCE_ID, 2);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(node1->owner_node, (uint64_t) 0);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), NULL_NODE_ID);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
+
 }
 
 TEST(ProtocolConfigMemOperationsHandler, options_cmd_nulls)

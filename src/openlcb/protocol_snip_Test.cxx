@@ -711,14 +711,13 @@ TEST(ProtocolSnip, load_user_name_null_callback)
     ASSERT_NE(node1, nullptr);
     ASSERT_NE(msg, nullptr);
 
-    // This should not crash even with NULL callback
-    // The function will call NULL callback which will cause undefined behavior
-    // In production, the interface should always have valid callbacks
-    // This test documents the current behavior
-    EXPECT_DEATH({
-        uint16_t offset = ProtocolSnip_load_user_name(node1, msg, 0, LEN_SNIP_USER_NAME_BUFFER - 1);
-        (void)offset;  // Suppress unused variable warning
-    }, ".*");
+    // NULL callback should produce an empty string (single null terminator), not crash
+    uint16_t offset = ProtocolSnip_load_user_name(node1, msg, 0, LEN_SNIP_USER_NAME_BUFFER - 1);
+
+    // Empty string = one null byte written
+    EXPECT_EQ(offset, 1);
+    EXPECT_EQ(msg->payload_count, 1);
+    EXPECT_EQ(*msg->payload[0], 0x00);
 }
 
 // ============================================================================
@@ -738,11 +737,13 @@ TEST(ProtocolSnip, load_user_description_null_callback)
     ASSERT_NE(node1, nullptr);
     ASSERT_NE(msg, nullptr);
 
-    // This should not crash even with NULL callback
-    EXPECT_DEATH({
-        uint16_t offset = ProtocolSnip_load_user_description(node1, msg, 0, LEN_SNIP_USER_DESCRIPTION_BUFFER - 1);
-        (void)offset;  // Suppress unused variable warning
-    }, ".*");
+    // NULL callback should produce an empty string (single null terminator), not crash
+    uint16_t offset = ProtocolSnip_load_user_description(node1, msg, 0, LEN_SNIP_USER_DESCRIPTION_BUFFER - 1);
+
+    // Empty string = one null byte written
+    EXPECT_EQ(offset, 1);
+    EXPECT_EQ(msg->payload_count, 1);
+    EXPECT_EQ(*msg->payload[0], 0x00);
 }
 
 // ============================================================================
@@ -1069,9 +1070,9 @@ TEST(ProtocolSnip, process_string_fits_both_limits)
 }
 
 // ============================================================================
-// TEST: String Fits Max But Exceeds Requested - No Null Terminator
+// TEST: String Fits Max But Exceeds Requested - Truncated with Null
 // @details Tests string <= max_str_len - 1 BUT string_length > byte_count
-// @coverage _process_snip_string() - Path: fits max but not requested, NO null
+// @coverage _process_snip_string() - Path: fits max but not requested, truncated + null
 // ============================================================================
 
 TEST(ProtocolSnip, process_string_exceeds_requested_bytes)
@@ -1087,20 +1088,20 @@ TEST(ProtocolSnip, process_string_exceeds_requested_bytes)
 
     // "ShortName" = 9 chars, max_str_len = 41, requesting only 5 bytes
     // string_length (9) <= max_str_len - 1 (40) BUT string_length (9) > byte_count (5)
-    // Should NOT be null terminated, only copy 5 bytes
+    // After fix: 4 chars of string content + null terminator = 5 bytes total
     uint16_t offset = ProtocolSnip_load_name(node1, msg, 0, 5);
-    
-    EXPECT_EQ(offset, 5);  // Only 5 bytes copied, NO null
+
+    // After fix: 4 chars + null terminator = 5 bytes total
+    EXPECT_EQ(offset, 5);
     EXPECT_EQ(msg->payload_count, 5);
-    
+
     uint8_t *payload_ptr = (uint8_t *)msg->payload;
-    // Should have "Short" (5 chars) with NO null terminator
+    // Should have "Shor" (4 chars) + null terminator
     EXPECT_EQ(payload_ptr[0], 'S');
     EXPECT_EQ(payload_ptr[1], 'h');
     EXPECT_EQ(payload_ptr[2], 'o');
     EXPECT_EQ(payload_ptr[3], 'r');
-    EXPECT_EQ(payload_ptr[4], 't');
-    // payload_ptr[5] should NOT be 0x00 (not written)
+    EXPECT_EQ(payload_ptr[4], 0x00);  // Null terminator
 }
 
 // ============================================================================
@@ -1196,9 +1197,9 @@ TEST(ProtocolSnip, process_string_single_char)
 }
 
 // ============================================================================
-// TEST: Requested Bytes = 1 with Multi-Char String
-// @details Tests minimal byte request with longer string (should not null terminate)
-// @coverage _process_snip_string() - Path: byte_count = 1, string > 1
+// TEST: Requested Bytes = 1 with Multi-Char String - Just Null Terminator
+// @details Tests minimal byte request with longer string (truncated to empty + null)
+// @coverage _process_snip_string() - Path: byte_count = 1, string > 1, just null
 // ============================================================================
 
 TEST(ProtocolSnip, process_string_minimal_byte_request)
@@ -1213,26 +1214,57 @@ TEST(ProtocolSnip, process_string_minimal_byte_request)
     ASSERT_NE(msg, nullptr);
 
     // "ShortName" = 9 chars, but only requesting 1 byte
-    // string_length (9) > byte_count (1)
-    // Should NOT be null terminated, only copy 1 byte
+    // After fix: byte_count=1 means 0 chars + null terminator = 1 byte total
     uint16_t offset = ProtocolSnip_load_name(node1, msg, 0, 1);
-    
-    EXPECT_EQ(offset, 1);  // Only 1 byte
+
+    // After fix: byte_count=1 means 0 chars + null terminator = 1 byte total
+    EXPECT_EQ(offset, 1);
     EXPECT_EQ(msg->payload_count, 1);
-    
+
     uint8_t *payload_ptr = (uint8_t *)msg->payload;
-    EXPECT_EQ(payload_ptr[0], 'S');  // First character only, no null
+    EXPECT_EQ(payload_ptr[0], 0x00);  // Only a null terminator (empty string)
+}
+
+// ============================================================================
+// TEST: String Length Equals Byte Count - Null Terminated via Main Path
+// @details Tests string_length == byte_count (boundary between branches)
+// @coverage _process_snip_string() - Path: boundary, string_length <= byte_count
+// ============================================================================
+
+TEST(ProtocolSnip, process_string_length_equals_byte_count)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_short_name);
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(msg, nullptr);
+
+    // "ShortName" = 9 chars, max_str_len = 41, requesting exactly 9 bytes
+    // string_length (9) <= byte_count (9) => takes the null-terminated path
+    uint16_t offset = ProtocolSnip_load_name(node1, msg, 0, 9);
+
+    EXPECT_EQ(offset, 10);  // 9 chars + null
+    EXPECT_EQ(msg->payload_count, 10);
+
+    uint8_t *payload_ptr = (uint8_t *)msg->payload;
+    EXPECT_EQ(payload_ptr[9], 0x00);  // Null terminator
+    EXPECT_STREQ((char *)payload_ptr, "ShortName");
+
 }
 
 // ============================================================================
 // TEST SUMMARY
 // ============================================================================
 //
-// Total Tests: 30
+// Total Tests: 31
 // - Basic Functionality: 12 tests
 // - NULL Callback Safety: 2 tests
 // - Edge Cases & Boundaries: 8 tests
-// - _process_snip_string Coverage: 8 tests
+// - _process_snip_string Coverage: 9 tests
 //
 // Coverage: ~98%
 //
@@ -1254,14 +1286,14 @@ TEST(ProtocolSnip, process_string_minimal_byte_request)
 // - ProtocolSnip_validate_snip_reply()
 //
 // Static Helper Functions (100% coverage):
-// - _process_snip_string() - 8 dedicated tests covering all paths:
+// - _process_snip_string() - 9 dedicated tests covering all paths:
 //   * String exceeds max_str_len (truncation with null)
 //   * String fits both limits (null terminated)
-//   * String exceeds requested bytes (no null)
+//   * String exceeds requested bytes (truncated + null)
 //   * Exact length match (null terminated)
 //   * Empty string (just null)
 //   * Single character (minimal valid)
-//   * Minimal byte request (1 byte, no null)
+//   * Minimal byte request (1 byte, just null)
 //   * Boundary conditions
 // - _process_snip_version() - tested via version ID loaders
 //
@@ -1276,11 +1308,11 @@ TEST(ProtocolSnip, process_string_minimal_byte_request)
 // 8. String Processing - Complete Path Coverage:
 //    - Length > max (truncate + null)
 //    - Length <= max AND length <= requested (null terminated)
-//    - Length <= max BUT length > requested (no null)
+//    - Length <= max BUT length > requested (truncated + null)
 //    - Exact max length (null terminated)
 //    - Empty string (just null)
 //    - Single character (minimal)
-//    - Minimal byte request (partial copy, no null)
+//    - Minimal byte request (just null terminator)
 // 9. Offset Tracking
 // 10. Zero-Length Requests
 //

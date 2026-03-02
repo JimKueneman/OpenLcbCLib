@@ -422,10 +422,11 @@ Functions</h2></td></tr>
 <p>State 7: Loads a CID4 frame (Node ID bits 11-0) and resets the 200 ms timer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>State machine context. </td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>State machine context.</td></tr>
   </table>
   </dd>
 </dl>
+<p>State 7: Loads a CID4 frame (Node ID bits 11-0) and resets the 200 ms timer. </p>
 
 </div>
 </div>
@@ -456,10 +457,11 @@ Functions</h2></td></tr>
 <p>Non-blocking — returns immediately each call until the timer expires. timerticks is reset to 0 at the end of State 7 (CID4) and incremented every 100 ms, so this waits at least 300 ms — satisfying the spec minimum of 200 ms (§6.2.1). Requires the 100 ms timer tick to be running (OpenLcbNode_100ms_timer_tick).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>State machine context. </td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>State machine context.</td></tr>
   </table>
   </dd>
 </dl>
+<p>State 8: Waits until timerticks &gt; 2, then transitions to LOAD_RESERVE_ID. </p>
 
 </div>
 </div>

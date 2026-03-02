@@ -51,6 +51,9 @@ static broadcast_clock_t _clocks[BROADCAST_TIME_TOTAL_CLOCK_COUNT];
 /** @brief Stored interface pointer for optional application callbacks. */
 static const interface_openlcb_application_broadcast_time_t *_interface;
 
+    /** @brief Tracks the last tick value to gate broadcast time processing. */
+static uint8_t _last_bcast_tick = 0;
+
 
     /**
      * @brief Searches the clock array for a slot matching clock_id.
@@ -144,6 +147,7 @@ void OpenLcbApplicationBroadcastTime_initialize(const interface_openlcb_applicat
 
     memset(_clocks, 0, sizeof(_clocks));
     _interface = interface;
+    _last_bcast_tick = 0;
 
 }
 
@@ -608,9 +612,11 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
      * @brief Advances all running consumer clocks by one 100 ms step.
      *
      * @details Algorithm:
+     * -# Compute ticks elapsed since last call via subtraction.
+     * -# Skip if no time has elapsed (deduplication).
      * -# For each allocated, running consumer clock with a non-zero rate:
      *    - Compute abs_rate from the signed rate.
-     *    - Add 100 * abs_rate to state.ms_accumulator.
+     *    - Add 100 * abs_rate * ticks_elapsed to state.ms_accumulator.
      *    - While accumulator >= BROADCAST_TIME_MS_PER_MINUTE_FIXED_POINT (240,000):
      *        - Subtract the threshold from the accumulator.
      *        - Call _advance_minute_forward() or _advance_minute_backward() depending on rate sign.
@@ -618,8 +624,18 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
      *
      * The threshold 240,000 equals 4 * 60 * 1000, which at rate=4 (1.0x) yields exactly
      * one fast-minute per real minute.  See the accumulator math comment above for details.
+     *
+     * @verbatim
+     * @param current_tick  Current value of the global 100ms tick counter.
+     * @endverbatim
      */
-void OpenLcbApplicationBroadcastTime_100ms_time_tick(void) {
+void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
+
+    uint8_t ticks_elapsed = (uint8_t)(current_tick - _last_bcast_tick);
+
+    if (ticks_elapsed == 0) { return; }
+
+    _last_bcast_tick = current_tick;
 
     for (int i = 0; i < BROADCAST_TIME_TOTAL_CLOCK_COUNT; i++) {
 
@@ -641,7 +657,7 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(void) {
 
         uint16_t abs_rate = (rate < 0) ? (uint16_t)(-rate) : (uint16_t)(rate);
 
-        clock->state.ms_accumulator += (uint32_t)(100) * abs_rate;
+        clock->state.ms_accumulator += (uint32_t)(100) * abs_rate * ticks_elapsed;
 
         while (clock->state.ms_accumulator >= BROADCAST_TIME_MS_PER_MINUTE_FIXED_POINT) {
 

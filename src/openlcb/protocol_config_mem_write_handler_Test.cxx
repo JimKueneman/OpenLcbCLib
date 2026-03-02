@@ -106,6 +106,10 @@ bool memory_write_return_zero = false;
 uint16_t memory_write_requested_bytes = 0;
 uint8_t memory_write_data[1024];
 
+// Backing store for write-under-mask tests (simulates config memory)
+uint8_t mock_config_memory[1024];
+bool config_memory_read_return_zero = false;
+
 const node_parameters_t _node_parameters_main_node = {
 
     .consumer_count_autocreate = AUTO_CREATE_EVENT_COUNT,
@@ -409,7 +413,7 @@ void _update_called_function_ptr(void *function_ptr)
     called_function_ptr = (void *)((long long)function_ptr + (long long)called_function_ptr);
 }
 
-void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code)
+void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, bool reply_pending, uint16_t return_code)
 {
 
     datagram_reply_code = return_code;
@@ -510,6 +514,34 @@ uint16_t _delayed_reply_time(openlcb_statemachine_info_t *statemachine_info, con
 {
 
     return 16000;
+}
+
+uint16_t _config_memory_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
+
+    if (config_memory_read_return_zero) {
+
+        return 0;
+    }
+
+    memcpy(buffer, &mock_config_memory[address], count);
+
+    return count;
+}
+
+uint16_t _config_memory_write_with_store(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
+
+    _update_called_function_ptr((void *)&_config_memory_write_with_store);
+
+    if (memory_write_return_zero) {
+
+        return 0;
+    }
+
+    memcpy(&mock_config_memory[address], buffer, count);
+
+    return count;
 }
 
 // uint16_t _snip_user_name_write(uint16_t byte_count, configuration_memory_buffer_t *buffer)
@@ -629,6 +661,40 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 
 };
 
+const interface_protocol_config_mem_write_handler_t interface_protocol_config_mem_write_handler_under_mask = {
+
+    .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
+
+    .config_memory_write = &_config_memory_write_with_store,
+    .config_memory_read = &_config_memory_read,
+
+    .write_request_config_definition_info = &_write_request_config_decscription_info,
+    .write_request_all = &_write_request_all,
+    .write_request_config_mem = &_write_request_config_memory,
+    .write_request_acdi_manufacturer = &_write_request_acdi_manufacturer,
+    .write_request_acdi_user = &_write_request_acdi_user,
+    .write_request_train_function_config_definition_info = &_write_request_train_config_decscription_info,
+    .write_request_train_function_config_memory = &_write_request_train_config_memory,
+
+    .delayed_reply_time = nullptr
+
+};
+
+const interface_protocol_config_mem_write_handler_t interface_protocol_config_mem_write_handler_under_mask_no_read = {
+
+    .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
+
+    .config_memory_write = &_config_memory_write_with_store,
+    .config_memory_read = nullptr,
+
+    .write_request_config_mem = &_write_request_config_memory,
+
+    .delayed_reply_time = nullptr
+
+};
+
 interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
     .config_memory_read = nullptr,
@@ -653,6 +719,8 @@ void _reset_variables(void)
     local_config_mem_write_request_info.space_info = nullptr;
     memory_write_return_zero = false;
     memory_write_requested_bytes = 0;
+    config_memory_read_return_zero = false;
+    memset(mock_config_memory, 0, sizeof(mock_config_memory));
 }
 
 void _global_initialize(void)
@@ -689,6 +757,26 @@ void _global_initialize_with_config_memory_write_and_delayed_reply_time_defined(
 {
 
     ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler_config_memory_write_and_delayed_reply_time_defined);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+}
+
+void _global_initialize_for_write_under_mask(void)
+{
+
+    ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler_under_mask);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+}
+
+void _global_initialize_for_write_under_mask_no_read(void)
+{
+
+    ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler_under_mask_no_read);
     OpenLcbNode_initialize(&interface_openlcb_node);
     ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
     OpenLcbBufferFifo_initialize();
@@ -2561,44 +2649,655 @@ TEST(ProtocolConfigMemWriteHandler, write_space_firmware)
 }
 
 // ============================================================================
-// TEST: Write Space Under Mask - Stub Function Coverage
-// @details Tests write under mask stub function doesn't crash
-// @coverage ProtocolConfigMemWriteHandler_write_space_under_mask_message()
-// @note This is a STUB function with no implementation
+// Section 3b: Write-Under-Mask Tests
 // ============================================================================
 
-TEST(ProtocolConfigMemWriteHandler, write_space_under_mask_stub)
-{
-    _global_initialize();
+// ============================================================================
+// TEST: Write Under Mask - Config Memory Success (space in byte 6)
+// @details Verifies read-modify-write with partial mask on Config Memory (0xFD)
+// @coverage ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory()
+// ============================================================================
 
-    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
-    ASSERT_NE(node, nullptr);
-    node->alias = DEST_ALIAS;
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_config_memory_success)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
 
     openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(incoming_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    // Pre-populate config memory with known pattern
+    mock_config_memory[0] = 0xFF;
+    mock_config_memory[1] = 0xFF;
+    mock_config_memory[2] = 0xFF;
+    mock_config_memory[3] = 0xFF;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    // Build write-under-mask datagram: sub-cmd 0x08, space in byte 6
+    // [0x20, 0x08, addr(4), space, data(4), mask(4)]
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    // Data bytes
+    *incoming_msg->payload[7] = 0x00;
+    *incoming_msg->payload[8] = 0x55;
+    *incoming_msg->payload[9] = 0xAA;
+    *incoming_msg->payload[10] = 0x0F;
+    // Mask bytes
+    *incoming_msg->payload[11] = 0xFF;
+    *incoming_msg->payload[12] = 0x0F;
+    *incoming_msg->payload[13] = 0xF0;
+    *incoming_msg->payload[14] = 0xFF;
+    incoming_msg->payload_count = 15; // 7 header + 4 data + 4 mask
+
+    // Phase 1: Validate and ACK
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, (uint16_t) 0x0000);
+    EXPECT_TRUE(node1->state.openlcb_datagram_ack_sent);
+    EXPECT_TRUE(statemachine_info.incoming_msg_info.enumerate);
+
+    // Phase 2: Perform the read-modify-write
+    _reset_variables();
+
+    // Re-populate config memory after reset (which clears mock_config_memory)
+    mock_config_memory[0] = 0xFF;
+    mock_config_memory[1] = 0xFF;
+    mock_config_memory[2] = 0xFF;
+    mock_config_memory[3] = 0xFF;
+
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+    EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
+
+    // Verify masked results:
+    // byte 0: (0xFF & ~0xFF) | (0x00 & 0xFF) = 0x00
+    // byte 1: (0xFF & ~0x0F) | (0x55 & 0x0F) = 0xF0 | 0x05 = 0xF5
+    // byte 2: (0xFF & ~0xF0) | (0xAA & 0xF0) = 0x0F | 0xA0 = 0xAF
+    // byte 3: (0xFF & ~0xFF) | (0x0F & 0xFF) = 0x0F
+    EXPECT_EQ(mock_config_memory[0], 0x00);
+    EXPECT_EQ(mock_config_memory[1], 0xF5);
+    EXPECT_EQ(mock_config_memory[2], 0xAF);
+    EXPECT_EQ(mock_config_memory[3], 0x0F);
+
+}
+
+// ============================================================================
+// TEST: Write Under Mask - Mask All Zeros (no change)
+// @details Mask = 0x00 should leave memory unchanged
+// @coverage _write_data_under_mask() - zero mask path
+// ============================================================================
+
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_mask_all_zeros)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(incoming_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    // Pre-populate
+    mock_config_memory[0] = 0x12;
+    mock_config_memory[1] = 0x34;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    // Data = 0xAA, 0xBB; Mask = 0x00, 0x00
+    *incoming_msg->payload[7] = 0xAA;
+    *incoming_msg->payload[8] = 0xBB;
+    *incoming_msg->payload[9] = 0x00;
+    *incoming_msg->payload[10] = 0x00;
+    incoming_msg->payload_count = 11; // 7 + 2 data + 2 mask
+
+    // Phase 1
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+    _reset_variables();
+
+    // Re-populate config memory after reset (which clears mock_config_memory)
+    mock_config_memory[0] = 0x12;
+    mock_config_memory[1] = 0x34;
+
+    // Phase 2
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    // Memory should be unchanged
+    EXPECT_EQ(mock_config_memory[0], 0x12);
+    EXPECT_EQ(mock_config_memory[1], 0x34);
+
+}
+
+// ============================================================================
+// TEST: Write Under Mask - Mask All Ones (full overwrite)
+// @details Mask = 0xFF should behave like a normal write
+// @coverage _write_data_under_mask() - full mask path
+// ============================================================================
+
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_mask_all_ones)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(incoming_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    mock_config_memory[0] = 0x12;
+    mock_config_memory[1] = 0x34;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    // Data = 0xAA, 0xBB; Mask = 0xFF, 0xFF
+    *incoming_msg->payload[7] = 0xAA;
+    *incoming_msg->payload[8] = 0xBB;
+    *incoming_msg->payload[9] = 0xFF;
+    *incoming_msg->payload[10] = 0xFF;
+    incoming_msg->payload_count = 11;
+
+    // Phase 1
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+    _reset_variables();
+
+    // Re-populate config memory after reset (which clears mock_config_memory)
+    mock_config_memory[0] = 0x12;
+    mock_config_memory[1] = 0x34;
+
+    // Phase 2
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    // Full overwrite
+    EXPECT_EQ(mock_config_memory[0], 0xAA);
+    EXPECT_EQ(mock_config_memory[1], 0xBB);
+
+}
+
+// ============================================================================
+// TEST: Write Under Mask - Single Byte
+// @details Tests single-byte write-under-mask with partial mask
+// @coverage _write_data_under_mask() - minimal size path
+// ============================================================================
+
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_single_byte)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(incoming_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    mock_config_memory[0] = 0xCC;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    // Data = 0x0F; Mask = 0xF0
+    *incoming_msg->payload[7] = 0x0F;
+    *incoming_msg->payload[8] = 0xF0;
+    incoming_msg->payload_count = 9; // 7 + 1 data + 1 mask
+
+    // Phase 1
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+    _reset_variables();
+
+    // Re-populate config memory after reset (which clears mock_config_memory)
+    mock_config_memory[0] = 0xCC;
+
+    // Phase 2
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    // (0xCC & ~0xF0) | (0x0F & 0xF0) = 0x0C | 0x00 = 0x0C
+    EXPECT_EQ(mock_config_memory[0], 0x0C);
+
+}
+
+// ============================================================================
+// TEST: Write Under Mask - Implicit Space FD (sub-command 0x09)
+// @details Tests shorthand encoding where space is implicit in sub-command
+// @coverage _extract_write_under_mask_command_parameters() - implicit space path
+// ============================================================================
+
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_implicit_space_fd)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(incoming_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    mock_config_memory[0x10] = 0xAB;
+    mock_config_memory[0x11] = 0xCD;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FD; // 0x09
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000010, 2);
+    // Data at byte 6 (no space byte)
+    *incoming_msg->payload[6] = 0xFF;
+    *incoming_msg->payload[7] = 0x00;
+    // Mask at byte 8
+    *incoming_msg->payload[8] = 0x0F;
+    *incoming_msg->payload[9] = 0xFF;
+    incoming_msg->payload_count = 10; // 6 + 2 data + 2 mask
+
+    // Phase 1
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+    _reset_variables();
+
+    // Re-populate config memory after reset (which clears mock_config_memory)
+    mock_config_memory[0x10] = 0xAB;
+    mock_config_memory[0x11] = 0xCD;
+
+    // Phase 2
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    // byte 0: (0xAB & ~0x0F) | (0xFF & 0x0F) = 0xA0 | 0x0F = 0xAF
+    // byte 1: (0xCD & ~0xFF) | (0x00 & 0xFF) = 0x00 | 0x00 = 0x00
+    EXPECT_EQ(mock_config_memory[0x10], 0xAF);
+    EXPECT_EQ(mock_config_memory[0x11], 0x00);
+
+}
+
+// ============================================================================
+// TEST: Write Under Mask - Read Failure
+// @details config_memory_read returns 0 bytes — expect write-fail reply
+// @coverage _write_data_under_mask() - read failure path
+// ============================================================================
+
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_read_failure)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
     ASSERT_NE(incoming_msg, nullptr);
     ASSERT_NE(outgoing_msg, nullptr);
 
     openlcb_statemachine_info_t statemachine_info;
-    statemachine_info.openlcb_node = node;
+    statemachine_info.openlcb_node = node1;
     statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
-    statemachine_info.incoming_msg_info.enumerate = false;
     statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
-    statemachine_info.outgoing_msg_info.enumerate = false;
-    statemachine_info.outgoing_msg_info.valid = false;
+    statemachine_info.incoming_msg_info.enumerate = false;
 
-    // Call stub function (should do nothing and not crash)
-    ProtocolConfigMemWriteHandler_write_space_under_mask_message(
-        &statemachine_info,
-        CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
-        CONFIG_MEM_WRITE_REPLY_OK_SPACE_FD,
-        CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FD
-    );
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[7] = 0xAA;
+    *incoming_msg->payload[8] = 0xFF;
+    incoming_msg->payload_count = 9;
 
-    // Verify stub completed without crash
-    EXPECT_TRUE(true);
+    // Phase 1: ACK
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+    _reset_variables();
+
+    // Make read fail
+    config_memory_read_return_zero = true;
+
+    // Phase 2: Should fail because read returns 0
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Write Under Mask - NULL config_memory_read Callback
+// @details Interface has no config_memory_read — expect write-fail reply
+// @coverage _write_data_under_mask() - null read callback path
+// ============================================================================
+
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_null_config_memory_read)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask_no_read();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(incoming_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[7] = 0xAA;
+    *incoming_msg->payload[8] = 0xFF;
+    incoming_msg->payload_count = 9;
+
+    // Phase 1: ACK
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+    _reset_variables();
+
+    // Phase 2: Should fail because config_memory_read is NULL
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Write Under Mask - Read-Only Space Rejected
+// @details Attempting write-under-mask on a read-only space should be rejected
+// @coverage _is_valid_write_under_mask_parameters() - read-only rejection
+// ============================================================================
+
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_read_only_space)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node_all_not_present);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(incoming_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *incoming_msg->payload[7] = 0xAA;
+    *incoming_msg->payload[8] = 0xFF;
+    incoming_msg->payload_count = 9;
+
+    // Phase 1: Should be rejected (space not present in this node_parameters)
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
+
+}
+
+// ============================================================================
+// TEST: Write Under Mask - Out of Bounds Address Rejected
+// @details Address beyond highest_address should be rejected
+// @coverage _is_valid_write_under_mask_parameters() - bounds check
+// ============================================================================
+
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_out_of_bounds)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(incoming_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    // Address beyond highest_address
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, node1->parameters->address_space_config_memory.highest_address + 1, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[7] = 0xAA;
+    *incoming_msg->payload[8] = 0xFF;
+    incoming_msg->payload_count = 9;
+
+    // Phase 1: Should be rejected (out of bounds)
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
+    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+
+}
+
+// ============================================================================
+// TEST: Write Under Mask - Zero Bytes Rejected
+// @details Payload with no data/mask bytes should be rejected
+// @coverage _is_valid_write_under_mask_parameters() - zero bytes check
+// ============================================================================
+
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_zero_bytes)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(incoming_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    incoming_msg->payload_count = 7; // Header only, no data/mask
+
+    // Phase 1: Should be rejected (zero bytes)
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
+    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_INVALID_ARGUMENTS);
+
+}
+
+// ============================================================================
+// TEST: Write Under Mask - Odd Payload Length Rejected
+// @details Odd data+mask region should be rejected (data and mask must be equal)
+// @coverage _is_valid_write_under_mask_parameters() - even length check
+// ============================================================================
+
+TEST(ProtocolConfigMemWriteHandler, write_under_mask_odd_payload)
+{
+
+    _reset_variables();
+    _global_initialize_for_write_under_mask();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(incoming_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[7] = 0xAA;
+    *incoming_msg->payload[8] = 0xBB;
+    *incoming_msg->payload[9] = 0xFF;
+    incoming_msg->payload_count = 10; // 7 + 3 data+mask (odd!)
+
+    // Phase 1: Should be rejected (odd data+mask length)
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
+    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_INVALID_ARGUMENTS);
+
 }
 
 

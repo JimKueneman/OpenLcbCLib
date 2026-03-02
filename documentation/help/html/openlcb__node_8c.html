@@ -117,6 +117,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a67d1e4736a41064ac7c649831848b4ca" id="r_a67d1e4736a41064ac7c649831848b4ca"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67d1e4736a41064ac7c649831848b4ca">OpenLcbNode_get_next</a> (uint8_t key)</td></tr>
 <tr class="memdesc:a67d1e4736a41064ac7c649831848b4ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the next allocated node for the given enumerator key.  <br /></td></tr>
 <tr class="separator:a67d1e4736a41064ac7c649831848b4ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38ffc3b418e77ce7f0e5f628414c8c8d" id="r_a38ffc3b418e77ce7f0e5f628414c8c8d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38ffc3b418e77ce7f0e5f628414c8c8d">OpenLcbNode_is_last</a> (uint8_t key)</td></tr>
+<tr class="memdesc:a38ffc3b418e77ce7f0e5f628414c8c8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the current enumeration position is the last node.  <br /></td></tr>
+<tr class="separator:a38ffc3b418e77ce7f0e5f628414c8c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0864e7f15b95e49cd2320217de99d403" id="r_a0864e7f15b95e49cd2320217de99d403"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0864e7f15b95e49cd2320217de99d403">OpenLcbNode_allocate</a> (uint64_t node_id, const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *node_parameters)</td></tr>
 <tr class="memdesc:a0864e7f15b95e49cd2320217de99d403"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new node with the given ID and configuration.  <br /></td></tr>
 <tr class="separator:a0864e7f15b95e49cd2320217de99d403"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -126,9 +129,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a45f1132ffd48a15bbae0f0be95a7aa71" id="r_a45f1132ffd48a15bbae0f0be95a7aa71"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a45f1132ffd48a15bbae0f0be95a7aa71">OpenLcbNode_find_by_node_id</a> (uint64_t node_id)</td></tr>
 <tr class="memdesc:a45f1132ffd48a15bbae0f0be95a7aa71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a node by its 64-bit OpenLCB node ID.  <br /></td></tr>
 <tr class="separator:a45f1132ffd48a15bbae0f0be95a7aa71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad69a221293d91383b8f8214ca9a38b40" id="r_ad69a221293d91383b8f8214ca9a38b40"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad69a221293d91383b8f8214ca9a38b40">OpenLcbNode_100ms_timer_tick</a> (void)</td></tr>
-<tr class="memdesc:ad69a221293d91383b8f8214ca9a38b40"><td class="mdescLeft">&#160;</td><td class="mdescRight">100ms timer tick handler for all allocated nodes.  <br /></td></tr>
-<tr class="separator:ad69a221293d91383b8f8214ca9a38b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc55f58d898314a7b7f725c5a679ca1e" id="r_afc55f58d898314a7b7f725c5a679ca1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc55f58d898314a7b7f725c5a679ca1e">OpenLcbNode_100ms_timer_tick</a> (uint8_t current_tick)</td></tr>
+<tr class="memdesc:afc55f58d898314a7b7f725c5a679ca1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">100ms timer tick handler — gates the application callback.  <br /></td></tr>
+<tr class="separator:afc55f58d898314a7b7f725c5a679ca1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68c1a3c6196e96d3f17b68023607d163" id="r_a68c1a3c6196e96d3f17b68023607d163"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68c1a3c6196e96d3f17b68023607d163">OpenLcbNode_reset_state</a> (void)</td></tr>
 <tr class="memdesc:a68c1a3c6196e96d3f17b68023607d163"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets all allocated nodes to their initial login state.  <br /></td></tr>
 <tr class="separator:a68c1a3c6196e96d3f17b68023607d163"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -241,6 +244,32 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a38ffc3b418e77ce7f0e5f628414c8c8d" name="a38ffc3b418e77ce7f0e5f628414c8c8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38ffc3b418e77ce7f0e5f628414c8c8d">&#9670;&#160;</a></span>OpenLcbNode_is_last()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbNode_is_last </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns true if the current enumeration position is the last node. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Validate key is within range</li>
+<li>Return false if no nodes allocated</li>
+<li>Return true if current index equals count minus one</li>
+</ol>
+<pre class="fragment">* @param key Same enumerator index used in the corresponding get_first/get_next calls
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if current enumeration position is the last allocated node </dd></dl>
+
+</div>
+</div>
 <a id="a0864e7f15b95e49cd2320217de99d403" name="a0864e7f15b95e49cd2320217de99d403"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0864e7f15b95e49cd2320217de99d403">&#9670;&#160;</a></span>OpenLcbNode_allocate()</h2>
 
@@ -325,8 +354,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad69a221293d91383b8f8214ca9a38b40" name="ad69a221293d91383b8f8214ca9a38b40"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad69a221293d91383b8f8214ca9a38b40">&#9670;&#160;</a></span>OpenLcbNode_100ms_timer_tick()</h2>
+<a id="afc55f58d898314a7b7f725c5a679ca1e" name="afc55f58d898314a7b7f725c5a679ca1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc55f58d898314a7b7f725c5a679ca1e">&#9670;&#160;</a></span>OpenLcbNode_100ms_timer_tick()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -334,17 +363,20 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbNode_100ms_timer_tick </td>
           <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>current_tick</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>100ms timer tick handler for all allocated nodes. </p>
-<p>Algorithm:</p><ol type="1">
-<li>Increment timerticks on each allocated node</li>
-<li>Call the interface on_100ms_timer_tick callback if registered </li>
-</ol>
+<p>100ms timer tick handler — gates the application callback. </p>
+<p>Called from the main loop with the current global tick. Fires the application callback at most once per unique tick value. The per-node timerticks increment has been removed — all modules now use the global clock via subtraction-based elapsed-time checks.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

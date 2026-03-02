@@ -110,9 +110,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a4463eb39695b2c8c669755c173fc13e0" id="r_a4463eb39695b2c8c669755c173fc13e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4463eb39695b2c8c669755c173fc13e0">OpenLcbApplicationTrain_get_state</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
 <tr class="memdesc:a4463eb39695b2c8c669755c173fc13e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the train state for a node.  <br /></td></tr>
 <tr class="separator:a4463eb39695b2c8c669755c173fc13e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7cb4aede47088d4c929b0721a5747521" id="r_a7cb4aede47088d4c929b0721a5747521"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cb4aede47088d4c929b0721a5747521">OpenLcbApplicationTrain_100ms_timer_tick</a> (void)</td></tr>
-<tr class="memdesc:a7cb4aede47088d4c929b0721a5747521"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrements the heartbeat countdown for all active train nodes.  <br /></td></tr>
-<tr class="separator:a7cb4aede47088d4c929b0721a5747521"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e670899f22ca4106d116d7a5fe81162" id="r_a4e670899f22ca4106d116d7a5fe81162"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e670899f22ca4106d116d7a5fe81162">OpenLcbApplicationTrain_100ms_timer_tick</a> (uint8_t current_tick)</td></tr>
+<tr class="memdesc:a4e670899f22ca4106d116d7a5fe81162"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrements the heartbeat countdown for all active train nodes.  <br /></td></tr>
+<tr class="separator:a4e670899f22ca4106d116d7a5fe81162"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86e23b68c107f3a2ff570351f9c1b675" id="r_a86e23b68c107f3a2ff570351f9c1b675"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86e23b68c107f3a2ff570351f9c1b675">OpenLcbApplicationTrain_send_set_speed</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> train_node_id, uint16_t speed)</td></tr>
 <tr class="memdesc:a86e23b68c107f3a2ff570351f9c1b675"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Set Speed/Direction command to a train node.  <br /></td></tr>
 <tr class="separator:a86e23b68c107f3a2ff570351f9c1b675"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -247,8 +247,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a7cb4aede47088d4c929b0721a5747521" name="a7cb4aede47088d4c929b0721a5747521"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cb4aede47088d4c929b0721a5747521">&#9670;&#160;</a></span>OpenLcbApplicationTrain_100ms_timer_tick()</h2>
+<a id="a4e670899f22ca4106d116d7a5fe81162" name="a4e670899f22ca4106d116d7a5fe81162"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e670899f22ca4106d116d7a5fe81162">&#9670;&#160;</a></span>OpenLcbApplicationTrain_100ms_timer_tick()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -256,7 +256,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbApplicationTrain_100ms_timer_tick </td>
           <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>current_tick</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -264,13 +264,21 @@ Functions</h2></td></tr>
 
 <p>Decrements the heartbeat countdown for all active train nodes. </p>
 <p>Algorithm:</p><ol type="1">
+<li>Compute ticks elapsed since last call via subtraction.</li>
+<li>Skip if no time has elapsed (deduplication).</li>
 <li>For each pool slot with heartbeat_timeout_s &gt; 0:<ul>
-<li>Decrement heartbeat_counter_100ms if &gt; 0.</li>
+<li>Decrement heartbeat_counter_100ms by ticks_elapsed (saturate at 0).</li>
 <li>At the halfway point, call _send_heartbeat_request() to ping the controller.</li>
-<li>At zero, set estop_active = true, set_speed = 0, and fire on_heartbeat_timeout. </li>
+<li>At zero, set estop_active = true, zero set_speed preserving direction, and fire on_heartbeat_timeout.</li>
 </ul>
 </li>
 </ol>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -38,11 +38,10 @@
 
 #include "../src/openlcb/openlcb_types.h"
 #include "../src/utilities/mustangpeak_string_helper.h"
+#include "../src/openlcb/openlcb_config.h"
 #include "../src/openlcb/openlcb_node.h"
 #include "../src/openlcb/openlcb_application.h"
 #include "../src/openlcb/openlcb_utilities.h"
-#include "../src/openlcb/openlcb_application_broadcast_time.h"
-#include "../src/openlcb/protocol_datagram_handler.h"
 
 #include <stdio.h>
 #include <pthread.h>
@@ -115,9 +114,7 @@ void *thread_function_timer(void *arg)
         if (_timer_pause == 0)
         {
             
-            OpenLcbApplicationBroadcastTime_100ms_time_tick();
-            OpenLcbNode_100ms_timer_tick();
-            ProtocolDatagramHandler_100ms_timer_tick();
+            OpenLcb_100ms_timer_tick();
             
         }
 
@@ -281,7 +278,7 @@ void OSxDrivers_unlock_shared_resources(void)
     _timer_pause = false;
 }
 
-void OSxDrivers_write_firemware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+void OSxDrivers_write_firmware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
     
     printf("Firmware Write, buffer is in config_mem_write_request_info->writebuffer ");
     

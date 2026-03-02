@@ -42,8 +42,7 @@
 #include "src/drivers/canbus/can_rx_statemachine.h"
 #include "src/openlcb/openlcb_types.h"
 #include "src/utilities/mustangpeak_string_helper.h"
-#include "src/openlcb/openlcb_node.h"
-#include "src/openlcb/protocol_datagram_handler.h"
+#include "src/openlcb/openlcb_config.h"
 
 #ifdef ARDUINO_COMPATIBLE
 #include "Arduino.h"
@@ -61,8 +60,7 @@ void IRAM_ATTR Timer0_ISR()
 {
   _is_100ms_timer_running = true;
 
-  OpenLcbNode_100ms_timer_tick();
-  ProtocolDatagramHandler_100ms_timer_tick();
+  OpenLcb_100ms_timer_tick();
 }
 
 bool Esp32Drivers_100ms_running()
