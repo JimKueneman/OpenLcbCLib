@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     printf("NodeID: %12llX\n", nodeid);
   }
 
-  openlcb_node_t *node = OpenLcb_create_node(nodeid, &NodeParameters_main_node);
+  openlcb_node_t *node = OpenLcb_create_node(nodeid, &OpenLcbUserConfig_node_parameters);
   printf("Allocated.....\n");
 
   while (1)

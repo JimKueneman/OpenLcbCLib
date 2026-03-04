@@ -86,7 +86,7 @@ void setup()
 
   Serial.println("Creating Node.....");
 
-  OpenLcb_create_node(NODE_ID, &NodeParameters_main_node);
+  OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 }
 
 void loop()

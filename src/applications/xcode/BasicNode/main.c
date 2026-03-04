@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
     sleep(2);
   }
 
-  node = OpenLcb_create_node(NODE_ID, &NodeParameters_main_node);
+  node = OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
   printf("Node Allocated.....\n");
 
   OpenLcbApplicationBroadcastTime_setup_consumer(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);

@@ -91,7 +91,7 @@
 extern "C" {
 #endif
 
-extern const struct node_parameters_TAG NodeParameters_main_node;
+extern const struct node_parameters_TAG OpenLcbUserConfig_node_parameters;
 
 #ifdef __cplusplus
 }

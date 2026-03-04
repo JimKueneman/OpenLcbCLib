@@ -64,7 +64,7 @@ void setup()
     Callbacks_initialize();
 
     Serial.println("Creating Node.....");
-    OpenLcb_create_node(NODE_ID, &NodeParameters_main_node);
+    OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
     Serial.println("Logging into Network..");
     WiFiTools_log_events(true);

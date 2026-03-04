@@ -187,7 +187,7 @@ int main(void)
 
   Callbacks_initialize();
 
-  OpenLcb_create_node(NODE_ID, &NodeParameters_main_node);
+  OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
   /* USER CODE END 2 */
 

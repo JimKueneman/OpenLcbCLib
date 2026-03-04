@@ -87,7 +87,7 @@ int main(void)
 
   printf("Booted\n");
 
-  OpenLcb_create_node(NODE_ID, &NodeParameters_main_node);
+  OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
   while (1)
   {

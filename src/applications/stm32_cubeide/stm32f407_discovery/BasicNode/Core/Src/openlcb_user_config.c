@@ -36,7 +36,7 @@
 #include "./src/openlcb/openlcb_types.h"
 #include "./src/openlcb/openlcb_defines.h"
 
-const node_parameters_t NodeParameters_main_node = {
+const node_parameters_t OpenLcbUserConfig_node_parameters = {
 
     .consumer_count_autocreate = 2,
     .producer_count_autocreate = 2,
