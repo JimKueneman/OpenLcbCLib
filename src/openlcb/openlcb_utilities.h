@@ -32,7 +32,7 @@
  * time event encoding/decoding, and train search event encoding/decoding.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #ifndef __OPENLCB_OPENLCB_UTILITIES__
@@ -66,29 +66,66 @@ extern "C" {
          */
     extern void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t *openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti);
 
-        /** @brief Zeros all payload bytes and resets payload_count. Header preserved. */
+        /**
+         * @brief Zeros all payload bytes and resets payload_count. Header preserved.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to clear payload from.
+         */
     extern void OpenLcbUtilities_clear_openlcb_message_payload(openlcb_msg_t *openlcb_msg);
 
-        /** @brief Zeros entire message including header, state flags, and reference count. */
+        /**
+         * @brief Zeros entire message including header, state flags, and reference count.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to fully clear.
+         */
     extern void OpenLcbUtilities_clear_openlcb_message(openlcb_msg_t *openlcb_msg);
 
     // =========================================================================
     // Payload Insert Functions (all big-endian, all increment payload_count)
     // =========================================================================
 
-        /** @brief Copies an 8-byte event ID to payload at offset 0. */
+        /**
+         * @brief Copies an 8-byte event ID to payload at offset 0.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to write into.
+         * @param event_id    64-bit @ref event_id_t to store in the payload.
+         */
     extern void OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg_t *openlcb_msg, event_id_t event_id);
 
-        /** @brief Copies a 6-byte node ID to payload at the given offset. */
+        /**
+         * @brief Copies a 6-byte node ID to payload at the given offset.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to write into.
+         * @param node_id     48-bit @ref node_id_t to store in the payload.
+         * @param offset      Starting byte offset in the payload.
+         */
     extern void OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg_t *openlcb_msg, node_id_t node_id, uint16_t offset);
 
-        /** @brief Copies one byte to payload at the given offset. */
+        /**
+         * @brief Copies one byte to payload at the given offset.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to write into.
+         * @param byte        Byte value to store.
+         * @param offset      Byte offset in the payload.
+         */
     extern void OpenLcbUtilities_copy_byte_to_openlcb_payload(openlcb_msg_t *openlcb_msg, uint8_t byte, uint16_t offset);
 
-        /** @brief Copies a 16-bit word (big-endian) to payload at the given offset. */
+        /**
+         * @brief Copies a 16-bit word (big-endian) to payload at the given offset.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to write into.
+         * @param word        16-bit value to store in big-endian order.
+         * @param offset      Starting byte offset in the payload.
+         */
     extern void OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t word, uint16_t offset);
 
-        /** @brief Copies a 32-bit doubleword (big-endian) to payload at the given offset. */
+        /**
+         * @brief Copies a 32-bit doubleword (big-endian) to payload at the given offset.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to write into.
+         * @param doubleword  32-bit value to store in big-endian order.
+         * @param offset      Starting byte offset in the payload.
+         */
     extern void OpenLcbUtilities_copy_dword_to_openlcb_payload(openlcb_msg_t *openlcb_msg, uint32_t doubleword, uint16_t offset);
 
         /**
@@ -123,35 +160,93 @@ extern "C" {
     // Payload Extract Functions (all big-endian, none modify payload_count)
     // =========================================================================
 
-        /** @brief Extracts a 6-byte node ID from payload at the given offset. */
+        /**
+         * @brief Extracts a 6-byte node ID from payload at the given offset.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to read from.
+         * @param offset      Starting byte offset in the payload.
+         *
+         * @return 48-bit @ref node_id_t assembled from the payload bytes.
+         */
     extern node_id_t OpenLcbUtilities_extract_node_id_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t offset);
 
-        /** @brief Extracts an 8-byte event ID from payload at offset 0. */
+        /**
+         * @brief Extracts an 8-byte event ID from payload at offset 0.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to read from.
+         *
+         * @return 64-bit @ref event_id_t assembled from the payload bytes.
+         */
     extern event_id_t OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg_t *openlcb_msg);
 
-        /** @brief Extracts one byte from payload at the given offset. */
+        /**
+         * @brief Extracts one byte from payload at the given offset.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to read from.
+         * @param offset      Byte offset in the payload.
+         *
+         * @return Byte value at the specified offset.
+         */
     extern uint8_t OpenLcbUtilities_extract_byte_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t offset);
 
-        /** @brief Extracts a 16-bit word (big-endian) from payload at the given offset. */
+        /**
+         * @brief Extracts a 16-bit word (big-endian) from payload at the given offset.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to read from.
+         * @param offset      Starting byte offset in the payload.
+         *
+         * @return 16-bit value assembled from two big-endian payload bytes.
+         */
     extern uint16_t OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t offset);
 
-        /** @brief Extracts a 32-bit doubleword (big-endian) from payload at the given offset. */
+        /**
+         * @brief Extracts a 32-bit doubleword (big-endian) from payload at the given offset.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to read from.
+         * @param offset      Starting byte offset in the payload.
+         *
+         * @return 32-bit value assembled from four big-endian payload bytes.
+         */
     extern uint32_t OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t offset);
 
     // =========================================================================
     // Message Classification
     // =========================================================================
 
-        /** @brief Returns the count of null bytes (0x00) in the payload. Used for SNIP validation. */
+        /**
+         * @brief Returns the count of null bytes (0x00) in the payload. Used for SNIP validation.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to scan.
+         *
+         * @return Number of null bytes found in the payload.
+         */
     extern uint8_t OpenLcbUtilities_count_nulls_in_openlcb_payload(openlcb_msg_t *openlcb_msg);
 
-        /** @brief Returns true if the MTI has the destination-address-present bit set. */
+        /**
+         * @brief Returns true if the MTI has the destination-address-present bit set.
+         *
+         * @param openlcb_msg Pointer to the @ref openlcb_msg_t to check.
+         *
+         * @return true if the message is addressed, false if global.
+         */
     extern bool OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg_t *openlcb_msg);
 
-        /** @brief Returns true if the message destination matches this node's alias or ID. */
+        /**
+         * @brief Returns true if the message destination matches this node's alias or ID.
+         *
+         * @param openlcb_node Pointer to the @ref openlcb_node_t to match against.
+         * @param openlcb_msg  Pointer to the @ref openlcb_msg_t to check.
+         *
+         * @return true if the message is addressed to this node.
+         */
     extern bool OpenLcbUtilities_is_addressed_message_for_node(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg);
 
-        /** @brief Sets the multi-frame control flag in the upper nibble of target, preserving the lower nibble. */
+        /**
+         * @brief Sets the multi-frame control flag in the upper nibble of target, preserving the lower nibble.
+         *
+         * @param target Pointer to the byte whose upper nibble will be replaced.
+         * @param flag   Flag value to write into the upper nibble.
+         */
     extern void OpenLcbUtilities_set_multi_frame_flag(uint8_t *target, uint8_t flag);
 
     // =========================================================================
@@ -184,29 +279,74 @@ extern "C" {
     // Node / Buffer Helpers
     // =========================================================================
 
-        /** @brief Returns the byte offset into global config memory where this node's space begins. */
+        /**
+         * @brief Returns the byte offset into global config memory where this node's space begins.
+         *
+         * @param openlcb_node Pointer to the @ref openlcb_node_t to calculate the offset for.
+         *
+         * @return Byte offset into the global configuration memory array.
+         */
     extern uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node_t *openlcb_node);
 
-        /** @brief Converts a @ref payload_type_enum to its maximum byte length. Returns 0 for unknown types. */
+        /**
+         * @brief Converts a @ref payload_type_enum to its maximum byte length. Returns 0 for unknown types.
+         *
+         * @param payload_type The @ref payload_type_enum value to convert.
+         *
+         * @return Maximum payload byte length for the given type, or 0 if unknown.
+         */
     extern uint16_t OpenLcbUtilities_payload_type_to_len(payload_type_enum payload_type);
 
     // =========================================================================
     // Configuration Memory Buffer Operations (all big-endian)
     // =========================================================================
 
-        /** @brief Extracts a 6-byte node ID from a config memory buffer at the given index. */
+        /**
+         * @brief Extracts a 6-byte node ID from a config memory buffer at the given index.
+         *
+         * @param buffer Pointer to the @ref configuration_memory_buffer_t to read from.
+         * @param index  Starting byte index in the buffer.
+         *
+         * @return 48-bit @ref node_id_t assembled from the buffer bytes.
+         */
     extern node_id_t OpenLcbUtilities_extract_node_id_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_t index);
 
-        /** @brief Extracts a 16-bit word from a config memory buffer at the given index. */
+        /**
+         * @brief Extracts a 16-bit word from a config memory buffer at the given index.
+         *
+         * @param buffer Pointer to the @ref configuration_memory_buffer_t to read from.
+         * @param index  Starting byte index in the buffer.
+         *
+         * @return 16-bit value assembled from two big-endian buffer bytes.
+         */
     extern uint16_t OpenLcbUtilities_extract_word_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_t index);
 
-        /** @brief Copies a 6-byte node ID into a config memory buffer at the given index. */
+        /**
+         * @brief Copies a 6-byte node ID into a config memory buffer at the given index.
+         *
+         * @param buffer  Pointer to the @ref configuration_memory_buffer_t to write into.
+         * @param node_id 48-bit @ref node_id_t to store.
+         * @param index   Starting byte index in the buffer.
+         */
     extern void OpenLcbUtilities_copy_node_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, node_id_t node_id, uint8_t index);
 
-        /** @brief Copies an 8-byte event ID into a config memory buffer at the given index. */
+        /**
+         * @brief Copies an 8-byte event ID into a config memory buffer at the given index.
+         *
+         * @param buffer   Pointer to the @ref configuration_memory_buffer_t to write into.
+         * @param event_id 64-bit @ref event_id_t to store.
+         * @param index    Starting byte index in the buffer.
+         */
     extern void OpenLcbUtilities_copy_event_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, event_id_t event_id, uint8_t index);
 
-        /** @brief Extracts an 8-byte event ID from a config memory buffer at the given index. */
+        /**
+         * @brief Extracts an 8-byte event ID from a config memory buffer at the given index.
+         *
+         * @param buffer Pointer to the @ref configuration_memory_buffer_t to read from.
+         * @param index  Starting byte index in the buffer.
+         *
+         * @return 64-bit @ref event_id_t assembled from the buffer bytes.
+         */
     extern event_id_t OpenLcbUtilities_copy_config_mem_buffer_to_event_id(configuration_memory_buffer_t *buffer, uint8_t index);
 
     // =========================================================================
@@ -222,7 +362,12 @@ extern "C" {
          */
     extern void OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, uint16_t error_code);
 
-        /** @brief Builds a config memory write-success reply datagram header. */
+        /**
+         * @brief Builds a config memory write-success reply datagram header.
+         *
+         * @param statemachine_info           Pointer to the @ref openlcb_statemachine_info_t context.
+         * @param config_mem_write_request_info Pointer to the @ref config_mem_write_request_info_t from the original request.
+         */
     extern void OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
         /**
@@ -258,23 +403,55 @@ extern "C" {
          */
     extern event_id_t OpenLcbUtilities_generate_event_range_id(event_id_t base_event_id, event_range_count_enum count);
 
-        /** @brief Returns true if the event ID falls within any of the node's consumer ranges. */
+        /**
+         * @brief Returns true if the event ID falls within any of the node's consumer ranges.
+         *
+         * @param openlcb_node Pointer to the @ref openlcb_node_t whose consumer ranges are checked.
+         * @param event_id     64-bit @ref event_id_t to test.
+         *
+         * @return true if the event ID falls within a consumer range.
+         */
     extern bool OpenLcbUtilities_is_event_id_in_consumer_ranges(openlcb_node_t *openlcb_node, event_id_t event_id);
 
-        /** @brief Returns true if the event ID falls within any of the node's producer ranges. */
+        /**
+         * @brief Returns true if the event ID falls within any of the node's producer ranges.
+         *
+         * @param openlcb_node Pointer to the @ref openlcb_node_t whose producer ranges are checked.
+         * @param event_id     64-bit @ref event_id_t to test.
+         *
+         * @return true if the event ID falls within a producer range.
+         */
     extern bool OpenLcbUtilities_is_event_id_in_producer_ranges(openlcb_node_t *openlcb_node, event_id_t event_id);
 
     // =========================================================================
     // Broadcast Time Event Utilities
     // =========================================================================
 
-        /** @brief Returns true if the event ID belongs to the broadcast time event space. */
+        /**
+         * @brief Returns true if the event ID belongs to the broadcast time event space.
+         *
+         * @param event_id 64-bit @ref event_id_t to test.
+         *
+         * @return true if the event ID is a broadcast time event.
+         */
     extern bool OpenLcbUtilities_is_broadcast_time_event(event_id_t event_id);
 
-        /** @brief Extracts the 48-bit clock ID (upper 6 bytes) from a broadcast time event ID. */
+        /**
+         * @brief Extracts the 48-bit clock ID (upper 6 bytes) from a broadcast time event ID.
+         *
+         * @param event_id Broadcast time @ref event_id_t to extract from.
+         *
+         * @return 48-bit clock identifier masked from the event ID.
+         */
     extern uint64_t OpenLcbUtilities_extract_clock_id_from_time_event(event_id_t event_id);
 
-        /** @brief Returns the @ref broadcast_time_event_type_enum for a broadcast time event ID. */
+        /**
+         * @brief Returns the @ref broadcast_time_event_type_enum for a broadcast time event ID.
+         *
+         * @param event_id Broadcast time @ref event_id_t to classify.
+         *
+         * @return The @ref broadcast_time_event_type_enum indicating the event type.
+         */
     extern broadcast_time_event_type_enum OpenLcbUtilities_get_broadcast_time_event_type(event_id_t event_id);
 
         /**
@@ -319,41 +496,118 @@ extern "C" {
          */
     extern bool OpenLcbUtilities_extract_rate_from_event_id(event_id_t event_id, int16_t *rate);
 
-        /** @brief Creates a Report/Set Time event ID from clock_id, hour, minute. */
+        /**
+         * @brief Creates a Report/Set Time event ID from clock_id, hour, minute.
+         *
+         * @param clock_id 48-bit clock identifier.
+         * @param hour     Hour value (0-23).
+         * @param minute   Minute value (0-59).
+         * @param is_set   true for a Set command, false for a Report.
+         *
+         * @return Encoded @ref event_id_t for the time event.
+         */
     extern event_id_t OpenLcbUtilities_create_time_event_id(uint64_t clock_id, uint8_t hour, uint8_t minute, bool is_set);
 
-        /** @brief Creates a Report/Set Date event ID from clock_id, month, day. */
+        /**
+         * @brief Creates a Report/Set Date event ID from clock_id, month, day.
+         *
+         * @param clock_id 48-bit clock identifier.
+         * @param month    Month value (1-12).
+         * @param day      Day value (1-31).
+         * @param is_set   true for a Set command, false for a Report.
+         *
+         * @return Encoded @ref event_id_t for the date event.
+         */
     extern event_id_t OpenLcbUtilities_create_date_event_id(uint64_t clock_id, uint8_t month, uint8_t day, bool is_set);
 
-        /** @brief Creates a Report/Set Year event ID from clock_id, year. */
+        /**
+         * @brief Creates a Report/Set Year event ID from clock_id, year.
+         *
+         * @param clock_id 48-bit clock identifier.
+         * @param year     Year value (0-4095).
+         * @param is_set   true for a Set command, false for a Report.
+         *
+         * @return Encoded @ref event_id_t for the year event.
+         */
     extern event_id_t OpenLcbUtilities_create_year_event_id(uint64_t clock_id, uint16_t year, bool is_set);
 
-        /** @brief Creates a Report/Set Rate event ID from clock_id, rate. */
+        /**
+         * @brief Creates a Report/Set Rate event ID from clock_id, rate.
+         *
+         * @param clock_id 48-bit clock identifier.
+         * @param rate     12-bit signed fixed-point rate (10.2 format).
+         * @param is_set   true for a Set command, false for a Report.
+         *
+         * @return Encoded @ref event_id_t for the rate event.
+         */
     extern event_id_t OpenLcbUtilities_create_rate_event_id(uint64_t clock_id, int16_t rate, bool is_set);
 
-        /** @brief Creates a command event ID (Query, Start, Stop, Date Rollover) for the given clock. */
+        /**
+         * @brief Creates a command event ID (Query, Start, Stop, Date Rollover) for the given clock.
+         *
+         * @param clock_id 48-bit clock identifier.
+         * @param command  @ref broadcast_time_event_type_enum specifying the command type.
+         *
+         * @return Encoded @ref event_id_t for the command event.
+         */
     extern event_id_t OpenLcbUtilities_create_command_event_id(uint64_t clock_id, broadcast_time_event_type_enum command);
 
     // =========================================================================
     // Train Search Event Utilities
     // =========================================================================
 
-        /** @brief Returns true if the event ID belongs to the train search space (upper 4 bytes = 0x090099FF). */
+        /**
+         * @brief Returns true if the event ID belongs to the train search space (upper 4 bytes = 0x090099FF).
+         *
+         * @param event_id 64-bit @ref event_id_t to test.
+         *
+         * @return true if the event ID is a train search event.
+         */
     extern bool OpenLcbUtilities_is_train_search_event(event_id_t event_id);
 
-        /** @brief Extracts 6 search-query nibbles from a train search event ID into digits[]. */
+        /**
+         * @brief Extracts 6 search-query nibbles from a train search event ID into digits[].
+         *
+         * @param event_id Train search @ref event_id_t to decode.
+         * @param digits   Pointer to a 6-element uint8_t array that receives the nibble values.
+         */
     extern void OpenLcbUtilities_extract_train_search_digits(event_id_t event_id, uint8_t *digits);
 
-        /** @brief Extracts the flags byte (byte 7) from a train search event ID. */
+        /**
+         * @brief Extracts the flags byte (byte 7) from a train search event ID.
+         *
+         * @param event_id Train search @ref event_id_t to decode.
+         *
+         * @return Flags byte from the lowest byte of the event ID.
+         */
     extern uint8_t OpenLcbUtilities_extract_train_search_flags(event_id_t event_id);
 
-        /** @brief Converts a 6-nibble digit array to a numeric DCC address, skipping leading 0xF nibbles. */
+        /**
+         * @brief Converts a 6-nibble digit array to a numeric DCC address, skipping leading 0xF nibbles.
+         *
+         * @param digits Pointer to a 6-element uint8_t array of nibble values.
+         *
+         * @return Numeric DCC address decoded from the digit array.
+         */
     extern uint16_t OpenLcbUtilities_train_search_digits_to_address(const uint8_t *digits);
 
-        /** @brief Creates a train search event ID from a DCC address and flags byte. */
+        /**
+         * @brief Creates a train search event ID from a DCC address and flags byte.
+         *
+         * @param address DCC address to encode into the search event.
+         * @param flags   Flags byte placed in the lowest byte of the event ID.
+         *
+         * @return Encoded @ref event_id_t for the train search query.
+         */
     extern event_id_t OpenLcbUtilities_create_train_search_event_id(uint16_t address, uint8_t flags);
 
-        /** @brief Returns true if the event ID is one of the 4 well-known emergency events. */
+        /**
+         * @brief Returns true if the event ID is one of the 4 well-known emergency events.
+         *
+         * @param event_id 64-bit @ref event_id_t to test.
+         *
+         * @return true if the event ID matches a well-known emergency event.
+         */
     extern bool OpenLcbUtilities_is_emergency_event(event_id_t event_id);
 
 #ifdef __cplusplus

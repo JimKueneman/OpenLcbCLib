@@ -23,8 +23,13 @@
  * @file can_utilities.h
  * @brief Utility functions for manipulating @ref can_msg_t frame buffers.
  *
+ * @details Includes functions for clearing, loading, copying, and extracting
+ * data from CAN frames.  Also provides MTI conversion and framing-bit helpers
+ * used by both the Rx and Tx paths.  All functions are stateless — no internal
+ * buffers or side effects beyond the pointers passed in.
+ *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #ifndef __DRIVERS_CANBUS_CAN_UTILITIES__

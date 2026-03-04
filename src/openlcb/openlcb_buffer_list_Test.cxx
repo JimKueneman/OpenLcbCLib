@@ -938,7 +938,7 @@ TEST(OpenLcbBufferList, timeout_reclaims_stale_inprocess)
     msg->source_alias = 0x0100;
     msg->dest_alias = 0x0200;
     msg->mti = 0x0300;
-    msg->timerticks = 0;
+    msg->timer.assembly_ticks = 0;
     msg->state.inprocess = true;
 
     OpenLcbBufferList_add(msg);
@@ -968,7 +968,7 @@ TEST(OpenLcbBufferList, timeout_ignores_non_inprocess)
     msg->source_alias = 0x0100;
     msg->dest_alias = 0x0200;
     msg->mti = 0x0300;
-    msg->timerticks = 0;
+    msg->timer.assembly_ticks = 0;
     msg->state.inprocess = false;
 
     OpenLcbBufferList_add(msg);
@@ -1002,7 +1002,7 @@ TEST(OpenLcbBufferList, no_timeout_before_threshold)
     msg->source_alias = 0x0100;
     msg->dest_alias = 0x0200;
     msg->mti = 0x0300;
-    msg->timerticks = 10;
+    msg->timer.assembly_ticks = 10;
     msg->state.inprocess = true;
 
     OpenLcbBufferList_add(msg);
@@ -1037,7 +1037,7 @@ TEST(OpenLcbBufferList, timeout_wraps_correctly)
     msg->source_alias = 0x0100;
     msg->dest_alias = 0x0200;
     msg->mti = 0x0300;
-    msg->timerticks = 240;
+    msg->timer.assembly_ticks = 240;
     msg->state.inprocess = true;
 
     OpenLcbBufferList_add(msg);
@@ -1068,7 +1068,7 @@ TEST(OpenLcbBufferList, completed_buffer_not_timed_out)
     msg->source_alias = 0x0100;
     msg->dest_alias = 0x0200;
     msg->mti = 0x0300;
-    msg->timerticks = 0;
+    msg->timer.assembly_ticks = 0;
     msg->state.inprocess = false;
 
     OpenLcbBufferList_add(msg);

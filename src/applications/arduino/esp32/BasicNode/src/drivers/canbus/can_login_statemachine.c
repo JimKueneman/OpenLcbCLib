@@ -27,8 +27,13 @@
  * @file can_login_statemachine.c
  * @brief Implementation of the CAN login state machine dispatcher.
  *
+ * @details Maps the node's current run_state to the corresponding login
+ * handler function pointer from the dependency-injected interface.  Executes
+ * exactly one state handler per call and returns so the main loop can
+ * continue processing other nodes and tasks.
+ *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_login_statemachine.h"
@@ -44,6 +49,7 @@
 #include "../../openlcb/openlcb_defines.h"
 
 
+/** @brief Saved pointer to the dependency-injected login state machine interface. */
 static interface_can_login_state_machine_t *_interface;
 
     /** @brief Stores the dependency-injection interface pointer. */

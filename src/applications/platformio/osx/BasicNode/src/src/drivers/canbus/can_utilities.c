@@ -27,8 +27,12 @@
  * @file can_utilities.c
  * @brief Implementation of utility functions for CAN frame buffers.
  *
+ * @details Stateless helper functions for clearing, loading, copying, and
+ * extracting data from @ref can_msg_t frames.  Also provides CAN identifier
+ * field extraction, MTI conversion, and NULL-counting for legacy SNIP detection.
+ *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_utilities.h"
@@ -119,6 +123,7 @@ uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_i
         return 0;
 
     }
+
     can_msg->payload_count = 6 + start_offset;
 
     for (int i = (start_offset + 5); i >= (0 + start_offset); i--) { // This is a count down...
@@ -161,6 +166,7 @@ uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_
     if (openlcb_msg->payload_count == 0) {
 
         return 0;
+
     }
 
     for (int i = can_start_index; i < LEN_CAN_BYTE_ARRAY; i++) {
@@ -350,6 +356,7 @@ uint16_t CanUtilities_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
         if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
 
             return ((uint16_t)((can_msg->payload[0] & 0x0F) << 8) | (uint16_t)(can_msg->payload[1]));
+
         }
 
         break;

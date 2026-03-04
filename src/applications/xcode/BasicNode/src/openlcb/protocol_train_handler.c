@@ -33,7 +33,7 @@
  * callbacks.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "protocol_train_handler.h"
@@ -68,8 +68,7 @@ void ProtocolTrainHandler_initialize(const interface_protocol_train_handler_t *i
 // ============================================================================
 
     /** @brief Attach a listener to the train node, or update flags if already attached. */
-static bool _attach_listener(train_state_t *state, node_id_t node_id, uint8_t flags)
-{
+static bool _attach_listener(train_state_t *state, node_id_t node_id, uint8_t flags) {
 
     if (!state || node_id == 0) {
 
@@ -235,8 +234,7 @@ static void _load_controller_assign_reply(openlcb_statemachine_info_t *statemach
 }
 
     /** @brief Build a Controller Query reply. */
-static void _load_controller_query_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t flags, node_id_t controller_node_id)
-{
+static void _load_controller_query_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t flags, node_id_t controller_node_id) {
 
     _load_reply_header(statemachine_info);
 
@@ -248,6 +246,7 @@ static void _load_controller_query_reply(openlcb_statemachine_info_t *statemachi
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(msg, controller_node_id, 3);
 
     statemachine_info->outgoing_msg_info.valid = true;
+
 }
 
     /** @brief Build a Controller Changed Notify reply. */
@@ -266,8 +265,7 @@ static void _load_controller_changed_reply(openlcb_statemachine_info_t *statemac
 }
 
     /** @brief Build a Listener Attach reply. */
-static void _load_listener_attach_reply(openlcb_statemachine_info_t *statemachine_info,node_id_t node_id, uint8_t result)
-{
+static void _load_listener_attach_reply(openlcb_statemachine_info_t *statemachine_info, node_id_t node_id, uint8_t result) {
 
     _load_reply_header(statemachine_info);
 
@@ -279,11 +277,11 @@ static void _load_listener_attach_reply(openlcb_statemachine_info_t *statemachin
     OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, result, 8);
 
     statemachine_info->outgoing_msg_info.valid = true;
+
 }
 
     /** @brief Build a Listener Detach reply. */
-static void _load_listener_detach_reply(openlcb_statemachine_info_t *statemachine_info, node_id_t node_id, uint8_t result)
-{
+static void _load_listener_detach_reply(openlcb_statemachine_info_t *statemachine_info, node_id_t node_id, uint8_t result) {
 
     _load_reply_header(statemachine_info);
 
@@ -295,11 +293,11 @@ static void _load_listener_detach_reply(openlcb_statemachine_info_t *statemachin
     OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, result, 8);
 
     statemachine_info->outgoing_msg_info.valid = true;
+
 }
 
     /** @brief Build a Listener Query reply. */
-static void _load_listener_query_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t count, uint8_t index, uint8_t flags, node_id_t node_id)
-{
+static void _load_listener_query_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t count, uint8_t index, uint8_t flags, node_id_t node_id) {
 
     _load_reply_header(statemachine_info);
 
@@ -313,6 +311,7 @@ static void _load_listener_query_reply(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(msg, node_id, 5);
 
     statemachine_info->outgoing_msg_info.valid = true;
+
 }
 
     /** @brief Build a Reserve/Release reply. */
@@ -345,6 +344,150 @@ static uint32_t _extract_fn_address(openlcb_msg_t *msg, uint16_t offset) {
            (uint32_t) OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, offset + 2);
 
     return addr;
+
+}
+
+
+// ============================================================================
+// Listener forwarding helpers
+// ============================================================================
+
+    /**
+     * @brief Loads a forwarded command into the outgoing buffer for one listener.
+     *
+     * @details Copies the incoming payload and ORs the P bit onto byte 0.
+     * Addresses the outgoing message to the listener's node_id with
+     * dest_alias = 0 (CAN layer resolves alias via listener alias table).
+     * If the listener has the REVERSE flag and this is a speed command,
+     * the direction bit in the float16 speed value is flipped.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param listener_node_id   48-bit Node ID of the target listener.
+     * @param listener_flags     Consist flags from the listener entry.
+     * @param instruction        Base instruction byte (P bit masked off).
+     * @endverbatim
+     */
+static void _load_forwarded_command(
+            openlcb_statemachine_info_t *statemachine_info,
+            node_id_t listener_node_id,
+            uint8_t listener_flags,
+            uint8_t instruction) {
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            0,
+            listener_node_id,
+            MTI_TRAIN_PROTOCOL);
+
+    openlcb_msg_t *incoming = statemachine_info->incoming_msg_info.msg_ptr;
+    openlcb_msg_t *outgoing = statemachine_info->outgoing_msg_info.msg_ptr;
+
+    OpenLcbUtilities_clear_openlcb_message_payload(outgoing);
+
+    for (uint16_t i = 0; i < incoming->payload_count; i++) {
+
+        uint8_t byte = OpenLcbUtilities_extract_byte_from_openlcb_payload(incoming, i);
+
+        if (i == 0) {
+
+            byte |= TRAIN_INSTRUCTION_P_BIT;
+
+        }
+
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(outgoing, byte, i);
+
+    }
+
+    outgoing->payload_count = incoming->payload_count;
+
+    // If REVERSE flag is set and this is a speed command, flip the direction bit
+    if ((listener_flags & TRAIN_LISTENER_FLAG_REVERSE) &&
+            instruction == TRAIN_SET_SPEED_DIRECTION &&
+            incoming->payload_count >= 3) {
+
+        uint16_t speed = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1);
+        speed ^= 0x8000;
+        OpenLcbUtilities_copy_word_to_openlcb_payload(outgoing, speed, 1);
+
+    }
+
+    statemachine_info->outgoing_msg_info.valid = true;
+    statemachine_info->outgoing_msg_info.enumerate = true;
+
+}
+
+    /**
+     * @brief Forwards the current command to the next eligible listener.
+     *
+     * @details Called on re-dispatch when incoming_msg_info.enumerate is true.
+     * Advances listener_enum_index, skipping the originating source node and
+     * listeners whose flags do not match the command type (LINK_F0 / LINK_FN
+     * for function commands).  Clears the enumerate flag when all listeners
+     * have been processed.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @endverbatim
+     */
+static void _forward_to_next_listener(openlcb_statemachine_info_t *statemachine_info) {
+
+    train_state_t *state = statemachine_info->openlcb_node->train_state;
+
+    if (!state) {
+
+        statemachine_info->incoming_msg_info.enumerate = false;
+        statemachine_info->outgoing_msg_info.valid = false;
+        return;
+
+    }
+
+    openlcb_msg_t *incoming = statemachine_info->incoming_msg_info.msg_ptr;
+    node_id_t source_id = incoming->source_id;
+    uint8_t raw_instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(incoming, 0);
+    uint8_t instruction = raw_instruction & ~TRAIN_INSTRUCTION_P_BIT;
+
+    while (state->listener_enum_index < state->listener_count) {
+
+        train_listener_entry_t *entry = &state->listeners[state->listener_enum_index];
+        state->listener_enum_index++;
+
+        // Skip the originating source node
+        if (entry->node_id == source_id) {
+
+            continue;
+
+        }
+
+        // For SET_FUNCTION, check link flags
+        if (instruction == TRAIN_SET_FUNCTION) {
+
+            uint32_t fn_address = _extract_fn_address(incoming, 1);
+
+            if (fn_address == 0 && !(entry->flags & TRAIN_LISTENER_FLAG_LINK_F0)) {
+
+                continue;
+
+            }
+
+            if (fn_address != 0 && !(entry->flags & TRAIN_LISTENER_FLAG_LINK_FN)) {
+
+                continue;
+
+            }
+
+        }
+
+        _load_forwarded_command(statemachine_info, entry->node_id, entry->flags, instruction);
+        return;
+
+    }
+
+    // All listeners processed
+    statemachine_info->incoming_msg_info.enumerate = false;
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
@@ -985,17 +1128,42 @@ static void _handle_management_reply(openlcb_statemachine_info_t *statemachine_i
     /**
      * @brief Dispatches an incoming Train Control command by sub-command byte.
      *
+     * @details Masks the P bit (bit 7) from the instruction byte before
+     * dispatch so that forwarded commands (P=1) are processed identically
+     * to direct commands (P=0).  After local processing of speed, function,
+     * or emergency stop commands, initiates listener forwarding enumeration
+     * if listeners are attached and the command is not itself a forwarded
+     * command (P=0).
+     *
      * @verbatim
      * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
      * @endverbatim
      */
 void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (!statemachine_info) { return; }
+    if (!statemachine_info) {
 
-    if (!statemachine_info->incoming_msg_info.msg_ptr) { return; }
+        return;
 
-    uint8_t instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0);
+    }
+
+    if (!statemachine_info->incoming_msg_info.msg_ptr) {
+
+        return;
+
+    }
+
+    // Re-dispatch: continue listener forwarding enumeration
+    if (statemachine_info->incoming_msg_info.enumerate) {
+
+        _forward_to_next_listener(statemachine_info);
+        return;
+
+    }
+
+    uint8_t raw_instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(
+            statemachine_info->incoming_msg_info.msg_ptr, 0);
+    uint8_t instruction = raw_instruction & ~TRAIN_INSTRUCTION_P_BIT;
 
     switch (instruction) {
 
@@ -1040,7 +1208,29 @@ void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *stat
             break;
 
         default:
+
             break;
+
+    }
+
+    // Start listener forwarding for forwardable commands (only if P=0)
+    if (!(raw_instruction & TRAIN_INSTRUCTION_P_BIT)) {
+
+        if (instruction == TRAIN_SET_SPEED_DIRECTION ||
+                instruction == TRAIN_SET_FUNCTION ||
+                instruction == TRAIN_EMERGENCY_STOP) {
+
+            train_state_t *state = statemachine_info->openlcb_node->train_state;
+
+            if (state && state->listener_count > 0) {
+
+                state->listener_enum_index = 0;
+                statemachine_info->incoming_msg_info.enumerate = true;
+                _forward_to_next_listener(statemachine_info);
+
+            }
+
+        }
 
     }
 
@@ -1055,17 +1245,16 @@ void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *stat
      */
 void ProtocolTrainHandler_handle_train_reply(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (!statemachine_info)
-    { 
-        
-        return; 
-    
+    if (!statemachine_info) {
+
+        return;
+
     }
 
-    if (!statemachine_info->incoming_msg_info.msg_ptr) { 
-        
-        return; 
-    
+    if (!statemachine_info->incoming_msg_info.msg_ptr) {
+
+        return;
+
     }
 
     uint8_t instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0);
@@ -1119,11 +1308,19 @@ void ProtocolTrainHandler_handle_train_reply(openlcb_statemachine_info_t *statem
 void ProtocolTrainHandler_handle_emergency_event(
         openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
 
-    if (!statemachine_info) { return; }
+    if (!statemachine_info) {
+
+        return;
+
+    }
 
     train_state_t *state = statemachine_info->openlcb_node->train_state;
 
-    if (!state) { return; }
+    if (!state) {
+
+        return;
+
+    }
 
     // Per Train Control Standard Section 5 & 6.2:
     //

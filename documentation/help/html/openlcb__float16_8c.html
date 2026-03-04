@@ -135,8 +135,9 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>Converts between 32-bit IEEE 754 single-precision floats and 16-bit half-precision representations. Handles subnormals, overflow to infinity, and rounding via bit manipulation of the raw float pattern.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a51976029470270650b06819012d8a69f" name="a51976029470270650b06819012d8a69f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a51976029470270650b06819012d8a69f">&#9670;&#160;</a></span>OpenLcbFloat16_from_float()</h2>
@@ -249,6 +250,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the float16 bit pattern represents positive or negative zero. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">half</td><td>16-bit float16 bit pattern to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the value is zero, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -272,6 +280,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Encodes a speed magnitude and direction into a float16 bit pattern. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">speed</td><td>Speed magnitude as a 32-bit float. </td></tr>
+    <tr><td class="paramname">reverse</td><td>true for reverse direction, false for forward.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>float16 bit pattern encoding the speed and direction. </dd></dl>
 
 </div>
 </div>
@@ -291,6 +307,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the speed magnitude from a float16 bit pattern (ignores direction). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">half</td><td>16-bit float16 bit pattern to decode.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Speed magnitude as a 32-bit float. </dd></dl>
 
 </div>
 </div>
@@ -310,6 +333,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the direction bit is set (reverse). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">half</td><td>16-bit float16 bit pattern to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the direction bit is set (reverse), false otherwise. </dd></dl>
 
 </div>
 </div>

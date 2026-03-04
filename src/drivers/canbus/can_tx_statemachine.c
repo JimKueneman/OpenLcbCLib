@@ -27,8 +27,13 @@
  * @file can_tx_statemachine.c
  * @brief Implementation of the CAN transmit state machine.
  *
+ * @details Routes outgoing OpenLCB messages to the correct frame handler
+ * (addressed, unaddressed, datagram, or stream) and loops until the full
+ * payload is transmitted as an atomic multi-frame sequence.  Also provides
+ * a pass-through path for pre-built raw CAN control frames.
+ *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_tx_statemachine.h"
@@ -44,6 +49,7 @@
 #include "../../openlcb/openlcb_utilities.h"
 
 
+/** @brief Saved pointer to the dependency-injected transmit interface. */
 static interface_can_tx_statemachine_t *_interface;
 
     /** @brief Stores the dependency-injection interface pointer. */
@@ -112,6 +118,10 @@ static bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *wor
      * @brief Transmits a complete OpenLCB message, blocking until all frames are sent.
      *
      * @details Algorithm:
+     * -# Discard immediately if state.invalid is set (AMR scrub marked it).
+     * -# If dest_alias == 0 and dest_id != 0, resolve the alias via
+     *    listener_find_by_node_id (DI, nullable). Drop the message if
+     *    unresolvable (return true so the caller clears the outgoing slot).
      * -# Return false immediately if the TX hardware buffer is busy.
      * -# If payload_count == 0: send a single zero-payload frame and return.
      * -# Otherwise, send the first frame; if it fails return false.
@@ -127,6 +137,31 @@ static bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *wor
      * @warning Blocks until the entire multi-frame message is sent.
      */
 bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
+
+    if (openlcb_msg->state.invalid) {
+
+        return true;
+
+    }
+
+    // Resolve listener alias via DI if needed (forwarded consist commands)
+    if (openlcb_msg->dest_alias == 0 && openlcb_msg->dest_id != 0
+            && _interface->listener_find_by_node_id) {
+
+        listener_alias_entry_t *entry =
+                _interface->listener_find_by_node_id(openlcb_msg->dest_id);
+
+        if (entry && entry->alias != 0) {
+
+            openlcb_msg->dest_alias = entry->alias;
+
+        } else {
+
+            return true;  // alias unresolvable — drop message, don't retry
+
+        }
+
+    }
 
     can_msg_t worker_can_msg;
     uint16_t payload_index = 0;

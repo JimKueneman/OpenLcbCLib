@@ -439,8 +439,34 @@
 
         bool allocated : 1;     /**< Buffer is in use */
         bool inprocess : 1;     /**< Multi-frame message being assembled */
+        bool invalid : 1;       /**< Message invalidated (e.g. AMR) — shall be discarded */
 
     } openlcb_msg_state_t;
+
+        /**
+         * @brief Timer field union for openlcb_msg_t.
+         *
+         * @details Shares one byte between two mutually exclusive uses:
+         * - assembly_ticks: full 8-bit tick snapshot for multi-frame assembly
+         *   timeout (used by CAN RX message handler and BufferList timeout).
+         * - datagram: split into a 5-bit tick snapshot and a 3-bit retry
+         *   counter for datagram rejected/resend logic.
+         *
+         * Only one interpretation is active at a time depending on the
+         * message lifecycle stage.
+         */
+    typedef union {
+
+        uint8_t assembly_ticks;     /**< Full 8-bit tick for multi-frame assembly timeout */
+
+        struct {
+
+            uint8_t tick_snapshot : 5;  /**< 5-bit tick snapshot (0-31) for datagram retry timeout */
+            uint8_t retry_count : 3;   /**< Datagram retry counter (0-7) */
+
+        } datagram;
+
+    } openlcb_msg_timer_t;
 
         /**
          * @brief Core OpenLCB message structure.
@@ -462,7 +488,7 @@
         payload_type_enum payload_type; /**< Payload buffer size category */
         uint16_t payload_count;         /**< Valid bytes currently in payload */
         openlcb_payload_t *payload;     /**< Pointer to payload buffer */
-        uint8_t timerticks;             /**< Timer tick counter for timeouts */
+        openlcb_msg_timer_t timer;      /**< Timer/retry union (assembly or datagram) */
         uint8_t reference_count;        /**< Number of active references to this message */
 
     } openlcb_msg_t;
@@ -533,7 +559,7 @@
          * @details Contains SNIP strings, protocol support bits, CDI/FDI data,
          * and address space information for every supported space.
          */
-    typedef struct {
+    typedef struct node_parameters_TAG {
 
         user_snip_struct_t snip;
         uint64_t protocol_support;              /**< Protocol Support Indicator bits */
@@ -630,6 +656,7 @@
 
         train_listener_entry_t listeners[USER_DEFINED_MAX_LISTENERS_PER_TRAIN];
         uint8_t listener_count;
+        uint8_t listener_enum_index;      /**< Enumeration index for listener forwarding */
 
         uint16_t functions[USER_DEFINED_MAX_TRAIN_FUNCTIONS]; /**< Function values indexed by function number */
 

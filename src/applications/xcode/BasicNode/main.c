@@ -7,7 +7,7 @@
 #include "pthread.h"
 
 #include "callbacks.h"
-#include "node_parameters.h"
+#include "openlcb_user_config.h"
 #include "application_drivers/osx_drivers.h"
 #include "application_drivers/osx_can_drivers.h"
 

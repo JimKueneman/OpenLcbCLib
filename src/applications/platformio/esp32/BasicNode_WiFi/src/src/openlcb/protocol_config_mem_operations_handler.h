@@ -25,12 +25,15 @@
      * POSSIBILITY OF SUCH DAMAGE.
      *
      * @file protocol_config_mem_operations_handler.h
-     * @brief Configuration memory operations dispatcher — routes memory-config
-     *        datagram sub-commands (options, address-space info, lock, freeze,
-     *        reset, factory-reset) to registered callbacks.
+     * @brief Configuration memory operations dispatcher.
+     *
+     * @details Routes memory-config datagram sub-commands (options,
+     * address-space info, lock, freeze, reset, factory-reset) to registered
+     * callbacks.  Uses a two-phase ACK-then-execute pattern and supports
+     * optional per-command handler overrides.
      *
      * @author Jim Kueneman
-     * @date 28 Feb 2026
+     * @date 4 Mar 2026
      *
      * @see MemoryConfigurationS.pdf
      */

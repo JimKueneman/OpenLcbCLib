@@ -25,13 +25,16 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *
 * @file openlcb_main_statemachine.h
-* @brief Central MTI-based message dispatcher.  Pops messages from the FIFO,
-*        enumerates all nodes, and routes to the correct protocol handler via
-*        function pointers.  NULL optional handlers trigger Interaction Rejected
-*        automatically.
+* @brief Central MTI-based message dispatcher.
+*
+* @details Pops messages from the FIFO, enumerates all nodes, and routes to
+* the correct protocol handler via function pointers.  NULL optional handlers
+* trigger Interaction Rejected automatically.  Required handlers include
+* message network, protocol support, and resource locking; optional handlers
+* cover SNIP, events, trains, datagrams, and streams.
 *
 * @author Jim Kueneman
-* @date 28 Feb 2026
+* @date 4 Mar 2026
 */
 
 #ifndef __OPENLCB_OPENLCB_MAIN_STATEMACHINE__

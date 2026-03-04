@@ -25,11 +25,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *
 * @file protocol_event_transport.h
-* @brief Event Transport protocol — producer/consumer identification, event
-*        reports, and learn/teach operations.  All callbacks are optional.
+* @brief Event Transport protocol handler.
+*
+* @details Handles producer/consumer identification, event reports, and
+* learn/teach operations.  All application callbacks are optional (NULL
+* callbacks are safely ignored).  Automatically responds to Identify Consumer
+* and Identify Producer requests when the event is in the node's list.
 *
 * @author Jim Kueneman
-* @date 28 Feb 2026
+* @date 4 Mar 2026
 */
 
 /*

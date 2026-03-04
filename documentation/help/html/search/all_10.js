@@ -11,7 +11,7 @@ var searchData=
   ['simple_5ftrain_5fnode_5fident_5finfo_5frequest_8',['simple_train_node_ident_info_request',['../structinterface__openlcb__main__statemachine__t.html#a073e47c65638014706cfa91e50589890',1,'interface_openlcb_main_statemachine_t']]],
   ['size_20constants_9',['Message Buffer Size Constants',['../group__buffer__size__constants.html',1,'']]],
   ['snip_10',['SNIP',['../openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c',1,'openlcb_types.h']]],
-  ['snip_11',['snip',['../structmessage__buffer__t.html#a9d058cfe3c85a0baa7e49a25bb189bfd',1,'message_buffer_t::snip'],['../structnode__parameters__t.html#a57a09149128a47f969c73501f7b4c2e1',1,'node_parameters_t::snip']]],
+  ['snip_11',['snip',['../structmessage__buffer__t.html#a9d058cfe3c85a0baa7e49a25bb189bfd',1,'message_buffer_t::snip'],['../structnode__parameters___t_a_g.html#a57a09149128a47f969c73501f7b4c2e1',1,'node_parameters_TAG::snip']]],
   ['snip_5fload_5fhardware_5fversion_12',['snip_load_hardware_version',['../structinterface__protocol__config__mem__read__handler__t.html#a9c7a47f634a348214c6205a734ebe90e',1,'interface_protocol_config_mem_read_handler_t']]],
   ['snip_5fload_5fmanufacturer_5fversion_5fid_13',['snip_load_manufacturer_version_id',['../structinterface__protocol__config__mem__read__handler__t.html#acf7abbeda8b5fa20452600b53476511c',1,'interface_protocol_config_mem_read_handler_t']]],
   ['snip_5fload_5fmodel_14',['snip_load_model',['../structinterface__protocol__config__mem__read__handler__t.html#a8235df58247086ba69cdd7c062e01cbd',1,'interface_protocol_config_mem_read_handler_t']]],

@@ -120,7 +120,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a38ffc3b418e77ce7f0e5f628414c8c8d" id="r_a38ffc3b418e77ce7f0e5f628414c8c8d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38ffc3b418e77ce7f0e5f628414c8c8d">OpenLcbNode_is_last</a> (uint8_t key)</td></tr>
 <tr class="memdesc:a38ffc3b418e77ce7f0e5f628414c8c8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the current enumeration position is the last node.  <br /></td></tr>
 <tr class="separator:a38ffc3b418e77ce7f0e5f628414c8c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0864e7f15b95e49cd2320217de99d403" id="r_a0864e7f15b95e49cd2320217de99d403"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0864e7f15b95e49cd2320217de99d403">OpenLcbNode_allocate</a> (uint64_t node_id, const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *node_parameters)</td></tr>
+<tr class="memitem:a0864e7f15b95e49cd2320217de99d403" id="r_a0864e7f15b95e49cd2320217de99d403"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0864e7f15b95e49cd2320217de99d403">OpenLcbNode_allocate</a> (uint64_t node_id, const <a class="el" href="openlcb__types_8h.html#abb637bafdfd991032d3af5faaf8cfafc">node_parameters_t</a> *node_parameters)</td></tr>
 <tr class="memdesc:a0864e7f15b95e49cd2320217de99d403"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new node with the given ID and configuration.  <br /></td></tr>
 <tr class="separator:a0864e7f15b95e49cd2320217de99d403"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02012a27bb89bffc68816a980279949e" id="r_a02012a27bb89bffc68816a980279949e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02012a27bb89bffc68816a980279949e">OpenLcbNode_find_by_alias</a> (uint16_t alias)</td></tr>
@@ -147,7 +147,7 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Fixed-size pool of <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> structures with allocation, multi-key enumeration, alias/ID lookup, and auto-generated event IDs.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ac2a7e31805a9b2f6cc448d65a06935f1" name="ac2a7e31805a9b2f6cc448d65a06935f1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac2a7e31805a9b2f6cc448d65a06935f1">&#9670;&#160;</a></span>OPENLCB_EVENT_ID_OFFSET</h2>
@@ -284,7 +284,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *</td>          <td class="paramname"><span class="paramname"><em>node_parameters</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="openlcb__types_8h.html#abb637bafdfd991032d3af5faaf8cfafc">node_parameters_t</a> *</td>          <td class="paramname"><span class="paramname"><em>node_parameters</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -371,13 +371,8 @@ Functions</h2></td></tr>
 
 <p>100ms timer tick handler — gates the application callback. </p>
 <p>Called from the main loop with the current global tick. Fires the application callback at most once per unique tick value. The per-node timerticks increment has been removed — all modules now use the global clock via subtraction-based elapsed-time checks.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter. </td></tr>
-  </table>
-  </dd>
-</dl>
-
+<pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.
+* </pre> 
 </div>
 </div>
 <a id="a68c1a3c6196e96d3f17b68023607d163" name="a68c1a3c6196e96d3f17b68023607d163"></a>

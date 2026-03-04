@@ -27,7 +27,7 @@
  * (CID, RID, AMD, AME, AMR, error reports). Invoked by the CAN Rx state machine.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #ifndef __DRIVERS_CANBUS_CAN_RX_MESSAGE_HANDLER__
@@ -48,7 +48,8 @@ extern "C" {
      *
      * @details Provides buffer allocation and alias-mapping callbacks needed to
      * assemble incoming CAN frames into OpenLCB messages and to respond to CAN
-     * control frames (CID, AME, etc.).  All pointers are REQUIRED.
+     * control frames (CID, AME, etc.).  The first 7 pointers are REQUIRED.
+     * The listener_* pointers are OPTIONAL (NULL = feature not linked in).
      *
      * @see CanRxMessageHandler_initialize
      */
@@ -74,6 +75,37 @@ extern "C" {
 
         /** @brief Returns the current global 100ms tick. Used to stamp incoming buffers.  Optional. */
         uint8_t (*get_current_tick)(void);
+
+        /**
+         * @brief OPTIONAL. Register a listener Node ID in the alias table.
+         *
+         * @details Called when a Train Listener Attach command is detected.
+         * NULL = listener alias feature not linked in.
+         *
+         * @note Typical: ListenerAliasTable_register.
+         */
+        listener_alias_entry_t *(*listener_register)(node_id_t node_id);
+
+        /**
+         * @brief OPTIONAL. Store a resolved alias for a registered listener.
+         *
+         * @details Called when an AMD frame arrives.  No-op if the node_id is
+         * not a registered listener.  NULL = feature not linked in.
+         *
+         * @note Typical: ListenerAliasTable_set_alias.
+         */
+        void (*listener_set_alias)(node_id_t node_id, uint16_t alias);
+
+        /**
+         * @brief OPTIONAL. Clear a listener entry by alias (AMR cleanup).
+         *
+         * @details Called when an AMR frame arrives so future TX-path lookups
+         * return alias == 0 instead of a stale alias.  NULL = feature not
+         * linked in.
+         *
+         * @note Typical: ListenerAliasTable_clear_alias_by_alias.
+         */
+        void (*listener_clear_alias_by_alias)(uint16_t alias);
 
     } interface_can_rx_message_handler_t;
 

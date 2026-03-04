@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Message construction handlers for the login sequence: Initialization Complete, Producer Identified, and Consumer Identified messages.  
+<p>Message construction handlers for the login sequence.  
 <a href="#details">More...</a></p>
 
 <p><a href="openlcb__login__statemachine__handler_8h_source.html">Go to the source code of this file.</a></p>
@@ -124,7 +124,7 @@ Functions</h2></td></tr>
 <tr class="separator:ac6977ee9bd7b697ad431ddadd14779a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Message construction handlers for the login sequence: Initialization Complete, Producer Identified, and Consumer Identified messages. </p>
+<div class="textblock"><p>Message construction handlers for the login sequence. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -132,8 +132,9 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>Builds Initialization Complete, Producer Identified, and Consumer Identified messages during the node login process. Each handler advances the login state machine and sets the enumerate flag when multiple messages must be sent for a single state transition.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a0240f7d8fb35fff420fcf60de82cb4ba" name="a0240f7d8fb35fff420fcf60de82cb4ba"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0240f7d8fb35fff420fcf60de82cb4ba">&#9670;&#160;</a></span>OpenLcbLoginMessageHandler_initialize()</h2>

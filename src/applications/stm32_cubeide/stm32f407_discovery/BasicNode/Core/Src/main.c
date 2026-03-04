@@ -26,7 +26,7 @@
 #include "stdio.h"
 
 #include "callbacks.h"
-#include "node_parameters.h"
+#include "openlcb_user_config.h"
 #include "application_drivers/stm32_driverlib_drivers.h"
 #include "application_drivers/stm32_driverlib_can_driver.h"
 

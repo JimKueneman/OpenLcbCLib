@@ -27,8 +27,13 @@
  * @file can_rx_message_handler.c
  * @brief Implementation of message handlers for CAN receive operations.
  *
+ * @details Handles multi-frame assembly (first/middle/last), single-frame
+ * messages, legacy SNIP, and all CAN control frames (CID, RID, AMD, AME, AMR).
+ * Also manages duplicate alias detection and listener alias table updates.
+ * Invoked by the CAN Rx state machine via dependency-injected callbacks.
+ *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_rx_message_handler.h"
@@ -53,6 +58,7 @@
     /** @brief Multi-frame assembly timeout in 100ms ticks (3 seconds). */
 #define CAN_RX_INPROCESS_TIMEOUT_TICKS 30
 
+/** @brief Saved pointer to the dependency-injected receive message handler interface. */
 static interface_can_rx_message_handler_t *_interface;
 
     /** @brief Stores the dependency-injection interface pointer. */
@@ -151,6 +157,7 @@ static bool _check_for_duplicate_alias(can_msg_t* can_msg) {
     if (!alias_mapping) {
 
         return false; // Done nothing to do
+
     }
 
     alias_mapping->is_duplicate = true; // flag for the main loop to handle
@@ -211,7 +218,7 @@ void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t offset, payload
             0,
             mti);
 
-    target_openlcb_msg->timerticks = _interface->get_current_tick();
+    target_openlcb_msg->timer.assembly_ticks = _interface->get_current_tick();
     target_openlcb_msg->state.inprocess = true;
 
     CanUtilities_append_can_payload_to_openlcb_payload(target_openlcb_msg, can_msg, offset);
@@ -236,7 +243,7 @@ void CanRxMessageHandler_middle_frame(can_msg_t* can_msg, uint8_t offset) {
 
     }
 
-    uint8_t elapsed = (uint8_t) (_interface->get_current_tick() - target_openlcb_msg->timerticks);
+    uint8_t elapsed = (uint8_t) (_interface->get_current_tick() - target_openlcb_msg->timer.assembly_ticks);
 
     if (elapsed >= CAN_RX_INPROCESS_TIMEOUT_TICKS) {
 
@@ -370,15 +377,19 @@ void CanRxMessageHandler_stream_frame(can_msg_t* can_msg, uint8_t offset, payloa
      * CID is a probe during alias reservation — the correct defence is always
      * RID, regardless of whether the node is permitted or still claiming.
      * This differs from RID/AMD/AMR receipt which indicates an active alias
-     * collision and is handled by @ref _check_for_duplicate_alias().
+     * collision and is handled by the internal `_check_for_duplicate_alias()` helper.
      *
-     * @param can_msg Received CID frame.
-     *
-     * @warning Silently drops the reply if buffer allocation fails.
+     * @verbatim
+     * @param can_msg  Received CID frame.
+     * @endverbatim
      */
 void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
 
-    if (!can_msg) { return; }
+    if (!can_msg) {
+
+        return;
+
+    }
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(source_alias);
@@ -407,10 +418,108 @@ void CanRxMessageHandler_rid_frame(can_msg_t* can_msg) {
 
 }
 
-    /** @brief Handles AMD frames: checks for a duplicate alias and flags it if found. */
+    /**
+     * @brief Releases held attach messages whose listener Node ID matches.
+     *
+     * @details Scans the OpenLcbBufferList for held Train Listener Attach
+     * commands (state.inprocess == true, MTI_TRAIN_PROTOCOL, instruction ==
+     * TRAIN_LISTENER_CONFIG, sub-command == TRAIN_LISTENER_ATTACH) whose
+     * embedded listener Node ID matches listener_id.  For each match, clears
+     * state.inprocess, releases from the BufferList, and pushes to the FIFO
+     * for normal protocol processing.
+     *
+     * Called from the AMD handler after the listener alias table has been
+     * updated — the attach can now proceed because the alias is resolved.
+     *
+     * @param listener_id  48-bit Node ID from the AMD payload.
+     */
+static void _release_held_messages_for_listener(node_id_t listener_id) {
+
+    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+
+        openlcb_msg_t *msg = OpenLcbBufferList_index_of(i);
+
+        if (!msg) {
+
+            continue;
+
+        }
+
+        if (!msg->state.inprocess) {
+
+            continue;
+
+        }
+
+        if (msg->mti != MTI_TRAIN_PROTOCOL) {
+
+            continue;
+
+        }
+
+        uint8_t instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 0);
+        uint8_t sub_command = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 1);
+
+        if (instruction != TRAIN_LISTENER_CONFIG) {
+
+            continue;
+
+        }
+
+        if (sub_command != TRAIN_LISTENER_ATTACH) {
+
+            continue;
+
+        }
+
+        node_id_t held_listener_id =
+                OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
+
+        if (held_listener_id != listener_id) {
+
+            continue;
+
+        }
+
+        // Match — alias now resolved, release to FIFO for protocol dispatch
+        msg->state.inprocess = false;
+        OpenLcbBufferList_release(msg);
+        OpenLcbBufferFifo_push(msg);
+
+    }
+
+}
+
+    /**
+     * @brief Handles AMD (Alias Map Definition) CAN control frames.
+     *
+     * @details Performs two actions:
+     * -# Checks for a duplicate alias condition (our own alias conflict).
+     * -# If the listener alias feature is linked in, updates the listener
+     *    table with the resolved alias and releases any held attach messages
+     *    that were waiting on this Node ID.
+     *
+     * @verbatim
+     * @param can_msg  Received AMD frame (6-byte NodeID in payload).
+     * @endverbatim
+     *
+     * @warning NOT thread-safe.
+     */
 void CanRxMessageHandler_amd_frame(can_msg_t* can_msg) {
 
     _check_for_duplicate_alias(can_msg);
+
+    // Update listener alias table and release held attach messages (DI, no-op if not linked in)
+    if (_interface->listener_set_alias) {
+
+        node_id_t node_id = CanUtilities_extract_can_payload_as_node_id(can_msg);
+        uint16_t alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+
+        _interface->listener_set_alias(node_id, alias);
+
+        _release_held_messages_for_listener(node_id);
+
+    }
 
 }
 
@@ -484,10 +593,80 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
 
 }
 
-    /** @brief Handles AMR frames: checks for a duplicate alias and flags it if found. */
+    /**
+     * @brief Releases and frees all BufferList messages from a released alias.
+     *
+     * @details Scans the OpenLcbBufferList for messages whose source_alias
+     * matches the released alias.  The sender has gone away — partial
+     * assemblies will never complete, and completed messages that have not
+     * yet been pushed to the FIFO should not be processed (any reply would
+     * target a stale alias).  Freeing them immediately reclaims scarce
+     * buffer slots that would otherwise sit until the 3-second timeout.
+     *
+     * @param alias  12-bit CAN alias that was released via AMR.
+     */
+static void _check_and_release_messages_by_source_alias(uint16_t alias) {
+
+    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+
+        openlcb_msg_t *msg = OpenLcbBufferList_index_of(i);
+
+        if (!msg) {
+
+            continue;
+
+        }
+
+        if (msg->source_alias != alias) {
+
+            continue;
+
+        }
+
+        OpenLcbBufferList_release(msg);
+        OpenLcbBufferStore_free_buffer(msg);
+
+    }
+
+}
+
+    /**
+     * @brief Handles AMR (Alias Map Reset) CAN control frames.
+     *
+     * @details Performs four actions when a remote node releases its alias:
+     * -# Checks for a duplicate alias condition (our own alias conflict).
+     * -# BufferList scrub: frees all messages from the released alias
+     *    (partial assemblies will never complete, completed messages should
+     *    not generate replies to a stale alias).
+     * -# FIFO scrub: marks queued incoming messages from the released alias
+     *    as invalid so the pop-phase guard or TX guard will discard them,
+     *    preventing late replies to the stale alias.
+     * -# Listener table cleanup: clears the released alias from the listener
+     *    table so future TX-path lookups return alias == 0 (unresolved)
+     *    instead of the stale alias.  DI, no-op if not linked in.
+     *
+     * @verbatim
+     * @param can_msg  Received AMR frame.
+     * @endverbatim
+     *
+     * @warning NOT thread-safe.
+     */
 void CanRxMessageHandler_amr_frame(can_msg_t* can_msg) {
 
     _check_for_duplicate_alias(can_msg);
+
+    uint16_t alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+
+    _check_and_release_messages_by_source_alias(alias);
+
+    OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(alias);
+
+    // Clear stale alias from listener table (DI, no-op if not linked in)
+    if (_interface->listener_clear_alias_by_alias) {
+
+        _interface->listener_clear_alias_by_alias(alias);
+
+    }
 
 }
 

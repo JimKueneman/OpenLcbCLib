@@ -25,11 +25,14 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *
 * @file protocol_message_network.c
-* @brief Core message network protocol — Verify Node ID, Protocol Support
-*        Inquiry/Reply, Initialization Complete, duplicate ID detection.
+* @brief Core message network protocol implementation.
+*
+* @details Implements Verify Node ID (addressed and global), Protocol Support
+* Inquiry/Reply, Initialization Complete, Optional Interaction Rejected, and
+* Terminate Due To Error.  Also detects duplicate Node IDs on the network.
 *
 * @author Jim Kueneman
-* @date 28 Feb 2026
+* @date 4 Mar 2026
 *
 * @see protocol_message_network.h
 * @see MessageNetworkS.pdf
@@ -64,7 +67,7 @@ void ProtocolMessageNetwork_initialize(const interface_openlcb_protocol_message_
     /** @brief Send PC Event Report with DUPLICATE_NODE_DETECTED (once per boot). */
 static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (statemachine_info->openlcb_node->state.duplicate_id_detected) { // Already handled this once
+    if (statemachine_info->openlcb_node->state.duplicate_id_detected) {
 
         return;
 
@@ -94,10 +97,8 @@ static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_in
      * the message is transport-independent.  For addressed responses, dest
      * fields are copied from the requester.
      *
-     * @verbatim
-     * @param statemachine_info  Context.
+     * @param statemachine_info  @ref openlcb_statemachine_info_t context.
      * @param is_addressed       true for addressed reply, false for global.
-     * @endverbatim
      */
 static void _load_verified_node_id(
             openlcb_statemachine_info_t *statemachine_info,

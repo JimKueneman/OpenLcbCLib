@@ -31,7 +31,7 @@
  * Supports indexed access and attribute-based search (alias + MTI).
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "openlcb_buffer_list.h"
@@ -95,6 +95,7 @@ openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg) {
     }
 
     return NULL;
+
 }
 
     /**
@@ -131,6 +132,7 @@ openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias
     }
 
     return NULL;
+
 }
 
     /**
@@ -168,6 +170,7 @@ openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg) {
     }
 
     return NULL;
+
 }
 
     /** @brief Returns the message pointer at the given index, or NULL if empty or out of range. */
@@ -180,6 +183,7 @@ openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index) {
     }
 
     return _openlcb_msg_buffer_list[index];
+
 }
 
     /** @brief Returns true if the list contains no messages. */
@@ -196,6 +200,7 @@ bool OpenLcbBufferList_is_empty(void) {
     }
 
     return true;
+
 }
 
 void OpenLcbBufferList_check_timeouts(uint8_t current_tick) {
@@ -206,7 +211,7 @@ void OpenLcbBufferList_check_timeouts(uint8_t current_tick) {
 
         if (msg && msg->state.inprocess) {
 
-            uint8_t elapsed = (uint8_t) (current_tick - msg->timerticks);
+            uint8_t elapsed = (uint8_t) (current_tick - msg->timer.assembly_ticks);
 
             if (elapsed >= BUFFER_LIST_INPROCESS_TIMEOUT_TICKS) {
 

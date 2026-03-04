@@ -33,7 +33,7 @@
  * dependency_injection_canbus.c copies.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  *
  * @see can_config.h - User-facing CAN configuration struct
  * @see openlcb_config.c - OpenLCB protocol layer wiring module

@@ -25,12 +25,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *
 * @file openlcb_login_statemachine.h
-* @brief Non-blocking login state machine that walks each node through
-*        Initialization Complete, Producer Identified, Consumer Identified,
-*        and on_login_complete before entering RUNSTATE_RUN.
+* @brief Non-blocking login state machine for node initialization.
+*
+* @details Walks each node through Initialization Complete, Producer
+* Identified, Consumer Identified, and on_login_complete before entering
+* RUNSTATE_RUN.  Uses a polling architecture called repeatedly from the
+* main loop; each call performs one atomic operation and returns immediately.
 *
 * @author Jim Kueneman
-* @date 28 Feb 2026
+* @date 4 Mar 2026
 */
 
 // This is a guard condition so that contents of this file are not included

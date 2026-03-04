@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file node_parameters.c
+ * \file openlcb_user_config.c
  *
  * Definition of the node at the application level.
  *
@@ -32,8 +32,7 @@
  * @date 5 Nov 2025
  */
 
-#include "node_parameters.h"
-
+#include "openlcb_user_config.h"
 #include "src/openlcb/openlcb_types.h"
 #include "src/openlcb/openlcb_defines.h"
 
@@ -121,8 +120,8 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_firmware.present = true,
     .address_space_firmware.low_address_valid = false,    // assume the low address starts at 0
     .address_space_firmware.low_address = 0,              // Firmware ALWAYS assumes it starts at 0
-    .address_space_firmware.highest_address = 0xFFFFFFFF, // Predefined in the Configuration Description Definition Spec
-    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,   // Never know how big firmware is
+    .address_space_firmware.highest_address = 0xFFFFFFFF, // Never know how big firmware is
+    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware update address space",
 
     .cdi =

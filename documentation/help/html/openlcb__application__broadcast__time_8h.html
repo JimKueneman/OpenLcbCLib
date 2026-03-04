@@ -643,13 +643,8 @@ Only consumer clocks are advanced; producer clocks manage their own time.</dd></
 </li>
 </ol>
 <p>The threshold 240,000 equals 4 * 60 * 1000, which at rate=4 (1.0x) yields exactly one fast-minute per real minute. See the accumulator math comment above for details.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter. </td></tr>
-  </table>
-  </dd>
-</dl>
-
+<pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.
+* </pre> 
 </div>
 </div>
 <a id="ab456de14c8773717289c8f9da85bb39a" name="ab456de14c8773717289c8f9da85bb39a"></a>

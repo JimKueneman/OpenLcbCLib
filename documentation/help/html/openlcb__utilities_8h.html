@@ -274,7 +274,7 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Provides helpers for message construction, payload insert/extract, configuration memory buffer operations, event range calculations, broadcast time event encoding/decoding, and train search event encoding/decoding.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a6b320eb92f3b9990fb78b35e4a93b8c0" name="a6b320eb92f3b9990fb78b35e4a93b8c0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6b320eb92f3b9990fb78b35e4a93b8c0">&#9670;&#160;</a></span>OpenLcbUtilities_load_openlcb_message()</h2>
@@ -363,6 +363,12 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Zeros all payload bytes and resets payload_count. Header preserved. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to clear payload from. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -390,6 +396,12 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Zeros entire message including header, state flags, and reference count. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to fully clear. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -421,6 +433,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Copies an 8-byte event ID to payload at offset 0. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to write into. </td></tr>
+    <tr><td class="paramname">event_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to store in the payload. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -457,6 +476,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Copies a 6-byte node ID to payload at the given offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to write into. </td></tr>
+    <tr><td class="paramname">node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> to store in the payload. </td></tr>
+    <tr><td class="paramname">offset</td><td>Starting byte offset in the payload.</td></tr>
+  </table>
+  </dd>
+</dl>
 <p>Copies a 6-byte node ID to payload at the given offset. </p>
 
 </div>
@@ -494,6 +521,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Copies one byte to payload at the given offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to write into. </td></tr>
+    <tr><td class="paramname">byte</td><td>Byte value to store. </td></tr>
+    <tr><td class="paramname">offset</td><td>Byte offset in the payload. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -530,6 +565,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Copies a 16-bit word (big-endian) to payload at the given offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to write into. </td></tr>
+    <tr><td class="paramname">word</td><td>16-bit value to store in big-endian order. </td></tr>
+    <tr><td class="paramname">offset</td><td>Starting byte offset in the payload. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -566,6 +609,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Copies a 32-bit doubleword (big-endian) to payload at the given offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to write into. </td></tr>
+    <tr><td class="paramname">doubleword</td><td>32-bit value to store in big-endian order. </td></tr>
+    <tr><td class="paramname">offset</td><td>Starting byte offset in the payload. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -697,6 +748,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts a 6-byte node ID from payload at the given offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to read from. </td></tr>
+    <tr><td class="paramname">offset</td><td>Starting byte offset in the payload.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> assembled from the payload bytes. </dd></dl>
 
 </div>
 </div>
@@ -724,6 +783,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts an 8-byte event ID from payload at offset 0. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to read from.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> assembled from the payload bytes. </dd></dl>
 
 </div>
 </div>
@@ -755,6 +821,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts one byte from payload at the given offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to read from. </td></tr>
+    <tr><td class="paramname">offset</td><td>Byte offset in the payload.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Byte value at the specified offset. </dd></dl>
 
 </div>
 </div>
@@ -786,6 +860,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts a 16-bit word (big-endian) from payload at the given offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to read from. </td></tr>
+    <tr><td class="paramname">offset</td><td>Starting byte offset in the payload.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>16-bit value assembled from two big-endian payload bytes. </dd></dl>
 
 </div>
 </div>
@@ -817,6 +899,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts a 32-bit doubleword (big-endian) from payload at the given offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to read from. </td></tr>
+    <tr><td class="paramname">offset</td><td>Starting byte offset in the payload.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>32-bit value assembled from four big-endian payload bytes. </dd></dl>
 
 </div>
 </div>
@@ -844,6 +934,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the count of null bytes (0x00) in the payload. Used for SNIP validation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to scan.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of null bytes found in the payload. </dd></dl>
 
 </div>
 </div>
@@ -871,6 +968,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the MTI has the destination-address-present bit set. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to check.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the message is addressed, false if global. </dd></dl>
 
 </div>
 </div>
@@ -902,6 +1006,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the message destination matches this node's alias or ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> to match against. </td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> to check.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the message is addressed to this node. </dd></dl>
 
 </div>
 </div>
@@ -933,6 +1045,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Sets the multi-frame control flag in the upper nibble of target, preserving the lower nibble. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">target</td><td>Pointer to the byte whose upper nibble will be replaced. </td></tr>
+    <tr><td class="paramname">flag</td><td>Flag value to write into the upper nibble. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1050,6 +1169,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the byte offset into global config memory where this node's space begins. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> to calculate the offset for.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Byte offset into the global configuration memory array. </dd></dl>
 
 </div>
 </div>
@@ -1077,6 +1203,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Converts a <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> to its maximum byte length. Returns 0 for unknown types. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">payload_type</td><td>The <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> value to convert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Maximum payload byte length for the given type, or 0 if unknown.</dd></dl>
 <p>Converts a <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> to its maximum byte length. Returns 0 for unknown types. </p>
 
 </div>
@@ -1109,6 +1242,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts a 6-byte node ID from a config memory buffer at the given index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> to read from. </td></tr>
+    <tr><td class="paramname">index</td><td>Starting byte index in the buffer.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> assembled from the buffer bytes. </dd></dl>
 
 </div>
 </div>
@@ -1140,6 +1281,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts a 16-bit word from a config memory buffer at the given index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> to read from. </td></tr>
+    <tr><td class="paramname">index</td><td>Starting byte index in the buffer.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>16-bit value assembled from two big-endian buffer bytes. </dd></dl>
 
 </div>
 </div>
@@ -1176,6 +1325,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Copies a 6-byte node ID into a config memory buffer at the given index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> to write into. </td></tr>
+    <tr><td class="paramname">node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> to store. </td></tr>
+    <tr><td class="paramname">index</td><td>Starting byte index in the buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1212,6 +1369,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Copies an 8-byte event ID into a config memory buffer at the given index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> to write into. </td></tr>
+    <tr><td class="paramname">event_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to store. </td></tr>
+    <tr><td class="paramname">index</td><td>Starting byte index in the buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1243,6 +1408,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts an 8-byte event ID from a config memory buffer at the given index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> to read from. </td></tr>
+    <tr><td class="paramname">index</td><td>Starting byte index in the buffer.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> assembled from the buffer bytes. </dd></dl>
 
 </div>
 </div>
@@ -1319,6 +1492,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Builds a config memory write-success reply datagram header. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to the <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">config_mem_write_request_info</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> from the original request. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1474,6 +1654,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the event ID falls within any of the node's consumer ranges. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> whose consumer ranges are checked. </td></tr>
+    <tr><td class="paramname">event_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the event ID falls within a consumer range. </dd></dl>
 
 </div>
 </div>
@@ -1505,6 +1693,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the event ID falls within any of the node's producer ranges. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> whose producer ranges are checked. </td></tr>
+    <tr><td class="paramname">event_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the event ID falls within a producer range. </dd></dl>
 
 </div>
 </div>
@@ -1532,6 +1728,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the event ID belongs to the broadcast time event space. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the event ID is a broadcast time event. </dd></dl>
 
 </div>
 </div>
@@ -1559,6 +1762,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts the 48-bit clock ID (upper 6 bytes) from a broadcast time event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>Broadcast time <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to extract from.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>48-bit clock identifier masked from the event ID. </dd></dl>
 
 </div>
 </div>
@@ -1586,6 +1796,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the <a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> for a broadcast time event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>Broadcast time <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to classify.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The <a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> indicating the event type. </dd></dl>
 
 </div>
 </div>
@@ -1799,6 +2016,16 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Creates a Report/Set Time event ID from clock_id, hour, minute. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier. </td></tr>
+    <tr><td class="paramname">hour</td><td>Hour value (0-23). </td></tr>
+    <tr><td class="paramname">minute</td><td>Minute value (0-59). </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for a Set command, false for a Report.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the time event. </dd></dl>
 
 </div>
 </div>
@@ -1840,6 +2067,16 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Creates a Report/Set Date event ID from clock_id, month, day. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier. </td></tr>
+    <tr><td class="paramname">month</td><td>Month value (1-12). </td></tr>
+    <tr><td class="paramname">day</td><td>Day value (1-31). </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for a Set command, false for a Report.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the date event. </dd></dl>
 
 </div>
 </div>
@@ -1876,6 +2113,15 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Creates a Report/Set Year event ID from clock_id, year. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier. </td></tr>
+    <tr><td class="paramname">year</td><td>Year value (0-4095). </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for a Set command, false for a Report.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the year event. </dd></dl>
 
 </div>
 </div>
@@ -1912,6 +2158,15 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Creates a Report/Set Rate event ID from clock_id, rate. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier. </td></tr>
+    <tr><td class="paramname">rate</td><td>12-bit signed fixed-point rate (10.2 format). </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for a Set command, false for a Report.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the rate event. </dd></dl>
 
 </div>
 </div>
@@ -1943,6 +2198,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Creates a command event ID (Query, Start, Stop, Date Rollover) for the given clock. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier. </td></tr>
+    <tr><td class="paramname">command</td><td><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> specifying the command type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the command event. </dd></dl>
 
 </div>
 </div>
@@ -1970,6 +2233,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the event ID belongs to the train search space (upper 4 bytes = 0x090099FF). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the event ID is a train search event.</dd></dl>
 <p>Returns true if the event ID belongs to the train search space (upper 4 bytes = 0x090099FF). </p>
 
 </div>
@@ -2002,6 +2272,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts 6 search-query nibbles from a train search event ID into digits[]. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>Train search <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to decode. </td></tr>
+    <tr><td class="paramname">digits</td><td>Pointer to a 6-element uint8_t array that receives the nibble values. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -2029,6 +2306,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Extracts the flags byte (byte 7) from a train search event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>Train search <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to decode.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Flags byte from the lowest byte of the event ID. </dd></dl>
 
 </div>
 </div>
@@ -2056,6 +2340,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Converts a 6-nibble digit array to a numeric DCC address, skipping leading 0xF nibbles. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">digits</td><td>Pointer to a 6-element uint8_t array of nibble values.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Numeric DCC address decoded from the digit array. </dd></dl>
 
 </div>
 </div>
@@ -2087,6 +2378,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Creates a train search event ID from a DCC address and flags byte. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">address</td><td>DCC address to encode into the search event. </td></tr>
+    <tr><td class="paramname">flags</td><td>Flags byte placed in the lowest byte of the event ID.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the train search query. </dd></dl>
 
 </div>
 </div>
@@ -2114,6 +2413,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the event ID is one of the 4 well-known emergency events. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the event ID matches a well-known emergency event. </dd></dl>
 
 </div>
 </div>

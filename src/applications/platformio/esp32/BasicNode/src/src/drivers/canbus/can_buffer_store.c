@@ -26,8 +26,13 @@
  *
  * @file can_buffer_store.c
  * @brief Implementation of the pre-allocated CAN message buffer pool.
+ *
+ * @details Single static array of @ref can_msg_t buffers with first-fit
+ * allocation.  Allocation and free operations toggle a per-slot flag and
+ * maintain running and peak counters for pool-size tuning.  NOT thread-safe.
+ *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_buffer_store.h"

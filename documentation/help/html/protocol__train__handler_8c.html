@@ -125,7 +125,7 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Handles incoming MTI_TRAIN_PROTOCOL commands and MTI_TRAIN_REPLY replies. Automatically updates train_state, builds protocol replies, forwards consist commands to listeners, and fires optional notifier callbacks.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a8910429fd811c07e7ff663cedfabc411" name="a8910429fd811c07e7ff663cedfabc411"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8910429fd811c07e7ff663cedfabc411">&#9670;&#160;</a></span>ProtocolTrainHandler_initialize()</h2>
@@ -165,6 +165,7 @@ Functions</h2></td></tr>
 
 <p>Dispatches an incoming Train Control command by sub-command byte. </p>
 <p>Handles an incoming Train Control Protocol command (MTI_TRAIN_PROTOCOL).</p>
+<p>Masks the P bit (bit 7) from the instruction byte before dispatch so that forwarded commands (P=1) are processed identically to direct commands (P=0). After local processing of speed, function, or emergency stop commands, initiates listener forwarding enumeration if listeners are attached and the command is not itself a forwarded command (P=0).</p>
 <pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
 * </pre> 
 </div>

@@ -6,13 +6,14 @@ var searchData=
   ['index_3',['index',['../structopenlcb__node___t_a_g.html#aae5a12e607d0f782506d9e6ec6179c64',1,'openlcb_node_TAG']]],
   ['initialized_4',['initialized',['../structopenlcb__node__state__t.html#aedeffc7d23da25d52b9a50045189fe2b',1,'openlcb_node_state_t']]],
   ['inprocess_5',['inprocess',['../structopenlcb__msg__state__t.html#a6db0c09032acfed6152272e0851576e0',1,'openlcb_msg_state_t']]],
-  ['is_5fallocated_6',['is_allocated',['../structbroadcast__clock__t.html#a46e75766403b17e73e356109aee081c7',1,'broadcast_clock_t']]],
-  ['is_5fconsumer_7',['is_consumer',['../structbroadcast__clock__t.html#a5d71a55f741db3daa42ad443b6a0c4fd',1,'broadcast_clock_t']]],
-  ['is_5fduplicate_8',['is_duplicate',['../structalias__mapping__struct.html#a70cebb5663459ea9444b61f00f1e3998',1,'alias_mapping_struct']]],
-  ['is_5flong_5faddress_9',['is_long_address',['../structtrain__state___t_a_g.html#a9231569054cae5f2bd081aaf0978b75e',1,'train_state_TAG']]],
-  ['is_5fpermitted_10',['is_permitted',['../structalias__mapping__struct.html#a1c19fd4ba1ee0bc1f0d7def30ede49a2',1,'alias_mapping_struct']]],
-  ['is_5fproducer_11',['is_producer',['../structbroadcast__clock__t.html#ad6dd46df120573b4540c49bfc3e67895',1,'broadcast_clock_t']]],
-  ['is_5frunning_12',['is_running',['../structbroadcast__clock__state__t.html#a95cbd6b99430748422cc048b4f29dc52',1,'broadcast_clock_state_t']]],
-  ['is_5ftx_5fbuffer_5fclear_13',['is_tx_buffer_clear',['../structcan__config__t.html#a600ed23c9d8e12fbcbb70a922e21be15',1,'can_config_t']]],
-  ['is_5ftx_5fbuffer_5fempty_14',['is_tx_buffer_empty',['../structinterface__can__tx__statemachine__t.html#a2e9d4e2d961ae1797f5a9877b4771b15',1,'interface_can_tx_statemachine_t']]]
+  ['invalid_6',['invalid',['../structopenlcb__msg__state__t.html#a287d7f5cafc29863a809d81fc80d55b3',1,'openlcb_msg_state_t']]],
+  ['is_5fallocated_7',['is_allocated',['../structbroadcast__clock__t.html#a46e75766403b17e73e356109aee081c7',1,'broadcast_clock_t']]],
+  ['is_5fconsumer_8',['is_consumer',['../structbroadcast__clock__t.html#a5d71a55f741db3daa42ad443b6a0c4fd',1,'broadcast_clock_t']]],
+  ['is_5fduplicate_9',['is_duplicate',['../structalias__mapping__struct.html#a70cebb5663459ea9444b61f00f1e3998',1,'alias_mapping_struct']]],
+  ['is_5flong_5faddress_10',['is_long_address',['../structtrain__state___t_a_g.html#a9231569054cae5f2bd081aaf0978b75e',1,'train_state_TAG']]],
+  ['is_5fpermitted_11',['is_permitted',['../structalias__mapping__struct.html#a1c19fd4ba1ee0bc1f0d7def30ede49a2',1,'alias_mapping_struct']]],
+  ['is_5fproducer_12',['is_producer',['../structbroadcast__clock__t.html#ad6dd46df120573b4540c49bfc3e67895',1,'broadcast_clock_t']]],
+  ['is_5frunning_13',['is_running',['../structbroadcast__clock__state__t.html#a95cbd6b99430748422cc048b4f29dc52',1,'broadcast_clock_state_t']]],
+  ['is_5ftx_5fbuffer_5fclear_14',['is_tx_buffer_clear',['../structcan__config__t.html#a600ed23c9d8e12fbcbb70a922e21be15',1,'can_config_t']]],
+  ['is_5ftx_5fbuffer_5fempty_15',['is_tx_buffer_empty',['../structinterface__can__tx__statemachine__t.html#a2e9d4e2d961ae1797f5a9877b4771b15',1,'interface_can_tx_statemachine_t']]]
 ];

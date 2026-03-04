@@ -118,10 +118,19 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ab317b73b50825b5354cf9024a035f37a" id="r_ab317b73b50825b5354cf9024a035f37a"><td class="memItemLeft" align="right" valign="top">uint8_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab317b73b50825b5354cf9024a035f37a">get_current_tick</a> )(void)</td></tr>
 <tr class="memdesc:ab317b73b50825b5354cf9024a035f37a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current global 100ms tick. Used to stamp incoming buffers. Optional.  <br /></td></tr>
 <tr class="separator:ab317b73b50825b5354cf9024a035f37a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0651c591fcdd3d6346901a1eef8c8a8e" id="r_a0651c591fcdd3d6346901a1eef8c8a8e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0651c591fcdd3d6346901a1eef8c8a8e">listener_register</a> )(<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memdesc:a0651c591fcdd3d6346901a1eef8c8a8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Register a listener Node ID in the alias table.  <br /></td></tr>
+<tr class="separator:a0651c591fcdd3d6346901a1eef8c8a8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57d3a21c4367026faff1ff794b53e0ec" id="r_a57d3a21c4367026faff1ff794b53e0ec"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57d3a21c4367026faff1ff794b53e0ec">listener_set_alias</a> )(<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint16_t alias)</td></tr>
+<tr class="memdesc:a57d3a21c4367026faff1ff794b53e0ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Store a resolved alias for a registered listener.  <br /></td></tr>
+<tr class="separator:a57d3a21c4367026faff1ff794b53e0ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a091595576e1cb208224a278830d95e4e" id="r_a091595576e1cb208224a278830d95e4e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a091595576e1cb208224a278830d95e4e">listener_clear_alias_by_alias</a> )(uint16_t alias)</td></tr>
+<tr class="memdesc:a091595576e1cb208224a278830d95e4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Clear a listener entry by alias (AMR cleanup).  <br /></td></tr>
+<tr class="separator:a091595576e1cb208224a278830d95e4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dependency-injection interface for the CAN receive message handlers. </p>
-<p>Provides buffer allocation and alias-mapping callbacks needed to assemble incoming CAN frames into OpenLCB messages and to respond to CAN control frames (CID, AME, etc.). All pointers are REQUIRED.</p>
+<p>Provides buffer allocation and alias-mapping callbacks needed to assemble incoming CAN frames into OpenLCB messages and to respond to CAN control frames (CID, AME, etc.). The first 7 pointers are REQUIRED. The listener_* pointers are OPTIONAL (NULL = feature not linked in).</p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__rx__message__handler_8c.html#aaa035b3a9b3535b413f441c4cb6d741f" title="Stores the dependency-injection interface pointer.">CanRxMessageHandler_initialize</a> </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad1e2712c22420a37f8a3775ae4214864" name="ad1e2712c22420a37f8a3775ae4214864"></a>
@@ -233,6 +242,60 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the current global 100ms tick. Used to stamp incoming buffers. Optional. </p>
+
+</div>
+</div>
+<a id="a0651c591fcdd3d6346901a1eef8c8a8e" name="a0651c591fcdd3d6346901a1eef8c8a8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0651c591fcdd3d6346901a1eef8c8a8e">&#9670;&#160;</a></span>listener_register</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *(* listener_register) (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Register a listener Node ID in the alias table. </p>
+<p>Called when a Train Listener Attach command is detected. NULL = listener alias feature not linked in.</p>
+<dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_register. </dd></dl>
+
+</div>
+</div>
+<a id="a57d3a21c4367026faff1ff794b53e0ec" name="a57d3a21c4367026faff1ff794b53e0ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57d3a21c4367026faff1ff794b53e0ec">&#9670;&#160;</a></span>listener_set_alias</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* listener_set_alias) (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint16_t alias)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Store a resolved alias for a registered listener. </p>
+<p>Called when an AMD frame arrives. No-op if the node_id is not a registered listener. NULL = feature not linked in.</p>
+<dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_set_alias. </dd></dl>
+
+</div>
+</div>
+<a id="a091595576e1cb208224a278830d95e4e" name="a091595576e1cb208224a278830d95e4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a091595576e1cb208224a278830d95e4e">&#9670;&#160;</a></span>listener_clear_alias_by_alias</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* listener_clear_alias_by_alias) (uint16_t alias)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Clear a listener entry by alias (AMR cleanup). </p>
+<p>Called when an AMR frame arrives so future TX-path lookups return alias == 0 instead of a stale alias. NULL = feature not linked in.</p>
+<dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_clear_alias_by_alias. </dd></dl>
 
 </div>
 </div>

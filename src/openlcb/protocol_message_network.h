@@ -25,12 +25,14 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *
 * @file protocol_message_network.h
-* @brief Core message network protocol — Verify Node ID, Protocol Support
-*        Inquiry/Reply, Initialization Complete, Optional Interaction Rejected,
-*        Terminate Due To Error.
+* @brief Core message network protocol handler.
+*
+* @details Implements Verify Node ID (addressed and global), Protocol Support
+* Inquiry/Reply, Initialization Complete, Optional Interaction Rejected, and
+* Terminate Due To Error.  Also detects duplicate Node IDs on the network.
 *
 * @author Jim Kueneman
-* @date 28 Feb 2026
+* @date 4 Mar 2026
 *
 * @see MessageNetworkS.pdf
 */

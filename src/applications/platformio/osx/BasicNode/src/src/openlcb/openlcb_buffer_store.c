@@ -31,7 +31,7 @@
  * sizes.  Reference counting supports shared buffers across multiple queues.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "openlcb_buffer_store.h"
@@ -108,6 +108,7 @@ void OpenLcbBufferStore_initialize(void) {
             _message_buffer.messages[i].payload = (openlcb_payload_t *) &_message_buffer.stream[i - (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH)];
 
         }
+
     }
 
     _buffer_store_basic_messages_allocated = 0;
@@ -135,6 +136,7 @@ static void _update_buffer_telemetry(payload_type_enum payload_type) {
                 _buffer_store_basic_max_messages_allocated = _buffer_store_basic_messages_allocated;
 
                 break;
+
             }
 
             break;
@@ -147,6 +149,7 @@ static void _update_buffer_telemetry(payload_type_enum payload_type) {
                 _buffer_store_datagram_max_messages_allocated = _buffer_store_datagram_messages_allocated;
 
                 break;
+
             }
 
             break;
@@ -159,6 +162,7 @@ static void _update_buffer_telemetry(payload_type_enum payload_type) {
                 _buffer_store_snip_max_messages_allocated = _buffer_store_snip_messages_allocated;
 
                 break;
+
             }
 
             break;
@@ -171,6 +175,7 @@ static void _update_buffer_telemetry(payload_type_enum payload_type) {
                 _buffer_store_stream_max_messages_allocated = _buffer_store_stream_messages_allocated;
 
                 break;
+
             }
 
             break;
@@ -180,6 +185,7 @@ static void _update_buffer_telemetry(payload_type_enum payload_type) {
             break;
 
     }
+
 }
 
     /**
@@ -248,7 +254,9 @@ openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type
             _update_buffer_telemetry(_message_buffer.messages[i].payload_type);
 
             return &_message_buffer.messages[i];
+
         }
+
     }
 
     return NULL;

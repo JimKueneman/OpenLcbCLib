@@ -25,12 +25,14 @@
      * POSSIBILITY OF SUCH DAMAGE.
      *
      * @file protocol_config_mem_operations_handler.c
-     * @brief Memory-config operations dispatcher — two-phase ACK-then-execute
-     *        handling for options, address-space info, lock, freeze, reset, and
-     *        factory-reset sub-commands.
+     * @brief Memory-config operations dispatcher implementation.
+     *
+     * @details Two-phase ACK-then-execute handling for options, address-space
+     * info, lock, freeze, reset, and factory-reset sub-commands.  Routes each
+     * operation to registered callbacks and sends appropriate replies.
      *
      * @author Jim Kueneman
-     * @date 28 Feb 2026
+     * @date 4 Mar 2026
      *
      * @see protocol_config_mem_operations_handler.h
      * @see MemoryConfigurationS.pdf
@@ -238,6 +240,7 @@ static uint8_t _available_address_space_info_flags(config_mem_operations_request
     }
 
     return flags;
+
 }
 
     /** @brief Send Datagram Received OK; set flags for phase-2 re-invocation. */
@@ -284,9 +287,11 @@ static void _handle_operations_request(openlcb_statemachine_info_t *statemachine
         } else {
 
             _load_datagram_reject_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+
         }
 
         return;
+
     }
 
     // Complete Command Request, if it was null the first pass with the datagram ACK check would have return NACK and with won't get called with a null
@@ -294,6 +299,7 @@ static void _handle_operations_request(openlcb_statemachine_info_t *statemachine
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // reset
     statemachine_info->incoming_msg_info.enumerate = false; // done
+
 }
 
     /**
@@ -504,6 +510,7 @@ void ProtocolConfigMemOperationsHandler_options_cmd(openlcb_statemachine_info_t 
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
+
 }
 
     /** @brief Dispatch Get Configuration Options reply to two-phase handler. */

@@ -32,7 +32,7 @@
  * callbacks when state changes.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "protocol_broadcast_time_handler.h"

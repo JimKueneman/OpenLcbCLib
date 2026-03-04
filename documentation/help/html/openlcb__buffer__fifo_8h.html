@@ -118,6 +118,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a53c7bb1734270e37eeec4a1d180306cc" id="r_a53c7bb1734270e37eeec4a1d180306cc"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53c7bb1734270e37eeec4a1d180306cc">OpenLcbBufferFifo_get_allocated_count</a> (void)</td></tr>
 <tr class="memdesc:a53c7bb1734270e37eeec4a1d180306cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of messages currently held in the FIFO.  <br /></td></tr>
 <tr class="separator:a53c7bb1734270e37eeec4a1d180306cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3148c0ad79e7c8eef6e0096a0a8efef5" id="r_a3148c0ad79e7c8eef6e0096a0a8efef5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3148c0ad79e7c8eef6e0096a0a8efef5">OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias</a> (uint16_t alias)</td></tr>
+<tr class="memdesc:a3148c0ad79e7c8eef6e0096a0a8efef5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks all queued incoming messages from a released alias as invalid.  <br /></td></tr>
+<tr class="separator:a3148c0ad79e7c8eef6e0096a0a8efef5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>FIFO queue for OpenLCB message pointers. </p>
@@ -292,6 +295,43 @@ Functions</h2></td></tr>
 
 <p>Returns the number of messages currently held in the FIFO. </p>
 
+</div>
+</div>
+<a id="a3148c0ad79e7c8eef6e0096a0a8efef5" name="a3148c0ad79e7c8eef6e0096a0a8efef5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3148c0ad79e7c8eef6e0096a0a8efef5">&#9670;&#160;</a></span>OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>alias</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Marks all queued incoming messages from a released alias as invalid. </p>
+<p>Walks the FIFO from tail to head and sets state.invalid on any message whose source_alias matches the released alias. These are incoming messages from a node that has gone away — processing them could generate replies to a stale alias. The pop-phase guard or TX guard will discard them. Used when an AMR (Alias Map Reset) frame arrives and the alias must be retired within 100 ms.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">alias</td><td>12-bit CAN alias that was released. If 0, returns immediately.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Walks the FIFO from tail to head and sets state.invalid on any message whose source_alias matches the released alias. These are completed incoming messages from a node that has gone away — processing them could generate replies to a stale alias that may now belong to a different node. The pop-phase guard or TX guard will discard them.</p>
+<p>Does not remove messages from the FIFO — the circular buffer head/tail pointers stay untouched.</p>
+<pre class="fragment">* @param alias  12-bit CAN alias that was released.  If 0, returns immediately.
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

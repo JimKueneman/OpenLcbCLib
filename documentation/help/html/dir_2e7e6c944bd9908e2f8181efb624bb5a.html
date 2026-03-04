@@ -151,25 +151,25 @@ Files</h2></td></tr>
 <tr class="memdesc:openlcb__gridconnect_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of GridConnect protocol conversion. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="openlcb__gridconnect_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openlcb__gridconnect_8h.html">openlcb_gridconnect.h</a></td></tr>
-<tr class="memdesc:openlcb__gridconnect_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bidirectional conversion between CAN messages and GridConnect ASCII format (:X&lt;8-hex-ID&gt;N&lt;hex-data&gt;;). Includes a streaming byte-at-a-time parser with automatic error recovery. <br /></td></tr>
+<tr class="memdesc:openlcb__gridconnect_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bidirectional conversion between CAN messages and GridConnect ASCII format. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openlcb__login__statemachine_8c.html">openlcb_login_statemachine.c</a></td></tr>
 <tr class="memdesc:openlcb__login__statemachine_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of the login state machine dispatcher. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="openlcb__login__statemachine_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openlcb__login__statemachine_8h.html">openlcb_login_statemachine.h</a></td></tr>
-<tr class="memdesc:openlcb__login__statemachine_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-blocking login state machine that walks each node through Initialization Complete, Producer Identified, Consumer Identified, and on_login_complete before entering RUNSTATE_RUN. <br /></td></tr>
+<tr class="memdesc:openlcb__login__statemachine_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-blocking login state machine for node initialization. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openlcb__login__statemachine__handler_8c.html">openlcb_login_statemachine_handler.c</a></td></tr>
 <tr class="memdesc:openlcb__login__statemachine__handler_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of the login state machine message handler. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="openlcb__login__statemachine__handler_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openlcb__login__statemachine__handler_8h.html">openlcb_login_statemachine_handler.h</a></td></tr>
-<tr class="memdesc:openlcb__login__statemachine__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message construction handlers for the login sequence: Initialization Complete, Producer Identified, and Consumer Identified messages. <br /></td></tr>
+<tr class="memdesc:openlcb__login__statemachine__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message construction handlers for the login sequence. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openlcb__main__statemachine_8c.html">openlcb_main_statemachine.c</a></td></tr>
 <tr class="memdesc:openlcb__main__statemachine_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of the main OpenLCB protocol state machine dispatcher. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="openlcb__main__statemachine_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openlcb__main__statemachine_8h.html">openlcb_main_statemachine.h</a></td></tr>
-<tr class="memdesc:openlcb__main__statemachine_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Central MTI-based message dispatcher. Pops messages from the FIFO, enumerates all nodes, and routes to the correct protocol handler via function pointers. NULL optional handlers trigger Interaction Rejected automatically. <br /></td></tr>
+<tr class="memdesc:openlcb__main__statemachine_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Central MTI-based message dispatcher. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openlcb__node_8c.html">openlcb_node.c</a></td></tr>
 <tr class="memdesc:openlcb__node_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenLCB node allocation, enumeration, and lifecycle management. <br /></td></tr>
@@ -193,46 +193,46 @@ Files</h2></td></tr>
 <tr class="memdesc:protocol__broadcast__time__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast Time Protocol message handler. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__config__mem__operations__handler_8c.html">protocol_config_mem_operations_handler.c</a></td></tr>
-<tr class="memdesc:protocol__config__mem__operations__handler_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory-config operations dispatcher — two-phase ACK-then-execute handling for options, address-space info, lock, freeze, reset, and factory-reset sub-commands. <br /></td></tr>
+<tr class="memdesc:protocol__config__mem__operations__handler_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory-config operations dispatcher implementation. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="protocol__config__mem__operations__handler_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__config__mem__operations__handler_8h.html">protocol_config_mem_operations_handler.h</a></td></tr>
-<tr class="memdesc:protocol__config__mem__operations__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory operations dispatcher — routes memory-config datagram sub-commands (options, address-space info, lock, freeze, reset, factory-reset) to registered callbacks. <br /></td></tr>
+<tr class="memdesc:protocol__config__mem__operations__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory operations dispatcher. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__config__mem__read__handler_8c.html">protocol_config_mem_read_handler.c</a></td></tr>
-<tr class="memdesc:protocol__config__mem__read__handler_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory read handler — two-phase dispatch for read commands across all standard address spaces (CDI, All, Config, ACDI-Mfg, ACDI-User, Train FDI, Train Fn Config). <br /></td></tr>
+<tr class="memdesc:protocol__config__mem__read__handler_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory read handler implementation. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="protocol__config__mem__read__handler_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__config__mem__read__handler_8h.html">protocol_config_mem_read_handler.h</a></td></tr>
-<tr class="memdesc:protocol__config__mem__read__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory read handler — processes datagram read commands for CDI (0xFF), All (0xFE), Config (0xFD), ACDI-Mfg (0xFC), ACDI-User (0xFB), Train FDI (0xFA), and Train Fn Config (0xF9). <br /></td></tr>
+<tr class="memdesc:protocol__config__mem__read__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory read handler. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__config__mem__write__handler_8c.html">protocol_config_mem_write_handler.c</a></td></tr>
-<tr class="memdesc:protocol__config__mem__write__handler_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory write handler — two-phase dispatch for write commands across all standard address spaces. <br /></td></tr>
+<tr class="memdesc:protocol__config__mem__write__handler_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory write handler implementation. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="protocol__config__mem__write__handler_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__config__mem__write__handler_8h.html">protocol_config_mem_write_handler.h</a></td></tr>
-<tr class="memdesc:protocol__config__mem__write__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory write handler — two-phase dispatch for write commands across all standard address spaces. <br /></td></tr>
+<tr class="memdesc:protocol__config__mem__write__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory write handler. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__datagram__handler_8c.html">protocol_datagram_handler.c</a></td></tr>
 <tr class="memdesc:protocol__datagram__handler_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Datagram protocol handler — reliable 0–72 byte addressed transfers. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="protocol__datagram__handler_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__datagram__handler_8h.html">protocol_datagram_handler.h</a></td></tr>
-<tr class="memdesc:protocol__datagram__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Datagram protocol handler — reliable 0–72 byte addressed transfers. Routes incoming datagrams to per-address-space callbacks for read, write, write-under-mask, and stream variants. NULL optional callbacks cause automatic rejection with SUBCOMMAND_UNKNOWN. <br /></td></tr>
+<tr class="memdesc:protocol__datagram__handler_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Datagram protocol handler for reliable 0-72 byte addressed transfers. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__event__transport_8c.html">protocol_event_transport.c</a></td></tr>
-<tr class="memdesc:protocol__event__transport_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of event transport protocol. <br /></td></tr>
+<tr class="memdesc:protocol__event__transport_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event Transport protocol implementation. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="protocol__event__transport_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__event__transport_8h.html">protocol_event_transport.h</a></td></tr>
-<tr class="memdesc:protocol__event__transport_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event Transport protocol — producer/consumer identification, event reports, and learn/teach operations. All callbacks are optional. <br /></td></tr>
+<tr class="memdesc:protocol__event__transport_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event Transport protocol handler. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__message__network_8c.html">protocol_message_network.c</a></td></tr>
-<tr class="memdesc:protocol__message__network_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Core message network protocol — Verify Node ID, Protocol Support Inquiry/Reply, Initialization Complete, duplicate ID detection. <br /></td></tr>
+<tr class="memdesc:protocol__message__network_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Core message network protocol implementation. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="protocol__message__network_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__message__network_8h.html">protocol_message_network.h</a></td></tr>
-<tr class="memdesc:protocol__message__network_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Core message network protocol — Verify Node ID, Protocol Support Inquiry/Reply, Initialization Complete, Optional Interaction Rejected, Terminate Due To Error. <br /></td></tr>
+<tr class="memdesc:protocol__message__network_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Core message network protocol handler. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__snip_8c.html">protocol_snip.c</a></td></tr>
-<tr class="memdesc:protocol__snip_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple Node Information Protocol (SNIP) — builds and validates SNIP reply messages from node parameters and config memory. <br /></td></tr>
+<tr class="memdesc:protocol__snip_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple Node Information Protocol (SNIP) implementation. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="protocol__snip_8h_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__snip_8h.html">protocol_snip.h</a></td></tr>
-<tr class="memdesc:protocol__snip_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple Node Information Protocol (SNIP) — returns manufacturer info (from node params) and user name/description (from config memory) in a single reply message. <br /></td></tr>
+<tr class="memdesc:protocol__snip_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple Node Information Protocol (SNIP) handler. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><span class="icondoc"></span>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="protocol__train__handler_8c.html">protocol_train_handler.c</a></td></tr>
 <tr class="memdesc:protocol__train__handler_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Train Control Protocol message handler implementation (Layer 1) <br /></td></tr>

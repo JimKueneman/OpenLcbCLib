@@ -27,7 +27,7 @@
  * handler, and manages multi-frame sequencing until the full payload is sent.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #ifndef __DRIVERS_CANBUS_CAN_TX_STATEMACHINE__
@@ -46,7 +46,8 @@ extern "C" {
     /**
      * @brief Dependency-injection interface for the CAN transmit state machine.
      *
-     * @details All 6 pointers are REQUIRED (must not be NULL).
+     * @details The first 6 pointers are REQUIRED (must not be NULL).
+     * listener_find_by_node_id is OPTIONAL (NULL = feature not linked in).
      *
      * @see CanTxStatemachine_initialize
      */
@@ -70,54 +71,66 @@ extern "C" {
         /** @brief REQUIRED. Transmit a pre-built raw CAN frame. Typical: CanTxMessageHandler_can_frame. */
         bool (*handle_can_frame)(can_msg_t *can_msg);
 
+        /**
+         * @brief OPTIONAL. Resolve a listener Node ID to its CAN alias.
+         *
+         * @details Called by the TX path when dest_alias == 0 and dest_id != 0
+         * (forwarded consist commands). Returns a pointer to the listener table
+         * entry so the caller can read entry->alias. NULL pointer = feature not
+         * linked in; NULL return = node_id not found in table.
+         *
+         * @note Typical: ListenerAliasTable_find_by_node_id. May be NULL.
+         */
+        listener_alias_entry_t *(*listener_find_by_node_id)(node_id_t node_id);
+
     } interface_can_tx_statemachine_t;
 
 
-    /**
-     * @brief Registers the dependency-injection interface for this module.
-     *
-     * @param interface_can_tx_statemachine Pointer to a populated
-     *        @ref interface_can_tx_statemachine_t. Must remain valid for the
-     *        lifetime of the application. All 6 pointers must be non-NULL.
-     *
-     * @warning NOT thread-safe - call during single-threaded initialization only.
-     *
-     * @see CanTxMessageHandler_initialize - initialize first
-     */
+        /**
+         * @brief Registers the dependency-injection interface for this module.
+         *
+         * @param interface_can_tx_statemachine Pointer to a populated
+         *        @ref interface_can_tx_statemachine_t. Must remain valid for the
+         *        lifetime of the application. All 6 pointers must be non-NULL.
+         *
+         * @warning NOT thread-safe - call during single-threaded initialization only.
+         *
+         * @see CanTxMessageHandler_initialize - initialize first
+         */
     extern void CanTxStatemachine_initialize(const interface_can_tx_statemachine_t *interface_can_tx_statemachine);
 
-    /**
-     * @brief Converts and transmits an @ref openlcb_msg_t as one or more CAN frames.
-     *
-     * @details Returns false immediately if the hardware TX buffer is not empty.
-     * Determines message type (addressed / unaddressed / datagram / stream), then
-     * loops until the entire payload is transmitted as an atomic multi-frame sequence.
-     *
-     * @param openlcb_msg  OpenLCB message to transmit. Must not be NULL.
-     *
-     * @return true when the full message is transmitted, false if the TX buffer was busy
-     *         or a hardware error occurred.
-     *
-     * @warning May block briefly while transmitting multi-frame messages.
-     * @warning NOT thread-safe - serialize with other callers.
-     *
-     * @see CanTxStatemachine_send_can_message - for raw CAN frames
-     */
+        /**
+         * @brief Converts and transmits an @ref openlcb_msg_t as one or more CAN frames.
+         *
+         * @details Returns false immediately if the hardware TX buffer is not empty.
+         * Determines message type (addressed / unaddressed / datagram / stream), then
+         * loops until the entire payload is transmitted as an atomic multi-frame sequence.
+         *
+         * @param openlcb_msg  OpenLCB message to transmit. Must not be NULL.
+         *
+         * @return true when the full message is transmitted, false if the TX buffer was busy
+         *         or a hardware error occurred.
+         *
+         * @warning May block briefly while transmitting multi-frame messages.
+         * @warning NOT thread-safe - serialize with other callers.
+         *
+         * @see CanTxStatemachine_send_can_message - for raw CAN frames
+         */
     extern bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t *openlcb_msg);
 
-    /**
-     * @brief Transmits a pre-built raw @ref can_msg_t directly to the hardware.
-     *
-     * @details No OpenLCB processing and no buffer-availability check — caller is
-     * responsible for ensuring the hardware is ready.  Used primarily for CAN control
-     * frames (CID, RID, AMD) during alias allocation.
-     *
-     * @param can_msg  Fully-constructed CAN frame. Must not be NULL.
-     *
-     * @return true on success, false on hardware failure.
-     *
-     * @see CanTxStatemachine_send_openlcb_message - for OpenLCB messages
-     */
+        /**
+         * @brief Transmits a pre-built raw @ref can_msg_t directly to the hardware.
+         *
+         * @details No OpenLCB processing and no buffer-availability check — caller is
+         * responsible for ensuring the hardware is ready.  Used primarily for CAN control
+         * frames (CID, RID, AMD) during alias allocation.
+         *
+         * @param can_msg  Fully-constructed CAN frame. Must not be NULL.
+         *
+         * @return true on success, false on hardware failure.
+         *
+         * @see CanTxStatemachine_send_openlcb_message - for OpenLCB messages
+         */
     extern bool CanTxStatemachine_send_can_message(can_msg_t *can_msg);
 
 #ifdef __cplusplus

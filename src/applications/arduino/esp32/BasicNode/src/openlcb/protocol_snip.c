@@ -25,11 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file protocol_snip.c
- * @brief Simple Node Information Protocol (SNIP) — builds and validates
- *        SNIP reply messages from node parameters and config memory.
+ * @brief Simple Node Information Protocol (SNIP) implementation.
+ *
+ * @details Builds and validates SNIP reply messages from node parameters
+ * and config memory.  Provides individual field loaders for assembling the
+ * SNIP payload and a validation function for incoming SNIP replies.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  *
  * @see protocol_snip.h
  * @see SimpleNodeInformationS.pdf
@@ -80,13 +83,11 @@ void ProtocolSnip_initialize(const interface_openlcb_protocol_snip_t *interface_
      * -# Otherwise truncate to byte_count - 1 chars + null terminator
      * -# Update *payload_offset and outgoing_msg->payload_count
      *
-     * @verbatim
-     * @param outgoing_msg     Destination message.
+     * @param outgoing_msg     Destination @ref openlcb_msg_t message.
      * @param payload_offset   Pointer to current offset (updated in place).
      * @param str              Source string.
      * @param max_str_len      Buffer size limit (includes null).
      * @param byte_count       Max bytes the caller wants written.
-     * @endverbatim
      */
 static void _process_snip_string(openlcb_msg_t* outgoing_msg, uint16_t *payload_offset, const char *str, uint16_t max_str_len, uint16_t byte_count) {
 
@@ -131,11 +132,9 @@ static void _process_snip_string(openlcb_msg_t* outgoing_msg, uint16_t *payload_
      * @details Algorithm:
      * -# Store version byte at *payload_data_offset, bump offset and count
      *
-     * @verbatim
-     * @param outgoing_msg         Destination message.
+     * @param outgoing_msg         Destination @ref openlcb_msg_t message.
      * @param payload_data_offset  Pointer to current offset (updated).
      * @param version              Version byte to write.
-     * @endverbatim
      *
      * @return Updated offset.
      */
@@ -399,7 +398,7 @@ void ProtocolSnip_handle_simple_node_info_reply(openlcb_statemachine_info_t *sta
      */
 bool ProtocolSnip_validate_snip_reply(openlcb_msg_t* snip_reply_msg) {
 
-    if (snip_reply_msg->payload_count > LEN_MESSAGE_BYTES_SNIP) { // serious issue if this occurs
+    if (snip_reply_msg->payload_count > LEN_MESSAGE_BYTES_SNIP) {
 
         return false;
 
@@ -420,4 +419,5 @@ bool ProtocolSnip_validate_snip_reply(openlcb_msg_t* snip_reply_msg) {
     }
 
     return true;
+
 }

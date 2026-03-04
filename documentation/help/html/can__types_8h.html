@@ -117,6 +117,8 @@ Data Structures</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structalias__mapping__info__struct.html">alias_mapping_info_struct</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structlistener__alias__entry__struct.html">listener_alias_entry_struct</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
@@ -147,6 +149,9 @@ Macros</h2></td></tr>
 <tr class="memitem:a44e6d0a4d6cdaaabc0c77f3845e7cadc" id="r_a44e6d0a4d6cdaaabc0c77f3845e7cadc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a44e6d0a4d6cdaaabc0c77f3845e7cadc">CAN_MTI_PCER_WITH_PAYLOAD_LAST</a>&#160;&#160;&#160;0x0F14</td></tr>
 <tr class="memdesc:a44e6d0a4d6cdaaabc0c77f3845e7cadc"><td class="mdescLeft">&#160;</td><td class="mdescRight">CAN framing MTI for last frame of segmented PCER-with-payload.  <br /></td></tr>
 <tr class="separator:a44e6d0a4d6cdaaabc0c77f3845e7cadc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41563a6b2d1edf4015398b9f6ca0c30b" id="r_a41563a6b2d1edf4015398b9f6ca0c30b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41563a6b2d1edf4015398b9f6ca0c30b">LISTENER_ALIAS_TABLE_DEPTH</a>&#160;&#160;&#160;    (USER_DEFINED_MAX_LISTENERS_PER_TRAIN * USER_DEFINED_TRAIN_NODE_COUNT)</td></tr>
+<tr class="memdesc:a41563a6b2d1edf4015398b9f6ca0c30b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total listener alias table slots across all train nodes.  <br /></td></tr>
+<tr class="separator:a41563a6b2d1edf4015398b9f6ca0c30b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -174,6 +179,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a6f5fe2a96f016592936919dc52552b60" id="r_a6f5fe2a96f016592936919dc52552b60"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structalias__mapping__info__struct.html">alias_mapping_info_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f5fe2a96f016592936919dc52552b60">alias_mapping_info_t</a></td></tr>
 <tr class="memdesc:a6f5fe2a96f016592936919dc52552b60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Container for all <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> entries plus a global duplicate flag.  <br /></td></tr>
 <tr class="separator:a6f5fe2a96f016592936919dc52552b60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0af04be2385c36a87e0b635199c3195b" id="r_a0af04be2385c36a87e0b635199c3195b"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structlistener__alias__entry__struct.html">listener_alias_entry_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a></td></tr>
+<tr class="memdesc:a0af04be2385c36a87e0b635199c3195b"><td class="mdescLeft">&#160;</td><td class="mdescRight">One entry in the listener alias table: a <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> / 12-bit alias pair.  <br /></td></tr>
+<tr class="separator:a0af04be2385c36a87e0b635199c3195b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Type definitions and constants for the CAN transport layer. </p>
@@ -182,8 +190,9 @@ Typedefs</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
 </ul>
 </dd></dl>
+<p>Defines <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>, <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a>, <a class="el" href="#a6f5fe2a96f016592936919dc52552b60">alias_mapping_info_t</a>, <a class="el" href="#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a>, <a class="el" href="#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a>, and all compile-time constants shared across the CAN driver modules. No executable code — types and macros only.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a66e224442df976c1bb15398aa0a681ab" name="a66e224442df976c1bb15398aa0a681ab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a66e224442df976c1bb15398aa0a681ab">&#9670;&#160;</a></span>USER_DEFINED_CAN_MSG_BUFFER_DEPTH</h2>
@@ -328,6 +337,22 @@ Typedefs</h2></td></tr>
 </div><div class="memdoc">
 
 <p>CAN framing MTI for last frame of segmented PCER-with-payload. </p>
+
+</div>
+</div>
+<a id="a41563a6b2d1edf4015398b9f6ca0c30b" name="a41563a6b2d1edf4015398b9f6ca0c30b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41563a6b2d1edf4015398b9f6ca0c30b">&#9670;&#160;</a></span>LISTENER_ALIAS_TABLE_DEPTH</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LISTENER_ALIAS_TABLE_DEPTH&#160;&#160;&#160;    (USER_DEFINED_MAX_LISTENERS_PER_TRAIN * USER_DEFINED_TRAIN_NODE_COUNT)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Total listener alias table slots across all train nodes. </p>
 
 </div>
 </div>
@@ -481,6 +506,24 @@ outgoing_can_msg must be freed after successful transmission.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8h.html" title="Fixed-size buffer mapping 12-bit CAN aliases to 48-bit OpenLCB Node IDs.">alias_mappings.h</a> </dd>
 <dd>
 <a class="el" href="alias__mappings_8c.html#a1e2639729c40c4ba017fa2529493c2d7" title="Sets the has_duplicate_alias flag to signal an alias conflict.">AliasMappings_set_has_duplicate_alias_flag</a> </dd></dl>
+
+</div>
+</div>
+<a id="a0af04be2385c36a87e0b635199c3195b" name="a0af04be2385c36a87e0b635199c3195b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0af04be2385c36a87e0b635199c3195b">&#9670;&#160;</a></span>listener_alias_entry_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structlistener__alias__entry__struct.html">listener_alias_entry_struct</a> <a class="el" href="#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>One entry in the listener alias table: a <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> / 12-bit alias pair. </p>
+<p>Written by the CAN RX interrupt (AMD arrival) and read by the CAN TX main thread (alias resolution). Protected by the existing lock_shared_resources / unlock_shared_resources mechanism.</p>
+<dl class="section see"><dt>See also</dt><dd>listener_alias_table.h </dd></dl>
 
 </div>
 </div>

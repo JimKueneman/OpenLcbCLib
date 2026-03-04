@@ -115,10 +115,13 @@ Data Fields</h2></td></tr>
 <tr class="memitem:afe35e3ecf6dcbcdbeaa1e991e2fd9da3" id="r_afe35e3ecf6dcbcdbeaa1e991e2fd9da3"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe35e3ecf6dcbcdbeaa1e991e2fd9da3">handle_can_frame</a> )(<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
 <tr class="memdesc:afe35e3ecf6dcbcdbeaa1e991e2fd9da3"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Transmit a pre-built raw CAN frame. Typical: CanTxMessageHandler_can_frame.  <br /></td></tr>
 <tr class="separator:afe35e3ecf6dcbcdbeaa1e991e2fd9da3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9572d43e73f7dd06b6dea53e0fcf1186" id="r_a9572d43e73f7dd06b6dea53e0fcf1186"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9572d43e73f7dd06b6dea53e0fcf1186">listener_find_by_node_id</a> )(<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memdesc:a9572d43e73f7dd06b6dea53e0fcf1186"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Resolve a listener Node ID to its CAN alias.  <br /></td></tr>
+<tr class="separator:a9572d43e73f7dd06b6dea53e0fcf1186"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dependency-injection interface for the CAN transmit state machine. </p>
-<p>All 6 pointers are REQUIRED (must not be NULL).</p>
+<p>The first 6 pointers are REQUIRED (must not be NULL). listener_find_by_node_id is OPTIONAL (NULL = feature not linked in).</p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__tx__statemachine_8c.html#acbe458eae799fff061319448b1855b3d" title="Stores the dependency-injection interface pointer.">CanTxStatemachine_initialize</a> </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a2e9d4e2d961ae1797f5a9877b4771b15" name="a2e9d4e2d961ae1797f5a9877b4771b15"></a>
@@ -214,6 +217,24 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>REQUIRED. Transmit a pre-built raw CAN frame. Typical: CanTxMessageHandler_can_frame. </p>
+
+</div>
+</div>
+<a id="a9572d43e73f7dd06b6dea53e0fcf1186" name="a9572d43e73f7dd06b6dea53e0fcf1186"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9572d43e73f7dd06b6dea53e0fcf1186">&#9670;&#160;</a></span>listener_find_by_node_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *(* listener_find_by_node_id) (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Resolve a listener Node ID to its CAN alias. </p>
+<p>Called by the TX path when dest_alias == 0 and dest_id != 0 (forwarded consist commands). Returns a pointer to the listener table entry so the caller can read entry-&gt;alias. NULL pointer = feature not linked in; NULL return = node_id not found in table.</p>
+<dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_find_by_node_id. May be NULL. </dd></dl>
 
 </div>
 </div>

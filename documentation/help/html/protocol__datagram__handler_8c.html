@@ -108,13 +108,6 @@ Macros</h2></td></tr>
 <tr class="memitem:a4e4c6ef944646b9cf80cab875a351559" id="r_a4e4c6ef944646b9cf80cab875a351559"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e4c6ef944646b9cf80cab875a351559">DATAGRAM_MAX_RETRIES</a>&#160;&#160;&#160;3</td></tr>
 <tr class="memdesc:a4e4c6ef944646b9cf80cab875a351559"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum datagram retry attempts before abandoning.  <br /></td></tr>
 <tr class="separator:a4e4c6ef944646b9cf80cab875a351559"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd3a34128b5768d362c46bf1de9856f8" id="r_abd3a34128b5768d362c46bf1de9856f8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd3a34128b5768d362c46bf1de9856f8">DATAGRAM_RETRY_SHIFT</a>&#160;&#160;&#160;5</td></tr>
-<tr class="memdesc:abd3a34128b5768d362c46bf1de9856f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit masks and shifts for packing retry count + tick snapshot into timerticks.  <br /></td></tr>
-<tr class="separator:abd3a34128b5768d362c46bf1de9856f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41d5e91952569aafc49865090a68a704" id="r_a41d5e91952569aafc49865090a68a704"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41d5e91952569aafc49865090a68a704">DATAGRAM_RETRY_MASK</a>&#160;&#160;&#160;0xE0</td></tr>
-<tr class="separator:a41d5e91952569aafc49865090a68a704"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aadb4ac4cf9c754110ca64c70af2fcedc" id="r_aadb4ac4cf9c754110ca64c70af2fcedc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aadb4ac4cf9c754110ca64c70af2fcedc">DATAGRAM_TICK_MASK</a>&#160;&#160;&#160;0x1F</td></tr>
-<tr class="separator:aadb4ac4cf9c754110ca64c70af2fcedc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -158,8 +151,8 @@ Functions</h2></td></tr>
 <p>Dispatches incoming datagrams to per-address-space callbacks for read, write, write-under-mask, and stream variants (both datagram- and stream-transport). Callback-based: the application populates an <a class="el" href="structinterface__protocol__datagram__handler__t.html">interface_protocol_datagram_handler_t</a> with handler pointers; NULL pointers cause automatic rejection with SUBCOMMAND_UNKNOWN.</p>
 <p>Also handles Datagram Received OK / Rejected replies including retry logic for temporary errors.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8h.html" title="Datagram protocol handler — reliable 0–72 byte addressed transfers. Routes incoming datagrams to per-...">protocol_datagram_handler.h</a> </dd>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8h.html" title="Datagram protocol handler for reliable 0-72 byte addressed transfers.">protocol_datagram_handler.h</a> </dd>
 <dd>
 DatagramTransportS.pdf </dd>
 <dd>
@@ -194,51 +187,6 @@ MemoryConfigurationS.pdf </dd></dl>
 </div><div class="memdoc">
 
 <p>Maximum datagram retry attempts before abandoning. </p>
-
-</div>
-</div>
-<a id="abd3a34128b5768d362c46bf1de9856f8" name="abd3a34128b5768d362c46bf1de9856f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abd3a34128b5768d362c46bf1de9856f8">&#9670;&#160;</a></span>DATAGRAM_RETRY_SHIFT</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define DATAGRAM_RETRY_SHIFT&#160;&#160;&#160;5</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Bit masks and shifts for packing retry count + tick snapshot into timerticks. </p>
-<p>Bits 7-5: retry count (0-7) Bits 4-0: tick snapshot (snapshot of current_tick at start of attempt) </p>
-
-</div>
-</div>
-<a id="a41d5e91952569aafc49865090a68a704" name="a41d5e91952569aafc49865090a68a704"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41d5e91952569aafc49865090a68a704">&#9670;&#160;</a></span>DATAGRAM_RETRY_MASK</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define DATAGRAM_RETRY_MASK&#160;&#160;&#160;0xE0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aadb4ac4cf9c754110ca64c70af2fcedc" name="aadb4ac4cf9c754110ca64c70af2fcedc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aadb4ac4cf9c754110ca64c70af2fcedc">&#9670;&#160;</a></span>DATAGRAM_TICK_MASK</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define DATAGRAM_TICK_MASK&#160;&#160;&#160;0x1F</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
 
 </div>
 </div>
@@ -407,7 +355,7 @@ MemoryConfigurationS.pdf </dd></dl>
 <p>Handles an incoming Datagram Rejected reply. Sets the resend flag for temporary errors; clears retry state for permanent errors.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Extract error code from payload word 0</li>
-<li>If ERROR_TEMPORARY bit set and a stored datagram exists: a. Extract retry count from upper 3 bits of timerticks b. Increment retry count c. If retries &lt; DATAGRAM_MAX_RETRIES, pack new retry count + fresh tick snapshot and set resend_datagram flag d. If retries &gt;= DATAGRAM_MAX_RETRIES, abandon (clear and free)</li>
+<li>If ERROR_TEMPORARY bit set and a stored datagram exists: a. Read retry count from timer.datagram.retry_count b. Increment retry count c. If retries &lt; DATAGRAM_MAX_RETRIES, store new retry count and fresh tick snapshot, set resend_datagram flag d. If retries &gt;= DATAGRAM_MAX_RETRIES, abandon (clear and free)</li>
 <li>If permanent error, clear resend flag and free stored buffer</li>
 <li>Set outgoing_msg_info.valid = false</li>
 </ol>
@@ -458,13 +406,8 @@ MemoryConfigurationS.pdf </dd></dl>
 
 <p>Periodic timer tick for datagram timeout tracking. </p>
 <p>Called from the main loop with the current global tick. Currently a placeholder — timeout scanning is done by <a class="el" href="#a82d0fe791b04fb2636b023ec52ee7aad" title="Scans for timed-out or max-retried pending datagrams and frees them.">ProtocolDatagramHandler_check_timeouts()</a>.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter. </td></tr>
-  </table>
-  </dd>
-</dl>
-
+<pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.
+* </pre> 
 </div>
 </div>
 <a id="a82d0fe791b04fb2636b023ec52ee7aad" name="a82d0fe791b04fb2636b023ec52ee7aad"></a>
@@ -484,13 +427,8 @@ MemoryConfigurationS.pdf </dd></dl>
 
 <p>Scans for timed-out or max-retried pending datagrams and frees them. </p>
 <p>Must be called from the main processing loop, not from an interrupt. Acquires the shared resource lock internally.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick, passed from the main loop. </td></tr>
-  </table>
-  </dd>
-</dl>
-
+<pre class="fragment">* @param current_tick  Current value of the global 100ms tick, passed from the main loop.
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

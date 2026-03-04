@@ -31,7 +31,7 @@
  * All other CAN-internal wiring is handled automatically by can_config.c.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  *
  * @see openlcb_config.h - OpenLCB protocol layer configuration
  */

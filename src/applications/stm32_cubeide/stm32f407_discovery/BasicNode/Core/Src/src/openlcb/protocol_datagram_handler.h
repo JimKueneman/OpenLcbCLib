@@ -25,13 +25,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file protocol_datagram_handler.h
- * @brief Datagram protocol handler — reliable 0–72 byte addressed transfers.
- *        Routes incoming datagrams to per-address-space callbacks for read,
- *        write, write-under-mask, and stream variants.  NULL optional callbacks
- *        cause automatic rejection with SUBCOMMAND_UNKNOWN.
+ * @brief Datagram protocol handler for reliable 0-72 byte addressed transfers.
+ *
+ * @details Routes incoming datagrams to per-address-space callbacks for read,
+ * write, write-under-mask, and stream variants.  NULL optional callbacks
+ * cause automatic rejection with SUBCOMMAND_UNKNOWN.  Handles Datagram
+ * Received OK, Datagram Rejected, and retry logic with timeout tracking.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #ifndef __OPENLCB_PROTOCOL_DATAGRAM_HANDLER__

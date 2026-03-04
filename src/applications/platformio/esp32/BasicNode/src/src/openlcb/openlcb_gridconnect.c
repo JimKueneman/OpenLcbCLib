@@ -58,7 +58,7 @@
  * ```
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  *
  * @see openlcb_gridconnect.h - Public interface
  * @see can_types.h - CAN message structures
@@ -84,12 +84,12 @@ static uint8_t _receive_buffer_index = 0;
 static gridconnect_buffer_t _receive_buffer;
 
     /** @brief Return true when the byte is a valid hexadecimal digit. */
-static bool _is_valid_hex_char(uint8_t next_byte)
-{
+static bool _is_valid_hex_char(uint8_t next_byte) {
 
     return (((next_byte >= '0') && (next_byte <= '9')) ||
             ((next_byte >= 'A') && (next_byte <= 'F')) ||
             ((next_byte >= 'a') && (next_byte <= 'f')));
+
 }
 
     /**
@@ -118,130 +118,125 @@ static bool _is_valid_hex_char(uint8_t next_byte)
     *
     * @see OpenLcbGridConnect_to_can_msg - Convert extracted GridConnect to CAN message
     */
-bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *gridconnect_buffer)
-{
+bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *gridconnect_buffer) {
 
-    switch (_current_state)
-    {
+    switch (_current_state) {
 
-    case GRIDCONNECT_STATE_SYNC_START:
+        case GRIDCONNECT_STATE_SYNC_START:
 
-        if ((next_byte == 'X') || (next_byte == 'x'))
-        {
+            if ((next_byte == 'X') || (next_byte == 'x')) {
 
-            _receive_buffer_index = 0;
-            _receive_buffer[_receive_buffer_index] = ':';
-            _receive_buffer_index++;
-            _receive_buffer[_receive_buffer_index] = next_byte;
-            _receive_buffer_index++;
-            _current_state = GRIDCONNECT_STATE_SYNC_FIND_HEADER;
-        }
+                _receive_buffer_index = 0;
+                _receive_buffer[_receive_buffer_index] = ':';
+                _receive_buffer_index++;
+                _receive_buffer[_receive_buffer_index] = next_byte;
+                _receive_buffer_index++;
+                _current_state = GRIDCONNECT_STATE_SYNC_FIND_HEADER;
 
-        break;
+            }
 
-    case GRIDCONNECT_STATE_SYNC_FIND_HEADER:
+            break;
 
-        if (_receive_buffer_index > GRIDCONNECT_NORMAL_FLAG_POS)
-        {
-            
+        case GRIDCONNECT_STATE_SYNC_FIND_HEADER:
+
+            if (_receive_buffer_index > GRIDCONNECT_NORMAL_FLAG_POS) {
+
+                _current_state = GRIDCONNECT_STATE_SYNC_START;
+
+                break;
+
+            }
+
+            if ((next_byte == 'N') || (next_byte == 'n')) {
+
+                if (_receive_buffer_index == GRIDCONNECT_NORMAL_FLAG_POS) {
+
+                    _receive_buffer[_receive_buffer_index] = next_byte;
+                    _receive_buffer_index++;
+                    _current_state = GRIDCONNECT_STATE_SYNC_FIND_DATA;
+
+                } else {
+
+                    _current_state = GRIDCONNECT_STATE_SYNC_START;
+
+                    break;
+
+                }
+
+            } else {
+
+                if (!_is_valid_hex_char(next_byte)) {
+
+                    _current_state = GRIDCONNECT_STATE_SYNC_START;
+
+                    break;
+
+                }
+
+                _receive_buffer[_receive_buffer_index] = next_byte;
+                _receive_buffer_index++;
+
+            }
+
+            break;
+
+        case GRIDCONNECT_STATE_SYNC_FIND_DATA:
+
+            if (next_byte == ';') {
+
+                if ((_receive_buffer_index + 1) % 2 != 0) {
+
+                    _current_state = GRIDCONNECT_STATE_SYNC_START;
+
+                    break;
+
+                }
+
+                _receive_buffer[_receive_buffer_index] = ';';
+                _receive_buffer[_receive_buffer_index + 1] = 0;
+                _current_state = GRIDCONNECT_STATE_SYNC_START;
+
+                for (int i = 0; i < MAX_GRID_CONNECT_LEN; i++) {
+
+                    (*gridconnect_buffer)[i] = _receive_buffer[i];
+
+                }
+
+                return true;
+
+            } else {
+
+                if (!_is_valid_hex_char(next_byte)) {
+
+                    _current_state = GRIDCONNECT_STATE_SYNC_START;
+
+                    break;
+
+                }
+
+                _receive_buffer[_receive_buffer_index] = next_byte;
+                _receive_buffer_index++;
+
+            }
+
+            if (_receive_buffer_index > MAX_GRID_CONNECT_LEN - 1) {
+
+                _current_state = GRIDCONNECT_STATE_SYNC_START;
+
+            }
+
+            break;
+
+        default:
+
             _current_state = GRIDCONNECT_STATE_SYNC_START;
 
             break;
-        }
 
-        if ((next_byte == 'N') || (next_byte == 'n'))
-        {
-
-            if (_receive_buffer_index == GRIDCONNECT_NORMAL_FLAG_POS)
-            {
-                
-                _receive_buffer[_receive_buffer_index] = next_byte;
-                
-                _receive_buffer_index++;
-                _current_state = GRIDCONNECT_STATE_SYNC_FIND_DATA;
-            }
-            else
-            {
-
-                _current_state = GRIDCONNECT_STATE_SYNC_START;
-
-                break;
-            }
-        }
-        else
-        {
-
-            if (!_is_valid_hex_char(next_byte))
-            {
-
-                _current_state = GRIDCONNECT_STATE_SYNC_START;
-
-                break;
-            }
-
-            _receive_buffer[_receive_buffer_index] = next_byte;
-            _receive_buffer_index++;
-        }
-
-        break;
-
-    case GRIDCONNECT_STATE_SYNC_FIND_DATA:
-
-        if (next_byte == ';')
-        {
-
-            if ((_receive_buffer_index + 1) % 2 != 0)
-            {
-                
-                _current_state = GRIDCONNECT_STATE_SYNC_START;
-
-                break;
-            }
-
-            _receive_buffer[_receive_buffer_index] = ';';
-            
-            _receive_buffer[_receive_buffer_index + 1] = 0;
-            _current_state = GRIDCONNECT_STATE_SYNC_START;
-
-            for (int i = 0; i < MAX_GRID_CONNECT_LEN; i++)
-            {
-
-                (*gridconnect_buffer)[i] = _receive_buffer[i];
-            }
-
-            return true;
-        }
-        else
-        {
-
-            if (!_is_valid_hex_char(next_byte))
-            {
-
-                _current_state = GRIDCONNECT_STATE_SYNC_START;
-
-                break;
-            }
-
-            _receive_buffer[_receive_buffer_index] = next_byte;
-            _receive_buffer_index++;
-        }
-
-        if (_receive_buffer_index > MAX_GRID_CONNECT_LEN - 1)
-        {
-
-            _current_state = GRIDCONNECT_STATE_SYNC_START;
-        }
-
-        break;
-
-    default:
-
-        _current_state = GRIDCONNECT_STATE_SYNC_START;
-
-        break;
     }
 
     return false;
+
 }
 
     /**
@@ -268,29 +263,27 @@ bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridco
     * @see OpenLcbGridConnect_copy_out_gridconnect_when_done - Extract valid messages
     * @see OpenLcbGridConnect_from_can_msg - Reverse conversion
     */
-void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect_buffer, can_msg_t *can_msg)
-{
+void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect_buffer, can_msg_t *can_msg) {
 
     size_t message_length;
     unsigned long data_char_count;
-    
+
     message_length = strlen((char *)gridconnect_buffer);
-    
-    if (message_length < GRIDCONNECT_HEADER_LEN)
-    {
+
+    if (message_length < GRIDCONNECT_HEADER_LEN) {
 
         can_msg->identifier = 0;
         can_msg->payload_count = 0;
         return;
+
     }
 
-    
     char identifier_str[GRIDCONNECT_IDENTIFIER_LEN + 1];
 
-    for (int i = GRIDCONNECT_IDENTIFIER_START_POS; i < GRIDCONNECT_IDENTIFIER_START_POS + GRIDCONNECT_IDENTIFIER_LEN; i++)
-    {
+    for (int i = GRIDCONNECT_IDENTIFIER_START_POS; i < GRIDCONNECT_IDENTIFIER_START_POS + GRIDCONNECT_IDENTIFIER_LEN; i++) {
 
         identifier_str[i - GRIDCONNECT_IDENTIFIER_START_POS] = (*gridconnect_buffer)[i];
+
     }
     identifier_str[GRIDCONNECT_IDENTIFIER_LEN] = 0;
 
@@ -298,18 +291,15 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect_buffer, can
     strcat(hex_it, identifier_str);
     can_msg->identifier = (uint32_t)strtoul(hex_it, NULL, 0);
 
-    
     data_char_count = message_length - GRIDCONNECT_HEADER_LEN;
     can_msg->payload_count = (uint8_t)(data_char_count / 2);
 
-    
     char byte_str[3];
     uint8_t byte;
     int payload_index = 0;
     int char_index = GRIDCONNECT_DATA_START_POS;
-    
-    while (char_index < (int)(data_char_count + GRIDCONNECT_DATA_START_POS))
-    {
+
+    while (char_index < (int)(data_char_count + GRIDCONNECT_DATA_START_POS)) {
 
         byte_str[0] = (*gridconnect_buffer)[char_index];
         byte_str[1] = (*gridconnect_buffer)[char_index + 1];
@@ -319,7 +309,9 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect_buffer, can
         can_msg->payload[payload_index] = byte;
         payload_index++;
         char_index += 2;
+
     }
+
 }
 
     /**
@@ -346,8 +338,7 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect_buffer, can
     *
     * @see OpenLcbGridConnect_to_can_msg - Reverse conversion
     */
-void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect_buffer, can_msg_t *can_msg)
-{
+void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect_buffer, can_msg_t *can_msg) {
 
     char temp_str[9];
 
@@ -358,13 +349,14 @@ void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect_buffer, c
     sprintf(temp_str, "%08lX", (unsigned long)can_msg->identifier);
     strcat((char *)gridconnect_buffer, temp_str);
     strcat((char *)gridconnect_buffer, "N");
-    
-    for (int i = 0; i < can_msg->payload_count; i++)
-    {
+
+    for (int i = 0; i < can_msg->payload_count; i++) {
 
         sprintf(temp_str, "%02X", can_msg->payload[i]);
         strcat((char *)gridconnect_buffer, temp_str);
+
     }
 
     strcat((char *)gridconnect_buffer, ";");
+
 }

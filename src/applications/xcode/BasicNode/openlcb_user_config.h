@@ -84,4 +84,18 @@
 #define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         6
 #define USER_DEFINED_MAX_TRAIN_FUNCTIONS             29
 
+// =============================================================================
+// Application-defined node parameters (forward-declared to avoid circular include)
+// =============================================================================
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern const struct node_parameters_TAG NodeParameters_main_node;
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* __OPENLCB_USER_CONFIG__ */

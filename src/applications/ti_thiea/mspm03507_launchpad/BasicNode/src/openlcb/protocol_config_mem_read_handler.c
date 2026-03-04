@@ -25,12 +25,15 @@
      * POSSIBILITY OF SUCH DAMAGE.
      *
      * @file protocol_config_mem_read_handler.c
-     * @brief Configuration memory read handler — two-phase dispatch for read
-     *        commands across all standard address spaces (CDI, All, Config,
-     *        ACDI-Mfg, ACDI-User, Train FDI, Train Fn Config).
+     * @brief Configuration memory read handler implementation.
+     *
+     * @details Two-phase dispatch for read commands across all standard
+     * address spaces (CDI, All, Config, ACDI-Mfg, ACDI-User, Train FDI,
+     * Train Fn Config).  Sends Datagram Received OK with reply-pending,
+     * reads from config memory, and returns the data in a reply datagram.
      *
      * @author Jim Kueneman
-     * @date 28 Feb 2026
+     * @date 4 Mar 2026
      *
      * @see protocol_config_mem_read_handler.h
      * @see MemoryConfigurationS.pdf
@@ -64,6 +67,7 @@ static interface_protocol_config_mem_read_handler_t *_interface;
 void ProtocolConfigMemReadHandler_initialize(const interface_protocol_config_mem_read_handler_t *interface_protocol_config_mem_read_handler) {
 
     _interface = (interface_protocol_config_mem_read_handler_t *) interface_protocol_config_mem_read_handler;
+
 }
 
     /**
@@ -74,10 +78,8 @@ void ProtocolConfigMemReadHandler_initialize(const interface_protocol_config_mem
      * -# Detect encoding: SPACE_IN_BYTE_6 vs SPACE_IN_BYTE_1
      * -# Set bytes, data_start accordingly
      *
-     * @verbatim
      * @param statemachine_info            Context with incoming message.
      * @param config_mem_read_request_info  Output: populated request fields.
-     * @endverbatim
      */
 static void _extract_read_command_parameters(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
 
@@ -94,6 +96,7 @@ static void _extract_read_command_parameters(openlcb_statemachine_info_t *statem
         config_mem_read_request_info->encoding = ADDRESS_SPACE_IN_BYTE_1;
         config_mem_read_request_info->bytes = *statemachine_info->incoming_msg_info.msg_ptr->payload[6];
         config_mem_read_request_info->data_start = 6;
+
     }
 
 }
@@ -101,9 +104,7 @@ static void _extract_read_command_parameters(openlcb_statemachine_info_t *statem
     /**
      * @brief Validate read parameters: callback, space present, bounds, 1–64 bytes.
      *
-     * @verbatim
      * @param config_mem_read_request_info  Request to validate.
-     * @endverbatim
      *
      * @return S_OK or an OpenLCB error code.
      */
@@ -112,29 +113,35 @@ static uint16_t _is_valid_read_parameters(config_mem_read_request_info_t *config
     if (!config_mem_read_request_info->read_space_func) {
 
         return ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN;
+
     }
 
     if (!config_mem_read_request_info->space_info->present) {
 
         return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN;
+
     }
 
     if (config_mem_read_request_info->address > config_mem_read_request_info->space_info->highest_address) {
 
         return ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS;
+
     }
 
     if (config_mem_read_request_info->bytes > 64) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
+
     }
 
     if (config_mem_read_request_info->bytes == 0) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
+
     }
 
     return S_OK;
+
 }
 
     /** @brief Clamp byte count so the read does not exceed highest_address. */
@@ -147,6 +154,7 @@ static void _check_for_read_overrun(openlcb_statemachine_info_t *statemachine_in
         config_mem_read_request_info->bytes = (uint8_t) (config_mem_read_request_info->space_info->highest_address - config_mem_read_request_info->address) + 1; // length +1 due to 0...end
 
     }
+
 }
 
     /**
@@ -157,10 +165,8 @@ static void _check_for_read_overrun(openlcb_statemachine_info_t *statemachine_in
      * -# Phase 1: validate → reject or ACK + re-invoke
      * -# Phase 2: clamp overrun, call space-specific read, reset flags
      *
-     * @verbatim
      * @param statemachine_info            Context.
      * @param config_mem_read_request_info  Carries callback + space_info.
-     * @endverbatim
      */
 static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
 
@@ -190,9 +196,11 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
 
             statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
             statemachine_info->incoming_msg_info.enumerate = true; // call this again for the data
+
         }
 
         return;
+
     }
 
     // Try to Complete Command Request, we know that config_mem_read_request_info->read_space_func is valid if we get here
@@ -202,6 +210,7 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // Done
     statemachine_info->incoming_msg_info.enumerate = false; // done
+
 }
 
     /** @brief Read from CDI (0xFF): copy bytes from node->parameters->cdi[]. */
@@ -216,6 +225,7 @@ void ProtocolConfigMemReadHandler_read_request_config_definition_info(openlcb_st
             config_mem_read_request_info->bytes);
 
     statemachine_info->outgoing_msg_info.valid = true;
+
 }
 
     /** @brief Read from Train FDI (0xFA): copy bytes from node->parameters->fdi[]. */
@@ -439,9 +449,11 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
             OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN);
 
             break;
+
     }
 
     statemachine_info->outgoing_msg_info.valid = true;
+
 }
 
     /** @brief Read from ACDI-User (0xFB): dispatch to SNIP loaders by address. */
@@ -473,7 +485,6 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
             break;
 
         case CONFIG_MEM_ACDI_USER_NAME_ADDRESS:
-
 
             if (_interface->snip_load_user_name) {
 
@@ -520,9 +531,11 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
             OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN);
 
             break;
+
     }
 
     statemachine_info->outgoing_msg_info.valid = true;
+
 }
 
     /** @brief Dispatch CDI (0xFF) read to two-phase handler. */
@@ -534,6 +547,7 @@ void ProtocolConfigMemReadHandler_read_space_config_description_info(openlcb_sta
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_configuration_definition;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
+
 }
 
     /** @brief Dispatch All (0xFE) read to two-phase handler. */
@@ -545,6 +559,7 @@ void ProtocolConfigMemReadHandler_read_space_all(openlcb_statemachine_info_t *st
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_all;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
+
 }
 
     /** @brief Dispatch Config (0xFD) read to two-phase handler. */
@@ -556,6 +571,7 @@ void ProtocolConfigMemReadHandler_read_space_config_memory(openlcb_statemachine_
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_config_memory;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
+
 }
 
     /** @brief Dispatch ACDI-Mfg (0xFC) read to two-phase handler. */
@@ -567,6 +583,7 @@ void ProtocolConfigMemReadHandler_read_space_acdi_manufacturer(openlcb_statemach
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_acdi_manufacturer;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
+
 }
 
     /** @brief Dispatch ACDI-User (0xFB) read to two-phase handler. */
@@ -578,6 +595,7 @@ void ProtocolConfigMemReadHandler_read_space_acdi_user(openlcb_statemachine_info
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_acdi_user;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
+
 }
 
     /** @brief Dispatch Train FDI (0xFA) read to two-phase handler. */
@@ -589,6 +607,7 @@ void ProtocolConfigMemReadHandler_read_space_train_function_definition_info(open
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_definition_info;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
+
 }
 
     /** @brief Dispatch Train Fn Config (0xF9) read to two-phase handler. */
@@ -600,6 +619,7 @@ void ProtocolConfigMemReadHandler_read_space_train_function_config_memory(openlc
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_config_memory;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
+
 }
 
 // Message handling stub functions are documented in the header file

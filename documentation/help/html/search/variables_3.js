@@ -1,7 +1,7 @@
 var searchData=
 [
   ['data_5fstart_0',['data_start',['../structconfig__mem__read__request__info___t_a_g.html#a506cc8c42ad4d545d9fc2938e3487b59',1,'config_mem_read_request_info_TAG::data_start'],['../structconfig__mem__write__request__info___t_a_g.html#a506cc8c42ad4d545d9fc2938e3487b59',1,'config_mem_write_request_info_TAG::data_start']]],
-  ['datagram_1',['datagram',['../structinterface__openlcb__main__statemachine__t.html#a01a33136c73a7e49bd1114a549b31ded',1,'interface_openlcb_main_statemachine_t::datagram'],['../structmessage__buffer__t.html#ad50f16bc31cf7112ff132eeb28586820',1,'message_buffer_t::datagram']]],
+  ['datagram_1',['datagram',['../structinterface__openlcb__main__statemachine__t.html#a01a33136c73a7e49bd1114a549b31ded',1,'interface_openlcb_main_statemachine_t::datagram'],['../unionopenlcb__msg__timer__t.html#a0b3e4fb71f5998427c4cb7080ac84112',1,'openlcb_msg_timer_t::datagram'],['../structmessage__buffer__t.html#ad50f16bc31cf7112ff132eeb28586820',1,'message_buffer_t::datagram']]],
   ['datagram_5fok_5freply_2',['datagram_ok_reply',['../structinterface__openlcb__main__statemachine__t.html#a61105cc4674534a45369db760045b04a',1,'interface_openlcb_main_statemachine_t']]],
   ['datagram_5frejected_5freply_3',['datagram_rejected_reply',['../structinterface__openlcb__main__statemachine__t.html#a6fd12990d215ddef74f727ca1573c2e9',1,'interface_openlcb_main_statemachine_t']]],
   ['date_4',['date',['../structbroadcast__clock__state__t.html#ae8029ac26c9dae52fa9ae5e028dec64c',1,'broadcast_clock_state_t']]],

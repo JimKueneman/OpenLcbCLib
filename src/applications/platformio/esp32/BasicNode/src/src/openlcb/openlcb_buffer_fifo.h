@@ -80,6 +80,20 @@ extern "C" {
         /** @brief Returns the number of messages currently held in the FIFO. */
     extern uint16_t OpenLcbBufferFifo_get_allocated_count(void);
 
+        /**
+         * @brief Marks all queued incoming messages from a released alias as invalid.
+         *
+         * @details Walks the FIFO from tail to head and sets state.invalid on
+         * any message whose source_alias matches the released alias.  These
+         * are incoming messages from a node that has gone away — processing
+         * them could generate replies to a stale alias.  The pop-phase guard
+         * or TX guard will discard them.  Used when an AMR (Alias Map Reset)
+         * frame arrives and the alias must be retired within 100 ms.
+         *
+         * @param alias  12-bit CAN alias that was released.  If 0, returns immediately.
+         */
+    extern void OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(uint16_t alias);
+
 
 #ifdef __cplusplus
 }

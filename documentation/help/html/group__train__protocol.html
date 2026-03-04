@@ -97,6 +97,9 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:ga708746bc0e2e3f6057cbd8df85aa1871" id="r_ga708746bc0e2e3f6057cbd8df85aa1871"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga708746bc0e2e3f6057cbd8df85aa1871">TRAIN_INSTRUCTION_P_BIT</a>&#160;&#160;&#160;0x80</td></tr>
+<tr class="memdesc:ga708746bc0e2e3f6057cbd8df85aa1871"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bit 7 of the instruction byte: P=1 for train-to-listener forwarded commands.  <br /></td></tr>
+<tr class="separator:ga708746bc0e2e3f6057cbd8df85aa1871"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9adb2d0872aebce56a761f3d6af686d1" id="r_ga9adb2d0872aebce56a761f3d6af686d1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga9adb2d0872aebce56a761f3d6af686d1">TRAIN_SET_SPEED_DIRECTION</a>&#160;&#160;&#160;0x00</td></tr>
 <tr class="memdesc:ga9adb2d0872aebce56a761f3d6af686d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set speed and direction: [0x00] [speed_hi] [speed_lo] (float16)  <br /></td></tr>
 <tr class="separator:ga9adb2d0872aebce56a761f3d6af686d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,6 +170,22 @@ Macros</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Instruction bytes and sub-commands for MTI_TRAIN_PROTOCOL / MTI_TRAIN_REPLY. </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ga708746bc0e2e3f6057cbd8df85aa1871" name="ga708746bc0e2e3f6057cbd8df85aa1871"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga708746bc0e2e3f6057cbd8df85aa1871">&#9670;&#160;</a></span>TRAIN_INSTRUCTION_P_BIT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRAIN_INSTRUCTION_P_BIT&#160;&#160;&#160;0x80</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bit 7 of the instruction byte: P=1 for train-to-listener forwarded commands. </p>
+
+</div>
+</div>
 <a id="ga9adb2d0872aebce56a761f3d6af686d1" name="ga9adb2d0872aebce56a761f3d6af686d1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga9adb2d0872aebce56a761f3d6af686d1">&#9670;&#160;</a></span>TRAIN_SET_SPEED_DIRECTION</h2>
 

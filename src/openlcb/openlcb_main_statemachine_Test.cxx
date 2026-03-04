@@ -1483,6 +1483,65 @@ TEST(OpenLcbMainStatemachine, handle_pop_fifo_empty)
 }
 
 // ============================================================================
+// TEST: handle_try_pop - Invalid message discarded immediately
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, handle_pop_invalid_message_discarded)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    // No current message
+    state->incoming_msg_info.msg_ptr = nullptr;
+
+    // Push an invalid message into the FIFO
+    openlcb_msg_t *invalid_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(invalid_msg, nullptr);
+    invalid_msg->mti = MTI_VERIFIED_NODE_ID;
+    invalid_msg->state.invalid = true;
+    OpenLcbBufferFifo_push(invalid_msg);
+
+    bool result = OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message();
+
+    // Should discard invalid message and return true (idle, try again next iteration)
+    EXPECT_TRUE(result);
+    EXPECT_EQ(state->incoming_msg_info.msg_ptr, nullptr);
+
+    // Buffer should have been freed
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: handle_try_pop - Non-invalid message processed normally
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, handle_pop_valid_message_not_discarded)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    // No current message
+    state->incoming_msg_info.msg_ptr = nullptr;
+
+    // Push a valid (non-invalid) message into the FIFO
+    openlcb_msg_t *valid_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(valid_msg, nullptr);
+    valid_msg->mti = MTI_VERIFIED_NODE_ID;
+    valid_msg->state.invalid = false;
+    OpenLcbBufferFifo_push(valid_msg);
+
+    bool result = OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message();
+
+    // Should pop message normally (returns false = got a message)
+    EXPECT_FALSE(result);
+    EXPECT_NE(state->incoming_msg_info.msg_ptr, nullptr);
+    EXPECT_EQ(state->incoming_msg_info.msg_ptr, valid_msg);
+    EXPECT_EQ(state->incoming_msg_info.msg_ptr->state.invalid, false);
+}
+
+// ============================================================================
 // TEST: handle_try_enumerate_first_node - Node available in RUN state
 // ============================================================================
 

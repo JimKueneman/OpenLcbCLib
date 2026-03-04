@@ -145,42 +145,42 @@
 extern "C" {
 #endif
 
-    /**
-     * @brief Initializes the Train Control Protocol handler.
-     *
-     * @param interface  Pointer to @ref interface_protocol_train_handler_t callbacks (may be NULL).
-     */
+        /**
+         * @brief Initializes the Train Control Protocol handler.
+         *
+         * @param interface  Pointer to @ref interface_protocol_train_handler_t callbacks (may be NULL).
+         */
     extern void ProtocolTrainHandler_initialize(const interface_protocol_train_handler_t *interface);
 
-    /**
-     * @brief Handles an incoming Train Control Protocol command (MTI_TRAIN_PROTOCOL).
-     *
-     * @details Decodes the sub-command byte, updates train_state, builds the
-     * appropriate reply, and fires notifier or decision callbacks.
-     *
-     * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
-     */
+        /**
+         * @brief Handles an incoming Train Control Protocol command (MTI_TRAIN_PROTOCOL).
+         *
+         * @details Decodes the sub-command byte, updates train_state, builds the
+         * appropriate reply, and fires notifier or decision callbacks.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
     extern void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *statemachine_info);
 
-    /**
-     * @brief Handles an incoming Train Control Protocol reply (MTI_TRAIN_REPLY).
-     *
-     * @details Decodes the reply sub-command and fires the matching throttle-side
-     * notifier callback.
-     *
-     * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
-     */
+        /**
+         * @brief Handles an incoming Train Control Protocol reply (MTI_TRAIN_REPLY).
+         *
+         * @details Decodes the reply sub-command and fires the matching throttle-side
+         * notifier callback.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
     extern void ProtocolTrainHandler_handle_train_reply(openlcb_statemachine_info_t *statemachine_info);
 
-    /**
-     * @brief Handles a global or addressed emergency event for a train node.
-     *
-     * @details Activates or clears the emergency state based on the well-known
-     * Event ID and fires the appropriate notifier callback.
-     *
-     * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
-     * @param event_id           Well-known @ref event_id_t for the emergency condition.
-     */
+        /**
+         * @brief Handles a global or addressed emergency event for a train node.
+         *
+         * @details Activates or clears the emergency state based on the well-known
+         * Event ID and fires the appropriate notifier callback.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         * @param event_id           Well-known @ref event_id_t for the emergency condition.
+         */
     extern void ProtocolTrainHandler_handle_emergency_event(
             openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 

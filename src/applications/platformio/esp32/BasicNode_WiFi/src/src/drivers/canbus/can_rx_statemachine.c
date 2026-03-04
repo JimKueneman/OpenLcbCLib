@@ -27,8 +27,14 @@
  * @file can_rx_statemachine.c
  * @brief Implementation of the CAN receive state machine.
  *
+ * @details Classifies incoming CAN frames as OpenLCB messages or CAN control
+ * frames, validates destination aliases for addressed traffic, extracts
+ * multi-frame framing bits, and dispatches to the appropriate handler via
+ * the dependency-injected interface.  Called directly from the CAN ISR or
+ * receive thread.
+ *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_rx_statemachine.h"
@@ -52,6 +58,7 @@
 /** @brief CAN payload byte offset for global frames with no destination. */
 #define OFFSET_NO_DEST_ID             0
 
+/** @brief Saved pointer to the dependency-injected receive state machine interface. */
 static interface_can_rx_statemachine_t *_interface;
 
     /** @brief Stores the dependency-injection interface pointer. */

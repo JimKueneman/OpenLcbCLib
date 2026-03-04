@@ -74,25 +74,68 @@
          */
     extern uint16_t OpenLcbFloat16_from_float(float value);
 
-        /** @brief Converts a float16 bit pattern to a 32-bit float. */
+        /**
+         * @brief Converts a float16 bit pattern to a 32-bit float.
+         *
+         * @param half  16-bit float16 bit pattern to convert.
+         *
+         * @return 32-bit float value.
+         */
     extern float OpenLcbFloat16_to_float(uint16_t half);
 
-        /** @brief Flips the sign/direction bit of a float16 value and returns the result. */
+        /**
+         * @brief Flips the sign/direction bit of a float16 value and returns the result.
+         *
+         * @param half  16-bit float16 bit pattern to negate.
+         *
+         * @return float16 bit pattern with the sign bit flipped.
+         */
     extern uint16_t OpenLcbFloat16_negate(uint16_t half);
 
-        /** @brief Returns true if the float16 bit pattern represents NaN (speed not available). */
+        /**
+         * @brief Returns true if the float16 bit pattern represents NaN (speed not available).
+         *
+         * @param half  16-bit float16 bit pattern to test.
+         *
+         * @return true if the value is NaN, false otherwise.
+         */
     extern bool OpenLcbFloat16_is_nan(uint16_t half);
 
-        /** @brief Returns true if the float16 bit pattern represents positive or negative zero. */
+        /**
+         * @brief Returns true if the float16 bit pattern represents positive or negative zero.
+         *
+         * @param half  16-bit float16 bit pattern to test.
+         *
+         * @return true if the value is zero, false otherwise.
+         */
     extern bool OpenLcbFloat16_is_zero(uint16_t half);
 
-        /** @brief Encodes a speed magnitude and direction into a float16 bit pattern. */
+        /**
+         * @brief Encodes a speed magnitude and direction into a float16 bit pattern.
+         *
+         * @param speed    Speed magnitude as a 32-bit float.
+         * @param reverse  true for reverse direction, false for forward.
+         *
+         * @return float16 bit pattern encoding the speed and direction.
+         */
     extern uint16_t OpenLcbFloat16_speed_with_direction(float speed, bool reverse);
 
-        /** @brief Returns the speed magnitude from a float16 bit pattern (ignores direction). */
+        /**
+         * @brief Returns the speed magnitude from a float16 bit pattern (ignores direction).
+         *
+         * @param half  16-bit float16 bit pattern to decode.
+         *
+         * @return Speed magnitude as a 32-bit float.
+         */
     extern float OpenLcbFloat16_get_speed(uint16_t half);
 
-        /** @brief Returns true if the direction bit is set (reverse). */
+        /**
+         * @brief Returns true if the direction bit is set (reverse).
+         *
+         * @param half  16-bit float16 bit pattern to test.
+         *
+         * @return true if the direction bit is set (reverse), false otherwise.
+         */
     extern bool OpenLcbFloat16_get_direction(uint16_t half);
 
 #ifdef __cplusplus

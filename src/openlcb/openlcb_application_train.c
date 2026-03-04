@@ -31,7 +31,7 @@
  * send helpers for the OpenLCB Train Control Protocol.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "openlcb_application_train.h"
@@ -178,9 +178,17 @@ static void _send_heartbeat_request(train_state_t *state) {
 
     openlcb_node_t *node = state->owner_node;
 
-    if (!node || !_interface || !_interface->send_openlcb_msg) { return; }
+    if (!node || !_interface || !_interface->send_openlcb_msg) {
 
-    if (state->controller_node_id == 0) { return; }
+        return;
+
+    }
+
+    if (state->controller_node_id == 0) {
+
+        return;
+
+    }
 
     openlcb_msg_t msg;
     payload_basic_t payload;
@@ -228,7 +236,11 @@ void OpenLcbApplicationTrain_100ms_timer_tick(uint8_t current_tick) {
 
     uint8_t ticks_elapsed = (uint8_t)(current_tick - _last_heartbeat_tick);
 
-    if (ticks_elapsed == 0) { return; }
+    if (ticks_elapsed == 0) {
+
+        return;
+
+    }
 
     _last_heartbeat_tick = current_tick;
 
@@ -578,7 +590,11 @@ void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, node_id_t t
     openlcb_msg_t msg;
     payload_basic_t payload;
 
-    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { return; }
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) {
+
+        return;
+
+    }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MGMT_NOOP, 1);

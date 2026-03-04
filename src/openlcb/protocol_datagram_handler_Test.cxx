@@ -4055,7 +4055,8 @@ TEST(ProtocolDatagramHandler, check_timeouts_not_expired)
     node1->state.resend_datagram = true;
 
     // Stamp with tick snapshot = 5, retry count = 0
-    datagram_msg->timerticks = 5;
+    datagram_msg->timer.datagram.tick_snapshot = 5;
+    datagram_msg->timer.datagram.retry_count = 0;
 
     EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
 
@@ -4084,7 +4085,8 @@ TEST(ProtocolDatagramHandler, check_timeouts_expired)
     node1->state.resend_datagram = true;
 
     // Stamp with tick snapshot = 0, retry count = 0
-    datagram_msg->timerticks = 0;
+    datagram_msg->timer.datagram.tick_snapshot = 0;
+    datagram_msg->timer.datagram.retry_count = 0;
 
     EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
 
@@ -4113,8 +4115,8 @@ TEST(ProtocolDatagramHandler, check_timeouts_max_retries_reached)
     node1->state.resend_datagram = true;
 
     // Stamp with retry count = 3 (>= DATAGRAM_MAX_RETRIES), tick snapshot = 0
-    // retry count 3 in upper 3 bits: 3 << 5 = 0x60
-    datagram_msg->timerticks = 0x60;
+    datagram_msg->timer.datagram.retry_count = 3;
+    datagram_msg->timer.datagram.tick_snapshot = 0;
 
     EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
 
@@ -4145,7 +4147,8 @@ TEST(ProtocolDatagramHandler, datagram_rejected_retry_increment)
     node1->last_received_datagram = datagram_msg;
 
     // Start with retry count = 0, tick snapshot = 5
-    datagram_msg->timerticks = 5;
+    datagram_msg->timer.datagram.retry_count = 0;
+    datagram_msg->timer.datagram.tick_snapshot = 5;
 
     openlcb_statemachine_info_t statemachine_info;
 
@@ -4167,11 +4170,11 @@ TEST(ProtocolDatagramHandler, datagram_rejected_retry_increment)
 
     ProtocolDatagramHandler_datagram_rejected(&statemachine_info);
 
-    // After first rejection: retry count = 1, tick snapshot = 10 (current_tick & 0x1F = 10)
-    // Expected timerticks: (1 << 5) | 10 = 0x2A
+    // After first rejection: retry count = 1, tick snapshot = 10 (current_tick)
     EXPECT_NE(node1->last_received_datagram, nullptr);
     EXPECT_TRUE(node1->state.resend_datagram);
-    EXPECT_EQ(datagram_msg->timerticks, 0x2A);
+    EXPECT_EQ(datagram_msg->timer.datagram.retry_count, 1);
+    EXPECT_EQ(datagram_msg->timer.datagram.tick_snapshot, 10);
 }
 
 // @details Verifies that datagram_rejected abandons after DATAGRAM_MAX_RETRIES
@@ -4193,8 +4196,8 @@ TEST(ProtocolDatagramHandler, datagram_rejected_max_retries_abandon)
     node1->last_received_datagram = datagram_msg;
 
     // Start with retry count = 2 (one more rejection will reach max of 3)
-    // retry count 2 in upper 3 bits: 2 << 5 = 0x40, tick snapshot = 0
-    datagram_msg->timerticks = 0x40;
+    datagram_msg->timer.datagram.retry_count = 2;
+    datagram_msg->timer.datagram.tick_snapshot = 0;
 
     openlcb_statemachine_info_t statemachine_info;
 
@@ -4241,7 +4244,8 @@ TEST(ProtocolDatagramHandler, check_timeouts_tick_wraparound)
     node1->state.resend_datagram = true;
 
     // Stamp with tick snapshot = 30 (0x1E), retry count = 0
-    datagram_msg->timerticks = 30;
+    datagram_msg->timer.datagram.tick_snapshot = 30;
+    datagram_msg->timer.datagram.retry_count = 0;
 
     EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
 

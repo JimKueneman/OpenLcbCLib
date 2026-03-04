@@ -28,7 +28,7 @@
  * State handlers are supplied via dependency injection.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #ifndef __DRIVERS_CANBUS_CAN_LOGIN_STATEMACHINE__

@@ -154,6 +154,59 @@ HTML.
 
 ---
 
+## `@param` in `.c` Files — Verbatim Wrapping
+
+When a public function is declared in a `.h` file **and** documented there with
+`@param` tags, the `.c` file implementation must wrap its own `@param` tags inside
+`@verbatim` / `@endverbatim`.  Without the wrapper Doxygen sees two definitions
+for the same parameter and emits duplicate-parameter warnings.
+
+**`.h` file** — canonical `@param` tags (rendered in the HTML output):
+```c
+        /**
+         * @brief Registers the dependency-injection interface for this module.
+         *
+         * @param interface_handler Pointer to a populated
+         *        @ref interface_handler_t. Must remain valid for the
+         *        lifetime of the application.
+         *
+         * @warning Must be called before any other module function.
+         */
+    extern void SomeModule_initialize(const interface_handler_t *interface_handler);
+```
+
+**`.c` file** — `@param` wrapped so Doxygen ignores it:
+```c
+    /**
+     * @brief Registers the dependency-injection interface for this module.
+     *
+     * @verbatim
+     * @param interface_handler Pointer to a populated interface_handler_t.
+     * @endverbatim
+     *
+     * @warning Must be called before any other module function.
+     */
+void SomeModule_initialize(const interface_handler_t *interface_handler) {
+
+    _interface = interface_handler;
+
+}
+```
+
+**Key points:**
+- The `.h` file is the single source of truth for `@param` documentation.
+- The `.c` file repeats the parameters inside `@verbatim` only so a reader of the
+  `.c` file can see them without opening the header.
+- `@ref` links do not render inside `@verbatim`, so use plain type names there.
+- Tags **outside** the `@verbatim` block (`@brief`, `@details`, `@warning`,
+  `@return`, `@see`) are processed normally.
+- Only wrap `@param` when the `.h` file already has `@param` tags for the same
+  function.  If the `.h` file does **not** document `@param` (or there is no `.h`
+  declaration at all, e.g. static/private functions), write `@param` tags normally
+  in the `.c` file **without** `@verbatim` wrapping.
+
+---
+
 ## File Header Blocks
 
 Every `.c` and `.h` file gets a file header after the copyright block.  Keep it
@@ -207,6 +260,26 @@ Do not give variables a multi-line block unless they have genuinely complex sema
 | Static helper with subtle behavior | Short block (Size 2) |
 
 When in doubt, go smaller.  You can always add more later.
+
+---
+
+## Application-Facing Files — Higher Documentation Standard
+
+Any `.h` or `.c` file in `/src/openlcb/` that contains "application" in its filename
+is a user-facing API file and requires one level higher of Doxygen documentation
+coverage than the table above would otherwise suggest.
+
+In practice this means:
+
+| Normal block size | Minimum for application files |
+|---|---|
+| Inline (Size 1) | Short block (Size 2) |
+| Short block (Size 2) | Full block (Size 3) |
+| Full block (Size 3) | Full block (Size 3) |
+
+These files are the primary interface between the library and application code.
+Complete documentation here directly helps end users understand how to configure
+and interact with the library.
 
 ---
 

@@ -133,6 +133,9 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__msg__state__t.html">openlcb_msg_state_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message buffer allocation/assembly state flags.  <a href="structopenlcb__msg__state__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">union &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionopenlcb__msg__timer__t.html">openlcb_msg_timer_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Timer field union for <a class="el" href="structopenlcb__msg__t.html" title="Core OpenLCB message structure.">openlcb_msg_t</a>.  <a href="unionopenlcb__msg__timer__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Core OpenLCB message structure.  <a href="structopenlcb__msg__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,8 +151,8 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__address__space__info__t.html">user_address_space_info_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Properties of a single configuration memory address space.  <a href="structuser__address__space__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnode__parameters__t.html">node_parameters_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete node configuration parameters (typically const/flash).  <a href="structnode__parameters__t.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnode__parameters___t_a_g.html">node_parameters_TAG</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete node configuration parameters (typically const/flash).  <a href="structnode__parameters___t_a_g.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structevent__id__enum__t.html">event_id_enum_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event list enumeration state.  <a href="structevent__id__enum__t.html#details">More...</a><br /></td></tr>
@@ -322,6 +325,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a5cc5550a13db98f7bd586e9bfac4651e" id="r_a5cc5550a13db98f7bd586e9bfac4651e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cc5550a13db98f7bd586e9bfac4651e">openlcb_msg_array_t</a>[<a class="el" href="group__buffer__size__constants.html#ga871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>]</td></tr>
 <tr class="memdesc:a5cc5550a13db98f7bd586e9bfac4651e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of all message structures in the buffer store.  <br /></td></tr>
 <tr class="separator:a5cc5550a13db98f7bd586e9bfac4651e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb637bafdfd991032d3af5faaf8cfafc" id="r_abb637bafdfd991032d3af5faaf8cfafc"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structnode__parameters___t_a_g.html">node_parameters_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb637bafdfd991032d3af5faaf8cfafc">node_parameters_t</a></td></tr>
+<tr class="memdesc:abb637bafdfd991032d3af5faaf8cfafc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete node configuration parameters (typically const/flash).  <br /></td></tr>
+<tr class="separator:abb637bafdfd991032d3af5faaf8cfafc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4aacdb6ee7a816ef7bb419414ee990af" id="r_a4aacdb6ee7a816ef7bb419414ee990af"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structtrain__state___t_a_g.html">train_state_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a></td></tr>
 <tr class="memdesc:a4aacdb6ee7a816ef7bb419414ee990af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutable runtime state for a single train node.  <br /></td></tr>
 <tr class="separator:a4aacdb6ee7a816ef7bb419414ee990af"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -528,6 +534,23 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Array of all message structures in the buffer store. </p>
+
+</div>
+</div>
+<a id="abb637bafdfd991032d3af5faaf8cfafc" name="abb637bafdfd991032d3af5faaf8cfafc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb637bafdfd991032d3af5faaf8cfafc">&#9670;&#160;</a></span>node_parameters_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structnode__parameters___t_a_g.html">node_parameters_TAG</a> <a class="el" href="#abb637bafdfd991032d3af5faaf8cfafc">node_parameters_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Complete node configuration parameters (typically const/flash). </p>
+<p>Contains SNIP strings, protocol support bits, CDI/FDI data, and address space information for every supported space. </p>
 
 </div>
 </div>

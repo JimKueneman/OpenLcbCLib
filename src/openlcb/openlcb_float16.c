@@ -25,10 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file openlcb_float16.c
- * @brief IEEE 754 half-precision (float16) conversion utilities
+ * @brief IEEE 754 half-precision (float16) conversion utilities.
+ *
+ * @details Converts between 32-bit IEEE 754 single-precision floats and
+ * 16-bit half-precision representations.  Handles subnormals, overflow to
+ * infinity, and rounding via bit manipulation of the raw float pattern.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "openlcb_float16.h"

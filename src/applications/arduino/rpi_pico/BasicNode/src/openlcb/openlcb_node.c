@@ -31,7 +31,7 @@
  * multi-key enumeration, alias/ID lookup, and auto-generated event IDs.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "openlcb_node.h"
@@ -73,8 +73,7 @@ static uint8_t _last_app_callback_tick = 0;
      * @param openlcb_node Pointer to @ref openlcb_node_t to clear
      * @endverbatim
      */
-static void _clear_node(openlcb_node_t *openlcb_node)
-{
+static void _clear_node(openlcb_node_t *openlcb_node) {
 
     openlcb_node->alias = 0;
     openlcb_node->id = 0;
@@ -110,19 +109,19 @@ static void _clear_node(openlcb_node_t *openlcb_node)
     }
 
     openlcb_node->consumers.range_count = 0;
-    for (int i = 0; i < USER_DEFINED_CONSUMER_RANGE_COUNT; i++)
-    {
+    for (int i = 0; i < USER_DEFINED_CONSUMER_RANGE_COUNT; i++) {
 
         openlcb_node->consumers.range_list[i].start_base = NULL_EVENT_ID;
         openlcb_node->consumers.range_list[i].event_count = 0;
+
     }
 
     openlcb_node->producers.range_count = 0;
-    for (int j = 0; j < USER_DEFINED_PRODUCER_RANGE_COUNT; j++)
-    {
+    for (int j = 0; j < USER_DEFINED_PRODUCER_RANGE_COUNT; j++) {
 
         openlcb_node->producers.range_list[j].start_base = NULL_EVENT_ID;
         openlcb_node->producers.range_list[j].event_count = 0;
+
     }
 
     openlcb_node->producers.enumerator.running = false;
@@ -144,8 +143,7 @@ static void _clear_node(openlcb_node_t *openlcb_node)
      * @param interface Pointer to @ref interface_openlcb_node_t with optional callbacks, or NULL
      * @endverbatim
      */
-void OpenLcbNode_initialize(const interface_openlcb_node_t *interface)
-{
+void OpenLcbNode_initialize(const interface_openlcb_node_t *interface) {
 
     _interface = interface;
     _last_app_callback_tick = 0;
@@ -180,8 +178,7 @@ void OpenLcbNode_initialize(const interface_openlcb_node_t *interface)
      *
      * @return Pointer to the first @ref openlcb_node_t, or NULL if empty or key invalid
      */
-openlcb_node_t *OpenLcbNode_get_first(uint8_t key)
-{
+openlcb_node_t *OpenLcbNode_get_first(uint8_t key) {
 
     if (key >= MAX_NODE_ENUM_KEY_VALUES) {
 
@@ -198,6 +195,7 @@ openlcb_node_t *OpenLcbNode_get_first(uint8_t key)
     }
 
     return &_openlcb_nodes.node[_node_enum_index_array[key]];
+
 }
 
     /**
@@ -214,8 +212,7 @@ openlcb_node_t *OpenLcbNode_get_first(uint8_t key)
      *
      * @return Pointer to the next @ref openlcb_node_t, or NULL if at end or key invalid
      */
-openlcb_node_t *OpenLcbNode_get_next(uint8_t key)
-{
+openlcb_node_t *OpenLcbNode_get_next(uint8_t key) {
 
     if (key >= MAX_NODE_ENUM_KEY_VALUES) {
 
@@ -232,6 +229,7 @@ openlcb_node_t *OpenLcbNode_get_next(uint8_t key)
     }
 
     return &_openlcb_nodes.node[_node_enum_index_array[key]];
+
 }
 
     /**
@@ -248,12 +246,19 @@ openlcb_node_t *OpenLcbNode_get_next(uint8_t key)
      *
      * @return true if current enumeration position is the last allocated node
      */
-bool OpenLcbNode_is_last(uint8_t key)
-{
+bool OpenLcbNode_is_last(uint8_t key) {
 
-    if (key >= MAX_NODE_ENUM_KEY_VALUES) { return false; }
+    if (key >= MAX_NODE_ENUM_KEY_VALUES) {
 
-    if (_openlcb_nodes.count == 0) { return false; }
+        return false;
+
+    }
+
+    if (_openlcb_nodes.count == 0) {
+
+        return false;
+
+    }
 
     return (_node_enum_index_array[key] >= _openlcb_nodes.count - 1);
 
@@ -272,8 +277,7 @@ bool OpenLcbNode_is_last(uint8_t key)
      * @param openlcb_node Pointer to @ref openlcb_node_t to generate event IDs for
      * @endverbatim
      */
-static void _generate_event_ids(openlcb_node_t *openlcb_node)
-{
+static void _generate_event_ids(openlcb_node_t *openlcb_node) {
 
     uint64_t node_id = openlcb_node->id << OPENLCB_EVENT_ID_OFFSET;
     uint16_t indexer = 0;
@@ -331,8 +335,7 @@ static void _generate_event_ids(openlcb_node_t *openlcb_node)
      *
      * @return Pointer to the allocated @ref openlcb_node_t, or NULL if the pool is full
      */
-openlcb_node_t *OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t *node_parameters)
-{
+openlcb_node_t *OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t *node_parameters) {
 
     for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
@@ -352,11 +355,13 @@ openlcb_node_t *OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t *
             _openlcb_nodes.node[i].state.allocated = true;
 
             return &_openlcb_nodes.node[i];
+
         }
 
     }
 
     return NULL;
+
 }
 
     /**
@@ -372,8 +377,7 @@ openlcb_node_t *OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t *
      *
      * @return Pointer to matching @ref openlcb_node_t, or NULL if not found
      */
-openlcb_node_t *OpenLcbNode_find_by_alias(uint16_t alias)
-{
+openlcb_node_t *OpenLcbNode_find_by_alias(uint16_t alias) {
 
     for (int i = 0; i < _openlcb_nodes.count; i++) {
 
@@ -386,6 +390,7 @@ openlcb_node_t *OpenLcbNode_find_by_alias(uint16_t alias)
     }
 
     return NULL;
+
 }
 
     /**
@@ -401,8 +406,7 @@ openlcb_node_t *OpenLcbNode_find_by_alias(uint16_t alias)
      *
      * @return Pointer to matching @ref openlcb_node_t, or NULL if not found
      */
-openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t node_id)
-{
+openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t node_id) {
 
     for (int i = 0; i < _openlcb_nodes.count; i++) {
 
@@ -415,6 +419,7 @@ openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t node_id)
     }
 
     return NULL;
+
 }
 
     /**
@@ -425,12 +430,17 @@ openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t node_id)
      * timerticks increment has been removed — all modules now use the global
      * clock via subtraction-based elapsed-time checks.
      *
+     * @verbatim
      * @param current_tick  Current value of the global 100ms tick counter.
+     * @endverbatim
      */
-void OpenLcbNode_100ms_timer_tick(uint8_t current_tick)
-{
+void OpenLcbNode_100ms_timer_tick(uint8_t current_tick) {
 
-    if ((uint8_t)(current_tick - _last_app_callback_tick) == 0) { return; }
+    if ((uint8_t)(current_tick - _last_app_callback_tick) == 0) {
+
+        return;
+
+    }
 
     _last_app_callback_tick = current_tick;
 
@@ -449,8 +459,7 @@ void OpenLcbNode_100ms_timer_tick(uint8_t current_tick)
      * -# For each allocated node, set run_state to RUNSTATE_INIT
      * -# Clear permitted and initialized flags
      */
-void OpenLcbNode_reset_state(void)
-{
+void OpenLcbNode_reset_state(void) {
 
     for (int i = 0; i < _openlcb_nodes.count; i++) {
 

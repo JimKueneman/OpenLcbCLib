@@ -71,34 +71,34 @@
 extern "C" {
 #endif
 
-    /**
-     * @brief Initializes the Train Search Protocol handler.
-     *
-     * @param interface  Pointer to @ref interface_protocol_train_search_handler_t callbacks (may be NULL).
-     */
+        /**
+         * @brief Initializes the Train Search Protocol handler.
+         *
+         * @param interface  Pointer to @ref interface_protocol_train_search_handler_t callbacks (may be NULL).
+         */
     extern void ProtocolTrainSearch_initialize(const interface_protocol_train_search_handler_t *interface);
 
-    /**
-     * @brief Handles incoming train search events.
-     *
-     * @details Called from the main statemachine MTI_PC_EVENT_REPORT case
-     * for each train node. Decodes the search query, compares against this
-     * node's DCC address, and if matching, loads a Producer Identified reply.
-     *
-     * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
-     * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
-     */
+        /**
+         * @brief Handles incoming train search events.
+         *
+         * @details Called from the main statemachine MTI_PC_EVENT_REPORT case
+         * for each train node. Decodes the search query, compares against this
+         * node's DCC address, and if matching, loads a Producer Identified reply.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
+         */
     extern void ProtocolTrainSearch_handle_search_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
-    /**
-     * @brief Handles the no-match case after full train search enumeration.
-     *
-     * @details If the ALLOCATE flag is set and on_search_no_match is registered,
-     * invokes the callback to create a new virtual train node.
-     *
-     * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
-     * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
-     */
+        /**
+         * @brief Handles the no-match case after full train search enumeration.
+         *
+         * @details If the ALLOCATE flag is set and on_search_no_match is registered,
+         * invokes the callback to create a new virtual train node.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
+         */
     extern void ProtocolTrainSearch_handle_search_no_match(
             openlcb_statemachine_info_t *statemachine_info,
             event_id_t event_id);

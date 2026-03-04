@@ -168,14 +168,30 @@ typedef struct {
 ~~~
 ## For loop and If statements and Functions:
 
-All for loops and If statements will use full brackets regardless of the number of statements in the following format examples, except for single line return statement as in the following example.  There will be blank space inserted as shown.
+All for loops and If statements will use full brackets regardless of the number of statements in the following format examples, except for single line `return`, `continue`, or `break` statements as in the following examples.  There will be blank space inserted as shown.
 
 Insert one blank line after opening braces { and one blank line before closing braces } in all code blocks.
 
 ### For Loops
 ~~~
 
-if (_interface->handle_try_enumerate_next_node()) { return; }
+if (_interface->handle_try_enumerate_next_node()) {
+
+    return;
+
+}
+
+if (!msg) {
+
+    continue;
+
+}
+
+if (found) {
+
+    break;
+
+}
     
 for (int i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++) {
 

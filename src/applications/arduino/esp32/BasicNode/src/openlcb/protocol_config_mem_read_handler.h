@@ -25,12 +25,15 @@
      * POSSIBILITY OF SUCH DAMAGE.
      *
      * @file protocol_config_mem_read_handler.h
-     * @brief Configuration memory read handler — processes datagram read commands
-     *        for CDI (0xFF), All (0xFE), Config (0xFD), ACDI-Mfg (0xFC),
-     *        ACDI-User (0xFB), Train FDI (0xFA), and Train Fn Config (0xF9).
+     * @brief Configuration memory read handler.
+     *
+     * @details Processes datagram read commands for CDI (0xFF), All (0xFE),
+     * Config (0xFD), ACDI-Mfg (0xFC), ACDI-User (0xFB), Train FDI (0xFA),
+     * and Train Fn Config (0xF9).  Uses a two-phase ACK-then-reply pattern
+     * and supports optional per-space handler overrides and delayed replies.
      *
      * @author Jim Kueneman
-     * @date 28 Feb 2026
+     * @date 4 Mar 2026
      */
 
 #ifndef __OPENLCB_PROTOCOL_CONFIG_MEM_READ_HANDLER__

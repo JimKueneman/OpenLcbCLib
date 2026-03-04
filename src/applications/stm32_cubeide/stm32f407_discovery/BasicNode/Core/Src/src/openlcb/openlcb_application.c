@@ -34,7 +34,7 @@
  * directly or call through to those callbacks.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "openlcb_application.h"
@@ -94,8 +94,7 @@ void OpenLcbApplication_initialize(const interface_openlcb_application_t *interf
      *
      * @warning NULL pointer on the node causes a crash — no NULL check is performed.
      */
-bool OpenLcbApplication_send_event_with_mti(openlcb_node_t *openlcb_node, event_id_t event_id, uint16_t mti)
-{
+bool OpenLcbApplication_send_event_with_mti(openlcb_node_t *openlcb_node, event_id_t event_id, uint16_t mti) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
@@ -113,13 +112,14 @@ bool OpenLcbApplication_send_event_with_mti(openlcb_node_t *openlcb_node, event_
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, event_id);
 
-    if (_interface->send_openlcb_msg)
-    {
+    if (_interface->send_openlcb_msg) {
 
         return _interface->send_openlcb_msg(&msg);
+
     }
 
     return false;
+
 }
 
     /**
@@ -187,6 +187,7 @@ uint16_t OpenLcbApplication_register_consumer_eventid(openlcb_node_t *openlcb_no
         openlcb_node->consumers.count = openlcb_node->consumers.count + 1;
 
         return (openlcb_node->consumers.count - 1);
+
     }
 
     return 0xFFFF;
@@ -222,9 +223,11 @@ uint16_t OpenLcbApplication_register_producer_eventid(openlcb_node_t *openlcb_no
         openlcb_node->producers.count = openlcb_node->producers.count + 1;
 
         return (openlcb_node->producers.count - 1);
+
     }
 
     return 0xFFFF;
+
 }
 
     /**
@@ -283,8 +286,7 @@ void OpenLcbApplication_clear_producer_ranges(openlcb_node_t *openlcb_node) {
      *
      * @warning NULL pointer causes a crash — no NULL check is performed on the node.
      */
-bool OpenLcbApplication_register_consumer_range(openlcb_node_t *openlcb_node, event_id_t event_id_base, event_range_count_enum range_size)
-{
+bool OpenLcbApplication_register_consumer_range(openlcb_node_t *openlcb_node, event_id_t event_id_base, event_range_count_enum range_size) {
 
     if (openlcb_node->consumers.range_count < USER_DEFINED_CONSUMER_RANGE_COUNT) {
 
@@ -293,9 +295,11 @@ bool OpenLcbApplication_register_consumer_range(openlcb_node_t *openlcb_node, ev
         openlcb_node->consumers.range_count++;
 
         return true;
+
     }
 
     return false;
+
 }
 
     /**
@@ -318,8 +322,7 @@ bool OpenLcbApplication_register_consumer_range(openlcb_node_t *openlcb_node, ev
      *
      * @warning NULL pointer causes a crash — no NULL check is performed on the node.
      */
-bool OpenLcbApplication_register_producer_range(openlcb_node_t *openlcb_node, event_id_t event_id_base, event_range_count_enum range_size)
-{
+bool OpenLcbApplication_register_producer_range(openlcb_node_t *openlcb_node, event_id_t event_id_base, event_range_count_enum range_size) {
 
     if (openlcb_node->producers.range_count < USER_DEFINED_PRODUCER_RANGE_COUNT) {
 
@@ -328,9 +331,11 @@ bool OpenLcbApplication_register_producer_range(openlcb_node_t *openlcb_node, ev
         openlcb_node->producers.range_count++;
 
         return true;
+
     }
 
     return false;
+
 }
 
     /**
@@ -382,6 +387,7 @@ bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *openlcb_node, event
     }
 
     return false;
+
 }
 
     /**
@@ -523,6 +529,7 @@ uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *openlcb_no
     }
 
     return 0xFFFF;
+
 }
 
     /**
@@ -558,4 +565,5 @@ uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *openlcb_n
     }
 
     return 0xFFFF;
+
 }

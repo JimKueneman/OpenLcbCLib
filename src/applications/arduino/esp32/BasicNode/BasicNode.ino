@@ -35,7 +35,7 @@
 
 
 #include "callbacks.h"
-#include "node_parameters.h"
+#include "openlcb_user_config.h"
 #include "esp32_drivers.h"
 #include "esp32_can_drivers.h"
 

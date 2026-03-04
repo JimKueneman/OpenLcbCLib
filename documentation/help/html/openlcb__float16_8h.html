@@ -329,6 +329,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Converts a float16 bit pattern to a 32-bit float. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">half</td><td>16-bit float16 bit pattern to convert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>32-bit float value.</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Extract sign, exponent, mantissa from half-precision fields</li>
 <li>Handle zero, subnormal (normalize), infinity/NaN, and normal cases</li>
@@ -363,6 +370,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Flips the sign/direction bit of a float16 value and returns the result. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">half</td><td>16-bit float16 bit pattern to negate.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>float16 bit pattern with the sign bit flipped.</dd></dl>
 <p>Flips the sign/direction bit of a float16 value and returns the result. </p>
 
 </div>
@@ -391,6 +405,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the float16 bit pattern represents NaN (speed not available). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">half</td><td>16-bit float16 bit pattern to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the value is NaN, false otherwise.</dd></dl>
 <p>Returns true if the float16 bit pattern represents NaN (speed not available). </p>
 
 </div>
@@ -419,6 +440,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the float16 bit pattern represents positive or negative zero. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">half</td><td>16-bit float16 bit pattern to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the value is zero, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -450,6 +478,14 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Encodes a speed magnitude and direction into a float16 bit pattern. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">speed</td><td>Speed magnitude as a 32-bit float. </td></tr>
+    <tr><td class="paramname">reverse</td><td>true for reverse direction, false for forward.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>float16 bit pattern encoding the speed and direction. </dd></dl>
 
 </div>
 </div>
@@ -477,6 +513,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the speed magnitude from a float16 bit pattern (ignores direction). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">half</td><td>16-bit float16 bit pattern to decode.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Speed magnitude as a 32-bit float. </dd></dl>
 
 </div>
 </div>
@@ -504,6 +547,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns true if the direction bit is set (reverse). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">half</td><td>16-bit float16 bit pattern to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the direction bit is set (reverse), false otherwise. </dd></dl>
 
 </div>
 </div>

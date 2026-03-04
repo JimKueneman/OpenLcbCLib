@@ -28,7 +28,7 @@
  * Non-blocking: call CanMainStateMachine_run() as fast as possible in the main loop.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 // This is a guard condition so that contents of this file are not included

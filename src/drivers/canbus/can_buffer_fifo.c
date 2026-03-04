@@ -31,7 +31,7 @@
  * head == tail always means empty without needing a separate counter.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_buffer_fifo.h"

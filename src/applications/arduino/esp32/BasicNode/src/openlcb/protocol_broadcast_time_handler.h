@@ -78,23 +78,23 @@
 extern "C" {
 #endif
 
-    /**
-     * @brief Initializes the Broadcast Time Protocol handler.
-     *
-     * @param interface_openlcb_protocol_broadcast_time_handler  Pointer to @ref interface_openlcb_protocol_broadcast_time_handler_t (must remain valid for application lifetime).
-     */
+        /**
+         * @brief Initializes the Broadcast Time Protocol handler.
+         *
+         * @param interface_openlcb_protocol_broadcast_time_handler  Pointer to @ref interface_openlcb_protocol_broadcast_time_handler_t (must remain valid for application lifetime).
+         */
     extern void ProtocolBroadcastTime_initialize(const interface_openlcb_protocol_broadcast_time_handler_t *interface_openlcb_protocol_broadcast_time_handler);
 
-    /**
-     * @brief Handles incoming broadcast time events.
-     *
-     * @details Decodes the Event ID and updates the singleton clock state.
-     * Only processes if the node has index == 0 and a matching clock is
-     * registered in the application broadcast time module.
-     *
-     * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
-     * @param event_id           Full 64-bit @ref event_id_t containing encoded time data.
-     */
+        /**
+         * @brief Handles incoming broadcast time events.
+         *
+         * @details Decodes the Event ID and updates the singleton clock state.
+         * Only processes if the node has index == 0 and a matching clock is
+         * registered in the application broadcast time module.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         * @param event_id           Full 64-bit @ref event_id_t containing encoded time data.
+         */
     extern void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
 #ifdef __cplusplus

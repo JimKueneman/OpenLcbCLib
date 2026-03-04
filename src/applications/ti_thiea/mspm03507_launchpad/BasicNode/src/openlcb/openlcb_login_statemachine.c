@@ -67,7 +67,7 @@
 * - Outgoing message buffer (pre-allocated, reused for all messages)
 *
 * @author Jim Kueneman
-* @date 28 Feb 2026
+* @date 4 Mar 2026
 *
 * @see openlcb_login_statemachine_handler.c - Message construction handlers
 * @see OpenLCB Message Network Standard S-9.7.3.1 - Initialization Complete
@@ -252,7 +252,7 @@ bool OpenLcbLoginStatemachine_handle_try_enumerate_first_node(void) {
 
         if (!_statemachine_info.openlcb_node) {
 
-            return true; // done
+            return true;
 
         }
 
@@ -287,9 +287,9 @@ bool OpenLcbLoginStatemachine_handle_try_enumerate_next_node(void) {
 
         _statemachine_info.openlcb_node = _interface->openlcb_node_get_next(OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
 
-        if (!_statemachine_info.openlcb_node) { // reached the end of the list
+        if (!_statemachine_info.openlcb_node) {
 
-            return true; // done
+            return true;
 
         }
 
@@ -300,6 +300,7 @@ bool OpenLcbLoginStatemachine_handle_try_enumerate_next_node(void) {
         }
 
         return true; // done
+
     }
 
     return false;

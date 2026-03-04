@@ -3391,3 +3391,650 @@ TEST(ProtocolTrainHandler, conformance_2_11_check_listener_configuration) {
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0);  // count = 0
 
 }
+
+
+// ============================================================================
+// Section 14: Listener Forwarding Tests
+// ============================================================================
+
+#define TEST_LISTENER_A 0x112233445566ULL
+#define TEST_LISTENER_B 0xAABBCCDDEEFFULL
+#define TEST_LISTENER_C 0x010203040506ULL  // Same as TEST_SOURCE_ID for source-skip tests
+
+    /** @brief Helper: attach a listener to a train node via the protocol handler. */
+static void _attach_test_listener(openlcb_statemachine_info_t *sm, openlcb_msg_t *incoming,
+        node_id_t listener_id, uint8_t flags) {
+
+    sm->outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, flags, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, listener_id, 3);
+    incoming->payload_count = 9;
+    ProtocolTrainHandler_handle_train_command(sm);
+
+}
+
+
+TEST(ProtocolTrainHandler, forwarding_speed_to_single_listener)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener A (no special flags)
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, 0);
+
+    // Send SET_SPEED command
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // State should be updated locally
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    EXPECT_EQ(state->set_speed, 0x3C00);
+
+    // First forwarded message should be valid
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_TRUE(sm.outgoing_msg_info.enumerate);
+    EXPECT_TRUE(sm.incoming_msg_info.enumerate);
+
+    // Outgoing should be addressed to listener A
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_A);
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_alias, 0);
+
+    // Payload should have P bit set
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0),
+            TRAIN_SET_SPEED_DIRECTION | TRAIN_INSTRUCTION_P_BIT);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), 0x3C00);
+
+    // Source should be the train node
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->source_id, node->id);
+
+    // Re-dispatch — should complete enumeration (no more listeners)
+    sm.outgoing_msg_info.valid = false;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_speed_to_two_listeners)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach two listeners
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, 0);
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_B, 0);
+
+    // Send SET_SPEED command
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x4000, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // First forwarded message: listener A
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_A);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0),
+            TRAIN_SET_SPEED_DIRECTION | TRAIN_INSTRUCTION_P_BIT);
+
+    // Re-dispatch for listener B
+    sm.outgoing_msg_info.valid = false;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_B);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0),
+            TRAIN_SET_SPEED_DIRECTION | TRAIN_INSTRUCTION_P_BIT);
+
+    // Final re-dispatch — done
+    sm.outgoing_msg_info.valid = false;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_speed_reverse_flag_flips_direction)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener with REVERSE flag
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, TRAIN_LISTENER_FLAG_REVERSE);
+
+    // Send forward speed 0x3C00 (positive = forward)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Forwarded speed should have direction flipped (0x3C00 ^ 0x8000 = 0xBC00)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), 0xBC00);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_function_f0_link_f0_flag)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener A with LINK_F0 flag
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, TRAIN_LISTENER_FLAG_LINK_F0);
+
+    // Send SET_FUNCTION for F0 (address = 0)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);  // addr hi
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // addr mid
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // addr lo = F0
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // F0 should be forwarded because LINK_F0 is set
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_A);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0),
+            TRAIN_SET_FUNCTION | TRAIN_INSTRUCTION_P_BIT);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_function_f0_no_link_f0_skipped)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener without LINK_F0 (only LINK_FN)
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, TRAIN_LISTENER_FLAG_LINK_FN);
+
+    // Send SET_FUNCTION for F0 (address = 0)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // F0
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // F0 should NOT be forwarded (no LINK_F0 flag)
+    // Enumeration should have started and immediately completed
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_function_fn_link_fn_flag)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener with LINK_FN flag
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, TRAIN_LISTENER_FLAG_LINK_FN);
+
+    // Send SET_FUNCTION for F5 (address = 5)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x05, 3);  // F5
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // F5 should be forwarded because LINK_FN is set
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_A);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_function_fn_no_link_fn_skipped)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener with LINK_F0 only (not LINK_FN)
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, TRAIN_LISTENER_FLAG_LINK_F0);
+
+    // Send SET_FUNCTION for F5 (address = 5)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x05, 3);  // F5
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // F5 should NOT be forwarded (no LINK_FN flag)
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_estop_to_listeners)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, 0);
+
+    // Send EMERGENCY_STOP
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_EMERGENCY_STOP, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Local estop should be active
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    EXPECT_TRUE(state->estop_active);
+
+    // Forwarded estop to listener
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_A);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0),
+            TRAIN_EMERGENCY_STOP | TRAIN_INSTRUCTION_P_BIT);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_source_skip)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener C whose node_id matches TEST_SOURCE_ID
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_C, 0);
+    // Attach listener A (different)
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, 0);
+
+    // Send SET_SPEED from TEST_SOURCE_ID
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    incoming->payload_count = 3;
+    incoming->source_id = TEST_SOURCE_ID;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Should skip listener C (matches source) and forward to listener A
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_A);
+
+    // Complete enumeration
+    sm.outgoing_msg_info.valid = false;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_no_listeners_no_enumeration)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // No listeners attached — send SET_SPEED
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // No forwarding — enumerate should remain false
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+    // Speed should still be updated locally
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    EXPECT_EQ(state->set_speed, 0x3C00);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_p_bit_not_forwarded_again)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach a listener
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, 0);
+
+    // Send a forwarded command (P bit already set) — simulates receiving
+    // a consist-forwarded speed command
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming,
+            TRAIN_SET_SPEED_DIRECTION | TRAIN_INSTRUCTION_P_BIT, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // State should be updated locally (P bit masked, dispatched to _handle_set_speed)
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    EXPECT_EQ(state->set_speed, 0x3C00);
+
+    // Should NOT start forwarding (P bit prevents cascaded forwarding)
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_query_not_forwarded)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach a listener
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, 0);
+
+    // Send QUERY_SPEEDS (not a forwardable command)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Query reply should be generated, but NO forwarding enumeration
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);  // Query reply
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_mixed_flags_selective)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Listener A: LINK_F0 only
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, TRAIN_LISTENER_FLAG_LINK_F0);
+    // Listener B: LINK_FN only
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_B, TRAIN_LISTENER_FLAG_LINK_FN);
+
+    // Send SET_FUNCTION F0 (address 0) — should only go to A (has LINK_F0)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // F0
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Should forward to listener A (LINK_F0)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_A);
+
+    // Re-dispatch — should skip B (no LINK_F0) and finish
+    sm.outgoing_msg_info.valid = false;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+    // Now send SET_FUNCTION F5 (address 5) — should only go to B (has LINK_FN)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x05, 3);  // F5
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Should skip A (no LINK_FN) and forward to B
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_B);
+
+    // Re-dispatch — done
+    sm.outgoing_msg_info.valid = false;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_speed_always_forwarded_regardless_of_flags)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener with no link flags (only REVERSE or nothing)
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, 0);
+
+    // Send SET_SPEED — should still be forwarded (speed is always forwarded)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_A);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_reverse_flag_no_effect_on_estop)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener with REVERSE flag
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, TRAIN_LISTENER_FLAG_REVERSE);
+
+    // Send EMERGENCY_STOP
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_EMERGENCY_STOP, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Estop is forwarded, REVERSE flag does not affect it (only 1 byte payload)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0),
+            TRAIN_EMERGENCY_STOP | TRAIN_INSTRUCTION_P_BIT);
+    EXPECT_EQ(outgoing->payload_count, 1);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_all_listeners_source_skipped)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach only the source node as a listener
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_C, 0);  // TEST_LISTENER_C == TEST_SOURCE_ID
+
+    // Send SET_SPEED from TEST_SOURCE_ID
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    incoming->payload_count = 3;
+    incoming->source_id = TEST_SOURCE_ID;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // All listeners skipped (source match) — enumeration done immediately
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}

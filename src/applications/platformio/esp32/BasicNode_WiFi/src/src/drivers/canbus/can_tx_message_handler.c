@@ -31,7 +31,7 @@
  * framing-bit encoding per the OpenLCB CAN Frame Transfer Standard.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_tx_message_handler.h"
@@ -63,6 +63,7 @@ static const uint32_t _OPENLCB_MESSAGE_DATAGRAM_LAST_FRAME = RESERVED_TOP_BIT | 
 /** @brief Pre-built upper bits for a standard OpenLCB message CAN identifier. */
 static const uint32_t _OPENLCB_MESSAGE_STANDARD_FRAME = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE;
 
+/** @brief Saved pointer to the dependency-injected transmit message handler interface. */
 static interface_can_tx_message_handler_t *_interface;
 
     /** @brief Stores the dependency-injection interface pointer. */

@@ -210,6 +210,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <p>Handles an incoming Train Control Protocol command (MTI_TRAIN_PROTOCOL).</p>
+<p>Masks the P bit (bit 7) from the instruction byte before dispatch so that forwarded commands (P=1) are processed identically to direct commands (P=0). After local processing of speed, function, or emergency stop commands, initiates listener forwarding enumeration if listeners are attached and the command is not itself a forwarded command (P=0).</p>
 <pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
 * </pre> 
 </div>

@@ -23,8 +23,13 @@
  * @file can_types.h
  * @brief Type definitions and constants for the CAN transport layer.
  *
+ * @details Defines @ref can_msg_t, @ref alias_mapping_t, @ref alias_mapping_info_t,
+ * @ref can_statemachine_info_t, @ref listener_alias_entry_t, and all compile-time
+ * constants shared across the CAN driver modules.  No executable code — types
+ * and macros only.
+ *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #ifndef __DRIVERS_CANBUS_CAN_TYPES__
@@ -186,6 +191,27 @@ extern "C" {
         alias_mapping_t list[ALIAS_MAPPING_BUFFER_DEPTH]; /**< @brief All registered mappings. */
         bool has_duplicate_alias;                          /**< @brief True if any entry has is_duplicate set. */
     } alias_mapping_info_t;
+
+    /** @brief Total listener alias table slots across all train nodes. */
+#define LISTENER_ALIAS_TABLE_DEPTH \
+    (USER_DEFINED_MAX_LISTENERS_PER_TRAIN * USER_DEFINED_TRAIN_NODE_COUNT)
+
+    /**
+     * @typedef listener_alias_entry_t
+     * @brief One entry in the listener alias table: a @ref node_id_t / 12-bit alias pair.
+     *
+     * @details Written by the CAN RX interrupt (AMD arrival) and read by the CAN TX
+     * main thread (alias resolution). Protected by the existing lock_shared_resources /
+     * unlock_shared_resources mechanism.
+     *
+     * @see listener_alias_table.h
+     */
+    typedef struct listener_alias_entry_struct {
+
+        node_id_t node_id; /**< @brief Listener Node ID (from protocol layer attach). 0 = unused. */
+        uint16_t alias;    /**< @brief Resolved CAN alias (0 = not yet resolved). */
+
+    } listener_alias_entry_t;
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['memory_5fhandler_5ft_0',['memory_handler_t',['../protocol__datagram__handler_8h.html#a34207c47984e37a0c4ecc774fcc1ca32',1,'protocol_datagram_handler.h']]]
+  ['listener_5falias_5fentry_5ft_0',['listener_alias_entry_t',['../can__types_8h.html#a0af04be2385c36a87e0b635199c3195b',1,'can_types.h']]]
 ];

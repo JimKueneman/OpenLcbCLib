@@ -954,17 +954,161 @@ TEST(CanRxMessageHandler, amr_frame_duplicate_alias)
     _test_for_all_buffer_stores_empty();
 }
 
+/*******************************************************************************
+ * AMR Alias Invalidation Tests — BufferList scrub and FIFO scrub
+ ******************************************************************************/
+
+/**
+ * Test: AMR scrubs in-progress assemblies from the released alias
+ *
+ * Verifies:
+ * - In-progress assembly from released alias is freed
+ * - In-progress assembly from a different alias is untouched
+ * - Completed messages are untouched
+ */
+TEST(CanRxMessageHandler, amr_frame_scrubs_buffer_list)
+{
+    _global_initialize();
+    _global_reset_variables();
+
+    // Allocate two buffers and simulate in-progress assemblies
+    openlcb_msg_t *msg_from_released = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *msg_from_other = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(msg_from_released, nullptr);
+    ASSERT_NE(msg_from_other, nullptr);
+
+    uint16_t released_alias = 0x0ABC;
+    uint16_t other_alias = 0x0DEF;
+
+    msg_from_released->source_alias = released_alias;
+    msg_from_released->state.inprocess = true;
+    OpenLcbBufferList_add(msg_from_released);
+
+    msg_from_other->source_alias = other_alias;
+    msg_from_other->state.inprocess = true;
+    OpenLcbBufferList_add(msg_from_other);
+
+    EXPECT_EQ(_count_buffer_list_items(), 2);
+
+    // Build AMR frame from released_alias
+    can_msg_t can_msg;
+    CanUtilities_load_can_message(&can_msg, 0x10703000 | released_alias, 8,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0, 0);
+
+    CanRxMessageHandler_amr_frame(&can_msg);
+
+    // msg_from_released should be freed, msg_from_other should remain
+    EXPECT_EQ(_count_buffer_list_items(), 1);
+    EXPECT_NE(OpenLcbBufferList_index_of(0), msg_from_released);
+
+    // Clean up remaining
+    OpenLcbBufferList_release(msg_from_other);
+    OpenLcbBufferStore_free_buffer(msg_from_other);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+}
+
+/**
+ * Test: AMR scrubs FIFO — marks incoming messages from released alias as invalid
+ *
+ * Verifies:
+ * - Incoming messages from the released alias (source_alias match) get state.invalid
+ * - Messages from other aliases are untouched
+ */
+TEST(CanRxMessageHandler, amr_frame_scrubs_fifo)
+{
+    _global_initialize();
+    _global_reset_variables();
+
+    uint16_t released_alias = 0x0ABC;
+    uint16_t other_alias = 0x0DEF;
+
+    openlcb_msg_t *msg_from_released = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *msg_from_other = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(msg_from_released, nullptr);
+    ASSERT_NE(msg_from_other, nullptr);
+
+    msg_from_released->source_alias = released_alias;
+    msg_from_other->source_alias = other_alias;
+
+    OpenLcbBufferFifo_push(msg_from_released);
+    OpenLcbBufferFifo_push(msg_from_other);
+
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 2);
+
+    // Build AMR frame from released_alias
+    can_msg_t can_msg;
+    CanUtilities_load_can_message(&can_msg, 0x10703000 | released_alias, 8,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0, 0);
+
+    CanRxMessageHandler_amr_frame(&can_msg);
+
+    // msg_from_released should be invalid, msg_from_other should not
+    EXPECT_TRUE(msg_from_released->state.invalid);
+    EXPECT_FALSE(msg_from_other->state.invalid);
+
+    // FIFO count unchanged — messages still in FIFO
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 2);
+
+    // Clean up
+    OpenLcbBufferFifo_pop();
+    OpenLcbBufferFifo_pop();
+    OpenLcbBufferStore_free_buffer(msg_from_released);
+    OpenLcbBufferStore_free_buffer(msg_from_other);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+}
+
+/**
+ * Test: AMR scrubs completed (non-inprocess) messages in the BufferList too
+ *
+ * Verifies:
+ * - All messages from the released alias are freed, regardless of inprocess state
+ */
+TEST(CanRxMessageHandler, amr_frame_frees_completed_in_buffer_list)
+{
+    _global_initialize();
+    _global_reset_variables();
+
+    uint16_t released_alias = 0x0ABC;
+
+    openlcb_msg_t *msg_completed = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg_completed, nullptr);
+
+    msg_completed->source_alias = released_alias;
+    msg_completed->state.inprocess = false;
+    OpenLcbBufferList_add(msg_completed);
+
+    EXPECT_EQ(_count_buffer_list_items(), 1);
+
+    can_msg_t can_msg;
+    CanUtilities_load_can_message(&can_msg, 0x10703000 | released_alias, 8,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0, 0);
+
+    CanRxMessageHandler_amr_frame(&can_msg);
+
+    // Completed message SHOULD be freed — inprocess state doesn't matter
+    EXPECT_EQ(_count_buffer_list_items(), 0);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+}
+
 TEST(CanRxMessageHandler, error_info_report_duplicate_alias)
 {
     _global_initialize();
     _global_reset_variables();
-    
+
     can_msg_t can_msg;
-    
+
     // Register an alias
     alias_mapping_t *mapping = AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
     mapping->is_permitted = true;
-    
+
     // Error info report from same alias (duplicate detected)
     CanUtilities_load_can_message(&can_msg, 0x10710000 | SOURCE_ALIAS, 8,
                                    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0, 0);

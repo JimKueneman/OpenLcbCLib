@@ -120,8 +120,9 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>Routes outgoing OpenLCB messages to the correct frame handler (addressed, unaddressed, datagram, or stream) and loops until the full payload is transmitted as an atomic multi-frame sequence. Also provides a pass-through path for pre-built raw CAN control frames.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="acbe458eae799fff061319448b1855b3d" name="acbe458eae799fff061319448b1855b3d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acbe458eae799fff061319448b1855b3d">&#9670;&#160;</a></span>CanTxStatemachine_initialize()</h2>
@@ -161,6 +162,8 @@ Functions</h2></td></tr>
 <p>Transmits a complete OpenLCB message, blocking until all frames are sent. </p>
 <p>Converts and transmits an <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> as one or more CAN frames.</p>
 <p>Algorithm:</p><ol type="1">
+<li>Discard immediately if state.invalid is set (AMR scrub marked it).</li>
+<li>If dest_alias == 0 and dest_id != 0, resolve the alias via listener_find_by_node_id (DI, nullable). Drop the message if unresolvable (return true so the caller clears the outgoing slot).</li>
 <li>Return false immediately if the TX hardware buffer is busy.</li>
 <li>If payload_count == 0: send a single zero-payload frame and return.</li>
 <li>Otherwise, send the first frame; if it fails return false.</li>

@@ -31,7 +31,7 @@
  * Head = next insertion, tail = next removal.  Empty when head == tail.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "openlcb_buffer_fifo.h"
@@ -154,6 +154,53 @@ openlcb_msg_t *OpenLcbBufferFifo_pop(void) {
 bool OpenLcbBufferFifo_is_empty(void) {
 
     return (_openlcb_msg_buffer_fifo.head == _openlcb_msg_buffer_fifo.tail);
+
+}
+
+    /**
+     * @brief Marks all queued incoming messages from a released alias as invalid.
+     *
+     * @details Walks the FIFO from tail to head and sets state.invalid on any
+     * message whose source_alias matches the released alias.  These are
+     * completed incoming messages from a node that has gone away — processing
+     * them could generate replies to a stale alias that may now belong to a
+     * different node.  The pop-phase guard or TX guard will discard them.
+     *
+     * Does not remove messages from the FIFO — the circular buffer head/tail
+     * pointers stay untouched.
+     *
+     * @verbatim
+     * @param alias  12-bit CAN alias that was released.  If 0, returns immediately.
+     * @endverbatim
+     */
+void OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(uint16_t alias) {
+
+    if (alias == 0) {
+
+        return;
+
+    }
+
+    uint8_t index = _openlcb_msg_buffer_fifo.tail;
+
+    while (index != _openlcb_msg_buffer_fifo.head) {
+
+        openlcb_msg_t *msg = _openlcb_msg_buffer_fifo.list[index];
+
+        if (msg && msg->source_alias == alias) {
+
+            msg->state.invalid = true;
+
+        }
+
+        index = index + 1;
+        if (index >= LEN_MESSAGE_FIFO_BUFFER) {
+
+            index = 0;
+
+        }
+
+    }
 
 }
 

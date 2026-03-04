@@ -25,12 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file openlcb_gridconnect.h
- * @brief Bidirectional conversion between CAN messages and GridConnect ASCII
- *        format (:X<8-hex-ID>N<hex-data>;).  Includes a streaming byte-at-a-time
- *        parser with automatic error recovery.
+ * @brief Bidirectional conversion between CAN messages and GridConnect ASCII format.
+ *
+ * @details Converts between @ref can_msg_t structures and the GridConnect ASCII
+ * wire format (:X<8-hex-ID>N<hex-data>;).  Includes a streaming byte-at-a-time
+ * parser with automatic error recovery for use over serial or TCP/IP links.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #ifndef __OPENLCB_OPENLCB_GRIDCONNECT__

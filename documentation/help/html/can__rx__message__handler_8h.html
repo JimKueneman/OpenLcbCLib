@@ -159,7 +159,7 @@ Functions</h2></td></tr>
 </dd></dl>
 <p>Handles multi-frame assembly, legacy SNIP, and all CAN control frames (CID, RID, AMD, AME, AMR, error reports). Invoked by the CAN Rx state machine.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="aaa035b3a9b3535b413f441c4cb6d741f" name="aaa035b3a9b3535b413f441c4cb6d741f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaa035b3a9b3535b413f441c4cb6d741f">&#9670;&#160;</a></span>CanRxMessageHandler_initialize()</h2>
@@ -555,7 +555,12 @@ Only correct for MTI_SIMPLE_NODE_INFO_REPLY without framing bits.</dd></dl>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe.</dd></dl>
-<p>Handles AMD (Alias Map Definition) CAN control frames. </p>
+<p>Performs two actions:</p><ol type="1">
+<li>Checks for a duplicate alias condition (our own alias conflict).</li>
+<li>If the listener alias feature is linked in, updates the listener table with the resolved alias and releases any held attach messages that were waiting on this Node ID.</li>
+</ol>
+<pre class="fragment">* @param can_msg  Received AMD frame (6-byte NodeID in payload).
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe. </dd></dl>
 
 </div>
 </div>
@@ -636,7 +641,14 @@ NOT thread-safe.</dd></dl>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe.</dd></dl>
-<p>Handles AMR (Alias Map Reset) CAN control frames. </p>
+<p>Performs four actions when a remote node releases its alias:</p><ol type="1">
+<li>Checks for a duplicate alias condition (our own alias conflict).</li>
+<li>BufferList scrub: frees all messages from the released alias (partial assemblies will never complete, completed messages should not generate replies to a stale alias).</li>
+<li>FIFO scrub: marks queued incoming messages from the released alias as invalid so the pop-phase guard or TX guard will discard them, preventing late replies to the stale alias.</li>
+<li>Listener table cleanup: clears the released alias from the listener table so future TX-path lookups return alias == 0 (unresolved) instead of the stale alias. DI, no-op if not linked in.</li>
+</ol>
+<pre class="fragment">* @param can_msg  Received AMR frame.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe. </dd></dl>
 
 </div>
 </div>
@@ -713,15 +725,9 @@ NOT thread-safe.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#af5ab163a26257b020cff610f592a13d4" title="Handles RID (Reserve ID) CAN control frames.">CanRxMessageHandler_rid_frame</a></dd></dl>
 <p>Handles CID (Check ID) CAN control frames (CanFrameTransferS 3.5.3).</p>
 <p>Per the standard: "Nodes that receive a CID frame that contains
-the alias they are using or have reserved shall respond with an RID frame." CID is a probe during alias reservation — the correct defence is always RID, regardless of whether the node is permitted or still claiming. This differs from RID/AMD/AMR receipt which indicates an active alias collision and is handled by _check_for_duplicate_alias().</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Received CID frame.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section warning"><dt>Warning</dt><dd>Silently drops the reply if buffer allocation fails. </dd></dl>
-
+  the alias they are using or have reserved shall respond with an RID frame." CID is a probe during alias reservation — the correct defence is always RID, regardless of whether the node is permitted or still claiming. This differs from RID/AMD/AMR receipt which indicates an active alias collision and is handled by the internal <code>_check_for_duplicate_alias()</code> helper.</p>
+<pre class="fragment">* @param can_msg  Received CID frame.
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

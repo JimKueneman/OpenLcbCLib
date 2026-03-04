@@ -846,3 +846,198 @@ TEST(OpenLcbBufferFIFO, wraparound_boundary)
 
     EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
 }
+
+// ============================================================================
+// AMR Alias Invalidation Tests
+// ============================================================================
+
+/**
+ * @brief Test check_and_invalidate sets state.invalid on matching source_alias
+ *
+ * Verifies:
+ * - Messages with matching source_alias get state.invalid = true
+ * - Messages with non-matching source_alias are untouched
+ * - FIFO count and order are not affected
+ */
+TEST(OpenLcbBufferFIFO, check_and_invalidate_by_source_alias_matching)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferFifo_initialize();
+
+    openlcb_msg_t *msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *msg2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *msg3 = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(msg1, nullptr);
+    ASSERT_NE(msg2, nullptr);
+    ASSERT_NE(msg3, nullptr);
+
+    msg1->source_alias = 0x0AAA;
+    msg2->source_alias = 0x0BBB;
+    msg3->source_alias = 0x0AAA;
+
+    OpenLcbBufferFifo_push(msg1);
+    OpenLcbBufferFifo_push(msg2);
+    OpenLcbBufferFifo_push(msg3);
+
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 3);
+
+    OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(0x0AAA);
+
+    // msg1 and msg3 should be invalid, msg2 should not
+    EXPECT_TRUE(msg1->state.invalid);
+    EXPECT_FALSE(msg2->state.invalid);
+    EXPECT_TRUE(msg3->state.invalid);
+
+    // FIFO count unchanged — messages are still in the FIFO
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 3);
+
+    // FIFO order unchanged
+    EXPECT_EQ(OpenLcbBufferFifo_pop(), msg1);
+    EXPECT_EQ(OpenLcbBufferFifo_pop(), msg2);
+    EXPECT_EQ(OpenLcbBufferFifo_pop(), msg3);
+
+    OpenLcbBufferStore_free_buffer(msg1);
+    OpenLcbBufferStore_free_buffer(msg2);
+    OpenLcbBufferStore_free_buffer(msg3);
+}
+
+/**
+ * @brief Test check_and_invalidate on empty FIFO
+ *
+ * Verifies:
+ * - No crash or undefined behavior on empty FIFO
+ */
+TEST(OpenLcbBufferFIFO, check_and_invalidate_by_source_alias_empty)
+{
+    OpenLcbBufferFifo_initialize();
+
+    OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(0x0AAA);
+
+    EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
+}
+
+/**
+ * @brief Test check_and_invalidate with alias 0
+ *
+ * Verifies:
+ * - alias == 0 is a no-op (early return)
+ * - Existing messages are untouched
+ */
+TEST(OpenLcbBufferFIFO, check_and_invalidate_by_source_alias_zero)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferFifo_initialize();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    msg->source_alias = 0x0000;
+    msg->state.invalid = false;
+
+    OpenLcbBufferFifo_push(msg);
+
+    OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(0);
+
+    EXPECT_FALSE(msg->state.invalid);
+
+    OpenLcbBufferFifo_pop();
+    OpenLcbBufferStore_free_buffer(msg);
+}
+
+/**
+ * @brief Test check_and_invalidate with no matching messages
+ *
+ * Verifies:
+ * - No messages are invalidated when alias doesn't match
+ */
+TEST(OpenLcbBufferFIFO, check_and_invalidate_by_source_alias_no_match)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferFifo_initialize();
+
+    openlcb_msg_t *msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *msg2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(msg1, nullptr);
+    ASSERT_NE(msg2, nullptr);
+
+    msg1->source_alias = 0x0111;
+    msg2->source_alias = 0x0222;
+
+    OpenLcbBufferFifo_push(msg1);
+    OpenLcbBufferFifo_push(msg2);
+
+    OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(0x0999);
+
+    EXPECT_FALSE(msg1->state.invalid);
+    EXPECT_FALSE(msg2->state.invalid);
+
+    OpenLcbBufferFifo_pop();
+    OpenLcbBufferFifo_pop();
+    OpenLcbBufferStore_free_buffer(msg1);
+    OpenLcbBufferStore_free_buffer(msg2);
+}
+
+/**
+ * @brief Test check_and_invalidate handles circular buffer wraparound
+ *
+ * Verifies:
+ * - Invalidation works correctly when FIFO has wrapped around
+ */
+TEST(OpenLcbBufferFIFO, check_and_invalidate_by_source_alias_wraparound)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferFifo_initialize();
+
+    openlcb_msg_t msgs[LEN_MESSAGE_BUFFER];
+    uint16_t target_alias = 0x0AAA;
+
+    // Push and pop several messages to advance tail past 0
+    for (int i = 0; i < LEN_MESSAGE_BUFFER / 2; i++) {
+
+        msgs[i].source_alias = 0x0111;
+        msgs[i].state.invalid = false;
+        msgs[i].state.allocated = false;
+        msgs[i].state.inprocess = false;
+        OpenLcbBufferFifo_push(&msgs[i]);
+
+    }
+
+    for (int i = 0; i < LEN_MESSAGE_BUFFER / 2; i++) {
+
+        OpenLcbBufferFifo_pop();
+
+    }
+
+    // Now push messages that will wrap around
+    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+
+        msgs[i].source_alias = (i % 2 == 0) ? target_alias : 0x0BBB;
+        msgs[i].state.invalid = false;
+        OpenLcbBufferFifo_push(&msgs[i]);
+
+    }
+
+    OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(target_alias);
+
+    // Verify: even-indexed messages should be invalid, odd should not
+    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+
+        openlcb_msg_t *popped = OpenLcbBufferFifo_pop();
+        ASSERT_NE(popped, nullptr);
+
+        if (i % 2 == 0) {
+
+            EXPECT_TRUE(popped->state.invalid);
+
+        } else {
+
+            EXPECT_FALSE(popped->state.invalid);
+
+        }
+
+    }
+
+    EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
+}

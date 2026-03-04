@@ -32,7 +32,7 @@
  * does one unit of work and returns so other application code can run.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_main_statemachine.h"
@@ -59,9 +59,13 @@
 
 
 
+/** @brief Saved pointer to the dependency-injected main state machine interface. */
 static interface_can_main_statemachine_t *_interface;
 
+/** @brief Internal state machine context shared across all handler functions. */
 static can_statemachine_info_t _can_statemachine_info;
+
+/** @brief Statically-allocated CAN frame buffer used for login messages (CID/RID/AMD). */
 static can_msg_t _can_msg;
 
     /**

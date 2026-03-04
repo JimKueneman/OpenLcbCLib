@@ -37,7 +37,7 @@
  * logic for temporary errors.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  *
  * @see protocol_datagram_handler.h
  * @see DatagramTransportS.pdf
@@ -63,15 +63,6 @@
 
     /** @brief Maximum datagram retry attempts before abandoning. */
 #define DATAGRAM_MAX_RETRIES 3
-
-    /** @brief Bit masks and shifts for packing retry count + tick snapshot into timerticks.
-     *
-     *  Bits 7-5: retry count (0-7)
-     *  Bits 4-0: tick snapshot (snapshot of current_tick at start of attempt)
-     */
-#define DATAGRAM_RETRY_SHIFT  5
-#define DATAGRAM_RETRY_MASK   0xE0
-#define DATAGRAM_TICK_MASK    0x1F
 
 
     /** @brief Stored callback interface pointer; set by _initialize(). */
@@ -102,10 +93,8 @@ void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handle
      * -# If handler_ptr is NULL, send SUBCOMMAND_UNKNOWN rejection
      * -# Otherwise call handler_ptr(statemachine_info)
      *
-     * @verbatim
-     * @param statemachine_info  Current state-machine context.
+     * @param statemachine_info  Current @ref openlcb_statemachine_info_t context.
      * @param handler_ptr        Callback, or NULL for auto-reject.
-     * @endverbatim
      */
 static void _handle_subcommand(openlcb_statemachine_info_t *statemachine_info, memory_handler_t handler_ptr) {
 
@@ -479,6 +468,7 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_all);
 
             break;
+
         case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory);
@@ -655,6 +645,7 @@ static void _handle_write_stream_address_space_at_offset_6(openlcb_statemachine_
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all);
 
             break;
+
         case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory);
@@ -876,9 +867,7 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
      * -# Config commands (options, lock, freeze, reset, etc.) dispatch directly
      * -# Unknown subcommands are rejected
      *
-     * @verbatim
-     * @param statemachine_info  Context with incoming 0x20 datagram.
-     * @endverbatim
+     * @param statemachine_info  @ref openlcb_statemachine_info_t context with incoming 0x20 datagram.
      */
 static void _handle_datagram_memory_configuration_command(openlcb_statemachine_info_t *statemachine_info) {
 
@@ -1493,10 +1482,10 @@ void ProtocolDatagramHandler_datagram_received_ok(openlcb_statemachine_info_t *s
      * @details Algorithm:
      * -# Extract error code from payload word 0
      * -# If ERROR_TEMPORARY bit set and a stored datagram exists:
-     *    a. Extract retry count from upper 3 bits of timerticks
+     *    a. Read retry count from timer.datagram.retry_count
      *    b. Increment retry count
-     *    c. If retries < DATAGRAM_MAX_RETRIES, pack new retry count + fresh
-     *       tick snapshot and set resend_datagram flag
+     *    c. If retries < DATAGRAM_MAX_RETRIES, store new retry count and
+     *       fresh tick snapshot, set resend_datagram flag
      *    d. If retries >= DATAGRAM_MAX_RETRIES, abandon (clear and free)
      * -# If permanent error, clear resend flag and free stored buffer
      * -# Set outgoing_msg_info.valid = false
@@ -1511,13 +1500,13 @@ void ProtocolDatagramHandler_datagram_rejected(openlcb_statemachine_info_t *stat
 
         if (statemachine_info->openlcb_node->last_received_datagram) {
 
-            uint8_t retries = (statemachine_info->openlcb_node->last_received_datagram->timerticks & DATAGRAM_RETRY_MASK) >> DATAGRAM_RETRY_SHIFT;
+            uint8_t retries = statemachine_info->openlcb_node->last_received_datagram->timer.datagram.retry_count;
             retries++;
 
             if (retries < DATAGRAM_MAX_RETRIES) {
 
-                statemachine_info->openlcb_node->last_received_datagram->timerticks =
-                        (uint8_t) ((retries << DATAGRAM_RETRY_SHIFT) | (statemachine_info->current_tick & DATAGRAM_TICK_MASK));
+                statemachine_info->openlcb_node->last_received_datagram->timer.datagram.retry_count = retries;
+                statemachine_info->openlcb_node->last_received_datagram->timer.datagram.tick_snapshot = statemachine_info->current_tick;
                 statemachine_info->openlcb_node->state.resend_datagram = true;
 
             } else {
@@ -1574,7 +1563,9 @@ void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t *openl
      * Currently a placeholder — timeout scanning is done by
      * ProtocolDatagramHandler_check_timeouts().
      *
+     * @verbatim
      * @param current_tick  Current value of the global 100ms tick counter.
+     * @endverbatim
      */
 void ProtocolDatagramHandler_100ms_timer_tick(uint8_t current_tick) {
 
@@ -1588,7 +1579,9 @@ void ProtocolDatagramHandler_100ms_timer_tick(uint8_t current_tick) {
      * @details Must be called from the main processing loop, not from an
      * interrupt. Acquires the shared resource lock internally.
      *
+     * @verbatim
      * @param current_tick  Current value of the global 100ms tick, passed from the main loop.
+     * @endverbatim
      */
 void ProtocolDatagramHandler_check_timeouts(uint8_t current_tick) {
 
@@ -1600,9 +1593,9 @@ void ProtocolDatagramHandler_check_timeouts(uint8_t current_tick) {
 
         if (node->last_received_datagram) {
 
-            uint8_t snapshot = node->last_received_datagram->timerticks & DATAGRAM_TICK_MASK;
-            uint8_t retries = (node->last_received_datagram->timerticks & DATAGRAM_RETRY_MASK) >> DATAGRAM_RETRY_SHIFT;
-            uint8_t elapsed = (current_tick - snapshot) & DATAGRAM_TICK_MASK;
+            uint8_t snapshot = node->last_received_datagram->timer.datagram.tick_snapshot;
+            uint8_t retries = node->last_received_datagram->timer.datagram.retry_count;
+            uint8_t elapsed = (current_tick - snapshot) & 0x1F;
 
             if (elapsed >= DATAGRAM_TIMEOUT_TICKS || retries >= DATAGRAM_MAX_RETRIES) {
 

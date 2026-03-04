@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file node_parameters.c
+ * \file openlcb_user_config.c
  *
  * Definition of the node at the application level.  
  *
@@ -32,13 +32,9 @@
  * @date 5 Dec 2024
  */
 
-#ifdef MPLAB
-#include "node_parameters.h"
-#include "../../../openlcb/openlcb_defines.h"
-#else
-#include "node_parameters.h"
+#include "openlcb_user_config.h"
+#include "src/openlcb/openlcb_types.h"
 #include "src/openlcb/openlcb_defines.h"
-#endif
 
 
 const node_parameters_t NodeParameters_main_node = {

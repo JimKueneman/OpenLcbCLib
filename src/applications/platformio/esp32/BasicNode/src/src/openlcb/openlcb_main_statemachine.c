@@ -60,7 +60,7 @@
 * Resource locking callbacks protect access to shared buffer pools and FIFOs.
 *
 * @author Jim Kueneman
-* @date 28 Feb 2026
+* @date 4 Mar 2026
 *
 * @see openlcb_main_statemachine.h - Public interface
 * @see openlcb_types.h - Core data structures
@@ -591,14 +591,14 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
             if (_interface->broadcast_time_event_handler && statemachine_info->openlcb_node->index == 0) {
 
-                if (OpenLcbUtilities_is_broadcast_time_event(event_id))
-                {
+                if (OpenLcbUtilities_is_broadcast_time_event(event_id)) {
 
                     _interface->broadcast_time_event_handler(statemachine_info, event_id);
 
                     break;
 
                 }
+
             }
 
             // Global Emergency event intercept -- check ALL train nodes
@@ -869,6 +869,15 @@ bool OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message(void) 
         _statemachine_info.incoming_msg_info.msg_ptr = OpenLcbBufferFifo_pop();
         _interface->unlock_shared_resources();
 
+        if (_statemachine_info.incoming_msg_info.msg_ptr &&
+                _statemachine_info.incoming_msg_info.msg_ptr->state.invalid) {
+
+            _free_incoming_message(&_statemachine_info);
+
+            return true;
+
+        }
+
         _statemachine_info.current_tick = _interface->get_current_tick();
 
         return (!_statemachine_info.incoming_msg_info.msg_ptr);
@@ -959,6 +968,7 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
         }
 
         return true; // done
+
     }
 
     return false;

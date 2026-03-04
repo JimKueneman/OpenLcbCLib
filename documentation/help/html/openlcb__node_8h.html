@@ -113,7 +113,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a7beb45af246c8e2bf112bfca6c11375b" id="r_a7beb45af246c8e2bf112bfca6c11375b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7beb45af246c8e2bf112bfca6c11375b">OpenLcbNode_initialize</a> (const <a class="el" href="structinterface__openlcb__node__t.html">interface_openlcb_node_t</a> *interface)</td></tr>
 <tr class="memdesc:a7beb45af246c8e2bf112bfca6c11375b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the node management module.  <br /></td></tr>
 <tr class="separator:a7beb45af246c8e2bf112bfca6c11375b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0864e7f15b95e49cd2320217de99d403" id="r_a0864e7f15b95e49cd2320217de99d403"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0864e7f15b95e49cd2320217de99d403">OpenLcbNode_allocate</a> (uint64_t node_id, const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *node_parameters)</td></tr>
+<tr class="memitem:a0864e7f15b95e49cd2320217de99d403" id="r_a0864e7f15b95e49cd2320217de99d403"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0864e7f15b95e49cd2320217de99d403">OpenLcbNode_allocate</a> (uint64_t node_id, const <a class="el" href="openlcb__types_8h.html#abb637bafdfd991032d3af5faaf8cfafc">node_parameters_t</a> *node_parameters)</td></tr>
 <tr class="memdesc:a0864e7f15b95e49cd2320217de99d403"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new node with the given ID and configuration.  <br /></td></tr>
 <tr class="separator:a0864e7f15b95e49cd2320217de99d403"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebb273e90eb5491704a9a42c830e5324" id="r_aebb273e90eb5491704a9a42c830e5324"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebb273e90eb5491704a9a42c830e5324">OpenLcbNode_get_first</a> (uint8_t key)</td></tr>
@@ -209,7 +209,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *</td>          <td class="paramname"><span class="paramname"><em>node_parameters</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="openlcb__types_8h.html#abb637bafdfd991032d3af5faaf8cfafc">node_parameters_t</a> *</td>          <td class="paramname"><span class="paramname"><em>node_parameters</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -224,7 +224,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">node_id</td><td>64-bit unique OpenLCB node identifier. </td></tr>
-    <tr><td class="paramname">node_parameters</td><td>Pointer to <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> defining node capabilities.</td></tr>
+    <tr><td class="paramname">node_parameters</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#abb637bafdfd991032d3af5faaf8cfafc">node_parameters_t</a> defining node capabilities.</td></tr>
   </table>
   </dd>
 </dl>
@@ -512,13 +512,8 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <p>Called from the main loop with the current global tick. Fires the application callback at most once per unique tick value. The per-node timerticks increment has been removed — all modules now use the global clock via subtraction-based elapsed-time checks.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter. </td></tr>
-  </table>
-  </dd>
-</dl>
-
+<pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

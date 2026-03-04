@@ -25,11 +25,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *
 * @file openlcb_login_statemachine_handler.h
-* @brief Message construction handlers for the login sequence: Initialization
-*        Complete, Producer Identified, and Consumer Identified messages.
+* @brief Message construction handlers for the login sequence.
+*
+* @details Builds Initialization Complete, Producer Identified, and Consumer
+* Identified messages during the node login process.  Each handler advances
+* the login state machine and sets the enumerate flag when multiple messages
+* must be sent for a single state transition.
 *
 * @author Jim Kueneman
-* @date 28 Feb 2026
+* @date 4 Mar 2026
 */
 
 // This is a guard condition so that contents of this file are not included

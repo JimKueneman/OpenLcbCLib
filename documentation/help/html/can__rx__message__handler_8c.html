@@ -136,13 +136,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:af5ab163a26257b020cff610f592a13d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles RID frames: checks for a duplicate alias and flags it if found.  <br /></td></tr>
 <tr class="separator:af5ab163a26257b020cff610f592a13d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0edca70265b5777d972dfe607776276" id="r_ae0edca70265b5777d972dfe607776276"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0edca70265b5777d972dfe607776276">CanRxMessageHandler_amd_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:ae0edca70265b5777d972dfe607776276"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles AMD frames: checks for a duplicate alias and flags it if found.  <br /></td></tr>
+<tr class="memdesc:ae0edca70265b5777d972dfe607776276"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles AMD (Alias Map Definition) CAN control frames.  <br /></td></tr>
 <tr class="separator:ae0edca70265b5777d972dfe607776276"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6a95cd9b0b64f9bce258072279e3e6e" id="r_ad6a95cd9b0b64f9bce258072279e3e6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6a95cd9b0b64f9bce258072279e3e6e">CanRxMessageHandler_ame_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
 <tr class="memdesc:ad6a95cd9b0b64f9bce258072279e3e6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles AME frames: responds with AMD frames for matching aliases.  <br /></td></tr>
 <tr class="separator:ad6a95cd9b0b64f9bce258072279e3e6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46f286844287b488746bab5131c404f0" id="r_a46f286844287b488746bab5131c404f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46f286844287b488746bab5131c404f0">CanRxMessageHandler_amr_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:a46f286844287b488746bab5131c404f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles AMR frames: checks for a duplicate alias and flags it if found.  <br /></td></tr>
+<tr class="memdesc:a46f286844287b488746bab5131c404f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles AMR (Alias Map Reset) CAN control frames.  <br /></td></tr>
 <tr class="separator:a46f286844287b488746bab5131c404f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c11e35eed23a505787d5c49b58dfd83" id="r_a9c11e35eed23a505787d5c49b58dfd83"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c11e35eed23a505787d5c49b58dfd83">CanRxMessageHandler_error_info_report_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
 <tr class="memdesc:a9c11e35eed23a505787d5c49b58dfd83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Error Information Report frames: checks for a duplicate alias and flags it if found.  <br /></td></tr>
@@ -157,8 +157,9 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>Handles multi-frame assembly (first/middle/last), single-frame messages, legacy SNIP, and all CAN control frames (CID, RID, AMD, AME, AMR). Also manages duplicate alias detection and listener alias table updates. Invoked by the CAN Rx state machine via dependency-injected callbacks.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a73c1c8d9d88ec0da070ff30ada2ac6e0" name="a73c1c8d9d88ec0da070ff30ada2ac6e0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a73c1c8d9d88ec0da070ff30ada2ac6e0">&#9670;&#160;</a></span>CAN_RX_INPROCESS_TIMEOUT_TICKS</h2>
@@ -433,15 +434,9 @@ Functions</h2></td></tr>
 <p>Handles CID frames per CanFrameTransferS Section 3.5.3. </p>
 <p>Handles CID (Check ID) CAN control frames (CanFrameTransferS 3.5.3).</p>
 <p>Per the standard: "Nodes that receive a CID frame that contains
-the alias they are using or have reserved shall respond with an RID frame." CID is a probe during alias reservation — the correct defence is always RID, regardless of whether the node is permitted or still claiming. This differs from RID/AMD/AMR receipt which indicates an active alias collision and is handled by _check_for_duplicate_alias().</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Received CID frame.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section warning"><dt>Warning</dt><dd>Silently drops the reply if buffer allocation fails. </dd></dl>
-
+  the alias they are using or have reserved shall respond with an RID frame." CID is a probe during alias reservation — the correct defence is always RID, regardless of whether the node is permitted or still claiming. This differs from RID/AMD/AMR receipt which indicates an active alias collision and is handled by the internal <code>_check_for_duplicate_alias()</code> helper.</p>
+<pre class="fragment">* @param can_msg  Received CID frame.
+* </pre> 
 </div>
 </div>
 <a id="af5ab163a26257b020cff610f592a13d4" name="af5ab163a26257b020cff610f592a13d4"></a>
@@ -479,8 +474,13 @@ the alias they are using or have reserved shall respond with an RID frame." CID 
       </table>
 </div><div class="memdoc">
 
-<p>Handles AMD frames: checks for a duplicate alias and flags it if found. </p>
 <p>Handles AMD (Alias Map Definition) CAN control frames. </p>
+<p>Performs two actions:</p><ol type="1">
+<li>Checks for a duplicate alias condition (our own alias conflict).</li>
+<li>If the listener alias feature is linked in, updates the listener table with the resolved alias and releases any held attach messages that were waiting on this Node ID.</li>
+</ol>
+<pre class="fragment">* @param can_msg  Received AMD frame (6-byte NodeID in payload).
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe. </dd></dl>
 
 </div>
 </div>
@@ -526,8 +526,15 @@ the alias they are using or have reserved shall respond with an RID frame." CID 
       </table>
 </div><div class="memdoc">
 
-<p>Handles AMR frames: checks for a duplicate alias and flags it if found. </p>
 <p>Handles AMR (Alias Map Reset) CAN control frames. </p>
+<p>Performs four actions when a remote node releases its alias:</p><ol type="1">
+<li>Checks for a duplicate alias condition (our own alias conflict).</li>
+<li>BufferList scrub: frees all messages from the released alias (partial assemblies will never complete, completed messages should not generate replies to a stale alias).</li>
+<li>FIFO scrub: marks queued incoming messages from the released alias as invalid so the pop-phase guard or TX guard will discard them, preventing late replies to the stale alias.</li>
+<li>Listener table cleanup: clears the released alias from the listener table so future TX-path lookups return alias == 0 (unresolved) instead of the stale alias. DI, no-op if not linked in.</li>
+</ol>
+<pre class="fragment">* @param can_msg  Received AMR frame.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe. </dd></dl>
 
 </div>
 </div>

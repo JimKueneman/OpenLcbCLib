@@ -25,11 +25,15 @@
      * POSSIBILITY OF SUCH DAMAGE.
      *
      * @file protocol_config_mem_write_handler.h
-     * @brief Configuration memory write handler — two-phase dispatch for write
-     *        commands across all standard address spaces.
+     * @brief Configuration memory write handler.
+     *
+     * @details Two-phase dispatch for write commands across all standard
+     * address spaces.  Supports plain write, write-under-mask
+     * (read-modify-write), and firmware upgrade writes.  Optional per-space
+     * handler overrides and delayed reply support are provided.
      *
      * @author Jim Kueneman
-     * @date 28 Feb 2026
+     * @date 4 Mar 2026
      *
      * @see MemoryConfigurationS.pdf
      */

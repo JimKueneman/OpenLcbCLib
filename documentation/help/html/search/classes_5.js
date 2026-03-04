@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['message_5fbuffer_5ft_0',['message_buffer_t',['../structmessage__buffer__t.html',1,'']]]
+  ['listener_5falias_5fentry_5fstruct_0',['listener_alias_entry_struct',['../structlistener__alias__entry__struct.html',1,'']]]
 ];

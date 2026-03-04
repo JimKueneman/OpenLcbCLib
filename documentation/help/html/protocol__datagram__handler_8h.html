@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Datagram protocol handler — reliable 0–72 byte addressed transfers. Routes incoming datagrams to per-address-space callbacks for read, write, write-under-mask, and stream variants. NULL optional callbacks cause automatic rejection with SUBCOMMAND_UNKNOWN.  
+<p>Datagram protocol handler for reliable 0-72 byte addressed transfers.  
 <a href="#details">More...</a></p>
 
 <p><a href="protocol__datagram__handler_8h_source.html">Go to the source code of this file.</a></p>
@@ -146,7 +146,7 @@ Functions</h2></td></tr>
 <tr class="separator:a82d0fe791b04fb2636b023ec52ee7aad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Datagram protocol handler — reliable 0–72 byte addressed transfers. Routes incoming datagrams to per-address-space callbacks for read, write, write-under-mask, and stream variants. NULL optional callbacks cause automatic rejection with SUBCOMMAND_UNKNOWN. </p>
+<div class="textblock"><p>Datagram protocol handler for reliable 0-72 byte addressed transfers. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -154,8 +154,9 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>Routes incoming datagrams to per-address-space callbacks for read, write, write-under-mask, and stream variants. NULL optional callbacks cause automatic rejection with SUBCOMMAND_UNKNOWN. Handles Datagram Received OK, Datagram Rejected, and retry logic with timeout tracking.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Typedef Documentation</h2>
 <a id="a34207c47984e37a0c4ecc774fcc1ca32" name="a34207c47984e37a0c4ecc774fcc1ca32"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a34207c47984e37a0c4ecc774fcc1ca32">&#9670;&#160;</a></span>memory_handler_t</h2>
@@ -425,7 +426,7 @@ Functions</h2></td></tr>
 <p>Handles an incoming Datagram Rejected reply. Sets the resend flag for temporary errors; clears retry state for permanent errors.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Extract error code from payload word 0</li>
-<li>If ERROR_TEMPORARY bit set and a stored datagram exists: a. Extract retry count from upper 3 bits of timerticks b. Increment retry count c. If retries &lt; DATAGRAM_MAX_RETRIES, pack new retry count + fresh tick snapshot and set resend_datagram flag d. If retries &gt;= DATAGRAM_MAX_RETRIES, abandon (clear and free)</li>
+<li>If ERROR_TEMPORARY bit set and a stored datagram exists: a. Read retry count from timer.datagram.retry_count b. Increment retry count c. If retries &lt; DATAGRAM_MAX_RETRIES, store new retry count and fresh tick snapshot, set resend_datagram flag d. If retries &gt;= DATAGRAM_MAX_RETRIES, abandon (clear and free)</li>
 <li>If permanent error, clear resend flag and free stored buffer</li>
 <li>Set outgoing_msg_info.valid = false</li>
 </ol>
@@ -505,13 +506,8 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <p>Called from the main loop with the current global tick. Currently a placeholder — timeout scanning is done by <a class="el" href="protocol__datagram__handler_8c.html#a82d0fe791b04fb2636b023ec52ee7aad" title="Scans for timed-out or max-retried pending datagrams and frees them.">ProtocolDatagramHandler_check_timeouts()</a>.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter. </td></tr>
-  </table>
-  </dd>
-</dl>
-
+<pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.
+* </pre> 
 </div>
 </div>
 <a id="a82d0fe791b04fb2636b023ec52ee7aad" name="a82d0fe791b04fb2636b023ec52ee7aad"></a>
@@ -541,11 +537,13 @@ Functions</h2></td></tr>
 <p>Must be called from the main processing loop, not from an interrupt. Acquires the shared resource lock internally.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick, passed from the main loop. </td></tr>
+    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick, passed from the main loop.</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Must be called from the main processing loop, not from an interrupt. Acquires the shared resource lock internally.</p>
+<pre class="fragment">* @param current_tick  Current value of the global 100ms tick, passed from the main loop.
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

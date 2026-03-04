@@ -25,12 +25,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file protocol_snip.h
- * @brief Simple Node Information Protocol (SNIP) — returns manufacturer info
- *        (from node params) and user name/description (from config memory) in
- *        a single reply message.
+ * @brief Simple Node Information Protocol (SNIP) handler.
+ *
+ * @details Returns manufacturer info (from node params) and user
+ * name/description (from config memory) in a single reply message.  Provides
+ * individual field loaders for assembling the SNIP payload and a validation
+ * function for incoming SNIP replies.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #ifndef __OPENLCB_PROTOCOL_SNIP__

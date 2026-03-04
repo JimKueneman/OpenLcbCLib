@@ -31,7 +31,7 @@
  * and all send functions for the OpenLCB Broadcast Time Protocol.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "openlcb_application_broadcast_time.h"
@@ -625,13 +625,19 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
      * The threshold 240,000 equals 4 * 60 * 1000, which at rate=4 (1.0x) yields exactly
      * one fast-minute per real minute.  See the accumulator math comment above for details.
      *
+     * @verbatim
      * @param current_tick  Current value of the global 100ms tick counter.
+     * @endverbatim
      */
 void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
 
     uint8_t ticks_elapsed = (uint8_t)(current_tick - _last_bcast_tick);
 
-    if (ticks_elapsed == 0) { return; }
+    if (ticks_elapsed == 0) {
+
+        return;
+
+    }
 
     _last_bcast_tick = current_tick;
 

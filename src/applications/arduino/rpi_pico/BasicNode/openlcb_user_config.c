@@ -24,18 +24,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file node_parameters.c
+ * \file openlcb_user_config.c
  *
  * Definition of the node at the application level.
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 5 Nov 2025
  */
 
-#include "node_parameters.h"
-
-#include "./src/openlcb/openlcb_types.h"
-#include "./src/openlcb/openlcb_defines.h"
+#include "openlcb_user_config.h"
+#include "src/openlcb/openlcb_types.h"
+#include "src/openlcb/openlcb_defines.h"
 
 const node_parameters_t NodeParameters_main_node = {
 

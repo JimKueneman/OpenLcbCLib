@@ -31,7 +31,7 @@
  * per the OpenLCB CAN Frame Transfer Standard.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_login_message_handler.h"
@@ -46,6 +46,7 @@
 #include "can_utilities.h"
 
 
+/** @brief Saved pointer to the dependency-injected login message handler interface. */
 static interface_can_login_message_handler_t *_interface;
 
     /**

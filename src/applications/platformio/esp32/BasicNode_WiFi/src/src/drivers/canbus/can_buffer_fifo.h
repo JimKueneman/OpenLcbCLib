@@ -31,7 +31,7 @@
  * ordered processing. Uses one extra slot so head == tail always means empty.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #ifndef __DRIVERS_CANBUS_CAN_BUFFER_FIFO__

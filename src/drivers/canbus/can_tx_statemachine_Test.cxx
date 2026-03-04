@@ -527,6 +527,70 @@ TEST(CanTxStatemachine, send_openlcb_message)
 }
 
 /*******************************************************************************
+ * AMR Alias Invalidation Tests
+ ******************************************************************************/
+
+/**
+ * Test: state.invalid causes immediate discard (returns true)
+ * Verifies:
+ * - Message with state.invalid == true is discarded (returns true)
+ * - No handler is called (message never transmitted)
+ * - TX buffer availability is NOT checked (early exit before that)
+ */
+TEST(CanTxStatemachine, send_openlcb_message_invalid_discarded)
+{
+    _initialize();
+    _reset_variables();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_VERIFY_NODE_ID_ADDRESSED);
+    openlcb_msg->payload_count = 6;
+    openlcb_msg->state.invalid = true;
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+
+    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+    EXPECT_FALSE(_handle_can_frame_called);
+    EXPECT_FALSE(_is_can_tx_buffer_empty_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+}
+
+/**
+ * Test: state.invalid == false allows normal transmission
+ * Verifies:
+ * - Normal messages (invalid == false) transmit as before
+ */
+TEST(CanTxStatemachine, send_openlcb_message_not_invalid_transmits)
+{
+    _initialize();
+    _reset_variables();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_VERIFY_NODE_ID_ADDRESSED);
+    openlcb_msg->payload_count = 6;
+    openlcb_msg->state.invalid = false;
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+
+    EXPECT_TRUE(_handle_addressed_msg_frame_called);
+    EXPECT_TRUE(_is_can_tx_buffer_empty_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+}
+
+/*******************************************************************************
  * Test Summary
  ******************************************************************************/
 

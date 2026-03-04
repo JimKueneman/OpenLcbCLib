@@ -25,11 +25,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file protocol_config_mem_write_handler.c
- * @brief Configuration memory write handler — two-phase dispatch for write
- *        commands across all standard address spaces.
+ * @brief Configuration memory write handler implementation.
+ *
+ * @details Two-phase dispatch for write commands across all standard
+ * address spaces.  Supports plain write, write-under-mask (read-modify-write),
+ * and firmware upgrade writes.  Sends Datagram Received OK with reply-pending
+ * before performing the actual write operation.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  *
  * @see protocol_config_mem_write_handler.h
  * @see MemoryConfigurationS.pdf
@@ -71,10 +75,8 @@ void ProtocolConfigMemWriteHandler_initialize(const interface_protocol_config_me
     /**
      * @brief Parse address, byte count, encoding, and write_buffer from incoming write datagram.
      *
-     * @verbatim
      * @param statemachine_info             Context with incoming message.
      * @param config_mem_write_request_info  Output: populated request fields.
-     * @endverbatim
      */
 static void _extract_write_command_parameters(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
@@ -89,6 +91,7 @@ static void _extract_write_command_parameters(openlcb_statemachine_info_t *state
         config_mem_write_request_info->encoding = ADDRESS_SPACE_IN_BYTE_1;
         config_mem_write_request_info->bytes = statemachine_info->incoming_msg_info.msg_ptr->payload_count - 6;
         config_mem_write_request_info->data_start = 6;
+
     }
 
     config_mem_write_request_info->address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
@@ -106,34 +109,41 @@ static uint16_t _is_valid_write_parameters(config_mem_write_request_info_t *conf
     if (!config_mem_write_request_info->write_space_func) {
 
         return ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN;
+
     }
 
     if (!config_mem_write_request_info->space_info->present) {
 
         return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN;
+
     }
 
     if (config_mem_write_request_info->space_info->read_only) {
 
         return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_WRITE_TO_READ_ONLY;
+
     }
 
     if (config_mem_write_request_info->address > config_mem_write_request_info->space_info->highest_address) {
 
         return ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS;
+
     }
 
     if (config_mem_write_request_info->bytes > 64) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
+
     }
 
     if (config_mem_write_request_info->bytes == 0) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
+
     }
 
     return S_OK;
+
 }
 
     /** @brief Clamp byte count so the write does not exceed highest_address. */
@@ -146,6 +156,7 @@ static void _check_for_write_overrun(openlcb_statemachine_info_t *statemachine_i
         config_mem_write_request_info->bytes = (uint8_t) (config_mem_write_request_info->space_info->highest_address - config_mem_write_request_info->address) + 1; // length +1 due to 0...end
 
     }
+
 }
 
     /**
@@ -156,10 +167,8 @@ static void _check_for_write_overrun(openlcb_statemachine_info_t *statemachine_i
      * -# Phase 1: validate → reject or ACK + re-invoke
      * -# Phase 2: clamp overrun, call space-specific write, reset flags
      *
-     * @verbatim
      * @param statemachine_info             Context.
      * @param config_mem_write_request_info  Carries callback + space_info.
-     * @endverbatim
      */
 static void _dispatch_write_request(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
@@ -189,9 +198,11 @@ static void _dispatch_write_request(openlcb_statemachine_info_t *statemachine_in
 
             statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
             statemachine_info->incoming_msg_info.enumerate = true; // call this again for the data
+
         }
 
         return;
+
     }
 
     _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
@@ -211,6 +222,7 @@ void ProtocolConfigMemWriteHandler_write_space_config_description_info(openlcb_s
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_configuration_definition;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
 }
 
     /** @brief Dispatch All (0xFE) write to two-phase handler. */
@@ -222,6 +234,7 @@ void ProtocolConfigMemWriteHandler_write_space_all(openlcb_statemachine_info_t *
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_all;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
 }
 
     /** @brief Dispatch Config (0xFD) write to two-phase handler. */
@@ -233,6 +246,7 @@ void ProtocolConfigMemWriteHandler_write_space_config_memory(openlcb_statemachin
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_config_memory;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
 }
 
     /** @brief Dispatch ACDI-Mfg (0xFC) write to two-phase handler. */
@@ -244,6 +258,7 @@ void ProtocolConfigMemWriteHandler_write_space_acdi_manufacturer(openlcb_statema
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_acdi_manufacturer;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
 }
 
     /** @brief Dispatch ACDI-User (0xFB) write to two-phase handler. */
@@ -255,6 +270,7 @@ void ProtocolConfigMemWriteHandler_write_space_acdi_user(openlcb_statemachine_in
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_acdi_user;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
 }
 
     /** @brief Dispatch Train FDI (0xFA) write to two-phase handler. */
@@ -266,6 +282,7 @@ void ProtocolConfigMemWriteHandler_write_space_train_function_definition_info(op
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_definition_info;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
 }
 
     /** @brief Dispatch Train Fn Config (0xF9) write to two-phase handler. */
@@ -277,6 +294,7 @@ void ProtocolConfigMemWriteHandler_write_space_train_function_config_memory(open
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_config_memory;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
 }
 
     /** @brief Dispatch Firmware (0xEF) write to two-phase handler. */
@@ -288,6 +306,7 @@ void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_inf
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_firmware;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
 }
 
 // ============================================================================
@@ -303,10 +322,8 @@ void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_inf
      * half of that.  The write_buffer pointer is set to the data start;
      * the mask begins at write_buffer + bytes.
      *
-     * @verbatim
      * @param statemachine_info             Context with incoming message.
      * @param config_mem_write_request_info Output: populated request fields.
-     * @endverbatim
      */
 static void _extract_write_under_mask_command_parameters(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
@@ -343,26 +360,31 @@ static uint16_t _is_valid_write_under_mask_parameters(openlcb_statemachine_info_
     if (!config_mem_write_request_info->space_info->present) {
 
         return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN;
+
     }
 
     if (config_mem_write_request_info->space_info->read_only) {
 
         return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_WRITE_TO_READ_ONLY;
+
     }
 
     if (config_mem_write_request_info->address > config_mem_write_request_info->space_info->highest_address) {
 
         return ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS;
+
     }
 
     if (config_mem_write_request_info->bytes > 64) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
+
     }
 
     if (config_mem_write_request_info->bytes == 0) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
+
     }
 
     // Data+mask region must have even length
@@ -372,6 +394,7 @@ static uint16_t _is_valid_write_under_mask_parameters(openlcb_statemachine_info_
     if (total_data_mask % 2 != 0) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
+
     }
 
     return S_OK;
@@ -384,11 +407,9 @@ static uint16_t _is_valid_write_under_mask_parameters(openlcb_statemachine_info_
      * @details For each byte position i:
      *   new[i] = (old[i] & ~mask[i]) | (data[i] & mask[i])
      *
-     * @verbatim
      * @param statemachine_info             Context for reply messages.
      * @param config_mem_write_request_info Request with address, bytes, data pointer.
      * @param mask_bytes                    Pointer to mask bytes (same length as data).
-     * @endverbatim
      *
      * @return Number of bytes written, or 0 on failure.
      */
@@ -468,10 +489,8 @@ static uint16_t _write_data_under_mask(openlcb_statemachine_info_t *statemachine
      * -# Phase 1: validate → reject or ACK + re-invoke
      * -# Phase 2: clamp overrun, read current data, apply mask, write back
      *
-     * @verbatim
      * @param statemachine_info             Context.
      * @param config_mem_write_request_info Carries space_info pointer.
-     * @endverbatim
      */
 static void _dispatch_write_under_mask_request(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
@@ -708,12 +727,8 @@ void ProtocolConfigMemWriteHandler_write_reply_fail_message(openlcb_statemachine
     * callback, allowing flexible implementation of configuration storage (EEPROM,
     * flash, RAM, etc.). Partial writes are treated as errors.
     *
-    * @verbatim
-    * @param statemachine_info Pointer to state machine context for message generation
-    * @endverbatim
-    * @verbatim
-    * @param config_mem_write_request_info Pointer to request info with address, byte count, and data
-    * @endverbatim
+    * @param statemachine_info Pointer to @ref openlcb_statemachine_info_t context for message generation.
+    * @param config_mem_write_request_info Pointer to @ref config_mem_write_request_info_t with address, byte count, and data.
     *
     * @return Number of bytes actually written to configuration memory
     *
@@ -743,7 +758,6 @@ static uint16_t _write_data(openlcb_statemachine_info_t *statemachine_info, conf
         }
 
     } else {
-
 
         OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
@@ -857,9 +871,11 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
             OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
 
             break;
+
     }
 
     statemachine_info->outgoing_msg_info.valid = true;
+
 }
 
     /**

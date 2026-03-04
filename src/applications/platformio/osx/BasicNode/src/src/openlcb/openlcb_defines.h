@@ -1264,7 +1264,12 @@
  * @{
  */
 
-    // Train instruction bytes (byte 0 of payload)
+    // Train instruction byte bit fields
+
+    /** @brief Bit 7 of the instruction byte: P=1 for train-to-listener forwarded commands. */
+#define TRAIN_INSTRUCTION_P_BIT          0x80
+
+    // Train instruction bytes (byte 0 of payload, bits 6:0)
 
     /** @brief Set speed and direction: [0x00] [speed_hi] [speed_lo] (float16) */
 #define TRAIN_SET_SPEED_DIRECTION    0x00

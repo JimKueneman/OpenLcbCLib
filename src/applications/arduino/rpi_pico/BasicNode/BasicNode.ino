@@ -36,7 +36,7 @@
 #include "Arduino.h"
 
 #include "callbacks.h"
-#include "node_parameters.h"
+#include "openlcb_user_config.h"
 #include "rpi_pico_drivers.h"
 #include "rpi_pico_can_drivers.h"
 

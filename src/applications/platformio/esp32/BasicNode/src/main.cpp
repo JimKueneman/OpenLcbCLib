@@ -4,7 +4,7 @@
 #include "stdio.h"
 #include "unistd.h"
 
-#include "node_parameters.h"
+#include "openlcb_user_config.h"
 #include "callbacks.h"
 
 #include "application_drivers/esp32_can_drivers.h"

@@ -107,7 +107,7 @@ Functions</h2></td></tr>
 <tr class="memitem:acc5207f2b2fb16cc8ef8cbacac9f71ca" id="r_acc5207f2b2fb16cc8ef8cbacac9f71ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc5207f2b2fb16cc8ef8cbacac9f71ca">OpenLcb_initialize</a> (const <a class="el" href="structopenlcb__config__t.html">openlcb_config_t</a> *config)</td></tr>
 <tr class="memdesc:acc5207f2b2fb16cc8ef8cbacac9f71ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the entire OpenLCB stack from the user configuration.  <br /></td></tr>
 <tr class="separator:acc5207f2b2fb16cc8ef8cbacac9f71ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0609edaf85a85ed07c25a5220c11dd27" id="r_a0609edaf85a85ed07c25a5220c11dd27"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0609edaf85a85ed07c25a5220c11dd27">OpenLcb_create_node</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *parameters)</td></tr>
+<tr class="memitem:a0609edaf85a85ed07c25a5220c11dd27" id="r_a0609edaf85a85ed07c25a5220c11dd27"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0609edaf85a85ed07c25a5220c11dd27">OpenLcb_create_node</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, const <a class="el" href="openlcb__types_8h.html#abb637bafdfd991032d3af5faaf8cfafc">node_parameters_t</a> *parameters)</td></tr>
 <tr class="memdesc:a0609edaf85a85ed07c25a5220c11dd27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a node slot and assigns its ID and parameters.  <br /></td></tr>
 <tr class="separator:a0609edaf85a85ed07c25a5220c11dd27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa00d6e3349959d1f1380597cd2f6b311" id="r_aa00d6e3349959d1f1380597cd2f6b311"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa00d6e3349959d1f1380597cd2f6b311">OpenLcb_run</a> (void)</td></tr>
@@ -128,7 +128,7 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Reads from <a class="el" href="structopenlcb__config__t.html" title="User configuration for OpenLcbCLib.">openlcb_config_t</a> and compile-time feature guards (OPENLCB_COMPILE_*), builds internal interface structs, and calls all Module_initialize() functions in the correct order.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a135d3ff3afe3f9b5e996051ae85fe3b5" name="a135d3ff3afe3f9b5e996051ae85fe3b5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a135d3ff3afe3f9b5e996051ae85fe3b5">&#9670;&#160;</a></span>OpenLcb_get_global_100ms_tick()</h2>
@@ -192,7 +192,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *</td>          <td class="paramname"><span class="paramname"><em>parameters</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="openlcb__types_8h.html#abb637bafdfd991032d3af5faaf8cfafc">node_parameters_t</a> *</td>          <td class="paramname"><span class="paramname"><em>parameters</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">

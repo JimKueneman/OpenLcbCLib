@@ -13,6 +13,7 @@ SOURCES
     can_tx_statemachine.c 
     can_utilities.c
     alias_mappings.c
+    alias_mapping_listener.c
 )
 
 
@@ -30,6 +31,7 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/drivers/canbus/can_tx_statemachine_Test.cxx
     ${ROOT_DIR}/src/drivers/canbus/can_utilities_Test.cxx
     ${ROOT_DIR}/src/drivers/canbus/alias_mappings_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/alias_mapping_listener_Test.cxx
 
     PARENT_SCOPE
 )

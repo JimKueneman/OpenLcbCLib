@@ -31,7 +31,7 @@
  * and all send functions for the OpenLCB Broadcast Time Protocol.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "openlcb_application_broadcast_time.h"
@@ -633,7 +633,11 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
 
     uint8_t ticks_elapsed = (uint8_t)(current_tick - _last_bcast_tick);
 
-    if (ticks_elapsed == 0) { return; }
+    if (ticks_elapsed == 0) {
+
+        return;
+
+    }
 
     _last_bcast_tick = current_tick;
 

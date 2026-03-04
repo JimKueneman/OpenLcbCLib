@@ -32,7 +32,7 @@
  * Identified event when a match is found.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 4 Mar 2026
  */
 
 #include "protocol_train_search_handler.h"
@@ -112,16 +112,28 @@ static bool _does_address_match(uint16_t train_address, const uint8_t *digits, u
 
     }
 
-    if (search_digit_count == 0) { return false; }
+    if (search_digit_count == 0) {
+
+        return false;
+
+    }
 
     if (flags & TRAIN_SEARCH_FLAG_EXACT) {
 
         // Exact: search digits must exactly equal the address digits
-        if (search_digit_count != train_digit_count) { return false; }
+        if (search_digit_count != train_digit_count) {
+
+            return false;
+
+        }
 
         for (int i = 0; i < search_digit_count; i++) {
 
-            if (search_digits[i] != train_digits[i]) { return false; }
+            if (search_digits[i] != train_digits[i]) {
+
+                return false;
+
+            }
 
         }
 
@@ -130,11 +142,19 @@ static bool _does_address_match(uint16_t train_address, const uint8_t *digits, u
     } else {
 
         // Prefix: search digits must be a prefix of the address digits
-        if (search_digit_count > train_digit_count) { return false; }
+        if (search_digit_count > train_digit_count) {
+
+            return false;
+
+        }
 
         for (int i = 0; i < search_digit_count; i++) {
 
-            if (search_digits[i] != train_digits[i]) { return false; }
+            if (search_digits[i] != train_digits[i]) {
+
+                return false;
+
+            }
 
         }
 
@@ -147,7 +167,11 @@ static bool _does_address_match(uint16_t train_address, const uint8_t *digits, u
     /** @brief Return true if the search digits match any digit sequence in name per TrainSearchS §6.3. */
 static bool _does_name_match(const char *name, const uint8_t *digits, uint8_t flags) {
 
-    if (!name || name[0] == '\0') { return false; }
+    if (!name || name[0] == '\0') {
+
+        return false;
+
+    }
 
     // Extract search digit sequences separated by 0xF nibbles
     // Each contiguous sequence of digit nibbles must match a digit run in the name
@@ -181,8 +205,16 @@ static bool _does_name_match(const char *name, const uint8_t *digits, uint8_t fl
         for (int p = 0; p < name_len && !seq_matched; p++) {
 
             // Find positions where a digit run starts (no digit immediately before)
-            if (name[p] < '0' || name[p] > '9') { continue; }
-            if (p > 0 && name[p - 1] >= '0' && name[p - 1] <= '9') { continue; }
+            if (name[p] < '0' || name[p] > '9') {
+
+                continue;
+
+            }
+            if (p > 0 && name[p - 1] >= '0' && name[p - 1] <= '9') {
+
+                continue;
+
+            }
 
             // Match search digits against digit characters in name starting at p
             int si = 0;
@@ -198,7 +230,11 @@ static bool _does_name_match(const char *name, const uint8_t *digits, uint8_t fl
 
                 }
 
-                if ((name[np] - '0') != seq[si]) { break; }
+                if ((name[np] - '0') != seq[si]) {
+
+                    break;
+
+                }
 
                 si++;
                 np++;
@@ -233,7 +269,11 @@ static bool _does_name_match(const char *name, const uint8_t *digits, uint8_t fl
 
         }
 
-        if (!seq_matched) { return false; }
+        if (!seq_matched) {
+
+            return false;
+
+        }
 
     }
 
@@ -253,7 +293,11 @@ static bool _does_train_match(
 
         if (flags & TRAIN_SEARCH_FLAG_LONG_ADDR) {
 
-            if (!train_state->is_long_address) { return false; }
+            if (!train_state->is_long_address) {
+
+                return false;
+
+            }
 
         } else {
 
@@ -276,14 +320,22 @@ static bool _does_train_match(
     }
 
     // Address match
-    if (_does_address_match(train_state->dcc_address, digits, flags)) { return true; }
+    if (_does_address_match(train_state->dcc_address, digits, flags)) {
+
+        return true;
+
+    }
 
     // Name match (only when Address Only flag is clear)
     if (!(flags & TRAIN_SEARCH_FLAG_ADDRESS_ONLY) && train_state->owner_node) {
 
         const node_parameters_t *params = train_state->owner_node->parameters;
 
-        if (params && _does_name_match(params->snip.name, digits, flags)) { return true; }
+        if (params && _does_name_match(params->snip.name, digits, flags)) {
+
+            return true;
+
+        }
 
     }
 
@@ -307,17 +359,17 @@ void ProtocolTrainSearch_handle_search_event(
         openlcb_statemachine_info_t *statemachine_info,
         event_id_t event_id) {
 
-    if (!statemachine_info || !statemachine_info->openlcb_node) { 
-        
-        return; 
-    
+    if (!statemachine_info || !statemachine_info->openlcb_node) {
+
+        return;
+
     }
 
     train_state_t *train_state = statemachine_info->openlcb_node->train_state;
-    if (!train_state) { 
-        
-        return; 
-    
+    if (!train_state) {
+
+        return;
+
     }
 
     // Decode the search query
@@ -327,7 +379,11 @@ void ProtocolTrainSearch_handle_search_event(
     uint8_t flags = OpenLcbUtilities_extract_train_search_flags(event_id);
 
     // Check if this train matches
-    if (!_does_train_match(train_state, digits, search_address, flags)) { return; }
+    if (!_does_train_match(train_state, digits, search_address, flags)) {
+
+        return;
+
+    }
 
     // Build reply: Producer Identified Set with this train's search event ID
     uint8_t reply_flags = 0;
@@ -383,13 +439,25 @@ void ProtocolTrainSearch_handle_search_no_match(
         openlcb_statemachine_info_t *statemachine_info,
         event_id_t event_id) {
 
-    if (!statemachine_info) { return; }
+    if (!statemachine_info) {
+
+        return;
+
+    }
 
     uint8_t flags = OpenLcbUtilities_extract_train_search_flags(event_id);
 
-    if (!(flags & TRAIN_SEARCH_FLAG_ALLOCATE)) { return; }
+    if (!(flags & TRAIN_SEARCH_FLAG_ALLOCATE)) {
 
-    if (!_interface || !_interface->on_search_no_match) { return; }
+        return;
+
+    }
+
+    if (!_interface || !_interface->on_search_no_match) {
+
+        return;
+
+    }
 
     uint8_t digits[6];
     OpenLcbUtilities_extract_train_search_digits(event_id, digits);
