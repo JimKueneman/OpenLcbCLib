@@ -290,11 +290,54 @@ const interface_can_tx_statemachine_t interface_can_tx_statemachine = {
     .handle_unaddressed_msg_frame = &_handle_unaddressed_msg_frame
 };
 
+/*******************************************************************************
+ * Listener Alias Resolution Mock
+ ******************************************************************************/
+
+// Track listener mock calls
+bool _listener_find_by_node_id_called = false;
+node_id_t _listener_find_by_node_id_last_arg = 0;
+
+// Control listener mock return value
+listener_alias_entry_t *_listener_find_return_value = NULL;
+
+// Static entry for the mock to return when non-NULL
+listener_alias_entry_t _listener_mock_entry;
+
+/**
+ * Mock: Resolve a listener Node ID to its CAN alias entry
+ * Returns _listener_find_return_value (NULL, or pointer to _listener_mock_entry)
+ */
+listener_alias_entry_t *_mock_listener_find_by_node_id(node_id_t node_id)
+{
+
+    _listener_find_by_node_id_called = true;
+    _listener_find_by_node_id_last_arg = node_id;
+
+    return _listener_find_return_value;
+
+}
+
+/*******************************************************************************
+ * Interface With Listener Support
+ ******************************************************************************/
+
+const interface_can_tx_statemachine_t interface_can_tx_statemachine_with_listener = {
+    .is_tx_buffer_empty = &_is_can_tx_buffer_empty,
+    .handle_addressed_msg_frame = &_handle_addressed_msg_frame,
+    .handle_can_frame = &_handle_can_frame,
+    .handle_datagram_frame = &_handle_datagram_frame,
+    .handle_stream_frame = &_handle_stream_frame,
+    .handle_unaddressed_msg_frame = &_handle_unaddressed_msg_frame,
+    .listener_find_by_node_id = &_mock_listener_find_by_node_id
+};
+
 /**
  * Reset all mock tracking variables
  */
 void _reset_variables(void)
 {
+
     _handle_addressed_msg_frame_called = false;
     _handle_unaddressed_msg_frame_called = false;
     _handle_datagram_frame_called = false;
@@ -307,15 +350,35 @@ void _reset_variables(void)
     _fail_handle_datagram_frame = false;
     _fail_handle_unaddressed_frame = false;
     _fail_handle_can_frame = false;
+
+    _listener_find_by_node_id_called = false;
+    _listener_find_by_node_id_last_arg = 0;
+    _listener_find_return_value = NULL;
+    _listener_mock_entry.node_id = 0;
+    _listener_mock_entry.alias = 0;
+
 }
 
 /**
- * Initialize all subsystems
+ * Initialize all subsystems (no listener support)
  */
 void _initialize(void)
 {
+
     OpenLcbBufferStore_initialize();
     CanTxStatemachine_initialize(&interface_can_tx_statemachine);
+
+}
+
+/**
+ * Initialize all subsystems with listener alias resolution support
+ */
+void _initialize_with_listener(void)
+{
+
+    OpenLcbBufferStore_initialize();
+    CanTxStatemachine_initialize(&interface_can_tx_statemachine_with_listener);
+
 }
 
 /*******************************************************************************
@@ -591,464 +654,462 @@ TEST(CanTxStatemachine, send_openlcb_message_not_invalid_transmits)
 }
 
 /*******************************************************************************
- * Test Summary
+ * Additional Coverage Tests
  ******************************************************************************/
 
-/*
- * Coverage Summary:
- * 
- * API Functions:
- *   - CanTxStatemachine_initialize()        : 100%
- *   - CanTxStatemachine_send_can_message()  : 100%
- *   - CanTxStatemachine_send_openlcb_message() : ~95%
- * 
- * Message Routing:
- *   - Addressed messages    : Tested
- *   - Unaddressed messages  : Tested
- *   - Datagrams (single)    : Tested
- *   - Datagrams (multi)     : Tested
- *   - Streams               : Tested (MTI_STREAM_PROCEED only)
- * 
- * Error Conditions:
- *   - Buffer full           : Tested
- *   - Transmission failure  : Tested (stream only)
- * 
- * Total Active Tests: 3
- * Estimated Coverage: ~95%
- * 
- * Missing Coverage (~5%):
- *   - Other stream MTI variants (INIT_REQUEST, INIT_REPLY, COMPLETE)
- *   - Empty payload messages
- *   - Addressed/Datagram/Unaddressed transmission failures
- *   - Multi-frame addressed non-datagram messages
- *   - Maximum payload boundary conditions
- */
-
-/*******************************************************************************
- * Additional Coverage Tests (Currently Commented Out)
- ******************************************************************************/
-
-// Uncomment and validate these tests one at a time to reach ~98% coverage
-
-/*
- * PRIORITY 1 TESTS - Must Have (+5% coverage)
- * ============================================
- */
-
-/*
+/**
  * Test: Stream MTI variants
  * Verifies all stream-related MTIs route to stream handler
- * 
+ *
  * Stream MTIs tested:
- * - MTI_STREAM_INIT_REQUEST (0x0CC8) - Request stream initialization
- * - MTI_STREAM_INIT_REPLY (0x0868) - Reply to stream init
- * - MTI_STREAM_PROCEED (0x0888) - Tell sender to proceed (already tested in main suite)
- * - MTI_STREAM_COMPLETE (0x08A8) - Stream complete notification
- * 
- * Coverage gain: +2%
+ * - MTI_STREAM_INIT_REQUEST - Request stream initialization
+ * - MTI_STREAM_INIT_REPLY - Reply to stream init
+ * - MTI_STREAM_COMPLETE - Stream complete notification
  */
-/*
 TEST(CanTxStatemachine, stream_mti_variants)
 {
-    _initialize();
-    
-    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(STREAM);
-    EXPECT_NE(openlcb_msg, nullptr);
-    
-    if (openlcb_msg)
-    {
-        // Test MTI_STREAM_INIT_REQUEST
-        _reset_variables();
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
-                                               0xBBB, 0x060504030201,
-                                               MTI_STREAM_INIT_REQUEST);
-        openlcb_msg->payload_count = 8;
-        
-        EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-        EXPECT_TRUE(_handle_stream_frame_called);
-        EXPECT_FALSE(_handle_addressed_msg_frame_called);
-        EXPECT_FALSE(_handle_datagram_frame_called);
-        
-        // Test MTI_STREAM_INIT_REPLY
-        _reset_variables();
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
-                                               0xBBB, 0x060504030201,
-                                               MTI_STREAM_INIT_REPLY);
-        openlcb_msg->payload_count = 8;
-        
-        EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-        EXPECT_TRUE(_handle_stream_frame_called);
-        EXPECT_FALSE(_handle_addressed_msg_frame_called);
-        EXPECT_FALSE(_handle_datagram_frame_called);
-        
-        // Test MTI_STREAM_COMPLETE
-        _reset_variables();
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
-                                               0xBBB, 0x060504030201,
-                                               MTI_STREAM_COMPLETE);
-        openlcb_msg->payload_count = 8;
-        
-        EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-        EXPECT_TRUE(_handle_stream_frame_called);
-        EXPECT_FALSE(_handle_addressed_msg_frame_called);
-        EXPECT_FALSE(_handle_datagram_frame_called);
-        
-        OpenLcbBufferStore_free_buffer(openlcb_msg);
-    }
-}
-*/
 
-/*
+    _initialize();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(STREAM);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    // Test MTI_STREAM_INIT_REQUEST
+    _reset_variables();
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_STREAM_INIT_REQUEST);
+    openlcb_msg->payload_count = 8;
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+    EXPECT_TRUE(_handle_stream_frame_called);
+    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+
+    // Test MTI_STREAM_INIT_REPLY
+    _reset_variables();
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_STREAM_INIT_REPLY);
+    openlcb_msg->payload_count = 8;
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+    EXPECT_TRUE(_handle_stream_frame_called);
+    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+
+    // Test MTI_STREAM_COMPLETE
+    _reset_variables();
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_STREAM_COMPLETE);
+    openlcb_msg->payload_count = 8;
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+    EXPECT_TRUE(_handle_stream_frame_called);
+    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+}
+
+/**
  * Test: Empty payload messages
  * Verifies messages with no payload are transmitted correctly
- * 
- * Examples of zero-payload messages:
- * - Initialization Complete
- * - Verify Node ID Global (no Node ID specified)
- * - Some event reports
- * 
- * Tests special case: if (openlcb_msg->payload_count == 0)
- * 
- * Coverage gain: +1%
+ *
+ * Tests the special case: if (openlcb_msg->payload_count == 0)
+ * which sends a single zero-payload frame and returns immediately.
  */
-/*
 TEST(CanTxStatemachine, empty_payload_messages)
 {
-    _initialize();
-    
-    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    EXPECT_NE(openlcb_msg, nullptr);
-    
-    if (openlcb_msg)
-    {
-        // Test global message with empty payload
-        _reset_variables();
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
-                                               0x000, 0x000000000000,
-                                               MTI_INITIALIZATION_COMPLETE);
-        openlcb_msg->payload_count = 0;  // No payload
-        
-        EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-        EXPECT_TRUE(_handle_unaddressed_msg_frame_called);
-        EXPECT_FALSE(_handle_addressed_msg_frame_called);
-        EXPECT_FALSE(_handle_datagram_frame_called);
-        EXPECT_FALSE(_handle_stream_frame_called);
-        
-        // Test addressed message with empty payload
-        _reset_variables();
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
-                                               0xBBB, 0x060504030201,
-                                               MTI_VERIFY_NODE_ID_ADDRESSED);
-        openlcb_msg->payload_count = 0;  // No payload (query without Node ID)
-        
-        EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-        EXPECT_TRUE(_handle_addressed_msg_frame_called);
-        EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
-        EXPECT_FALSE(_handle_datagram_frame_called);
-        EXPECT_FALSE(_handle_stream_frame_called);
-        
-        OpenLcbBufferStore_free_buffer(openlcb_msg);
-    }
-}
-*/
 
-/*
+    _initialize();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    // Test global message with empty payload
+    _reset_variables();
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0x000, 0x000000000000,
+                                           MTI_INITIALIZATION_COMPLETE);
+    openlcb_msg->payload_count = 0;
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+    EXPECT_TRUE(_handle_unaddressed_msg_frame_called);
+    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+
+    // Test addressed message with empty payload
+    _reset_variables();
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_VERIFY_NODE_ID_ADDRESSED);
+    openlcb_msg->payload_count = 0;
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+    EXPECT_TRUE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+}
+
+/**
  * Test: Addressed message transmission failure
  * Verifies failure is detected and propagated when first frame fails
- * 
- * Simulates CAN hardware unable to send addressed message frame
- * Tests error propagation from handler back to caller
- * 
- * Coverage gain: +1%
  */
-/*
 TEST(CanTxStatemachine, addressed_message_transmission_failure)
 {
-    _initialize();
-    
-    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    EXPECT_NE(openlcb_msg, nullptr);
-    
-    if (openlcb_msg)
-    {
-        _reset_variables();
-        _fail_handle_addressed_frame = true;  // Force failure
-        
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
-                                               0xBBB, 0x060504030201,
-                                               MTI_VERIFY_NODE_ID_ADDRESSED);
-        openlcb_msg->payload_count = 6;
-        OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
-        
-        EXPECT_FALSE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-        EXPECT_TRUE(_handle_addressed_msg_frame_called);
-        EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
-        EXPECT_FALSE(_handle_datagram_frame_called);
-        EXPECT_FALSE(_handle_stream_frame_called);
-        
-        OpenLcbBufferStore_free_buffer(openlcb_msg);
-    }
-}
-*/
 
-/*
+    _initialize();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    _reset_variables();
+    _fail_handle_addressed_frame = true;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_VERIFY_NODE_ID_ADDRESSED);
+    openlcb_msg->payload_count = 6;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
+
+    EXPECT_FALSE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+    EXPECT_TRUE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+}
+
+/**
  * Test: Multi-frame addressed message
  * Verifies large addressed messages are segmented correctly
- * 
- * Tests multi-frame loop for regular (non-datagram) messages
- * Example: Protocol Support Reply can be multi-frame
- * 
- * Coverage gain: +1%
+ *
+ * Uses a DATAGRAM buffer to have enough room for 20 bytes of payload
+ * with an addressed (non-datagram) MTI to exercise the multi-frame loop.
  */
-/*
 TEST(CanTxStatemachine, multiframe_addressed_message)
 {
+
     _initialize();
-    
-    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    EXPECT_NE(openlcb_msg, nullptr);
-    
-    if (openlcb_msg)
+
+    // Use DATAGRAM buffer so we have room for 20 bytes (BASIC is only 16)
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    _reset_variables();
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_PROTOCOL_SUPPORT_REPLY);
+    openlcb_msg->payload_count = 20;
+
+    for (int i = 0; i < 20; i++)
     {
-        _reset_variables();
-        
-        // Protocol Support Reply with large payload
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
-                                               0xBBB, 0x060504030201,
-                                               MTI_PROTOCOL_SUPPORT_REPLY);
-        openlcb_msg->payload_count = 20;  // Requires multiple frames
-        
-        // Fill payload with test data
-        for (int i = 0; i < 20; i++)
-        {
-            *openlcb_msg->payload[i] = i;
-        }
-        
-        EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-        EXPECT_TRUE(_handle_addressed_msg_frame_called);
-        EXPECT_FALSE(_handle_datagram_frame_called);
-        EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
-        EXPECT_FALSE(_handle_stream_frame_called);
-        
-        OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+        *openlcb_msg->payload[i] = i;
+
     }
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+    EXPECT_TRUE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
 }
-*/
 
-/*
- * PRIORITY 2 TESTS - Should Have (+2% coverage)
- * ==============================================
- */
-
-/*
+/**
  * Test: Datagram transmission failure
  * Verifies failure is detected when datagram cannot be sent
- * 
- * Simulates CAN hardware unable to send datagram frame
- * Tests error handling in datagram path
- * 
- * Coverage gain: +1%
  */
-/*
 TEST(CanTxStatemachine, datagram_transmission_failure)
 {
-    _initialize();
-    
-    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    EXPECT_NE(openlcb_msg, nullptr);
-    
-    if (openlcb_msg)
-    {
-        _reset_variables();
-        _fail_handle_datagram_frame = true;  // Force failure
-        
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
-                                               0xBBB, 0x060504030201,
-                                               MTI_DATAGRAM);
-        openlcb_msg->payload_count = 10;
-        
-        EXPECT_FALSE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-        EXPECT_TRUE(_handle_datagram_frame_called);
-        EXPECT_FALSE(_handle_addressed_msg_frame_called);
-        EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
-        EXPECT_FALSE(_handle_stream_frame_called);
-        
-        OpenLcbBufferStore_free_buffer(openlcb_msg);
-    }
-}
-*/
 
-/*
+    _initialize();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    _reset_variables();
+    _fail_handle_datagram_frame = true;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_DATAGRAM);
+    openlcb_msg->payload_count = 10;
+
+    EXPECT_FALSE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+    EXPECT_TRUE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+}
+
+/**
  * Test: Unaddressed message transmission failure
  * Verifies failure detection for global messages
- * 
- * Simulates CAN hardware unable to send global message frame
- * Tests error handling in unaddressed path
- * 
- * Coverage gain: +1%
  */
-/*
 TEST(CanTxStatemachine, unaddressed_message_transmission_failure)
 {
+
     _initialize();
-    
+
     openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    EXPECT_NE(openlcb_msg, nullptr);
-    
-    if (openlcb_msg)
-    {
-        _reset_variables();
-        _fail_handle_unaddressed_frame = true;  // Force failure
-        
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
-                                               0x000, 0x000000000000,
-                                               MTI_VERIFY_NODE_ID_GLOBAL);
-        openlcb_msg->payload_count = 6;
-        OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
-        
-        EXPECT_FALSE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-        EXPECT_TRUE(_handle_unaddressed_msg_frame_called);
-        EXPECT_FALSE(_handle_addressed_msg_frame_called);
-        EXPECT_FALSE(_handle_datagram_frame_called);
-        EXPECT_FALSE(_handle_stream_frame_called);
-        
-        OpenLcbBufferStore_free_buffer(openlcb_msg);
-    }
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    _reset_variables();
+    _fail_handle_unaddressed_frame = true;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0x000, 0x000000000000,
+                                           MTI_VERIFY_NODE_ID_GLOBAL);
+    openlcb_msg->payload_count = 6;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
+
+    EXPECT_FALSE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+    EXPECT_TRUE(_handle_unaddressed_msg_frame_called);
+    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
 }
-*/
 
-/*
- * PRIORITY 3 TESTS - Nice to Have (+1% coverage)
- * ===============================================
- */
-
-/*
+/**
  * Test: CAN frame transmission failure
  * Verifies failure is detected when CAN hardware cannot send
- * 
- * Tests error propagation from CAN layer for control frames
- * Examples: CID, RID, AMD frames during alias allocation
- * 
- * Coverage gain: +0.5%
  */
-/*
 TEST(CanTxStatemachine, can_frame_transmission_failure)
 {
+
     _reset_variables();
     _initialize();
-    
-    _fail_handle_can_frame = true;  // Force failure
-    
+
+    _fail_handle_can_frame = true;
+
     can_msg_t can_msg;
     CanUtilities_load_can_message(&can_msg, 0x170506BE, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    
+
     EXPECT_FALSE(CanTxStatemachine_send_can_message(&can_msg));
     EXPECT_TRUE(_handle_can_frame_called);
-}
-*/
 
-/*
+}
+
+/**
  * Test: Maximum payload sizes
  * Verifies handling of maximum-size payloads without buffer overruns
- * 
- * Tests boundary conditions:
- * - Maximum datagram (72 bytes = 10 CAN frames)
- * - Maximum stream data
- * - Maximum regular message
- * 
- * Coverage gain: +0.5%
  */
-/*
 TEST(CanTxStatemachine, maximum_payload_sizes)
 {
+
     _initialize();
-    
+
     // Test maximum datagram (72 bytes)
     openlcb_msg_t *datagram_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    EXPECT_NE(datagram_msg, nullptr);
-    
-    if (datagram_msg)
+    ASSERT_NE(datagram_msg, nullptr);
+
+    _reset_variables();
+
+    OpenLcbUtilities_load_openlcb_message(datagram_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_DATAGRAM);
+    datagram_msg->payload_count = 72;
+
+    for (int i = 0; i < 72; i++)
     {
-        _reset_variables();
-        
-        OpenLcbUtilities_load_openlcb_message(datagram_msg, 0xAAA, 0x010203040506,
-                                               0xBBB, 0x060504030201,
-                                               MTI_DATAGRAM);
-        datagram_msg->payload_count = 72;  // Maximum datagram size
-        
-        // Fill with test data
-        for (int i = 0; i < 72; i++)
-        {
-            *datagram_msg->payload[i] = i & 0xFF;
-        }
-        
-        EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(datagram_msg));
-        EXPECT_TRUE(_handle_datagram_frame_called);
-        EXPECT_FALSE(_handle_addressed_msg_frame_called);
-        
-        OpenLcbBufferStore_free_buffer(datagram_msg);
+
+        *datagram_msg->payload[i] = i & 0xFF;
+
     }
-    
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(datagram_msg));
+    EXPECT_TRUE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+
+    OpenLcbBufferStore_free_buffer(datagram_msg);
+
     // Test maximum stream data
     openlcb_msg_t *stream_msg = OpenLcbBufferStore_allocate_buffer(STREAM);
-    EXPECT_NE(stream_msg, nullptr);
-    
-    if (stream_msg)
+    ASSERT_NE(stream_msg, nullptr);
+
+    _reset_variables();
+
+    OpenLcbUtilities_load_openlcb_message(stream_msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_STREAM_PROCEED);
+    stream_msg->payload_count = LEN_MESSAGE_BYTES_STREAM;
+
+    for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
     {
-        _reset_variables();
-        
-        OpenLcbUtilities_load_openlcb_message(stream_msg, 0xAAA, 0x010203040506,
-                                               0xBBB, 0x060504030201,
-                                               MTI_STREAM_PROCEED);
-        stream_msg->payload_count = LEN_MESSAGE_BYTES_STREAM;  // Maximum stream size
-        
-        // Fill with test data
-        for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
-        {
-            *stream_msg->payload[i] = i & 0xFF;
-        }
-        
-        EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(stream_msg));
-        EXPECT_TRUE(_handle_stream_frame_called);
-        EXPECT_FALSE(_handle_datagram_frame_called);
-        
-        OpenLcbBufferStore_free_buffer(stream_msg);
+
+        *stream_msg->payload[i] = i & 0xFF;
+
     }
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(stream_msg));
+    EXPECT_TRUE(_handle_stream_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+
+    OpenLcbBufferStore_free_buffer(stream_msg);
+
 }
-*/
 
 /*******************************************************************************
- * COVERAGE SUMMARY WITH ADDITIONAL TESTS
+ * Listener Alias Resolution Tests
  ******************************************************************************/
 
-/*
- * If all additional tests are enabled:
- * 
- * Total Tests: 11 (3 active + 8 additional)
- * Estimated Coverage: ~98%
- * 
- * Breakdown:
- * - Module initialization: 100%
- * - CAN frame transmission: 100%
- * - OpenLCB message routing: 98%
- *   * All MTI variants tested
- *   * All handler paths tested
- *   * All error conditions tested
- *   * Boundary conditions tested
- * 
- * To enable tests:
- * 1. Uncomment one test at a time
- * 2. Compile and run
- * 3. Verify test passes
- * 4. Move to next test
- * 
- * Recommended order:
- * 1. stream_mti_variants
- * 2. empty_payload_messages
- * 3. multiframe_addressed_message
- * 4. addressed_message_transmission_failure
- * 5. datagram_transmission_failure
- * 6. unaddressed_message_transmission_failure
- * 7. can_frame_transmission_failure
- * 8. maximum_payload_sizes
+/**
+ * Test: Listener resolves alias successfully
+ * Verifies:
+ * - dest_alias=0, dest_id=valid triggers listener lookup
+ * - When listener returns entry with valid alias, dest_alias is updated
+ * - Message is then transmitted normally through the addressed handler
  */
+TEST(CanTxStatemachine, listener_resolves_alias)
+{
+
+    _initialize_with_listener();
+    _reset_variables();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    // dest_alias=0, dest_id=valid triggers the listener resolution path
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0x000, 0x060504030201,
+                                           MTI_VERIFY_NODE_ID_ADDRESSED);
+    openlcb_msg->payload_count = 6;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
+
+    // Configure mock to return an entry with alias 0x123
+    _listener_mock_entry.node_id = 0x060504030201;
+    _listener_mock_entry.alias = 0x123;
+    _listener_find_return_value = &_listener_mock_entry;
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+
+    // Verify the listener was called with the correct node ID
+    EXPECT_TRUE(_listener_find_by_node_id_called);
+    EXPECT_EQ(_listener_find_by_node_id_last_arg, (node_id_t) 0x060504030201);
+
+    // Verify dest_alias was updated from the listener entry
+    EXPECT_EQ(openlcb_msg->dest_alias, 0x123);
+
+    // Verify the message was transmitted through the addressed handler
+    EXPECT_TRUE(_handle_addressed_msg_frame_called);
+    EXPECT_TRUE(_is_can_tx_buffer_empty_called);
+    EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+}
+
+/**
+ * Test: Listener returns NULL entry (node ID not found)
+ * Verifies:
+ * - dest_alias=0, dest_id=valid triggers listener lookup
+ * - When listener returns NULL, message is dropped (returns true)
+ * - No handler is called (message never transmitted)
+ */
+TEST(CanTxStatemachine, listener_returns_null_drops_message)
+{
+
+    _initialize_with_listener();
+    _reset_variables();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    // dest_alias=0, dest_id=valid triggers the listener resolution path
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0x000, 0x060504030201,
+                                           MTI_VERIFY_NODE_ID_ADDRESSED);
+    openlcb_msg->payload_count = 6;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
+
+    // Configure mock to return NULL (node not found in listener table)
+    _listener_find_return_value = NULL;
+
+    // Returns true (drop message, don't retry) per the source code comment
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+
+    // Verify the listener was called
+    EXPECT_TRUE(_listener_find_by_node_id_called);
+    EXPECT_EQ(_listener_find_by_node_id_last_arg, (node_id_t) 0x060504030201);
+
+    // Verify no handler was called (message dropped before transmission)
+    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+    EXPECT_FALSE(_handle_can_frame_called);
+    EXPECT_FALSE(_is_can_tx_buffer_empty_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+}
+
+/**
+ * Test: Listener returns entry with alias=0 (not yet resolved)
+ * Verifies:
+ * - dest_alias=0, dest_id=valid triggers listener lookup
+ * - When listener returns entry but alias=0, message is dropped (returns true)
+ * - No handler is called (message never transmitted)
+ */
+TEST(CanTxStatemachine, listener_entry_alias_zero_drops_message)
+{
+
+    _initialize_with_listener();
+    _reset_variables();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    // dest_alias=0, dest_id=valid triggers the listener resolution path
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0x000, 0x060504030201,
+                                           MTI_VERIFY_NODE_ID_ADDRESSED);
+    openlcb_msg->payload_count = 6;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
+
+    // Configure mock to return an entry where alias has not been resolved yet
+    _listener_mock_entry.node_id = 0x060504030201;
+    _listener_mock_entry.alias = 0;
+    _listener_find_return_value = &_listener_mock_entry;
+
+    // Returns true (drop message, don't retry) per the source code comment
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+
+    // Verify the listener was called
+    EXPECT_TRUE(_listener_find_by_node_id_called);
+    EXPECT_EQ(_listener_find_by_node_id_last_arg, (node_id_t) 0x060504030201);
+
+    // Verify no handler was called (message dropped before transmission)
+    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
+    EXPECT_FALSE(_handle_datagram_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+    EXPECT_FALSE(_handle_can_frame_called);
+    EXPECT_FALSE(_is_can_tx_buffer_empty_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+}

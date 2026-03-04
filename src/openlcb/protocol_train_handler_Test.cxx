@@ -4038,3 +4038,2108 @@ TEST(ProtocolTrainHandler, forwarding_all_listeners_source_skipped)
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
 
 }
+
+
+// ============================================================================
+// Section 15: Missing Branch Coverage Tests
+// ============================================================================
+
+// ---------------------------------------------------------------------------
+// _attach_listener: NULL state (line 73 TRUE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, listener_attach_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_LISTENER_NODE_ID, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Reply with result=0xFF (state is NULL, attach fails)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0xFF);
+
+    // on_listener_changed NOT fired on failure
+    EXPECT_NE(notifier_called, 6);
+
+}
+
+// ---------------------------------------------------------------------------
+// _attach_listener: zero node_id (line 73 — node_id == 0 path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, listener_attach_zero_node_id)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach with node_id = 0
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, (uint64_t) 0, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Attach should fail with result 0xFF
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0xFF);
+
+    // No listener added
+    EXPECT_EQ(state->listener_count, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _attach_listener: update existing listener flags (line 82 TRUE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, listener_attach_update_existing_flags)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener first time
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_NODE_ID, 0x00);
+
+    EXPECT_EQ(state->listener_count, 1);
+    EXPECT_EQ(state->listeners[0].flags, 0x00);
+
+    // Attach same listener with different flags — should update, not add
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_NODE_ID, TRAIN_LISTENER_FLAG_REVERSE);
+
+    EXPECT_EQ(state->listener_count, 1);
+    EXPECT_EQ(state->listeners[0].flags, TRAIN_LISTENER_FLAG_REVERSE);
+
+}
+
+// ---------------------------------------------------------------------------
+// _attach_listener: capacity full (line 92 TRUE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, listener_attach_capacity_full)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Fill all listener slots (USER_DEFINED_MAX_LISTENERS_PER_TRAIN = 6)
+    for (uint8_t i = 0; i < USER_DEFINED_MAX_LISTENERS_PER_TRAIN; i++) {
+
+        _attach_test_listener(&sm, incoming, 0x010000000001ULL + i, 0x00);
+
+    }
+
+    EXPECT_EQ(state->listener_count, USER_DEFINED_MAX_LISTENERS_PER_TRAIN);
+
+    // Try attaching one more — should fail
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, 0xFFFFFFFFFFFFULL, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Reply with result=0xFF (full)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0xFF);
+
+    // Count did not increase
+    EXPECT_EQ(state->listener_count, USER_DEFINED_MAX_LISTENERS_PER_TRAIN);
+
+}
+
+// ---------------------------------------------------------------------------
+// _detach_listener: NULL state (line 109 TRUE path — !state)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, listener_detach_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_DETACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_LISTENER_NODE_ID, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Reply with result=0xFF
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0xFF);
+
+}
+
+// ---------------------------------------------------------------------------
+// _detach_listener: zero node_id (line 109 — node_id == 0 path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, listener_detach_zero_node_id)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_DETACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, (uint64_t) 0, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Reply with result=0xFF (detach of zero node_id fails)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0xFF);
+
+}
+
+// ---------------------------------------------------------------------------
+// _forward_to_next_listener: NULL train_state (line 439 TRUE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, forward_to_next_listener_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *saved_state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach a listener so forwarding begins
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, 0);
+
+    // Send SET_SPEED command to start forwarding
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // First forward succeeds — enumerate should be true
+    EXPECT_TRUE(sm.incoming_msg_info.enumerate);
+
+    // Now NULL the train_state before re-dispatch
+    node->train_state = NULL;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Should abort gracefully
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+    // Restore for cleanup
+    node->train_state = saved_state;
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_set_speed: NULL on_speed_changed (line 514 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, set_speed_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x4200, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // State updated even though callback is NULL
+    EXPECT_EQ(state->set_speed, 0x4200);
+    // Notifier NOT fired
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_set_function: fn_address >= USER_DEFINED_MAX_TRAIN_FUNCTIONS
+//   (line 531 FALSE path — state && fn_address < max is FALSE)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, set_function_out_of_bounds_state_not_stored)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Set Function F29 (== USER_DEFINED_MAX_TRAIN_FUNCTIONS, out of bounds)
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 29, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0xABCD, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Notifier fires with address and value
+    EXPECT_EQ(notifier_called, 2);
+    EXPECT_EQ(last_fn_address, (uint32_t) 29);
+    EXPECT_EQ(last_fn_value, 0xABCD);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_set_function: NULL on_function_changed (line 537 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, set_function_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x03, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // State updated
+    EXPECT_EQ(state->functions[3], 0x0001);
+    // Notifier NOT fired
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_emergency_stop: NULL state (line 551 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, emergency_stop_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_EMERGENCY_STOP, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Notifier still fires even with NULL state
+    EXPECT_EQ(notifier_called, 3);
+    EXPECT_EQ(last_emergency_type, TRAIN_EMERGENCY_TYPE_ESTOP);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_emergency_stop: NULL on_emergency_entered (line 561 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, emergency_stop_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_EMERGENCY_STOP, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // State updated
+    EXPECT_TRUE(state->estop_active);
+    // Notifier NOT fired
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_query_function: fn_address >= max (line 601 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, query_function_out_of_range)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Query function address 30 (>= USER_DEFINED_MAX_TRAIN_FUNCTIONS which is 29)
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 30, 3);
+    incoming->payload_count = 4;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Reply built with value 0 (out-of-range returns default)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 4), 0x0000);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_controller_config ASSIGN: NULL state (line 627 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, controller_assign_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Reply built (accepted = true, since state is NULL, accepted stays default true)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+    // on_controller_assigned still fires
+    EXPECT_EQ(notifier_called, 4);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_controller_config ASSIGN: different controller, NULL assign_request
+//   callback (line 637 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, controller_assign_different_null_decision_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // NULL assign_request callback => accepted stays true by default
+    EXPECT_EQ(state->controller_node_id, TEST_CONTROLLER_NODE_ID_2);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+    // on_controller_assigned is NULL — notifier not called
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_controller_config ASSIGN: accepted but NULL on_controller_assigned
+//   (line 655 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, controller_assign_accepted_null_assigned_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Accepted
+    EXPECT_EQ(state->controller_node_id, TEST_CONTROLLER_NODE_ID);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+    // on_controller_assigned is NULL — notifier not called
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_controller_config RELEASE: wrong releasing_id (line 669 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, controller_release_wrong_id)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Release with wrong node ID
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Controller NOT cleared
+    EXPECT_EQ(state->controller_node_id, TEST_CONTROLLER_NODE_ID);
+    // on_controller_released NOT fired
+    EXPECT_NE(notifier_called, 5);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_controller_config RELEASE: NULL on_controller_released (line 673 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, controller_release_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Controller cleared
+    EXPECT_EQ(state->controller_node_id, (uint64_t) 0);
+    // Notifier NOT fired (NULL callback)
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_controller_config QUERY: NULL state (line 690 — state is NULL)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, controller_query_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_QUERY, 1);
+    incoming->payload_count = 2;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Reply with flags=0, node_id=0
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 3), (uint64_t) 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_controller_config CHANGED: NULL on_controller_changed_request
+//   (line 713 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, controller_changed_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CHANGED, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // NULL callback => accepted stays true => result=0x00
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_listener_config ATTACH: NULL on_listener_changed (line 767 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, listener_attach_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_LISTENER_NODE_ID, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Listener added
+    EXPECT_EQ(state->listener_count, 1);
+
+    // Reply success
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0x00);
+
+    // on_listener_changed is NULL — notifier not called
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_listener_config DETACH: NULL on_listener_changed (line 803 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, listener_detach_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    // Pre-populate a listener
+    state->listeners[0].node_id = TEST_LISTENER_NODE_ID;
+    state->listeners[0].flags = 0x00;
+    state->listener_count = 1;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_DETACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_LISTENER_NODE_ID, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Listener removed
+    EXPECT_EQ(state->listener_count, 0);
+
+    // Reply success
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0x00);
+
+    // on_listener_changed is NULL — notifier not called
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_listener_config QUERY: NULL state (line 824 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, listener_query_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Reply with count=0 (state is NULL)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_listener_config QUERY: index out of range (line 830 TRUE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, listener_query_index_out_of_range)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    // Add one listener
+    state->listeners[0].node_id = TEST_LISTENER_NODE_ID;
+    state->listeners[0].flags = TRAIN_LISTENER_FLAG_LINK_F0;
+    state->listener_count = 1;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Query index 5 (only 1 listener exists, so index >= count)
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 5, 2);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Reply with count=1, index=5, flags=0, node_id=0
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 1);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3), 5);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 4), 0);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 5), (uint64_t) 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_management RESERVE: NULL state (line 880 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, management_reserve_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
+    incoming->payload_count = 2;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Reply built with result=0 (state is NULL, result stays 0)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_management RELEASE: NULL state (line 902 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, management_release_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RELEASE, 1);
+    incoming->payload_count = 2;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // No crash — no reply for release
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_management NOOP: NULL state (line 914 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, management_noop_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_NOOP, 1);
+    incoming->payload_count = 2;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // No crash
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: NULL callback for query_speeds (line 940 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_query_speeds_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3E00, 4);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3A00, 6);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: NULL callback for query_function (line 958 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_query_function_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x05, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: NULL callback for controller_assign_reply (line 983 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_controller_assign_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: NULL callback for controller_query_reply (line 994 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_controller_query_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x01, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: NULL callback for controller_changed_notify_reply (line 1006 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_controller_changed_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CHANGED, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: unknown controller config sub-command (line 1017 default)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_controller_config_unknown_sub)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0xFE, 1);
+    incoming->payload_count = 2;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: NULL callback for listener_attach_reply (line 1035 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_listener_attach_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_LISTENER_NODE_ID, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 8);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: NULL callback for listener_detach_reply (line 1047 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_listener_detach_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_DETACH, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_LISTENER_NODE_ID, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 8);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: NULL callback for listener_query_reply (line 1059 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_listener_query_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 3, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 1, 3);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 4);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_LISTENER_NODE_ID, 5);
+    incoming->payload_count = 11;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: unknown listener config sub-command (line 1073 default)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_listener_config_unknown_sub)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0xFE, 1);
+    incoming->payload_count = 2;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: NULL callback for reserve_reply (line 1091 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_management_reserve_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: NULL callback for heartbeat_request (line 1102 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_management_heartbeat_null_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_NOOP, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x0A, 4);
+    incoming->payload_count = 5;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Reply dispatch: unknown management sub-command (line 1117 default)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, reply_management_unknown_sub)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0xFE, 1);
+    incoming->payload_count = 2;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Emergency event: NULL on_emergency_entered for ESTOP (line 1351 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, emergency_event_estop_null_entered_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_STOP);
+
+    // Flag set
+    EXPECT_TRUE(node->train_state->global_estop_active);
+    // Notifier NOT fired (NULL callback)
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Emergency event: NULL on_emergency_exited for CLEAR_ESTOP (line 1363 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, emergency_event_clear_estop_null_exited_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+    node->train_state->global_estop_active = true;
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_STOP);
+
+    // Flag cleared
+    EXPECT_FALSE(node->train_state->global_estop_active);
+    // Notifier NOT fired (NULL callback)
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Emergency event: NULL on_emergency_entered for EOFF (line 1375 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, emergency_event_eoff_null_entered_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_OFF);
+
+    // Flag set
+    EXPECT_TRUE(node->train_state->global_eoff_active);
+    // Notifier NOT fired (NULL callback)
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// Emergency event: NULL on_emergency_exited for CLEAR_EOFF (line 1387 FALSE path)
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, emergency_event_clear_eoff_null_exited_callback)
+{
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node = _create_train_node();
+    node->train_state->global_eoff_active = true;
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_OFF);
+
+    // Flag cleared
+    EXPECT_FALSE(node->train_state->global_eoff_active);
+    // Notifier NOT fired (NULL callback)
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+// ---------------------------------------------------------------------------
+// _load_forwarded_command: REVERSE flag with SET_SPEED (line 407 TRUE path fully)
+// This tests that when all three sub-conditions are true, the direction bit flips.
+// The existing test only verifies the direction is flipped; this ensures
+// payload_count >= 3 condition is exercised along with instruction match.
+// ---------------------------------------------------------------------------
+
+TEST(ProtocolTrainHandler, forwarding_reverse_flag_flips_direction_forward_to_reverse)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Attach listener with REVERSE flag
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, TRAIN_LISTENER_FLAG_REVERSE);
+
+    // Send forward speed 0x3C00 (forward = bit 15 clear)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Forwarded message should have direction bit flipped (0x3C00 ^ 0x8000 = 0xBC00)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    uint16_t fwd_speed = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1);
+    EXPECT_EQ(fwd_speed, 0xBC00);
+
+}
+
+// ---------------------------------------------------------------------------
+// _handle_listener_config ATTACH: failed attach returns 0xFF (line 753 TRUE path)
+// This path is reached when _attach_listener returns false (state non-NULL but
+// attach fails, e.g., capacity full or zero node_id).
+// The capacity_full test above covers this via attach failing after max.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// _handle_listener_config DETACH: state non-NULL but detach fails
+//   (line 785-793 — _detach_listener returns false)
+// Already covered by command_listener_detach_not_found test above.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// _get_listener_count NULL state and _get_listener_by_index NULL/out-of-range
+// These are covered indirectly through the listener_query_null_state and
+// listener_query_index_out_of_range tests above, which force the paths
+// through the _handle_listener_config QUERY code that calls these functions.
+// ---------------------------------------------------------------------------
+
+
+// ============================================================================
+// Section 16: NULL _interface pointer tests
+//
+// Tests where ProtocolTrainHandler_initialize(NULL) is called so _interface
+// itself is NULL, covering the `_interface &&` sub-branch FALSE path in all
+// compound callback checks.
+// ============================================================================
+
+static void _global_initialize_null_interface(void) {
+
+    ProtocolTrainHandler_initialize(NULL);
+    OpenLcbApplicationTrain_initialize(&_interface_app_train);
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_set_speed)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x4200, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, 0x4200);
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_set_function)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x01, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->functions[1], 0x0001);
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_set_function_out_of_bounds)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 29, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0xABCD, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_emergency_stop)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_EMERGENCY_STOP, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(state->estop_active);
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_query_function_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    incoming->payload_count = 4;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_controller_assign_different)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // No decision callback → default accept
+    EXPECT_EQ(state->controller_node_id, TEST_CONTROLLER_NODE_ID_2);
+    // No on_controller_assigned callback → notifier_called stays 0
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_controller_release)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->controller_node_id, (uint64_t) 0);
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_controller_changed)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CHANGED, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Default accept — result=0x00
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_listener_attach)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_LISTENER_NODE_ID, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0x00);
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_listener_detach)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // First attach a listener
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_LISTENER_NODE_ID, 3);
+    incoming->payload_count = 9;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Now detach
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_DETACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_LISTENER_NODE_ID, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0x00);
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_reply_query_speeds)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_reply_query_function)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_FUNCTION, 0);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_reply_controller_config)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // ASSIGN reply
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_reply(&sm);
+    EXPECT_EQ(notifier_called, 0);
+
+    // QUERY reply
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_QUERY, 1);
+    incoming->payload_count = 9;
+    ProtocolTrainHandler_handle_train_reply(&sm);
+    EXPECT_EQ(notifier_called, 0);
+
+    // CHANGED reply
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CHANGED, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_reply(&sm);
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_reply_listener_config)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // ATTACH reply
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    incoming->payload_count = 9;
+    ProtocolTrainHandler_handle_train_reply(&sm);
+    EXPECT_EQ(notifier_called, 0);
+
+    // DETACH reply
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_DETACH, 1);
+    incoming->payload_count = 9;
+    ProtocolTrainHandler_handle_train_reply(&sm);
+    EXPECT_EQ(notifier_called, 0);
+
+    // QUERY reply
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
+    incoming->payload_count = 11;
+    ProtocolTrainHandler_handle_train_reply(&sm);
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_reply_management)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // RESERVE reply
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_reply(&sm);
+    EXPECT_EQ(notifier_called, 0);
+
+    // NOOP/heartbeat reply
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_NOOP, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x0A, 4);
+    incoming->payload_count = 5;
+    ProtocolTrainHandler_handle_train_reply(&sm);
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, null_interface_emergency_events)
+{
+
+    _reset_tracking();
+    _global_initialize_null_interface();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming_msg, outgoing_msg;
+    memset(&sm, 0, sizeof(sm));
+    memset(&incoming_msg, 0, sizeof(incoming_msg));
+    memset(&outgoing_msg, 0, sizeof(outgoing_msg));
+    sm.openlcb_node = node;
+    sm.incoming_msg_info.msg_ptr = &incoming_msg;
+    sm.outgoing_msg_info.msg_ptr = &outgoing_msg;
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_STOP);
+    EXPECT_TRUE(state->global_estop_active);
+    EXPECT_EQ(notifier_called, 0);
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_STOP);
+    EXPECT_FALSE(state->global_estop_active);
+    EXPECT_EQ(notifier_called, 0);
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_OFF);
+    EXPECT_TRUE(state->global_eoff_active);
+    EXPECT_EQ(notifier_called, 0);
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_OFF);
+    EXPECT_FALSE(state->global_eoff_active);
+    EXPECT_EQ(notifier_called, 0);
+
+}
+
+TEST(ProtocolTrainHandler, forwarding_reverse_short_payload_no_flip)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_NODE_ID, TRAIN_LISTENER_FLAG_REVERSE);
+
+    // Send SET_SPEED with only 2 bytes payload (missing speed word)
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x42, 1);
+    incoming->payload_count = 2;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Forwarded but direction NOT flipped (payload_count < 3)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 1), 0x42);
+
+}
+
+TEST(ProtocolTrainHandler, set_function_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x01, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Callback fires even with NULL state
+    EXPECT_EQ(notifier_called, 2);
+    EXPECT_EQ(last_fn_address, (uint32_t) 1);
+
+}
+
+TEST(ProtocolTrainHandler, controller_release_null_state)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    node->train_state = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
+    incoming->payload_count = 8;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // No crash, no callback
+    EXPECT_EQ(notifier_called, 0);
+
+}

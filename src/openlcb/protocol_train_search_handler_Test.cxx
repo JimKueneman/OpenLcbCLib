@@ -190,6 +190,132 @@ static node_parameters_t _test_node_parameters_named = {
 
 };
 
+static node_parameters_t _test_node_parameters_empty_name = {
+
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
+    .snip.mfg_version = 4,
+    .snip.name = "",
+    .snip.model = "Test Model",
+    .snip.hardware_version = "0.001",
+    .snip.software_version = "0.002",
+    .snip.user_version = 2,
+
+    .protocol_support = (PSI_DATAGRAM |
+                         PSI_EVENT_EXCHANGE |
+                         PSI_SIMPLE_NODE_INFORMATION),
+
+};
+
+static node_parameters_t _test_node_parameters_ab12cd34 = {
+
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
+    .snip.mfg_version = 4,
+    .snip.name = "AB12CD34",
+    .snip.model = "Test Model",
+    .snip.hardware_version = "0.001",
+    .snip.software_version = "0.002",
+    .snip.user_version = 2,
+
+    .protocol_support = (PSI_DATAGRAM |
+                         PSI_EVENT_EXCHANGE |
+                         PSI_SIMPLE_NODE_INFORMATION),
+
+};
+
+static node_parameters_t _test_node_parameters_dashes = {
+
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
+    .snip.mfg_version = 4,
+    .snip.name = "Unit 1-2-3",
+    .snip.model = "Test Model",
+    .snip.hardware_version = "0.001",
+    .snip.software_version = "0.002",
+    .snip.user_version = 2,
+
+    .protocol_support = (PSI_DATAGRAM |
+                         PSI_EVENT_EXCHANGE |
+                         PSI_SIMPLE_NODE_INFORMATION),
+
+};
+
+static node_parameters_t _test_node_parameters_1357 = {
+
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
+    .snip.mfg_version = 4,
+    .snip.name = "Train 1357",
+    .snip.model = "Test Model",
+    .snip.hardware_version = "0.001",
+    .snip.software_version = "0.002",
+    .snip.user_version = 2,
+
+    .protocol_support = (PSI_DATAGRAM |
+                         PSI_EVENT_EXCHANGE |
+                         PSI_SIMPLE_NODE_INFORMATION),
+
+};
+
+static node_parameters_t _test_node_parameters_a5b = {
+
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
+    .snip.mfg_version = 4,
+    .snip.name = "A5B",
+    .snip.model = "Test Model",
+    .snip.hardware_version = "0.001",
+    .snip.software_version = "0.002",
+    .snip.user_version = 2,
+
+    .protocol_support = (PSI_DATAGRAM |
+                         PSI_EVENT_EXCHANGE |
+                         PSI_SIMPLE_NODE_INFORMATION),
+
+};
+
+static node_parameters_t _test_node_parameters_test42 = {
+
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
+    .snip.mfg_version = 4,
+    .snip.name = "Test 42",
+    .snip.model = "Test Model",
+    .snip.hardware_version = "0.001",
+    .snip.software_version = "0.002",
+    .snip.user_version = 2,
+
+    .protocol_support = (PSI_DATAGRAM |
+                         PSI_EVENT_EXCHANGE |
+                         PSI_SIMPLE_NODE_INFORMATION),
+
+};
+
+static node_parameters_t _test_node_parameters_digit_start = {
+
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
+    .snip.mfg_version = 4,
+    .snip.name = "5Train",
+    .snip.model = "Test Model",
+    .snip.hardware_version = "0.001",
+    .snip.software_version = "0.002",
+    .snip.user_version = 2,
+
+    .protocol_support = (PSI_DATAGRAM |
+                         PSI_EVENT_EXCHANGE |
+                         PSI_SIMPLE_NODE_INFORMATION),
+
+};
+
 
 // ============================================================================
 // Test Helpers
@@ -667,7 +793,7 @@ TEST(TrainSearch, handler_non_train_node_skipped)
     // Create a regular (non-train) node
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
-    // Do NOT call OpenLcbApplicationTrain_setup — train_state stays NULL
+    node->train_state = NULL;  // Explicitly NULL — no train setup
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -1588,6 +1714,674 @@ TEST(TrainSearch, no_match_returns_null)
 
     // Callback invoked but returned NULL
     EXPECT_EQ(_no_match_count, 1);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+
+// ============================================================================
+// SECTION 13: ADDITIONAL COVERAGE -- Missing Branch Tests
+// @details Tests targeting uncovered branches for 100% branch coverage
+// ============================================================================
+
+// ============================================================================
+// TEST: All-0xF digit search returns false (line 115)
+// @coverage _does_address_match — search_digit_count == 0 TRUE branch
+// ============================================================================
+
+TEST(TrainSearch, address_match_all_f_digits_returns_no_match)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 42, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Craft event with all-0xF nibbles + ADDRESS_ONLY to skip name match
+    // Lower 32 bits = 0xFFFFFF00 | flags; ADDRESS_ONLY = 0x20
+    event_id_t search_event = EVENT_TRAIN_SEARCH_SPACE
+            | 0xFFFFFF00ULL
+            | (uint64_t) TRAIN_SEARCH_FLAG_ADDRESS_ONLY;
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // All-0xF digits means zero valid search digits — no address match
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Prefix mode with more search digits than train address (line 145)
+// @coverage _does_address_match — prefix: search_digit_count > train_digit_count
+// ============================================================================
+
+TEST(TrainSearch, prefix_more_search_digits_than_train_no_match)
+{
+
+    _global_initialize();
+
+    // Train address 3 has 1 digit
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 3, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "12345" (5 digits) in prefix mode on 1-digit train address
+    // Use no DCC flag to bypass DCC disambiguation; ADDRESS_ONLY to skip name matching
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            12345, TRAIN_SEARCH_FLAG_ADDRESS_ONLY);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // More search digits than train digits — no match
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Name match with empty string name (line 170)
+// @coverage _does_name_match — name[0] == '\0' TRUE branch
+// ============================================================================
+
+TEST(TrainSearch, name_match_empty_name_returns_no_match)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+    node->parameters = &_test_node_parameters_empty_name;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 42 — won't match address 9999, will try name match
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Empty name — name match returns false, no overall match
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Name match with consecutive digit run — search starts mid-run (line 213)
+// @coverage _does_name_match — p > 0 && name[p-1] is digit, skip branch
+// ============================================================================
+
+TEST(TrainSearch, name_match_digit_mid_run_skipped)
+{
+
+    _global_initialize();
+
+    // Name "AB12CD34" — digit runs: "12" starting at index 2, "34" at index 6
+    // Search for "2" should NOT match because '2' is mid-run of "12"
+    // but it IS the start of no run by itself. Actually searching for "2":
+    // At p=2, name[2]='1', is digit, p>0, name[1]='B' not digit => start of run.
+    // Match '1' vs '2' => mismatch, move on.
+    // At p=3, name[3]='2', is digit, p>0, name[2]='1' IS digit => skip (line 213).
+    // At p=6, name[6]='3', is digit, p>0, name[5]='D' not digit => start of run.
+    // Match '3' vs '2' => mismatch.
+    // At p=7, name[7]='4', is digit, p>0, name[6]='3' IS digit => skip (line 213).
+    // No match found => false
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+    node->parameters = &_test_node_parameters_ab12cd34;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "2" — should not match (2 is mid-run in "12", not start)
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            2, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // "2" doesn't start any digit run — no match
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Name match with non-digit separator in name (line 226)
+// @coverage _does_name_match — name[np] < '0' || name[np] > '9' skip non-digit
+// ============================================================================
+
+TEST(TrainSearch, name_match_non_digit_separator_in_name)
+{
+
+    _global_initialize();
+
+    // Name "Unit 1-2-3" — digits interspersed with dashes
+    // Search for "123" should match: at run start '1', match '1',
+    // skip '-', match '2', skip '-', match '3'
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+    node->parameters = &_test_node_parameters_dashes;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "123" in prefix mode — should match "1-2-3" in name
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            123, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Name match succeeds — digits skip over separators
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Name match digit mismatch during matching (line 233)
+// @coverage _does_name_match — (name[np] - '0') != seq[si] break
+// ============================================================================
+
+TEST(TrainSearch, name_match_digit_mismatch_during_run)
+{
+
+    _global_initialize();
+
+    // Name "Train 1357" — search for "13" prefix should match,
+    // but search for "139" should fail at the third digit (5 != 9)
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+    node->parameters = &_test_node_parameters_1357;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "139" — matches "1", "3" but then "5" != "9" => mismatch
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            139, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Mismatch during name matching — no match
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Name match partial sequence not complete (line 244 FALSE branch)
+// @coverage _does_name_match — si < seq_len after loop exits (partial match)
+// ============================================================================
+
+TEST(TrainSearch, name_match_partial_sequence_not_complete)
+{
+
+    _global_initialize();
+
+    // Name "A5B" — only one digit "5"
+    // Search for "56" — matches "5" then runs out of name digits; si=1 < seq_len=2
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+    node->parameters = &_test_node_parameters_a5b;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "56" — partial match "5" only, sequence incomplete
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            56, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Partial sequence — no match
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Exact name match — trailing digit fails exact check (line 256 FALSE)
+// @coverage _does_name_match — exact match where next char is digit (run continues)
+// ============================================================================
+
+TEST(TrainSearch, name_match_exact_trailing_digit_fails)
+{
+
+    _global_initialize();
+
+    // Name "Loco 1234 Express" — search for "123" with EXACT flag
+    // "123" matches at start of "1234" run, but "4" follows => not exact
+    openlcb_node_t *node = _create_named_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "123" WITH EXACT — run "1234" has trailing digit '4'
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            123, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_EXACT);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // "123" is prefix of "1234", but exact mode rejects it
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Exact name match — run ended by non-digit then end of name (line 256 TRUE paths)
+// @coverage _does_name_match — np >= name_len sub-condition
+// ============================================================================
+
+TEST(TrainSearch, name_match_exact_run_ends_at_name_end)
+{
+
+    _global_initialize();
+
+    // Name "Test 42" — digit run "42" is at end of string
+    // Search for "42" with EXACT — after matching "42", np moves past end => exact match
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+    node->parameters = &_test_node_parameters_test42;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "42" WITH EXACT — matches run "42" at end of name
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_EXACT);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // "42" exactly matches run at end of name
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Name match with NULL parameters (line 334)
+// @coverage _does_train_match — params == NULL
+// ============================================================================
+
+TEST(TrainSearch, train_match_null_parameters_no_name_match)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+    // Set parameters to NULL so _does_train_match sees params == NULL
+    node->parameters = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 42 — won't match 9999, name match skipped (params NULL)
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // NULL parameters — no name match possible
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: handle_search_event with NULL statemachine_info (line 362)
+// @coverage ProtocolTrainSearch_handle_search_event — statemachine_info == NULL
+// ============================================================================
+
+TEST(TrainSearch, handle_search_event_null_statemachine_info)
+{
+
+    _global_initialize();
+
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC);
+
+    // Must not crash
+    ProtocolTrainSearch_handle_search_event(NULL, search_event);
+
+    // No crash = success; no way to check output since statemachine is NULL
+    EXPECT_EQ(_search_matched_count, 0);
+
+}
+
+// ============================================================================
+// TEST: handle_search_event with NULL openlcb_node (line 362)
+// @coverage ProtocolTrainSearch_handle_search_event — statemachine_info->openlcb_node == NULL
+// ============================================================================
+
+TEST(TrainSearch, handle_search_event_null_openlcb_node)
+{
+
+    _global_initialize();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    sm.openlcb_node = NULL;
+    sm.incoming_msg_info.msg_ptr = incoming;
+    sm.incoming_msg_info.enumerate = false;
+    sm.outgoing_msg_info.msg_ptr = outgoing;
+    sm.outgoing_msg_info.enumerate = false;
+    sm.outgoing_msg_info.valid = false;
+
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC);
+
+    // Must not crash
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: handle_search_event with NULL interface pointer (line 416)
+// @coverage ProtocolTrainSearch_handle_search_event — _interface == NULL
+// ============================================================================
+
+TEST(TrainSearch, handle_search_event_null_interface_pointer)
+{
+
+    // Initialize with NULL interface pointer (not null callbacks — null pointer)
+    ProtocolTrainSearch_initialize(NULL);
+    ProtocolTrainHandler_initialize(&_interface_train);
+    OpenLcbApplicationTrain_initialize(&_interface_app_train);
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+    _reset_tracking();
+
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 42, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(42, 0x00);
+
+    // Should match and generate reply but skip callback since _interface is NULL
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(_search_matched_count, 0);
+
+}
+
+// ============================================================================
+// TEST: handle_search_no_match with NULL statemachine_info (line 442)
+// @coverage ProtocolTrainSearch_handle_search_no_match — statemachine_info == NULL
+// ============================================================================
+
+TEST(TrainSearch, handle_search_no_match_null_statemachine_info)
+{
+
+    _global_initialize_with_no_match();
+
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    // Must not crash
+    ProtocolTrainSearch_handle_search_no_match(NULL, search_event);
+
+    EXPECT_EQ(_no_match_count, 0);
+
+}
+
+// ============================================================================
+// TEST: handle_search_no_match with NULL interface pointer (line 456)
+// @coverage ProtocolTrainSearch_handle_search_no_match — _interface == NULL
+// ============================================================================
+
+TEST(TrainSearch, handle_search_no_match_null_interface_pointer)
+{
+
+    // Initialize with NULL interface pointer
+    ProtocolTrainSearch_initialize(NULL);
+    ProtocolTrainHandler_initialize(&_interface_train);
+    OpenLcbApplicationTrain_initialize(&_interface_app_train);
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+    _reset_tracking();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    // Must not crash — _interface is NULL
+    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+
+    EXPECT_EQ(_no_match_count, 0);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: No-match returns node with train_state == NULL (line 468)
+// @coverage ProtocolTrainSearch_handle_search_no_match — new_node->train_state == NULL
+// ============================================================================
+
+TEST(TrainSearch, no_match_returns_node_with_null_train_state)
+{
+
+    _global_initialize_with_no_match();
+
+    // Create a node WITHOUT train state
+    openlcb_node_t *new_node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    new_node->alias = TEST_DEST_ALIAS;
+    new_node->train_state = NULL;  // no train state
+
+    // Use a separate node as the statemachine context
+    openlcb_node_t *current_node = OpenLcbNode_allocate(0x050101010A00ULL, &_test_node_parameters);
+    current_node->alias = 0x0CCC;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, current_node, incoming, outgoing);
+
+    // Callback will return a node with NULL train_state
+    _no_match_return_node = new_node;
+
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+
+    // Callback invoked
+    EXPECT_EQ(_no_match_count, 1);
+
+    // No reply since train_state is NULL
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: No-match returns node with short address (line 472 FALSE branch)
+// @coverage ProtocolTrainSearch_handle_search_no_match — is_long_address == false
+// ============================================================================
+
+TEST(TrainSearch, no_match_returns_node_with_short_address)
+{
+
+    _global_initialize_with_no_match();
+
+    // Create a train node with SHORT address
+    openlcb_node_t *new_node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(new_node, 42, false);
+
+    // Use a separate node as the statemachine context
+    openlcb_node_t *current_node = OpenLcbNode_allocate(0x050101010A00ULL, &_test_node_parameters);
+    current_node->alias = 0x0CCC;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, current_node, incoming, outgoing);
+
+    // Callback returns node with short address
+    _no_match_return_node = new_node;
+
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+
+    // Callback invoked
+    EXPECT_EQ(_no_match_count, 1);
+
+    // Reply loaded — check DCC flag set but LONG_ADDR flag NOT set
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+    event_id_t reply_event = OpenLcbUtilities_extract_event_id_from_openlcb_payload(
+            sm.outgoing_msg_info.msg_ptr);
+    uint8_t reply_flags = OpenLcbUtilities_extract_train_search_flags(reply_event);
+    EXPECT_EQ(reply_flags & TRAIN_SEARCH_FLAG_DCC, TRAIN_SEARCH_FLAG_DCC);
+    EXPECT_EQ(reply_flags & TRAIN_SEARCH_FLAG_LONG_ADDR, 0);
+
+}
+
+// ============================================================================
+// TEST: Name match with name starting with digit (line 213 p==0 sub-branch)
+// @coverage _does_name_match — p > 0 FALSE (p==0 is a digit, start of run)
+// ============================================================================
+
+TEST(TrainSearch, name_match_digit_at_position_zero)
+{
+
+    _global_initialize();
+
+    // Name "5Train" — digit '5' at p=0
+    // Search for "5" — at p=0, name[0]='5' is digit, p > 0 is FALSE → condition FALSE
+    // Start matching: '5' == seq[0]='5' → match. Prefix mode → seq_matched = true.
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+    node->parameters = &_test_node_parameters_digit_start;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "5" — should match name "5Train" at p=0
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            5, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // "5" matches digit at start of name
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Address match with train DCC address 0 (line 76 TRUE branch)
+// @coverage _does_address_match — temp == 0
+// ============================================================================
+
+TEST(TrainSearch, address_match_train_address_zero)
+{
+
+    _global_initialize();
+
+    // Train has DCC address 0 — exercises temp == 0 branch in _does_address_match
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 0, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for address 1 — forces _does_address_match to be called with train_address=0
+    // This exercises the temp == 0 TRUE branch at line 76
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            1, TRAIN_SEARCH_FLAG_ADDRESS_ONLY);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // Address 0 != 1 → no match (but line 76 was exercised)
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+// ============================================================================
+// TEST: Name match skipped when owner_node is NULL (line 330)
+// @coverage _does_train_match — train_state->owner_node == NULL
+// ============================================================================
+
+TEST(TrainSearch, train_match_null_owner_node_skips_name_match)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+    // Explicitly NULL out owner_node so name matching is skipped
+    node->train_state->owner_node = NULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "42" — address 9999 won't match, name match blocked by NULL owner_node
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    // No match — address mismatch and name match skipped
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
 
 }

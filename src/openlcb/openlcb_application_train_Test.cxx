@@ -764,3 +764,256 @@ TEST(ApplicationTrain, send_with_no_initialization)
     EXPECT_FALSE(mock_send_called);
 
 }
+
+
+// ============================================================================
+// Section 7: Pool Exhaustion — Line 115
+// ============================================================================
+
+TEST(ApplicationTrain, pool_exhaustion_returns_null)
+{
+
+    _global_initialize();
+
+    // Allocate all 4 pool slots using the node allocator
+    openlcb_node_t *nodes[USER_DEFINED_TRAIN_NODE_COUNT];
+
+    for (int i = 0; i < USER_DEFINED_TRAIN_NODE_COUNT; i++) {
+
+        nodes[i] = OpenLcbNode_allocate(TEST_DEST_ID + i, &_test_node_parameters);
+
+        EXPECT_NE(nodes[i], nullptr);
+
+        // _clear_node does not zero train_state, so force it NULL
+        nodes[i]->train_state = NULL;
+
+        train_state_t *state = OpenLcbApplicationTrain_setup(nodes[i]);
+
+        EXPECT_NE(state, nullptr);
+
+    }
+
+    // NODE_BUFFER_DEPTH is also 4, so use a stack-local node for the 5th attempt
+    openlcb_node_t extra_node;
+    memset(&extra_node, 0, sizeof(openlcb_node_t));
+    extra_node.id = 0xFFFFFFFFFF00ULL;
+    extra_node.train_state = NULL;
+
+    // Pool is full — must return NULL
+    train_state_t *overflow = OpenLcbApplicationTrain_setup(&extra_node);
+
+    EXPECT_EQ(overflow, nullptr);
+    EXPECT_EQ(extra_node.train_state, nullptr);
+
+}
+
+
+// ============================================================================
+// Section 8: Heartbeat Request Null Send Callback — Line 183
+// ============================================================================
+
+TEST(ApplicationTrain, heartbeat_request_null_send_callback)
+{
+
+    _reset_tracking();
+
+    // Initialize with _interface_nulls so send_openlcb_msg is NULL
+    ProtocolTrainHandler_initialize(&_handler_interface_with_heartbeat);
+    OpenLcbApplicationTrain_initialize(&_interface_nulls);
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 100;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    // Tick to halfway — send_openlcb_msg is NULL, should not crash
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbApplicationTrain_100ms_timer_tick((uint8_t)(i + 1));
+
+    }
+
+    // send was NULL so nothing should have been sent
+    EXPECT_FALSE(mock_send_called);
+
+}
+
+
+// ============================================================================
+// Section 9: Timer Tick Same Value Early Return — Line 241
+// ============================================================================
+
+TEST(ApplicationTrain, timer_tick_same_value_early_return)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 100;
+
+    // First tick with value 5 — should process normally
+    OpenLcbApplicationTrain_100ms_timer_tick(5);
+
+    uint32_t counter_after_first = state->heartbeat_counter_100ms;
+
+    EXPECT_EQ(counter_after_first, (uint32_t) 95);
+
+    // Second tick with same value 5 — ticks_elapsed == 0, early return
+    OpenLcbApplicationTrain_100ms_timer_tick(5);
+
+    // Counter must not have changed
+    EXPECT_EQ(state->heartbeat_counter_100ms, counter_after_first);
+
+}
+
+
+// ============================================================================
+// Section 10: DCC Address / Speed Steps — Lines 624-681
+// ============================================================================
+
+TEST(ApplicationTrain, dcc_address_null_node)
+{
+
+    _global_initialize();
+
+    // set with NULL node — should not crash
+    OpenLcbApplicationTrain_set_dcc_address(NULL, 1234, true);
+
+    // get with NULL node — returns 0
+    EXPECT_EQ(OpenLcbApplicationTrain_get_dcc_address(NULL), (uint16_t) 0);
+
+}
+
+TEST(ApplicationTrain, dcc_address_null_train_state)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->train_state = NULL;
+
+    // set with valid node but NULL train_state — should not crash
+    OpenLcbApplicationTrain_set_dcc_address(node, 1234, true);
+
+    // get with valid node but NULL train_state — returns 0
+    EXPECT_EQ(OpenLcbApplicationTrain_get_dcc_address(node), (uint16_t) 0);
+
+}
+
+TEST(ApplicationTrain, is_long_address_null_node)
+{
+
+    _global_initialize();
+
+    // NULL node — returns false
+    EXPECT_FALSE(OpenLcbApplicationTrain_is_long_address(NULL));
+
+}
+
+TEST(ApplicationTrain, is_long_address_null_train_state)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->train_state = NULL;
+
+    // Valid node, NULL train_state — returns false
+    EXPECT_FALSE(OpenLcbApplicationTrain_is_long_address(node));
+
+}
+
+TEST(ApplicationTrain, speed_steps_null_node)
+{
+
+    _global_initialize();
+
+    // set with NULL node — should not crash
+    OpenLcbApplicationTrain_set_speed_steps(NULL, 128);
+
+    // get with NULL node — returns 0
+    EXPECT_EQ(OpenLcbApplicationTrain_get_speed_steps(NULL), (uint8_t) 0);
+
+}
+
+TEST(ApplicationTrain, speed_steps_null_train_state)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->train_state = NULL;
+
+    // set with valid node but NULL train_state — should not crash
+    OpenLcbApplicationTrain_set_speed_steps(node, 128);
+
+    // get with valid node but NULL train_state — returns 0
+    EXPECT_EQ(OpenLcbApplicationTrain_get_speed_steps(node), (uint8_t) 0);
+
+}
+
+TEST(ApplicationTrain, dcc_address_normal_operation)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    // Set short address
+    OpenLcbApplicationTrain_set_dcc_address(node, 42, false);
+
+    EXPECT_EQ(OpenLcbApplicationTrain_get_dcc_address(node), (uint16_t) 42);
+    EXPECT_FALSE(OpenLcbApplicationTrain_is_long_address(node));
+
+    // Change to long address
+    OpenLcbApplicationTrain_set_dcc_address(node, 9999, true);
+
+    EXPECT_EQ(OpenLcbApplicationTrain_get_dcc_address(node), (uint16_t) 9999);
+    EXPECT_TRUE(OpenLcbApplicationTrain_is_long_address(node));
+
+}
+
+TEST(ApplicationTrain, speed_steps_normal_operation)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    // Default after setup should be 0
+    EXPECT_EQ(OpenLcbApplicationTrain_get_speed_steps(node), (uint8_t) 0);
+
+    OpenLcbApplicationTrain_set_speed_steps(node, 128);
+
+    EXPECT_EQ(OpenLcbApplicationTrain_get_speed_steps(node), (uint8_t) 128);
+
+    OpenLcbApplicationTrain_set_speed_steps(node, 28);
+
+    EXPECT_EQ(OpenLcbApplicationTrain_get_speed_steps(node), (uint8_t) 28);
+
+}

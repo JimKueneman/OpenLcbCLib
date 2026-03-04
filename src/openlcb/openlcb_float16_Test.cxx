@@ -494,3 +494,54 @@ TEST(Float16, negate_double_negate_identity)
     EXPECT_EQ(result, original);
 
 }
+
+// ============================================================================
+// Section 7: Branch coverage — float32 special inputs
+// ============================================================================
+
+TEST(Float16, from_float_nan_input)
+{
+
+    uint16_t result = OpenLcbFloat16_from_float(NAN);
+
+    // NaN should produce half NaN: sign | 0x7E00
+    EXPECT_TRUE(OpenLcbFloat16_is_nan(result));
+
+}
+
+TEST(Float16, from_float_positive_infinity_input)
+{
+
+    uint16_t result = OpenLcbFloat16_from_float(INFINITY);
+
+    // Infinity should produce half infinity: 0x7C00
+    EXPECT_EQ(result, 0x7C00);
+
+}
+
+TEST(Float16, from_float_negative_infinity_input)
+{
+
+    uint16_t result = OpenLcbFloat16_from_float(-INFINITY);
+
+    // Negative infinity: 0xFC00
+    EXPECT_EQ(result, 0xFC00);
+
+}
+
+TEST(Float16, from_float_float32_subnormal)
+{
+
+    // A float32 subnormal has biased exponent = 0 (unbiased = -127), mantissa != 0
+    // This is extremely tiny (~1.4e-45 for smallest). It falls through the
+    // zero check (mantissa != 0) and eventually flushes to zero in half.
+    // Use a known float32 subnormal: the smallest positive float32 subnormal
+    // is ~1.401298e-45 (0x00000001 bit pattern).
+    union { uint32_t u; float f; } u;
+    u.u = 0x00000001;  // smallest float32 subnormal
+    uint16_t result = OpenLcbFloat16_from_float(u.f);
+
+    // This is way below half subnormal range, so it flushes to positive zero
+    EXPECT_EQ(result, FLOAT16_POSITIVE_ZERO);
+
+}

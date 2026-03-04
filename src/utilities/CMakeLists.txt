@@ -1,9 +1,10 @@
 project(utilities C)
-set(SOURCES mustangpeak_string_helper.c)
+set(SOURCES mustangpeak_string_helper.c mustangpeak_endian_helper.c)
 
 if (${GTEST})
 set(TESTS ${TESTS}
     ${ROOT_DIR}/src/utilities/mustangpeak_string_helper_Test.cxx
+    ${ROOT_DIR}/src/utilities/mustangpeak_endian_helper_Test.cxx
 
     PARENT_SCOPE
 )

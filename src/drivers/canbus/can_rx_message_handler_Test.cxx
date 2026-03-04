@@ -23,6 +23,7 @@
 #include "../../openlcb/openlcb_buffer_list.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../drivers/canbus/alias_mappings.h"
+#include "../../openlcb/openlcb_utilities.h"
 
 /*******************************************************************************
  * Test Constants
@@ -86,6 +87,34 @@ uint8_t _mock_get_current_tick(void)
 }
 
 /*******************************************************************************
+ * Mock Listener Callbacks
+ ******************************************************************************/
+
+static bool listener_set_alias_called = false;
+static node_id_t listener_set_alias_node_id = 0;
+static uint16_t listener_set_alias_alias = 0;
+
+static bool listener_clear_alias_called = false;
+static uint16_t listener_clear_alias_alias = 0;
+
+void _mock_listener_set_alias(node_id_t node_id, uint16_t alias)
+{
+
+    listener_set_alias_called = true;
+    listener_set_alias_node_id = node_id;
+    listener_set_alias_alias = alias;
+
+}
+
+void _mock_listener_clear_alias_by_alias(uint16_t alias)
+{
+
+    listener_clear_alias_called = true;
+    listener_clear_alias_alias = alias;
+
+}
+
+/*******************************************************************************
  * Interface Structure for RX Message Handler
  ******************************************************************************/
 
@@ -97,6 +126,18 @@ const interface_can_rx_message_handler_t _can_rx_message_handler_interface = {
     .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
     .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag,
     .get_current_tick = &_mock_get_current_tick,
+};
+
+const interface_can_rx_message_handler_t _can_rx_message_handler_interface_with_listeners = {
+    .can_buffer_store_allocate_buffer = &can_buffer_store_allocate_buffer,
+    .openlcb_buffer_store_allocate_buffer = &openlcb_buffer_store_allocate_buffer,
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
+    .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
+    .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag,
+    .get_current_tick = &_mock_get_current_tick,
+    .listener_set_alias = &_mock_listener_set_alias,
+    .listener_clear_alias_by_alias = &_mock_listener_clear_alias_by_alias,
 };
 
 /*******************************************************************************
@@ -114,10 +155,27 @@ void _global_initialize(void)
     CanRxMessageHandler_initialize(&_can_rx_message_handler_interface);
 }
 
+void _global_initialize_with_listeners(void)
+{
+    CanBufferStore_initialize();
+    CanBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferList_initialize();
+    AliasMappings_initialize();
+    CanRxMessageHandler_initialize(&_can_rx_message_handler_interface_with_listeners);
+}
+
 void _global_reset_variables(void)
 {
     fail_buffer = false;
     force_fail_allocate = false;
+    _test_global_100ms_tick = 0;
+    listener_set_alias_called = false;
+    listener_set_alias_node_id = 0;
+    listener_set_alias_alias = 0;
+    listener_clear_alias_called = false;
+    listener_clear_alias_alias = 0;
 }
 
 // Helper: Count items in OpenLcbBufferList (API doesn't provide count())
@@ -1669,45 +1727,424 @@ TEST(CanRxMessageHandler, cid_frame_permitted_buffer_fail)
 }
 
 /*******************************************************************************
- * COVERAGE SUMMARY
- *
- * Active Tests: 39
- * Coverage: 100% ✅
- * Status: Production Ready
- * 
- * All API calls verified against actual header files.
- * Uses ONLY documented functions from the OpenLCB library.
- * 
- * Test Categories:
- * - Basic frame handling (16 tests)
- * - Error conditions (8 tests)
- * - Duplicate alias detection (7 tests)
- * - Edge case coverage (5 tests - NEW!)
- * 
- * Edge Cases Covered:
- * 1. AME broadcast with multiple aliases (CRITICAL)
- * 2. AME broadcast with buffer failure
- * 3. Datagram-specific rejection (MTI_DATAGRAM_REJECTED_REPLY)
- * 4. Reject message with OpenLCB buffer exhaustion
- * 5. Datagram middle frame rejection
- * 
- * ALL identified coverage gaps have been addressed!
- * 
- * All API calls verified against actual header files.
- * Uses ONLY documented functions from the OpenLCB library.
- * 
- * Test Categories:
- * - Basic frame handling (16 tests)
- * - Error conditions (8 tests)
- * - Duplicate alias detection (7 tests)
- * - Edge case coverage (5 tests - NEW!)
- * 
- * Edge Cases Covered:
- * 1. AME broadcast with multiple aliases (CRITICAL)
- * 2. AME broadcast with buffer failure
- * 3. Datagram-specific rejection (MTI_DATAGRAM_REJECTED_REPLY)
- * 4. Reject message with OpenLCB buffer exhaustion
- * 5. Datagram middle frame rejection
- * 
- * ALL identified coverage gaps have been addressed!
+ * Listener and Timeout Coverage Tests
  ******************************************************************************/
+
+TEST(CanRxMessageHandler, middle_frame_timeout)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+
+    // First frame at tick 0
+    _test_global_100ms_tick = 0;
+
+    CanUtilities_load_can_message(&can_msg, 0x19C48000 | SOURCE_ALIAS, 8,
+                                   0x20 | NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06);
+
+    CanRxMessageHandler_first_frame(&can_msg, 2, DATAGRAM);
+
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+
+    // Advance tick by 30 (>= CAN_RX_INPROCESS_TIMEOUT_TICKS)
+    _test_global_100ms_tick = 30;
+
+    // Middle frame should detect stale assembly and reject
+    CanUtilities_load_can_message(&can_msg, 0x19C48000 | SOURCE_ALIAS, 8,
+                                   0x10 | NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
+                                   0x11, 0x12, 0x13, 0x14, 0x15, 0x16);
+
+    CanRxMessageHandler_middle_frame(&can_msg, 2);
+
+    // Stale assembly freed from BufferList
+    EXPECT_TRUE(OpenLcbBufferList_is_empty());
+
+    // Reject message should be in the OpenLCB FIFO
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
+
+    openlcb_msg_t *reject = OpenLcbBufferFifo_pop();
+
+    if (reject) {
+
+        OpenLcbBufferStore_free_buffer(reject);
+
+    }
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, amd_frame_with_listener)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // AMD frame from SOURCE_ALIAS with node ID 0x010203040506
+    CanUtilities_load_can_message(&can_msg, 0x10701000 | SOURCE_ALIAS, 6,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0, 0);
+
+    CanRxMessageHandler_amd_frame(&can_msg);
+
+    // Verify listener_set_alias was called with correct parameters
+    EXPECT_TRUE(listener_set_alias_called);
+    EXPECT_EQ(listener_set_alias_node_id, (node_id_t) 0x010203040506);
+    EXPECT_EQ(listener_set_alias_alias, SOURCE_ALIAS);
+
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 0);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, amr_frame_with_listener)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // AMR frame from SOURCE_ALIAS
+    CanUtilities_load_can_message(&can_msg, 0x10703000 | SOURCE_ALIAS, 6,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0, 0);
+
+    CanRxMessageHandler_amr_frame(&can_msg);
+
+    // Verify listener_clear_alias_by_alias was called with correct alias
+    EXPECT_TRUE(listener_clear_alias_called);
+    EXPECT_EQ(listener_clear_alias_alias, SOURCE_ALIAS);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, amd_frame_releases_held_attach_messages)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    #define LISTENER_NODE_ID 0x112233445566ULL
+
+    // Manually create a held train listener attach message in the BufferList
+    openlcb_msg_t *held_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(held_msg, nullptr);
+
+    // Set up as a held attach: MTI_TRAIN_PROTOCOL, inprocess=true
+    held_msg->mti = MTI_TRAIN_PROTOCOL;
+    held_msg->source_alias = NODE_ALIAS_1;
+    held_msg->dest_alias = 0xAAA;
+    held_msg->state.inprocess = true;
+    held_msg->payload_count = 9;
+
+    // payload[0] = TRAIN_LISTENER_CONFIG (0x30)
+    // payload[1] = TRAIN_LISTENER_ATTACH (0x01)
+    // payload[2] = flags (0x00)
+    // payload[3..8] = listener node ID (6 bytes big-endian)
+    *held_msg->payload[0] = TRAIN_LISTENER_CONFIG;
+    *held_msg->payload[1] = TRAIN_LISTENER_ATTACH;
+    *held_msg->payload[2] = 0x00;
+    *held_msg->payload[3] = 0x11;
+    *held_msg->payload[4] = 0x22;
+    *held_msg->payload[5] = 0x33;
+    *held_msg->payload[6] = 0x44;
+    *held_msg->payload[7] = 0x55;
+    *held_msg->payload[8] = 0x66;
+
+    OpenLcbBufferList_add(held_msg);
+
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+
+    // Send AMD frame with the listener's node ID and some alias
+    uint16_t listener_alias = 0x0ABC;
+
+    CanUtilities_load_can_message(&can_msg, 0x10701000 | listener_alias, 6,
+                                   0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0, 0);
+
+    CanRxMessageHandler_amd_frame(&can_msg);
+
+    // The held message should now be released from BufferList and pushed to FIFO
+    EXPECT_TRUE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
+
+    // Verify the released message
+    openlcb_msg_t *released = OpenLcbBufferFifo_pop();
+
+    EXPECT_NE(released, nullptr);
+
+    if (released) {
+
+        EXPECT_FALSE(released->state.inprocess);
+        EXPECT_EQ(released->mti, MTI_TRAIN_PROTOCOL);
+        OpenLcbBufferStore_free_buffer(released);
+
+    }
+
+    // Verify listener_set_alias was also called
+    EXPECT_TRUE(listener_set_alias_called);
+    EXPECT_EQ(listener_set_alias_node_id, LISTENER_NODE_ID);
+    EXPECT_EQ(listener_set_alias_alias, listener_alias);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, amd_frame_held_message_no_match)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Create a held attach message with a DIFFERENT node ID
+    openlcb_msg_t *held_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(held_msg, nullptr);
+
+    held_msg->mti = MTI_TRAIN_PROTOCOL;
+    held_msg->source_alias = NODE_ALIAS_1;
+    held_msg->dest_alias = 0xAAA;
+    held_msg->state.inprocess = true;
+    held_msg->payload_count = 9;
+    *held_msg->payload[0] = TRAIN_LISTENER_CONFIG;
+    *held_msg->payload[1] = TRAIN_LISTENER_ATTACH;
+    *held_msg->payload[2] = 0x00;
+    *held_msg->payload[3] = 0xAA;
+    *held_msg->payload[4] = 0xBB;
+    *held_msg->payload[5] = 0xCC;
+    *held_msg->payload[6] = 0xDD;
+    *held_msg->payload[7] = 0xEE;
+    *held_msg->payload[8] = 0xFF;
+
+    OpenLcbBufferList_add(held_msg);
+
+    // Send AMD frame with a different node ID — should NOT release the held message
+    CanUtilities_load_can_message(&can_msg, 0x10701000 | 0x0ABC, 6,
+                                   0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0, 0);
+
+    CanRxMessageHandler_amd_frame(&can_msg);
+
+    // Message should still be in BufferList (not released)
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+
+    // Clean up
+    OpenLcbBufferList_release(held_msg);
+    OpenLcbBufferStore_free_buffer(held_msg);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, amd_frame_held_message_wrong_mti)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Create a held message with wrong MTI (not TRAIN_PROTOCOL)
+    openlcb_msg_t *held_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(held_msg, nullptr);
+
+    held_msg->mti = MTI_DATAGRAM;  // Wrong MTI
+    held_msg->state.inprocess = true;
+    held_msg->payload_count = 9;
+    *held_msg->payload[0] = TRAIN_LISTENER_CONFIG;
+    *held_msg->payload[1] = TRAIN_LISTENER_ATTACH;
+    *held_msg->payload[2] = 0x00;
+    *held_msg->payload[3] = 0x11;
+    *held_msg->payload[4] = 0x22;
+    *held_msg->payload[5] = 0x33;
+    *held_msg->payload[6] = 0x44;
+    *held_msg->payload[7] = 0x55;
+    *held_msg->payload[8] = 0x66;
+
+    OpenLcbBufferList_add(held_msg);
+
+    // AMD with matching node ID — should NOT release because MTI doesn't match
+    CanUtilities_load_can_message(&can_msg, 0x10701000 | 0x0ABC, 6,
+                                   0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0, 0);
+
+    CanRxMessageHandler_amd_frame(&can_msg);
+
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+
+    OpenLcbBufferList_release(held_msg);
+    OpenLcbBufferStore_free_buffer(held_msg);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, amd_frame_held_message_wrong_instruction)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Create a held message with wrong instruction byte (not TRAIN_LISTENER_CONFIG)
+    openlcb_msg_t *held_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(held_msg, nullptr);
+
+    held_msg->mti = MTI_TRAIN_PROTOCOL;
+    held_msg->state.inprocess = true;
+    held_msg->payload_count = 9;
+    *held_msg->payload[0] = 0x01;  // Wrong instruction (e.g., TRAIN_SET_SPEED_DIRECTION)
+    *held_msg->payload[1] = TRAIN_LISTENER_ATTACH;
+    *held_msg->payload[2] = 0x00;
+    *held_msg->payload[3] = 0x11;
+    *held_msg->payload[4] = 0x22;
+    *held_msg->payload[5] = 0x33;
+    *held_msg->payload[6] = 0x44;
+    *held_msg->payload[7] = 0x55;
+    *held_msg->payload[8] = 0x66;
+
+    OpenLcbBufferList_add(held_msg);
+
+    CanUtilities_load_can_message(&can_msg, 0x10701000 | 0x0ABC, 6,
+                                   0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0, 0);
+
+    CanRxMessageHandler_amd_frame(&can_msg);
+
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+
+    OpenLcbBufferList_release(held_msg);
+    OpenLcbBufferStore_free_buffer(held_msg);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, amd_frame_held_message_wrong_subcommand)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Create a held message with wrong sub_command (not TRAIN_LISTENER_ATTACH)
+    openlcb_msg_t *held_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(held_msg, nullptr);
+
+    held_msg->mti = MTI_TRAIN_PROTOCOL;
+    held_msg->state.inprocess = true;
+    held_msg->payload_count = 9;
+    *held_msg->payload[0] = TRAIN_LISTENER_CONFIG;
+    *held_msg->payload[1] = 0x02;  // Wrong sub-command (e.g., TRAIN_LISTENER_DETACH)
+    *held_msg->payload[2] = 0x00;
+    *held_msg->payload[3] = 0x11;
+    *held_msg->payload[4] = 0x22;
+    *held_msg->payload[5] = 0x33;
+    *held_msg->payload[6] = 0x44;
+    *held_msg->payload[7] = 0x55;
+    *held_msg->payload[8] = 0x66;
+
+    OpenLcbBufferList_add(held_msg);
+
+    CanUtilities_load_can_message(&can_msg, 0x10701000 | 0x0ABC, 6,
+                                   0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0, 0);
+
+    CanRxMessageHandler_amd_frame(&can_msg);
+
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+
+    OpenLcbBufferList_release(held_msg);
+    OpenLcbBufferStore_free_buffer(held_msg);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, amd_frame_held_message_not_inprocess)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Create a message that matches but is NOT inprocess
+    openlcb_msg_t *held_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(held_msg, nullptr);
+
+    held_msg->mti = MTI_TRAIN_PROTOCOL;
+    held_msg->state.inprocess = false;  // Not held
+    held_msg->payload_count = 9;
+    *held_msg->payload[0] = TRAIN_LISTENER_CONFIG;
+    *held_msg->payload[1] = TRAIN_LISTENER_ATTACH;
+    *held_msg->payload[2] = 0x00;
+    *held_msg->payload[3] = 0x11;
+    *held_msg->payload[4] = 0x22;
+    *held_msg->payload[5] = 0x33;
+    *held_msg->payload[6] = 0x44;
+    *held_msg->payload[7] = 0x55;
+    *held_msg->payload[8] = 0x66;
+
+    OpenLcbBufferList_add(held_msg);
+
+    CanUtilities_load_can_message(&can_msg, 0x10701000 | 0x0ABC, 6,
+                                   0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0, 0);
+
+    CanRxMessageHandler_amd_frame(&can_msg);
+
+    // Should NOT be released (not inprocess)
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+
+    OpenLcbBufferList_release(held_msg);
+    OpenLcbBufferStore_free_buffer(held_msg);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, cid_frame_null)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    // CID with NULL can_msg should return immediately without crashing
+    CanRxMessageHandler_cid_frame(NULL);
+
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 0);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
