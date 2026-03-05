@@ -3496,12 +3496,13 @@ TEST(ProtocolDatagramHandler, load_datagram_received_ok)
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, false, 0x0000);
+    // Reply Pending is always set — time=0 means no specific timeout
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 0x0000);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM_OK_REPLY);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 1);
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x00);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), DATAGRAM_OK_REPLY_PENDING);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->dest_alias, statemachine_info.incoming_msg_info.msg_ptr->source_alias);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->dest_id, statemachine_info.incoming_msg_info.msg_ptr->source_id);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->source_alias, statemachine_info.incoming_msg_info.msg_ptr->dest_alias);
@@ -3938,7 +3939,7 @@ TEST(ProtocolDatagramHandler, handle_datagram_ok_with_delay_time)
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 2);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 2);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM_OK_REPLY);
@@ -3949,50 +3950,50 @@ TEST(ProtocolDatagramHandler, handle_datagram_ok_with_delay_time)
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->source_alias, statemachine_info.incoming_msg_info.msg_ptr->dest_alias);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->source_id, statemachine_info.incoming_msg_info.msg_ptr->dest_id);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 4);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 4);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x02 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 8);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 8);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x03 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 16);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 16);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x04 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 32);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 32);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x05 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 64);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 64);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x06 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 128);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 128);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x07 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 256);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 256);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x08 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 512);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 512);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x09 | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 1024);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 1024);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0A | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 2048);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 2048);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0B | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 4096);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 4096);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0C | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 8192);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 8192);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0D | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 16384);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 16384);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0E | DATAGRAM_OK_REPLY_PENDING);
 
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 32769);
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 32769);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0F | DATAGRAM_OK_REPLY_PENDING);
 
-    // Test reply_pending=true with time=0 (Reply Pending bit set, exponent 0)
-    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, true, 0);
+    // Test time=0 (Reply Pending bit set, exponent 0)
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 0);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x00 | DATAGRAM_OK_REPLY_PENDING);
 }
 

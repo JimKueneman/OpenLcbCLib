@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "Updating: arduino/esp32/BasicNode"
 cp ../../src/openlcb/*.c ../../src/applications/arduino/esp32/BasicNode/src/openlcb/
 cp ../../src/openlcb/*.h ../../src/applications/arduino/esp32/BasicNode/src/openlcb/
 #cp ../../src/drivers/*.c ../../src/applications/arduino/esp32/BasicNode/src/drivers/
@@ -9,6 +10,7 @@ cp ../../src/drivers/canbus/*.h ../../src/applications/arduino/esp32/BasicNode/s
 cp ../../src/utilities/*.c ../../src/applications/arduino/esp32/BasicNode/src/utilities/
 cp ../../src/utilities/*.h ../../src/applications/arduino/esp32/BasicNode/src/utilities/
 
+echo "Updating: arduino/rpi_pico/BasicNode"
 cp ../../src/openlcb/*.c ../../src/applications/arduino/rpi_pico/BasicNode/src/openlcb/
 cp ../../src/openlcb/*.h ../../src/applications/arduino/rpi_pico/BasicNode/src/openlcb/
 #cp ../../src/drivers/*.c ../../src/applications/arduino/rpi_pico/BasicNode/src/drivers/
@@ -18,9 +20,7 @@ cp ../../src/drivers/canbus/*.h ../../src/applications/arduino/rpi_pico/BasicNod
 cp ../../src/utilities/*.c ../../src/applications/arduino/rpi_pico/BasicNode/src/utilities/
 cp ../../src/utilities/*.h ../../src/applications/arduino/rpi_pico/BasicNode/src/utilities/
 
-
-
-
+echo "Updating: platformio/esp32/BasicNode"
 cp ../../src/openlcb/*.c ../../src/applications/platformio/esp32/BasicNode/src/src/openlcb/
 cp ../../src/openlcb/*.h ../../src/applications/platformio/esp32/BasicNode/src/src/openlcb/
 #cp ../../src/drivers/*.c ../../src/applications/platformio/esp32/BasicNode/src/src/drivers/
@@ -30,6 +30,7 @@ cp ../../src/drivers/canbus/*.h ../../src/applications/platformio/esp32/BasicNod
 cp ../../src/utilities/*.c ../../src/applications/platformio/esp32/BasicNode/src/src/utilities/
 cp ../../src/utilities/*.h ../../src/applications/platformio/esp32/BasicNode/src/src/utilities/
 
+echo "Updating: platformio/esp32/BasicNode_WiFi"
 cp ../../src/openlcb/*.c ../../src/applications/platformio/esp32/BasicNode_WiFi/src/src/openlcb/
 cp ../../src/openlcb/*.h ../../src/applications/platformio/esp32/BasicNode_WiFi/src/src/openlcb/
 #cp ../../src/drivers/*.c ../../src/applications/platformio/esp32/BasicNode_WiFi/src/src/drivers/
@@ -39,6 +40,7 @@ cp ../../src/drivers/canbus/*.h ../../src/applications/platformio/esp32/BasicNod
 cp ../../src/utilities/*.c ../../src/applications/platformio/esp32/BasicNode_WiFi/src/src/utilities/
 cp ../../src/utilities/*.h ../../src/applications/platformio/esp32/BasicNode_WiFi/src/src/utilities/
 
+echo "Updating: platformio/osx/BasicNode"
 cp ../../src/openlcb/*.c ../../src/applications/platformio/osx/BasicNode/src/src/openlcb/
 cp ../../src/openlcb/*.h ../../src/applications/platformio/osx/BasicNode/src/src/openlcb/
 #cp ../../src/drivers/*.c ../../src/applications/platformio/osx/BasicNode/src/src/drivers/
@@ -48,9 +50,7 @@ cp ../../src/drivers/canbus/*.h ../../src/applications/platformio/osx/BasicNode/
 cp ../../src/utilities/*.c ../../src/applications/platformio/osx/BasicNode/src/src/utilities/
 cp ../../src/utilities/*.h ../../src/applications/platformio/osx/BasicNode/src/src/utilities/
 
-
-
-
+echo "Updating: xcode/BasicNode"
 cp ../../src/openlcb/*.c ../../src/applications/xcode/BasicNode/src/openlcb/
 cp ../../src/openlcb/*.h ../../src/applications/xcode/BasicNode/src/openlcb/
 #cp ../../src/drivers/*.c ../../src/applications/xcode/BasicNode/src/drivers/
@@ -60,9 +60,7 @@ cp ../../src/drivers/canbus/*.h ../../src/applications/xcode/BasicNode/src/drive
 cp ../../src/utilities/*.c ../../src/applications/xcode/BasicNode/src/utilities/
 cp ../../src/utilities/*.h ../../src/applications/xcode/BasicNode/src/utilities/
 
-
-
-
+echo "Updating: ti_thiea/mspm03507_launchpad/BasicNode"
 cp ../../src/openlcb/*.c ../../src/applications/ti_thiea/mspm03507_launchpad/BasicNode/src/openlcb/
 cp ../../src/openlcb/*.h ../../src/applications/ti_thiea/mspm03507_launchpad/BasicNode/src/openlcb/
 #cp ../../src/drivers/*.c ../../src/applications/ti_thiea/mspm03507_launchpad/BasicNode/src/drivers/
@@ -72,9 +70,7 @@ cp ../../src/drivers/canbus/*.h ../../src/applications/ti_thiea/mspm03507_launch
 cp ../../src/utilities/*.c ../../src/applications/ti_thiea/mspm03507_launchpad/BasicNode/src/utilities/
 cp ../../src/utilities/*.h ../../src/applications/ti_thiea/mspm03507_launchpad/BasicNode/src/utilities/
 
-
-
-
+echo "Updating: stm32_cubeide/stm32f407_discovery/BasicNode"
 cp ../../src/openlcb/*.c ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/Core/Src/src/openlcb/
 cp ../../src/openlcb/*.h ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/Core/Src/src/openlcb/
 #cp ../../src/drivers/*.c ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/Core/Src/src/drivers/
@@ -84,7 +80,17 @@ cp ../../src/drivers/canbus/*.h ../../src/applications/stm32_cubeide/stm32f407_d
 cp ../../src/utilities/*.c ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/Core/Src/src/utilities/
 cp ../../src/utilities/*.h ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/Core/Src/src/utilities/
 
+echo "Updating: NmraLccProjects/RPiPico"
+cp ../../src/openlcb/*.c ../../../NmraLccProjects/RPiPico/src/openlcb/
+cp ../../src/openlcb/*.h ../../../NmraLccProjects/RPiPico/src/openlcb/
+#cp ../../src/drivers/*.c ../../../NmraLccProjects/RPiPico/src/drivers/
+#cp ../../src/drivers/*.h ../../../NmraLccProjects/RPiPico/src/drivers/
+cp ../../src/drivers/canbus/*.c ../../../NmraLccProjects/RPiPico/src/drivers/canbus/
+cp ../../src/drivers/canbus/*.h ../../../NmraLccProjects/RPiPico/src/drivers/canbus/
+cp ../../src/utilities/*.c ../../../NmraLccProjects/RPiPico/src/utilities/
+cp ../../src/utilities/*.h ../../../NmraLccProjects/RPiPico/src/utilities/
 
+echo "Updating: NmraLccProjects/RPiPico_Train"
 cp ../../src/openlcb/*.c ../../../NmraLccProjects/RPiPico_Train/src/openlcb/
 cp ../../src/openlcb/*.h ../../../NmraLccProjects/RPiPico_Train/src/openlcb/
 #cp ../../src/drivers/*.c ../../../NmraLccProjects/RPiPico_Train/src/drivers/
@@ -93,3 +99,5 @@ cp ../../src/drivers/canbus/*.c ../../../NmraLccProjects/RPiPico_Train/src/drive
 cp ../../src/drivers/canbus/*.h ../../../NmraLccProjects/RPiPico_Train/src/drivers/canbus/
 cp ../../src/utilities/*.c ../../../NmraLccProjects/RPiPico_Train/src/utilities/
 cp ../../src/utilities/*.h ../../../NmraLccProjects/RPiPico_Train/src/utilities/
+
+echo "Done."

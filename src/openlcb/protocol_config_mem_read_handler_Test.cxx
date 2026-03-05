@@ -414,7 +414,7 @@ void _update_called_function_ptr(void *function_ptr)
     called_function_ptr = (void *)((long long)function_ptr + (long long)called_function_ptr);
 }
 
-void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, bool reply_pending, uint16_t return_code)
+void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code)
 {
 
     datagram_reply_code = return_code;

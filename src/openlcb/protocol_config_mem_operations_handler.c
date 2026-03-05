@@ -246,7 +246,7 @@ static uint8_t _available_address_space_info_flags(config_mem_operations_request
     /** @brief Send Datagram Received OK; set flags for phase-2 re-invocation. */
 static void _load_datagram_ok_message(openlcb_statemachine_info_t *statemachine_info) {
 
-    _interface->load_datagram_received_ok_message(statemachine_info, true, 0x00);
+    _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
     statemachine_info->incoming_msg_info.enumerate = true; // call this again for the data

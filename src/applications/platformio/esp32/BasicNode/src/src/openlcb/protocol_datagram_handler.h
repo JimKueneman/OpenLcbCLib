@@ -351,11 +351,13 @@ extern "C" {
         /**
          * @brief Builds a Datagram Received OK message (MTI 0x0A28).
          *
+         * @details The Reply Pending bit (0x80) is always set.  A reply
+         *          datagram (read data, write OK/fail, etc.) will always follow.
+         *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
-         * @param reply_pending  true if a reply datagram will follow.
-         * @param reply_pending_time_in_seconds  Seconds until reply (rounded up to 2^N). Ignored when reply_pending is false.
+         * @param reply_pending_time_in_seconds  Seconds until reply (rounded up to 2^N); 0 for no specific timeout.
          */
-    extern void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds);
+    extern void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
 
         /**
          * @brief Builds a Datagram Rejected message (MTI 0x0A48).

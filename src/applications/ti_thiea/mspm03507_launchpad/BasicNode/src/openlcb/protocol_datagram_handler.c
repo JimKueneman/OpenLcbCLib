@@ -1331,7 +1331,14 @@ void ProtocolDatagramHandler_datagram(openlcb_statemachine_info_t *statemachine_
      *                                        Ignored when reply_pending is false.
      * @endverbatim
      */
-void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds) {
+void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds) {
+
+    // The Reply Pending bit (DATAGRAM_OK_REPLY_PENDING, 0x80) is always set.
+    // The spec (MemoryConfigurationS §4.8-4.9) permits omitting it for
+    // immediate writes, but always setting it is fully compliant, simpler,
+    // and guarantees the requestor receives an explicit Write Reply for
+    // every operation.  All three Config Mem handlers (read, write,
+    // operations) rely on this — do not make it conditional.
 
     uint8_t exponent = 0;
 
@@ -1409,12 +1416,7 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM_OK_REPLY);
 
-    uint8_t flags = exponent;
-    if (reply_pending) {
-
-        flags |= DATAGRAM_OK_REPLY_PENDING;
-
-    }
+    uint8_t flags = exponent | DATAGRAM_OK_REPLY_PENDING;
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,

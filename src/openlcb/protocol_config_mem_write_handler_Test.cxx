@@ -413,7 +413,7 @@ void _update_called_function_ptr(void *function_ptr)
     called_function_ptr = (void *)((long long)function_ptr + (long long)called_function_ptr);
 }
 
-void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, bool reply_pending, uint16_t return_code)
+void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code)
 {
 
     datagram_reply_code = return_code;
@@ -3046,7 +3046,8 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_read_failure)
     // Make read fail
     config_memory_read_return_zero = true;
 
-    // Phase 2: Should fail because read returns 0
+    // Phase 2: Read fails — Write Reply (fail) is always sent because
+    // Reply Pending is always set.
     ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
@@ -3098,7 +3099,8 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_null_config_memory_read)
     ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
     _reset_variables();
 
-    // Phase 2: Should fail because config_memory_read is NULL
+    // Phase 2: config_memory_read is NULL — Write Reply (fail) is always
+    // sent because Reply Pending is always set.
     ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
@@ -4117,6 +4119,8 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_write_partial_failure)
     mock_config_memory[0] = 0xFF;
     memory_write_return_zero = true;
 
+    // Write partial failure — Write Reply (fail) is always sent because
+    // Reply Pending is always set.
     ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
@@ -4176,7 +4180,8 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_null_config_memory_write)
 
     EXPECT_TRUE(node1->state.openlcb_datagram_ack_sent);
 
-    // Phase 2: Should fail because config_memory_write is NULL
+    // Phase 2: config_memory_write is NULL — Write Reply (fail) is always
+    // sent because Reply Pending is always set.
     _reset_variables();
 
     mock_config_memory[0] = 0xFF;

@@ -186,13 +186,17 @@ static void _dispatch_write_request(openlcb_statemachine_info_t *statemachine_in
 
         } else {
 
+            // The delayed_reply_time callback, when provided, supplies the
+            // timeout exponent for the Datagram OK payload; when NULL a
+            // default of 0 is used.  Reply Pending is always set — see
+            // comment in ProtocolDatagramHandler_load_datagram_received_ok_message.
             if (_interface->delayed_reply_time) {
 
-                _interface->load_datagram_received_ok_message(statemachine_info, true, _interface->delayed_reply_time(statemachine_info, config_mem_write_request_info));
+                _interface->load_datagram_received_ok_message(statemachine_info, _interface->delayed_reply_time(statemachine_info, config_mem_write_request_info));
 
             } else {
 
-                _interface->load_datagram_received_ok_message(statemachine_info, false, 0x00);
+                _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
 
             }
 
@@ -511,13 +515,14 @@ static void _dispatch_write_under_mask_request(openlcb_statemachine_info_t *stat
 
         } else {
 
+            // Reply Pending always set — see _dispatch_write_request comment.
             if (_interface->delayed_reply_time) {
 
-                _interface->load_datagram_received_ok_message(statemachine_info, true, _interface->delayed_reply_time(statemachine_info, config_mem_write_request_info));
+                _interface->load_datagram_received_ok_message(statemachine_info, _interface->delayed_reply_time(statemachine_info, config_mem_write_request_info));
 
             } else {
 
-                _interface->load_datagram_received_ok_message(statemachine_info, false, 0x00);
+                _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
 
             }
 

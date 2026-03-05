@@ -186,11 +186,11 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
 
             if (_interface->delayed_reply_time) {
 
-                _interface->load_datagram_received_ok_message(statemachine_info, true, _interface->delayed_reply_time(statemachine_info, config_mem_read_request_info));
+                _interface->load_datagram_received_ok_message(statemachine_info, _interface->delayed_reply_time(statemachine_info, config_mem_read_request_info));
 
             } else {
 
-                _interface->load_datagram_received_ok_message(statemachine_info, true, 0x00);
+                _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
 
             }
 
