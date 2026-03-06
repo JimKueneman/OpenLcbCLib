@@ -117,9 +117,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a4d034624deb9c413c4977afa8987a6df" id="r_a4d034624deb9c413c4977afa8987a6df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d034624deb9c413c4977afa8987a6df">ProtocolDatagramHandler_datagram</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:a4d034624deb9c413c4977afa8987a6df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main entry point — switches on payload[0] command byte.  <br /></td></tr>
 <tr class="separator:a4d034624deb9c413c4977afa8987a6df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f0eb99ef0c40403f62e20643506c6fb" id="r_a8f0eb99ef0c40403f62e20643506c6fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f0eb99ef0c40403f62e20643506c6fb">ProtocolDatagramHandler_load_datagram_received_ok_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds)</td></tr>
-<tr class="memdesc:a8f0eb99ef0c40403f62e20643506c6fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a Datagram Received OK message (MTI 0x0A28).  <br /></td></tr>
-<tr class="separator:a8f0eb99ef0c40403f62e20643506c6fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe5f21fda782ce61534588d89163ccff" id="r_abe5f21fda782ce61534588d89163ccff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe5f21fda782ce61534588d89163ccff">ProtocolDatagramHandler_load_datagram_received_ok_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td></tr>
+<tr class="memdesc:abe5f21fda782ce61534588d89163ccff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a Datagram Received OK message (MTI 0x0A28).  <br /></td></tr>
+<tr class="separator:abe5f21fda782ce61534588d89163ccff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74c7ab99bff8408f9a00f77ed79da9f4" id="r_a74c7ab99bff8408f9a00f77ed79da9f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74c7ab99bff8408f9a00f77ed79da9f4">ProtocolDatagramHandler_load_datagram_rejected_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t return_code)</td></tr>
 <tr class="memdesc:a74c7ab99bff8408f9a00f77ed79da9f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a Datagram Rejected message (MTI 0x0A48).  <br /></td></tr>
 <tr class="separator:a74c7ab99bff8408f9a00f77ed79da9f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -241,8 +241,8 @@ MemoryConfigurationS.pdf </dd></dl>
 * </pre> 
 </div>
 </div>
-<a id="a8f0eb99ef0c40403f62e20643506c6fb" name="a8f0eb99ef0c40403f62e20643506c6fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f0eb99ef0c40403f62e20643506c6fb">&#9670;&#160;</a></span>ProtocolDatagramHandler_load_datagram_received_ok_message()</h2>
+<a id="abe5f21fda782ce61534588d89163ccff" name="abe5f21fda782ce61534588d89163ccff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe5f21fda782ce61534588d89163ccff">&#9670;&#160;</a></span>ProtocolDatagramHandler_load_datagram_received_ok_message()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -251,11 +251,6 @@ MemoryConfigurationS.pdf </dd></dl>
           <td class="memname">void ProtocolDatagramHandler_load_datagram_received_ok_message </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>reply_pending</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

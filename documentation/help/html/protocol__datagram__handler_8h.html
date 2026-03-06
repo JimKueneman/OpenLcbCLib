@@ -120,9 +120,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a87c419434a44020752f0fd815f1a0832" id="r_a87c419434a44020752f0fd815f1a0832"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87c419434a44020752f0fd815f1a0832">ProtocolDatagramHandler_initialize</a> (const <a class="el" href="structinterface__protocol__datagram__handler__t.html">interface_protocol_datagram_handler_t</a> *interface_protocol_datagram_handler)</td></tr>
 <tr class="memdesc:a87c419434a44020752f0fd815f1a0832"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface. Call once at startup before any datagram processing.  <br /></td></tr>
 <tr class="separator:a87c419434a44020752f0fd815f1a0832"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f0eb99ef0c40403f62e20643506c6fb" id="r_a8f0eb99ef0c40403f62e20643506c6fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f0eb99ef0c40403f62e20643506c6fb">ProtocolDatagramHandler_load_datagram_received_ok_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds)</td></tr>
-<tr class="memdesc:a8f0eb99ef0c40403f62e20643506c6fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a Datagram Received OK message (MTI 0x0A28).  <br /></td></tr>
-<tr class="separator:a8f0eb99ef0c40403f62e20643506c6fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe5f21fda782ce61534588d89163ccff" id="r_abe5f21fda782ce61534588d89163ccff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe5f21fda782ce61534588d89163ccff">ProtocolDatagramHandler_load_datagram_received_ok_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td></tr>
+<tr class="memdesc:abe5f21fda782ce61534588d89163ccff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a Datagram Received OK message (MTI 0x0A28).  <br /></td></tr>
+<tr class="separator:abe5f21fda782ce61534588d89163ccff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74c7ab99bff8408f9a00f77ed79da9f4" id="r_a74c7ab99bff8408f9a00f77ed79da9f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74c7ab99bff8408f9a00f77ed79da9f4">ProtocolDatagramHandler_load_datagram_rejected_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t return_code)</td></tr>
 <tr class="memdesc:a74c7ab99bff8408f9a00f77ed79da9f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a Datagram Rejected message (MTI 0x0A48).  <br /></td></tr>
 <tr class="separator:a74c7ab99bff8408f9a00f77ed79da9f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -214,8 +214,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a8f0eb99ef0c40403f62e20643506c6fb" name="a8f0eb99ef0c40403f62e20643506c6fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f0eb99ef0c40403f62e20643506c6fb">&#9670;&#160;</a></span>ProtocolDatagramHandler_load_datagram_received_ok_message()</h2>
+<a id="abe5f21fda782ce61534588d89163ccff" name="abe5f21fda782ce61534588d89163ccff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe5f21fda782ce61534588d89163ccff">&#9670;&#160;</a></span>ProtocolDatagramHandler_load_datagram_received_ok_message()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -231,11 +231,6 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>reply_pending</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>reply_pending_time_in_seconds</em></span>&#160;)</td>
         </tr>
       </table>
@@ -247,11 +242,11 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Builds a Datagram Received OK message (MTI 0x0A28). </p>
+<p>The Reply Pending bit (0x80) is always set. A reply datagram (read data, write OK/fail, etc.) will always follow.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">reply_pending</td><td>true if a reply datagram will follow. </td></tr>
-    <tr><td class="paramname">reply_pending_time_in_seconds</td><td>Seconds until reply (rounded up to 2^N). Ignored when reply_pending is false.</td></tr>
+    <tr><td class="paramname">reply_pending_time_in_seconds</td><td>Seconds until reply (rounded up to 2^N); 0 for no specific timeout.</td></tr>
   </table>
   </dd>
 </dl>

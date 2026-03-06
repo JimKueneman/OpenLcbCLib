@@ -97,9 +97,9 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a873fe428cb8efe42b0bc937f2c1e8b20" id="r_a873fe428cb8efe42b0bc937f2c1e8b20"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a873fe428cb8efe42b0bc937f2c1e8b20">load_datagram_received_ok_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds)</td></tr>
-<tr class="memdesc:a873fe428cb8efe42b0bc937f2c1e8b20"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED — Send Datagram Received OK with reply-pending flag and time.  <br /></td></tr>
-<tr class="separator:a873fe428cb8efe42b0bc937f2c1e8b20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acbb0b05b4b90f1f8851f976ed278089d" id="r_acbb0b05b4b90f1f8851f976ed278089d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbb0b05b4b90f1f8851f976ed278089d">load_datagram_received_ok_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td></tr>
+<tr class="memdesc:acbb0b05b4b90f1f8851f976ed278089d"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED — Send Datagram Received OK with Reply Pending (always set) and timeout.  <br /></td></tr>
+<tr class="separator:acbb0b05b4b90f1f8851f976ed278089d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05137d26998c7eef34c0ddc3debb621a" id="r_a05137d26998c7eef34c0ddc3debb621a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05137d26998c7eef34c0ddc3debb621a">load_datagram_received_rejected_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t error_code)</td></tr>
 <tr class="memdesc:a05137d26998c7eef34c0ddc3debb621a"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED — Send Datagram Received Rejected with error code.  <br /></td></tr>
 <tr class="separator:a05137d26998c7eef34c0ddc3debb621a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,19 +150,19 @@ Data Fields</h2></td></tr>
 <div class="textblock"><p>Callback interface for memory-config operations. </p>
 <p>Required callbacks: load_datagram_received_ok_message, load_datagram_received_rejected_message. All others are optional (NULL disables the sub-command). </p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a id="a873fe428cb8efe42b0bc937f2c1e8b20" name="a873fe428cb8efe42b0bc937f2c1e8b20"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a873fe428cb8efe42b0bc937f2c1e8b20">&#9670;&#160;</a></span>load_datagram_received_ok_message</h2>
+<a id="acbb0b05b4b90f1f8851f976ed278089d" name="acbb0b05b4b90f1f8851f976ed278089d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbb0b05b4b90f1f8851f976ed278089d">&#9670;&#160;</a></span>load_datagram_received_ok_message</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* load_datagram_received_ok_message) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, bool reply_pending, uint16_t reply_pending_time_in_seconds)</td>
+          <td class="memname">void(* load_datagram_received_ok_message) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>REQUIRED — Send Datagram Received OK with reply-pending flag and time. </p>
+<p>REQUIRED — Send Datagram Received OK with Reply Pending (always set) and timeout. </p>
 
 </div>
 </div>
