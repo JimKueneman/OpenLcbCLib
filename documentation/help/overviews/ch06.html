@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 6 — Thread Safety | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 6 — Thread Safety</h1>
+
+        <h2>6.1 Why It Matters</h2>
+        <p>Even on bare-metal systems without an OS, the library operates in two concurrent contexts:</p>
+        <ul>
+            <li><strong>Interrupt context (ISR)</strong>: The CAN receive interrupt fires when a frame arrives. It allocates a CAN buffer, copies the frame data, and pushes it to the CAN FIFO. On some platforms, the CAN TX complete interrupt also runs here.</li>
+            <li><strong>Main loop context</strong>: All state machines, protocol handlers, buffer operations, and node management run in the main loop.</li>
+        </ul>
+        <p>Without synchronization, the ISR could interrupt the main loop in the middle of a buffer pool operation, corrupting the data structure.</p>
+
+        <h2>6.2 The Lock/Unlock Contract</h2>
+        <p>The library defines a lock/unlock contract through callback function pointers that the application must provide:</p>
+
+        <pre><code>// Application provides these functions:
+void lock_shared_resources(void);    // Enter critical section
+void unlock_shared_resources(void);  // Leave critical section</code></pre>
+
+        <p>The library calls <code>lock_shared_resources()</code> before accessing any shared data structure and <code>unlock_shared_resources()</code> immediately after. The critical section must be as short as possible to minimize interrupt latency.</p>
+
+        <h2>6.3 What Must Be Protected</h2>
+
+        <div class="mermaid">
+flowchart TB
+    subgraph SHARED["Shared Resources (require lock)"]
+        A["CAN Buffer Store<br/>(allocate/free)"]
+        B["CAN FIFO<br/>(push/pop)"]
+        C["Alias Mapping Table<br/>(is_duplicate flag)"]
+        D["Listener Alias Table<br/>(alias resolution)"]
+        E["OpenLCB Buffer List<br/>(timeout check)"]
+    end
+
+    subgraph ISR["ISR Context (writes)"]
+        I1["CAN RX: allocate + push"]
+        I2["CAN RX: set is_duplicate"]
+        I3["CAN RX: update listener alias"]
+    end
+
+    subgraph MAIN["Main Loop (reads/writes)"]
+        M1["CAN RX SM: pop + free"]
+        M2["CAN TX SM: allocate"]
+        M3["Main SM: check duplicates"]
+        M4["Main SM: resolve aliases"]
+        M5["Main SM: check timeouts"]
+    end
+
+    I1 --> A
+    I1 --> B
+    I2 --> C
+    I3 --> D
+    M1 --> A
+    M1 --> B
+    M2 --> A
+    M3 --> C
+    M4 --> D
+    M5 --> E
+
+    style SHARED fill:#fff3e0,stroke:#e65100
+    style ISR fill:#ffcdd2,stroke:#c62828
+    style MAIN fill:#c8e6c9,stroke:#2e7d32
+        </div>
+
+        <table>
+            <thead>
+                <tr><th>Resource</th><th>ISR Access</th><th>Main Loop Access</th><th>Why Lock Needed</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>CAN Buffer Store</td>
+                    <td>allocate_buffer()</td>
+                    <td>allocate_buffer(), free_buffer()</td>
+                    <td>Concurrent allocation could return same slot twice</td>
+                </tr>
+                <tr>
+                    <td>CAN FIFO</td>
+                    <td>push()</td>
+                    <td>pop()</td>
+                    <td>Concurrent push/pop could corrupt head/tail pointers</td>
+                </tr>
+                <tr>
+                    <td>Alias Mapping Table</td>
+                    <td>Set is_duplicate flag</td>
+                    <td>Read and clear is_duplicate</td>
+                    <td>Flag read-modify-write is not atomic</td>
+                </tr>
+                <tr>
+                    <td>Listener Alias Table</td>
+                    <td>Write alias on AMD arrival</td>
+                    <td>Read alias for TX resolution</td>
+                    <td>Partial write visible to reader</td>
+                </tr>
+                <tr>
+                    <td>OpenLCB Buffer List</td>
+                    <td>None</td>
+                    <td>check_timeouts()</td>
+                    <td>Documentation requires lock (future-proofing)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>6.4 Bare-Metal Implementation</h2>
+        <p>On bare-metal systems, the simplest and most reliable approach is to disable and re-enable interrupts:</p>
+
+        <pre><code>// dsPIC example
+void lock_shared_resources(void) {
+    __builtin_disi(0x3FFF);  // Disable interrupts
+}
+
+void unlock_shared_resources(void) {
+    __builtin_disi(0x0000);  // Re-enable interrupts
+}
+
+// ARM Cortex-M example
+void lock_shared_resources(void) {
+    __disable_irq();
+}
+
+void unlock_shared_resources(void) {
+    __enable_irq();
+}
+
+// ESP32 (FreeRTOS) example
+static portMUX_TYPE spinlock = portMUX_INITIALIZER_UNLOCKED;
+
+void lock_shared_resources(void) {
+    portENTER_CRITICAL(&amp;spinlock);
+}
+
+void unlock_shared_resources(void) {
+    portEXIT_CRITICAL(&amp;spinlock);
+}</code></pre>
+
+        <h2>6.5 RTOS Implementation</h2>
+        <p>On an RTOS, use a mutex or critical section:</p>
+
+        <pre><code>// FreeRTOS example with mutex
+static SemaphoreHandle_t shared_mutex;
+
+void lock_shared_resources(void) {
+    xSemaphoreTake(shared_mutex, portMAX_DELAY);
+}
+
+void unlock_shared_resources(void) {
+    xSemaphoreGive(shared_mutex);
+}</code></pre>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">ISR Context Warning</div>
+            <p>If the lock function is called from both ISR and main loop context, a standard mutex will not work. Use a critical section (disable interrupts) or an ISR-safe mutex. On FreeRTOS, <code>portENTER_CRITICAL()</code> / <code>portEXIT_CRITICAL()</code> is the appropriate mechanism when ISR and task contexts share resources.</p>
+        </div>
+
+        <h2>6.6 Common Pitfalls</h2>
+
+        <table>
+            <thead>
+                <tr><th>Pitfall</th><th>Symptom</th><th>Fix</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Forgetting to lock around CAN FIFO push in ISR</td>
+                    <td>Corrupted FIFO, random crashes, lost messages</td>
+                    <td>Wrap ISR push in lock/unlock</td>
+                </tr>
+                <tr>
+                    <td>Holding lock for too long</td>
+                    <td>Increased interrupt latency, missed CAN frames at high bus load</td>
+                    <td>Keep critical sections minimal -- only the shared access</td>
+                </tr>
+                <tr>
+                    <td>Using a non-ISR-safe mutex from ISR context</td>
+                    <td>Deadlock or undefined behavior</td>
+                    <td>Use disable-interrupts or ISR-safe primitives</td>
+                </tr>
+                <tr>
+                    <td>Nested locks without nesting support</td>
+                    <td>Premature unlock on inner unlock call</td>
+                    <td>Ensure lock implementation supports nesting, or restructure code</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="chapter-nav">
+            <a href="ch05.html">&larr; Previous: Ch 5 — Node Management</a>
+            <a href="ch06b.html">Next: Ch 6b — Callback Interface Pattern &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

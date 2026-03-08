@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLCB C Library — Implementation Guide</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>OpenLCB C Library — Implementation Guide</h1>
+        <p class="subtitle">A guide for maintainers, contributors, and anyone who needs to understand how this library works, how data flows through it, and where to look when debugging.</p>
+
+        <div class="callout callout-info">
+            <div class="callout-title">About this guide</div>
+            <p>This guide covers the <strong>implementation</strong> of the OpenLCB C library — how the code is structured, how messages flow, and how the pieces connect. For the generated API reference (individual function signatures, struct fields, etc.), see the <a href="../html/index.html">Doxygen API Reference</a>.</p>
+        </div>
+
+        <div class="part-group">
+            <div class="part-title">Part I — Orientation</div>
+            <ul class="chapter-list">
+                <li><a href="ch01.html">
+                    <span class="ch-number">Chapter 1</span> Project Overview
+                    <span class="ch-desc">What OpenLCB is, the four design principles, architecture boundary between core and transport drivers, directory structure.</span>
+                </a></li>
+                <li><a href="ch02.html">
+                    <span class="ch-number">Chapter 2</span> Building and Running
+                    <span class="ch-desc">Compile-time configuration constants, build overview, link to dedicated build guide.</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="part-group">
+            <div class="part-title">Part II — Core Infrastructure</div>
+            <ul class="chapter-list">
+                <li><a href="ch03.html">
+                    <span class="ch-number">Chapter 3</span> Types and Constants (Transport-Independent)
+                    <span class="ch-desc">openlcb_types.h master tour — Node IDs, MTI codes, payload types, message structure, node state.</span>
+                </a></li>
+                <li><a href="ch03b.html">
+                    <span class="ch-number">Chapter 3b</span> CAN-Specific Types and Constants
+                    <span class="ch-desc">can_types.h — CAN frame structure, 29-bit identifier layout, CAN control frame constants.</span>
+                </a></li>
+                <li><a href="ch04.html">
+                    <span class="ch-number">Chapter 4</span> OpenLCB Buffer and Message System
+                    <span class="ch-desc">Segregated payload pools, reference counting, FIFO, buffer list, allocation and lifecycle.</span>
+                </a></li>
+                <li><a href="ch04b.html">
+                    <span class="ch-number">Chapter 4b</span> CAN Buffer System
+                    <span class="ch-desc">CAN frame buffer pool, CAN FIFO, how CAN buffers feed into OpenLCB buffers.</span>
+                </a></li>
+                <li><a href="ch05.html">
+                    <span class="ch-number">Chapter 5</span> Node Management
+                    <span class="ch-desc">Node pool, state bits, multi-key enumerator, node parameters, adding virtual nodes.</span>
+                </a></li>
+                <li><a href="ch06.html">
+                    <span class="ch-number">Chapter 6</span> Thread Safety
+                    <span class="ch-desc">The lock/unlock contract, what must be protected, bare-metal vs RTOS implementations.</span>
+                </a></li>
+                <li><a href="ch06b.html">
+                    <span class="ch-number">Chapter 6b</span> Callback Interface Pattern
+                    <span class="ch-desc">Dependency injection via function pointer structs, required vs optional callbacks.</span>
+                </a></li>
+                <li><a href="ch07.html">
+                    <span class="ch-number">Chapter 7</span> Utilities
+                    <span class="ch-desc">Payload insert/extract, event ranges, broadcast time encoding, train search encoding, float16.</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="part-group">
+            <div class="part-title">Part III — State Machines (Transport-Independent)</div>
+            <ul class="chapter-list">
+                <li><a href="ch08.html">
+                    <span class="ch-number">Chapter 8</span> Main Dispatcher State Machine
+                    <span class="ch-desc">The central message router — priority dispatch, MTI table, node enumeration, worker buffer.</span>
+                </a></li>
+                <li><a href="ch09.html">
+                    <span class="ch-number">Chapter 9</span> Login State Machine
+                    <span class="ch-desc">Node startup sequence — Initialization Complete, event announcements, state progression.</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="part-group">
+            <div class="part-title">Part IIIb — CAN Transport State Machines</div>
+            <ul class="chapter-list">
+                <li><a href="ch10.html">
+                    <span class="ch-number">Chapter 10</span> CAN Transport State Machine
+                    <span class="ch-desc">CAN orchestrator — duplicate alias resolution, frame type routing, CAN identifier layout.</span>
+                </a></li>
+                <li><a href="ch11.html">
+                    <span class="ch-number">Chapter 11</span> CAN RX and TX Pipelines
+                    <span class="ch-desc">Frame-to-message assembly, message-to-frame fragmentation, multi-frame tracking.</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="part-group">
+            <div class="part-title">Part IV — Protocol Handlers</div>
+            <ul class="chapter-list">
+                <li><a href="ch12.html">
+                    <span class="ch-number">Chapter 12</span> Message Network Protocol
+                    <span class="ch-desc">Verify Node ID, Protocol Support Inquiry/Reply, OIR, Terminate Due to Error.</span>
+                </a></li>
+                <li><a href="ch13.html">
+                    <span class="ch-number">Chapter 13</span> Event Transport Protocol
+                    <span class="ch-desc">Consumer/Producer Identified, PCER, Learn Event, event ranges and state tracking.</span>
+                </a></li>
+                <li><a href="ch14.html">
+                    <span class="ch-number">Chapter 14</span> Datagram Protocol
+                    <span class="ch-desc">Two-phase ACK, address space routing, read/write/write-under-mask, retry logic.</span>
+                </a></li>
+                <li><a href="ch15.html">
+                    <span class="ch-number">Chapter 15</span> Simple Node Information (SNIP)
+                    <span class="ch-desc">SNIP response format, field loaders, manufacturer and user information.</span>
+                </a></li>
+                <li><a href="ch16.html">
+                    <span class="ch-number">Chapter 16</span> Configuration Description Information (CDI)
+                    <span class="ch-desc">XML device self-description, CDI structure, address space 0xFF.</span>
+                </a></li>
+                <li><a href="ch17.html">
+                    <span class="ch-number">Chapter 17</span> Train Control Protocol
+                    <span class="ch-desc">Speed, functions, E-stop, controller assignment, consist system, heartbeat.</span>
+                </a></li>
+                <li><a href="ch18.html">
+                    <span class="ch-number">Chapter 18</span> Broadcast Time Protocol
+                    <span class="ch-desc">Event-based time distribution, clock IDs, time/date/year/rate encoding.</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="part-group">
+            <div class="part-title">Part V — CAN Driver Layer</div>
+            <ul class="chapter-list">
+                <li><a href="ch19.html">
+                    <span class="ch-number">Chapter 19</span> Alias Mapping: Global Table
+                    <span class="ch-desc">Alias-to-NodeID registry, registration, lookup, duplicate detection and resolution.</span>
+                </a></li>
+                <li><a href="ch20.html">
+                    <span class="ch-number">Chapter 20</span> Alias Mapping: Listener Table
+                    <span class="ch-desc">On-demand alias resolution for consist listener nodes, AME/AMD lifecycle.</span>
+                </a></li>
+                <li><a href="ch21.html">
+                    <span class="ch-number">Chapter 21</span> Multi-Node Message Routing
+                    <span class="ch-desc">Virtual nodes sharing a CAN interface, the loopback problem, approaches under consideration.</span>
+                </a></li>
+                <li><a href="ch22.html">
+                    <span class="ch-number">Chapter 22</span> CAN Login Sequence
+                    <span class="ch-desc">CID frame construction, LFSR alias generation, RID/AMD, timing and collision detection.</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="part-group">
+            <div class="part-title">Part VI — Integration and Debugging</div>
+            <ul class="chapter-list">
+                <li><a href="ch23.html">
+                    <span class="ch-number">Chapter 23</span> Wiring It All Together
+                    <span class="ch-desc">Full initialization walkthrough, main loop, timer tick, platform-specific implementations.</span>
+                </a></li>
+                <li><a href="ch24.html">
+                    <span class="ch-number">Chapter 24</span> Data Flow Walkthrough
+                    <span class="ch-desc">End-to-end message traces with Mermaid diagrams — incoming, outgoing, login, datagram.</span>
+                </a></li>
+                <li><a href="ch25.html">
+                    <span class="ch-number">Chapter 25</span> Debugging Guide
+                    <span class="ch-desc">Buffer exhaustion, alias collisions, datagram timeouts, stuck state machines, test patterns.</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="part-group">
+            <div class="part-title">Part VII — Extending the Library</div>
+            <ul class="chapter-list">
+                <li><a href="ch26.html">
+                    <span class="ch-number">Chapter 26</span> Adding a New Protocol
+                    <span class="ch-desc">Step-by-step: define MTI, create interface, register handler, implement, test.</span>
+                </a></li>
+                <li><a href="ch27.html">
+                    <span class="ch-number">Chapter 27</span> Adding a New Transport
+                    <span class="ch-desc">Creating a driver alongside canbus/, what a transport must provide, the openlcb_msg_t boundary.</span>
+                </a></li>
+                <li><a href="ch28.html">
+                    <span class="ch-number">Chapter 28</span> Porting to a New Platform
+                    <span class="ch-desc">What the application must provide, bare-metal vs RTOS, memory tuning.</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="part-group">
+            <div class="part-title">Appendices</div>
+            <ul class="chapter-list">
+                <li><a href="appendix_a.html">
+                    <span class="ch-number">Appendix A</span> MTI Quick Reference Table
+                    <span class="ch-desc">All MTI values with names, addressing mode, and handling module.</span>
+                </a></li>
+                <li><a href="appendix_b.html">
+                    <span class="ch-number">Appendix B</span> CAN Frame Format Reference
+                    <span class="ch-desc">29-bit identifier bit-field diagram, control frame layouts, datagram/stream sequencing.</span>
+                </a></li>
+                <li><a href="appendix_c.html">
+                    <span class="ch-number">Appendix C</span> Configuration Memory Address Space Map
+                    <span class="ch-desc">All address spaces (0xF9-0xFF) with purpose, permissions, typical sizes.</span>
+                </a></li>
+                <li><a href="appendix_d.html">
+                    <span class="ch-number">Appendix D</span> Event ID Encoding Reference
+                    <span class="ch-desc">Well-known events, broadcast time encoding, train search encoding, range encoding.</span>
+                </a></li>
+                <li><a href="appendix_e.html">
+                    <span class="ch-number">Appendix E</span> Compile-Time Configuration Reference
+                    <span class="ch-desc">All USER_DEFINED_* macros with purpose, defaults, and tuning guidance.</span>
+                </a></li>
+                <li><a href="appendix_f.html">
+                    <span class="ch-number">Appendix F</span> OpenLCB Specification Traceability
+                    <span class="ch-desc">170+ spec requirements mapped to source files and documentation chapters.</span>
+                </a></li>
+                <li><a href="appendix_g.html">
+                    <span class="ch-number">Appendix G</span> Glossary
+                    <span class="ch-desc">OpenLCB/LCC terminology: Node ID, alias, MTI, CDI, SNIP, PCER, datagram, etc.</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <hr style="margin-top:48px">
+        <p style="font-size:13px; color:var(--text-muted)">Copyright &copy; 2026 Jim Kueneman. All rights reserved. See the <a href="../licence.html">License</a>.</p>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

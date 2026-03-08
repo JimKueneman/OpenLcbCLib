@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 20 — Alias Mapping: Listener Table | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 20 — Alias Mapping: Listener Table</h1>
+
+        <p>When a train node has consist listeners (other train nodes that receive forwarded commands), the CAN TX path needs to resolve each listener's 48-bit Node ID to its 12-bit CAN alias. The listener alias table provides this on-demand resolution, implemented in <code>alias_mapping_listener.h</code> and <code>alias_mapping_listener.c</code>.</p>
+
+        <h2>20.1 Purpose: Why a Separate Table?</h2>
+        <p>The global alias mapping table (<a href="ch19.html">Chapter 19</a>) tracks aliases for nodes known to this device. The listener alias table serves a different purpose: it maps <em>remote</em> listener Node IDs to their CAN aliases so consist commands can be forwarded to them.</p>
+
+        <table>
+            <thead>
+                <tr><th>Aspect</th><th>Global Table (Ch 19)</th><th>Listener Table (Ch 20)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Purpose</td><td>Maps our own nodes' aliases</td><td>Maps remote listener nodes' aliases</td></tr>
+                <tr><td>Population</td><td>Login process (CID/RID/AMD)</td><td>On-demand via AME/AMD exchange</td></tr>
+                <tr><td>Size</td><td><code>USER_DEFINED_NODE_BUFFER_DEPTH</code></td><td><code>MAX_LISTENERS_PER_TRAIN * TRAIN_NODE_COUNT</code></td></tr>
+                <tr><td>Alias source</td><td>Locally generated</td><td>Learned from remote AMD frames</td></tr>
+            </tbody>
+        </table>
+
+        <h2>20.2 The listener_alias_entry_t Structure</h2>
+
+        <pre><code>typedef struct listener_alias_entry_struct {
+    node_id_t node_id; // Listener Node ID (from protocol layer attach). 0 = unused.
+    uint16_t alias;    // Resolved CAN alias (0 = not yet resolved).
+} listener_alias_entry_t;</code></pre>
+
+        <p>An entry with <code>node_id != 0</code> and <code>alias == 0</code> means the listener is registered but its CAN alias has not yet been resolved. The TX path must wait (or trigger resolution) before it can send a CAN frame to that listener.</p>
+
+        <h2>20.3 Table Size</h2>
+        <p>The table is sized statically at compile time:</p>
+
+        <pre><code>#define LISTENER_ALIAS_TABLE_DEPTH \
+    (USER_DEFINED_MAX_LISTENERS_PER_TRAIN * USER_DEFINED_TRAIN_NODE_COUNT)</code></pre>
+
+        <p>For example, if each train supports 4 listeners and there are 2 train nodes, the table has 8 slots. All slots are shared across all train nodes -- the table is a flat array, not partitioned per train.</p>
+
+        <h2>20.4 API Functions</h2>
+
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>ListenerAliasTable_initialize()</code></td>
+                    <td>Zeros all entries. Call once at startup.</td>
+                </tr>
+                <tr>
+                    <td><code>ListenerAliasTable_register(node_id)</code></td>
+                    <td>Registers a listener Node ID with <code>alias = 0</code>. If already registered, returns the existing entry without modification. Returns NULL if the table is full or node_id is invalid.</td>
+                </tr>
+                <tr>
+                    <td><code>ListenerAliasTable_unregister(node_id)</code></td>
+                    <td>Removes the entry matching node_id. Clears both <code>node_id</code> and <code>alias</code> fields. Safe to call with a node_id that is not registered.</td>
+                </tr>
+                <tr>
+                    <td><code>ListenerAliasTable_set_alias(node_id, alias)</code></td>
+                    <td>Stores a resolved alias for a registered listener Node ID. Called when an AMD frame arrives. If node_id is not in the table, this is a no-op.</td>
+                </tr>
+                <tr>
+                    <td><code>ListenerAliasTable_find_by_node_id(node_id)</code></td>
+                    <td>Primary TX-path query. Returns the entry for the given Node ID. Caller checks <code>entry->alias != 0</code> to confirm the alias has been resolved.</td>
+                </tr>
+                <tr>
+                    <td><code>ListenerAliasTable_flush_aliases()</code></td>
+                    <td>Zeros all alias fields but preserves registered node_ids. Called on global AME (empty payload) receipt.</td>
+                </tr>
+                <tr>
+                    <td><code>ListenerAliasTable_clear_alias_by_alias(alias)</code></td>
+                    <td>Zeros the alias field for the entry matching a specific alias value. Called when an AMR frame is received.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>20.5 Population Flow</h2>
+        <p>The listener alias resolution follows this sequence when a listener is attached to a train consist:</p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant App as Application
+    participant Train as Train Protocol Handler
+    participant LT as Listener Alias Table
+    participant CAN as CAN Bus
+    participant Remote as Remote Listener Node
+
+    App->>Train: Attach listener (Node ID = 0x050101012345)
+    Train->>LT: ListenerAliasTable_register(0x050101012345)
+    Note over LT: Entry created: node_id=0x050101012345, alias=0
+
+    Train->>CAN: Send AME frame with Node ID 0x050101012345
+    CAN->>Remote: AME received
+    Remote->>CAN: Reply with AMD (alias=0x2AB, Node ID=0x050101012345)
+
+    CAN->>LT: ListenerAliasTable_set_alias(0x050101012345, 0x2AB)
+    Note over LT: Entry updated: node_id=0x050101012345, alias=0x2AB
+
+    Note over Train: TX path can now resolve alias for listener
+    Train->>LT: ListenerAliasTable_find_by_node_id(0x050101012345)
+    Note over Train: alias=0x2AB, send forwarded command
+        </div>
+
+        <h2>20.6 flush_aliases vs clear_alias_by_alias</h2>
+        <p>Two operations invalidate resolved aliases, triggered by different CAN events:</p>
+
+        <table>
+            <thead>
+                <tr><th>Operation</th><th>Trigger</th><th>Effect</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>flush_aliases()</code></td>
+                    <td>Global AME with empty payload received</td>
+                    <td>Zeros <strong>all</strong> alias fields, preserves all node_ids. The AMD replies triggered by the global AME will re-populate aliases via <code>set_alias()</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>clear_alias_by_alias(alias)</code></td>
+                    <td>AMR frame received for a specific alias</td>
+                    <td>Zeros the alias field of the <strong>one</strong> matching entry, preserves the node_id. When the remote node re-claims an alias and sends AMD, <code>set_alias()</code> will re-populate.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Node IDs Are Never Lost</div>
+            <p>Both flush operations preserve the registered <code>node_id</code> values. Only the <code>alias</code> field is cleared. This means the table remembers which listeners are attached even when their CAN aliases are temporarily unknown. Once the remote nodes re-announce via AMD, the aliases are automatically re-learned.</p>
+        </div>
+
+        <h2>20.7 How the TX Path Uses This Table</h2>
+        <p>When the CAN TX state machine needs to forward a consist command to a listener, it follows this pattern:</p>
+
+        <ol>
+            <li>Get the listener Node ID from the train's listener list.</li>
+            <li>Call <code>ListenerAliasTable_find_by_node_id(node_id)</code>.</li>
+            <li>If the returned entry has <code>alias != 0</code>, use that alias as the destination alias in the CAN frame header.</li>
+            <li>If <code>alias == 0</code>, the alias is not yet resolved -- the message must be held until an AMD resolves it.</li>
+        </ol>
+
+        <p>The TX state machine interface includes an optional <code>listener_find_by_node_id</code> function pointer, wired to <code>ListenerAliasTable_find_by_node_id()</code> by <code>can_config.c</code>.</p>
+
+        <h2>20.8 Thread Safety</h2>
+        <p>The listener alias table is written by the CAN RX interrupt (when AMD arrives and <code>set_alias()</code> is called) and read by the CAN TX main thread (during alias resolution). The <code>lock_shared_resources</code> / <code>unlock_shared_resources</code> mechanism must protect concurrent accesses, as described in <a href="ch06.html">Chapter 6</a>.</p>
+
+        <h2>20.9 Source Files</h2>
+        <table>
+            <thead>
+                <tr><th>File</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>drivers/canbus/alias_mapping_listener.h</code></td><td>Public API declarations</td></tr>
+                <tr><td><code>drivers/canbus/alias_mapping_listener.c</code></td><td>Implementation -- single static table, linear scan</td></tr>
+                <tr><td><code>drivers/canbus/can_types.h</code></td><td>Type definition for <code>listener_alias_entry_t</code> and <code>LISTENER_ALIAS_TABLE_DEPTH</code></td></tr>
+            </tbody>
+        </table>
+
+        <div class="chapter-nav">
+            <a href="ch19.html">&larr; Prev: Ch 19 — Alias Mapping</a>
+            <a href="ch21.html">Next: Ch 21 — Multi-Node Routing &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -31,7 +31,7 @@
  * Head = next insertion, tail = next removal.  Empty when head == tail.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 8 Mar 2026
  */
 
 #include "openlcb_buffer_fifo.h"
@@ -201,6 +201,39 @@ void OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(uint16_t al
         }
 
     }
+
+}
+
+    /**
+    * @brief Inserts a message pointer at the head of the FIFO.
+    *
+    * @details Algorithm:
+    * -# Compute previous tail position with wraparound
+    * -# If prev == head the FIFO is full, return NULL
+    * -# Move tail back, store pointer at new tail, return the pointer
+    *
+    * @verbatim
+    * @param new_msg Pointer to @ref openlcb_msg_t allocated from OpenLcbBufferStore
+    * @endverbatim
+    *
+    * @return The queued pointer on success, or NULL if the FIFO is full
+    */
+openlcb_msg_t *OpenLcbBufferFifo_push_to_head(openlcb_msg_t *new_msg) {
+
+    uint8_t prev = (_openlcb_msg_buffer_fifo.tail == 0)
+        ? LEN_MESSAGE_FIFO_BUFFER - 1
+        : _openlcb_msg_buffer_fifo.tail - 1;
+
+    if (prev != _openlcb_msg_buffer_fifo.head) {
+
+        _openlcb_msg_buffer_fifo.tail = prev;
+        _openlcb_msg_buffer_fifo.list[prev] = new_msg;
+
+        return new_msg;
+
+    }
+
+    return NULL;
 
 }
 

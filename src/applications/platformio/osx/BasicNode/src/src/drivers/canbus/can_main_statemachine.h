@@ -28,7 +28,7 @@
  * Non-blocking: call CanMainStateMachine_run() as fast as possible in the main loop.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 8 Mar 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -100,6 +100,9 @@ extern "C" {
 
         /** @brief REQUIRED. Continue enumeration to the next node. Typical: CanMainStatemachine_handle_try_enumerate_next_node. */
         bool (*handle_try_enumerate_next_node)(void);
+
+        /** @brief OPTIONAL. Probe one listener alias for staleness. NULL if unused. Typical: CanMainStatemachine_handle_listener_verification. */
+        bool (*handle_listener_verification)(void);
 
     } interface_can_main_statemachine_t;
 
@@ -210,6 +213,19 @@ extern "C" {
      * @warning NOT thread-safe.
      */
     extern bool CanMainStatemachine_handle_try_enumerate_next_node(void);
+
+
+    /**
+     * @brief Probes one listener alias for staleness and queues an AME if due.
+     *
+     * @details Exposed for unit testing. Normally called via the interface pointer.
+     *
+     * @return true if a probe AME was queued, false if nothing to do.
+     *
+     * @warning Locks shared resources during CAN buffer allocation and FIFO push.
+     * @warning NOT thread-safe.
+     */
+    extern bool CanMainStatemachine_handle_listener_verification(void);
 
 #ifdef __cplusplus
 }

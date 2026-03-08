@@ -134,6 +134,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a326e8a6b5051c0b6821a460fab2ba410" id="r_a326e8a6b5051c0b6821a460fab2ba410"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a326e8a6b5051c0b6821a460fab2ba410">CanMainStatemachine_handle_try_enumerate_next_node</a> (void)</td></tr>
 <tr class="memdesc:a326e8a6b5051c0b6821a460fab2ba410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Continues enumeration and processes the next node.  <br /></td></tr>
 <tr class="separator:a326e8a6b5051c0b6821a460fab2ba410"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d57587caecc98631d9a65e076d0493b" id="r_a9d57587caecc98631d9a65e076d0493b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d57587caecc98631d9a65e076d0493b">CanMainStatemachine_handle_listener_verification</a> (void)</td></tr>
+<tr class="memdesc:a9d57587caecc98631d9a65e076d0493b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Probes one listener alias for staleness and queues an AME if due.  <br /></td></tr>
+<tr class="separator:a9d57587caecc98631d9a65e076d0493b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main CAN layer state machine — orchestrates alias management, login, and message dispatch. </p>
@@ -144,7 +147,7 @@ Functions</h2></td></tr>
 </dd></dl>
 <p>Coordinates duplicate alias detection, outgoing message transmission, login sequencing, and round-robin node enumeration across all virtual nodes. Non-blocking: call <a class="el" href="#a9bdef5a88eff72849f2506381fe1742f" title="Executes one iteration of the main CAN state machine.">CanMainStateMachine_run()</a> as fast as possible in the main loop.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>8 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a360ebdb7ef110fdd62097a5fc56310f1" name="a360ebdb7ef110fdd62097a5fc56310f1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a360ebdb7ef110fdd62097a5fc56310f1">&#9670;&#160;</a></span>CanMainStatemachine_initialize()</h2>
@@ -216,7 +219,7 @@ Functions</h2></td></tr>
 NOT thread-safe - call from a single context only.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a360ebdb7ef110fdd62097a5fc56310f1" title="Registers the dependency-injection interface and prepares internal buffers.">CanMainStatemachine_initialize</a> - must be called first</dd></dl>
 <p>Executes one iteration of the main CAN state machine.</p>
-<p>Calls each handler in priority order, returning after the first one that does work. Priority: duplicate aliases → outgoing CAN frame → login frame → enumerate first node → enumerate next node. </p>
+<p>Calls each handler in priority order, returning after the first one that does work. Listener verification runs unconditionally before the priority chain. Priority: duplicate aliases -&gt; outgoing CAN frame -&gt; login frame -&gt; enumerate first node -&gt; enumerate next node. </p>
 
 </div>
 </div>
@@ -423,6 +426,44 @@ NOT thread-safe.</dd></dl>
 <p>Continues enumeration and processes the next node.</p>
 <p>Fetches the next node and runs its login state machine if still logging in. Returns true when there are no more nodes (enumeration complete), false otherwise.</p>
 <dl class="section return"><dt>Returns</dt><dd>true when all nodes have been processed, false if more nodes remain. </dd></dl>
+
+</div>
+</div>
+<a id="a9d57587caecc98631d9a65e076d0493b" name="a9d57587caecc98631d9a65e076d0493b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d57587caecc98631d9a65e076d0493b">&#9670;&#160;</a></span>CanMainStatemachine_handle_listener_verification()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CanMainStatemachine_handle_listener_verification </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Probes one listener alias for staleness and queues an AME if due. </p>
+<p>Exposed for unit testing. Normally called via the interface pointer.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if a probe AME was queued, false if nothing to do.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Locks shared resources during CAN buffer allocation and FIFO push. </dd>
+<dd>
+NOT thread-safe.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call <a class="el" href="alias__mapping__listener_8c.html#ac1e5ca2ca0ce988c7c8ebf76fd23cda9" title="Probes one listener entry for alias staleness (round-robin).">ListenerAliasTable_check_one_verification()</a> with current tick</li>
+<li>If non-zero node_id returned: get first node's alias, allocate a CAN buffer (with lock/unlock), build targeted AME, push to CAN FIFO (with lock/unlock)</li>
+<li>Return true if an AME was queued, false otherwise</li>
+</ol>
+<dl class="section return"><dt>Returns</dt><dd>true if a probe AME was queued, false if nothing to do. </dd></dl>
 
 </div>
 </div>

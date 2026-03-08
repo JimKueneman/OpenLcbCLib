@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 16 — CDI (Configuration Description Information)</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html" class="active">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 16 — CDI (Configuration Description Information)</h1>
+
+        <p>
+            CDI is an XML document that describes a node's configuration memory layout. It allows
+            configuration tools to automatically generate user interfaces for reading and writing
+            node settings, without requiring tool-specific knowledge of each device type.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>CDI data location:</strong>
+            The CDI byte array is stored in the node's <code>parameters->cdi[]</code> field
+            (typically in flash/ROM) and served via datagram reads from address space 0xFF.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>16.1 What CDI Is</h2>
+
+        <p>
+            CDI is a self-description mechanism. Each node carries an XML document that tells a
+            configuration tool:
+        </p>
+
+        <ul>
+            <li>What configuration variables exist (name, type, size, offset).</li>
+            <li>How they are organized into groups and segments.</li>
+            <li>What descriptions and default values apply.</li>
+            <li>Which address space each segment maps to.</li>
+        </ul>
+
+        <p>
+            A configuration tool reads the CDI, parses the XML, and presents a form-based UI to
+            the user. Reads and writes to configuration memory are performed through the Datagram
+            Protocol (Chapter 14).
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>16.2 Address Space 0xFF</h2>
+
+        <p>
+            CDI data is served from address space 0xFF (Configuration Description Information).
+            When a configuration tool reads from space 0xFF, the datagram handler routes the
+            request to the CDI read callback, which returns bytes from the node's
+            <code>parameters->cdi[]</code> array.
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Tool as Config Tool
+    participant Node
+    participant Datagram as Datagram Handler
+    participant CDI as CDI Data (flash)
+
+    Tool->>Node: Datagram Read (space=0xFF, addr=0, count=64)
+    Node->>Datagram: Route to space 0xFF handler
+    Datagram->>CDI: Read bytes from cdi[] array
+    CDI-->>Datagram: 64 bytes of XML
+    Datagram-->>Node: Datagram Read Reply OK
+    Node-->>Tool: Response datagram (XML bytes)
+
+    Note over Tool: Repeat until all CDI read
+        </div>
+
+        <p>
+            The CDI address space is read-only. Its properties are defined in the node's
+            <code>parameters->address_space_configuration_definition</code> structure:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Property</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Space ID</td><td>0xFF</td></tr>
+                <tr><td>Read-only</td><td>Yes</td></tr>
+                <tr><td>Highest address</td><td>Length of CDI data - 1</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>16.3 CDI XML Structure</h2>
+
+        <p>
+            A CDI document follows the OpenLCB CDI schema. The key elements are:
+        </p>
+
+        <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="..."&gt;
+
+  &lt;identification&gt;
+    &lt;manufacturer&gt;...&lt;/manufacturer&gt;
+    &lt;model&gt;...&lt;/model&gt;
+    &lt;hardwareVersion&gt;...&lt;/hardwareVersion&gt;
+    &lt;softwareVersion&gt;...&lt;/softwareVersion&gt;
+  &lt;/identification&gt;
+
+  &lt;acdi/&gt;
+
+  &lt;segment space="0xFE" origin="0"&gt;
+    &lt;group&gt;
+      &lt;name&gt;User Settings&lt;/name&gt;
+      &lt;int size="1"&gt;
+        &lt;name&gt;Option A&lt;/name&gt;
+        &lt;default&gt;0&lt;/default&gt;
+      &lt;/int&gt;
+      &lt;string size="32"&gt;
+        &lt;name&gt;Label&lt;/name&gt;
+      &lt;/string&gt;
+    &lt;/group&gt;
+  &lt;/segment&gt;
+
+&lt;/cdi&gt;</code></pre>
+
+        <table>
+            <thead>
+                <tr><th>Element</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>&lt;identification&gt;</code></td><td>Manufacturer, model, and version strings (mirrors SNIP data).</td></tr>
+                <tr><td><code>&lt;acdi/&gt;</code></td><td>Marker indicating ACDI user name/description fields are present.</td></tr>
+                <tr><td><code>&lt;segment&gt;</code></td><td>Maps to an address space. The <code>space</code> attribute identifies which space (e.g., 0xFE for configuration memory).</td></tr>
+                <tr><td><code>&lt;group&gt;</code></td><td>Logical grouping of variables (displayed as a section in the UI).</td></tr>
+                <tr><td><code>&lt;int&gt;</code></td><td>Integer variable with a given byte size.</td></tr>
+                <tr><td><code>&lt;string&gt;</code></td><td>String variable with a given byte size.</td></tr>
+                <tr><td><code>&lt;eventid&gt;</code></td><td>8-byte Event ID variable.</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>16.4 Relationship to Configuration Memory</h2>
+
+        <p>
+            CDI describes the <em>layout</em>; the actual data lives in configuration memory
+            (address space 0xFE). The CDI tells a tool that "byte offset 0 is a 1-byte integer
+            named Option A." The tool then uses Datagram Read/Write commands to address space 0xFE
+            to access that byte.
+        </p>
+
+        <div class="mermaid">
+flowchart LR
+    A["CDI (space 0xFF)\nDescribes layout"] --> B["Config Memory (space 0xFE)\nStores actual values"]
+    C["Config Tool"] --> A
+    C --> B
+
+    style A fill:#4a90d9,color:#fff
+    style B fill:#27ae60,color:#fff
+        </div>
+
+        <p>
+            The CDI is read once by the configuration tool to build its UI. Subsequent reads and
+            writes target configuration memory directly. The CDI itself is never written to by
+            external tools (it is read-only in flash).
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>16.5 CDI Storage in This Implementation</h2>
+
+        <p>
+            The CDI byte array is defined by the application and referenced through the node
+            parameters structure:
+        </p>
+
+        <pre><code>typedef struct node_parameters_TAG {
+    ...
+    uint8_t cdi[USER_DEFINED_CDI_LENGTH];
+    ...
+    user_address_space_info_t address_space_configuration_definition; // Space 0xFF
+    ...
+} node_parameters_t;</code></pre>
+
+        <p>
+            The <code>USER_DEFINED_CDI_LENGTH</code> macro controls the size of the CDI array.
+            It must be defined in the application's <code>openlcb_user_config.h</code>. The CDI
+            content is typically a C string literal stored as a <code>const</code> byte array in
+            flash memory.
+        </p>
+
+        <div class="callout callout-warning">
+            <strong>Application-defined:</strong> The library does not generate CDI automatically.
+            The application developer must create the XML content that matches their configuration
+            memory layout. Any mismatch between the CDI and the actual memory layout will cause
+            configuration tools to read/write incorrect addresses.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>16.6 FDI (Function Definition Information)</h2>
+
+        <p>
+            Train nodes also carry an FDI document in <code>parameters->fdi[]</code>, served from
+            address space 0xFA. FDI describes the train's available functions (headlight, bell,
+            horn, etc.) using a similar XML schema. The FDI array size is controlled by
+            <code>USER_DEFINED_FDI_LENGTH</code>.
+        </p>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch15.html">Previous: Ch 15 — SNIP</a>
+            <a href="ch17.html">Next: Ch 17 — Train Control</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

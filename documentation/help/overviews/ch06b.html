@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 6b — Callback Interface Pattern | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 6b — Callback Interface Pattern</h1>
+        <p>The library uses a consistent dependency injection (DI) pattern across all modules. Instead of modules calling each other directly, the application wires them together through function pointer structs. This chapter explains the pattern and its conventions.</p>
+
+        <h2>6b.1 The Pattern</h2>
+        <p>Every module that depends on external behavior follows the same three-step pattern:</p>
+
+        <ol>
+            <li><strong>Define an interface struct</strong> containing function pointers for each external dependency.</li>
+            <li><strong>Application creates and populates</strong> a static instance of the struct, filling in the pointers.</li>
+            <li><strong>Pass the struct to the module's <code>*_initialize()</code> function</strong>, which stores the pointer internally.</li>
+        </ol>
+
+        <pre><code>// Step 1: Module defines its interface (in module_header.h)
+typedef struct {
+    void (*send_openlcb_msg)(openlcb_msg_t *msg);        // Required
+    void (*on_message_received)(openlcb_node_t *node,     // Optional
+                                openlcb_msg_t *msg);
+    void (*lock_shared_resources)(void);                   // Required
+    void (*unlock_shared_resources)(void);                 // Required
+} interface_some_module_t;
+
+// Step 2: Application creates the struct (in main.c)
+static interface_some_module_t my_interface = {
+    .send_openlcb_msg = &amp;platform_send_message,
+    .on_message_received = &amp;app_handle_message,
+    .lock_shared_resources = &amp;platform_lock,
+    .unlock_shared_resources = &amp;platform_unlock,
+};
+
+// Step 3: Initialize the module
+SomeModule_initialize(&amp;my_interface);</code></pre>
+
+        <h2>6b.2 Required vs. Optional Callbacks</h2>
+        <p>Interface struct members fall into two categories:</p>
+
+        <table>
+            <thead>
+                <tr><th>Category</th><th>If NULL</th><th>Convention</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Required</strong></td>
+                    <td>Module cannot function; undefined behavior or crash</td>
+                    <td>Must always be set. Documented as required in the header.</td>
+                </tr>
+                <tr>
+                    <td><strong>Optional</strong></td>
+                    <td>Module checks for NULL before calling; uses a default behavior</td>
+                    <td>Can be set to NULL. The default behavior is typically an Optional Interaction Rejected (OIR) response or a no-op.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <div class="callout-title">NULL Optional = OIR</div>
+            <p>When an optional callback is NULL and a message arrives that would trigger it, the library generates an Optional Interaction Rejected (OIR) response automatically. This tells the remote node that this protocol/feature is not supported by this node.</p>
+        </div>
+
+        <h2>6b.3 Key Callback Contracts</h2>
+
+        <h3>send_openlcb_msg()</h3>
+        <p>The most important callback. Every module that needs to send a message calls through this pointer. The CAN transport layer provides the implementation, which fragments the message into CAN frames and queues them for transmission.</p>
+
+        <pre><code>void (*send_openlcb_msg)(openlcb_msg_t *msg);</code></pre>
+
+        <p>Contract:</p>
+        <ul>
+            <li>The callee takes ownership of the message buffer.</li>
+            <li>The callee must eventually call <code>OpenLcbBufferStore_free_buffer()</code> when done.</li>
+            <li>The caller must not access the message after calling send.</li>
+        </ul>
+
+        <h3>send_can_message()</h3>
+        <p>Used by the CAN transport layer to hand a raw CAN frame to the hardware driver for transmission.</p>
+
+        <pre><code>void (*send_can_message)(can_msg_t *msg);</code></pre>
+
+        <p>Contract:</p>
+        <ul>
+            <li>The callee must transmit (or queue) the frame and then free the <code>can_msg_t</code> buffer.</li>
+            <li>The caller must not access the frame after calling send.</li>
+        </ul>
+
+        <h3>lock_shared_resources() / unlock_shared_resources()</h3>
+        <p>Described in detail in <a href="ch06.html">Chapter 6</a>. Every module that accesses shared data structures requires these callbacks.</p>
+
+        <h2>6b.4 Node Enumeration Callbacks</h2>
+        <p>Some callbacks are invoked once per node during the main state machine's node enumeration loop. The callback receives a pointer to the current node and the current message being processed:</p>
+
+        <pre><code>void (*on_event_received)(openlcb_node_t *node, openlcb_msg_t *msg);
+void (*on_datagram_received)(openlcb_node_t *node, openlcb_msg_t *msg);
+void (*on_train_command)(openlcb_node_t *node, openlcb_msg_t *msg);</code></pre>
+
+        <p>These are called from within the main dispatcher's node iteration loop, so they are always in main loop context (never from ISR).</p>
+
+        <h2>6b.5 How Callbacks Wire Modules Together</h2>
+
+        <div class="mermaid">
+flowchart TB
+    subgraph APP["Application"]
+        APP_INIT["main() initialization"]
+    end
+
+    subgraph CORE["OpenLCB Core"]
+        MAIN_SM["Main State Machine"]
+        LOGIN_SM["Login State Machine"]
+        PROTO["Protocol Handlers"]
+    end
+
+    subgraph CAN["CAN Transport"]
+        CAN_SM["CAN State Machine"]
+        CAN_RX["CAN RX"]
+        CAN_TX["CAN TX"]
+    end
+
+    subgraph HW["Platform Hardware"]
+        HW_CAN["CAN Driver"]
+        HW_TIMER["Timer ISR"]
+        HW_LOCK["Lock/Unlock"]
+    end
+
+    APP_INIT -->|"interface structs"| MAIN_SM
+    APP_INIT -->|"interface structs"| LOGIN_SM
+    APP_INIT -->|"interface structs"| CAN_SM
+
+    PROTO -->|"send_openlcb_msg()"| CAN_TX
+    CAN_TX -->|"send_can_message()"| HW_CAN
+    CAN_RX -->|"push to FIFO"| MAIN_SM
+    MAIN_SM -->|"lock/unlock"| HW_LOCK
+    CAN_SM -->|"lock/unlock"| HW_LOCK
+
+    style APP fill:#e8f5e9,stroke:#388e3c
+    style CORE fill:#e3f2fd,stroke:#1565c0
+    style CAN fill:#fff3e0,stroke:#e65100
+    style HW fill:#fce4ec,stroke:#c62828
+        </div>
+
+        <h2>6b.6 Example: Node Module Interface</h2>
+        <p>The node module has a minimal interface with a single optional callback:</p>
+
+        <pre><code>typedef struct {
+    void (*on_100ms_timer_tick)(void);  // Optional: fired every 100ms after node updates
+} interface_openlcb_node_t;
+
+// Usage:
+static interface_openlcb_node_t node_interface = {
+    .on_100ms_timer_tick = &amp;my_timer_handler,  // or NULL to skip
+};
+OpenLcbNode_initialize(&amp;node_interface);</code></pre>
+
+        <h2>6b.7 Design Benefits</h2>
+        <ul>
+            <li><strong>Testability</strong>: In unit tests, interfaces are populated with mock functions that record calls and return test data. No hardware needed.</li>
+            <li><strong>Portability</strong>: The same core code runs on dsPIC, STM32, ESP32, and macOS -- only the interface implementations differ.</li>
+            <li><strong>Modularity</strong>: Modules are self-contained. Adding a new protocol handler does not require modifying existing modules.</li>
+            <li><strong>Zero overhead</strong>: Function pointer calls have the same cost as direct calls on most architectures. There is no vtable lookup or dynamic dispatch overhead.</li>
+        </ul>
+
+        <div class="chapter-nav">
+            <a href="ch06.html">&larr; Previous: Ch 6 — Thread Safety</a>
+            <a href="ch07.html">Next: Ch 7 — Utilities &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

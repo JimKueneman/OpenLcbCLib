@@ -32,7 +32,7 @@
  * does one unit of work and returns so other application code can run.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 8 Mar 2026
  */
 
 #include "can_main_statemachine.h"
@@ -47,6 +47,7 @@
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 #include "can_utilities.h"
+#include "alias_mapping_listener.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_utilities.h"
@@ -346,17 +347,75 @@ bool CanMainStatemachine_handle_try_enumerate_next_node(void) {
 }
 
     /**
+     * @brief Probes one listener alias for staleness and queues an AME if due.
+     *
+     * @details Algorithm:
+     * -# Call ListenerAliasTable_check_one_verification() with current tick
+     * -# If non-zero node_id returned: get first node's alias, allocate a CAN
+     *    buffer (with lock/unlock), build targeted AME, push to CAN FIFO
+     *    (with lock/unlock)
+     * -# Return true if an AME was queued, false otherwise
+     *
+     * @return true if a probe AME was queued, false if nothing to do.
+     */
+bool CanMainStatemachine_handle_listener_verification(void) {
+
+    node_id_t probe_id =
+            ListenerAliasTable_check_one_verification(_interface->get_current_tick());
+
+    if (probe_id != 0) {
+
+        // Use first node's alias as AME source
+        openlcb_node_t* node = _interface->openlcb_node_get_first(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
+
+        if (node && node->alias != 0) {
+
+            _interface->lock_shared_resources();
+            can_msg_t* ame = CanBufferStore_allocate_buffer();
+            _interface->unlock_shared_resources();
+
+            if (ame) {
+
+                ame->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME | node->alias;
+                CanUtilities_copy_node_id_to_payload(ame, probe_id, 0);
+
+                _interface->lock_shared_resources();
+                CanBufferFifo_push(ame);
+                _interface->unlock_shared_resources();
+
+                return true;
+
+            }
+
+        }
+
+    }
+
+    return false;
+
+}
+
+    /**
      * @brief Executes one cooperative iteration of the main CAN state machine.
      *
      * @details Calls each handler in priority order, returning after the first one
-     * that does work. Priority: duplicate aliases → outgoing CAN frame →
-     * login frame → enumerate first node → enumerate next node.
+     * that does work. Listener verification runs unconditionally before the priority
+     * chain. Priority: duplicate aliases -> outgoing CAN frame ->
+     * login frame -> enumerate first node -> enumerate next node.
      */
 void CanMainStateMachine_run(void) {
 
     _interface->lock_shared_resources();
     OpenLcbBufferList_check_timeouts(_interface->get_current_tick());
     _interface->unlock_shared_resources();
+
+    // Unconditional — runs every call so rate-limiting and stale timeouts
+    // advance reliably regardless of outgoing message traffic.
+    if (_interface->handle_listener_verification) {
+
+        _interface->handle_listener_verification();
+
+    }
 
     if (_interface->handle_duplicate_aliases()) {
 

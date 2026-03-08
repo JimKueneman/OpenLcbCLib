@@ -29,7 +29,7 @@
  * and macros only.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 8 Mar 2026
  */
 
 #ifndef __DRIVERS_CANBUS_CAN_TYPES__
@@ -208,8 +208,10 @@ extern "C" {
      */
     typedef struct listener_alias_entry_struct {
 
-        node_id_t node_id; /**< @brief Listener Node ID (from protocol layer attach). 0 = unused. */
-        uint16_t alias;    /**< @brief Resolved CAN alias (0 = not yet resolved). */
+        node_id_t node_id;          /**< @brief Listener Node ID (from protocol layer attach). 0 = unused. */
+        uint16_t alias;             /**< @brief Resolved CAN alias (0 = not yet resolved). */
+        uint16_t verify_ticks;      /**< @brief Tick snapshot when last probed or confirmed. */
+        uint8_t verify_pending : 1; /**< @brief AME sent, awaiting AMD reply. */
 
     } listener_alias_entry_t;
 

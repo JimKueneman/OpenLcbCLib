@@ -133,9 +133,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a2d823330eceb4441cf7e3f8552ec46d4" id="r_a2d823330eceb4441cf7e3f8552ec46d4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d823330eceb4441cf7e3f8552ec46d4">on_query_function_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td></tr>
 <tr class="memdesc:a2d823330eceb4441cf7e3f8552ec46d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Query Function reply received.  <br /></td></tr>
 <tr class="separator:a2d823330eceb4441cf7e3f8552ec46d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d8401136fc103af60bad86977c51cb5" id="r_a4d8401136fc103af60bad86977c51cb5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d8401136fc103af60bad86977c51cb5">on_controller_assign_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t result)</td></tr>
-<tr class="memdesc:a4d8401136fc103af60bad86977c51cb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller Assign reply received.  <br /></td></tr>
-<tr class="separator:a4d8401136fc103af60bad86977c51cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4780df1596bdf74dcc871e98648fd3ab" id="r_a4780df1596bdf74dcc871e98648fd3ab"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4780df1596bdf74dcc871e98648fd3ab">on_controller_assign_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t result, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> current_controller)</td></tr>
+<tr class="memdesc:a4780df1596bdf74dcc871e98648fd3ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller Assign reply received. On reject (result != 0), current_controller is the Node ID of the controller that currently owns the train. On accept, it is 0.  <br /></td></tr>
+<tr class="separator:a4780df1596bdf74dcc871e98648fd3ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2844e12ac9f995324ec73547b5deda6" id="r_ab2844e12ac9f995324ec73547b5deda6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2844e12ac9f995324ec73547b5deda6">on_controller_query_reply</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t flags, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> controller_node_id)</td></tr>
 <tr class="memdesc:ab2844e12ac9f995324ec73547b5deda6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller Query reply received.  <br /></td></tr>
 <tr class="separator:ab2844e12ac9f995324ec73547b5deda6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -361,19 +361,19 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a4d8401136fc103af60bad86977c51cb5" name="a4d8401136fc103af60bad86977c51cb5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d8401136fc103af60bad86977c51cb5">&#9670;&#160;</a></span>on_controller_assign_reply</h2>
+<a id="a4780df1596bdf74dcc871e98648fd3ab" name="a4780df1596bdf74dcc871e98648fd3ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4780df1596bdf74dcc871e98648fd3ab">&#9670;&#160;</a></span>on_controller_assign_reply</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_controller_assign_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t result)</td>
+          <td class="memname">void(* on_controller_assign_reply) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t result, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> current_controller)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Controller Assign reply received. </p>
+<p>Controller Assign reply received. On reject (result != 0), current_controller is the Node ID of the controller that currently owns the train. On accept, it is 0. </p>
 
 </div>
 </div>

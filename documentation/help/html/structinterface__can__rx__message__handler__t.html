@@ -127,6 +127,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a091595576e1cb208224a278830d95e4e" id="r_a091595576e1cb208224a278830d95e4e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a091595576e1cb208224a278830d95e4e">listener_clear_alias_by_alias</a> )(uint16_t alias)</td></tr>
 <tr class="memdesc:a091595576e1cb208224a278830d95e4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Clear a listener entry by alias (AMR cleanup).  <br /></td></tr>
 <tr class="separator:a091595576e1cb208224a278830d95e4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a564ee86223e7b5b37868ce0a85350b59" id="r_a564ee86223e7b5b37868ce0a85350b59"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a564ee86223e7b5b37868ce0a85350b59">listener_flush_aliases</a> )(void)</td></tr>
+<tr class="memdesc:a564ee86223e7b5b37868ce0a85350b59"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Flush all cached listener aliases (global AME).  <br /></td></tr>
+<tr class="separator:a564ee86223e7b5b37868ce0a85350b59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dependency-injection interface for the CAN receive message handlers. </p>
@@ -296,6 +299,24 @@ Data Fields</h2></td></tr>
 <p>OPTIONAL. Clear a listener entry by alias (AMR cleanup). </p>
 <p>Called when an AMR frame arrives so future TX-path lookups return alias == 0 instead of a stale alias. NULL = feature not linked in.</p>
 <dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_clear_alias_by_alias. </dd></dl>
+
+</div>
+</div>
+<a id="a564ee86223e7b5b37868ce0a85350b59" name="a564ee86223e7b5b37868ce0a85350b59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a564ee86223e7b5b37868ce0a85350b59">&#9670;&#160;</a></span>listener_flush_aliases</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* listener_flush_aliases) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Flush all cached listener aliases (global AME). </p>
+<p>Called when a global AME (empty payload) is received per CanFrameTransferS Section 6.2.3. Zeros all alias fields but preserves registered node_ids. The AMD replies triggered by the global AME will re-populate aliases via set_alias. NULL = feature not linked in.</p>
+<dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_flush_aliases. </dd></dl>
 
 </div>
 </div>

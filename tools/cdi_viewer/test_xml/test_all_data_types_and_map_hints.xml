@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">
+	<segment origin="0" space="253">
+		<name>All Data Types &amp; Map/Hints</name>
+		<group>
+			<name>Integer Controls</name>
+			<int size="1">
+				<name>Map Dropdown</name>
+				<default>2</default>
+				<map>
+					<relation><property>1</property><value>Option One</value></relation>
+					<relation><property>2</property><value>Option Two</value></relation>
+					<relation><property>3</property><value>Option Three</value></relation>
+				</map>
+			</int>
+			<int size="1">
+				<name>Map Radio Buttons</name>
+				<default>10</default>
+				<map>
+					<relation><property>10</property><value>Radio 10</value></relation>
+					<relation><property>20</property><value>Radio 20</value></relation>
+				</map>
+				<hints><radiobutton/></hints>
+			</int>
+			<int size="1">
+				<name>Map Checkbox</name>
+				<default>1</default>
+				<map>
+					<relation><property>0</property><value>Feature Off</value></relation>
+					<relation><property>1</property><value>Feature On</value></relation>
+				</map>
+				<hints><checkbox/></hints>
+			</int>
+			<int size="2">
+				<name>Slider Input</name>
+				<min>0</min>
+				<max>1000</max>
+				<default>250</default>
+				<hints showValue="yes" immediate="yes"><slider/></hints>
+			</int>
+			<int size="4">
+				<name>Numeric Input</name>
+				<min>-100</min>
+				<max>10000</max>
+				<default>500</default>
+			</int>
+		</group>
+		<group>
+			<name>String Controls</name>
+			<string size="20">
+				<name>Map String</name>
+				<default>B</default>
+				<map>
+					<relation><property>A</property><value>Selection A</value></relation>
+					<relation><property>B</property><value>Selection B</value></relation>
+				</map>
+			</string>
+			<string size="30">
+				<name>Text Input</name>
+				<description>A free-form text entry.</description>
+				<default>Default Text</default>
+			</string>
+		</group>
+		<group>
+			<name>EventID Controls</name>
+			<eventid>
+				<name>Map EventID</name>
+				<default>"01.02.03.04.05.06.07.08"</default>
+				<map>
+					<relation><property>"01.02.03.04.05.06.07.08"</property><value>Event A</value></relation>
+					<relation><property>"AA.BB.CC.DD.EE.FF.00.11"</property><value>Event B</value></relation>
+				</map>
+			</eventid>
+			<eventid>
+				<name>Text EventID</name>
+				<description>Enter a 8-byte hex event ID.</description>
+			</eventid>
+		</group>
+		<group>
+			<name>Float Controls</name>
+			<float size="4">
+				<name>Map Float</name>
+				<default>1.23</default>
+				<map>
+					<relation><property>1.23</property><value>Float A</value></relation>
+					<relation><property>4.56</property><value>Float B</value></relation>
+				</map>
+			</float>
+			<float size="8">
+				<name>Numeric Float</name>
+				<min>-10.5</min>
+				<max>100.5</max>
+				<default>25.75</default>
+				<floatFormat>%.2f</floatFormat>
+			</float>
+		</group>
+		<group>
+			<name>Action &amp; Blob</name>
+			<action size="1">
+				<name>Reset Button</name>
+				<buttonText>Perform Reset</buttonText>
+				<dialogText>Are you sure you want to reset?</dialogText>
+				<description>Triggers a device reset.</description>
+			</action>
+			<blob size="10" mode="readwrite">
+				<name>Firmware Update</name>
+				<description>Upload new firmware to the device.</description>
+			</blob>
+		</group>
+	</segment>
+</cdi>

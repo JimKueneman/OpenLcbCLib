@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appendix E — Compile-Time Config | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Appendix E — Compile-Time Configuration Reference</h1>
+
+        <p>All compile-time configuration is provided by the application in <code>openlcb_user_config.h</code>. This file must be placed on the compiler's include path. A template is provided in <code>templates/openlcb_user_config.h</code>.</p>
+
+        <h2>E.1 Required Buffer Depth Macros</h2>
+
+        <p>These macros control the static memory allocation for message buffer pools. All must be defined:</p>
+
+        <table>
+            <thead>
+                <tr><th>Macro</th><th>Purpose</th><th>Per-Buffer Size</th><th>Typical Value</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>USER_DEFINED_BASIC_BUFFER_DEPTH</code></td><td>Number of BASIC message buffers</td><td>16 bytes</td><td>5-10</td></tr>
+                <tr><td><code>USER_DEFINED_DATAGRAM_BUFFER_DEPTH</code></td><td>Number of DATAGRAM message buffers</td><td>72 bytes</td><td>2-5</td></tr>
+                <tr><td><code>USER_DEFINED_SNIP_BUFFER_DEPTH</code></td><td>Number of SNIP message buffers</td><td>256 bytes</td><td>1-3</td></tr>
+                <tr><td><code>USER_DEFINED_STREAM_BUFFER_DEPTH</code></td><td>Number of STREAM message buffers</td><td>512 bytes</td><td>0-2</td></tr>
+                <tr><td><code>USER_DEFINED_CAN_MSG_BUFFER_DEPTH</code></td><td>Number of CAN frame buffers (FIFO depth)</td><td>~16 bytes</td><td>5-20</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Buffer Limit</div>
+            <p>The sum <code>BASIC + DATAGRAM + SNIP + STREAM</code> must not exceed 126 on 8-bit targets. This is enforced at compile time by <code>openlcb_config.h</code>.</p>
+        </div>
+
+        <h2>E.2 Required Node and Event Macros</h2>
+
+        <table>
+            <thead>
+                <tr><th>Macro</th><th>Purpose</th><th>Typical Value</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>USER_DEFINED_NODE_BUFFER_DEPTH</code></td><td>Maximum virtual nodes that can be allocated</td><td>1-5</td></tr>
+                <tr><td><code>USER_DEFINED_PRODUCER_COUNT</code></td><td>Max events a node can produce</td><td>2-16</td></tr>
+                <tr><td><code>USER_DEFINED_CONSUMER_COUNT</code></td><td>Max events a node can consume</td><td>2-16</td></tr>
+                <tr><td><code>USER_DEFINED_PRODUCER_RANGE_COUNT</code></td><td>Max producer event ranges (must be >= 1)</td><td>1-4</td></tr>
+                <tr><td><code>USER_DEFINED_CONSUMER_RANGE_COUNT</code></td><td>Max consumer event ranges (must be >= 1)</td><td>1-4</td></tr>
+                <tr><td><code>USER_DEFINED_CDI_LENGTH</code></td><td>CDI XML buffer size in bytes</td><td>256-2048</td></tr>
+                <tr><td><code>USER_DEFINED_FDI_LENGTH</code></td><td>FDI XML buffer size in bytes (train nodes)</td><td>1-512</td></tr>
+            </tbody>
+        </table>
+
+        <h2>E.3 Required Config Memory Macros</h2>
+
+        <table>
+            <thead>
+                <tr><th>Macro</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS</code></td><td>Address in config memory for user-assigned node name</td></tr>
+                <tr><td><code>USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS</code></td><td>Address in config memory for user description</td></tr>
+            </tbody>
+        </table>
+
+        <h2>E.4 Required Train Macros</h2>
+
+        <p>These must be defined even if train support is not enabled (set to 0 if not needed):</p>
+
+        <table>
+            <thead>
+                <tr><th>Macro</th><th>Purpose</th><th>Typical Value</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>USER_DEFINED_TRAIN_NODE_COUNT</code></td><td>Max train nodes that can be allocated</td><td>0-8</td></tr>
+                <tr><td><code>USER_DEFINED_MAX_LISTENERS_PER_TRAIN</code></td><td>Max consist members per train</td><td>0-4</td></tr>
+                <tr><td><code>USER_DEFINED_MAX_TRAIN_FUNCTIONS</code></td><td>DCC functions per train (29 = F0-F28)</td><td>0-29</td></tr>
+            </tbody>
+        </table>
+
+        <h2>E.5 Feature Flag Macros</h2>
+
+        <p>Define these to enable optional protocol support. Each flag includes the corresponding protocol handler code and callbacks in the build:</p>
+
+        <table>
+            <thead>
+                <tr><th>Macro</th><th>Enables</th><th>Dependencies</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>OPENLCB_COMPILE_EVENTS</code></td><td>Event Transport Protocol (Producer/Consumer)</td><td>None</td></tr>
+                <tr><td><code>OPENLCB_COMPILE_DATAGRAMS</code></td><td>Datagram Protocol</td><td>None</td></tr>
+                <tr><td><code>OPENLCB_COMPILE_MEMORY_CONFIGURATION</code></td><td>Memory Configuration Protocol (read/write/operations)</td><td><code>DATAGRAMS</code></td></tr>
+                <tr><td><code>OPENLCB_COMPILE_FIRMWARE</code></td><td>Firmware Upgrade Protocol (freeze/unfreeze/write)</td><td><code>MEMORY_CONFIGURATION</code></td></tr>
+                <tr><td><code>OPENLCB_COMPILE_BROADCAST_TIME</code></td><td>Broadcast Time Protocol</td><td><code>EVENTS</code></td></tr>
+                <tr><td><code>OPENLCB_COMPILE_TRAIN</code></td><td>Train Control Protocol</td><td>None</td></tr>
+                <tr><td><code>OPENLCB_COMPILE_TRAIN_SEARCH</code></td><td>Train Search Protocol</td><td><code>EVENTS</code> + <code>TRAIN</code></td></tr>
+                <tr><td><code>OPENLCB_COMPILE_VERBOSE</code></td><td>Compile-time summary via <code>#pragma message</code></td><td>None</td></tr>
+            </tbody>
+        </table>
+
+        <h2>E.6 Feature Dependency Tree</h2>
+
+        <div class="mermaid">
+flowchart TD
+    EVT["OPENLCB_COMPILE_EVENTS"]
+    DG["OPENLCB_COMPILE_DATAGRAMS"]
+    MC["OPENLCB_COMPILE_MEMORY_CONFIGURATION"]
+    FW["OPENLCB_COMPILE_FIRMWARE"]
+    BT["OPENLCB_COMPILE_BROADCAST_TIME"]
+    TR["OPENLCB_COMPILE_TRAIN"]
+    TS["OPENLCB_COMPILE_TRAIN_SEARCH"]
+
+    MC -->|requires| DG
+    FW -->|requires| MC
+    BT -->|requires| EVT
+    TS -->|requires| EVT
+    TS -->|requires| TR
+
+    style EVT fill:#e8f5e9,stroke:#2e7d32
+    style DG fill:#e8f5e9,stroke:#2e7d32
+    style MC fill:#e3f2fd,stroke:#1565c0
+    style FW fill:#e3f2fd,stroke:#1565c0
+    style BT fill:#fff3e0,stroke:#e65100
+    style TR fill:#e8f5e9,stroke:#2e7d32
+    style TS fill:#fff3e0,stroke:#e65100
+        </div>
+
+        <p>If a dependency is not met, compilation fails with a <code>#error</code> directive. For example, enabling <code>OPENLCB_COMPILE_MEMORY_CONFIGURATION</code> without <code>OPENLCB_COMPILE_DATAGRAMS</code> produces:</p>
+
+        <pre><code>#error "OPENLCB_COMPILE_MEMORY_CONFIGURATION requires OPENLCB_COMPILE_DATAGRAMS"</code></pre>
+
+        <h2>E.7 Derived Constants</h2>
+
+        <p>These constants are computed from the user-defined macros. They should not be overridden directly:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Formula</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>LEN_MESSAGE_BUFFER</code></td><td>BASIC + DATAGRAM + SNIP + STREAM</td><td>Total number of message buffers</td></tr>
+                <tr><td><code>ALIAS_MAPPING_BUFFER_DEPTH</code></td><td><code>USER_DEFINED_NODE_BUFFER_DEPTH</code></td><td>Alias table size (one per node)</td></tr>
+                <tr><td><code>LISTENER_ALIAS_TABLE_DEPTH</code></td><td>MAX_LISTENERS_PER_TRAIN * TRAIN_NODE_COUNT</td><td>Listener alias table size</td></tr>
+            </tbody>
+        </table>
+
+        <h2>E.8 No-Features Warning</h2>
+
+        <p>If no optional features are enabled, the compiler issues a warning:</p>
+
+        <pre><code>#if !defined(OPENLCB_COMPILE_EVENTS) && !defined(OPENLCB_COMPILE_DATAGRAMS) && \
+    !defined(OPENLCB_COMPILE_TRAIN)
+#warning "No optional features enabled. This node will only support SNIP identification."
+#endif</code></pre>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Source Reference</div>
+            <p>Required macros are validated with <code>#error</code> directives in <code>openlcb_types.h</code> and <code>can_types.h</code>. Feature dependency validation and buffer sanity checks are in <code>openlcb_config.h</code>. The verbose compile summary is also in <code>openlcb_config.h</code>.</p>
+        </div>
+
+        <div class="chapter-nav">
+            <a href="appendix_d.html">&larr; Prev: Appendix D — Event ID Encoding</a>
+            <a href="appendix_f.html">Next: Appendix F — Spec Traceability &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

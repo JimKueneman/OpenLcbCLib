@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 12 — Message Network Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html" class="active">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 12 — Message Network Protocol</h1>
+
+        <p>
+            The Message Network protocol implements the mandatory foundation of OpenLCB: node
+            identification, protocol capability discovery, and error signaling. Every node must
+            support these handlers.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/protocol_message_network.c</code>,
+            <code>src/openlcb/protocol_message_network.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>12.1 Handled MTIs</h2>
+
+        <table>
+            <thead>
+                <tr><th>MTI</th><th>Name</th><th>Handler Function</th><th>Auto-Reply?</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0x0100</td><td>Initialization Complete</td><td><code>handle_initialization_complete()</code></td><td>Only if duplicate Node ID detected</td></tr>
+                <tr><td>0x0101</td><td>Initialization Complete Simple</td><td><code>handle_initialization_complete_simple()</code></td><td>Only if duplicate Node ID detected</td></tr>
+                <tr><td>0x0828</td><td>Protocol Support Inquiry</td><td><code>handle_protocol_support_inquiry()</code></td><td>Yes: Protocol Support Reply</td></tr>
+                <tr><td>0x0668</td><td>Protocol Support Reply</td><td><code>handle_protocol_support_reply()</code></td><td>No</td></tr>
+                <tr><td>0x0488</td><td>Verify Node ID Addressed</td><td><code>handle_verify_node_id_addressed()</code></td><td>Yes: Verified Node ID</td></tr>
+                <tr><td>0x0490</td><td>Verify Node ID Global</td><td><code>handle_verify_node_id_global()</code></td><td>Yes if payload matches or is empty</td></tr>
+                <tr><td>0x0170/0x0171</td><td>Verified Node ID / Simple</td><td><code>handle_verified_node_id()</code></td><td>Only if duplicate Node ID detected</td></tr>
+                <tr><td>0x0068</td><td>Optional Interaction Rejected</td><td><code>handle_optional_interaction_rejected()</code></td><td>No (fires app callback)</td></tr>
+                <tr><td>0x00A8</td><td>Terminate Due to Error</td><td><code>handle_terminate_due_to_error()</code></td><td>No (fires app callback)</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>12.2 Verify Node ID</h2>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Requester
+    participant Node
+
+    Note over Requester,Node: Addressed Variant
+    Requester->>Node: Verify Node ID Addressed (0x0488)
+    Node-->>Requester: Verified Node ID (0x0170)
+
+    Note over Requester,Node: Global Variant (empty payload)
+    Requester->>Node: Verify Node ID Global (0x0490)
+    Node-->>Requester: Verified Node ID (0x0170)
+
+    Note over Requester,Node: Global Variant (with Node ID)
+    Requester->>Node: Verify Node ID Global (payload = target ID)
+    Note over Node: Match? Reply. No match? Ignore.
+    Node-->>Requester: Verified Node ID (0x0170)
+        </div>
+
+        <ul>
+            <li><strong>Addressed:</strong> Always replies with Verified Node ID containing this node's full 48-bit Node ID.</li>
+            <li><strong>Global (empty payload):</strong> Every node on the network replies.</li>
+            <li><strong>Global (with Node ID):</strong> Only the node whose ID matches the payload replies.</li>
+        </ul>
+
+        <p>
+            The reply MTI is <code>MTI_VERIFIED_NODE_ID</code> (0x0170) or <code>MTI_VERIFIED_NODE_ID_SIMPLE</code>
+            (0x0171) depending on whether the node's <code>protocol_support</code> flags include <code>PSI_SIMPLE</code>.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>12.3 Protocol Support Inquiry / Reply</h2>
+
+        <p>
+            PIP (Protocol Identification Protocol) allows any node to discover what protocols
+            another node supports. The reply carries a 48-bit bitmap in 6 payload bytes:
+        </p>
+
+        <pre><code>// Reply payload layout (6 bytes):
+// Byte 0: bits [23:16] of protocol_support
+// Byte 1: bits [15:8]
+// Byte 2: bits [7:0]
+// Byte 3: bits [47:40]
+// Byte 4: bits [39:32]
+// Byte 5: bits [31:24]</code></pre>
+
+        <div class="callout callout-info">
+            <strong>Firmware upgrade swap:</strong> When <code>state.firmware_upgrade_active</code>
+            is set, the handler replaces <code>PSI_FIRMWARE_UPGRADE</code> with
+            <code>PSI_FIRMWARE_UPGRADE_ACTIVE</code> in the reply, informing the requestor that
+            a firmware upgrade is in progress.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>12.4 Optional Interaction Rejected (OIR)</h2>
+
+        <p>
+            OIR is sent when a node receives an addressed MTI it does not implement. The payload
+            contains:
+        </p>
+        <table>
+            <thead>
+                <tr><th>Bytes</th><th>Content</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0-1</td><td>Error code (e.g., <code>ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANSPORT_PROTOCOL</code>)</td></tr>
+                <tr><td>2-3</td><td>The rejected MTI value</td></tr>
+            </tbody>
+        </table>
+
+        <p>
+            When receiving an OIR, the handler parses the error code and rejected MTI, then
+            fires the optional <code>on_optional_interaction_rejected</code> application callback.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>12.5 Terminate Due to Error</h2>
+
+        <p>
+            Similar to OIR but signals that a multi-message sequence has been aborted. The payload
+            format is identical (error code in bytes 0-1, triggering MTI in bytes 2-3). The
+            application callback <code>on_terminate_due_to_error</code> fires if non-NULL.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>12.6 Duplicate Node ID Detection</h2>
+
+        <p>
+            Three message types trigger duplicate Node ID detection:
+        </p>
+        <ul>
+            <li><strong>Initialization Complete:</strong> If the payload contains this node's own Node ID, another node with the same ID just came online.</li>
+            <li><strong>Initialization Complete Simple:</strong> Same check.</li>
+            <li><strong>Verified Node ID:</strong> If the payload matches this node's ID, a duplicate exists.</li>
+        </ul>
+
+        <p>
+            When a duplicate is detected, the handler sends a PC Event Report with the well-known
+            event <code>EVENT_ID_DUPLICATE_NODE_DETECTED</code>. This is done at most once per
+            boot (the <code>duplicate_id_detected</code> flag prevents repeat reports).
+        </p>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch11.html">Previous: Ch 11 — CAN RX/TX Pipelines</a>
+            <a href="ch13.html">Next: Ch 13 — Event Transport</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

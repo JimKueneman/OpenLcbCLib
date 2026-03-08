@@ -142,6 +142,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a41dbaa73eb2229932ffc76416db879e7" id="r_a41dbaa73eb2229932ffc76416db879e7"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41dbaa73eb2229932ffc76416db879e7">handle_try_enumerate_next_node</a> )(void)</td></tr>
 <tr class="memdesc:a41dbaa73eb2229932ffc76416db879e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Continue enumeration to the next node. Typical: CanMainStatemachine_handle_try_enumerate_next_node.  <br /></td></tr>
 <tr class="separator:a41dbaa73eb2229932ffc76416db879e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa88737a3369ad39fe19f646b5ecc031f" id="r_aa88737a3369ad39fe19f646b5ecc031f"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa88737a3369ad39fe19f646b5ecc031f">handle_listener_verification</a> )(void)</td></tr>
+<tr class="memdesc:aa88737a3369ad39fe19f646b5ecc031f"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Probe one listener alias for staleness. NULL if unused. Typical: CanMainStatemachine_handle_listener_verification.  <br /></td></tr>
+<tr class="separator:aa88737a3369ad39fe19f646b5ecc031f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dependency-injection interface for the CAN main state machine. </p>
@@ -385,6 +388,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>REQUIRED. Continue enumeration to the next node. Typical: CanMainStatemachine_handle_try_enumerate_next_node. </p>
+
+</div>
+</div>
+<a id="aa88737a3369ad39fe19f646b5ecc031f" name="aa88737a3369ad39fe19f646b5ecc031f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa88737a3369ad39fe19f646b5ecc031f">&#9670;&#160;</a></span>handle_listener_verification</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* handle_listener_verification) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Probe one listener alias for staleness. NULL if unused. Typical: CanMainStatemachine_handle_listener_verification. </p>
 
 </div>
 </div>

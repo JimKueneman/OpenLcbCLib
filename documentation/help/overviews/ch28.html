@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 28 — Porting to a Platform | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 28 — Porting to a New Platform</h1>
+
+        <p>This chapter describes what the application must provide when porting the OpenLCB C Library to a new hardware platform. The library is written in standard C with no OS dependencies -- all platform-specific behavior is injected through callback function pointers.</p>
+
+        <h2>28.1 Platform Requirements</h2>
+
+        <p>The application must provide four categories of platform support:</p>
+
+        <div class="mermaid">
+flowchart LR
+    subgraph Platform["Application Platform Layer"]
+        A["Transport Driver<br/>(CAN, TCP/IP, ...)"]
+        B["100ms Timer"]
+        C["Persistent Storage<br/>(EEPROM/Flash/File)"]
+        D["Lock/Unlock<br/>(Interrupt Control)"]
+    end
+
+    subgraph Library["OpenLCB C Library"]
+        E["can_config_t /<br/>openlcb_config_t"]
+    end
+
+    A --> E
+    B --> E
+    C --> E
+    D --> E
+
+    style Platform fill:#fff3e0,stroke:#e65100
+    style Library fill:#e8f5e9,stroke:#2e7d32
+        </div>
+
+        <table>
+            <thead>
+                <tr><th>Requirement</th><th>Config Struct</th><th>Function Pointers</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Transport driver</strong></td>
+                    <td><code>can_config_t</code></td>
+                    <td><code>transmit_raw_can_frame()</code>, <code>is_tx_buffer_clear()</code></td>
+                </tr>
+                <tr>
+                    <td><strong>100ms timer</strong></td>
+                    <td>Direct call</td>
+                    <td>Call <code>OpenLcb_100ms_timer_tick()</code> from a hardware timer ISR</td>
+                </tr>
+                <tr>
+                    <td><strong>Persistent storage</strong></td>
+                    <td><code>openlcb_config_t</code></td>
+                    <td><code>config_mem_read()</code>, <code>config_mem_write()</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Lock/unlock</strong></td>
+                    <td>Both config structs</td>
+                    <td><code>lock_shared_resources()</code>, <code>unlock_shared_resources()</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Reboot</strong></td>
+                    <td><code>openlcb_config_t</code></td>
+                    <td><code>reboot()</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>28.2 Bare-Metal vs. RTOS</h2>
+
+        <table>
+            <thead>
+                <tr><th>Concern</th><th>Bare-Metal</th><th>RTOS</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Main loop</strong></td>
+                    <td><code>while(1) { OpenLcb_run(); }</code></td>
+                    <td>Dedicated task calling <code>OpenLcb_run()</code></td>
+                </tr>
+                <tr>
+                    <td><strong>100ms timer</strong></td>
+                    <td>Hardware timer interrupt calls <code>OpenLcb_100ms_timer_tick()</code></td>
+                    <td>RTOS software timer or periodic task calls <code>OpenLcb_100ms_timer_tick()</code></td>
+                </tr>
+                <tr>
+                    <td><strong>lock_shared_resources</strong></td>
+                    <td>Disable global interrupts</td>
+                    <td>Mutex lock or critical section enter</td>
+                </tr>
+                <tr>
+                    <td><strong>unlock_shared_resources</strong></td>
+                    <td>Enable global interrupts</td>
+                    <td>Mutex unlock or critical section exit</td>
+                </tr>
+                <tr>
+                    <td><strong>CAN RX</strong></td>
+                    <td>ISR reads frame, pushes to CAN FIFO</td>
+                    <td>ISR or DMA fills FIFO; task processes</td>
+                </tr>
+                <tr>
+                    <td><strong>Persistent storage</strong></td>
+                    <td>Direct EEPROM/Flash register access</td>
+                    <td>File I/O or flash driver with mutex</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Bare-Metal Lock/Unlock Example</h3>
+
+        <pre><code>// PIC18 example (Microchip XC8)
+void my_lock(void) {
+    INTCONbits.GIE = 0;   // Disable global interrupts
+}
+
+void my_unlock(void) {
+    INTCONbits.GIE = 1;   // Enable global interrupts
+}</code></pre>
+
+        <h3>RTOS Lock/Unlock Example</h3>
+
+        <pre><code>// FreeRTOS example
+static SemaphoreHandle_t openlcb_mutex;
+
+void my_lock(void) {
+    xSemaphoreTake(openlcb_mutex, portMAX_DELAY);
+}
+
+void my_unlock(void) {
+    xSemaphoreGive(openlcb_mutex);
+}</code></pre>
+
+        <h3>POSIX Lock/Unlock Example (Testing)</h3>
+
+        <pre><code>// Linux/macOS testing
+static pthread_mutex_t openlcb_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+void my_lock(void) {
+    pthread_mutex_lock(&openlcb_mutex);
+}
+
+void my_unlock(void) {
+    pthread_mutex_unlock(&openlcb_mutex);
+}</code></pre>
+
+        <h2>28.3 100ms Timer Implementation</h2>
+
+        <p>The library requires a single timer tick at approximately 100ms intervals. This is the only action performed in interrupt/timer context -- all protocol work runs in the main loop.</p>
+
+        <pre><code>// Timer ISR -- keep it minimal
+void Timer_100ms_ISR(void) {
+    OpenLcb_100ms_timer_tick();  // Increments volatile uint8_t counter
+}
+
+// The counter wraps at 255.
+// Protocol timeouts compare (current - snapshot) which handles wrapping
+// correctly for intervals up to 12.7 seconds.</code></pre>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Timer Accuracy</div>
+            <p>The library tolerates timer jitter. The 200ms CAN login wait actually measures "elapsed ticks > 2" which produces a 200-300ms window depending on when the timer started relative to the tick boundary. This is intentional and meets the OpenLCB specification requirement of "at least 200ms."</p>
+        </div>
+
+        <h2>28.4 Persistent Storage</h2>
+
+        <p>The application provides read/write functions for configuration memory. The library calls these when a remote node issues Memory Configuration Protocol read/write commands:</p>
+
+        <pre><code>uint16_t my_config_mem_read(openlcb_node_t *node,
+                           uint32_t address,
+                           uint16_t count,
+                           configuration_memory_buffer_t *buffer) {
+    // Read 'count' bytes from EEPROM/Flash/file starting at 'address'
+    // into 'buffer'. Return actual bytes read.
+    // The 'node' parameter allows per-node storage partitioning.
+    return eeprom_read(address, (uint8_t *)buffer, count);
+}
+
+uint16_t my_config_mem_write(openlcb_node_t *node,
+                            uint32_t address,
+                            uint16_t count,
+                            configuration_memory_buffer_t *buffer) {
+    // Write 'count' bytes from 'buffer' to persistent storage
+    // starting at 'address'. Return actual bytes written.
+    return eeprom_write(address, (uint8_t *)buffer, count);
+}</code></pre>
+
+        <h2>28.5 CAN Driver Integration</h2>
+
+        <p>For CAN-based platforms, the application must provide two hardware-level functions:</p>
+
+        <pre><code>// Transmit a CAN frame
+bool my_can_transmit(can_msg_t *can_msg) {
+    // Copy can_msg->identifier (29-bit) and can_msg->data[0..7]
+    // into CAN hardware TX buffer and trigger transmission.
+    // Return true if the frame was accepted by hardware.
+    CAN_TX_BUF.id = can_msg->identifier;
+    memcpy(CAN_TX_BUF.data, can_msg->data, can_msg->payload_count);
+    CAN_TX_BUF.dlc = can_msg->payload_count;
+    CAN_TX_BUF.send = 1;
+    return true;
+}
+
+// Check if CAN TX hardware is ready
+bool my_can_is_tx_clear(void) {
+    return (CAN_TX_BUF.send == 0);
+}</code></pre>
+
+        <p>The CAN RX interrupt pushes received frames into the library's CAN FIFO:</p>
+
+        <pre><code>void CAN_RX_ISR(void) {
+    can_msg_t *buffer = CanBufferStore_allocate();
+    if (buffer) {
+        buffer->identifier = CAN_RX_BUF.id;
+        buffer->payload_count = CAN_RX_BUF.dlc;
+        memcpy(buffer->data, CAN_RX_BUF.data, CAN_RX_BUF.dlc);
+        CanBufferFifo_push(buffer);
+    }
+    // If allocate returns NULL, frame is dropped (buffer exhaustion)
+    CAN_RX_BUF.clear_interrupt();
+}</code></pre>
+
+        <h2>28.6 Memory Tuning for Constrained Targets</h2>
+
+        <p>All buffer pool sizes are configured at compile time in <code>openlcb_user_config.h</code>. The total RAM footprint depends on pool depths and enabled features:</p>
+
+        <table>
+            <thead>
+                <tr><th>Pool</th><th>Per-Buffer Size</th><th>Typical Depth</th><th>RAM Cost</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>BASIC</td><td>16 bytes + overhead</td><td>5</td><td>~160 bytes</td></tr>
+                <tr><td>DATAGRAM</td><td>72 bytes + overhead</td><td>2</td><td>~200 bytes</td></tr>
+                <tr><td>SNIP</td><td>256 bytes + overhead</td><td>2</td><td>~580 bytes</td></tr>
+                <tr><td>STREAM</td><td>512 bytes + overhead</td><td>1</td><td>~570 bytes</td></tr>
+                <tr><td>CAN frames</td><td>~16 bytes each</td><td>10</td><td>~160 bytes</td></tr>
+                <tr><td>Nodes</td><td>~200 bytes each</td><td>1</td><td>~200 bytes</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">8-bit Target Limit</div>
+            <p>Total buffer count across all OpenLCB pools (BASIC + DATAGRAM + SNIP + STREAM) must not exceed 126. This is enforced at compile time by <code>openlcb_config.h</code>. The limit exists because buffer indices use 7-bit fields on 8-bit processors.</p>
+        </div>
+
+        <h3>Minimal Configuration Profile</h3>
+
+        <p>For the most constrained targets (8-bit MCU with 2-4KB RAM), use a minimal configuration:</p>
+
+        <pre><code>// openlcb_user_config.h -- minimal profile
+
+#define USER_DEFINED_BASIC_BUFFER_DEPTH       3
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH    1
+#define USER_DEFINED_SNIP_BUFFER_DEPTH        1
+#define USER_DEFINED_STREAM_BUFFER_DEPTH      0
+#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH     5
+#define USER_DEFINED_NODE_BUFFER_DEPTH        1
+#define USER_DEFINED_PRODUCER_COUNT           2
+#define USER_DEFINED_CONSUMER_COUNT           2
+#define USER_DEFINED_PRODUCER_RANGE_COUNT     1
+#define USER_DEFINED_CONSUMER_RANGE_COUNT     1
+#define USER_DEFINED_TRAIN_NODE_COUNT         0
+#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN  0
+#define USER_DEFINED_MAX_TRAIN_FUNCTIONS      0
+#define USER_DEFINED_CDI_LENGTH              256
+#define USER_DEFINED_FDI_LENGTH                1
+
+// Enable only essential features:
+#define OPENLCB_COMPILE_EVENTS
+// (no datagrams, no train, no broadcast time)</code></pre>
+
+        <h3>Full-Featured Configuration Profile</h3>
+
+        <p>For 32-bit platforms with ample RAM (STM32, ESP32, Raspberry Pi Pico):</p>
+
+        <pre><code>// openlcb_user_config.h -- full-featured profile
+
+#define USER_DEFINED_BASIC_BUFFER_DEPTH      10
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH    5
+#define USER_DEFINED_SNIP_BUFFER_DEPTH        3
+#define USER_DEFINED_STREAM_BUFFER_DEPTH      2
+#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH    20
+#define USER_DEFINED_NODE_BUFFER_DEPTH        5
+#define USER_DEFINED_PRODUCER_COUNT          16
+#define USER_DEFINED_CONSUMER_COUNT          16
+#define USER_DEFINED_PRODUCER_RANGE_COUNT     4
+#define USER_DEFINED_CONSUMER_RANGE_COUNT     4
+#define USER_DEFINED_TRAIN_NODE_COUNT         8
+#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN  4
+#define USER_DEFINED_MAX_TRAIN_FUNCTIONS     29
+#define USER_DEFINED_CDI_LENGTH            2048
+#define USER_DEFINED_FDI_LENGTH             512
+
+// Enable all features:
+#define OPENLCB_COMPILE_EVENTS
+#define OPENLCB_COMPILE_DATAGRAMS
+#define OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#define OPENLCB_COMPILE_FIRMWARE
+#define OPENLCB_COMPILE_BROADCAST_TIME
+#define OPENLCB_COMPILE_TRAIN
+#define OPENLCB_COMPILE_TRAIN_SEARCH</code></pre>
+
+        <h2>28.7 Porting Checklist</h2>
+
+        <table>
+            <thead>
+                <tr><th>Item</th><th>Status</th><th>Notes</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Create <code>openlcb_user_config.h</code></td><td></td><td>Copy from <code>templates/openlcb_user_config.h</code>, adjust buffer depths and feature flags</td></tr>
+                <tr><td>Implement <code>lock_shared_resources()</code></td><td></td><td>Disable interrupts (bare-metal) or mutex lock (RTOS)</td></tr>
+                <tr><td>Implement <code>unlock_shared_resources()</code></td><td></td><td>Enable interrupts (bare-metal) or mutex unlock (RTOS)</td></tr>
+                <tr><td>Implement 100ms timer</td><td></td><td>Hardware timer ISR calling <code>OpenLcb_100ms_timer_tick()</code></td></tr>
+                <tr><td>Implement <code>config_mem_read()</code></td><td></td><td>EEPROM, Flash, or file-backed storage</td></tr>
+                <tr><td>Implement <code>config_mem_write()</code></td><td></td><td>Same storage backend as read</td></tr>
+                <tr><td>Implement <code>reboot()</code></td><td></td><td>Software reset or watchdog trigger</td></tr>
+                <tr><td>Implement <code>transmit_raw_can_frame()</code></td><td></td><td>CAN hardware TX buffer write (CAN transport only)</td></tr>
+                <tr><td>Implement <code>is_tx_buffer_clear()</code></td><td></td><td>CAN hardware TX buffer status check (CAN transport only)</td></tr>
+                <tr><td>Implement CAN RX ISR</td><td></td><td>Allocate CAN buffer, copy frame, push to FIFO</td></tr>
+                <tr><td>Populate <code>can_config_t</code></td><td></td><td>Wire all function pointers</td></tr>
+                <tr><td>Populate <code>openlcb_config_t</code></td><td></td><td>Wire all required + desired optional callbacks</td></tr>
+                <tr><td>Call <code>CanConfig_initialize()</code></td><td></td><td>Before <code>OpenLcb_initialize()</code></td></tr>
+                <tr><td>Call <code>OpenLcb_initialize()</code></td><td></td><td>After CAN config, before creating nodes</td></tr>
+                <tr><td>Call <code>OpenLcb_create_node()</code></td><td></td><td>For each virtual node, with Node ID and parameters</td></tr>
+                <tr><td>Main loop calls <code>OpenLcb_run()</code></td><td></td><td>As fast as possible, non-blocking</td></tr>
+                <tr><td>Test on hardware</td><td></td><td>Verify login completes, respond to Verify Node ID</td></tr>
+            </tbody>
+        </table>
+
+        <div class="chapter-nav">
+            <a href="ch27.html">&larr; Prev: Ch 27 — Adding a Transport</a>
+            <a href="appendix_a.html">Next: Appendix A — MTI Reference &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

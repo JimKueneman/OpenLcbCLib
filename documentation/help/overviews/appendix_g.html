@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appendix G — Glossary | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Appendix G — Glossary</h1>
+
+        <p>This glossary defines the OpenLCB/LCC terminology used throughout this documentation.</p>
+
+        <table>
+            <thead>
+                <tr><th>Term</th><th>Definition</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>ACDI</strong></td>
+                    <td>Abbreviated Default CDI. A simplified identification mechanism that provides manufacturer and user strings via dedicated address spaces (0xFC and 0xFB) without requiring CDI XML parsing.</td>
+                </tr>
+                <tr>
+                    <td><strong>Alias</strong></td>
+                    <td>A 12-bit value used on CAN networks to represent a 48-bit Node ID in the CAN frame header. Aliases are allocated via the CID/RID/AMD login sequence and are only used by the CAN transport layer.</td>
+                </tr>
+                <tr>
+                    <td><strong>AMD</strong></td>
+                    <td>Alias Map Definition. A CAN control frame that announces the binding between a 12-bit alias and a 48-bit Node ID. Sent during login after the alias is reserved.</td>
+                </tr>
+                <tr>
+                    <td><strong>AME</strong></td>
+                    <td>Alias Mapping Enquiry. A CAN control frame requesting nodes to re-announce their alias mappings. An AME with no data field is a global query; with a 6-byte Node ID it targets a specific node.</td>
+                </tr>
+                <tr>
+                    <td><strong>AMR</strong></td>
+                    <td>Alias Map Reset. A CAN control frame announcing that a node is releasing its alias. Receiving nodes must stop using that alias within 100ms.</td>
+                </tr>
+                <tr>
+                    <td><strong>CAN</strong></td>
+                    <td>Controller Area Network. A bus protocol using differential signaling, originally developed for automotive applications. OpenLCB uses CAN 2.0B extended frames with 29-bit identifiers at 125 kbps.</td>
+                </tr>
+                <tr>
+                    <td><strong>CDI</strong></td>
+                    <td>Configuration Description Information. An XML document served from address space 0xFF that describes a node's configurable options, allowing configuration tools to generate a UI automatically.</td>
+                </tr>
+                <tr>
+                    <td><strong>CID</strong></td>
+                    <td>Check ID. A CAN control frame (CID7 through CID4) used during alias reservation. Each CID frame carries 12 bits of the node's 48-bit Node ID for collision detection.</td>
+                </tr>
+                <tr>
+                    <td><strong>Consist</strong></td>
+                    <td>A group of train nodes linked together so that commands sent to the lead train are forwarded to all member (listener) trains. Implemented via the listener attach/detach protocol.</td>
+                </tr>
+                <tr>
+                    <td><strong>Consumer</strong></td>
+                    <td>A node that receives and acts upon a specific Event ID when it is produced (reported via PCER) by another node on the network.</td>
+                </tr>
+                <tr>
+                    <td><strong>Datagram</strong></td>
+                    <td>A reliable, addressed message of up to 72 bytes (64 bytes of payload after protocol overhead). Used for configuration memory read/write operations. Requires acknowledgment (Datagram OK or Rejected).</td>
+                </tr>
+                <tr>
+                    <td><strong>Event ID</strong></td>
+                    <td>A 64-bit (8-byte) value that identifies a specific occurrence or state. Events are the primary mechanism for inter-node communication in OpenLCB. They are produced (PCER) and consumed by nodes.</td>
+                </tr>
+                <tr>
+                    <td><strong>FDI</strong></td>
+                    <td>Function Description Information. An XML document (address space 0xFA) describing the functions available on a train node, similar to CDI but specific to train control functions.</td>
+                </tr>
+                <tr>
+                    <td><strong>FIFO</strong></td>
+                    <td>First In, First Out. A queue data structure used in the library to buffer incoming CAN frames (CAN FIFO) and incoming OpenLCB messages (OpenLCB FIFO) between the RX path and the main loop.</td>
+                </tr>
+                <tr>
+                    <td><strong>float16</strong></td>
+                    <td>IEEE 754 half-precision floating point. Used by the train protocol for speed values, providing adequate precision (about 3 decimal digits) in just 2 bytes.</td>
+                </tr>
+                <tr>
+                    <td><strong>Inhibited</strong></td>
+                    <td>A CAN-specific node state before alias reservation is complete. An inhibited node may only transmit CID, RID, and AMD frames. After AMD is sent, the node transitions to Permitted.</td>
+                </tr>
+                <tr>
+                    <td><strong>ISR</strong></td>
+                    <td>Interrupt Service Routine. In the library's architecture, the CAN receive ISR reads frames from hardware and pushes them to the CAN FIFO. This is the only code that runs in interrupt context.</td>
+                </tr>
+                <tr>
+                    <td><strong>LCC</strong></td>
+                    <td>Layout Command Control. The NMRA-adopted name for OpenLCB, used in the model railroad industry. LCC and OpenLCB refer to the same protocol.</td>
+                </tr>
+                <tr>
+                    <td><strong>LFSR</strong></td>
+                    <td>Linear Feedback Shift Register. The algorithm used to generate CAN aliases from Node IDs. It produces a deterministic sequence of 12-bit values from a 48-bit seed, with low collision probability.</td>
+                </tr>
+                <tr>
+                    <td><strong>Listener</strong></td>
+                    <td>In the train control context, a consist member node that receives forwarded commands from the lead train. Listeners have flags controlling how speed (reverse), F0 (link F0), and other functions (link Fn) are forwarded.</td>
+                </tr>
+                <tr>
+                    <td><strong>MTI</strong></td>
+                    <td>Message Type Indicator. A 16-bit value that identifies the type of an OpenLCB message. MTI bits encode addressing mode, priority, and whether the message carries an Event ID or destination address.</td>
+                </tr>
+                <tr>
+                    <td><strong>Node</strong></td>
+                    <td>A logical entity on an OpenLCB network identified by a unique 48-bit Node ID. A single physical device may host multiple virtual nodes. Each node can produce and consume events, respond to SNIP queries, and participate in other protocols.</td>
+                </tr>
+                <tr>
+                    <td><strong>Node ID</strong></td>
+                    <td>A globally unique 48-bit (6-byte) identifier assigned to each OpenLCB node. Node IDs are typically written in dotted-hex notation (e.g., 05.01.01.01.00.01). They are allocated from manufacturer-assigned ranges.</td>
+                </tr>
+                <tr>
+                    <td><strong>OIR</strong></td>
+                    <td>Optional Interaction Rejected. A response sent when a node receives an addressed message with an MTI it does not support. Contains the rejected MTI and an error code.</td>
+                </tr>
+                <tr>
+                    <td><strong>OpenLCB</strong></td>
+                    <td>Open Layout Control Bus. An open-source protocol for model railroad control systems. It provides event-based communication, configuration, and train control over CAN, TCP/IP, or other transports.</td>
+                </tr>
+                <tr>
+                    <td><strong>PCER</strong></td>
+                    <td>Producer/Consumer Event Report. The message sent when an event occurs. All nodes consuming that Event ID are notified. PCER may optionally carry a payload (PCER with Payload).</td>
+                </tr>
+                <tr>
+                    <td><strong>Permitted</strong></td>
+                    <td>A CAN-specific node state after alias reservation is complete (AMD sent) but before Initialization Complete is sent. The node has a valid alias but is not yet fully initialized.</td>
+                </tr>
+                <tr>
+                    <td><strong>Producer</strong></td>
+                    <td>A node that generates (produces) a specific Event ID via PCER when a condition or action occurs. Producers announce their events during login via Producer Identified messages.</td>
+                </tr>
+                <tr>
+                    <td><strong>Protocol Support Reply</strong></td>
+                    <td>A 6-byte (48-bit) bit field returned in response to Protocol Support Inquiry. Each bit indicates support for a specific protocol (SNIP, datagram, events, train control, etc.).</td>
+                </tr>
+                <tr>
+                    <td><strong>PSI</strong></td>
+                    <td>Protocol Support Indicator. The individual bit constants (e.g., PSI_DATAGRAM, PSI_EVENT_EXCHANGE) used to build the Protocol Support Reply bit field.</td>
+                </tr>
+                <tr>
+                    <td><strong>RID</strong></td>
+                    <td>Reserve ID. A CAN control frame sent after the 200ms CID wait period to formally claim an alias. No data field.</td>
+                </tr>
+                <tr>
+                    <td><strong>SNIP</strong></td>
+                    <td>Simple Node Information Protocol. A lightweight protocol for retrieving human-readable identification from a node: manufacturer name, model, hardware/software version, and user-assigned name/description.</td>
+                </tr>
+                <tr>
+                    <td><strong>Stream</strong></td>
+                    <td>A bulk data transfer mechanism for transferring large amounts of data with flow control. Defined in the specification but not yet implemented in this library.</td>
+                </tr>
+                <tr>
+                    <td><strong>Virtual Node</strong></td>
+                    <td>A software-only OpenLCB node hosted on a physical device alongside other nodes. Each virtual node has its own unique Node ID and (on CAN) its own alias. From the network perspective, virtual nodes are indistinguishable from physical nodes.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="chapter-nav">
+            <a href="appendix_f.html">&larr; Prev: Appendix F — Spec Traceability</a>
+            <a href="index.html">Back to Index</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -15,6 +15,7 @@
  *   - Flush all aliases (global AME)
  *   - Clear alias by alias value (AMR)
  *   - Boundary and validation checks
+ *   - Verification prober (round-robin, rate-limiting, stale detection)
  *
  * Author: Jim Kueneman
  * Date: 2026-03-03
@@ -685,5 +686,293 @@ TEST(AliasMappingListener, table_depth_matches_user_defines) {
     // Compile-time check that table depth is computed from user defines
     EXPECT_EQ(LISTENER_ALIAS_TABLE_DEPTH,
               USER_DEFINED_MAX_LISTENERS_PER_TRAIN * USER_DEFINED_TRAIN_NODE_COUNT);
+
+}
+
+/*******************************************************************************
+ * Verification Prober Tests
+ ******************************************************************************/
+
+/**
+ * Helper: register a node, set its alias, then manually set verify_ticks
+ * to simulate an entry that has been resolved for a while.
+ */
+static listener_alias_entry_t *setup_resolved_entry(node_id_t node_id,
+                                                     uint16_t alias,
+                                                     uint16_t verify_ticks) {
+
+    listener_alias_entry_t *entry = ListenerAliasTable_register(node_id);
+    ListenerAliasTable_set_alias(node_id, alias);
+    entry->verify_ticks = verify_ticks;
+    return entry;
+
+}
+
+/**
+ * @brief Advance the prober's internal counter by calling check_one_verification
+ *        the specified number of times on an empty table.
+ *
+ * @details Each call with a unique tick value increments the monotonic
+ *          counter.  Call before registering entries so that entries stamped
+ *          with verify_ticks = 0 appear "due" when the counter reaches
+ *          PROBE_INTERVAL_TICKS.
+ */
+static void advance_prober_counter(uint16_t count) {
+
+    for (uint16_t i = 0; i < count; i++) {
+
+        uint8_t tick = (uint8_t) (i + 1);
+        ListenerAliasTable_check_one_verification(tick);
+
+    }
+
+}
+
+TEST(AliasMappingListener, verify_no_entries_returns_zero) {
+
+    setup_test();
+
+    // Empty table — nothing to probe
+    EXPECT_EQ(ListenerAliasTable_check_one_verification(1), (node_id_t) 0);
+
+}
+
+TEST(AliasMappingListener, verify_unresolved_entry_skipped) {
+
+    setup_test();
+
+    // Registered but alias not yet resolved
+    ListenerAliasTable_register(TEST_NODE_ID_A);
+
+    EXPECT_EQ(ListenerAliasTable_check_one_verification(255), (node_id_t) 0);
+
+}
+
+TEST(AliasMappingListener, verify_resolved_entry_not_due) {
+
+    setup_test();
+
+    // Resolved entry with verify_ticks = 0; tick = 1 — interval not elapsed
+    setup_resolved_entry(TEST_NODE_ID_A, TEST_ALIAS_A, 0);
+
+    EXPECT_EQ(ListenerAliasTable_check_one_verification(1), (node_id_t) 0);
+
+}
+
+TEST(AliasMappingListener, verify_resolved_entry_due_returns_node_id) {
+
+    setup_test();
+
+    // Advance prober counter so entries registered now will be due
+    advance_prober_counter(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS);
+
+    setup_resolved_entry(TEST_NODE_ID_A, TEST_ALIAS_A, 0);
+
+    uint8_t tick = (uint8_t) (USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS + 1);
+    node_id_t result = ListenerAliasTable_check_one_verification(tick);
+
+    EXPECT_EQ(result, TEST_NODE_ID_A);
+
+    // Entry should now be pending
+    listener_alias_entry_t *entry = ListenerAliasTable_find_by_node_id(TEST_NODE_ID_A);
+    EXPECT_EQ(entry->verify_pending, 1);
+
+}
+
+TEST(AliasMappingListener, verify_pending_entry_amd_clears_pending) {
+
+    setup_test();
+
+    // Advance counter, register entry, probe it to make it pending
+    advance_prober_counter(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS);
+    listener_alias_entry_t *entry = setup_resolved_entry(TEST_NODE_ID_A, TEST_ALIAS_A, 0);
+
+    uint8_t tick = (uint8_t) (USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS + 1);
+    ListenerAliasTable_check_one_verification(tick);
+    EXPECT_EQ(entry->verify_pending, 1);
+
+    // Simulate AMD arrival
+    ListenerAliasTable_set_alias(TEST_NODE_ID_A, TEST_ALIAS_A);
+
+    EXPECT_EQ(entry->verify_pending, 0);
+    EXPECT_EQ(entry->alias, TEST_ALIAS_A);
+
+}
+
+TEST(AliasMappingListener, verify_pending_timeout_clears_alias) {
+
+    setup_test();
+
+    // Advance counter, register entry, probe it to make it pending
+    advance_prober_counter(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS);
+    listener_alias_entry_t *entry = setup_resolved_entry(TEST_NODE_ID_A, TEST_ALIAS_A, 0);
+
+    uint8_t tick = (uint8_t) (USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS + 1);
+    ListenerAliasTable_check_one_verification(tick);
+    EXPECT_EQ(entry->verify_pending, 1);
+
+    // Advance by VERIFY_TIMEOUT_TICKS — should detect stale
+    advance_prober_counter(USER_DEFINED_LISTENER_VERIFY_TIMEOUT_TICKS);
+
+    tick = (uint8_t) (tick + USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL +
+            USER_DEFINED_LISTENER_VERIFY_TIMEOUT_TICKS);
+    node_id_t result = ListenerAliasTable_check_one_verification(tick);
+
+    // Stale handled internally, returns 0
+    EXPECT_EQ(result, (node_id_t) 0);
+
+    // Entry: alias cleared, verify_pending cleared, node_id preserved
+    EXPECT_EQ(entry->alias, 0);
+    EXPECT_EQ(entry->verify_pending, 0);
+    EXPECT_EQ(entry->node_id, TEST_NODE_ID_A);
+
+}
+
+TEST(AliasMappingListener, verify_rate_limiting) {
+
+    setup_test();
+
+    // Advance counter so entry is due
+    advance_prober_counter(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS);
+    setup_resolved_entry(TEST_NODE_ID_A, TEST_ALIAS_A, 0);
+
+    uint8_t tick = (uint8_t) (USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS + 1);
+
+    // First call — returns node_id
+    node_id_t result1 = ListenerAliasTable_check_one_verification(tick);
+    EXPECT_EQ(result1, TEST_NODE_ID_A);
+
+    // Reset entry for another probe attempt
+    listener_alias_entry_t *entry = ListenerAliasTable_find_by_node_id(TEST_NODE_ID_A);
+    entry->verify_pending = 0;
+    entry->verify_ticks = 0;  // stamp as "long ago" to ensure due
+
+    // Same tick — rate-limited, returns 0
+    node_id_t result2 = ListenerAliasTable_check_one_verification(tick);
+    EXPECT_EQ(result2, (node_id_t) 0);
+
+    // Advance by PROBE_TICK_INTERVAL — can probe again
+    uint8_t next_tick = (uint8_t) (tick + USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL);
+    node_id_t result3 = ListenerAliasTable_check_one_verification(next_tick);
+    EXPECT_EQ(result3, TEST_NODE_ID_A);
+
+}
+
+TEST(AliasMappingListener, verify_round_robin_advances) {
+
+    setup_test();
+
+    // Advance counter so all entries will be due
+    advance_prober_counter(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS);
+
+    setup_resolved_entry(TEST_NODE_ID_A, TEST_ALIAS_A, 0);
+    setup_resolved_entry(TEST_NODE_ID_B, TEST_ALIAS_B, 0);
+    setup_resolved_entry(TEST_NODE_ID_C, TEST_ALIAS_C, 0);
+
+    uint8_t tick = (uint8_t) (USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS + 1);
+
+    // Three calls, advancing tick each time — should get 3 different node_ids
+    node_id_t r1 = ListenerAliasTable_check_one_verification(tick);
+    tick = (uint8_t) (tick + USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL);
+    node_id_t r2 = ListenerAliasTable_check_one_verification(tick);
+    tick = (uint8_t) (tick + USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL);
+    node_id_t r3 = ListenerAliasTable_check_one_verification(tick);
+
+    // All should be non-zero and distinct
+    EXPECT_NE(r1, (node_id_t) 0);
+    EXPECT_NE(r2, (node_id_t) 0);
+    EXPECT_NE(r3, (node_id_t) 0);
+    EXPECT_NE(r1, r2);
+    EXPECT_NE(r2, r3);
+    EXPECT_NE(r1, r3);
+
+}
+
+TEST(AliasMappingListener, verify_flush_clears_pending) {
+
+    setup_test();
+
+    // Advance counter, register, probe to make pending
+    advance_prober_counter(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS);
+    listener_alias_entry_t *entry = setup_resolved_entry(TEST_NODE_ID_A, TEST_ALIAS_A, 0);
+
+    uint8_t tick = (uint8_t) (USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS + 1);
+    ListenerAliasTable_check_one_verification(tick);
+    EXPECT_EQ(entry->verify_pending, 1);
+
+    // Flush aliases
+    ListenerAliasTable_flush_aliases();
+
+    EXPECT_EQ(entry->alias, 0);
+    EXPECT_EQ(entry->verify_pending, 0);
+
+}
+
+TEST(AliasMappingListener, verify_unregister_clears_pending) {
+
+    setup_test();
+
+    // Advance counter, register, probe to make pending
+    advance_prober_counter(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS);
+    listener_alias_entry_t *entry = setup_resolved_entry(TEST_NODE_ID_A, TEST_ALIAS_A, 0);
+
+    uint8_t tick = (uint8_t) (USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS + 1);
+    ListenerAliasTable_check_one_verification(tick);
+    EXPECT_EQ(entry->verify_pending, 1);
+
+    // Unregister
+    ListenerAliasTable_unregister(TEST_NODE_ID_A);
+
+    EXPECT_EQ(ListenerAliasTable_find_by_node_id(TEST_NODE_ID_A), nullptr);
+
+}
+
+TEST(AliasMappingListener, verify_clear_alias_by_alias_clears_pending) {
+
+    setup_test();
+
+    // Advance counter, register, probe to make pending
+    advance_prober_counter(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS);
+    listener_alias_entry_t *entry = setup_resolved_entry(TEST_NODE_ID_A, TEST_ALIAS_A, 0);
+
+    uint8_t tick = (uint8_t) (USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS + 1);
+    ListenerAliasTable_check_one_verification(tick);
+    EXPECT_EQ(entry->verify_pending, 1);
+
+    // Clear alias by alias value (AMR)
+    ListenerAliasTable_clear_alias_by_alias(TEST_ALIAS_A);
+
+    EXPECT_EQ(entry->alias, 0);
+    EXPECT_EQ(entry->verify_pending, 0);
+
+}
+
+TEST(AliasMappingListener, verify_initialize_resets_cursor) {
+
+    setup_test();
+
+    // Advance counter and register entries
+    advance_prober_counter(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS);
+    setup_resolved_entry(TEST_NODE_ID_A, TEST_ALIAS_A, 0);
+    setup_resolved_entry(TEST_NODE_ID_B, TEST_ALIAS_B, 0);
+
+    uint8_t tick = (uint8_t) (USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS + 1);
+    ListenerAliasTable_check_one_verification(tick);
+    tick = (uint8_t) (tick + USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL);
+    ListenerAliasTable_check_one_verification(tick);
+
+    // Re-initialize — resets counter and cursor to 0
+    ListenerAliasTable_initialize();
+
+    // All entries should be cleared
+    EXPECT_EQ(ListenerAliasTable_find_by_node_id(TEST_NODE_ID_A), nullptr);
+    EXPECT_EQ(ListenerAliasTable_find_by_node_id(TEST_NODE_ID_B), nullptr);
+
+    // Advance counter again, register, and verify probe works
+    advance_prober_counter(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS);
+    setup_resolved_entry(TEST_NODE_ID_C, TEST_ALIAS_C, 0);
+    tick = (uint8_t) (USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS + 1);
+    node_id_t result = ListenerAliasTable_check_one_verification(tick);
+    EXPECT_EQ(result, TEST_NODE_ID_C);
 
 }

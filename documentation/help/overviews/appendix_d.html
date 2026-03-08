@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appendix D — Event ID Encoding | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Appendix D — Event ID Encoding Reference</h1>
+
+        <p>Event IDs are 64-bit (8-byte) values carried in Producer/Consumer Event Report (PCER) messages and identification messages. This appendix documents the well-known event IDs, broadcast time encoding, train search encoding, and range encoding used by the library.</p>
+
+        <h2>D.1 Well-Known Events: Auto-Routed</h2>
+
+        <p>Events in the <code>0x0100000000xxxxxx</code> range are automatically forwarded by gateways between network segments:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Event ID</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>EVENT_ID_EMERGENCY_OFF</code></td><td><code>0x010000000000FFFF</code></td><td>Emergency Off -- immediately stop all layout activity</td></tr>
+                <tr><td><code>EVENT_ID_CLEAR_EMERGENCY_OFF</code></td><td><code>0x010000000000FFFE</code></td><td>Clear Emergency Off -- resume normal operation</td></tr>
+                <tr><td><code>EVENT_ID_EMERGENCY_STOP</code></td><td><code>0x010000000000FFFD</code></td><td>Emergency Stop -- stop all trains but maintain power</td></tr>
+                <tr><td><code>EVENT_ID_CLEAR_EMERGENCY_STOP</code></td><td><code>0x010000000000FFFC</code></td><td>Clear Emergency Stop -- trains may resume</td></tr>
+                <tr><td><code>EVENT_ID_NODE_RECORDED_NEW_LOG</code></td><td><code>0x010000000000FFF8</code></td><td>Node has recorded a new log entry</td></tr>
+                <tr><td><code>EVENT_ID_POWER_SUPPLY_BROWN_OUT_NODE</code></td><td><code>0x010000000000FFF1</code></td><td>Power supply brown-out detected on specific node</td></tr>
+                <tr><td><code>EVENT_ID_POWER_SUPPLY_BROWN_OUT_STANDARD</code></td><td><code>0x010000000000FFF0</code></td><td>Power supply brown-out on standard power bus</td></tr>
+                <tr><td><code>EVENT_ID_IDENT_BUTTON_COMBO_PRESSED</code></td><td><code>0x010000000000FF00</code></td><td>Identification button combination pressed</td></tr>
+                <tr><td><code>EVENT_ID_LINK_ERROR_CODE_1</code></td><td><code>0x010000000000FF01</code></td><td>Link layer error code 1</td></tr>
+                <tr><td><code>EVENT_ID_LINK_ERROR_CODE_2</code></td><td><code>0x010000000000FF02</code></td><td>Link layer error code 2</td></tr>
+                <tr><td><code>EVENT_ID_LINK_ERROR_CODE_3</code></td><td><code>0x010000000000FF03</code></td><td>Link layer error code 3</td></tr>
+                <tr><td><code>EVENT_ID_LINK_ERROR_CODE_4</code></td><td><code>0x010000000000FF04</code></td><td>Link layer error code 4</td></tr>
+            </tbody>
+        </table>
+
+        <h2>D.2 Well-Known Events: Non-Auto-Routed</h2>
+
+        <p>Events in the <code>0x0101xxxxxxxxxxxx</code> range are segment-local and not forwarded by gateways:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Event ID</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>EVENT_ID_DUPLICATE_NODE_DETECTED</code></td><td><code>0x0101000000000201</code></td><td>Duplicate Node ID detected on network</td></tr>
+                <tr><td><code>EVENT_ID_TRAIN</code></td><td><code>0x0101000000000303</code></td><td>Train node identification event</td></tr>
+                <tr><td><code>EVENT_ID_TRAIN_PROXY</code></td><td><code>0x0101000000000304</code></td><td>Train proxy identification (deprecated)</td></tr>
+                <tr><td><code>EVENT_ID_FIRMWARE_CORRUPTED</code></td><td><code>0x0101000000000601</code></td><td>Node firmware is corrupted</td></tr>
+                <tr><td><code>EVENT_ID_FIRMWARE_UPGRADE_BY_HARDWARE_SWITCH</code></td><td><code>0x0101000000000602</code></td><td>Firmware upgrade initiated by hardware switch</td></tr>
+            </tbody>
+        </table>
+
+        <h2>D.3 Broadcast Time Event Encoding</h2>
+
+        <p>Broadcast time events use 8-byte Event IDs where the upper 6 bytes identify the clock and the lower 2 bytes encode the time data or command:</p>
+
+        <pre><code>Event ID layout:
+Bytes 0-5: Clock ID (identifies which clock)
+Bytes 6-7: Command/Data (time, date, year, rate, or control command)
+
+Example: Default Fast Clock, Report Time 14:30
+  Clock ID: 01.01.00.00.01.00
+  Data:     0E.1E  (hour=14 in bits 12-8, minute=30 in bits 7-0)
+  Event ID: 01.01.00.00.01.00.0E.1E</code></pre>
+
+        <h3>Clock Identifiers</h3>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Clock ID (6 bytes)</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK</code></td><td><code>01.01.00.00.01.00</code></td><td>Default Fast Clock</td></tr>
+                <tr><td><code>BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK</code></td><td><code>01.01.00.00.01.01</code></td><td>Default Real-time Clock</td></tr>
+                <tr><td><code>BROADCAST_TIME_ID_ALTERNATE_CLOCK_1</code></td><td><code>01.01.00.00.01.02</code></td><td>Alternate Clock 1</td></tr>
+                <tr><td><code>BROADCAST_TIME_ID_ALTERNATE_CLOCK_2</code></td><td><code>01.01.00.00.01.03</code></td><td>Alternate Clock 2</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Data Type Ranges (Lower 2 Bytes)</h3>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Range</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>BROADCAST_TIME_REPORT_TIME_BASE</code></td><td><code>0x0000-0x17FF</code></td><td>Report Time: hour (bits 12-8) + minute (bits 7-0)</td></tr>
+                <tr><td><code>BROADCAST_TIME_REPORT_DATE_BASE</code></td><td><code>0x2100-0x2CFF</code></td><td>Report Date: month (bits 11-8) + day (bits 7-0)</td></tr>
+                <tr><td><code>BROADCAST_TIME_REPORT_YEAR_BASE</code></td><td><code>0x3000-0x3FFF</code></td><td>Report Year: year (bits 11-0)</td></tr>
+                <tr><td><code>BROADCAST_TIME_REPORT_RATE_BASE</code></td><td><code>0x4000-0x4FFF</code></td><td>Report Rate: 12-bit signed fixed-point (2 fractional bits)</td></tr>
+                <tr><td><code>BROADCAST_TIME_SET_TIME_BASE</code></td><td><code>0x8000-0x97FF</code></td><td>Set Time command (same encoding as Report Time)</td></tr>
+                <tr><td><code>BROADCAST_TIME_SET_DATE_BASE</code></td><td><code>0xA100-0xACFF</code></td><td>Set Date command (same encoding as Report Date)</td></tr>
+                <tr><td><code>BROADCAST_TIME_SET_YEAR_BASE</code></td><td><code>0xB000-0xBFFF</code></td><td>Set Year command (same encoding as Report Year)</td></tr>
+                <tr><td><code>BROADCAST_TIME_SET_RATE_BASE</code></td><td><code>0xC000-0xCFFF</code></td><td>Set Rate command (same encoding as Report Rate)</td></tr>
+                <tr><td><code>BROADCAST_TIME_QUERY</code></td><td><code>0xF000</code></td><td>Query -- request synchronization</td></tr>
+                <tr><td><code>BROADCAST_TIME_STOP</code></td><td><code>0xF001</code></td><td>Stop clock</td></tr>
+                <tr><td><code>BROADCAST_TIME_START</code></td><td><code>0xF002</code></td><td>Start clock</td></tr>
+                <tr><td><code>BROADCAST_TIME_DATE_ROLLOVER</code></td><td><code>0xF003</code></td><td>Date Rollover (midnight crossing)</td></tr>
+            </tbody>
+        </table>
+
+        <h2>D.4 Train Search Event Encoding</h2>
+
+        <p>Train search events use the <code>09.00.99.FF</code> prefix. The lower 4 bytes encode the search address and flags:</p>
+
+        <pre><code>Event ID: 09.00.99.FF.xx.xx.xx.xx
+
+Bytes 4-6: Search address encoded as 6 BCD nibbles, MSB first
+           Short queries padded with 0xF nibbles
+Byte 7:   Flags byte</code></pre>
+
+        <h3>Train Search Flags</h3>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>TRAIN_SEARCH_FLAG_ALLOCATE</code></td><td><code>0x80</code></td><td>Allocate new train node if no match found</td></tr>
+                <tr><td><code>TRAIN_SEARCH_FLAG_EXACT</code></td><td><code>0x40</code></td><td>Exact match only (no partial matching)</td></tr>
+                <tr><td><code>TRAIN_SEARCH_FLAG_ADDRESS_ONLY</code></td><td><code>0x20</code></td><td>Match address only (not name)</td></tr>
+                <tr><td><code>TRAIN_SEARCH_FLAG_DCC</code></td><td><code>0x08</code></td><td>DCC protocol</td></tr>
+                <tr><td><code>TRAIN_SEARCH_FLAG_LONG_ADDR</code></td><td><code>0x04</code></td><td>Force long (14-bit) DCC address</td></tr>
+                <tr><td><code>TRAIN_SEARCH_SPEED_STEP_MASK</code></td><td><code>0x03</code></td><td>Speed step mode (bits 1-0): 0=default, 1=14, 2=28, 3=128</td></tr>
+            </tbody>
+        </table>
+
+        <h2>D.5 Event Range Encoding</h2>
+
+        <p>Event ranges allow a node to express interest in a contiguous block of Event IDs using a single identification message. The range is defined by a base Event ID and a power-of-2 count:</p>
+
+        <pre><code>// Range structure
+typedef struct {
+    event_id_t start_base;              // Starting Event ID
+    event_range_count_enum event_count; // Number of consecutive IDs
+} event_id_range_t;</code></pre>
+
+        <p>Supported range sizes (defined in <code>event_range_count_enum</code>):</p>
+
+        <table>
+            <thead>
+                <tr><th>Enum Value</th><th>Range Size</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>EVENT_RANGE_COUNT_1</code></td><td>1 (single event)</td></tr>
+                <tr><td><code>EVENT_RANGE_COUNT_2</code></td><td>2</td></tr>
+                <tr><td><code>EVENT_RANGE_COUNT_4</code></td><td>4</td></tr>
+                <tr><td><code>EVENT_RANGE_COUNT_8</code></td><td>8</td></tr>
+                <tr><td><code>EVENT_RANGE_COUNT_16</code></td><td>16</td></tr>
+                <tr><td>...</td><td>(powers of 2)</td></tr>
+                <tr><td><code>EVENT_RANGE_COUNT_32768</code></td><td>32768</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Source Reference</div>
+            <p>Well-known event IDs are defined in <code>openlcb_defines.h</code> (groups <code>well_known_events_auto</code> and <code>well_known_events_local</code>). Broadcast time constants are in the <code>broadcast_time_events</code> group. Train search constants are in the <code>well_known_events_local</code> group. Range types are in <code>openlcb_types.h</code>.</p>
+        </div>
+
+        <div class="chapter-nav">
+            <a href="appendix_c.html">&larr; Prev: Appendix C — Address Spaces</a>
+            <a href="appendix_e.html">Next: Appendix E — Compile-Time Config &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

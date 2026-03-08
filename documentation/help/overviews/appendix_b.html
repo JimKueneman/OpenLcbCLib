@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appendix B — CAN Frame Format | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Appendix B — CAN Frame Format Reference</h1>
+
+        <p>OpenLCB uses CAN 2.0B extended frames with 29-bit identifiers. This appendix documents the bit-field layout of the CAN identifier and the different frame types used by the protocol.</p>
+
+        <h2>B.1 29-Bit Identifier Layout</h2>
+
+        <p>The 29-bit CAN extended identifier is divided into fields that differ based on whether the frame is a control frame or an OpenLCB message frame:</p>
+
+        <pre><code>Bit:  28  27  26 25 24  23 22 21 20 19 18 17 16 15 14 13 12  11 10 9 8 7 6 5 4 3 2 1 0
+      [R] [M] [--- Frame Type/Seq ---] [------ Variable Field ------] [-- Source Alias --]
+
+R   = Reserved (bit 28): always 1 on transmit, ignored on receive
+M   = OpenLCB Message flag (bit 27): 1 = OpenLCB message, 0 = CAN control frame
+Bits 26-24 = Frame Type (messages) or Sequence Number (control frames)
+Bits 23-12 = Variable Field (MTI for messages, sub-type for control frames)
+Bits 11-0  = Source Alias (12-bit CAN alias of the sending node)</code></pre>
+
+        <h3>Identifier Masks</h3>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RESERVED_TOP_BIT</code></td><td><code>0x10000000</code></td><td>Bit 28 -- always set to 1</td></tr>
+                <tr><td><code>CAN_OPENLCB_MSG</code></td><td><code>0x08000000</code></td><td>Bit 27 -- 1 = OpenLCB message frame</td></tr>
+                <tr><td><code>MASK_CAN_FRAME_SEQUENCE_NUMBER</code></td><td><code>0x07000000</code></td><td>Bits 26-24 -- frame type or sequence number</td></tr>
+                <tr><td><code>MASK_CAN_VARIABLE_FIELD</code></td><td><code>0x00FFF000</code></td><td>Bits 23-12 -- MTI or control frame sub-type</td></tr>
+                <tr><td><code>MASK_CAN_SOURCE_ALIAS</code></td><td><code>0x00000FFF</code></td><td>Bits 11-0 -- source node alias</td></tr>
+            </tbody>
+        </table>
+
+        <h2>B.2 Frame Type Classification</h2>
+
+        <div class="mermaid">
+flowchart TD
+    A["CAN Frame Received"] --> B{"Bit 27 set?"}
+    B -->|"Yes (1)"| C["OpenLCB Message Frame"]
+    B -->|"No (0)"| D["CAN Control Frame"]
+
+    C --> E{"Frame Type<br/>bits 26-24"}
+    E -->|"001"| F["Standard Message"]
+    E -->|"010"| G["Datagram Only"]
+    E -->|"011"| H["Datagram First"]
+    E -->|"100"| I["Datagram Middle"]
+    E -->|"101"| J["Datagram Final"]
+    E -->|"110"| K["Reserved"]
+    E -->|"111"| L["Stream"]
+
+    D --> M{"Sequence bits<br/>26-24 + Variable"}
+    M --> N["CID / RID / AMD / AME / AMR"]
+        </div>
+
+        <h2>B.3 OpenLCB Message Frame Types</h2>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Bits 26-24</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>OPENLCB_MESSAGE_STANDARD_FRAME_TYPE</code></td><td><code>0x01000000</code></td><td>001</td><td>Global or addressed OpenLCB message (MTI in variable field)</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_DATAGRAM_ONLY</code></td><td><code>0x02000000</code></td><td>010</td><td>Complete datagram in a single CAN frame</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_DATAGRAM_FIRST</code></td><td><code>0x03000000</code></td><td>011</td><td>First frame of a multi-frame datagram</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_DATAGRAM_MIDDLE</code></td><td><code>0x04000000</code></td><td>100</td><td>Middle frame of a multi-frame datagram</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_DATAGRAM_FINAL</code></td><td><code>0x05000000</code></td><td>101</td><td>Final frame of a multi-frame datagram</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_RESERVED</code></td><td><code>0x06000000</code></td><td>110</td><td>Reserved for future use</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_STREAM</code></td><td><code>0x07000000</code></td><td>111</td><td>Stream data frame</td></tr>
+            </tbody>
+        </table>
+
+        <h2>B.4 CAN Control Frames</h2>
+
+        <p>Control frames have bit 27 = 0. They handle alias allocation and mapping management:</p>
+
+        <h3>Check ID (CID) Frames</h3>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Bits 26-24</th><th>Variable Field Contains</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>CAN_CONTROL_FRAME_CID7</code></td><td><code>0x07000000</code></td><td>111</td><td>Node ID bits 47-36 (first 12 bits)</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_CID6</code></td><td><code>0x06000000</code></td><td>110</td><td>Node ID bits 35-24 (2nd 12 bits)</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_CID5</code></td><td><code>0x05000000</code></td><td>101</td><td>Node ID bits 23-12 (3rd 12 bits)</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_CID4</code></td><td><code>0x04000000</code></td><td>100</td><td>Node ID bits 11-0 (last 12 bits)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Alias Management Frames</h3>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Description</th><th>Data Field</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>CAN_CONTROL_FRAME_RID</code></td><td><code>0x00700000</code></td><td>Reserve ID -- claims the alias</td><td>Empty (0 bytes)</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_AMD</code></td><td><code>0x00701000</code></td><td>Alias Map Definition -- maps alias to Node ID</td><td>6-byte Node ID</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_AME</code></td><td><code>0x00702000</code></td><td>Alias Mapping Enquiry -- query alias ownership</td><td>6-byte Node ID (or empty for global query)</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_AMR</code></td><td><code>0x00703000</code></td><td>Alias Map Reset -- node releasing alias</td><td>6-byte Node ID</td></tr>
+            </tbody>
+        </table>
+
+        <h2>B.5 Multi-Frame Message Indicator Bits</h2>
+
+        <p>For standard OpenLCB messages that span multiple CAN frames (not datagrams), the first data byte contains framing bits:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Bits 5-4</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>MULTIFRAME_ONLY</code></td><td><code>0x00</code></td><td>00</td><td>Single frame (complete message)</td></tr>
+                <tr><td><code>MULTIFRAME_FIRST</code></td><td><code>0x10</code></td><td>01</td><td>First frame of multi-frame sequence</td></tr>
+                <tr><td><code>MULTIFRAME_FINAL</code></td><td><code>0x20</code></td><td>10</td><td>Final frame of multi-frame sequence</td></tr>
+                <tr><td><code>MULTIFRAME_MIDDLE</code></td><td><code>0x30</code></td><td>11</td><td>Middle frame of multi-frame sequence</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Mask</div>
+            <p>Use <code>MASK_MULTIFRAME_BITS</code> (<code>0x30</code>) to extract the framing indicator from the first data byte.</p>
+        </div>
+
+        <h2>B.6 Datagram Frame Sequencing</h2>
+
+        <p>Datagrams up to 8 bytes use a single "Datagram Only" frame. Larger datagrams (up to 72 bytes) are split across multiple frames:</p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant S as Sender
+    participant B as CAN Bus
+    participant R as Receiver
+
+    Note over S,R: Datagram ≤ 8 bytes
+    S->>B: Datagram Only (type 0x02)
+    B->>R: Complete datagram
+
+    Note over S,R: Datagram > 8 bytes
+    S->>B: Datagram First (type 0x03) [8 bytes]
+    S->>B: Datagram Middle (type 0x04) [8 bytes]
+    S->>B: Datagram Middle (type 0x04) [8 bytes]
+    S->>B: Datagram Final (type 0x05) [2-8 bytes]
+    B->>R: Assembled datagram
+
+    R->>B: Datagram OK Reply
+    B->>S: Acknowledgment
+        </div>
+
+        <p>For datagram frames, the variable field (bits 23-12) carries the destination alias instead of the MTI. The frame type bits (26-24) identify the frame as a datagram.</p>
+
+        <h2>B.7 CAN Identifier Field Masks (OpenLCB Messages)</h2>
+
+        <p>When the frame is a standard OpenLCB message (frame type = 001), the variable field contains the MTI. These masks extract specific MTI sub-fields from the CAN identifier:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>MASK_CAN_STREAM_OR_DATAGRAM</code></td><td><code>0x01000000</code></td><td>Stream/datagram indicator in CAN ID</td></tr>
+                <tr><td><code>MASK_CAN_PRIORITY</code></td><td><code>0x00C00000</code></td><td>Priority field in CAN ID</td></tr>
+                <tr><td><code>MASK_CAN_SIMPLE_PROTOCOL</code></td><td><code>0x00010000</code></td><td>Simple protocol indicator</td></tr>
+                <tr><td><code>MASK_CAN_DEST_ADDRESS_PRESENT</code></td><td><code>0x00008000</code></td><td>Destination address present</td></tr>
+                <tr><td><code>MASK_CAN_EVENT_PRESENT</code></td><td><code>0x00004000</code></td><td>Event ID present in payload</td></tr>
+                <tr><td><code>MASK_CAN_PRIORITY_MODIFIER</code></td><td><code>0x00003000</code></td><td>Priority modifier bits</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Source Reference</div>
+            <p>All CAN frame format constants are defined in <code>openlcb_defines.h</code>. CAN frame type definitions are in the <code>can_frame_format</code> and <code>can_control_frames</code> Doxygen groups.</p>
+        </div>
+
+        <div class="chapter-nav">
+            <a href="appendix_a.html">&larr; Prev: Appendix A — MTI Reference</a>
+            <a href="appendix_c.html">Next: Appendix C — Address Spaces &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

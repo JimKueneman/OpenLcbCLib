@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 5 — Node Management | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 5 — Node Management</h1>
+        <p>The node module (<code>openlcb_node.h/.c</code>) manages a fixed-size pool of <code>openlcb_node_t</code> structures. It provides allocation, enumeration, and lookup functions used by every other module in the library.</p>
+
+        <h2>5.1 Static Node Pool</h2>
+        <p>The pool is sized by <code>USER_DEFINED_NODE_BUFFER_DEPTH</code>:</p>
+
+        <pre><code>typedef struct {
+    openlcb_node_t node[USER_DEFINED_NODE_BUFFER_DEPTH];
+    uint16_t count;  // Number of allocated nodes (never decreases)
+} openlcb_nodes_t;</code></pre>
+
+        <p>Nodes are allocated once and never deallocated. The <code>count</code> field only increases. This simplifies memory management and avoids dangling pointer issues -- once you have a pointer to a node, it remains valid for the lifetime of the application.</p>
+
+        <h2>5.2 Node Allocation</h2>
+        <pre><code>openlcb_node_t *OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t *node_parameters);</code></pre>
+
+        <p>Finds the first free slot, initializes it with:</p>
+        <ul>
+            <li>The provided 48-bit <code>node_id</code></li>
+            <li>A pointer to the const <code>node_parameters_t</code> (stored, not copied -- it must remain valid)</li>
+            <li>Auto-generated consumer and producer event IDs based on the Node ID</li>
+            <li>State flags: <code>allocated = 1</code>, <code>run_state = RUNSTATE_INIT</code></li>
+            <li>The node's index in the array</li>
+        </ul>
+
+        <p>Returns <code>NULL</code> if the pool is full.</p>
+
+        <h3>Event Auto-Generation</h3>
+        <p>The <code>consumer_count_autocreate</code> and <code>producer_count_autocreate</code> fields in <code>node_parameters_t</code> tell the allocator how many event IDs to automatically generate. Events are derived from the Node ID, creating unique event IDs for each node without requiring the application to manually compute them.</p>
+
+        <h2>5.3 Multi-Key Node Enumerator</h2>
+        <p>The library frequently needs to iterate over all allocated nodes -- for example, the main state machine processes each node on every tick, and the login state machine runs independently for each node. To support multiple independent, concurrent iterations, the node module provides a keyed enumerator system.</p>
+
+        <pre><code>openlcb_node_t *OpenLcbNode_get_first(uint8_t key);
+openlcb_node_t *OpenLcbNode_get_next(uint8_t key);
+bool OpenLcbNode_is_last(uint8_t key);</code></pre>
+
+        <p>Each enumerator key (0 to <code>MAX_NODE_ENUM_KEY_VALUES - 1</code>) maintains its own position index. The library supports 8 concurrent enumeration keys.</p>
+
+        <div class="mermaid">
+flowchart TD
+    START["get_first(key=0)"] --> N0["Node 0"]
+    N0 -->|"get_next(key=0)"| N1["Node 1"]
+    N1 -->|"get_next(key=0)"| N2["Node 2"]
+    N2 -->|"get_next(key=0)"| END["NULL (end)"]
+
+    START2["get_first(key=1)"] --> N0b["Node 0"]
+    N0b -->|"get_next(key=1)"| N1b["Node 1"]
+    N1b -->|"is_last(key=1)?"| CHECK{"true"}
+
+    style START fill:#c8e6c9,stroke:#2e7d32
+    style START2 fill:#bbdefb,stroke:#1565c0
+    style END fill:#ffcdd2,stroke:#c62828
+    style CHECK fill:#fff9c4,stroke:#f57f17
+        </div>
+
+        <h3>Usage Pattern</h3>
+        <pre><code>// Iterate all nodes using key 0
+openlcb_node_t *node = OpenLcbNode_get_first(0);
+while (node) {
+    // Process this node...
+    process_node(node);
+    node = OpenLcbNode_get_next(0);
+}
+
+// Meanwhile, another module can independently iterate using key 1
+openlcb_node_t *other = OpenLcbNode_get_first(1);
+while (other) {
+    // Different processing...
+    other = OpenLcbNode_get_next(1);
+}</code></pre>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Key Allocation</div>
+            <p>Keys are not dynamically allocated -- they are convention-based. Each module that needs to enumerate nodes uses a different key constant. If two modules accidentally use the same key simultaneously, their iteration positions will interfere with each other.</p>
+        </div>
+
+        <h2>5.4 Node Lookup</h2>
+        <pre><code>openlcb_node_t *OpenLcbNode_find_by_alias(uint16_t alias);
+openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t node_id);</code></pre>
+
+        <p>Linear scans of the node pool. For typical pool sizes (1-4 nodes), this is fast enough. Both return <code>NULL</code> if no match is found.</p>
+
+        <h2>5.5 The openlcb_node_t Structure Walkthrough</h2>
+        <table>
+            <thead>
+                <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>state</code></td><td><code>openlcb_node_state_t</code></td><td>Bitfield with run_state, allocated, permitted, initialized, etc.</td></tr>
+                <tr><td><code>id</code></td><td><code>uint64_t</code></td><td>48-bit Node ID (permanent, globally unique)</td></tr>
+                <tr><td><code>alias</code></td><td><code>uint16_t</code></td><td>12-bit CAN alias (temporary, assigned during login)</td></tr>
+                <tr><td><code>seed</code></td><td><code>uint64_t</code></td><td>Current seed for the LFSR alias generation algorithm</td></tr>
+                <tr><td><code>consumers</code></td><td><code>event_id_consumer_list_t</code></td><td>List of consumed events with statuses, plus range list and enumerator</td></tr>
+                <tr><td><code>producers</code></td><td><code>event_id_producer_list_t</code></td><td>List of produced events with statuses, plus range list and enumerator</td></tr>
+                <tr><td><code>parameters</code></td><td><code>const node_parameters_t *</code></td><td>Pointer to const configuration (SNIP, CDI, address spaces, PSI bits)</td></tr>
+                <tr><td><code>timerticks</code></td><td><code>uint16_t</code></td><td>100ms timer tick counter (incremented by main loop)</td></tr>
+                <tr><td><code>owner_node</code></td><td><code>uint64_t</code></td><td>Node ID that has locked/reserved this node (0 = unlocked)</td></tr>
+                <tr><td><code>last_received_datagram</code></td><td><code>openlcb_msg_t *</code></td><td>Saved incoming datagram for reply processing</td></tr>
+                <tr><td><code>index</code></td><td><code>uint8_t</code></td><td>This node's index in the node array</td></tr>
+                <tr><td><code>train_state</code></td><td><code>train_state_t *</code></td><td>Pointer to train state (NULL for non-train nodes)</td></tr>
+            </tbody>
+        </table>
+
+        <h2>5.6 The train_state Pointer</h2>
+        <p>For non-train nodes, <code>train_state</code> is <code>NULL</code>. For train nodes, it points to a <code>train_state_t</code> structure allocated from a separate static pool by <code>OpenLcbApplicationTrain_setup()</code>. The train state holds:</p>
+
+        <ul>
+            <li>Speed values: <code>set_speed</code>, <code>commanded_speed</code>, <code>actual_speed</code> (all float16)</li>
+            <li>Emergency stop flags: <code>estop_active</code>, <code>global_estop_active</code>, <code>global_eoff_active</code></li>
+            <li>Controller assignment: <code>controller_node_id</code>, <code>reserved_node_count</code></li>
+            <li>Heartbeat management: <code>heartbeat_timeout_s</code>, <code>heartbeat_counter_100ms</code></li>
+            <li>Consist listener list: <code>listeners[]</code>, <code>listener_count</code></li>
+            <li>Function values: <code>functions[]</code> array indexed by function number</li>
+            <li>DCC addressing: <code>dcc_address</code>, <code>is_long_address</code>, <code>speed_steps</code></li>
+            <li>Back-pointer: <code>owner_node</code> pointing back to the owning <code>openlcb_node_t</code></li>
+        </ul>
+
+        <h2>5.7 Other Node Module Functions</h2>
+
+        <pre><code>void OpenLcbNode_initialize(const interface_openlcb_node_t *interface);
+void OpenLcbNode_reset_state(void);
+void OpenLcbNode_100ms_timer_tick(uint8_t current_tick);</code></pre>
+
+        <ul>
+            <li><code>initialize()</code>: Clears all node structures and stores the optional callback interface.</li>
+            <li><code>reset_state()</code>: Resets all allocated nodes to <code>RUNSTATE_INIT</code>, clearing <code>permitted</code> and <code>initialized</code> flags. Does not deallocate nodes. Used when the transport layer needs to re-login (e.g., after a bus reset).</li>
+            <li><code>100ms_timer_tick()</code>: Increments node timer counters and fires the application callback (if registered) at most once per unique tick value.</li>
+        </ul>
+
+        <div class="chapter-nav">
+            <a href="ch04b.html">&larr; Previous: Ch 4b — CAN Buffer System</a>
+            <a href="ch06.html">Next: Ch 6 — Thread Safety &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

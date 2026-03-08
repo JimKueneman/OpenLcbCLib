@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 17 — Train Control Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html" class="active">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 17 — Train Control Protocol</h1>
+
+        <p>
+            The Train Control Protocol handles speed, function, controller management, consist
+            (listener) operations, and heartbeat monitoring for train nodes. It uses two MTIs:
+            <code>MTI_TRAIN_PROTOCOL</code> (commands to a train) and <code>MTI_TRAIN_REPLY</code>
+            (replies from a train). The handler automatically updates train state, builds replies,
+            and forwards consist commands to listeners.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/protocol_train_handler.c</code>,
+            <code>src/openlcb/protocol_train_handler.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>17.1 train_state_t Structure</h2>
+
+        <p>
+            Each train node has a mutable <code>train_state_t</code> structure allocated from a
+            static pool. It holds the complete runtime state:
+        </p>
+
+        <pre><code>typedef struct train_state_TAG {
+    uint16_t set_speed;               // Last commanded speed (float16)
+    uint16_t commanded_speed;         // Control algorithm output (float16)
+    uint16_t actual_speed;            // Measured speed, optional (float16)
+    bool estop_active;                // Point-to-point E-stop
+    bool global_estop_active;         // Global Emergency Stop
+    bool global_eoff_active;          // Global Emergency Off
+    node_id_t controller_node_id;     // Active controller (0 if none)
+    uint8_t reserved_node_count;      // Reservation count
+    uint32_t heartbeat_timeout_s;     // Heartbeat deadline (seconds)
+    uint32_t heartbeat_counter_100ms; // Heartbeat countdown (100ms ticks)
+
+    train_listener_entry_t listeners[]; // Consist listener array
+    uint8_t listener_count;
+    uint8_t listener_enum_index;        // For consist forwarding
+
+    uint16_t functions[];               // Function values by number
+
+    uint16_t dcc_address;    // DCC address (0 = not set)
+    bool is_long_address;    // Extended DCC address
+    uint8_t speed_steps;     // 0=default, 1=14, 2=28, 3=128
+
+    struct openlcb_node_TAG *owner_node; // Back-pointer to owning node
+} train_state_t;</code></pre>
+
+        <!-- ================================================================ -->
+        <h2>17.2 Sub-Command Table</h2>
+
+        <p>
+            The first payload byte of <code>MTI_TRAIN_PROTOCOL</code> identifies the command
+            category. The P bit (0x80) indicates a proxied/forwarded command from a consist
+            member:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Byte 0</th><th>Command</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0x00</td><td>Set Speed/Direction</td><td>Set train speed using float16 encoding.</td></tr>
+                <tr><td>0x01</td><td>Set Function</td><td>Set a function value by 24-bit address.</td></tr>
+                <tr><td>0x02</td><td>Emergency Stop</td><td>Point-to-point E-stop for this train.</td></tr>
+                <tr><td>0x10</td><td>Query Speeds</td><td>Request set/commanded/actual speed values.</td></tr>
+                <tr><td>0x11</td><td>Query Function</td><td>Request function value by address.</td></tr>
+                <tr><td>0x20</td><td>Controller Config</td><td>Controller assign/release/query/changed (sub-command in byte 1).</td></tr>
+                <tr><td>0x30</td><td>Listener Config</td><td>Listener attach/detach/query (sub-command in byte 1).</td></tr>
+                <tr><td>0x40</td><td>Management</td><td>Reserve/release/heartbeat (sub-command in byte 1).</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Controller Sub-Commands (byte 1, when byte 0 = 0x20)</h3>
+        <table>
+            <thead>
+                <tr><th>Byte 1</th><th>Operation</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0x01</td><td>Controller Assign</td></tr>
+                <tr><td>0x02</td><td>Controller Release</td></tr>
+                <tr><td>0x03</td><td>Controller Query</td></tr>
+                <tr><td>0x04</td><td>Controller Changed Notify</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Listener Sub-Commands (byte 1, when byte 0 = 0x30)</h3>
+        <table>
+            <thead>
+                <tr><th>Byte 1</th><th>Operation</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0x01</td><td>Listener Attach</td></tr>
+                <tr><td>0x02</td><td>Listener Detach</td></tr>
+                <tr><td>0x03</td><td>Listener Query</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Management Sub-Commands (byte 1, when byte 0 = 0x40)</h3>
+        <table>
+            <thead>
+                <tr><th>Byte 1</th><th>Operation</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0x01</td><td>Reserve</td></tr>
+                <tr><td>0x02</td><td>Release</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>17.3 Speed: Float16 Encoding</h2>
+
+        <p>
+            Speed values use the OpenLCB float16 format (IEEE 754 half-precision). The sign bit
+            (bit 15) encodes direction: 0 = forward, 1 = reverse. The remaining 15 bits encode
+            the speed magnitude as a half-precision float.
+        </p>
+
+        <p>
+            The handler stores the float16 value directly in <code>train_state.set_speed</code>.
+            The application can also maintain <code>commanded_speed</code> (control algorithm
+            output) and <code>actual_speed</code> (measured) for Query Speeds replies.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>17.4 Function Control</h2>
+
+        <p>
+            Functions are identified by a 24-bit address (3 bytes starting at payload offset 1).
+            The function value is a 16-bit word at offset 4. Standard functions (0-28) are stored
+            in the <code>train_state.functions[]</code> array. Functions outside the array size
+            are still forwarded via the callback but not stored.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>17.5 Controller Assignment Flow</h2>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Throttle as New Throttle
+    participant Train as Train Node
+    participant Current as Current Controller
+
+    Throttle->>Train: Controller Assign (Node ID)
+    alt No current controller
+        Note over Train: Accept immediately
+        Train->>Train: Store controller_node_id
+        Train-->>Throttle: Controller Assign Reply (result=0x00)
+    else Current controller exists
+        alt Decision callback accepts
+            Train->>Train: Store new controller_node_id
+            Train-->>Throttle: Controller Assign Reply (result=0x00)
+        else Decision callback rejects
+            Train-->>Throttle: Controller Assign Reply (result=0x01, current controller ID)
+        end
+    end
+        </div>
+
+        <p>
+            The <code>on_controller_assign_request</code> decision callback lets the application
+            decide whether to allow the takeover. If the callback is NULL, the assignment is
+            always accepted. On rejection, the reply includes the 6-byte Node ID of the current
+            controller so the requester can negotiate a handoff.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>17.6 Consist System (Listeners)</h2>
+
+        <p>
+            The consist system uses a listener list on each train node. When a speed or function
+            command arrives, the handler processes it locally and then forwards it to all attached
+            listeners using the enumerate flag pattern:
+        </p>
+
+        <div class="mermaid">
+flowchart TD
+    A["Speed/Function command\narrives at Train Node"] --> B["Update local train_state"]
+    B --> C["Fire notifier callback"]
+    C --> D{{"Any listeners?"}}
+    D -- "No" --> E["Done"]
+    D -- "Yes" --> F["Set enumerate flag\nReset listener_enum_index"]
+    F --> G["Forward to listener[0]"]
+    G --> H["Main loop re-dispatches"]
+    H --> I["Forward to listener[1]"]
+    I --> J["... until all done"]
+    J --> K["Clear enumerate flag"]
+
+    style A fill:#4a90d9,color:#fff
+        </div>
+
+        <h3>Listener Flags</h3>
+        <table>
+            <thead>
+                <tr><th>Flag</th><th>Value</th><th>Effect</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>REVERSE</td><td>0x02</td><td>Flip the direction bit in forwarded speed commands.</td></tr>
+                <tr><td>LINK_F0</td><td>0x04</td><td>Forward function 0 (headlight) commands to this listener.</td></tr>
+                <tr><td>LINK_FN</td><td>0x08</td><td>Forward function 1+ commands to this listener.</td></tr>
+                <tr><td>HIDE</td><td>0x80</td><td>Hide this listener from enumeration queries.</td></tr>
+            </tbody>
+        </table>
+
+        <p>
+            Forwarded commands have the P bit (0x80) set in byte 0 to indicate they originated
+            from a consist master, not directly from a throttle. The forwarding logic skips the
+            originating source node to prevent feedback loops, and checks LINK_F0/LINK_FN flags
+            before forwarding function commands.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>17.7 Heartbeat</h2>
+
+        <p>
+            The train node can send periodic heartbeat requests to its assigned controller. If the
+            controller does not respond within the timeout period, the
+            <code>on_heartbeat_timeout</code> notifier fires and the application can take
+            appropriate action (e.g., stop the train).
+        </p>
+
+        <p>
+            The heartbeat countdown is maintained in <code>train_state.heartbeat_counter_100ms</code>
+            and decremented by the application's 100ms tick handler. The timeout period in
+            seconds is stored in <code>train_state.heartbeat_timeout_s</code>.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>17.8 Emergency Events</h2>
+
+        <p>
+            The handler processes well-known emergency Event IDs via
+            <code>ProtocolTrainHandler_handle_emergency_event()</code>. Emergency states are
+            tracked in the train state:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Event</th><th>State Flag</th><th>Scope</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Emergency Stop (point-to-point)</td><td><code>estop_active</code></td><td>Single train</td></tr>
+                <tr><td>Global Emergency Stop</td><td><code>global_estop_active</code></td><td>All trains</td></tr>
+                <tr><td>Global Emergency Off</td><td><code>global_eoff_active</code></td><td>All trains (power off)</td></tr>
+            </tbody>
+        </table>
+
+        <p>
+            When an emergency event is received, the handler sets the corresponding flag and fires
+            <code>on_emergency_entered</code>. When the clear event is received, the flag is
+            reset and <code>on_emergency_exited</code> fires.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>17.9 Callback Interface</h2>
+
+        <p>
+            The <code>interface_protocol_train_handler_t</code> contains three categories of
+            callbacks, all optional (NULL is safely ignored):
+        </p>
+
+        <h3>Train-Node Side: Notifiers</h3>
+        <p>
+            Fire AFTER the handler has updated <code>train_state</code> and built any reply.
+            The application uses these to drive hardware:
+        </p>
+        <table>
+            <thead>
+                <tr><th>Callback</th><th>When Fired</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>on_speed_changed</code></td><td>Speed was set (state updated).</td></tr>
+                <tr><td><code>on_function_changed</code></td><td>Function was set (state updated).</td></tr>
+                <tr><td><code>on_emergency_entered</code></td><td>Emergency state activated.</td></tr>
+                <tr><td><code>on_emergency_exited</code></td><td>Emergency state cleared.</td></tr>
+                <tr><td><code>on_controller_assigned</code></td><td>Controller assigned or changed.</td></tr>
+                <tr><td><code>on_controller_released</code></td><td>Controller released.</td></tr>
+                <tr><td><code>on_listener_changed</code></td><td>Listener list modified (attach/detach).</td></tr>
+                <tr><td><code>on_heartbeat_timeout</code></td><td>Heartbeat timed out.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Train-Node Side: Decision Callbacks</h3>
+        <p>
+            Return a value the handler uses to build the reply. If NULL, the handler uses a
+            default policy (accept):
+        </p>
+        <table>
+            <thead>
+                <tr><th>Callback</th><th>Purpose</th><th>Default (NULL)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>on_controller_assign_request</code></td><td>Another controller wants to take over.</td><td>Accept</td></tr>
+                <tr><td><code>on_controller_changed_request</code></td><td>Controller Changed Notify received.</td><td>Accept</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Throttle Side: Notifiers</h3>
+        <p>Fire when a reply is received from the train node:</p>
+        <table>
+            <thead>
+                <tr><th>Callback</th><th>When Fired</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>on_query_speeds_reply</code></td><td>Query Speeds reply received.</td></tr>
+                <tr><td><code>on_query_function_reply</code></td><td>Query Function reply received.</td></tr>
+                <tr><td><code>on_controller_assign_reply</code></td><td>Controller Assign reply received.</td></tr>
+                <tr><td><code>on_controller_query_reply</code></td><td>Controller Query reply received.</td></tr>
+                <tr><td><code>on_controller_changed_notify_reply</code></td><td>Controller Changed Notify reply received.</td></tr>
+                <tr><td><code>on_listener_attach_reply</code></td><td>Listener Attach reply received.</td></tr>
+                <tr><td><code>on_listener_detach_reply</code></td><td>Listener Detach reply received.</td></tr>
+                <tr><td><code>on_listener_query_reply</code></td><td>Listener Query reply received.</td></tr>
+                <tr><td><code>on_reserve_reply</code></td><td>Reserve reply received.</td></tr>
+                <tr><td><code>on_heartbeat_request</code></td><td>Heartbeat request from train node.</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch16.html">Previous: Ch 16 — CDI</a>
+            <a href="ch18.html">Next: Ch 18 — Broadcast Time</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

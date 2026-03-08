@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 24 — Data Flow Walkthrough | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 24 — Data Flow Walkthrough</h1>
+
+        <p>This chapter traces messages through the library end-to-end, from CAN frame arrival to protocol handler response and back out to the bus. Use these traces as a map when debugging or understanding how the pieces fit together.</p>
+
+        <h2>24.1 The Five State Machines</h2>
+        <table>
+            <thead>
+                <tr><th>State Machine</th><th>Layer</th><th>File</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>CAN Main SM</td><td>CAN Transport</td><td><code>can_main_statemachine.c</code></td><td>CAN frame dispatch, alias conflict, CAN login orchestration</td></tr>
+                <tr><td>CAN Login SM</td><td>CAN Transport</td><td><code>can_login_statemachine.c</code></td><td>Per-node CAN alias allocation (CID/RID/AMD)</td></tr>
+                <tr><td>OpenLCB Login SM</td><td>Core</td><td><code>openlcb_login_statemachine.c</code></td><td>Per-node OpenLCB login (Init Complete, event announcements)</td></tr>
+                <tr><td>OpenLCB Main SM</td><td>Core</td><td><code>openlcb_main_statemachine.c</code></td><td>Protocol message dispatch to handlers</td></tr>
+                <tr><td>CAN RX SM</td><td>CAN Transport</td><td><code>can_rx_statemachine.c</code></td><td>CAN frame classification and assembly (runs in ISR context)</td></tr>
+            </tbody>
+        </table>
+
+        <h2>24.2 Main Loop Calling Order</h2>
+        <div class="mermaid">
+flowchart TD
+    ML["OpenLcb_run()"] --> A["CanMainStateMachine_run()"]
+    A --> B["OpenLcbLoginMainStatemachine_run()"]
+    B --> C["OpenLcbMainStatemachine_run()"]
+    C --> D["_run_periodic_services()"]
+
+    subgraph CAN_SM["CAN Main SM Priority"]
+        A1["1. Handle duplicate aliases"]
+        A2["2. Send outgoing CAN frame"]
+        A3["3. Send login CAN frame"]
+        A4["4. Enumerate first/next node for login"]
+    end
+
+    subgraph OLCB_SM["OpenLCB Main SM Priority"]
+        C1["1. Send outgoing OpenLCB message"]
+        C2["2. Re-enumerate (multi-response)"]
+        C3["3. Pop incoming from FIFO"]
+        C4["4. Enumerate first node"]
+        C5["5. Enumerate next node"]
+    end
+
+    A --> CAN_SM
+    C --> OLCB_SM
+
+    style ML fill:#f3e5f5,stroke:#7b1fa2
+    style A fill:#fff3e0,stroke:#e65100
+    style B fill:#e3f2fd,stroke:#1565c0
+    style C fill:#e3f2fd,stroke:#1565c0
+    style D fill:#fce4ec,stroke:#c62828
+        </div>
+
+        <h2>24.3 Trace 1: Incoming CAN Frame to Protocol Response</h2>
+        <p>This trace follows a single-frame Verify Node ID (Global) message from arrival to response.</p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant HW as CAN Hardware
+    participant ISR as CAN RX ISR
+    participant FIFO as CAN RX FIFO
+    participant CANSM as CAN Main SM
+    participant RXSM as CAN RX SM
+    participant OLCB_FIFO as OpenLCB FIFO
+    participant OLCB_SM as OpenLCB Main SM
+    participant Handler as Protocol Handler
+    participant TXSM as CAN TX SM
+    participant Bus as CAN Bus
+
+    HW->>ISR: CAN interrupt fires
+    ISR->>FIFO: Push raw can_msg_t
+    Note over ISR: Returns to main loop
+
+    CANSM->>FIFO: Pop can_msg_t
+    CANSM->>RXSM: Classify frame
+    Note over RXSM: Single frame, OpenLCB message
+    RXSM->>RXSM: Allocate openlcb_msg_t (BASIC)
+    RXSM->>RXSM: Extract MTI, aliases, Node IDs
+    RXSM->>OLCB_FIFO: Push openlcb_msg_t
+
+    OLCB_SM->>OLCB_FIFO: Pop openlcb_msg_t
+    Note over OLCB_SM: MTI = 0x0490 (Verify Node ID Global)
+    OLCB_SM->>OLCB_SM: Enumerate first node
+    OLCB_SM->>Handler: ProtocolMessageNetwork_handle_verify_node_id_global()
+    Handler->>Handler: Build Verified Node ID response
+    Handler->>OLCB_SM: Response in worker buffer
+    OLCB_SM->>TXSM: CanTxStatemachine_send_openlcb_message()
+    TXSM->>TXSM: Convert openlcb_msg_t to CAN frame(s)
+    TXSM->>Bus: Transmit CAN frame
+    Note over OLCB_SM: Enumerate next node (repeat for all nodes)
+        </div>
+
+        <h2>24.4 Trace 2: Multi-Frame Datagram Assembly</h2>
+        <div class="mermaid">
+sequenceDiagram
+    participant Bus as CAN Bus
+    participant RX as CAN RX Handler
+    participant List as Buffer List
+    participant FIFO as OpenLCB FIFO
+    participant SM as OpenLCB Main SM
+
+    Bus->>RX: Datagram First frame (8 bytes)
+    RX->>RX: Allocate openlcb_msg_t (DATAGRAM)
+    RX->>RX: Set state.inprocess = true
+    RX->>RX: Copy payload bytes, set timer.assembly_ticks
+    RX->>List: Store in Buffer List (in-flight)
+
+    Bus->>RX: Datagram Middle frame (8 bytes)
+    RX->>List: Find matching entry (by source alias)
+    RX->>RX: Append payload bytes
+
+    Bus->>RX: Datagram Final frame (2-8 bytes)
+    RX->>List: Find matching entry
+    RX->>RX: Append final bytes
+    RX->>RX: Set state.inprocess = false
+    RX->>FIFO: Push completed openlcb_msg_t
+
+    SM->>FIFO: Pop completed datagram
+    Note over SM: Process as complete message
+        </div>
+
+        <h2>24.5 Trace 3: Application Sends Event</h2>
+        <div class="mermaid">
+sequenceDiagram
+    participant App as Application
+    participant API as OpenLcbApplication API
+    participant Store as Buffer Store
+    participant SM as OpenLCB Main SM
+    participant TX as CAN TX SM
+    participant Bus as CAN Bus
+
+    App->>API: Send PCER (event_id)
+    API->>Store: Allocate openlcb_msg_t (BASIC)
+    API->>API: Fill MTI=0x05B4, source_alias, event_id
+    API->>SM: CanTxStatemachine_send_openlcb_message()
+    SM->>TX: Convert to CAN frame
+    TX->>TX: Build CAN identifier with Frame Type 1
+    TX->>TX: Insert event_id in 8-byte payload
+    TX->>Bus: Transmit single CAN frame
+    TX->>Store: Free openlcb_msg_t
+        </div>
+
+        <h2>24.6 Trace 4: Node Login (Power-On to RUN)</h2>
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> INIT: Power on
+    INIT --> GENERATE_ALIAS: seed = Node ID
+    GENERATE_ALIAS --> CID7: alias = LFSR(seed)
+    CID7 --> CID6: Send CID7 frame
+    CID6 --> CID5: Send CID6 frame
+    CID5 --> CID4: Send CID5 frame
+    CID4 --> WAIT: Send CID4, snapshot tick
+    WAIT --> RID: elapsed > 200ms
+    RID --> AMD: Send RID
+    AMD --> INIT_COMPLETE: Send AMD, permitted=true
+
+    state "OpenLCB Login" as OL {
+        INIT_COMPLETE --> CONSUMER_EVENTS: Send Init Complete
+        CONSUMER_EVENTS --> PRODUCER_EVENTS: Enumerate all consumer events
+        PRODUCER_EVENTS --> LOGIN_COMPLETE: Enumerate all producer events
+        LOGIN_COMPLETE --> RUN: on_login_complete callback
+    }
+
+    note right of WAIT
+        CAN Login SM handles
+        INIT through AMD.
+    end note
+
+    note right of OL
+        OpenLCB Login SM handles
+        INIT_COMPLETE through RUN.
+    end note
+        </div>
+
+        <h2>24.7 Trace 5: Datagram Round-Trip</h2>
+        <div class="mermaid">
+sequenceDiagram
+    participant A as Node A (sender)
+    participant Bus as CAN Bus
+    participant B as Node B (receiver)
+
+    A->>Bus: Datagram Only/First/Middle/Final
+    Bus->>B: Datagram assembled
+    B->>B: Protocol handler processes datagram
+    B->>Bus: Datagram Received OK (with Reply Pending flag)
+    Bus->>A: Datagram OK received
+    Note over A: Start reply timeout
+
+    B->>B: Handler prepares reply datagram
+    B->>Bus: Reply datagram (Only/First/Middle/Final)
+    Bus->>A: Reply received
+    A->>Bus: Datagram Received OK
+    Bus->>B: OK received
+        </div>
+
+        <h2>24.8 CAN RX Frame Classification</h2>
+        <div class="mermaid">
+flowchart TD
+    A["Incoming CAN Frame"] --> B{Bit 27 set?}
+    B -->|Yes| C["OpenLCB Message Frame"]
+    B -->|No| D["Control Frame"]
+
+    C --> E{Frame Type bits 26-24}
+    E -->|001| F["Standard OpenLCB Message"]
+    E -->|010| G["Datagram Only"]
+    E -->|011| H["Datagram First"]
+    E -->|100| I["Datagram Middle"]
+    E -->|101| J["Datagram Final"]
+    E -->|111| K["Stream Data"]
+
+    D --> L{Control Frame Type}
+    L -->|CID 7-4| M["Check ID Frame"]
+    L -->|RID| N["Reserve ID Frame"]
+    L -->|AMD| O["Alias Map Definition"]
+    L -->|AME| P["Alias Map Enquiry"]
+    L -->|AMR| Q["Alias Map Reset"]
+    L -->|Error| R["Error Info Report"]
+        </div>
+
+        <h2>24.9 CAN TX Message Routing</h2>
+        <div class="mermaid">
+flowchart TD
+    A["openlcb_msg_t to send"] --> B{Message type?}
+    B -->|"Global (no dest)"| C["Unaddressed frame handler"]
+    B -->|"Addressed"| D["Addressed frame handler"]
+    B -->|"Datagram"| E["Datagram frame handler"]
+    B -->|"Stream"| F["Stream frame handler"]
+
+    C --> G["Single CAN frame:<br/>MTI in variable field"]
+
+    D --> H{Payload fits in 1 frame?}
+    H -->|Yes| I["Single frame with dest alias in bytes 0-1"]
+    H -->|No| J["Multi-frame: First/Middle/Last<br/>with framing bits"]
+
+    E --> K{Payload <= 8 bytes?}
+    K -->|Yes| L["Datagram Only frame"]
+    K -->|No| M["Datagram First + Middle(s) + Final"]
+        </div>
+
+        <h2>24.10 Thread Safety at ISR Boundary</h2>
+        <div class="mermaid">
+flowchart LR
+    subgraph ISR["ISR Context"]
+        I1["CAN RX interrupt"]
+        I2["Push to CAN FIFO"]
+        I3["Set is_duplicate flag"]
+        I4["Set listener alias"]
+    end
+
+    subgraph MAIN["Main Loop Context"]
+        M1["Pop from CAN FIFO"]
+        M2["Register/unregister aliases"]
+        M3["Allocate/free buffers"]
+        M4["Process messages"]
+    end
+
+    LOCK["lock_shared_resources()"]
+    UNLOCK["unlock_shared_resources()"]
+
+    ISR ---|"FIFO is the boundary"| MAIN
+    MAIN --> LOCK
+    LOCK --> M1
+    M1 --> UNLOCK
+
+    style ISR fill:#fce4ec,stroke:#c62828
+    style MAIN fill:#e3f2fd,stroke:#1565c0
+        </div>
+
+        <h2>24.11 Buffer Lifecycle</h2>
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> Free: Pool initialized
+    Free --> Allocated: allocate_buffer(type)
+    Allocated --> InFIFO: Push to FIFO
+    InFIFO --> Processing: Pop from FIFO
+    Processing --> SharedRef: inc_reference_count()
+    SharedRef --> Processing: dec via free_buffer()
+    Processing --> Free: free_buffer() when ref_count=0
+    Allocated --> Free: free_buffer() (no FIFO)
+
+    note right of SharedRef
+        Multiple consumers can
+        hold references via
+        reference counting.
+    end note
+        </div>
+
+        <h2>24.12 Debugging Checklist for Each Trace Step</h2>
+        <table>
+            <thead>
+                <tr><th>Step</th><th>What to Check</th><th>Common Failure</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>CAN frame arrives</td><td>Is CAN RX interrupt firing? Check FIFO push.</td><td>CAN hardware not initialized, wrong baud rate</td></tr>
+                <tr><td>FIFO pop</td><td>Is main loop calling <code>OpenLcb_run()</code> fast enough?</td><td>FIFO overflow (too slow main loop)</td></tr>
+                <tr><td>Frame classification</td><td>Is the 29-bit identifier correct?</td><td>Standard (11-bit) frame sent to extended-only handler</td></tr>
+                <tr><td>Buffer allocation</td><td>Is the correct pool type being allocated?</td><td>Pool exhaustion -- increase <code>USER_DEFINED_*_BUFFER_DEPTH</code></td></tr>
+                <tr><td>Multi-frame assembly</td><td>Do all frames arrive within timeout?</td><td>3-second assembly timeout expired</td></tr>
+                <tr><td>MTI dispatch</td><td>Is the handler wired in the interface struct?</td><td>NULL handler pointer -- sends OIR automatically</td></tr>
+                <tr><td>Response TX</td><td>Is <code>is_tx_buffer_clear()</code> returning true?</td><td>CAN TX hardware busy, frames queued but not sent</td></tr>
+                <tr><td>Buffer free</td><td>Is reference count reaching zero?</td><td>Buffer leak -- forgot to free after processing</td></tr>
+            </tbody>
+        </table>
+
+        <div class="chapter-nav">
+            <a href="ch23.html">&larr; Prev: Ch 23 — Wiring It Together</a>
+            <a href="ch25.html">Next: Ch 25 — Debugging Guide &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

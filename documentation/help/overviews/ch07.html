@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 7 — Utilities | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 7 — Utilities</h1>
+        <p>Three utility modules provide essential helper functions used throughout the library: <code>openlcb_utilities.h</code> (message manipulation), <code>openlcb_float16.h</code> (speed encoding), and <code>openlcb_gridconnect.h</code> (CAN-ASCII conversion).</p>
+
+        <h2>7.1 Payload Insert Functions</h2>
+        <p>All insert functions write data in big-endian byte order (network order, as required by the OpenLCB specification) and update <code>payload_count</code> automatically.</p>
+
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Writes</th><th>Offset</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg, event_id)</code></td>
+                    <td>8-byte event ID</td>
+                    <td>Always at offset 0</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_copy_node_id_to_openlcb_payload(msg, node_id, offset)</code></td>
+                    <td>6-byte node ID</td>
+                    <td>Caller-specified</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, byte, offset)</code></td>
+                    <td>1 byte</td>
+                    <td>Caller-specified</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_copy_word_to_openlcb_payload(msg, word, offset)</code></td>
+                    <td>2-byte word (big-endian)</td>
+                    <td>Caller-specified</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_copy_dword_to_openlcb_payload(msg, dword, offset)</code></td>
+                    <td>4-byte doubleword (big-endian)</td>
+                    <td>Caller-specified</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_copy_string_to_openlcb_payload(msg, str, offset)</code></td>
+                    <td>Null-terminated string</td>
+                    <td>Caller-specified</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_copy_byte_array_to_openlcb_payload(msg, array, offset, count)</code></td>
+                    <td>Byte array</td>
+                    <td>Caller-specified</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Example: Building a Verified Node ID Reply</h3>
+        <pre><code>// Allocate a BASIC buffer and populate it
+openlcb_msg_t *reply = OpenLcbBufferStore_allocate_buffer(BASIC);
+if (reply) {
+    OpenLcbUtilities_load_openlcb_message(reply,
+        node->alias, node->id,  // source
+        0, 0,                   // dest (global)
+        MTI_VERIFIED_NODE_ID);
+
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(reply, node->id, 0);
+    // reply->payload_count is now 6
+
+    send_openlcb_msg(reply);  // Ownership transfers
+}</code></pre>
+
+        <h2>7.2 Payload Extract Functions</h2>
+        <p>Extract functions read data in big-endian order. They do not modify <code>payload_count</code>.</p>
+
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Reads</th><th>Returns</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>OpenLcbUtilities_extract_event_id_from_openlcb_payload(msg)</code></td>
+                    <td>8 bytes at offset 0</td>
+                    <td><code>event_id_t</code></td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, offset)</code></td>
+                    <td>6 bytes at offset</td>
+                    <td><code>node_id_t</code></td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, offset)</code></td>
+                    <td>1 byte at offset</td>
+                    <td><code>uint8_t</code></td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_extract_word_from_openlcb_payload(msg, offset)</code></td>
+                    <td>2 bytes at offset</td>
+                    <td><code>uint16_t</code></td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_extract_dword_from_openlcb_payload(msg, offset)</code></td>
+                    <td>4 bytes at offset</td>
+                    <td><code>uint32_t</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>7.3 Message Classification Helpers</h2>
+
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>OpenLcbUtilities_is_addressed_openlcb_message(msg)</code></td>
+                    <td>Returns true if the MTI has the destination-address-present bit set (<code>MASK_DEST_ADDRESS_PRESENT</code>)</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_is_addressed_message_for_node(node, msg)</code></td>
+                    <td>Returns true if the message destination matches this node's alias or Node ID</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_count_nulls_in_openlcb_payload(msg)</code></td>
+                    <td>Counts null bytes (0x00) in the payload. Used for SNIP validation (SNIP has multiple null-terminated strings).</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbUtilities_set_multi_frame_flag(target, flag)</code></td>
+                    <td>Sets the multi-frame control bits (upper nibble) in the first data byte, preserving the lower nibble</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>7.4 Event Range Utilities</h2>
+        <p>Event ranges allow a node to declare that it produces or consumes a contiguous block of event IDs with a single message, rather than listing each event individually.</p>
+
+        <pre><code>event_id_t OpenLcbUtilities_generate_event_range_id(event_id_t base, event_range_count_enum count);
+bool OpenLcbUtilities_is_event_id_in_consumer_ranges(openlcb_node_t *node, event_id_t event_id);
+bool OpenLcbUtilities_is_event_id_in_producer_ranges(openlcb_node_t *node, event_id_t event_id);</code></pre>
+
+        <ul>
+            <li><code>generate_event_range_id()</code>: Creates a masked event ID encoding the base address and range size for a Range Identified message.</li>
+            <li><code>is_event_id_in_consumer_ranges()</code> / <code>is_event_id_in_producer_ranges()</code>: Tests whether a given event ID falls within any of the node's declared event ranges.</li>
+        </ul>
+
+        <h2>7.5 Broadcast Time Event Encoding/Decoding</h2>
+        <p>The Broadcast Time protocol encodes time, date, year, and rate information into 64-bit event IDs. The utilities module provides both encoding and decoding functions.</p>
+
+        <h3>Decoding (Event ID to Values)</h3>
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Extracts</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>OpenLcbUtilities_is_broadcast_time_event(event_id)</code></td><td>Returns true if event ID is in the broadcast time space</td></tr>
+                <tr><td><code>OpenLcbUtilities_extract_clock_id_from_time_event(event_id)</code></td><td>48-bit clock identifier (upper 6 bytes)</td></tr>
+                <tr><td><code>OpenLcbUtilities_get_broadcast_time_event_type(event_id)</code></td><td>Event type enum (time, date, year, rate, query, etc.)</td></tr>
+                <tr><td><code>OpenLcbUtilities_extract_time_from_event_id(event_id, &amp;hour, &amp;minute)</code></td><td>Hour (0-23) and minute (0-59)</td></tr>
+                <tr><td><code>OpenLcbUtilities_extract_date_from_event_id(event_id, &amp;month, &amp;day)</code></td><td>Month (1-12) and day (1-31)</td></tr>
+                <tr><td><code>OpenLcbUtilities_extract_year_from_event_id(event_id, &amp;year)</code></td><td>Year (0-4095)</td></tr>
+                <tr><td><code>OpenLcbUtilities_extract_rate_from_event_id(event_id, &amp;rate)</code></td><td>12-bit signed fixed-point rate (10.2 format)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Encoding (Values to Event ID)</h3>
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Creates</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>OpenLcbUtilities_create_time_event_id(clock_id, hour, minute, is_set)</code></td><td>Report/Set Time event ID</td></tr>
+                <tr><td><code>OpenLcbUtilities_create_date_event_id(clock_id, month, day, is_set)</code></td><td>Report/Set Date event ID</td></tr>
+                <tr><td><code>OpenLcbUtilities_create_year_event_id(clock_id, year, is_set)</code></td><td>Report/Set Year event ID</td></tr>
+                <tr><td><code>OpenLcbUtilities_create_rate_event_id(clock_id, rate, is_set)</code></td><td>Report/Set Rate event ID</td></tr>
+                <tr><td><code>OpenLcbUtilities_create_command_event_id(clock_id, command)</code></td><td>Query, Start, Stop, or Date Rollover event ID</td></tr>
+            </tbody>
+        </table>
+
+        <p>The <code>is_set</code> parameter distinguishes between Report events (sent by a clock producer to announce current state) and Set events (sent by a consumer to change the clock).</p>
+
+        <h2>7.6 Train Search Event Encoding/Decoding</h2>
+        <p>Train search uses event IDs in the <code>0x090099FF________</code> space to encode a DCC address and control flags:</p>
+
+        <pre><code>bool OpenLcbUtilities_is_train_search_event(event_id_t event_id);
+void OpenLcbUtilities_extract_train_search_digits(event_id_t event_id, uint8_t *digits);
+uint8_t OpenLcbUtilities_extract_train_search_flags(event_id_t event_id);
+uint16_t OpenLcbUtilities_train_search_digits_to_address(const uint8_t *digits);
+event_id_t OpenLcbUtilities_create_train_search_event_id(uint16_t address, uint8_t flags);</code></pre>
+
+        <p>The event ID encodes 6 BCD-like nibbles for the address (with 0xF meaning "unused digit") and a flags byte in the lowest byte containing:</p>
+
+        <table>
+            <thead>
+                <tr><th>Flag</th><th>Value</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>TRAIN_SEARCH_FLAG_ALLOCATE</code></td><td>0x80</td><td>Allocate new train node if no match</td></tr>
+                <tr><td><code>TRAIN_SEARCH_FLAG_EXACT</code></td><td>0x40</td><td>Exact match only</td></tr>
+                <tr><td><code>TRAIN_SEARCH_FLAG_ADDRESS_ONLY</code></td><td>0x20</td><td>Match address, not name</td></tr>
+                <tr><td><code>TRAIN_SEARCH_FLAG_DCC</code></td><td>0x08</td><td>DCC protocol</td></tr>
+                <tr><td><code>TRAIN_SEARCH_FLAG_LONG_ADDR</code></td><td>0x04</td><td>Force long (14-bit) DCC address</td></tr>
+                <tr><td><code>TRAIN_SEARCH_SPEED_STEP_MASK</code></td><td>0x03</td><td>Speed step mode (0=default, 1=14, 2=28, 3=128)</td></tr>
+            </tbody>
+        </table>
+
+        <h2>7.7 Float16: IEEE 754 Half-Precision</h2>
+        <p>The OpenLCB Train Protocol encodes speed as IEEE 754 binary16 (half-precision floating point). The sign bit doubles as the direction indicator: 0 = forward, 1 = reverse. The <code>openlcb_float16.h</code> module provides integer-only bit manipulation for embedded targets that lack hardware float16 support.</p>
+
+        <h3>Constants</h3>
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>FLOAT16_POSITIVE_ZERO</code></td><td>0x0000</td><td>Forward, stopped</td></tr>
+                <tr><td><code>FLOAT16_NEGATIVE_ZERO</code></td><td>0x8000</td><td>Reverse, stopped</td></tr>
+                <tr><td><code>FLOAT16_NAN</code></td><td>0x7E00</td><td>Speed not available</td></tr>
+                <tr><td><code>FLOAT16_SIGN_MASK</code></td><td>0x8000</td><td>Direction bit (bit 15)</td></tr>
+                <tr><td><code>FLOAT16_EXPONENT_MASK</code></td><td>0x7C00</td><td>5-bit exponent (bits 14-10)</td></tr>
+                <tr><td><code>FLOAT16_MANTISSA_MASK</code></td><td>0x03FF</td><td>10-bit mantissa (bits 9-0)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Conversion Functions</h3>
+        <pre><code>uint16_t OpenLcbFloat16_from_float(float value);     // float32 to float16 bits
+float    OpenLcbFloat16_to_float(uint16_t half);      // float16 bits to float32
+uint16_t OpenLcbFloat16_negate(uint16_t half);        // Flip direction bit
+bool     OpenLcbFloat16_is_nan(uint16_t half);        // Test for NaN
+bool     OpenLcbFloat16_is_zero(uint16_t half);       // Test for +/- zero</code></pre>
+
+        <h3>Speed + Direction Helpers</h3>
+        <pre><code>uint16_t OpenLcbFloat16_speed_with_direction(float speed, bool reverse);
+float    OpenLcbFloat16_get_speed(uint16_t half);     // Magnitude only (abs)
+bool     OpenLcbFloat16_get_direction(uint16_t half); // true = reverse</code></pre>
+
+        <h3>Example: Setting Train Speed</h3>
+        <pre><code>// Set train to 50.0 mph forward
+uint16_t f16 = OpenLcbFloat16_speed_with_direction(50.0f, false);
+// f16 is now the float16 bit pattern for 50.0 forward
+
+// Extract speed and direction
+float speed = OpenLcbFloat16_get_speed(f16);    // 50.0
+bool reverse = OpenLcbFloat16_get_direction(f16); // false
+
+// Emergency stop: set to +0 (forward, stopped)
+uint16_t stop = FLOAT16_POSITIVE_ZERO;  // 0x0000</code></pre>
+
+        <h2>7.8 GridConnect: ASCII CAN Format</h2>
+        <p>GridConnect is an ASCII encoding of CAN frames used for serial and TCP/IP communication. The format is:</p>
+
+        <pre><code>:X&lt;8-hex-ID&gt;N&lt;hex-data&gt;;
+
+Examples:
+:X19170AAAN050101011800;   (Verified Node ID from alias 0xAAA)
+:X195B4AAAN0101000000010000;  (PCER event from alias 0xAAA)</code></pre>
+
+        <p>The maximum string length is 29 bytes (<code>MAX_GRID_CONNECT_LEN</code>): 2 prefix (<code>:X</code>) + 8 ID + 1 (<code>N</code>) + 16 data (8 bytes x 2 hex chars) + 1 (<code>;</code>) + 1 NUL.</p>
+
+        <h3>Streaming Parser</h3>
+        <pre><code>bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte,
+                                                        gridconnect_buffer_t *buffer);</code></pre>
+
+        <p>Feeds one byte at a time from the incoming serial/TCP stream. Uses static internal state to track parsing progress through three states:</p>
+
+        <table>
+            <thead>
+                <tr><th>State</th><th>Value</th><th>Waiting For</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>GRIDCONNECT_STATE_SYNC_START</code></td><td>0</td><td><code>:X</code> or <code>:x</code> prefix</td></tr>
+                <tr><td><code>GRIDCONNECT_STATE_SYNC_FIND_HEADER</code></td><td>2</td><td>8 hexadecimal identifier characters</td></tr>
+                <tr><td><code>GRIDCONNECT_STATE_SYNC_FIND_DATA</code></td><td>4</td><td>Data bytes until <code>;</code> terminator</td></tr>
+            </tbody>
+        </table>
+
+        <p>Returns <code>true</code> when a complete, valid message is ready in the buffer. Malformed input automatically resets the parser to the sync state.</p>
+
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> SYNC_START
+    SYNC_START --> SYNC_FIND_HEADER : ':X' received
+    SYNC_START --> SYNC_START : other bytes (ignored)
+    SYNC_FIND_HEADER --> SYNC_FIND_DATA : 8 hex chars + 'N'
+    SYNC_FIND_HEADER --> SYNC_START : invalid char (reset)
+    SYNC_FIND_DATA --> SYNC_START : ';' received (message complete, return true)
+    SYNC_FIND_DATA --> SYNC_START : overflow or invalid (reset)
+        </div>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Single Context Only</div>
+            <p>The streaming parser uses static state and is NOT thread-safe. It must only be called from a single context (e.g., the UART receive handler or the main loop, but not both).</p>
+        </div>
+
+        <h3>Conversion Functions</h3>
+        <pre><code>void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *buffer, can_msg_t *can_msg);
+void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *buffer, can_msg_t *can_msg);</code></pre>
+
+        <ul>
+            <li><code>to_can_msg()</code>: Converts a validated GridConnect string (from the parser) to a <code>can_msg_t</code>. No additional format validation is performed.</li>
+            <li><code>from_can_msg()</code>: Converts a <code>can_msg_t</code> to a null-terminated GridConnect string. Output uses uppercase hex with zero-padded 8-character identifier.</li>
+        </ul>
+
+        <h2>7.9 Configuration Memory Buffer Operations</h2>
+        <p>A parallel set of insert/extract functions operates on <code>configuration_memory_buffer_t</code> (64-byte) buffers used by the datagram protocol for configuration memory read/write operations:</p>
+
+        <pre><code>node_id_t OpenLcbUtilities_extract_node_id_from_config_mem_buffer(buffer, index);
+uint16_t  OpenLcbUtilities_extract_word_from_config_mem_buffer(buffer, index);
+void      OpenLcbUtilities_copy_node_id_to_config_mem_buffer(buffer, node_id, index);
+void      OpenLcbUtilities_copy_event_id_to_config_mem_buffer(buffer, event_id, index);
+event_id_t OpenLcbUtilities_copy_config_mem_buffer_to_event_id(buffer, index);</code></pre>
+
+        <p>These are used by the configuration memory protocol handler when reading and writing node configuration data through address spaces.</p>
+
+        <h2>7.10 Emergency Event Detection</h2>
+        <pre><code>bool OpenLcbUtilities_is_emergency_event(event_id_t event_id);</code></pre>
+        <p>Returns <code>true</code> if the event ID matches one of the four well-known emergency events: Emergency Off, Clear Emergency Off, Emergency Stop, or Clear Emergency Stop. Used by the train protocol to handle global emergency events.</p>
+
+        <div class="chapter-nav">
+            <a href="ch06b.html">&larr; Previous: Ch 6b — Callback Interface Pattern</a>
+            <a href="ch08.html">Next: Ch 8 — Main Dispatcher &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

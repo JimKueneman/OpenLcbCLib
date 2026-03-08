@@ -60,7 +60,7 @@
 * Resource locking callbacks protect access to shared buffer pools and FIFOs.
 *
 * @author Jim Kueneman
-* @date 4 Mar 2026
+* @date 8 Mar 2026
 *
 * @see openlcb_main_statemachine.h - Public interface
 * @see openlcb_types.h - Core data structures
@@ -141,6 +141,72 @@ static void _free_incoming_message(openlcb_statemachine_info_t *statemachine_inf
 }
 
     /**
+     * @brief Copies the outgoing message into the incoming FIFO for sibling
+     * dispatch.
+     *
+     * @details Allocates a buffer from the store sized to the outgoing
+     * payload, copies header fields and payload bytes, marks the copy as
+     * loopback, and pushes it to the head of the incoming FIFO so it is
+     * processed next.  Asserts if the pool is exhausted — the buffer pool
+     * must be sized so this never happens (see Buffer Pool Sizing in
+     * documentation/plans/sibling_dispatch_plan.md).
+     */
+static void _loopback_to_siblings(void) {
+
+    openlcb_msg_t *out = _statemachine_info.outgoing_msg_info.msg_ptr;
+
+    // Pick the smallest pool that fits the payload
+    payload_type_enum ptype;
+
+    if (out->payload_count <= LEN_MESSAGE_BYTES_BASIC) {
+
+        ptype = BASIC;
+
+    } else if (out->payload_count <= LEN_MESSAGE_BYTES_DATAGRAM) {
+
+        ptype = DATAGRAM;
+
+    } else if (out->payload_count <= LEN_MESSAGE_BYTES_SNIP) {
+
+        ptype = SNIP;
+
+    } else {
+
+        ptype = STREAM;
+
+    }
+
+    _interface->lock_shared_resources();
+    openlcb_msg_t *copy = OpenLcbBufferStore_allocate_buffer(ptype);
+    _interface->unlock_shared_resources();
+
+    assert (copy && "loopback buffer allocation failed — pool too small");
+
+    // Copy header
+    copy->mti          = out->mti;
+    copy->source_alias = out->source_alias;
+    copy->source_id    = out->source_id;
+    copy->dest_alias   = out->dest_alias;
+    copy->dest_id      = out->dest_id;
+    copy->payload_count = out->payload_count;
+
+    // Copy payload bytes
+    for (uint16_t i = 0; i < out->payload_count; i++) {
+
+        *copy->payload[i] = *out->payload[i];
+
+    }
+
+    // Mark as loopback — prevents re-loopback and enables self-skip
+    copy->state.loopback = true;
+
+    _interface->lock_shared_resources();
+    OpenLcbBufferFifo_push_to_head(copy);
+    _interface->unlock_shared_resources();
+
+}
+
+    /**
     * @brief Returns true if the node should process this message.
     *
     * @details Algorithm:
@@ -158,6 +224,21 @@ static void _free_incoming_message(openlcb_statemachine_info_t *statemachine_inf
 bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *statemachine_info) {
 
     if (!statemachine_info->openlcb_node) {
+
+        return false;
+
+    }
+
+    if (!statemachine_info->incoming_msg_info.msg_ptr) {
+
+        return false;
+
+    }
+
+    // Self-skip: the originating node must not process its own loopback copy
+    if (statemachine_info->incoming_msg_info.msg_ptr->state.loopback &&
+            statemachine_info->openlcb_node->id ==
+            statemachine_info->incoming_msg_info.msg_ptr->source_id) {
 
         return false;
 
@@ -814,6 +895,15 @@ bool OpenLcbMainStatemachine_handle_outgoing_openlcb_message(void) {
     if (_statemachine_info.outgoing_msg_info.valid) {
 
         if (_interface->send_openlcb_msg(_statemachine_info.outgoing_msg_info.msg_ptr)) {
+
+            // Loopback to siblings only when the trigger was NOT itself
+            // a loopback (one-level cascade prevention).
+            if (!_statemachine_info.incoming_msg_info.msg_ptr ||
+                    !_statemachine_info.incoming_msg_info.msg_ptr->state.loopback) {
+
+                _loopback_to_siblings();
+
+            }
 
             _statemachine_info.outgoing_msg_info.valid = false; // done
 

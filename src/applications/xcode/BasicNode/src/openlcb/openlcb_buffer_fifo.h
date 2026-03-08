@@ -33,7 +33,7 @@
  * OpenLcbBufferStore_initialize() and before any push or pop operations.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 8 Mar 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -93,6 +93,20 @@ extern "C" {
          * @param alias  12-bit CAN alias that was released.  If 0, returns immediately.
          */
     extern void OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(uint16_t alias);
+
+        /**
+         * @brief Inserts a message pointer at the head of the FIFO.
+         *
+         * @details The inserted message becomes the next one returned by
+         * OpenLcbBufferFifo_pop().  Used by sibling dispatch to ensure
+         * loopback copies are processed immediately, minimizing the time
+         * the loopback buffer is allocated.
+         *
+         * @param new_msg  Pointer to an @ref openlcb_msg_t allocated from OpenLcbBufferStore.
+         *
+         * @return The queued message pointer on success, or NULL if the FIFO is full.
+         */
+    extern openlcb_msg_t *OpenLcbBufferFifo_push_to_head(openlcb_msg_t *new_msg);
 
 
 #ifdef __cplusplus

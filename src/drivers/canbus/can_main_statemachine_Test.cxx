@@ -39,6 +39,7 @@
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 #include "alias_mappings.h"
+#include "alias_mapping_listener.h"
 
 #include "../../openlcb/openlcb_node.h"
 #include "../../openlcb/openlcb_defines.h"
@@ -95,6 +96,7 @@ bool handle_login_outgoing_can_message_called = false;
 bool handle_outgoing_can_message_called = false;
 bool handle_try_enumerate_first_node_called = false;
 bool handle_try_enumerate_next_node_called = false;
+bool handle_listener_verification_called = false;
 
 // Mock behavior control
 bool send_can_message_enabled = true;
@@ -308,6 +310,15 @@ bool _handle_try_enumerate_next_node(void)
     return CanMainStatemachine_handle_try_enumerate_next_node();
 }
 
+/**
+ * Mock: Handle listener verification wrapper
+ */
+bool _handle_listener_verification(void)
+{
+    handle_listener_verification_called = true;
+    return CanMainStatemachine_handle_listener_verification();
+}
+
 // Interface struct with all mocks
 const interface_openlcb_node_t interface_openlcb_node = {};
 
@@ -326,7 +337,8 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .handle_outgoing_can_message = &_handle_outgoing_can_message,
     .handle_login_outgoing_can_message = &_handle_login_outgoing_can_message,
     .handle_try_enumerate_first_node = &_handle_try_enumerate_first_node,
-    .handle_try_enumerate_next_node = &_handle_try_enumerate_next_node
+    .handle_try_enumerate_next_node = &_handle_try_enumerate_next_node,
+    .handle_listener_verification = &_handle_listener_verification
 };
 
 /*******************************************************************************
@@ -351,6 +363,7 @@ void reset_test_variables(void)
     handle_outgoing_can_message_called = false;
     handle_try_enumerate_first_node_called = false;
     handle_try_enumerate_next_node_called = false;
+    handle_listener_verification_called = false;
     send_can_message_enabled = true;
     node_find_node_by_alias_fail = false;
 }
@@ -363,11 +376,12 @@ void setup_test(void)
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
     AliasMappings_initialize();
+    ListenerAliasTable_initialize();
     OpenLcbBufferStore_initialize();
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();
     OpenLcbNode_initialize(&interface_openlcb_node);
-    
+
     CanMainStatemachine_initialize(&interface_can_main_statemachine);
 }
 
@@ -1081,6 +1095,182 @@ TEST(CanMainStatemachine, outgoing_message_retained_on_failure)
  * - Professional documentation
  * - Ready for deployment
  */
+
+/*******************************************************************************
+ * Listener Verification Tests
+ ******************************************************************************/
+
+#define LISTENER_NODE_ID 0x050607080901
+#define LISTENER_ALIAS   0x0ABC
+
+/**
+ * Helper: advance the listener prober's internal monotonic counter by calling
+ * check_one_verification on an empty table the specified number of times.
+ */
+static void _advance_listener_prober(uint16_t count) {
+
+    for (uint16_t i = 0; i < count; i++) {
+
+        ListenerAliasTable_check_one_verification((uint8_t) (i + 1));
+
+    }
+
+}
+
+// ============================================================================
+// TEST: Listener verification — nothing to probe returns false
+// ============================================================================
+
+TEST(CanMainStatemachine, listener_verification_nothing_to_probe)
+{
+    setup_test();
+    reset_test_variables();
+
+    // Empty listener table — prober returns 0
+    bool result = CanMainStatemachine_handle_listener_verification();
+
+    EXPECT_FALSE(result);
+}
+
+// ============================================================================
+// TEST: Listener verification — due entry queues AME with correct fields
+// ============================================================================
+
+TEST(CanMainStatemachine, listener_verification_queues_ame)
+{
+    setup_test();
+    reset_test_variables();
+
+    // Register and resolve a listener (stamps verify_ticks = 0)
+    ListenerAliasTable_register(LISTENER_NODE_ID);
+    ListenerAliasTable_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
+
+    // Advance counter to PROBE_INTERVAL - 1 so the NEXT call will trigger.
+    // Each call increments counter and checks the entry; age < interval so
+    // the entry is not probed yet.
+    _advance_listener_prober(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS - 1);
+
+    // Need a node with a valid alias for the AME source
+    openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
+    node1->alias = NODE_ALIAS_1;
+
+    // The prober used ticks 1..(INTERVAL-1), so last_tick = INTERVAL-1.
+    // Use a tick that passes the rate limiter.
+    _test_global_100ms_tick = (uint8_t) USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS;
+
+    bool result = CanMainStatemachine_handle_listener_verification();
+
+    EXPECT_TRUE(result);
+
+    // Verify an AME was pushed to the CAN FIFO
+    can_msg_t *ame = CanBufferFifo_pop();
+    ASSERT_NE(ame, nullptr);
+
+    // AME identifier: RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME | source_alias
+    EXPECT_EQ(ame->identifier, (uint32_t) (RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME | NODE_ALIAS_1));
+
+    // Payload should contain the listener's node ID (6 bytes)
+    EXPECT_EQ(ame->payload_count, 6);
+    node_id_t payload_id = CanUtilities_extract_can_payload_as_node_id(ame);
+    EXPECT_EQ(payload_id, (node_id_t) LISTENER_NODE_ID);
+
+    EXPECT_TRUE(lock_shared_resources_called);
+    EXPECT_TRUE(unlock_shared_resources_called);
+}
+
+// ============================================================================
+// TEST: Listener verification — no node available returns false
+// ============================================================================
+
+TEST(CanMainStatemachine, listener_verification_no_node_returns_false)
+{
+    setup_test();
+    reset_test_variables();
+
+    // Register, resolve, advance to INTERVAL-1 so next call triggers
+    ListenerAliasTable_register(LISTENER_NODE_ID);
+    ListenerAliasTable_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
+    _advance_listener_prober(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS - 1);
+
+    // Do NOT allocate any nodes — get_first will return NULL
+
+    _test_global_100ms_tick = (uint8_t) USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS;
+
+    bool result = CanMainStatemachine_handle_listener_verification();
+
+    EXPECT_FALSE(result);
+
+    // Nothing should be in the CAN FIFO
+    EXPECT_EQ(CanBufferFifo_pop(), nullptr);
+}
+
+// ============================================================================
+// TEST: Listener verification — node alias zero returns false
+// ============================================================================
+
+TEST(CanMainStatemachine, listener_verification_node_alias_zero_returns_false)
+{
+    setup_test();
+    reset_test_variables();
+
+    // Register, resolve, advance to INTERVAL-1 so next call triggers
+    ListenerAliasTable_register(LISTENER_NODE_ID);
+    ListenerAliasTable_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
+    _advance_listener_prober(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS - 1);
+
+    // Allocate a node but leave alias as 0 (not yet logged in)
+    openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
+    node1->alias = 0;
+
+    _test_global_100ms_tick = (uint8_t) USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS;
+
+    bool result = CanMainStatemachine_handle_listener_verification();
+
+    EXPECT_FALSE(result);
+    EXPECT_EQ(CanBufferFifo_pop(), nullptr);
+}
+
+// ============================================================================
+// TEST: Listener verification — buffer alloc failure returns false
+// ============================================================================
+
+TEST(CanMainStatemachine, listener_verification_buffer_alloc_fail_returns_false)
+{
+    setup_test();
+    reset_test_variables();
+
+    // Register, resolve, advance to INTERVAL-1 so next call triggers
+    ListenerAliasTable_register(LISTENER_NODE_ID);
+    ListenerAliasTable_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
+    _advance_listener_prober(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS - 1);
+
+    // Allocate a node with valid alias
+    openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
+    node1->alias = NODE_ALIAS_1;
+
+    // Exhaust all CAN buffers so allocation fails
+    while (CanBufferStore_allocate_buffer() != nullptr) { }
+
+    _test_global_100ms_tick = (uint8_t) USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS;
+
+    bool result = CanMainStatemachine_handle_listener_verification();
+
+    EXPECT_FALSE(result);
+}
+
+// ============================================================================
+// TEST: Run calls handle_listener_verification when wired
+// ============================================================================
+
+TEST(CanMainStatemachine, run_calls_listener_verification)
+{
+    setup_test();
+    reset_test_variables();
+
+    CanMainStateMachine_run();
+
+    EXPECT_TRUE(handle_listener_verification_called);
+}
 
 /*******************************************************************************
  * End of Test Suite

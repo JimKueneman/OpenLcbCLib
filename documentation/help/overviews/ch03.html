@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 3 — Types and Constants | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 3 — Types and Constants (Transport-Independent)</h1>
+        <p>This chapter covers the core type definitions in <code>openlcb_types.h</code> and the protocol constants in <code>openlcb_defines.h</code>. These files are the foundation of the entire library -- every other module includes them.</p>
+
+        <h2>3.1 Fundamental Typedefs</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Typedef</th>
+                    <th>Underlying Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>node_id_t</code></td>
+                    <td><code>uint64_t</code></td>
+                    <td>48-bit Node ID stored in a 64-bit type (upper 16 bits unused). <code>NULL_NODE_ID</code> = 0x000000000000.</td>
+                </tr>
+                <tr>
+                    <td><code>event_id_t</code></td>
+                    <td><code>uint64_t</code></td>
+                    <td>64-bit Event ID. <code>NULL_EVENT_ID</code> = 0x0000000000000000.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3.2 The openlcb_msg_t Structure</h2>
+        <p>The core message structure. Every message flowing through the library is represented by this type.</p>
+
+        <pre><code>typedef struct {
+    openlcb_msg_state_t state;      // Bitfield: allocated, inprocess, invalid, loopback
+    uint16_t mti;                   // Message Type Indicator
+    uint16_t source_alias;          // 12-bit CAN alias of sender
+    uint16_t dest_alias;            // 12-bit CAN alias of recipient (0 = global)
+    node_id_t source_id;            // 48-bit Node ID of sender
+    node_id_t dest_id;              // 48-bit Node ID of recipient (0 = global)
+    payload_type_enum payload_type; // BASIC, DATAGRAM, SNIP, or STREAM
+    uint16_t payload_count;         // Valid bytes currently in payload
+    openlcb_payload_t *payload;     // Pointer to payload buffer
+    openlcb_msg_timer_t timer;      // Timer/retry union
+    uint8_t reference_count;        // Number of active references
+} openlcb_msg_t;</code></pre>
+
+        <h3>3.2.1 openlcb_msg_state_t Bitfield</h3>
+        <p>Packed state flags that track the lifecycle of a message buffer:</p>
+
+        <pre><code>typedef struct {
+    bool allocated : 1;   // Buffer is in use (owned by buffer store)
+    bool inprocess : 1;   // Multi-frame message being assembled
+    bool invalid : 1;     // Invalidated (e.g., by AMR) -- discard on next access
+    bool loopback : 1;    // Sibling dispatch copy -- skip source node, no re-loopback
+} openlcb_msg_state_t;</code></pre>
+
+        <table>
+            <thead>
+                <tr><th>Flag</th><th>Set By</th><th>Cleared By</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>allocated</code></td><td>Buffer store allocate</td><td>Buffer store free (ref_count reaches 0)</td><td>Prevents double allocation</td></tr>
+                <tr><td><code>inprocess</code></td><td>CAN RX (first frame of multi-frame)</td><td>CAN RX (final frame received)</td><td>Marks partially assembled messages in buffer list</td></tr>
+                <tr><td><code>invalid</code></td><td>FIFO invalidation on AMR</td><td>Never (message is freed)</td><td>Prevents processing stale messages from departed nodes</td></tr>
+                <tr><td><code>loopback</code></td><td>Sibling dispatch</td><td>Main dispatcher after processing</td><td>Ensures loopback copies skip the originating node</td></tr>
+            </tbody>
+        </table>
+
+        <h3>3.2.2 openlcb_msg_timer_t Union</h3>
+        <p>A single byte shared between two mutually exclusive uses depending on the message lifecycle stage:</p>
+
+        <pre><code>typedef union {
+    uint8_t assembly_ticks;         // Full 8-bit tick for multi-frame assembly timeout
+
+    struct {
+        uint8_t tick_snapshot : 5;  // 5-bit tick snapshot (0-31) for datagram retry
+        uint8_t retry_count : 3;   // Datagram retry counter (0-7)
+    } datagram;
+
+} openlcb_msg_timer_t;</code></pre>
+
+        <ul>
+            <li><strong>assembly_ticks</strong>: Used during multi-frame message assembly. The CAN RX handler snapshots the current tick when the first frame arrives; the buffer list timeout scanner compares elapsed ticks to detect stalled assemblies.</li>
+            <li><strong>datagram.tick_snapshot + retry_count</strong>: Used during datagram retry logic. When a Datagram Rejected reply arrives with a temporary error, the tick snapshot and retry counter track when to resend and how many attempts remain.</li>
+        </ul>
+
+        <h3>3.2.3 payload_type_enum</h3>
+
+        <pre><code>typedef enum {
+    BASIC,      // 16-byte payload buffer
+    DATAGRAM,   // 72-byte payload buffer
+    SNIP,       // 256-byte payload buffer
+    STREAM      // 512-byte payload buffer
+} payload_type_enum;</code></pre>
+
+        <table>
+            <thead>
+                <tr><th>Value</th><th>Payload Size</th><th>Typical Use</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>BASIC</code></td><td>16 bytes</td><td>Most OpenLCB messages (events, verify node ID, protocol support)</td></tr>
+                <tr><td><code>DATAGRAM</code></td><td>72 bytes</td><td>Datagram protocol messages (config memory read/write)</td></tr>
+                <tr><td><code>SNIP</code></td><td>256 bytes</td><td>SNIP replies, events with payload</td></tr>
+                <tr><td><code>STREAM</code></td><td>512 bytes</td><td>Stream data transfers</td></tr>
+            </tbody>
+        </table>
+
+        <h2>3.3 Event Types</h2>
+
+        <h3>3.3.1 event_id_struct_t</h3>
+        <p>An event ID paired with its current status, used in producer and consumer lists:</p>
+        <pre><code>typedef struct {
+    event_id_t event;           // 64-bit Event ID
+    event_status_enum status;   // EVENT_STATUS_UNKNOWN, EVENT_STATUS_SET, EVENT_STATUS_CLEAR
+} event_id_struct_t;</code></pre>
+
+        <h3>3.3.2 event_id_range_t</h3>
+        <p>A contiguous range of event IDs for range-identified events:</p>
+        <pre><code>typedef struct {
+    event_id_t start_base;              // Starting Event ID
+    event_range_count_enum event_count; // Number of consecutive Event IDs
+} event_id_range_t;</code></pre>
+
+        <p>The <code>event_range_count_enum</code> provides power-of-two sizes from 1 up to 32768:</p>
+        <pre><code>typedef enum {
+    EVENT_RANGE_COUNT_1 = 0,
+    EVENT_RANGE_COUNT_2 = 2,
+    EVENT_RANGE_COUNT_4 = 4,
+    // ... powers of 2 ...
+    EVENT_RANGE_COUNT_32768 = 32768
+} event_range_count_enum;</code></pre>
+
+        <h2>3.4 Node Types</h2>
+
+        <h3>3.4.1 openlcb_node_t Structure</h3>
+        <p>The complete representation of a virtual node:</p>
+
+        <pre><code>typedef struct openlcb_node_TAG {
+    openlcb_node_state_t state;              // Bitfield: run_state, allocated, permitted, etc.
+    uint64_t id;                             // 48-bit Node ID
+    uint16_t alias;                          // 12-bit CAN alias
+    uint64_t seed;                           // Seed for alias generation (LFSR)
+    event_id_consumer_list_t consumers;      // Consumed event list + enumerator
+    event_id_producer_list_t producers;      // Produced event list + enumerator
+    const node_parameters_t *parameters;     // Pointer to const configuration
+    uint16_t timerticks;                     // 100ms timer tick counter
+    uint64_t owner_node;                     // Node ID that has locked this node
+    openlcb_msg_t *last_received_datagram;   // Saved for reply processing
+    uint8_t index;                           // Index in node array
+    struct train_state_TAG *train_state;     // NULL if not a train node
+} openlcb_node_t;</code></pre>
+
+        <h3>3.4.2 openlcb_node_state_t Bitfield</h3>
+
+        <pre><code>typedef struct {
+    uint8_t run_state : 5;              // Login state machine state (0-31)
+    bool allocated : 1;                 // Node is allocated
+    bool permitted : 1;                 // CAN alias allocated and claimed
+    bool initialized : 1;              // Node fully initialized (Init Complete sent)
+    bool duplicate_id_detected : 1;     // Duplicate Node ID conflict
+    bool openlcb_datagram_ack_sent : 1; // Datagram ACK sent, awaiting reply
+    bool resend_datagram : 1;           // Resend last datagram (retry logic)
+    bool firmware_upgrade_active : 1;   // Firmware upgrade in progress
+} openlcb_node_state_t;</code></pre>
+
+        <h3>3.4.3 node_parameters_t Structure</h3>
+        <p>Configuration parameters for a node. Typically stored in <code>const</code> (flash) memory:</p>
+
+        <pre><code>typedef struct node_parameters_TAG {
+    user_snip_struct_t snip;                    // SNIP strings (manufacturer info)
+    uint64_t protocol_support;                  // Protocol Support Indicator bits
+    uint8_t consumer_count_autocreate;          // Auto-create N consumer events from Node ID
+    uint8_t producer_count_autocreate;          // Auto-create N producer events from Node ID
+    uint8_t cdi[USER_DEFINED_CDI_LENGTH];       // CDI XML data
+    uint8_t fdi[USER_DEFINED_FDI_LENGTH];       // FDI data (train nodes)
+    user_address_space_info_t address_space_configuration_definition;  // Space 0xFF
+    user_address_space_info_t address_space_all;                       // Space 0xFE
+    user_address_space_info_t address_space_config_memory;             // Space 0xFD
+    user_address_space_info_t address_space_acdi_manufacturer;         // Space 0xFC
+    user_address_space_info_t address_space_acdi_user;                 // Space 0xFB
+    user_address_space_info_t address_space_train_function_definition_info;  // Space 0xFA
+    user_address_space_info_t address_space_train_function_config_memory;    // Space 0xF9
+    user_configuration_options configuration_options;
+    user_address_space_info_t address_space_firmware;                  // Space 0xEF
+} node_parameters_t;</code></pre>
+
+        <h2>3.5 MTI Constants</h2>
+        <p>All Message Type Indicator values are defined in <code>openlcb_defines.h</code>. The MTI is a 16-bit value carried in the <code>mti</code> field of <code>openlcb_msg_t</code>.</p>
+
+        <h3>3.5.1 Message Network MTIs</h3>
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>MTI_INITIALIZATION_COMPLETE</code></td><td>0x0100</td><td>Node initialization complete (full protocol)</td></tr>
+                <tr><td><code>MTI_INITIALIZATION_COMPLETE_SIMPLE</code></td><td>0x0101</td><td>Node initialization complete (simple node)</td></tr>
+                <tr><td><code>MTI_VERIFY_NODE_ID_ADDRESSED</code></td><td>0x0488</td><td>Request specific node to identify</td></tr>
+                <tr><td><code>MTI_VERIFY_NODE_ID_GLOBAL</code></td><td>0x0490</td><td>Request all nodes to identify</td></tr>
+                <tr><td><code>MTI_VERIFIED_NODE_ID</code></td><td>0x0170</td><td>Node ID verification response</td></tr>
+                <tr><td><code>MTI_VERIFIED_NODE_ID_SIMPLE</code></td><td>0x0171</td><td>Node ID verification response (simple)</td></tr>
+                <tr><td><code>MTI_OPTIONAL_INTERACTION_REJECTED</code></td><td>0x0068</td><td>Node cannot process the message (OIR)</td></tr>
+                <tr><td><code>MTI_TERMINATE_DUE_TO_ERROR</code></td><td>0x00A8</td><td>Fatal error, node terminating</td></tr>
+                <tr><td><code>MTI_PROTOCOL_SUPPORT_INQUIRY</code></td><td>0x0828</td><td>Query supported protocols</td></tr>
+                <tr><td><code>MTI_PROTOCOL_SUPPORT_REPLY</code></td><td>0x0668</td><td>Supported protocols reply (6-byte bitfield)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>3.5.2 Event Transport MTIs</h3>
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>MTI_CONSUMER_IDENTIFY</code></td><td>0x08F4</td><td>Identify consumers of an event</td></tr>
+                <tr><td><code>MTI_CONSUMER_RANGE_IDENTIFIED</code></td><td>0x04A4</td><td>Consumer identifies event range</td></tr>
+                <tr><td><code>MTI_CONSUMER_IDENTIFIED_UNKNOWN</code></td><td>0x04C7</td><td>Consumer state unknown</td></tr>
+                <tr><td><code>MTI_CONSUMER_IDENTIFIED_SET</code></td><td>0x04C4</td><td>Consumer event is SET</td></tr>
+                <tr><td><code>MTI_CONSUMER_IDENTIFIED_CLEAR</code></td><td>0x04C5</td><td>Consumer event is CLEAR</td></tr>
+                <tr><td><code>MTI_CONSUMER_IDENTIFIED_RESERVED</code></td><td>0x04C6</td><td>Consumer event in RESERVED state</td></tr>
+                <tr><td><code>MTI_PRODUCER_IDENTIFY</code></td><td>0x0914</td><td>Identify producers of an event</td></tr>
+                <tr><td><code>MTI_PRODUCER_RANGE_IDENTIFIED</code></td><td>0x0524</td><td>Producer identifies event range</td></tr>
+                <tr><td><code>MTI_PRODUCER_IDENTIFIED_UNKNOWN</code></td><td>0x0547</td><td>Producer state unknown</td></tr>
+                <tr><td><code>MTI_PRODUCER_IDENTIFIED_SET</code></td><td>0x0544</td><td>Producer event is SET</td></tr>
+                <tr><td><code>MTI_PRODUCER_IDENTIFIED_CLEAR</code></td><td>0x0545</td><td>Producer event is CLEAR</td></tr>
+                <tr><td><code>MTI_PRODUCER_IDENTIFIED_RESERVED</code></td><td>0x0546</td><td>Producer event in RESERVED state</td></tr>
+                <tr><td><code>MTI_EVENTS_IDENTIFY_DEST</code></td><td>0x0968</td><td>Request specific node to identify events</td></tr>
+                <tr><td><code>MTI_EVENTS_IDENTIFY</code></td><td>0x0970</td><td>Request all nodes to identify events</td></tr>
+                <tr><td><code>MTI_EVENT_LEARN</code></td><td>0x0594</td><td>Teaching/learning event configuration</td></tr>
+                <tr><td><code>MTI_PC_EVENT_REPORT</code></td><td>0x05B4</td><td>Producer/Consumer Event Report (PCER)</td></tr>
+                <tr><td><code>MTI_PC_EVENT_REPORT_WITH_PAYLOAD</code></td><td>0x0F14</td><td>PCER with additional payload data</td></tr>
+            </tbody>
+        </table>
+
+        <h3>3.5.3 SNIP, Train, Stream, and Datagram MTIs</h3>
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>MTI_SIMPLE_NODE_INFO_REQUEST</code></td><td>0x0DE8</td><td>Request SNIP data from node</td></tr>
+                <tr><td><code>MTI_SIMPLE_NODE_INFO_REPLY</code></td><td>0x0A08</td><td>SNIP data reply</td></tr>
+                <tr><td><code>MTI_TRAIN_PROTOCOL</code></td><td>0x05EB</td><td>Train control command</td></tr>
+                <tr><td><code>MTI_TRAIN_REPLY</code></td><td>0x01E9</td><td>Train control reply</td></tr>
+                <tr><td><code>MTI_SIMPLE_TRAIN_INFO_REQUEST</code></td><td>0x0DA8</td><td>Request train node info</td></tr>
+                <tr><td><code>MTI_SIMPLE_TRAIN_INFO_REPLY</code></td><td>0x09C8</td><td>Train node info reply</td></tr>
+                <tr><td><code>MTI_DATAGRAM</code></td><td>0x1C48</td><td>Datagram message</td></tr>
+                <tr><td><code>MTI_DATAGRAM_OK_REPLY</code></td><td>0x0A28</td><td>Datagram received OK</td></tr>
+                <tr><td><code>MTI_DATAGRAM_REJECTED_REPLY</code></td><td>0x0A48</td><td>Datagram rejected (with error)</td></tr>
+                <tr><td><code>MTI_STREAM_INIT_REQUEST</code></td><td>0x0CC8</td><td>Stream connection request</td></tr>
+                <tr><td><code>MTI_STREAM_INIT_REPLY</code></td><td>0x0868</td><td>Stream connection reply</td></tr>
+                <tr><td><code>MTI_STREAM_SEND</code></td><td>0x1F88</td><td>Stream data</td></tr>
+                <tr><td><code>MTI_STREAM_PROCEED</code></td><td>0x0888</td><td>Stream flow control</td></tr>
+                <tr><td><code>MTI_STREAM_COMPLETE</code></td><td>0x08A8</td><td>Stream completed</td></tr>
+            </tbody>
+        </table>
+
+        <h2>3.6 Protocol Support Indicator Bits</h2>
+        <p>A 48-bit bitfield returned in the Protocol Support Reply message. Each bit indicates support for a protocol:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Bit Value</th><th>Protocol</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>PSI_SIMPLE</code></td><td>0x800000</td><td>Simple Node Protocol</td></tr>
+                <tr><td><code>PSI_DATAGRAM</code></td><td>0x400000</td><td>Datagram Protocol</td></tr>
+                <tr><td><code>PSI_STREAM</code></td><td>0x200000</td><td>Stream Protocol</td></tr>
+                <tr><td><code>PSI_MEMORY_CONFIGURATION</code></td><td>0x100000</td><td>Memory Configuration Protocol</td></tr>
+                <tr><td><code>PSI_RESERVATION</code></td><td>0x080000</td><td>Reservation Protocol</td></tr>
+                <tr><td><code>PSI_EVENT_EXCHANGE</code></td><td>0x040000</td><td>Event Exchange Protocol</td></tr>
+                <tr><td><code>PSI_IDENTIFICATION</code></td><td>0x020000</td><td>Identification Protocol</td></tr>
+                <tr><td><code>PSI_TEACHING_LEARNING</code></td><td>0x010000</td><td>Teaching/Learning Protocol</td></tr>
+                <tr><td><code>PSI_REMOTE_BUTTON</code></td><td>0x008000</td><td>Remote Button Protocol</td></tr>
+                <tr><td><code>PSI_ABBREVIATED_DEFAULT_CDI</code></td><td>0x004000</td><td>Abbreviated Default CDI</td></tr>
+                <tr><td><code>PSI_DISPLAY</code></td><td>0x002000</td><td>Display Protocol</td></tr>
+                <tr><td><code>PSI_SIMPLE_NODE_INFORMATION</code></td><td>0x001000</td><td>SNIP</td></tr>
+                <tr><td><code>PSI_CONFIGURATION_DESCRIPTION_INFO</code></td><td>0x000800</td><td>CDI Protocol</td></tr>
+                <tr><td><code>PSI_TRAIN_CONTROL</code></td><td>0x000400</td><td>Train Control Protocol</td></tr>
+                <tr><td><code>PSI_FUNCTION_DESCRIPTION</code></td><td>0x000200</td><td>FDI Protocol</td></tr>
+                <tr><td><code>PSI_FUNCTION_CONFIGURATION</code></td><td>0x000040</td><td>Function Configuration Protocol</td></tr>
+                <tr><td><code>PSI_FIRMWARE_UPGRADE</code></td><td>0x000020</td><td>Firmware Upgrade Protocol</td></tr>
+                <tr><td><code>PSI_FIRMWARE_UPGRADE_ACTIVE</code></td><td>0x000010</td><td>Firmware Upgrade Active</td></tr>
+            </tbody>
+        </table>
+
+        <h2>3.7 Error Codes</h2>
+
+        <h3>Permanent Errors (0x1xxx)</h3>
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>ERROR_PERMANENT</code></td><td>0x1000</td><td>Generic permanent error</td></tr>
+                <tr><td><code>ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN</code></td><td>0x1001</td><td>Unknown address space</td></tr>
+                <tr><td><code>ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS</code></td><td>0x1002</td><td>Address out of bounds</td></tr>
+                <tr><td><code>ERROR_PERMANENT_CONFIG_MEM_ADDRESS_WRITE_TO_READ_ONLY</code></td><td>0x1003</td><td>Write to read-only memory</td></tr>
+                <tr><td><code>ERROR_PERMANENT_SOURCE_NOT_PERMITTED</code></td><td>0x1020</td><td>Source not permitted</td></tr>
+                <tr><td><code>ERROR_PERMANENT_NOT_IMPLEMENTED</code></td><td>0x1040</td><td>Not implemented</td></tr>
+                <tr><td><code>ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN</code></td><td>0x1041</td><td>Unknown subcommand</td></tr>
+                <tr><td><code>ERROR_PERMANENT_NOT_IMPLEMENTED_COMMAND_UNKNOWN</code></td><td>0x1042</td><td>Unknown command</td></tr>
+                <tr><td><code>ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL</code></td><td>0x1043</td><td>Unknown MTI or transport</td></tr>
+                <tr><td><code>ERROR_PERMANENT_INVALID_ARGUMENTS</code></td><td>0x1080</td><td>Invalid arguments</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Temporary Errors (0x2xxx)</h3>
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>ERROR_TEMPORARY</code></td><td>0x2000</td><td>Generic temporary error</td></tr>
+                <tr><td><code>ERROR_TEMPORARY_BUFFER_UNAVAILABLE</code></td><td>0x2020</td><td>Buffer or resource unavailable</td></tr>
+                <tr><td><code>ERROR_TEMPORARY_NOT_EXPECTED_OUT_OF_ORDER</code></td><td>0x2040</td><td>Message out of sequence</td></tr>
+                <tr><td><code>ERROR_TEMPORARY_TRANSFER_ERROR</code></td><td>0x2080</td><td>Transfer error</td></tr>
+                <tr><td><code>ERROR_TEMPORARY_TIME_OUT</code></td><td>0x2011</td><td>Timeout waiting for response</td></tr>
+                <tr><td><code>ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START</code></td><td>0x2041</td><td>Middle/end frame without start</td></tr>
+                <tr><td><code>ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END</code></td><td>0x2042</td><td>Start before previous end</td></tr>
+            </tbody>
+        </table>
+
+        <h2>3.8 Run States</h2>
+        <p>The <code>run_state</code> field in <code>openlcb_node_state_t</code> tracks the login state machine progression:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RUNSTATE_INIT</code></td><td>0</td><td>Boot initialization, sets Node ID as seed</td></tr>
+                <tr><td><code>RUNSTATE_GENERATE_SEED</code></td><td>1</td><td>Generate new 48-bit seed (after collision)</td></tr>
+                <tr><td><code>RUNSTATE_GENERATE_ALIAS</code></td><td>2</td><td>Generate 12-bit alias from seed via LFSR</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_CHECK_ID_07</code></td><td>3</td><td>Send CID frame 7 (first 12 bits of Node ID)</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_CHECK_ID_06</code></td><td>4</td><td>Send CID frame 6 (2nd 12 bits)</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_CHECK_ID_05</code></td><td>5</td><td>Send CID frame 5 (3rd 12 bits)</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_CHECK_ID_04</code></td><td>6</td><td>Send CID frame 4 (last 12 bits)</td></tr>
+                <tr><td><code>RUNSTATE_WAIT_200ms</code></td><td>7</td><td>Wait 200ms for collision detection</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_RESERVE_ID</code></td><td>8</td><td>Send RID frame to claim alias</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_ALIAS_MAP_DEFINITION</code></td><td>9</td><td>Send AMD frame, node becomes Permitted</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_INITIALIZATION_COMPLETE</code></td><td>10</td><td>Send Init Complete, node becomes Initialized</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_CONSUMER_EVENTS</code></td><td>11</td><td>Broadcast all consumer event IDs</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_PRODUCER_EVENTS</code></td><td>12</td><td>Broadcast all producer event IDs</td></tr>
+                <tr><td><code>RUNSTATE_LOGIN_COMPLETE</code></td><td>13</td><td>Callback for application startup messages</td></tr>
+                <tr><td><code>RUNSTATE_RUN</code></td><td>14</td><td>Normal operation -- process messages from FIFO</td></tr>
+            </tbody>
+        </table>
+
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> INIT
+    INIT --> GENERATE_SEED
+    GENERATE_SEED --> GENERATE_ALIAS
+    GENERATE_ALIAS --> CID7
+    CID7 --> CID6
+    CID6 --> CID5
+    CID5 --> CID4
+    CID4 --> WAIT_200ms
+    WAIT_200ms --> GENERATE_SEED : collision
+    WAIT_200ms --> RID : no collision
+    RID --> AMD
+    AMD --> INIT_COMPLETE
+    INIT_COMPLETE --> CONSUMER_EVENTS
+    CONSUMER_EVENTS --> PRODUCER_EVENTS
+    PRODUCER_EVENTS --> LOGIN_COMPLETE
+    LOGIN_COMPLETE --> RUN
+
+    state "RUNSTATE_INIT (0)" as INIT
+    state "GENERATE_SEED (1)" as GENERATE_SEED
+    state "GENERATE_ALIAS (2)" as GENERATE_ALIAS
+    state "CID7 (3)" as CID7
+    state "CID6 (4)" as CID6
+    state "CID5 (5)" as CID5
+    state "CID4 (6)" as CID4
+    state "WAIT_200ms (7)" as WAIT_200ms
+    state "RID (8)" as RID
+    state "AMD (9)" as AMD
+    state "INIT_COMPLETE (10)" as INIT_COMPLETE
+    state "CONSUMER_EVENTS (11)" as CONSUMER_EVENTS
+    state "PRODUCER_EVENTS (12)" as PRODUCER_EVENTS
+    state "LOGIN_COMPLETE (13)" as LOGIN_COMPLETE
+    state "RUN (14)" as RUN
+        </div>
+
+        <div class="chapter-nav">
+            <a href="ch02.html">&larr; Previous: Ch 2 — Building and Running</a>
+            <a href="ch03b.html">Next: Ch 3b — CAN-Specific Types &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

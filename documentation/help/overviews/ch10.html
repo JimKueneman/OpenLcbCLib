@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 10 — CAN Transport State Machine</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html" class="active">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 10 — CAN Transport State Machine</h1>
+
+        <p>
+            The CAN main state machine orchestrates the CAN transport layer: it handles duplicate
+            alias resolution, outgoing CAN frame transmission, CAN login frame sequencing, and
+            round-robin node enumeration. It is the CAN-layer counterpart of the OpenLCB main dispatcher.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/drivers/canbus/can_main_statemachine.c</code>,
+            <code>src/drivers/canbus/can_main_statemachine.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>10.1 Entry Point</h2>
+
+        <p>
+            <code>CanMainStateMachine_run()</code> is called from the main loop alongside the
+            OpenLCB state machines. Each call performs one cooperative step and returns immediately.
+            Before the priority chain runs, it calls <code>OpenLcbBufferList_check_timeouts()</code>
+            to expire stale multi-frame assembly buffers.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>10.2 Priority Dispatch Flowchart</h2>
+
+        <div class="mermaid">
+flowchart TD
+    A["CanMainStateMachine_run()"] --> T["check_timeouts()"]
+    T --> B{"handle_duplicate\n_aliases()"}
+    B -- "true" --> Z["return"]
+    B -- "false" --> C{"handle_outgoing\n_can_message()"}
+    C -- "true" --> Z
+    C -- "false" --> D{"handle_login_outgoing\n_can_message()"}
+    D -- "true" --> Z
+    D -- "false" --> E{"handle_try_enumerate\n_first_node()"}
+    E -- "true" --> Z
+    E -- "false" --> F{"handle_try_enumerate\n_next_node()"}
+    F --> Z
+
+    style A fill:#4a90d9,color:#fff
+    style Z fill:#888,color:#fff
+        </div>
+
+        <table>
+            <thead>
+                <tr><th>Priority</th><th>Function</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0 (always)</td>
+                    <td><code>check_timeouts()</code></td>
+                    <td>Expire stale multi-frame assembly buffers in the BufferList (3-second timeout).</td>
+                </tr>
+                <tr>
+                    <td>1 (highest)</td>
+                    <td><code>handle_duplicate_aliases()</code></td>
+                    <td>Scan alias table for duplicates; unregister and reset affected nodes.</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><code>handle_outgoing_can_message()</code></td>
+                    <td>Pop one frame from the outgoing CAN FIFO and transmit. Retries on busy.</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><code>handle_login_outgoing_can_message()</code></td>
+                    <td>Transmit the pending login frame (CID/RID/AMD) from the static buffer.</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><code>handle_try_enumerate_first_node()</code></td>
+                    <td>Start node enumeration; run login state machine for nodes still in CAN login phase.</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><code>handle_try_enumerate_next_node()</code></td>
+                    <td>Advance to next node; continue CAN login processing if needed.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>10.3 Duplicate Alias Handling</h2>
+
+        <p>
+            Duplicate aliases are detected by the CAN RX path (ISR context) and flagged in the
+            alias mapping table. The main state machine resolves them in the main-loop context:
+        </p>
+
+        <div class="mermaid">
+flowchart LR
+    A["RX ISR detects\nduplicate alias"] --> B["Set is_duplicate\nflag on mapping entry"]
+    B --> C["Set has_duplicate_alias\nglobal flag"]
+    C --> D["Main loop:\nhandle_duplicate_aliases()"]
+    D --> E["Unregister alias\nfrom mapping table"]
+    E --> F["Reset node to\nRUNSTATE_GENERATE_SEED"]
+    F --> G["Node re-logs in\nwith new alias"]
+        </div>
+
+        <p>The <code>_reset_node()</code> function clears:</p>
+        <ul>
+            <li>The node's alias (set to 0)</li>
+            <li>All state flags: <code>permitted</code>, <code>initialized</code>, <code>duplicate_id_detected</code>, <code>firmware_upgrade_active</code></li>
+            <li>Resend/ACK flags: <code>resend_datagram</code>, <code>openlcb_datagram_ack_sent</code></li>
+            <li>Any pending datagram buffer (<code>last_received_datagram</code> freed)</li>
+            <li>Sets <code>run_state = RUNSTATE_GENERATE_SEED</code> to start a fresh alias reservation</li>
+        </ul>
+
+        <!-- ================================================================ -->
+        <h2>10.4 CAN Identifier Layout</h2>
+
+        <p>
+            OpenLCB CAN frames use 29-bit extended identifiers. The top bit (bit 28) distinguishes
+            OpenLCB frames from CAN control frames:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Bits</th><th>Field</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>28</td><td>Frame Type</td><td>1 = OpenLCB message, 0 = CAN control frame</td></tr>
+                <tr><td>27:24</td><td>Frame Subtype</td><td>For OpenLCB: message type (standard, datagram variants, stream). For control: sequence number or 0 for variable-field.</td></tr>
+                <tr><td>23:12</td><td>Variable Field</td><td>MTI (for standard messages), Destination Alias (for datagrams/streams), or CID check value / control frame type.</td></tr>
+                <tr><td>11:0</td><td>Source Alias</td><td>12-bit alias of the sending node.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>OpenLCB Frame Types (bits 27:24)</h3>
+        <table>
+            <thead>
+                <tr><th>Value</th><th>Frame Type</th><th>Variable Field (bits 23:12)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0x1</td><td>Standard (global/addressed)</td><td>CAN MTI</td></tr>
+                <tr><td>0x2</td><td>Datagram Only</td><td>Destination Alias</td></tr>
+                <tr><td>0x3</td><td>Datagram First</td><td>Destination Alias</td></tr>
+                <tr><td>0x4</td><td>Datagram Middle</td><td>Destination Alias</td></tr>
+                <tr><td>0x5</td><td>Datagram Final</td><td>Destination Alias</td></tr>
+                <tr><td>0x6</td><td>Reserved</td><td>--</td></tr>
+                <tr><td>0x7</td><td>Stream</td><td>Destination Alias</td></tr>
+            </tbody>
+        </table>
+
+        <h3>CAN Control Frames (bit 28 = 0)</h3>
+        <table>
+            <thead>
+                <tr><th>Sequence</th><th>Variable Field</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0</td><td>0x0700</td><td>RID (Reserve ID)</td></tr>
+                <tr><td>0</td><td>0x0701</td><td>AMD (Alias Map Definition)</td></tr>
+                <tr><td>0</td><td>0x0702</td><td>AME (Alias Map Enquiry)</td></tr>
+                <tr><td>0</td><td>0x0703</td><td>AMR (Alias Map Reset)</td></tr>
+                <tr><td>0</td><td>0x0710-0x0713</td><td>Error Information Report</td></tr>
+                <tr><td>7..1</td><td>Check value</td><td>CID7 through CID1 (Check ID frames)</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>10.5 Node Enumeration for Login</h2>
+
+        <p>
+            The CAN state machine's enumerate-first / enumerate-next loop processes nodes
+            whose <code>run_state &lt; RUNSTATE_LOAD_INITIALIZATION_COMPLETE</code>.
+            These nodes are still in the CAN login phase (alias reservation). The CAN login
+            state machine is invoked via the <code>login_statemachine_run()</code> callback.
+            Nodes that have passed this threshold are handled by the OpenLCB login state machine
+            (Chapter 9) instead.
+        </p>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch09.html">Previous: Ch 9 — Login State Machine</a>
+            <a href="ch11.html">Next: Ch 11 — CAN RX/TX Pipelines</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

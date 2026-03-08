@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://openlcb.org/trunk/prototypes/xml/xslt/cdi.xsl"?>
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">
+    <identification>
+        <manufacturer>"Mustangpeak "</manufacturer>
+        <model>" MODEL "</model>
+        <hardwareVersion>2.0</hardwareVersion>
+        <softwareVersion>2.1</softwareVersion>
+        <link ref="www.mustangpeak.net/cdi2node.html"/>
+        <map>
+            <name>Map Text</name>
+            <description>This is the Map Description</description>
+            <relation>
+                <property>Relation 1 Property</property>
+                <value>Relation 1 Value</value>
+            </relation>
+            <relation>
+                <property>Relation 2 Property</property>
+                <value>Relation 2 Value</value>
+            </relation>
+        </map>
+    </identification>
+    <acdi/>
+    <segment space="253" origin="1000">
+        <name>Segment [name]</name>
+        <description>Segment [description]</description>    
+        <int size="1" offset="-50">
+            <name>Int Basic [name]</name>
+            <description>Int Basic [description]</description>
+            <min>10</min>
+            <max>100</max>
+            <default>20</default>
+            <map>
+                <name>Int Basic Map [map name]</name>
+                <description>Int Basic Map [description]</description>
+                <relation>
+                    <property>10</property>
+                    <value>This is the UI String Value 1</value>
+                </relation>
+                <relation>
+                    <property>20</property>
+                    <value>This is the UI String Value 2</value>
+                </relation>
+            </map>
+        </int>
+        
+        <int size="1" offset="-50">
+            <name>Int Slider Hint [name]</name>
+            <description>Int Slider Hint [description]</description>
+            <min>10</min>
+            <max>100</max>
+            <default>20</default>
+            <map>
+                <name>Int Slider Map Hint [name]</name>
+                <description>Int Slider Map Hint [description] [name]</description>
+                <relation>
+                    <property>10</property>
+                    <value>This is the UI String Value 1</value>
+                </relation>
+                <relation>
+                    <property>20</property>
+                    <value>This is the UI String Value 2</value>
+                </relation>
+            </map>
+            <hints>
+                <slider tickSpacing="5" immediate="no" showValue="yes"/>
+            </hints>
+        </int>
+        <int size="1" offset="-50">
+            <name>Int Radio Hint [name]</name>
+            <description>Int Radio Hint [description]</description>
+            <min>10</min>
+            <max>100</max>
+            <default>20</default>
+            <map>
+                <name>Int Radio Map Hint [name]</name>
+                <description>Int Radio Map Hint [description] [name]</description>
+                <relation>
+                    <property>10</property>
+                    <value>This is the UI String Value 1</value>
+                </relation>
+                <relation>
+                    <property>20</property>
+                    <value>This is the UI String Value 2</value>
+                </relation>
+            </map>
+            <hints>
+                <radiobutton/>
+            </hints>
+        </int>
+        <int size="1" offset="-50">
+            <name>Int Checkbox Hint [name]</name>
+            <description>Int CheckBox Hint [description]</description>
+            <min>10</min>
+            <max>100</max>
+            <default>20</default>
+            <map>
+                <name>Int Checkbox Map Hint [name]</name>
+                <description>Int Checkbox Map Hint [description] [name]</description>
+                <relation>
+                    <property>10</property>
+                    <value>This is the UI String Value 1</value>
+                </relation>
+                <relation>
+                    <property>20</property>
+                    <value>This is the UI String Value 2</value>
+                </relation>
+            </map>
+            <hints>
+                <checkbox/>
+            </hints>
+        </int>
+        <string size="50" offset="55">
+            <name>String [name]</name>
+            <description>String [description]</description>
+            <map>
+                <name>String Map [name]</name>
+                <description>String Map [description]</description>
+                <relation>
+                    <property>"StringKey1"</property>
+                    <value>This is the UI String Value 1</value>
+                </relation>
+                <relation>
+                    <property>"StringKey2"</property>
+                    <value>This is the UI String Value 2</value>
+                </relation>
+            </map>
+        </string>
+        <eventid offset="55">
+            <name>EventID [name]</name>
+            <description>EventID [description]</description>
+            <map>
+                <name>EventID Map [name]</name>
+                <description>EventID Map [description]</description>
+                <relation>
+                    <property>05.04.03.02.01.00.00.00</property>
+                    <value>This is the UI EventID Value 1</value>
+                </relation>
+                <relation>
+                    <property>05.04.03.02.01.00.00.01</property>
+                    <value>This is the UI EventID Value 2</value>
+                </relation>
+            </map>
+        </eventid>
+        <float size="8" offset="80">
+            <name>Float [name]</name>
+            <description>Float [description]</description>
+            <map>
+                <name>Float Map [name]</name>
+                <description>Float Map [description]</description>
+                <relation>
+                    <property>45.67</property>
+                    <value>This is the UI Float Value 1</value>
+                </relation>
+                <relation>
+                    <property>65.23</property>
+                    <value>This is the UI Float Value 2</value>
+                </relation>
+            </map>
+        </float>
+    </segment>
+</cdi>

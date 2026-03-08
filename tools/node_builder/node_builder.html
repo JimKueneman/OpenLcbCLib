@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node Builder — OpenLcbCLib</title>
+    <link rel="stylesheet" href="node_builder.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header id="app-header">
+    <h1>Node Builder <span>— OpenLcbCLib</span></h1>
+    <div class="header-actions">
+        <button class="btn" id="btn-load" title="Load an existing openlcb_user_config.h">Load Config</button>
+        <button class="btn btn-success" id="btn-generate" title="Generate and download openlcb_user_config.h and node_parameters.h/.c">Generate &amp; Download</button>
+    </div>
+</header>
+
+<main id="main-content">
+
+    <!-- Status bar -->
+    <div class="info-box" id="status-bar">
+        New project — configure your node below, then click <strong>Generate &amp; Download</strong>.
+    </div>
+
+    <!-- Hidden file inputs -->
+    <input type="file" id="file-load-config" accept=".h,.c" multiple style="display:none">
+    <input type="file" id="file-load-cdi" accept=".xml" style="display:none">
+    <input type="file" id="file-load-fdi" accept=".xml" style="display:none">
+
+    <div class="app-layout">
+
+        <!-- ===== Sidebar Navigation ===== -->
+        <nav id="sidebar">
+            <div class="nav-group">
+                <div class="nav-group-label">OpenLCB/LCC Node Configuration</div>
+                <button class="nav-item active" id="nav-features" onclick="selectPanel('panel-features')">Feature Flags</button>
+                <button class="nav-item" id="nav-config-options" onclick="selectPanel('panel-config-options')">Configuration Options</button>
+                <button class="nav-item" id="nav-identity" onclick="selectPanel('panel-identity')">Node Identity (SNIP)</button>
+                <button class="nav-item" id="nav-train" onclick="selectPanel('panel-train')">Train Protocol</button>
+                <button class="nav-item" id="nav-address-spaces" onclick="selectPanel('panel-address-spaces')">Address Spaces</button>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">OpenLcbCLib Buffer Management</div>
+                <button class="nav-item" id="nav-buffers" onclick="selectPanel('panel-buffers')">Buffer Pool Sizing</button>
+                <button class="nav-item" id="nav-events" onclick="selectPanel('panel-events')">Event System Buffers</button>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">OpenLcbCLib Callback Defines</div>
+                <button class="nav-item" id="nav-callbacks" onclick="selectPanel('panel-callbacks')">Callbacks</button>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Output</div>
+                <button class="nav-item" id="nav-preview" onclick="selectPanel('panel-preview')">Preview openlcb_user_config</button>
+            </div>
+        </nav>
+
+        <!-- ===== Content Area ===== -->
+        <div id="content-area">
+
+            <!-- ── Feature Flags ── -->
+            <section class="content-panel active" id="panel-features">
+                <div class="panel-title">
+                    <h2>Feature Flags</h2>
+                    <span class="badge" id="badge-features">4 enabled</span>
+                </div>
+                <div class="panel-body">
+                    <div class="info-box">
+                        Enable the protocols your node supports. Dependencies are auto-checked.
+                        Panels, address spaces, and protocol bits update automatically.
+                    </div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="flag-events" checked onchange="onFeatureFlagChange('flag-events')">
+                                <label for="flag-events">Event Exchange</label>
+
+                                <span class="tag tag-required">common</span>
+                            </div>
+                            <div class="flag-help">Produce and consume events for signaling, sensors, and automation.</div>
+                        </div>
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="flag-datagrams" checked onchange="onFeatureFlagChange('flag-datagrams')">
+                                <label for="flag-datagrams">Datagrams</label>
+
+                                <span class="tag tag-required">common</span>
+                            </div>
+                            <div class="flag-help">Addressed point-to-point messages. Required by Memory Configuration and other protocols.</div>
+                        </div>
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="flag-config-mem" checked onchange="onFeatureFlagChange('flag-config-mem')">
+                                <label for="flag-config-mem">Memory Configuration</label>
+
+                                <span class="tag tag-required">common</span>
+                            </div>
+                            <div class="flag-help">Remote configuration via CDI. Lets tools like JMRI read and write node settings.</div>
+                        </div>
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="flag-firmware" checked onchange="onFeatureFlagChange('flag-firmware')">
+                                <label for="flag-firmware">Firmware Upgrade</label>
+
+                                <span class="tag tag-required">common</span>
+                            </div>
+                            <div class="flag-help">Over-the-network firmware updates via the Memory Configuration protocol.</div>
+                        </div>
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="flag-broadcast-time" checked onchange="onFeatureFlagChange('flag-broadcast-time')">
+                                <label for="flag-broadcast-time">Broadcast Time</label>
+
+                            </div>
+                            <div class="flag-help">Receive fast clock and time distribution messages from the network.</div>
+                        </div>
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="flag-train" onchange="onFeatureFlagChange('flag-train')">
+                                <label for="flag-train">Train Control (Traction)</label>
+
+                            </div>
+                            <div class="flag-help">This node will be a Train Node and support the Train Control Protocol.</div>
+                        </div>
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="flag-stream" disabled onchange="onFeatureFlagChange('flag-stream')">
+                                <label for="flag-stream" class="disabled-label">Streaming</label>
+
+                                <span class="tag tag-unreleased">unreleased</span>
+                            </div>
+                            <div class="flag-help">Large data transfers over the network.</div>
+                        </div>
+                    </div>
+
+                    <!-- Compact CDI file-picker + Generate -->
+                    <div class="ff-file-row hidden" id="ff-cdi-picker">
+                        <button class="btn btn-small btn-file" onclick="document.getElementById('file-load-cdi').click()">&#128194; Load CDI XML</button>
+                        <button class="btn btn-small" onclick="generateStarterCDI()">Generate Starter</button>
+                        <span class="file-name" id="ff-cdi-file-name">No file loaded</span>
+                        <span class="ff-byte-count" id="ff-cdi-bytes"></span>
+                        <button class="btn-clear hidden" id="btn-clear-cdi" onclick="clearCdi()" title="Clear loaded CDI">&times;</button>
+                    </div>
+
+                    <!-- Compact FDI file-picker + Generate -->
+                    <div class="ff-file-row hidden" id="ff-fdi-picker">
+                        <button class="btn btn-small btn-file" onclick="document.getElementById('file-load-fdi').click()">&#128194; Load FDI XML</button>
+                        <button class="btn btn-small" onclick="generateStarterFDI()">Generate Starter</button>
+                        <span class="file-name" id="ff-fdi-file-name">No file loaded</span>
+                        <span class="ff-byte-count" id="ff-fdi-bytes"></span>
+                        <button class="btn-clear hidden" id="btn-clear-fdi" onclick="clearFdi()" title="Clear loaded FDI">&times;</button>
+                    </div>
+
+                    <!-- Protocol Support (auto-derived) -->
+                    <div class="ff-section-label">Protocol Support <span class="tag tag-auto">auto-derived</span></div>
+                    <div class="protocol-list" id="protocol-list"></div>
+                </div>
+            </section>
+
+            <!-- ── Configuration Options ── -->
+            <section class="content-panel" id="panel-config-options">
+                <div class="panel-title">
+                    <h2>Configuration Options</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="info-box">
+                        These flags tell other nodes what configuration capabilities your node supports.
+                        They are reported during Memory Configuration Protocol discovery.
+                    </div>
+                    <div class="checkbox-group" style="margin-bottom:12px;">
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="cfgopt-write-mask" checked disabled>
+                                <label for="cfgopt-write-mask">Write Under Mask</label>
+                                <span class="tag tag-auto">library-managed</span>
+                            </div>
+                            <div class="flag-help">The library handles partial byte writes automatically. Always enabled.</div>
+                        </div>
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="cfgopt-unaligned-reads" checked>
+                                <label for="cfgopt-unaligned-reads">Unaligned Reads</label>
+                            </div>
+                            <div class="flag-help">Allow reading configuration data from any byte address, not just aligned boundaries.</div>
+                        </div>
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="cfgopt-unaligned-writes" checked>
+                                <label for="cfgopt-unaligned-writes">Unaligned Writes</label>
+                            </div>
+                            <div class="flag-help">Allow writing configuration data to any byte address.</div>
+                        </div>
+                        <div class="checkbox-item">
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="cfgopt-stream-rw" disabled>
+                                <label for="cfgopt-stream-rw" class="disabled-label">Stream Read/Write</label>
+                                <span class="tag tag-unreleased">requires Stream</span>
+                            </div>
+                            <div class="flag-help">Use the streaming protocol for large configuration reads and writes.</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label for="cfgopt-desc">Description</label>
+                        <input type="text" id="cfgopt-desc" value="" placeholder="Optional (max 63 chars)" maxlength="63">
+                        <span class="help">Optional text describing your node's configuration capabilities.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Node Identity (SNIP) ── -->
+            <section class="content-panel" id="panel-identity">
+                <div class="panel-title">
+                    <h2>Node Identity (SNIP)</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="info-box">
+                        These identify your node on the network. Other nodes and tools (like JMRI) display
+                        this information when they discover your node.
+                    </div>
+                    <div class="form-row">
+                        <label for="snip-name">Manufacturer Name</label>
+                        <input type="text" id="snip-name" value="Basic OpenLcb Node" maxlength="40">
+                        <span class="help">Your company or personal name shown when other nodes query this node. Max 40 chars.</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="snip-model">Model</label>
+                        <input type="text" id="snip-model" value="Test Application" maxlength="40">
+                        <span class="help">The product or project name for this node. Max 40 chars.</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="snip-hw-version">Hardware Version</label>
+                        <input type="text" id="snip-hw-version" value="0.0.1" maxlength="20">
+                        <span class="help">Version string for the circuit board or hardware revision. Max 20 chars.</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="snip-sw-version">Software Version</label>
+                        <input type="text" id="snip-sw-version" value="0.0.1" maxlength="20">
+                        <span class="help">Version string for the firmware running on this node. Max 20 chars.</span>
+                    </div>
+                    <div class="info-box hidden" id="snip-cdi-note">
+                        These values were extracted from the CDI &lt;identification&gt; block.
+                        To change them, edit your CDI XML file and reload it.
+                    </div>
+                    <div class="info-box error file-drop hidden" id="snip-config-mem-note" data-file-type="cdi">
+                        A valid CDI XML file is required. <strong>Click here to browse</strong> or
+                        <strong>drag &amp; drop</strong> a CDI XML file.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Train Protocol ── -->
+            <section class="content-panel" id="panel-train">
+                <div class="panel-title">
+                    <h2>Train Protocol</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="info-box">
+                        Configure how many trains your node can control simultaneously and how
+                        much memory to allocate for train functions and throttle connections.
+                    </div>
+                    <div class="form-row">
+                        <label for="train-node-count">Train Node Count</label>
+                        <input type="number" id="train-node-count" value="4" min="1">
+                        <span class="help">How many buffers to reserve to store train-specific data. Each train uses one virtual node slot from Buffer Pool.</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="train-listeners">Max Listeners / Train</label>
+                        <input type="number" id="train-listeners" value="6" min="1">
+                        <span class="help">How many trains can be combined into a consist for this node.</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="train-functions">Max Train Functions</label>
+                        <input type="number" id="train-functions" value="29" min="1">
+                        <span class="help">DCC function outputs per train. 29 = F0 (headlight) through F28.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Address Spaces (tabbed) ── -->
+            <section class="content-panel" id="panel-address-spaces">
+                <div class="panel-title">
+                    <h2>Address Spaces</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="info-box">
+                        Address spaces define how other nodes read and write data on your node.
+                        Each space has a numeric ID and a range of addresses. Most are auto-configured
+                        from your Feature Flag selections — you only need to edit specific fields.
+                    </div>
+
+                    <!-- Tab bar -->
+                    <div class="addr-tab-bar">
+                        <button class="addr-tab-btn active" id="tab-0xff" onclick="switchAddrTab('0xff')">0xFF CDI</button>
+                        <button class="addr-tab-btn"         id="tab-0xfe" onclick="switchAddrTab('0xfe')">0xFE All Mem</button>
+                        <button class="addr-tab-btn"         id="tab-0xfd" onclick="switchAddrTab('0xfd')">0xFD Config</button>
+                        <button class="addr-tab-btn"         id="tab-0xfc" onclick="switchAddrTab('0xfc')">0xFC ACDI Mfg</button>
+                        <button class="addr-tab-btn"         id="tab-0xfb" onclick="switchAddrTab('0xfb')">0xFB ACDI Usr</button>
+                        <button class="addr-tab-btn hidden"  id="tab-0xfa" onclick="switchAddrTab('0xfa')">0xFA Train FDI</button>
+                        <button class="addr-tab-btn hidden"  id="tab-0xf9" onclick="switchAddrTab('0xf9')">0xF9 Train Fn</button>
+                        <button class="addr-tab-btn"         id="tab-0xef" onclick="switchAddrTab('0xef')">0xEF Firmware</button>
+                    </div>
+
+                    <!-- Tab panes -->
+
+                    <!-- 0xFF CDI -->
+                    <div class="addr-tab-pane active" id="pane-0xff">
+                        <details class="info-box addr-info">
+                            <summary>Configuration Description Information &mdash; read-only XML that describes the node's configurable options.</summary>
+                            <div class="addr-info-detail">
+                                Configuration tools read this space to discover what settings a node supports and
+                                build their UI automatically. The content is a null-terminated UTF-8 XML document
+                                generated from the CDI file you load. The library stores the byte array in program
+                                memory and serves it to any node that requests it. The address range is set
+                                automatically when you load a CDI file.
+                            </div>
+                        </details>
+                        <div class="form-row">
+                            <label>Present <span class="tag tag-fixed">fixed</span> <span class="tag tag-auto">auto-handled</span></label>
+                            <input type="checkbox" checked disabled>
+                            <span class="help">This space is always present — it holds the CDI XML data.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Read Only <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" checked disabled>
+                            <span class="help">CDI data is read-only; configuration tools read it to build their UI.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address Valid <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" disabled>
+                            <span class="help">CDI space always starts at address zero.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address <span class="tag tag-fixed">fixed</span></label>
+                            <input type="text" value="0x00000000 (0)" disabled>
+                            <span class="help">Starting address (fixed at zero for CDI space).</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Highest Address <span class="tag tag-auto">auto</span></label>
+                            <input type="text" id="addr-0xff-high" value="(from CDI)" disabled>
+                            <span class="help">Automatically set to CDI byte count minus 1 when a CDI file is loaded.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xff-desc">Description <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xff-desc" value="" placeholder="Optional (max 59 chars)" maxlength="59">
+                            <span class="help">Optional text describing this address space to configuration tools.</span>
+                        </div>
+                        <div id="cdi-info" style="display:none; margin-top:12px;">
+                            <div class="form-row">
+                                <label>CDI Length (bytes) <span class="tag tag-auto">auto</span></label>
+                                <input type="text" id="cdi-length" readonly>
+                            </div>
+                            <div style="margin-top:8px;">
+                                <label style="font-size:12px;color:var(--text-label);display:block;margin-bottom:4px;">Byte Array Preview</label>
+                                <div class="cdi-preview" id="cdi-preview"></div>
+                            </div>
+                        </div>
+                        <div class="info-box error file-drop hidden" id="cdi-needed-0xff" data-file-type="cdi">
+                            A valid CDI XML file is required to set the address range.
+                            <strong>Click here to browse</strong> or <strong>drag &amp; drop</strong> a CDI XML file.
+                        </div>
+                    </div>
+
+                    <!-- 0xFE All Memory -->
+                    <div class="addr-tab-pane" id="pane-0xfe">
+                        <details class="info-box addr-info">
+                            <summary>All Memory &mdash; raw byte-level access to the entire node address range.</summary>
+                            <div class="addr-info-detail">
+                                This space provides an unstructured, byte-addressable window into node memory.
+                                It is mainly used for debugging, diagnostics, or direct memory inspection by
+                                advanced configuration tools. Because the space is generic, the address range
+                                and read/write policy are user-configurable. Most nodes leave this enabled with
+                                read-only access so tools can peek at raw memory without risking corruption.
+                            </div>
+                        </details>
+                        <div class="form-row">
+                            <label for="addr-0xfe-present">Present <span class="tag tag-editable">user editable</span></label>
+                            <input type="checkbox" id="addr-0xfe-present" checked onchange="onAddrSpaceChange()">
+                            <span class="help">Whether this address space is advertised during memory configuration discovery.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xfe-readonly">Read Only <span class="tag tag-editable">user editable</span></label>
+                            <input type="checkbox" id="addr-0xfe-readonly" checked>
+                            <span class="help">If checked, this space can only be read, not written.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xfe-low-valid">Low Address Valid <span class="tag tag-editable">user editable</span></label>
+                            <input type="checkbox" id="addr-0xfe-low-valid" onchange="onAddrSpaceChange()">
+                            <span class="help">If checked, the space starts at the Low Address below instead of zero.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xfe-low">Low Address <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xfe-low" value="0x00000000" disabled>
+                            <span class="help">Starting address of this space. Enabled when Low Address Valid is checked.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xfe-high">Highest Address <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xfe-high" value="0xFFFF">
+                            <span class="help">Last byte address in this address space.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xfe-desc">Description <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xfe-desc" value="" placeholder="Optional (max 59 chars)" maxlength="59">
+                            <span class="help">Optional text describing this address space to configuration tools.</span>
+                        </div>
+                    </div>
+
+                    <!-- 0xFD Configuration -->
+                    <div class="addr-tab-pane" id="pane-0xfd">
+                        <details class="info-box addr-info">
+                            <summary>Configuration Memory &mdash; writable space for user-configurable node settings.</summary>
+                            <div class="addr-info-detail">
+                                This is where configuration tools read and write the settings described by the CDI.
+                                The memory layout starts with the ACDI user name and description at the User Name
+                                Address, followed by your application-specific configuration variables. The library
+                                maps CDI offsets to this space automatically. Set the Highest Address large enough
+                                to cover all your CDI-defined variables.
+                            </div>
+                        </details>
+                        <div class="form-row">
+                            <label>Present <span class="tag tag-fixed">fixed</span> <span class="tag tag-auto">auto-handled</span></label>
+                            <input type="checkbox" checked disabled>
+                            <span class="help">Configuration space is always present when Memory Configuration is enabled.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Read Only <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" disabled>
+                            <span class="help">Configuration space is writable so tools can update node settings.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address Valid <span class="tag tag-auto">auto</span></label>
+                            <input type="checkbox" id="addr-0xfd-low-valid" disabled>
+                            <span class="help">Automatically set when User Name Address is not zero.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address <span class="tag tag-auto">auto</span></label>
+                            <input type="text" id="addr-0xfd-low" value="0x0 (0)" disabled>
+                            <span class="help">Equals User Name Address when Low Address Valid is checked.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="cfg-highest-addr">Highest Address <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="cfg-highest-addr" value="0x0200">
+                            <span class="help">Last byte address in configuration space. Must be &ge; <span id="cfg-min-highest-hint">126</span>.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xfd-desc">Description <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xfd-desc" value="" placeholder="Optional (max 59 chars)" maxlength="59">
+                            <span class="help">Optional text describing this address space to configuration tools.</span>
+                        </div>
+                        <div class="ff-section-label">Configuration Memory Layout</div>
+                        <div class="form-row">
+                            <label for="cfg-user-name-addr">User Name Address <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="cfg-user-name-addr" value="0x00000000" oninput="onConfigSpaceChange()">
+                            <span class="help">Where the user-editable name starts in configuration memory.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>User Description Address <span class="tag tag-auto">auto</span></label>
+                            <input type="text" id="cfg-user-desc-addr" value="0x3F (63)" readonly>
+                            <span class="help">Auto-calculated: User Name Address + 63 (name buffer size).</span>
+                        </div>
+                        <div class="form-row">
+                            <label>First User-Defined Address <span class="tag tag-auto">auto</span></label>
+                            <input type="text" id="cfg-first-user-addr" value="0x7F (127)" readonly>
+                            <span class="help">First address available for your own CDI-defined configuration variables.</span>
+                        </div>
+                    </div>
+
+                    <!-- 0xFC ACDI Manufacturer -->
+                    <div class="addr-tab-pane" id="pane-0xfc">
+                        <details class="info-box addr-info">
+                            <summary>ACDI Manufacturer &mdash; fixed virtual addresses for the CDI &lt;identification&gt; static fields.</summary>
+                            <div class="addr-info-detail">
+                                Without this space a configuration tool would have to parse the CDI XML to locate
+                                the manufacturer name, model, and version strings. This space provides a shortcut:
+                                it maps the static &lt;identification&gt; data to well-known fixed addresses so tools
+                                can read them directly without any XML parsing. The values come from the SNIP
+                                panel and are stored as null-terminated strings at standard offsets defined by the
+                                OpenLCB specification.
+                            </div>
+                        </details>
+                        <div class="form-row">
+                            <label>Present <span class="tag tag-fixed">fixed</span> <span class="tag tag-auto">auto-handled</span></label>
+                            <input type="checkbox" checked disabled>
+                            <span class="help">ACDI Manufacturer space is always present — holds SNIP manufacturer data.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Read Only <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" checked disabled>
+                            <span class="help">Manufacturer data is read-only; set via SNIP fields.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address Valid <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" disabled>
+                            <span class="help">This space always starts at address zero.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address <span class="tag tag-fixed">fixed</span></label>
+                            <input type="text" value="0x0 (0)" disabled>
+                            <span class="help">Starting address (fixed at zero).</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Highest Address <span class="tag tag-fixed">fixed</span></label>
+                            <input type="text" value="0x7C (124)" disabled>
+                            <span class="help">Fixed at 0x7C (124) — covers SNIP version + manufacturer name + model + HW/SW version.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xfc-desc">Description <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xfc-desc" value="" placeholder="Optional (max 59 chars)" maxlength="59">
+                            <span class="help">Optional text describing this address space to configuration tools.</span>
+                        </div>
+                    </div>
+
+                    <!-- 0xFB ACDI User -->
+                    <div class="addr-tab-pane" id="pane-0xfb">
+                        <details class="info-box addr-info">
+                            <summary>ACDI User &mdash; fixed virtual addresses for the user name and description fields.</summary>
+                            <div class="addr-info-detail">
+                                Without this space a configuration tool would have to parse the CDI XML to find
+                                the configuration memory addresses for the user name and user description. This
+                                space provides a shortcut: it maps those fields to well-known fixed virtual
+                                addresses so tools can read and write them directly without any XML parsing.
+                                The library maps this space to the same backing store as the 0xFD configuration
+                                space at the User Name Address offset, so both spaces access the same physical data.
+                            </div>
+                        </details>
+                        <div class="form-row">
+                            <label>Present <span class="tag tag-fixed">fixed</span> <span class="tag tag-auto">auto-handled</span></label>
+                            <input type="checkbox" checked disabled>
+                            <span class="help">ACDI User space is present when Memory Configuration is enabled.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Read Only <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" disabled>
+                            <span class="help">User data is writable — holds user name and description.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address Valid <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" disabled>
+                            <span class="help">This space always starts at address zero.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address <span class="tag tag-fixed">fixed</span></label>
+                            <input type="text" value="0x0 (0)" disabled>
+                            <span class="help">Starting address (fixed at zero).</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Highest Address <span class="tag tag-fixed">fixed</span></label>
+                            <input type="text" value="0x7F (127)" disabled>
+                            <span class="help">Fixed at 0x7F (127) — covers user version + user name + user description.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xfb-desc">Description <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xfb-desc" value="" placeholder="Optional (max 59 chars)" maxlength="59">
+                            <span class="help">Optional text describing this address space to configuration tools.</span>
+                        </div>
+                    </div>
+
+                    <!-- 0xFA Train FDI -->
+                    <div class="addr-tab-pane" id="pane-0xfa">
+                        <details class="info-box addr-info">
+                            <summary>Train FDI &mdash; read-only XML describing the train's function map for throttles.</summary>
+                            <div class="addr-info-detail">
+                                The Function Description Information space works like CDI but for train nodes.
+                                Throttles read this XML to discover which functions a train supports (headlight,
+                                bell, horn, etc.) and how to display them. The content is a null-terminated UTF-8
+                                XML document generated from the FDI file you load. The address range is set
+                                automatically when you load an FDI file.
+                            </div>
+                        </details>
+                        <div class="form-row">
+                            <label>Present <span class="tag tag-fixed">fixed</span> <span class="tag tag-auto">auto-handled</span></label>
+                            <input type="checkbox" checked disabled>
+                            <span class="help">Train FDI space is present when Train Control is enabled.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Read Only <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" checked disabled>
+                            <span class="help">FDI data is read-only; configuration tools read it to discover train functions.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address Valid <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" disabled>
+                            <span class="help">FDI space always starts at address zero.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address <span class="tag tag-fixed">fixed</span></label>
+                            <input type="text" value="0x0 (0)" disabled>
+                            <span class="help">Starting address (fixed at zero for FDI space).</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Highest Address <span class="tag tag-auto">auto</span></label>
+                            <input type="text" id="addr-0xfa-high" value="(from FDI)" disabled>
+                            <span class="help">Automatically set to FDI byte count minus 1 when an FDI file is loaded.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xfa-desc">Description <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xfa-desc" value="" placeholder="Optional (max 59 chars)" maxlength="59">
+                            <span class="help">Optional text describing this address space to configuration tools.</span>
+                        </div>
+                        <div class="info-box error file-drop hidden" id="fdi-needed-0xfa" data-file-type="fdi">
+                            A valid FDI XML file is required to set the address range.
+                            <strong>Click here to browse</strong> or <strong>drag &amp; drop</strong> an FDI XML file.
+                        </div>
+                    </div>
+
+                    <!-- 0xF9 Train Function Config -->
+                    <div class="addr-tab-pane" id="pane-0xf9">
+                        <details class="info-box addr-info">
+                            <summary>Train Function Config &mdash; writable space for train function states (speed, lights, sound).</summary>
+                            <div class="addr-info-detail">
+                                Throttles write to this space to control train functions such as speed, direction,
+                                headlight, bell, and horn. Each function occupies a fixed-size slot at a known
+                                offset. The FDI describes which functions exist and their offsets so throttles
+                                know where to write. Set the Highest Address large enough to cover all function
+                                slots your train node supports.
+                            </div>
+                        </details>
+                        <div class="form-row">
+                            <label>Present <span class="tag tag-fixed">fixed</span> <span class="tag tag-auto">auto-handled</span></label>
+                            <input type="checkbox" checked disabled>
+                            <span class="help">Train function config space is present when Train Control is enabled.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Read Only <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" disabled>
+                            <span class="help">Function configuration is writable — throttles can modify function states.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address Valid <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" disabled>
+                            <span class="help">This space always starts at address zero.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address <span class="tag tag-fixed">fixed</span></label>
+                            <input type="text" value="0x0 (0)" disabled>
+                            <span class="help">Starting address (fixed at zero).</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xf9-high">Highest Address <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xf9-high" value="0x0100">
+                            <span class="help">Last byte address for train function configuration data.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xf9-desc">Description <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xf9-desc" value="" placeholder="Optional (max 59 chars)" maxlength="59">
+                            <span class="help">Optional text describing this address space to configuration tools.</span>
+                        </div>
+                    </div>
+
+                    <!-- 0xEF Firmware -->
+                    <div class="addr-tab-pane" id="pane-0xef">
+                        <details class="info-box addr-info">
+                            <summary>Firmware Upgrade &mdash; writable space for over-the-network firmware updates.</summary>
+                            <div class="addr-info-detail">
+                                This space receives firmware image data during an upgrade. The upgrade protocol
+                                uses a freeze/write/unfreeze sequence: the upgrading tool freezes the space,
+                                streams the firmware binary in sequential write commands, then unfreezes to
+                                commit the image and reboot. The full 32-bit address range is advertised because
+                                the firmware tool manages addressing. Your Callbacks_freeze, Callbacks_write_firmware,
+                                and Callbacks_unfreeze implementations handle the platform-specific file I/O and
+                                flash operations.
+                            </div>
+                        </details>
+                        <div class="form-row">
+                            <label>Present <span class="tag tag-fixed">fixed</span> <span class="tag tag-auto">auto-handled</span></label>
+                            <input type="checkbox" checked disabled>
+                            <span class="help">Firmware space is present when Firmware Upgrade is enabled.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Read Only <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" disabled>
+                            <span class="help">Firmware space is writable to allow over-the-network updates.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address Valid <span class="tag tag-fixed">fixed</span></label>
+                            <input type="checkbox" disabled>
+                            <span class="help">Firmware space always starts at address zero.</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Low Address <span class="tag tag-fixed">fixed</span></label>
+                            <input type="text" value="0x0 (0)" disabled>
+                            <span class="help">Starting address (fixed at zero).</span>
+                        </div>
+                        <div class="form-row">
+                            <label>Highest Address <span class="tag tag-fixed">fixed</span></label>
+                            <input type="text" value="0xFFFFFFFF (4294967295)" disabled>
+                            <span class="help">Full 32-bit address range — firmware tools manage the actual range.</span>
+                        </div>
+                        <div class="form-row">
+                            <label for="addr-0xef-desc">Description <span class="tag tag-editable">user editable</span></label>
+                            <input type="text" id="addr-0xef-desc" value="" placeholder="Optional (max 59 chars)" maxlength="59">
+                            <span class="help">Optional text describing this address space to configuration tools.</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ── Buffer Pool Sizing ── -->
+            <section class="content-panel" id="panel-buffers">
+                <div class="panel-title">
+                    <h2>Buffer Pool Sizing</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="info-box">
+                        The library pre-allocates fixed pools of message buffers at startup.
+                        Each value sets the maximum buffer depth for that pool.
+                        Larger pools handle more simultaneous traffic but use more RAM.
+                        The defaults work well for most nodes.
+                    </div>
+                    <div class="form-row">
+                        <label for="buf-basic">BASIC (16 Bytes each)</label>
+                        <input type="number" id="buf-basic" value="32" min="1">
+                        <span class="help">Maximum number of small buffers for protocol overhead and short CAN messages.</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="buf-datagram">DATAGRAM (72 Bytes each)</label>
+                        <input type="number" id="buf-datagram" value="4" min="1">
+                        <span class="help">Maximum number of buffers for addressed point-to-point datagram messages.</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="buf-snip">SNIP (256 Bytes each)</label>
+                        <input type="number" id="buf-snip" value="4" min="1">
+                        <span class="help">Maximum number of buffers for Simple Node Information Protocol responses.</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="buf-stream">STREAM (512 Bytes each)</label>
+                        <input type="number" id="buf-stream" value="0" min="0">
+                        <span class="help">Maximum number of buffers for large streaming data transfers. 0 is fine if Streaming is not enabled.</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="buf-nodes">Node Count</label>
+                        <input type="number" id="buf-nodes" value="1" min="1">
+                        <span class="help">Maximum number of virtual nodes your hardware can host. Train nodes each use one slot.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Event System (always visible, fields disabled when Events unchecked) ── -->
+            <section class="content-panel" id="panel-events">
+                <div class="panel-title">
+                    <h2>Event System Buffers</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="info-box" id="events-disabled-msg" style="display:none;">
+                        Events protocol disabled — library defaults (0 producers, 0 consumers,
+                        1 producer range, 1 consumer range) will be used in generated code.
+                        Enable Event Exchange in Feature Flags to configure.
+                    </div>
+                    <div class="info-box">
+                        The library pre-allocates fixed buffers for event IDs at startup.
+                        Set these to the maximum number of events your node will need.
+                    </div>
+                    <div class="form-row">
+                        <label for="evt-producers">Producer Count</label>
+                        <input type="number" id="evt-producers" value="64" min="0">
+                        <span class="help">Maximum number of unique event IDs this node can produce (send out to the network).</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="evt-producer-ranges">Producer Range Count</label>
+                        <input type="number" id="evt-producer-ranges" value="5" min="1">
+                        <span class="help">Maximum number of contiguous event ID ranges for produced events. Must be &ge; 1.</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="evt-consumers">Consumer Count</label>
+                        <input type="number" id="evt-consumers" value="64" min="0">
+                        <span class="help">Maximum number of unique event IDs this node can consume (listen for from the network).</span>
+                    </div>
+                    <div class="form-row">
+                        <label for="evt-consumer-ranges">Consumer Range Count</label>
+                        <input type="number" id="evt-consumer-ranges" value="5" min="1">
+                        <span class="help">Maximum number of contiguous event ID ranges for consumed events. Must be &ge; 1.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Callbacks ── -->
+            <section class="content-panel" id="panel-callbacks">
+                <div class="panel-title">
+                    <h2>Callbacks</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="info-box">
+                        Callbacks are functions the library calls when specific events happen (message received,
+                        timer tick, login complete, etc.). Mandatory callbacks are always included. Optional
+                        callbacks appear based on which features you enabled.
+                    </div>
+                    <div class="checkbox-group" id="callbacks-list"></div>
+                </div>
+            </section>
+
+            <!-- ── Preview ── -->
+            <section class="content-panel" id="panel-preview">
+                <div class="panel-title">
+                    <h2>Preview openlcb_user_config</h2>
+                    <button class="btn btn-primary" id="btn-refresh-preview" style="margin-left:auto;">Refresh</button>
+                </div>
+                <div class="panel-body">
+                    <div class="info-box">
+                        Generated output based on your current settings.
+                        Click <strong>Refresh</strong> to rebuild after making changes.
+                    </div>
+                    <div class="preview-tab-bar">
+                        <button class="preview-tab-btn active" onclick="switchPreviewTab('user-config-h')">openlcb_user_config.h</button>
+                        <button class="preview-tab-btn" onclick="switchPreviewTab('user-config-c')">openlcb_user_config.c</button>
+                    </div>
+                    <pre class="preview-code active" id="preview-user-config-h"></pre>
+                    <pre class="preview-code" id="preview-user-config-c"></pre>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <!-- ── Summary & Validation — fixed at bottom ── -->
+    <section class="panel" id="panel-validation">
+        <div class="panel-title">
+            <h2>Summary &amp; Validation</h2>
+            <span class="badge" id="badge-validation">—</span>
+        </div>
+        <div class="panel-body">
+            <button class="btn btn-primary" onclick="runValidation()" style="margin-bottom:12px;">Run Validation</button>
+            <ul class="validation-list" id="validation-list">
+                <li style="color:var(--text-2);">Click "Run Validation" to check your configuration.</li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer id="app-footer">
+    Node Builder — OpenLcbCLib &middot; Generates openlcb_user_config.h/.c for your OpenLCB node
+</footer>
+
+<!-- JS modules — order matters: utils first, app last -->
+<script src="js/utils.js"></script>
+<script src="js/protocol_support.js"></script>
+<script src="js/feature_flags.js"></script>
+<script src="js/cdi_processing.js"></script>
+<script src="js/fdi_processing.js"></script>
+<script src="js/callbacks.js"></script>
+<script src="js/address_spaces.js"></script>
+<script src="js/validation.js"></script>
+<script src="js/codegen.js"></script>
+<script src="js/roundtrip.js"></script>
+<script src="js/persistence.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

@@ -97,6 +97,8 @@ static uint16_t listener_set_alias_alias = 0;
 static bool listener_clear_alias_called = false;
 static uint16_t listener_clear_alias_alias = 0;
 
+static bool listener_flush_aliases_called = false;
+
 void _mock_listener_set_alias(node_id_t node_id, uint16_t alias)
 {
 
@@ -111,6 +113,13 @@ void _mock_listener_clear_alias_by_alias(uint16_t alias)
 
     listener_clear_alias_called = true;
     listener_clear_alias_alias = alias;
+
+}
+
+void _mock_listener_flush_aliases(void)
+{
+
+    listener_flush_aliases_called = true;
 
 }
 
@@ -138,6 +147,7 @@ const interface_can_rx_message_handler_t _can_rx_message_handler_interface_with_
     .get_current_tick = &_mock_get_current_tick,
     .listener_set_alias = &_mock_listener_set_alias,
     .listener_clear_alias_by_alias = &_mock_listener_clear_alias_by_alias,
+    .listener_flush_aliases = &_mock_listener_flush_aliases,
 };
 
 /*******************************************************************************
@@ -176,6 +186,7 @@ void _global_reset_variables(void)
     listener_set_alias_alias = 0;
     listener_clear_alias_called = false;
     listener_clear_alias_alias = 0;
+    listener_flush_aliases_called = false;
 }
 
 // Helper: Count items in OpenLcbBufferList (API doesn't provide count())
@@ -2143,6 +2154,142 @@ TEST(CanRxMessageHandler, cid_frame_null)
     CanRxMessageHandler_cid_frame(NULL);
 
     EXPECT_EQ(CanBufferFifo_get_allocated_count(), 0);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+/**
+ * Test: Global AME flushes listener alias table (CanFrameTransferS §6.2.3)
+ *
+ * When a global AME (empty payload) arrives, all cached listener aliases
+ * must be discarded.  The AMD replies triggered by the global AME will
+ * re-populate them via set_alias.
+ */
+TEST(CanRxMessageHandler, ame_global_flushes_listener_aliases)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Register permitted aliases so the AME handler has work to do
+    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping1->is_permitted = true;
+
+    // Global AME (no payload)
+    CanUtilities_load_can_message(&can_msg, 0x17020AAA, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0);
+
+    CanRxMessageHandler_ame_frame(&can_msg);
+
+    // Verify listener_flush_aliases was called
+    EXPECT_TRUE(listener_flush_aliases_called);
+
+    // Clean up AMD responses
+    while (CanBufferFifo_get_allocated_count() > 0) {
+
+        can_msg_t *response = CanBufferFifo_pop();
+
+        if (response) {
+
+            CanBufferStore_free_buffer(response);
+
+        }
+
+    }
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+/**
+ * Test: Targeted AME does NOT flush listener aliases
+ *
+ * Only a global AME (empty payload) triggers the flush.  A targeted AME
+ * (with a specific Node ID) should not affect the listener table.
+ */
+TEST(CanRxMessageHandler, ame_targeted_does_not_flush_listener_aliases)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Register a permitted alias
+    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping1->is_permitted = true;
+
+    // Targeted AME with specific Node ID in payload
+    CanUtilities_load_can_message(&can_msg, 0x17020AAA, 6,
+                                   0x05, 0x01, 0x01, 0x01, 0x01, 0x01, 0, 0);
+
+    CanRxMessageHandler_ame_frame(&can_msg);
+
+    // Flush should NOT have been called for a targeted AME
+    EXPECT_FALSE(listener_flush_aliases_called);
+
+    // Clean up AMD response
+    while (CanBufferFifo_get_allocated_count() > 0) {
+
+        can_msg_t *response = CanBufferFifo_pop();
+
+        if (response) {
+
+            CanBufferStore_free_buffer(response);
+
+        }
+
+    }
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+/**
+ * Test: Global AME without listener interface does not crash
+ *
+ * When listener_flush_aliases is NULL (non-train build), the global AME
+ * handler must not crash.
+ */
+TEST(CanRxMessageHandler, ame_global_no_listener_interface_no_crash)
+{
+
+    _global_initialize();  // Uses interface WITHOUT listener callbacks
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping1->is_permitted = true;
+
+    // Global AME (no payload)
+    CanUtilities_load_can_message(&can_msg, 0x17020AAA, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0);
+
+    // Should not crash even though listener_flush_aliases is NULL
+    CanRxMessageHandler_ame_frame(&can_msg);
+
+    // Should still generate AMD responses
+    EXPECT_GE(CanBufferFifo_get_allocated_count(), 1);
+
+    // Clean up
+    while (CanBufferFifo_get_allocated_count() > 0) {
+
+        can_msg_t *response = CanBufferFifo_pop();
+
+        if (response) {
+
+            CanBufferStore_free_buffer(response);
+
+        }
+
+    }
 
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();

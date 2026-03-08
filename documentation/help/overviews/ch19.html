@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 19 — Alias Mapping: Global Table | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 19 — Alias Mapping: Global Table</h1>
+
+        <p>On a CAN bus, every OpenLCB node is identified by a 48-bit Node ID, but CAN 2.0B frames only provide 12 bits for source addressing. The alias mapping table bridges this gap by maintaining a registry of 12-bit CAN alias to 48-bit Node ID pairs. This chapter covers the global alias mapping table implemented in <code>alias_mappings.h</code> and <code>alias_mappings.c</code>.</p>
+
+        <h2>19.1 The alias_mapping_t Structure</h2>
+        <p>Each entry in the alias mapping table is an <code>alias_mapping_t</code>:</p>
+
+        <pre><code>typedef struct alias_mapping_struct {
+    node_id_t node_id;        // Permanent 48-bit Node ID
+    uint16_t alias;           // Temporary 12-bit CAN alias (0x001-0xFFF)
+    uint8_t is_duplicate : 1; // Set by ISR when another node claims this alias
+    uint8_t is_permitted : 1; // Set after successful login (AMD transmitted)
+} alias_mapping_t;</code></pre>
+
+        <table>
+            <thead>
+                <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>node_id</code></td><td><code>node_id_t</code> (uint64_t)</td><td>The permanent 48-bit OpenLCB Node ID. Zero means the slot is empty.</td></tr>
+                <tr><td><code>alias</code></td><td><code>uint16_t</code></td><td>The temporary 12-bit CAN alias (valid range 0x001 - 0xFFF). Zero means empty.</td></tr>
+                <tr><td><code>is_duplicate</code></td><td>1-bit flag</td><td>Set by the CAN RX ISR when a frame arrives from another node using the same alias. The main loop reads this flag to trigger conflict resolution.</td></tr>
+                <tr><td><code>is_permitted</code></td><td>1-bit flag</td><td>Set after the node successfully transmits its AMD frame, meaning the alias is officially claimed.</td></tr>
+            </tbody>
+        </table>
+
+        <h2>19.2 The alias_mapping_info_t Container</h2>
+        <p>All mapping entries are held in a single static container:</p>
+
+        <pre><code>typedef struct alias_mapping_info_struct {
+    alias_mapping_t list[ALIAS_MAPPING_BUFFER_DEPTH]; // All registered mappings
+    bool has_duplicate_alias;                          // Fast-check flag
+} alias_mapping_info_t;</code></pre>
+
+        <p>The <code>ALIAS_MAPPING_BUFFER_DEPTH</code> macro defaults to <code>USER_DEFINED_NODE_BUFFER_DEPTH</code>, so there is one slot per virtual node. The <code>has_duplicate_alias</code> flag is a fast-check optimization: when set, at least one entry has <code>is_duplicate</code> set, and the main loop should scan the list to find and resolve the conflict.</p>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Why a separate fast-check flag?</div>
+            <p>Checking every entry's <code>is_duplicate</code> field on every main loop iteration is wasteful when conflicts are rare. The single <code>has_duplicate_alias</code> boolean lets the main loop skip the scan entirely in the common case. The ISR sets it; the main loop clears it after resolution.</p>
+        </div>
+
+        <h2>19.3 API Functions</h2>
+
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>AliasMappings_initialize()</code></td>
+                    <td>Zeros all entries and clears the duplicate flag. Call once at startup before any node operations.</td>
+                </tr>
+                <tr>
+                    <td><code>AliasMappings_register(alias, node_id)</code></td>
+                    <td>Registers a CAN alias / Node ID pair. Finds the first empty slot or updates an existing entry with the same Node ID. Returns a pointer to the entry, or NULL if the buffer is full or parameters are out of range.</td>
+                </tr>
+                <tr>
+                    <td><code>AliasMappings_unregister(alias)</code></td>
+                    <td>Removes the entry matching the given alias, clearing all four fields. Safe to call with an alias that does not exist.</td>
+                </tr>
+                <tr>
+                    <td><code>AliasMappings_find_mapping_by_alias(alias)</code></td>
+                    <td>Bidirectional lookup: returns the entry for the given 12-bit alias, or NULL if not found.</td>
+                </tr>
+                <tr>
+                    <td><code>AliasMappings_find_mapping_by_node_id(node_id)</code></td>
+                    <td>Bidirectional lookup: returns the entry for the given 48-bit Node ID, or NULL if not found.</td>
+                </tr>
+                <tr>
+                    <td><code>AliasMappings_set_has_duplicate_alias_flag()</code></td>
+                    <td>Signals the main loop that an incoming message used one of our reserved aliases. Does NOT automatically trigger reallocation.</td>
+                </tr>
+                <tr>
+                    <td><code>AliasMappings_clear_has_duplicate_alias_flag()</code></td>
+                    <td>Clears the duplicate flag after the main loop has resolved the conflict.</td>
+                </tr>
+                <tr>
+                    <td><code>AliasMappings_flush()</code></td>
+                    <td>Clears all mappings and resets all flags. Functionally identical to <code>initialize()</code> but intended for runtime use (system reset, test teardown).</td>
+                </tr>
+                <tr>
+                    <td><code>AliasMappings_get_alias_mapping_info()</code></td>
+                    <td>Returns a pointer to the internal <code>alias_mapping_info_t</code>. Intended for diagnostics and testing.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>19.4 Registration and Lookup</h2>
+        <p>The register function enforces one alias per Node ID. If a Node ID is already registered, calling <code>AliasMappings_register()</code> with a new alias silently replaces the old alias. This is the correct behavior during conflict recovery, where a node must adopt a new alias.</p>
+
+        <pre><code>// Registration algorithm:
+// 1. Validate alias is in range 0x001-0xFFF
+// 2. Validate node_id is in range 0x000000000001-0xFFFFFFFFFFFF
+// 3. Scan all ALIAS_MAPPING_BUFFER_DEPTH entries
+// 4. On first empty slot (alias==0) or matching Node ID: store and return
+// 5. If no slot found: return NULL (buffer full)</code></pre>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Caller Must Check for NULL</div>
+            <p>All lookup and register functions return NULL when the entry is not found or the buffer is full. Callers must always check the return value before dereferencing.</p>
+        </div>
+
+        <h2>19.5 Duplicate Alias Detection</h2>
+        <p>Duplicate detection follows a two-phase pattern dictated by the ISR/main-loop architecture:</p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant ISR as CAN RX ISR
+    participant Table as Alias Mapping Table
+    participant Main as Main Loop
+
+    ISR->>Table: Frame arrives with alias 0x3AB
+    Table->>Table: Find entry with alias 0x3AB
+    Note over Table: Entry found: set is_duplicate = true
+    Table->>Table: Set has_duplicate_alias = true
+    ISR-->>Main: (returns to main loop)
+
+    Main->>Table: Check has_duplicate_alias?
+    Note over Main: Flag is true -- scan list
+    Main->>Table: Find entry with is_duplicate == true
+    Note over Main: Found node with alias 0x3AB
+    Main->>Main: Reset node: unregister old alias,<br/>re-seed, restart login
+    Main->>Table: AliasMappings_clear_has_duplicate_alias_flag()
+        </div>
+
+        <h2>19.6 Alias Lifecycle</h2>
+        <p>An alias transitions through several states during its lifetime on the CAN bus:</p>
+
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> Generate: Power-on / conflict
+    Generate --> Check: LFSR produces 12-bit alias
+    Check --> Reserved: CID7, CID6, CID5, CID4 sent<br/>Wait 200ms, no objection
+    Check --> Generate: Objection received<br/>during CID or wait
+    Reserved --> Defined: RID sent, then AMD sent<br/>is_permitted = true
+    Defined --> Released: AMR sent or<br/>alias conflict detected
+    Released --> [*]
+
+    note right of Generate
+        Seed derived from Node ID.
+        LFSR advances on each retry.
+    end note
+
+    note right of Check
+        Four CID frames broadcast
+        12 bits of Node ID each.
+        200ms wait for collisions.
+    end note
+
+    note right of Defined
+        Normal operation.
+        Alias is in the mapping table
+        with is_permitted = true.
+    end note
+        </div>
+
+        <table>
+            <thead>
+                <tr><th>State</th><th>CAN Frame</th><th>Table Action</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Generate</td><td>-</td><td><code>AliasMappings_register(alias, node_id)</code> -- reserves the slot</td></tr>
+                <tr><td>Check (CID)</td><td>CID7, CID6, CID5, CID4</td><td>Entry exists with <code>is_permitted = false</code></td></tr>
+                <tr><td>Reserve</td><td>RID</td><td>No table change; alias is now claimed</td></tr>
+                <tr><td>Define</td><td>AMD</td><td><code>is_permitted = true</code></td></tr>
+                <tr><td>Release</td><td>AMR</td><td><code>AliasMappings_unregister(alias)</code> -- clears the slot</td></tr>
+            </tbody>
+        </table>
+
+        <h2>19.7 Thread Safety</h2>
+        <p>The alias mapping table is shared between the CAN RX interrupt (which sets <code>is_duplicate</code> and <code>has_duplicate_alias</code>) and the main loop (which reads and clears these flags, registers and unregisters entries). This makes it one of the critical shared data structures described in <a href="ch06.html">Chapter 6</a>.</p>
+
+        <table>
+            <thead>
+                <tr><th>Context</th><th>Operations</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>CAN RX ISR</strong></td><td>Reads entries (find by alias), sets <code>is_duplicate</code>, sets <code>has_duplicate_alias</code></td></tr>
+                <tr><td><strong>Main Loop</strong></td><td>Registers/unregisters entries, clears flags, performs lookups</td></tr>
+            </tbody>
+        </table>
+
+        <p>The <code>lock_shared_resources()</code> / <code>unlock_shared_resources()</code> mechanism must protect accesses from the main loop when the ISR might modify the same data. On bare-metal platforms, this typically means disabling CAN RX interrupts during main-loop table operations.</p>
+
+        <h2>19.8 Source Files</h2>
+        <table>
+            <thead>
+                <tr><th>File</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>drivers/canbus/alias_mappings.h</code></td><td>Public API declarations</td></tr>
+                <tr><td><code>drivers/canbus/alias_mappings.c</code></td><td>Implementation -- single static <code>alias_mapping_info_t</code> instance, linear scan</td></tr>
+                <tr><td><code>drivers/canbus/can_types.h</code></td><td>Type definitions for <code>alias_mapping_t</code> and <code>alias_mapping_info_t</code></td></tr>
+            </tbody>
+        </table>
+
+        <div class="chapter-nav">
+            <a href="ch18.html">&larr; Prev: Ch 18 — Broadcast Time</a>
+            <a href="ch20.html">Next: Ch 20 — Listener Aliases &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

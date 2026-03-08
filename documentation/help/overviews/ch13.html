@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 13 — Event Transport Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html" class="active">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 13 — Event Transport Protocol</h1>
+
+        <p>
+            The Event Transport protocol handles producer/consumer identification, event reports,
+            and learn/teach operations. Each node maintains lists of events it produces and consumes,
+            and the protocol handler automatically responds to identification queries.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/protocol_event_transport.c</code>,
+            <code>src/openlcb/protocol_event_transport.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>13.1 Consumer/Producer Identified Messages</h2>
+
+        <p>
+            When a node receives an Identify Consumer or Identify Producer request, it checks
+            whether the requested event ID is in its consumer or producer list. If found, it
+            responds with the appropriate Identified message including the event's current state:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>State</th><th>Consumer MTI</th><th>Producer MTI</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Unknown</td><td>0x04C7 Consumer Identified Unknown</td><td>0x0547 Producer Identified Unknown</td></tr>
+                <tr><td>Set (active)</td><td>0x04C4 Consumer Identified Set</td><td>0x0544 Producer Identified Set</td></tr>
+                <tr><td>Clear (inactive)</td><td>0x04C5 Consumer Identified Clear</td><td>0x0545 Producer Identified Clear</td></tr>
+                <tr><td>Reserved</td><td>0x04C6 Consumer Identified Reserved</td><td>0x0546 Producer Identified Reserved</td></tr>
+                <tr><td>Range</td><td>0x04A4 Consumer Range Identified</td><td>0x0524 Producer Range Identified</td></tr>
+            </tbody>
+        </table>
+
+        <p>
+            The event state is tracked per-event in the node's producer/consumer lists. The
+            functions <code>extract_consumer_event_status_mti()</code> and
+            <code>extract_producer_event_status_mti()</code> return the correct MTI based on
+            the stored state.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>13.2 Identify Events: Multi-Message Enumeration</h2>
+
+        <p>
+            The Identify Events message (global 0x0970 or addressed 0x0968) requests a node to
+            report all events it produces and consumes. This is a multi-message response that
+            uses the enumerate flag:
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Requester
+    participant Node
+    participant Dispatcher
+
+    Requester->>Node: Identify Events (0x0970)
+
+    loop For each producer event
+        Node->>Dispatcher: set enumerate=true, valid=true
+        Dispatcher-->>Requester: Producer Identified (0x0544/0x0545/0x0547)
+    end
+
+    loop For each consumer event
+        Node->>Dispatcher: set enumerate=true, valid=true
+        Dispatcher-->>Requester: Consumer Identified (0x04C4/0x04C5/0x04C7)
+    end
+
+    Note over Node: Clear enumerate flag
+        </div>
+
+        <p>
+            The handler walks through all producer events first, then all consumer events, using
+            an internal index that persists across re-enumeration calls. When the last event has
+            been sent, the enumerate flag is cleared and the dispatcher advances to the next node.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>13.3 Event Ranges</h2>
+
+        <p>
+            Event ranges use a power-of-2 encoding where the lowest set bit in the Event ID
+            indicates the range size. For example, an Event ID of <code>0x0501010100FF0100</code>
+            with the lowest set bit at position 8 covers a 256-event range. Range messages allow
+            a single response to cover many events.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>13.4 Learn Event</h2>
+
+        <p>
+            The Learn Event message (MTI 0x0594) carries an Event ID that should be stored by
+            nodes in "learn mode." The handler extracts the Event ID and forwards it to the
+            optional <code>on_event_learn</code> application callback. No automatic response is generated.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>13.5 PC Event Report (PCER)</h2>
+
+        <p>
+            The PC Event Report (MTI 0x05B4) announces that an event has occurred on the network.
+            The handler:
+        </p>
+
+        <ol>
+            <li>Extracts the 8-byte Event ID from the payload.</li>
+            <li>Searches the node's consumer list for a matching event.</li>
+            <li>If found, fires <code>on_consumed_event_pcer</code> with the event index and ID.</li>
+            <li>If not found, fires <code>on_pc_event_report</code> (generic notification).</li>
+        </ol>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Producer as Producer Node
+    participant Network
+    participant Consumer as Consumer Node
+
+    Producer->>Network: PC Event Report (Event ID)
+    Network->>Consumer: PC Event Report (Event ID)
+    Note over Consumer: Search consumer list
+    alt Event found in list
+        Consumer->>Consumer: on_consumed_event_pcer(index, event_id)
+    else Not in list
+        Consumer->>Consumer: on_pc_event_report(event_id)
+    end
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>13.6 PCER with Payload</h2>
+
+        <p>
+            The PCER with Payload variant (MTI 0x05F4) carries additional data bytes beyond the
+            8-byte Event ID. This is used for extended event information. The handler forwards
+            the event ID and extra payload to the <code>on_pc_event_report_with_payload</code>
+            callback.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>13.7 Application Callbacks</h2>
+
+        <p>
+            All event transport callbacks are optional (NULL is safely ignored). They are defined
+            in <code>interface_openlcb_protocol_event_transport_t</code>:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Callback</th><th>When Fired</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>on_consumed_event_identified</code></td><td>A matching consumer event identification was received</td></tr>
+                <tr><td><code>on_consumed_event_pcer</code></td><td>A PCER matching one of our consumed events arrived</td></tr>
+                <tr><td><code>on_consumer_range_identified</code></td><td>Consumer Range Identified received</td></tr>
+                <tr><td><code>on_producer_range_identified</code></td><td>Producer Range Identified received</td></tr>
+                <tr><td><code>on_event_learn</code></td><td>Learn Event received</td></tr>
+                <tr><td><code>on_pc_event_report</code></td><td>PCER not matching any consumed event</td></tr>
+                <tr><td><code>on_pc_event_report_with_payload</code></td><td>PCER with payload received</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch12.html">Previous: Ch 12 — Message Network</a>
+            <a href="ch14.html">Next: Ch 14 — Datagram Protocol</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

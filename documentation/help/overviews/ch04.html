@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 4 — OpenLCB Buffer System | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 4 — OpenLCB Buffer System</h1>
+        <p>The buffer system is the memory backbone of the library. It provides three cooperating modules: a <strong>buffer store</strong> (pool allocator), a <strong>buffer FIFO</strong> (ordered message queue), and a <strong>buffer list</strong> (random-access assembly area). All memory is statically allocated at compile time.</p>
+
+        <h2>4.1 The message_buffer_t Master Structure</h2>
+        <p>A single <code>message_buffer_t</code> instance holds all message structures and payload pools:</p>
+
+        <pre><code>typedef struct {
+    openlcb_msg_array_t messages;            // Array of openlcb_msg_t[LEN_MESSAGE_BUFFER]
+    openlcb_basic_data_buffer_t basic;       // Pool of BASIC payloads (16 bytes each)
+    openlcb_datagram_data_buffer_t datagram; // Pool of DATAGRAM payloads (72 bytes each)
+    openlcb_snip_data_buffer_t snip;         // Pool of SNIP payloads (256 bytes each)
+    openlcb_stream_data_buffer_t stream;     // Pool of STREAM payloads (512 bytes each)
+} message_buffer_t;</code></pre>
+
+        <p>The total number of message structures equals the sum of all four pool depths:</p>
+        <pre><code>#define LEN_MESSAGE_BUFFER (USER_DEFINED_BASIC_BUFFER_DEPTH \
+    + USER_DEFINED_DATAGRAM_BUFFER_DEPTH \
+    + USER_DEFINED_SNIP_BUFFER_DEPTH \
+    + USER_DEFINED_STREAM_BUFFER_DEPTH)</code></pre>
+
+        <h2>4.2 Four Segregated Payload Pools</h2>
+        <p>Each message structure is permanently paired with one payload buffer from its pool. During initialization, each <code>openlcb_msg_t.payload</code> pointer is wired to its corresponding payload slot. This pairing never changes.</p>
+
+        <table>
+            <thead>
+                <tr><th>Pool</th><th>Payload Size</th><th>Depth Macro</th><th>Typical Depth</th><th>Use Cases</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>BASIC</td><td>16 bytes</td><td><code>USER_DEFINED_BASIC_BUFFER_DEPTH</code></td><td>32</td><td>Events, Verify Node ID, Protocol Support, OIR</td></tr>
+                <tr><td>DATAGRAM</td><td>72 bytes</td><td><code>USER_DEFINED_DATAGRAM_BUFFER_DEPTH</code></td><td>4</td><td>Config memory read/write, datagram protocol</td></tr>
+                <tr><td>SNIP</td><td>256 bytes</td><td><code>USER_DEFINED_SNIP_BUFFER_DEPTH</code></td><td>4</td><td>SNIP replies, events with payload</td></tr>
+                <tr><td>STREAM</td><td>512 bytes</td><td><code>USER_DEFINED_STREAM_BUFFER_DEPTH</code></td><td>1</td><td>Stream data transfers</td></tr>
+            </tbody>
+        </table>
+
+        <div class="mermaid">
+flowchart LR
+    subgraph Store["message_buffer_t"]
+        direction TB
+        MSG["openlcb_msg_t array<br/>[LEN_MESSAGE_BUFFER]"]
+        B["BASIC pool<br/>16 bytes x N"]
+        D["DATAGRAM pool<br/>72 bytes x N"]
+        S["SNIP pool<br/>256 bytes x N"]
+        ST["STREAM pool<br/>512 bytes x N"]
+    end
+
+    MSG -->|"payload ptr"| B
+    MSG -->|"payload ptr"| D
+    MSG -->|"payload ptr"| S
+    MSG -->|"payload ptr"| ST
+
+    style Store fill:#e3f2fd,stroke:#1565c0
+    style B fill:#c8e6c9,stroke:#2e7d32
+    style D fill:#fff9c4,stroke:#f57f17
+    style S fill:#ffe0b2,stroke:#e65100
+    style ST fill:#e1bee7,stroke:#7b1fa2
+        </div>
+
+        <h2>4.3 Buffer Store API</h2>
+
+        <h3>4.3.1 Initialization</h3>
+        <pre><code>void OpenLcbBufferStore_initialize(void);</code></pre>
+        <p>Clears all message structures, wires payload pointers, and resets counters. Must be called once at startup before any other buffer operation.</p>
+
+        <h3>4.3.2 Allocation and Deallocation</h3>
+        <pre><code>openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type);
+void OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg);
+void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *msg);</code></pre>
+
+        <ul>
+            <li><code>allocate_buffer()</code>: Scans the specified pool for the first non-allocated slot, marks it allocated with <code>reference_count = 1</code>, clears the payload, and returns the pointer. Returns <code>NULL</code> if the pool is exhausted.</li>
+            <li><code>free_buffer()</code>: Decrements the reference count. When it reaches zero, clears the message structure and marks it as not allocated. Passing <code>NULL</code> is safe.</li>
+            <li><code>inc_reference_count()</code>: Increments the reference count, allowing the same buffer to be held by multiple queues simultaneously (e.g., sibling dispatch sends a loopback copy while the original is still in the TX pipeline).</li>
+        </ul>
+
+        <h3>4.3.3 Reference Counting Lifecycle</h3>
+
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> Free : Pool initialized
+    Free --> Allocated : allocate_buffer()<br/>ref_count = 1
+    Allocated --> Shared : inc_reference_count()<br/>ref_count++
+    Shared --> Shared : inc_reference_count()<br/>ref_count++
+    Shared --> Allocated : free_buffer()<br/>ref_count-- (still > 0)
+    Allocated --> Free : free_buffer()<br/>ref_count = 0
+    Shared --> Free : free_buffer()<br/>ref_count = 0
+        </div>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Critical: Reference Count Correctness</div>
+            <p>Every code path that receives a buffer pointer must eventually call <code>free_buffer()</code> exactly once. Forgetting to free causes a pool leak; double-freeing corrupts the pool. When using <code>inc_reference_count()</code>, each holder must independently call <code>free_buffer()</code>.</p>
+        </div>
+
+        <h3>4.3.4 Peak Allocation Counters</h3>
+        <p>The buffer store tracks both current and peak allocation counts for each pool type:</p>
+
+        <pre><code>uint16_t OpenLcbBufferStore_basic_messages_allocated(void);
+uint16_t OpenLcbBufferStore_basic_messages_max_allocated(void);
+uint16_t OpenLcbBufferStore_datagram_messages_allocated(void);
+uint16_t OpenLcbBufferStore_datagram_messages_max_allocated(void);
+uint16_t OpenLcbBufferStore_snip_messages_allocated(void);
+uint16_t OpenLcbBufferStore_snip_messages_max_allocated(void);
+uint16_t OpenLcbBufferStore_stream_messages_allocated(void);
+uint16_t OpenLcbBufferStore_stream_messages_max_allocated(void);
+void OpenLcbBufferStore_clear_max_allocated(void);</code></pre>
+
+        <p>Use the <code>*_max_allocated()</code> functions during development to determine if your pool depths are adequate. If the peak matches the pool depth, the pool was at capacity and messages may have been dropped.</p>
+
+        <h2>4.4 Buffer FIFO</h2>
+        <p>The FIFO is a circular buffer of <code>openlcb_msg_t</code> pointers. It serves as the primary message queue between the transport layer (producer) and the main state machine (consumer).</p>
+
+        <h3>4.4.1 Circular Buffer Design</h3>
+        <p>Uses one extra slot so that <code>head == tail</code> always means empty (no separate count or full flag needed).</p>
+
+        <h3>4.4.2 API</h3>
+        <pre><code>void OpenLcbBufferFifo_initialize(void);
+openlcb_msg_t *OpenLcbBufferFifo_push(openlcb_msg_t *new_msg);
+openlcb_msg_t *OpenLcbBufferFifo_pop(void);
+bool OpenLcbBufferFifo_is_empty(void);
+uint16_t OpenLcbBufferFifo_get_allocated_count(void);
+void OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(uint16_t alias);
+openlcb_msg_t *OpenLcbBufferFifo_push_to_head(openlcb_msg_t *new_msg);</code></pre>
+
+        <ul>
+            <li><code>push()</code>: Adds a message to the tail (back) of the FIFO. Returns the message pointer on success, <code>NULL</code> if full.</li>
+            <li><code>pop()</code>: Removes and returns the oldest message from the head (front). Returns <code>NULL</code> if empty.</li>
+            <li><code>push_to_head()</code>: Inserts at the head so the message becomes the next one popped. Used by sibling dispatch to ensure loopback copies are processed immediately.</li>
+            <li><code>check_and_invalidate_messages_by_source_alias()</code>: Walks the FIFO and sets <code>state.invalid</code> on any message whose <code>source_alias</code> matches the given alias. Used when an AMR (Alias Map Reset) frame arrives -- stale messages from the departed node must not be processed.</li>
+        </ul>
+
+        <h2>4.5 Buffer List</h2>
+        <p>The buffer list is a fixed-size array of <code>openlcb_msg_t</code> pointers supporting random access and attribute-based search. It is used primarily for multi-frame message assembly where incoming CAN frames must be matched to an in-progress message by source alias, dest alias, and MTI.</p>
+
+        <h3>4.5.1 API</h3>
+        <pre><code>void OpenLcbBufferList_initialize(void);
+openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg);
+openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti);
+openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg);
+openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index);
+bool OpenLcbBufferList_is_empty(void);
+void OpenLcbBufferList_check_timeouts(uint8_t current_tick);</code></pre>
+
+        <ul>
+            <li><code>add()</code>: Inserts into the first available (NULL) slot.</li>
+            <li><code>find()</code>: Searches for a message matching source_alias, dest_alias, and MTI. Used by the CAN RX handler to find the in-progress buffer for continuation frames.</li>
+            <li><code>release()</code>: Removes a message from the list (sets slot to NULL) without freeing it. The caller retains ownership.</li>
+            <li><code>check_timeouts()</code>: Scans for messages with <code>state.inprocess</code> set whose assembly has stalled (elapsed ticks exceed threshold). Frees stale messages to prevent pool leaks. Caller must hold the shared resource lock.</li>
+        </ul>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant CAN_RX as CAN RX Handler
+    participant List as Buffer List
+    participant Store as Buffer Store
+    participant FIFO as Buffer FIFO
+
+    Note over CAN_RX: First frame arrives
+    CAN_RX->>Store: allocate_buffer(SNIP)
+    Store-->>CAN_RX: msg_ptr (ref_count=1)
+    CAN_RX->>CAN_RX: Copy data, set inprocess=1
+    CAN_RX->>List: add(msg_ptr)
+
+    Note over CAN_RX: Middle frame arrives
+    CAN_RX->>List: find(src_alias, dst_alias, mti)
+    List-->>CAN_RX: msg_ptr
+    CAN_RX->>CAN_RX: Append data to payload
+
+    Note over CAN_RX: Final frame arrives
+    CAN_RX->>List: find(src_alias, dst_alias, mti)
+    List-->>CAN_RX: msg_ptr
+    CAN_RX->>CAN_RX: Append data, set inprocess=0
+    CAN_RX->>List: release(msg_ptr)
+    CAN_RX->>FIFO: push(msg_ptr)
+        </div>
+
+        <h2>4.6 Pool Exhaustion and Tuning</h2>
+        <p>When a pool is exhausted, <code>allocate_buffer()</code> returns <code>NULL</code>. The consequences depend on context:</p>
+
+        <table>
+            <thead>
+                <tr><th>Context</th><th>Symptom</th><th>Recovery</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>CAN RX (incoming message)</td>
+                    <td>Frame is dropped silently. Sender may retry (datagrams) or the message is lost (events).</td>
+                    <td>Increase the relevant pool depth.</td>
+                </tr>
+                <tr>
+                    <td>Protocol handler (outgoing reply)</td>
+                    <td>Reply cannot be constructed. Addressed messages may trigger an OIR from the remote node after timeout.</td>
+                    <td>Increase the relevant pool depth.</td>
+                </tr>
+                <tr>
+                    <td>Sibling dispatch (loopback copy)</td>
+                    <td>Loopback copy for sibling nodes is dropped. The sibling never sees the message.</td>
+                    <td>Increase BASIC pool depth.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Tuning Strategy</div>
+            <p>Run your application under expected peak load and monitor the <code>*_max_allocated()</code> counters. If any peak value equals the pool depth, increase that depth. A good rule of thumb is to add 25-50% headroom above the observed peak.</p>
+        </div>
+
+        <div class="chapter-nav">
+            <a href="ch03b.html">&larr; Previous: Ch 3b — CAN-Specific Types</a>
+            <a href="ch04b.html">Next: Ch 4b — CAN Buffer System &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

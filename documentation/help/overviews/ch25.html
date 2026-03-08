@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 25 — Debugging Guide | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 25 — Debugging Guide</h1>
+
+        <p>This chapter covers the most common issues encountered when integrating and debugging the OpenLCB C Library, with symptoms, diagnosis steps, and solutions.</p>
+
+        <h2>25.1 Buffer Pool Exhaustion</h2>
+        <h3>Symptoms</h3>
+        <ul>
+            <li>Allocate functions return NULL.</li>
+            <li>Messages are silently dropped -- no response sent for incoming requests.</li>
+            <li>Datagrams fail after a burst of activity.</li>
+            <li>Node appears to stop responding after heavy traffic.</li>
+        </ul>
+
+        <h3>Diagnosis</h3>
+        <p>Use the peak allocation counters provided by the buffer store modules. These track the high-water mark for each pool type during runtime:</p>
+        <pre><code>// Check peak allocation for each pool type
+// OpenLCB buffers:
+OpenLcbBufferStore_get_peak_allocated_count(BASIC);
+OpenLcbBufferStore_get_peak_allocated_count(DATAGRAM);
+OpenLcbBufferStore_get_peak_allocated_count(SNIP);
+OpenLcbBufferStore_get_peak_allocated_count(STREAM);
+
+// CAN buffers:
+CanBufferStore_get_peak_allocated_count();</code></pre>
+
+        <p>If the peak count equals the pool depth, you have hit exhaustion.</p>
+
+        <h3>Tuning</h3>
+        <table>
+            <thead>
+                <tr><th>Pool</th><th>Macro</th><th>Increase When</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>BASIC (16B)</td><td><code>USER_DEFINED_BASIC_BUFFER_DEPTH</code></td><td>Many concurrent simple messages (Verify Node ID, events)</td></tr>
+                <tr><td>DATAGRAM (72B)</td><td><code>USER_DEFINED_DATAGRAM_BUFFER_DEPTH</code></td><td>Multiple overlapping datagram transfers</td></tr>
+                <tr><td>SNIP (256B)</td><td><code>USER_DEFINED_SNIP_BUFFER_DEPTH</code></td><td>Multiple concurrent SNIP requests or events with payload</td></tr>
+                <tr><td>STREAM (512B)</td><td><code>USER_DEFINED_STREAM_BUFFER_DEPTH</code></td><td>Stream transfers (future use)</td></tr>
+                <tr><td>CAN frames</td><td><code>USER_DEFINED_CAN_MSG_BUFFER_DEPTH</code></td><td>CAN RX FIFO overflows (ISR producing faster than main loop consumes)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">8-bit Target Limit</div>
+            <p>Total buffer count across all pools must not exceed 126 on 8-bit processors. This is enforced at compile time by <code>openlcb_config.h</code>.</p>
+        </div>
+
+        <h2>25.2 Alias Collisions</h2>
+        <h3>Symptoms</h3>
+        <ul>
+            <li>Node repeatedly restarts login (CID frames seen repeatedly).</li>
+            <li>Node never reaches RUNSTATE_RUN.</li>
+            <li>Intermittent communication loss with a specific node.</li>
+        </ul>
+
+        <h3>Detection Flow</h3>
+        <div class="mermaid">
+flowchart TD
+    A["CAN RX ISR receives frame"] --> B{Source alias matches one of our reserved aliases?}
+    B -->|Yes| C["Set entry.is_duplicate = true"]
+    C --> D["Set has_duplicate_alias = true"]
+    D --> E["Main loop detects flag"]
+    E --> F["Scan table for is_duplicate entries"]
+    F --> G["Unregister old alias, re-seed, restart login"]
+
+    B -->|No| H["Normal processing"]
+        </div>
+
+        <h3>Log Points</h3>
+        <ul>
+            <li>Add logging in <code>AliasMappings_set_has_duplicate_alias_flag()</code> to see when collisions are detected.</li>
+            <li>Add logging in the <code>on_alias_change</code> callback to track alias changes.</li>
+            <li>Monitor the <code>run_state</code> field of each node -- a node bouncing between INIT/GENERATE_SEED/GENERATE_ALIAS indicates repeated collisions.</li>
+        </ul>
+
+        <h2>25.3 Datagram Assembly Timeout</h2>
+        <h3>Symptoms</h3>
+        <ul>
+            <li>Multi-frame datagrams are never completed.</li>
+            <li>Datagram Rejected with temporary error code sent after 3 seconds.</li>
+            <li>Configuration memory reads/writes fail intermittently.</li>
+        </ul>
+
+        <h3>Causes</h3>
+        <table>
+            <thead>
+                <tr><th>Cause</th><th>Diagnosis</th><th>Fix</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Main loop too slow</td><td>100ms tick advancing faster than frames are processed</td><td>Speed up main loop, reduce other work between <code>OpenLcb_run()</code> calls</td></tr>
+                <tr><td>CAN bus error</td><td>Middle or Final frame lost in transit</td><td>Check CAN bus termination, cable length, baud rate</td></tr>
+                <tr><td>Buffer exhaustion</td><td>CAN buffer pool depleted, incoming frames dropped</td><td>Increase <code>USER_DEFINED_CAN_MSG_BUFFER_DEPTH</code></td></tr>
+                <tr><td>Sender paused too long</td><td>Sender inserts delay between datagram frames</td><td>Sender must send all datagram frames consecutively</td></tr>
+            </tbody>
+        </table>
+
+        <h2>25.4 State Machine Stuck</h2>
+        <h3>How to Identify</h3>
+        <p>Check the <code>run_state</code> field of each node. A node that stays in a non-RUN state for an extended period is stuck:</p>
+
+        <table>
+            <thead>
+                <tr><th>Stuck State</th><th>Likely Cause</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RUNSTATE_WAIT_200ms</code> (7)</td><td>100ms timer tick not incrementing. Check that <code>OpenLcb_100ms_timer_tick()</code> is being called.</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_CHECK_ID_*</code> (3-6)</td><td>CAN TX hardware not sending frames. Check <code>transmit_raw_can_frame()</code> and <code>is_tx_buffer_clear()</code>.</td></tr>
+                <tr><td><code>RUNSTATE_LOAD_CONSUMER/PRODUCER_EVENTS</code> (11-12)</td><td>Event enumeration stuck. Check that event lists are properly initialized in <code>node_parameters_t</code>.</td></tr>
+                <tr><td><code>RUNSTATE_LOGIN_COMPLETE</code> (13)</td><td><code>on_login_complete</code> callback returning false. The callback must return true to allow the node to proceed to RUN.</td></tr>
+            </tbody>
+        </table>
+
+        <h2>25.5 Common Mistakes</h2>
+
+        <h3>When Adding Protocols</h3>
+        <ul>
+            <li>Forgetting to wire the handler in the main state machine interface struct (results in OIR being sent for that MTI).</li>
+            <li>Not adding the compile-time feature guard around the handler and its wiring.</li>
+            <li>Using the wrong buffer type for the response (e.g., BASIC for a datagram reply that needs 72 bytes).</li>
+        </ul>
+
+        <h3>When Adding Nodes</h3>
+        <ul>
+            <li>Not increasing <code>USER_DEFINED_NODE_BUFFER_DEPTH</code> when adding more virtual nodes.</li>
+            <li>Not increasing <code>ALIAS_MAPPING_BUFFER_DEPTH</code> (defaults to node buffer depth, so usually automatic).</li>
+            <li>Forgetting to set up the <code>node_parameters_t</code> with correct protocol support bits, SNIP data, and event lists.</li>
+        </ul>
+
+        <h2>25.6 Google Test Patterns</h2>
+        <p>The library's test suite uses Google Test (gTest) with a consistent pattern for mocking the callback interfaces:</p>
+
+        <ol>
+            <li><strong>Create a mock interface struct</strong> with function pointers set to test-specific implementations.</li>
+            <li><strong>Call <code>Module_initialize(&mock_interface)</code></strong> to inject the test dependencies.</li>
+            <li><strong>Call the function under test</strong> with known inputs.</li>
+            <li><strong>Assert on the outputs</strong> and on any side effects captured by the mock functions.</li>
+        </ol>
+
+        <pre><code>// Example test pattern (simplified)
+TEST(AliasMappings, RegisterAndLookup) {
+    AliasMappings_initialize();
+
+    // Register an alias
+    alias_mapping_t *result = AliasMappings_register(0x3AB, 0x050101010001ULL);
+    ASSERT_NE(result, nullptr);
+    EXPECT_EQ(result->alias, 0x3AB);
+    EXPECT_EQ(result->node_id, 0x050101010001ULL);
+
+    // Lookup by alias
+    alias_mapping_t *found = AliasMappings_find_mapping_by_alias(0x3AB);
+    EXPECT_EQ(found, result);
+
+    // Lookup by Node ID
+    found = AliasMappings_find_mapping_by_node_id(0x050101010001ULL);
+    EXPECT_EQ(found, result);
+}</code></pre>
+
+        <div class="chapter-nav">
+            <a href="ch24.html">&larr; Prev: Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch26.html">Next: Ch 26 — Adding a Protocol &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

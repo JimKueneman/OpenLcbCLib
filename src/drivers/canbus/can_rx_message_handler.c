@@ -33,7 +33,7 @@
  * Invoked by the CAN Rx state machine via dependency-injected callbacks.
  *
  * @author Jim Kueneman
- * @date 6 Mar 2026
+ * @date 4 Mar 2026
  */
 
 #include "can_rx_message_handler.h"
@@ -60,9 +60,6 @@
 
 /** @brief Saved pointer to the dependency-injected receive message handler interface. */
 static interface_can_rx_message_handler_t *_interface;
-
-// Forward declarations for helpers used by last_frame()
-static bool _check_hold_for_alias_resolution(openlcb_msg_t *msg);
 
     /** @brief Stores the dependency-injection interface pointer. */
 void CanRxMessageHandler_initialize(const interface_can_rx_message_handler_t *interface_can_frame_message_handler) {
@@ -284,17 +281,6 @@ void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t offset) {
 
     target_openlcb_msg->state.inprocess = false;
 
-    // Check if this is a Listener Attach that needs to be held until the
-    // listener's alias is resolved via AMD.  If held, the message stays in
-    // the BufferList and a targeted AME is queued.  The AMD handler will
-    // release it once the alias arrives.  3-second timeout in
-    // OpenLcbBufferList_check_timeouts() frees it if AMD never arrives.
-    if (_check_hold_for_alias_resolution(target_openlcb_msg)) {
-
-        return;
-
-    }
-
     OpenLcbBufferList_release(target_openlcb_msg);
     OpenLcbBufferFifo_push(target_openlcb_msg);
 
@@ -384,14 +370,15 @@ void CanRxMessageHandler_stream_frame(can_msg_t* can_msg, uint8_t offset, payloa
 }
 
     /**
-     * @brief Handles CID frames per CanFrameTransferS Section 3.5.3.
+     * @brief Handles CID frames per CanFrameTransferS §6.2.5.
      *
-     * @details Per the standard: "Nodes that receive a CID frame that contains
-     * the alias they are using or have reserved shall respond with an RID frame."
-     * CID is a probe during alias reservation — the correct defence is always
-     * RID, regardless of whether the node is permitted or still claiming.
-     * This differs from RID/AMD/AMR receipt which indicates an active alias
-     * collision and is handled by the internal `_check_for_duplicate_alias()` helper.
+     * @details Per the standard (§6.2.5 Node ID Alias Collision Handling):
+     * "If the frame is a Check ID (CID) frame, send a Reserve ID (RID) frame
+     * in response."  The correct defence is always RID, regardless of whether
+     * the node is Permitted or still Inhibited.
+     * This differs from non-CID frames (RID/AMD/AMR) which indicate an active
+     * alias collision and are handled by the internal `_check_for_duplicate_alias()`
+     * helper.
      *
      * @verbatim
      * @param can_msg  Received CID frame.
@@ -429,79 +416,6 @@ void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
 void CanRxMessageHandler_rid_frame(can_msg_t* can_msg) {
 
     _check_for_duplicate_alias(can_msg);
-
-}
-
-    /**
-     * @brief Queues a targeted AME (Alias Map Enquiry) for a listener Node ID.
-     *
-     * @details Allocates a CAN buffer, builds an AME control frame with the
-     * listener's 48-bit Node ID in the payload, and pushes it to the CAN FIFO.
-     * The AME is sent from our train node's alias so the AMD reply arrives
-     * on our bus segment.
-     *
-     * @param source_alias  Our train node's 12-bit CAN alias.
-     * @param node_id       48-bit Node ID of the listener to query.
-     */
-static void _queue_targeted_ame(uint16_t source_alias, node_id_t node_id) {
-
-    can_msg_t *ame_msg = _interface->can_buffer_store_allocate_buffer();
-
-    if (ame_msg) {
-
-        ame_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME | source_alias;
-        CanUtilities_copy_node_id_to_payload(ame_msg, node_id, 0);
-        CanBufferFifo_push(ame_msg);
-
-    }
-
-}
-
-    /**
-     * @brief Checks if a completed multi-frame message should be held for
-     * listener alias resolution.
-     *
-     * @details Only holds Train Listener Attach commands whose listener
-     * Node ID has no resolved alias in the listener table. Registers the
-     * listener Node ID, marks the message as in-process (held), stamps a
-     * timeout tick, and queues a targeted AME to solicit the alias.
-     *
-     * @param msg  Completed OpenLCB message from last_frame().
-     *
-     * @return true if the message is held (caller must NOT release/push it),
-     *         false if the message should proceed normally.
-     */
-static bool _check_hold_for_alias_resolution(openlcb_msg_t *msg) {
-
-    if (msg->mti != MTI_TRAIN_PROTOCOL) { return false; }
-
-    uint8_t instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 0);
-
-    if (instruction != TRAIN_LISTENER_CONFIG) { return false; }
-
-    uint8_t sub_command = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 1);
-
-    if (sub_command != TRAIN_LISTENER_ATTACH) { return false; }
-
-    if (!_interface->listener_register) { return false; }
-
-    // Listener Node ID at payload offset 3 (byte 0=instruction, 1=sub-cmd, 2=flags, 3-8=node_id)
-    node_id_t listener_id =
-            OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
-
-    listener_alias_entry_t *entry = _interface->listener_register(listener_id);
-
-    if (!entry) { return false; }  // table full — let message proceed
-
-    if (entry->alias != 0) { return false; }  // already resolved — no hold needed
-
-    // Hold: alias unresolved — keep in BufferList until AMD arrives
-    msg->state.inprocess = true;
-    msg->timer.assembly_ticks = _interface->get_current_tick();
-
-    _queue_targeted_ame(msg->dest_alias, listener_id);
-
-    return true;
 
 }
 
@@ -655,6 +569,13 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
         }
 
         return;
+
+    }
+
+    // Global AME: discard cached listener aliases per CanFrameTransferS §6.2.3
+    if (_interface->listener_flush_aliases) {
+
+        _interface->listener_flush_aliases();
 
     }
 

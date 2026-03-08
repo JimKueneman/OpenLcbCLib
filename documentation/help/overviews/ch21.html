@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 21 — Multi-Node Message Routing | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 21 — Multi-Node Message Routing (In Development)</h1>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Feature Status: In Development</div>
+            <p>Multi-node local message routing is a known gap in the current implementation. This chapter documents the problem, the current behavior, and the approaches under consideration.</p>
+        </div>
+
+        <h2>21.1 The Multi-Node Architecture</h2>
+        <p>A single physical device can host multiple virtual OpenLCB nodes. For example, a command station might host one configuration node plus several train nodes. Each virtual node has its own unique 48-bit Node ID and its own 12-bit CAN alias. From the perspective of other devices on the CAN bus, each virtual node appears as an independent node.</p>
+
+        <div class="mermaid">
+flowchart TB
+    subgraph Device["Single Physical Device"]
+        N1["Virtual Node A<br/>ID: 05.01.01.01.00.01<br/>Alias: 0x3AB"]
+        N2["Virtual Node B<br/>ID: 05.01.01.01.00.02<br/>Alias: 0x4CD"]
+        N3["Virtual Node C<br/>ID: 05.01.01.01.00.03<br/>Alias: 0x5EF"]
+        SM["Shared CAN Interface<br/>(single hardware port)"]
+    end
+
+    BUS["CAN Bus"]
+
+    N1 --> SM
+    N2 --> SM
+    N3 --> SM
+    SM <--> BUS
+
+    style Device fill:#fff3e0,stroke:#e65100
+    style BUS fill:#e3f2fd,stroke:#1565c0
+        </div>
+
+        <h2>21.2 Per-Node Alias Allocation</h2>
+        <p>Each virtual node goes through the full CAN login sequence independently, via round-robin processing in the CAN main state machine. The login state machine iterates through all nodes that are not yet in <code>RUNSTATE_RUN</code>, running one state transition per node per main loop iteration. This means all nodes log in concurrently, each generating its own alias from its own Node ID seed.</p>
+
+        <h2>21.3 The Loopback Problem</h2>
+        <p>When virtual Node A sends a message that virtual Node B (on the same device) should receive, the CAN driver transmits the frame onto the bus, but the hardware does <em>not</em> deliver that frame back to the local receive path. Remote nodes see it, but local sibling nodes do not.</p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant A as Virtual Node A
+    participant TX as CAN TX
+    participant BUS as CAN Bus
+    participant RX as CAN RX
+    participant B as Virtual Node B
+
+    A->>TX: Send event PCER
+    TX->>BUS: CAN frame transmitted
+    BUS->>RX: Frame NOT looped back
+    Note over B: Node B never sees<br/>Node A's event
+
+    BUS-->>BUS: Remote nodes receive it
+        </div>
+
+        <p>This affects several protocol areas:</p>
+
+        <table>
+            <thead>
+                <tr><th>Protocol</th><th>Impact</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Event Transport</strong></td><td>If Node A produces an event that Node B consumes, Node B will not see the PCER.</td></tr>
+                <tr><td><strong>Datagrams</strong></td><td>If Node A sends a datagram addressed to Node B, Node B will not receive it.</td></tr>
+                <tr><td><strong>Train Control</strong></td><td>If a local throttle node sends a speed command to a local train node, the train will not respond.</td></tr>
+                <tr><td><strong>Verify Node ID</strong></td><td>Global Verify Node ID from Node A should elicit a response from Node B, but it will not.</td></tr>
+            </tbody>
+        </table>
+
+        <h2>21.4 Current Behavior</h2>
+        <p>In the current implementation, the <code>openlcb_msg_t</code> structure includes a <code>state.loopback</code> flag that is used to mark messages as sibling dispatch copies. When a global message is sent by a local node, the main state machine can set the loopback flag on a copy and push it to the incoming FIFO so that other local nodes can process it. However, this mechanism is not yet fully implemented for all message types.</p>
+
+        <h2>21.5 Approaches Under Consideration</h2>
+
+        <table>
+            <thead>
+                <tr><th>Approach</th><th>Description</th><th>Pros</th><th>Cons</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>TX-side loopback</strong></td>
+                    <td>When the TX path sends a message, also push a copy (with loopback flag) into the RX FIFO for local delivery.</td>
+                    <td>Simple, transparent to protocol handlers</td>
+                    <td>Consumes extra buffer slots, must handle reference counting correctly</td>
+                </tr>
+                <tr>
+                    <td><strong>Application-level routing</strong></td>
+                    <td>The application explicitly routes messages between local nodes by calling the appropriate API functions directly.</td>
+                    <td>No library changes needed</td>
+                    <td>Burden on application developer, easy to miss edge cases</td>
+                </tr>
+                <tr>
+                    <td><strong>Dispatcher-level sibling fan-out</strong></td>
+                    <td>The main state machine dispatcher detects that the destination is a local node and delivers the message directly, bypassing the CAN bus entirely.</td>
+                    <td>Most efficient, no bus traffic for local messages</td>
+                    <td>Requires dispatcher to know about all local nodes' aliases, adds complexity to the dispatch path</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>21.6 Impact on Protocol Correctness</h2>
+        <p>For single-node devices (the most common case), this limitation has no effect. Multi-node devices where nodes do not need to communicate with each other are also unaffected. The issue only arises when co-hosted virtual nodes need to exchange messages -- for example, a command station node sending speed commands to a co-hosted train node.</p>
+
+        <p>Applications that require local inter-node communication today can work around this by using the application layer API directly (e.g., calling the train state modification functions directly rather than going through the message path).</p>
+
+        <div class="chapter-nav">
+            <a href="ch20.html">&larr; Prev: Ch 20 — Listener Aliases</a>
+            <a href="ch22.html">Next: Ch 22 — CAN Login &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

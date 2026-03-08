@@ -37,7 +37,7 @@
  * flushes all aliases (node_ids preserved).
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 8 Mar 2026
  */
 
 #ifndef __DRIVERS_CANBUS_ALIAS_MAPPING_LISTENER__
@@ -125,6 +125,24 @@ extern "C" {
          * @param alias  12-bit CAN alias being released.
          */
     extern void ListenerAliasTable_clear_alias_by_alias(uint16_t alias);
+
+        /**
+         * @brief Probes one listener entry for alias staleness (round-robin).
+         *
+         * @details Rate-limited to once per USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL
+         * ticks. At most one entry probed per call.  Returns the Node ID whose
+         * alias needs verification, or 0 if nothing to do.
+         *
+         * State transitions:
+         * - Resolved + probe interval elapsed -> Verifying (AME sent)
+         * - Verifying + timeout elapsed -> Stale (alias cleared)
+         * - Verifying + AMD arrives (via set_alias) -> Resolved
+         *
+         * @param current_tick  Current value of the global 100ms tick counter.
+         *
+         * @return @ref node_id_t to probe (caller queues targeted AME), or 0.
+         */
+    extern node_id_t ListenerAliasTable_check_one_verification(uint8_t current_tick);
 
 #ifdef __cplusplus
 }

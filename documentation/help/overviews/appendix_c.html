@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appendix C — Address Spaces | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Appendix C — Configuration Memory Address Space Map</h1>
+
+        <p>OpenLCB defines a set of well-known address spaces accessed via the Memory Configuration Protocol (datagrams). Each space has an 8-bit identifier and contains a specific type of data. This appendix documents all address spaces supported by the library.</p>
+
+        <h2>C.1 Address Space Summary</h2>
+
+        <table>
+            <thead>
+                <tr><th>Space ID</th><th>Constant</th><th>Name</th><th>Access</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>0xFF</code></td>
+                    <td><code>CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO</code></td>
+                    <td>CDI</td>
+                    <td>Read-only</td>
+                    <td>Configuration Description Information -- XML document describing the node's configurable options</td>
+                </tr>
+                <tr>
+                    <td><code>0xFE</code></td>
+                    <td><code>CONFIG_MEM_SPACE_ALL</code></td>
+                    <td>All</td>
+                    <td>Read/Write</td>
+                    <td>Virtual space combining all other spaces -- addresses map to the underlying space</td>
+                </tr>
+                <tr>
+                    <td><code>0xFD</code></td>
+                    <td><code>CONFIG_MEM_SPACE_CONFIGURATION_MEMORY</code></td>
+                    <td>Config Memory</td>
+                    <td>Read/Write</td>
+                    <td>User-configurable data -- the primary space for node settings stored in EEPROM/Flash</td>
+                </tr>
+                <tr>
+                    <td><code>0xFC</code></td>
+                    <td><code>CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS</code></td>
+                    <td>ACDI Manufacturer</td>
+                    <td>Read-only</td>
+                    <td>Manufacturer identification strings (name, model, hardware/software version)</td>
+                </tr>
+                <tr>
+                    <td><code>0xFB</code></td>
+                    <td><code>CONFIG_MEM_SPACE_ACDI_USER_ACCESS</code></td>
+                    <td>ACDI User</td>
+                    <td>Read/Write</td>
+                    <td>User-assignable node name and description strings</td>
+                </tr>
+                <tr>
+                    <td><code>0xFA</code></td>
+                    <td><code>CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO</code></td>
+                    <td>FDI</td>
+                    <td>Read-only</td>
+                    <td>Function Description Information -- XML document describing train functions</td>
+                </tr>
+                <tr>
+                    <td><code>0xF9</code></td>
+                    <td><code>CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY</code></td>
+                    <td>Train Fn Config</td>
+                    <td>Read/Write</td>
+                    <td>Train function configuration memory (function names, properties)</td>
+                </tr>
+                <tr>
+                    <td><code>0xEF</code></td>
+                    <td><code>CONFIG_MEM_SPACE_FIRMWARE</code></td>
+                    <td>Firmware</td>
+                    <td>Write-only</td>
+                    <td>Firmware upgrade data -- only accessible when node is in Firmware Upgrade state</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>C.2 ACDI Manufacturer Space Layout (0xFC)</h2>
+
+        <p>The ACDI Manufacturer space provides read-only access to the same identification strings reported via SNIP:</p>
+
+        <table>
+            <thead>
+                <tr><th>Address</th><th>Constant</th><th>Length</th><th>Content</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x00</code></td><td><code>CONFIG_MEM_ACDI_MANUFACTURER_VERSION_ADDRESS</code></td><td>1 byte</td><td>Version byte (always 0x01)</td></tr>
+                <tr><td><code>0x01</code></td><td><code>CONFIG_MEM_ACDI_MANUFACTURER_ADDRESS</code></td><td>41 bytes</td><td>Manufacturer name (null-terminated)</td></tr>
+                <tr><td><code>0x2A</code></td><td><code>CONFIG_MEM_ACDI_MODEL_ADDRESS</code></td><td>41 bytes</td><td>Model name (null-terminated)</td></tr>
+                <tr><td><code>0x53</code></td><td><code>CONFIG_MEM_ACDI_HARDWARE_VERSION_ADDRESS</code></td><td>21 bytes</td><td>Hardware version (null-terminated)</td></tr>
+                <tr><td><code>0x68</code></td><td><code>CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS</code></td><td>21 bytes</td><td>Software version (null-terminated)</td></tr>
+            </tbody>
+        </table>
+
+        <h2>C.3 ACDI User Space Layout (0xFB)</h2>
+
+        <p>The ACDI User space provides read/write access to user-assignable identification strings:</p>
+
+        <table>
+            <thead>
+                <tr><th>Address</th><th>Constant</th><th>Length</th><th>Content</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x00</code></td><td><code>CONFIG_MEM_ACDI_USER_VERSION_ADDRESS</code></td><td>1 byte</td><td>Version byte (always 0x01)</td></tr>
+                <tr><td><code>0x01</code></td><td><code>CONFIG_MEM_ACDI_USER_NAME_ADDRESS</code></td><td>63 bytes</td><td>User-assigned node name (null-terminated)</td></tr>
+                <tr><td><code>0x40</code></td><td><code>CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS</code></td><td>64 bytes</td><td>User description (null-terminated)</td></tr>
+            </tbody>
+        </table>
+
+        <h2>C.4 Address Space in node_parameters_t</h2>
+
+        <p>Each address space has a corresponding <code>user_address_space_info_t</code> entry in <code>node_parameters_t</code> that describes its properties:</p>
+
+        <pre><code>typedef struct {
+    bool present : 1;           // Space exists on this node
+    bool read_only : 1;         // Space is read-only
+    bool low_address_valid : 1; // low_address field is meaningful
+    uint8_t address_space;      // Space identifier (0x00-0xFF)
+    uint32_t highest_address;   // Highest valid address in space
+    uint32_t low_address;       // Lowest valid address (if low_address_valid)
+    char description[59];       // Human-readable description
+} user_address_space_info_t;</code></pre>
+
+        <p>The <code>node_parameters_t</code> structure contains one entry for each well-known space:</p>
+
+        <table>
+            <thead>
+                <tr><th>Field Name</th><th>Space</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>address_space_configuration_definition</code></td><td>0xFF (CDI)</td></tr>
+                <tr><td><code>address_space_all</code></td><td>0xFE (All)</td></tr>
+                <tr><td><code>address_space_config_memory</code></td><td>0xFD (Config Memory)</td></tr>
+                <tr><td><code>address_space_acdi_manufacturer</code></td><td>0xFC (ACDI Manufacturer)</td></tr>
+                <tr><td><code>address_space_acdi_user</code></td><td>0xFB (ACDI User)</td></tr>
+                <tr><td><code>address_space_train_function_definition_info</code></td><td>0xFA (FDI)</td></tr>
+                <tr><td><code>address_space_train_function_config_memory</code></td><td>0xF9 (Train Fn Config)</td></tr>
+                <tr><td><code>address_space_firmware</code></td><td>0xEF (Firmware)</td></tr>
+            </tbody>
+        </table>
+
+        <h2>C.5 Command Encoding</h2>
+
+        <p>Configuration memory commands use the datagram protocol. The first byte of the datagram payload is always <code>0x20</code> (<code>CONFIG_MEM_CONFIGURATION</code>), and the second byte is the command code. The address space is encoded either in the command byte itself (for spaces 0xFD-0xFF) or in byte 6 of the payload:</p>
+
+        <table>
+            <thead>
+                <tr><th>Command</th><th>Space in Cmd Byte</th><th>Space in Byte 6</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Read 0xFF</td><td><code>0x43</code></td><td>--</td></tr>
+                <tr><td>Read 0xFE</td><td><code>0x42</code></td><td>--</td></tr>
+                <tr><td>Read 0xFD</td><td><code>0x41</code></td><td>--</td></tr>
+                <tr><td>Read other</td><td><code>0x40</code></td><td>Space ID</td></tr>
+                <tr><td>Write 0xFF</td><td><code>0x03</code></td><td>--</td></tr>
+                <tr><td>Write 0xFE</td><td><code>0x02</code></td><td>--</td></tr>
+                <tr><td>Write 0xFD</td><td><code>0x01</code></td><td>--</td></tr>
+                <tr><td>Write other</td><td><code>0x00</code></td><td>Space ID</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Source Reference</div>
+            <p>Address space constants are defined in <code>openlcb_defines.h</code> (groups <code>address_spaces</code>, <code>acdi_manufacturer_layout</code>, <code>acdi_user_layout</code>). The <code>user_address_space_info_t</code> structure is defined in <code>openlcb_types.h</code>.</p>
+        </div>
+
+        <div class="chapter-nav">
+            <a href="appendix_b.html">&larr; Prev: Appendix B — CAN Frame Format</a>
+            <a href="appendix_d.html">Next: Appendix D — Event ID Encoding &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

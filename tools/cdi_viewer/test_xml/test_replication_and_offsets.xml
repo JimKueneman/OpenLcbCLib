@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">
+	<segment origin="100" space="253">
+		<name>Replicated Sensors</name>
+		<group replication="3">
+			<name>Sensor Settings</name>
+			<repname>Sensor</repname>
+			<description>Configure each sensor individually.</description>
+			<int size="1" default="1">
+				<name>Sensor Type</name>
+				<description>Type of connected sensor.</description>
+			</int>
+			<int size="2" default="500">
+				<name>Threshold</name>
+				<description>Activation threshold.</description>
+			</int>
+		</group>
+		<group offset="128"> <!-- Jump 128 bytes from here -->
+			<name>Offset Group</name>
+			<int size="4">
+				<name>Base Value</name>
+			</int>
+			<string size="16" offset="5"> <!-- Jump 5 bytes from previous element's end -->
+				<name>Offset String</name>
+			</string>
+			<int size="1" offset="-3"> <!-- Jump -3 bytes back from previous element's end -->
+				<name>Negative Offset Int</name>
+			</int>
+		</group>
+	</segment>
+	<segment origin="0" space="254">
+		<name>Another Space</name>
+		<int size="1">
+			<name>First in Space 254</name>
+		</int>
+	</segment>
+</cdi>

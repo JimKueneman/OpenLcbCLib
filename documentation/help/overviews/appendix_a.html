@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appendix A — MTI Reference | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Appendix A — MTI Quick Reference</h1>
+
+        <p>This appendix lists all Message Type Indicator (MTI) values defined in <code>openlcb_defines.h</code>, grouped by protocol area. The MTI is a 16-bit value that identifies the message type, addressing mode, and priority.</p>
+
+        <h2>A.1 MTI Bit Field Layout</h2>
+
+        <p>The 16-bit MTI encodes several flags:</p>
+
+        <table>
+            <thead>
+                <tr><th>Bits</th><th>Mask</th><th>Field</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>12</td><td><code>0x01000</code></td><td>Stream/Datagram</td><td>1 = Stream or Datagram type</td></tr>
+                <tr><td>11-10</td><td><code>0x00C00</code></td><td>Priority</td><td>00 = highest, 11 = lowest</td></tr>
+                <tr><td>4</td><td><code>0x00010</code></td><td>Simple Protocol</td><td>1 = Simple Node variant</td></tr>
+                <tr><td>3</td><td><code>0x00008</code></td><td>Dest Address Present</td><td>1 = addressed message</td></tr>
+                <tr><td>2</td><td><code>0x00004</code></td><td>Event ID Present</td><td>1 = carries Event ID in payload</td></tr>
+                <tr><td>1-0</td><td><code>0x00003</code></td><td>Priority Modifier</td><td>Fine-grained priority adjustment</td></tr>
+            </tbody>
+        </table>
+
+        <h2>A.2 Message Network Protocol</h2>
+
+        <table>
+            <thead>
+                <tr><th>MTI Value</th><th>Constant</th><th>Dir</th><th>Addr</th><th>Handler Module</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x0100</code></td><td><code>MTI_INITIALIZATION_COMPLETE</code></td><td>Out</td><td>Global</td><td><code>openlcb_login_statemachine</code></td><td><a href="ch09.html">9</a></td></tr>
+                <tr><td><code>0x0101</code></td><td><code>MTI_INITIALIZATION_COMPLETE_SIMPLE</code></td><td>Out</td><td>Global</td><td><code>openlcb_login_statemachine</code></td><td><a href="ch09.html">9</a></td></tr>
+                <tr><td><code>0x0488</code></td><td><code>MTI_VERIFY_NODE_ID_ADDRESSED</code></td><td>In</td><td>Addressed</td><td><code>protocol_message_network</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td><code>0x0490</code></td><td><code>MTI_VERIFY_NODE_ID_GLOBAL</code></td><td>In</td><td>Global</td><td><code>protocol_message_network</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td><code>0x0170</code></td><td><code>MTI_VERIFIED_NODE_ID</code></td><td>Out</td><td>Global</td><td><code>protocol_message_network</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td><code>0x0171</code></td><td><code>MTI_VERIFIED_NODE_ID_SIMPLE</code></td><td>Out</td><td>Global</td><td><code>protocol_message_network</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td><code>0x0068</code></td><td><code>MTI_OPTIONAL_INTERACTION_REJECTED</code></td><td>Out</td><td>Addressed</td><td><code>protocol_message_network</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td><code>0x00A8</code></td><td><code>MTI_TERMINATE_DUE_TO_ERROR</code></td><td>Both</td><td>Addressed</td><td><code>protocol_message_network</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td><code>0x0828</code></td><td><code>MTI_PROTOCOL_SUPPORT_INQUIRY</code></td><td>In</td><td>Addressed</td><td><code>protocol_message_network</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td><code>0x0668</code></td><td><code>MTI_PROTOCOL_SUPPORT_REPLY</code></td><td>Out</td><td>Addressed</td><td><code>protocol_message_network</code></td><td><a href="ch12.html">12</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>A.3 Event Transport Protocol</h2>
+
+        <table>
+            <thead>
+                <tr><th>MTI Value</th><th>Constant</th><th>Dir</th><th>Addr</th><th>Handler Module</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x08F4</code></td><td><code>MTI_CONSUMER_IDENTIFY</code></td><td>In</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x04A4</code></td><td><code>MTI_CONSUMER_RANGE_IDENTIFIED</code></td><td>Out</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x04C7</code></td><td><code>MTI_CONSUMER_IDENTIFIED_UNKNOWN</code></td><td>Out</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x04C4</code></td><td><code>MTI_CONSUMER_IDENTIFIED_SET</code></td><td>Out</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x04C5</code></td><td><code>MTI_CONSUMER_IDENTIFIED_CLEAR</code></td><td>Out</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x04C6</code></td><td><code>MTI_CONSUMER_IDENTIFIED_RESERVED</code></td><td>Out</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x0914</code></td><td><code>MTI_PRODUCER_IDENTIFY</code></td><td>In</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x0524</code></td><td><code>MTI_PRODUCER_RANGE_IDENTIFIED</code></td><td>Out</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x0547</code></td><td><code>MTI_PRODUCER_IDENTIFIED_UNKNOWN</code></td><td>Out</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x0544</code></td><td><code>MTI_PRODUCER_IDENTIFIED_SET</code></td><td>Out</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x0545</code></td><td><code>MTI_PRODUCER_IDENTIFIED_CLEAR</code></td><td>Out</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x0546</code></td><td><code>MTI_PRODUCER_IDENTIFIED_RESERVED</code></td><td>Out</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x0968</code></td><td><code>MTI_EVENTS_IDENTIFY_DEST</code></td><td>In</td><td>Addressed</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x0970</code></td><td><code>MTI_EVENTS_IDENTIFY</code></td><td>In</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x0594</code></td><td><code>MTI_EVENT_LEARN</code></td><td>In</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x05B4</code></td><td><code>MTI_PC_EVENT_REPORT</code></td><td>Both</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td><code>0x0F14</code></td><td><code>MTI_PC_EVENT_REPORT_WITH_PAYLOAD</code></td><td>Both</td><td>Global</td><td><code>protocol_event_transport</code></td><td><a href="ch13.html">13</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>A.4 Simple Node Information Protocol (SNIP)</h2>
+
+        <table>
+            <thead>
+                <tr><th>MTI Value</th><th>Constant</th><th>Dir</th><th>Addr</th><th>Handler Module</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x0DE8</code></td><td><code>MTI_SIMPLE_NODE_INFO_REQUEST</code></td><td>In</td><td>Addressed</td><td><code>protocol_snip</code></td><td><a href="ch15.html">15</a></td></tr>
+                <tr><td><code>0x0A08</code></td><td><code>MTI_SIMPLE_NODE_INFO_REPLY</code></td><td>Out</td><td>Addressed</td><td><code>protocol_snip</code></td><td><a href="ch15.html">15</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>A.5 Train Control Protocol</h2>
+
+        <table>
+            <thead>
+                <tr><th>MTI Value</th><th>Constant</th><th>Dir</th><th>Addr</th><th>Handler Module</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x05EB</code></td><td><code>MTI_TRAIN_PROTOCOL</code></td><td>In</td><td>Addressed</td><td><code>protocol_train_handler</code></td><td><a href="ch17.html">17</a></td></tr>
+                <tr><td><code>0x01E9</code></td><td><code>MTI_TRAIN_REPLY</code></td><td>Out</td><td>Addressed</td><td><code>protocol_train_handler</code></td><td><a href="ch17.html">17</a></td></tr>
+                <tr><td><code>0x0DA8</code></td><td><code>MTI_SIMPLE_TRAIN_INFO_REQUEST</code></td><td>In</td><td>Addressed</td><td><code>protocol_train_handler</code></td><td><a href="ch17.html">17</a></td></tr>
+                <tr><td><code>0x09C8</code></td><td><code>MTI_SIMPLE_TRAIN_INFO_REPLY</code></td><td>Out</td><td>Addressed</td><td><code>protocol_train_handler</code></td><td><a href="ch17.html">17</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>A.6 Datagram Protocol</h2>
+
+        <table>
+            <thead>
+                <tr><th>MTI Value</th><th>Constant</th><th>Dir</th><th>Addr</th><th>Handler Module</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x1C48</code></td><td><code>MTI_DATAGRAM</code></td><td>Both</td><td>Addressed</td><td><code>protocol_datagram_handler</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td><code>0x0A28</code></td><td><code>MTI_DATAGRAM_OK_REPLY</code></td><td>Out</td><td>Addressed</td><td><code>protocol_datagram_handler</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td><code>0x0A48</code></td><td><code>MTI_DATAGRAM_REJECTED_REPLY</code></td><td>Out</td><td>Addressed</td><td><code>protocol_datagram_handler</code></td><td><a href="ch14.html">14</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>A.7 Stream Protocol</h2>
+
+        <table>
+            <thead>
+                <tr><th>MTI Value</th><th>Constant</th><th>Dir</th><th>Addr</th><th>Handler Module</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x0CC8</code></td><td><code>MTI_STREAM_INIT_REQUEST</code></td><td>In</td><td>Addressed</td><td>Not yet implemented</td><td>--</td></tr>
+                <tr><td><code>0x0868</code></td><td><code>MTI_STREAM_INIT_REPLY</code></td><td>Out</td><td>Addressed</td><td>Not yet implemented</td><td>--</td></tr>
+                <tr><td><code>0x1F88</code></td><td><code>MTI_STREAM_SEND</code></td><td>Both</td><td>Addressed</td><td>Not yet implemented</td><td>--</td></tr>
+                <tr><td><code>0x0888</code></td><td><code>MTI_STREAM_PROCEED</code></td><td>Both</td><td>Addressed</td><td>Not yet implemented</td><td>--</td></tr>
+                <tr><td><code>0x08A8</code></td><td><code>MTI_STREAM_COMPLETE</code></td><td>Both</td><td>Addressed</td><td>Not yet implemented</td><td>--</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Source Reference</div>
+            <p>All MTI constants are defined in <code>openlcb_defines.h</code>. The handler module column shows which <code>.c</code> file processes incoming messages with that MTI. "Not yet implemented" indicates the MTI constant is defined but no handler exists (the dispatcher will send OIR for these).</p>
+        </div>
+
+        <div class="chapter-nav">
+            <a href="ch28.html">&larr; Prev: Ch 28 — Porting to a Platform</a>
+            <a href="appendix_b.html">Next: Appendix B — CAN Frame Format &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

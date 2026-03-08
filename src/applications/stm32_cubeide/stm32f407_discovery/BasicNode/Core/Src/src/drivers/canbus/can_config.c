@@ -33,7 +33,7 @@
  * dependency_injection_canbus.c copies.
  *
  * @author Jim Kueneman
- * @date 6 Mar 2026
+ * @date 8 Mar 2026
  *
  * @see can_config.h - User-facing CAN configuration struct
  * @see openlcb_config.c - OpenLCB protocol layer wiring module
@@ -136,10 +136,12 @@ static void _build_rx_message_handler(void) {
     _rx_msg.alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag;
     _rx_msg.get_current_tick = &OpenLcb_get_global_100ms_tick;
 
-    // Listener alias table (optional — enables consist alias resolution)
-    _rx_msg.listener_register = &ListenerAliasTable_register;
+    // Listener alias management (OPTIONAL — NULL if OPENLCB_COMPILE_TRAIN not defined)
+#ifdef OPENLCB_COMPILE_TRAIN
     _rx_msg.listener_set_alias = &ListenerAliasTable_set_alias;
     _rx_msg.listener_clear_alias_by_alias = &ListenerAliasTable_clear_alias_by_alias;
+    _rx_msg.listener_flush_aliases = &ListenerAliasTable_flush_aliases;
+#endif
 
 }
 
@@ -198,9 +200,6 @@ static void _build_tx_statemachine(void) {
     _tx_sm.handle_stream_frame          = &CanTxMessageHandler_stream_frame;
     _tx_sm.handle_can_frame             = &CanTxMessageHandler_can_frame;
 
-    // Listener alias table (optional — enables consist alias resolution at TX)
-    _tx_sm.listener_find_by_node_id = &ListenerAliasTable_find_by_node_id;
-
 }
 
     /** @brief Wires the main state machine interface from user config and library internals. */
@@ -230,6 +229,9 @@ static void _build_main_statemachine(void) {
     _main_sm.handle_login_outgoing_can_message = &CanMainStatemachine_handle_login_outgoing_can_message;
     _main_sm.handle_try_enumerate_first_node = &CanMainStatemachine_handle_try_enumerate_first_node;
     _main_sm.handle_try_enumerate_next_node = &CanMainStatemachine_handle_try_enumerate_next_node;
+
+    // Listener verification (always wired — prober returns 0 if no listeners registered)
+    _main_sm.handle_listener_verification = &CanMainStatemachine_handle_listener_verification;
 
 }
 
@@ -284,6 +286,5 @@ void CanConfig_initialize(const can_config_t *config) {
     CanMainStatemachine_initialize(&_main_sm);
 
     AliasMappings_initialize();
-    ListenerAliasTable_initialize();
 
 }

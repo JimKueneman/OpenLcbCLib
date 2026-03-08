@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 8 — Main Dispatcher State Machine</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html" class="active">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 8 — Main Dispatcher State Machine</h1>
+
+        <p>
+            The main dispatcher is the central message-routing engine for the OpenLCB protocol stack.
+            It lives in <code>openlcb_main_statemachine.c/.h</code> and is driven by a single entry point
+            called as fast as possible from the application main loop.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/openlcb_main_statemachine.c</code>,
+            <code>src/openlcb/openlcb_main_statemachine.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>8.1 Entry Point</h2>
+
+        <p>
+            The entire dispatch loop is driven by <code>OpenLcbMainStatemachine_run()</code>.
+            Each call performs exactly one atomic operation and returns immediately, maintaining a
+            non-blocking cooperative design. The application calls this as fast as possible:
+        </p>
+
+        <pre><code>while (1) {
+    OpenLcbMainStatemachine_run();   // protocol dispatch
+    OpenLcbLoginMainStatemachine_run();  // login sequencing
+    CanMainStateMachine_run();       // CAN layer
+}</code></pre>
+
+        <!-- ================================================================ -->
+        <h2>8.2 Priority Dispatch Flowchart</h2>
+
+        <p>
+            Each call to <code>_run()</code> evaluates five priorities in order. The first one that
+            returns <code>true</code> (meaning it did work) causes the function to return immediately.
+            This ensures the highest-priority task always gets serviced first.
+        </p>
+
+        <div class="mermaid">
+flowchart TD
+    A["OpenLcbMainStatemachine_run()"] --> B{"handle_outgoing\n_openlcb_message()"}
+    B -- "true (msg pending)" --> Z["return"]
+    B -- "false" --> C{"handle_try\n_reenumerate()"}
+    C -- "true (enumerate flag set)" --> Z
+    C -- "false" --> D{"handle_try_pop_next\n_incoming_openlcb_message()"}
+    D -- "true (popped or empty)" --> Z
+    D -- "false" --> E{"handle_try_enumerate\n_first_node()"}
+    E -- "true" --> Z
+    E -- "false" --> F{"handle_try_enumerate\n_next_node()"}
+    F -- "true" --> Z
+    F -- "false" --> Z
+
+    style A fill:#4a90d9,color:#fff
+    style Z fill:#888,color:#fff
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Priority</th>
+                    <th>Function</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1 (highest)</td>
+                    <td><code>handle_outgoing_openlcb_message()</code></td>
+                    <td>Send the pending outgoing message to the transport layer. Also performs sibling loopback for multi-node setups.</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><code>handle_try_reenumerate()</code></td>
+                    <td>If a handler set the <code>enumerate</code> flag (multi-message response), re-enter the same handler without advancing to the next node.</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><code>handle_try_pop_next_incoming_openlcb_message()</code></td>
+                    <td>Pop the next message from the incoming FIFO (thread-safe under lock). Discards messages marked <code>invalid</code>.</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><code>handle_try_enumerate_first_node()</code></td>
+                    <td>Get the first node from the node pool and dispatch the incoming message to it.</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><code>handle_try_enumerate_next_node()</code></td>
+                    <td>Advance to the next node and dispatch. Frees the incoming message when the last node is reached.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>8.3 The State Machine Context</h2>
+
+        <p>
+            The dispatcher maintains a single static context structure, <code>openlcb_statemachine_info_t</code>,
+            that is passed to every protocol handler. This structure provides:
+        </p>
+
+        <pre><code>typedef struct {
+    openlcb_msg_info_t   incoming_msg_info;   // current incoming message + enumerate flag
+    openlcb_msg_info_t   outgoing_msg_info;   // worker buffer for reply + valid flag
+    openlcb_node_t      *openlcb_node;        // node currently being enumerated
+    uint8_t              current_tick;         // snapshot of 100ms timer
+} openlcb_statemachine_info_t;</code></pre>
+
+        <div class="callout callout-warning">
+            <strong>Worker buffer:</strong> The outgoing message buffer inside the context uses
+            <code>STREAM</code>-sized payload (the largest available), ensuring any protocol handler
+            can build its response without worrying about buffer size limits.
+        </div>
+
+        <h3>Key fields</h3>
+
+        <table>
+            <thead>
+                <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>incoming_msg_info.msg_ptr</code></td>
+                    <td><code>openlcb_msg_t*</code></td>
+                    <td>Pointer to the current incoming message popped from the FIFO.</td>
+                </tr>
+                <tr>
+                    <td><code>incoming_msg_info.enumerate</code></td>
+                    <td><code>bool</code></td>
+                    <td>Set by handlers that need to send multiple messages (e.g., Identify Events). The dispatcher re-enters the handler until this flag is cleared.</td>
+                </tr>
+                <tr>
+                    <td><code>outgoing_msg_info.msg_ptr</code></td>
+                    <td><code>openlcb_msg_t*</code></td>
+                    <td>Pre-allocated STREAM-sized worker buffer for building responses.</td>
+                </tr>
+                <tr>
+                    <td><code>outgoing_msg_info.valid</code></td>
+                    <td><code>bool</code></td>
+                    <td>Set by handlers when a response is ready. Cleared after successful transmission.</td>
+                </tr>
+                <tr>
+                    <td><code>openlcb_node</code></td>
+                    <td><code>openlcb_node_t*</code></td>
+                    <td>The node currently being processed during enumeration.</td>
+                </tr>
+                <tr>
+                    <td><code>current_tick</code></td>
+                    <td><code>uint8_t</code></td>
+                    <td>Snapshot of the 100ms timer captured when a message is popped from the FIFO.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>8.4 Node Address Filtering</h2>
+
+        <p>
+            Before dispatching a message to a protocol handler, the function
+            <code>OpenLcbMainStatemachine_does_node_process_msg()</code> determines whether the
+            current node should process the message. The rules are:
+        </p>
+
+        <ol>
+            <li>If the node is NULL or not initialized, reject.</li>
+            <li>If the message is a loopback from this same node (self-skip), reject.</li>
+            <li>If the message is <strong>global</strong> (no destination address bit set), accept.</li>
+            <li>If the message is <strong>addressed</strong>, accept only if the destination alias or Node ID matches this node.</li>
+            <li>Special case: <code>MTI_VERIFY_NODE_ID_GLOBAL</code> is always accepted (it carries an optional Node ID in the payload).</li>
+        </ol>
+
+        <!-- ================================================================ -->
+        <h2>8.5 Fan-Out to All Nodes</h2>
+
+        <p>
+            Every incoming message is dispatched to <strong>every node</strong> in the system by
+            the enumerate-first / enumerate-next loop. Global messages reach all nodes; addressed
+            messages are filtered by <code>does_node_process_msg()</code> so only the target node
+            processes them. This fan-out design supports multi-node configurations where a single
+            microcontroller hosts several virtual nodes.
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant FIFO as Incoming FIFO
+    participant SM as Main Dispatcher
+    participant N1 as Node 1
+    participant N2 as Node 2
+    participant N3 as Node 3
+
+    SM->>FIFO: pop()
+    FIFO-->>SM: message
+    SM->>N1: does_node_process_msg? -> yes
+    SM->>N1: process_main_statemachine()
+    Note over SM: send outgoing if valid
+    SM->>N2: does_node_process_msg? -> yes
+    SM->>N2: process_main_statemachine()
+    SM->>N3: does_node_process_msg? -> no (not addressed)
+    Note over SM: free incoming message
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>8.6 Sibling Loopback</h2>
+
+        <p>
+            When a node generates a response (e.g., an Init Complete message), sibling nodes
+            on the same microcontroller need to see it too. The dispatcher handles this with
+            <code>_loopback_to_siblings()</code>:
+        </p>
+
+        <ol>
+            <li>After successfully sending an outgoing message, allocate a buffer copy.</li>
+            <li>Copy the header and payload bytes into the new buffer.</li>
+            <li>Mark the copy with <code>state.loopback = true</code>.</li>
+            <li>Push to the <strong>head</strong> of the incoming FIFO (processed next).</li>
+        </ol>
+
+        <div class="callout callout-info">
+            <strong>One-level cascade:</strong> Loopback copies are never looped back again.
+            The <code>state.loopback</code> flag prevents infinite recursion, and the self-skip
+            check in <code>does_node_process_msg()</code> prevents the originating node from
+            processing its own copy.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>8.7 The Enumerate Flag</h2>
+
+        <p>
+            Some protocol handlers need to send multiple messages in response to a single
+            incoming message. For example, Identify Events must report every producer and
+            consumer event the node knows about. The mechanism:
+        </p>
+
+        <ol>
+            <li>The handler builds the first response, sets <code>outgoing_msg_info.valid = true</code>,
+                and sets <code>incoming_msg_info.enumerate = true</code>.</li>
+            <li>Priority 1 sends the outgoing message.</li>
+            <li>Priority 2 sees the enumerate flag and re-enters the handler.</li>
+            <li>The handler builds the next response. When the last message is sent, it clears
+                the enumerate flag.</li>
+            <li>The dispatcher advances to the next node (or the next incoming message).</li>
+        </ol>
+
+        <!-- ================================================================ -->
+        <h2>8.8 MTI Dispatch Table</h2>
+
+        <p>
+            <code>OpenLcbMainStatemachine_process_main_statemachine()</code> contains a large
+            <code>switch</code> statement that routes each MTI to the correct protocol handler
+            callback. If an optional handler is NULL, request-type MTIs trigger an Interaction
+            Rejected response automatically; reply/indication MTIs are silently ignored.
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>MTI</th><th>Handler Callback</th><th>Required?</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0x0DE8</td><td><code>snip_simple_node_info_request</code></td><td>Optional (OIR if NULL)</td></tr>
+                <tr><td>0x0A08</td><td><code>snip_simple_node_info_reply</code></td><td>Optional</td></tr>
+                <tr><td>0x0100</td><td><code>message_network_initialization_complete</code></td><td>Required</td></tr>
+                <tr><td>0x0101</td><td><code>message_network_initialization_complete_simple</code></td><td>Required</td></tr>
+                <tr><td>0x0828</td><td><code>message_network_protocol_support_inquiry</code></td><td>Required</td></tr>
+                <tr><td>0x0668</td><td><code>message_network_protocol_support_reply</code></td><td>Required</td></tr>
+                <tr><td>0x0488</td><td><code>message_network_verify_node_id_addressed</code></td><td>Required</td></tr>
+                <tr><td>0x0490</td><td><code>message_network_verify_node_id_global</code></td><td>Required</td></tr>
+                <tr><td>0x0170/0x0171</td><td><code>message_network_verified_node_id</code></td><td>Required</td></tr>
+                <tr><td>0x0068</td><td><code>message_network_optional_interaction_rejected</code></td><td>Required</td></tr>
+                <tr><td>0x00A8</td><td><code>message_network_terminate_due_to_error</code></td><td>Required</td></tr>
+                <tr><td>0x08F4</td><td><code>event_transport_consumer_identify</code></td><td>Optional</td></tr>
+                <tr><td>0x04A4</td><td><code>event_transport_consumer_range_identified</code></td><td>Optional</td></tr>
+                <tr><td>0x04C7</td><td><code>event_transport_consumer_identified_unknown</code></td><td>Optional</td></tr>
+                <tr><td>0x04C4</td><td><code>event_transport_consumer_identified_set</code></td><td>Optional</td></tr>
+                <tr><td>0x04C5</td><td><code>event_transport_consumer_identified_clear</code></td><td>Optional</td></tr>
+                <tr><td>0x04C6</td><td><code>event_transport_consumer_identified_reserved</code></td><td>Optional</td></tr>
+                <tr><td>0x0914</td><td><code>event_transport_producer_identify</code></td><td>Optional (+ train search intercept)</td></tr>
+                <tr><td>0x0524</td><td><code>event_transport_producer_range_identified</code></td><td>Optional</td></tr>
+                <tr><td>0x0547</td><td><code>event_transport_producer_identified_unknown</code></td><td>Optional</td></tr>
+                <tr><td>0x0544</td><td><code>event_transport_producer_identified_set</code></td><td>Optional (+ broadcast time intercept)</td></tr>
+                <tr><td>0x0545</td><td><code>event_transport_producer_identified_clear</code></td><td>Optional</td></tr>
+                <tr><td>0x0546</td><td><code>event_transport_producer_identified_reserved</code></td><td>Optional</td></tr>
+                <tr><td>0x0968</td><td><code>event_transport_identify_dest</code></td><td>Optional</td></tr>
+                <tr><td>0x0970</td><td><code>event_transport_identify</code></td><td>Optional</td></tr>
+                <tr><td>0x0594</td><td><code>event_transport_learn</code></td><td>Optional</td></tr>
+                <tr><td>0x05B4</td><td><code>event_transport_pc_report</code></td><td>Optional (+ broadcast time/emergency intercepts)</td></tr>
+                <tr><td>0x05F4</td><td><code>event_transport_pc_report_with_payload</code></td><td>Optional</td></tr>
+                <tr><td>0x05EB</td><td><code>train_control_command</code></td><td>Optional (OIR if NULL)</td></tr>
+                <tr><td>0x01E9</td><td><code>train_control_reply</code></td><td>Optional</td></tr>
+                <tr><td>0x0DA8</td><td><code>simple_train_node_ident_info_request</code></td><td>Optional (OIR if NULL)</td></tr>
+                <tr><td>0x0A48</td><td><code>simple_train_node_ident_info_reply</code></td><td>Optional</td></tr>
+                <tr><td>0x1C48</td><td><code>datagram</code></td><td>Optional (Datagram Rejected if NULL)</td></tr>
+                <tr><td>0x0A28</td><td><code>datagram_ok_reply</code></td><td>Optional</td></tr>
+                <tr><td>0x0A48</td><td><code>datagram_rejected_reply</code></td><td>Optional</td></tr>
+                <tr><td>0x0CC8</td><td><code>stream_initiate_request</code></td><td>Optional (OIR if NULL)</td></tr>
+                <tr><td>0x0868</td><td><code>stream_initiate_reply</code></td><td>Optional</td></tr>
+                <tr><td>0x1F88</td><td><code>stream_send_data</code></td><td>Optional (OIR if NULL)</td></tr>
+                <tr><td>0x0888</td><td><code>stream_data_proceed</code></td><td>Optional</td></tr>
+                <tr><td>0x08A8</td><td><code>stream_data_complete</code></td><td>Optional (OIR if NULL)</td></tr>
+                <tr><td>default</td><td><code>load_interaction_rejected</code> (if addressed)</td><td>--</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>8.9 Special MTI Intercepts</h2>
+
+        <p>
+            Several MTIs have special routing before falling through to the normal event transport handlers:
+        </p>
+
+        <ul>
+            <li><strong>MTI_PRODUCER_IDENTIFY (0x0914):</strong> If the event ID is a train search
+                event, it is dispatched to <code>train_search_event_handler</code> for train nodes only.
+                If no train matches across all nodes, <code>train_search_no_match_handler</code> fires
+                on the last node.</li>
+            <li><strong>MTI_PRODUCER_IDENTIFIED_SET (0x0544):</strong> If the event ID is a broadcast
+                time event, it is dispatched to <code>broadcast_time_event_handler</code> (node index 0 only).</li>
+            <li><strong>MTI_PC_EVENT_REPORT (0x05B4):</strong> Checked first for broadcast time events
+                (node 0 only), then for emergency events (dispatched to all train nodes), before
+                falling through to the regular event handler.</li>
+        </ul>
+
+        <!-- ================================================================ -->
+        <h2>8.10 Interaction Rejected</h2>
+
+        <p>
+            <code>OpenLcbMainStatemachine_load_interaction_rejected()</code> builds an OIR response
+            with error code <code>ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANSPORT_PROTOCOL</code>
+            and includes the triggering MTI in the payload (bytes 2-3). This is called:
+        </p>
+
+        <ul>
+            <li>When a request-type MTI has a NULL handler callback.</li>
+            <li>For any unknown addressed MTI in the default case.</li>
+            <li>Unknown global MTIs are silently ignored (no OIR).</li>
+        </ul>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch07.html">Previous: Ch 7 — Utilities</a>
+            <a href="ch09.html">Next: Ch 9 — Login State Machine</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

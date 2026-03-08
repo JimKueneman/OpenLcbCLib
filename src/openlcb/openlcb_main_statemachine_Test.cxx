@@ -114,6 +114,17 @@ bool handle_pop_called = false;
 bool handle_enumerate_first_called = false;
 bool handle_enumerate_next_called = false;
 
+// Train search / emergency / datagram tracking
+bool train_search_event_handler_called = false;
+bool train_search_no_match_handler_called = false;
+bool train_emergency_event_handler_called = false;
+bool load_datagram_rejected_called = false;
+bool force_is_last_node = false;
+bool train_search_handler_set_valid = false;
+
+// Static dummy train state for tests
+static train_state_t _dummy_train_state;
+
 // ============================================================================
 // Test Node Parameters
 // ============================================================================
@@ -376,6 +387,41 @@ void _ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *state
 }
 
 // ============================================================================
+// Mock Protocol Handlers - Train Search & Emergency
+// ============================================================================
+
+void _mock_train_search_event_handler(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id)
+{
+    _update_called_function_ptr((void *)&_mock_train_search_event_handler);
+    train_search_event_handler_called = true;
+    if (train_search_handler_set_valid) {
+        statemachine_info->outgoing_msg_info.valid = true;
+    }
+}
+
+void _mock_train_search_no_match_handler(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id)
+{
+    _update_called_function_ptr((void *)&_mock_train_search_no_match_handler);
+    train_search_no_match_handler_called = true;
+}
+
+void _mock_train_emergency_event_handler(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id)
+{
+    _update_called_function_ptr((void *)&_mock_train_emergency_event_handler);
+    train_emergency_event_handler_called = true;
+}
+
+// ============================================================================
+// Mock Protocol Handlers - Datagram Rejected
+// ============================================================================
+
+void _mock_load_datagram_rejected(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code)
+{
+    _update_called_function_ptr((void *)&_mock_load_datagram_rejected);
+    load_datagram_rejected_called = true;
+}
+
+// ============================================================================
 // Mock Protocol Handlers - Train
 // ============================================================================
 
@@ -475,7 +521,7 @@ bool _OpenLcbNode_is_last(uint8_t key)
 {
     _update_called_function_ptr((void *)&_OpenLcbNode_is_last);
 
-    return false;
+    return force_is_last_node;
 }
 
 // ============================================================================
@@ -721,6 +767,14 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     // Optional Protocol Handlers - Broadcast Time
     .broadcast_time_event_handler = &_ProtocolBroadcastTime_handle_time_event,
 
+    // Optional Protocol Handlers - Train Search & Emergency
+    .train_search_event_handler = &_mock_train_search_event_handler,
+    .train_search_no_match_handler = &_mock_train_search_no_match_handler,
+    .train_emergency_event_handler = &_mock_train_emergency_event_handler,
+
+    // Optional Protocol Handlers - Datagram Rejected
+    .load_datagram_rejected = &_mock_load_datagram_rejected,
+
     // Optional Protocol Handlers - Train
     .train_control_command = &_ProtocolTrainControl_command,
     .train_control_reply = &_ProtocolTrainControl_reply,
@@ -883,6 +937,15 @@ void _reset_variables(void)
     handle_pop_called = false;
     handle_enumerate_first_called = false;
     handle_enumerate_next_called = false;
+
+    // Reset train search / emergency / datagram tracking
+    train_search_event_handler_called = false;
+    train_search_no_match_handler_called = false;
+    train_emergency_event_handler_called = false;
+    load_datagram_rejected_called = false;
+    force_is_last_node = false;
+    train_search_handler_set_valid = false;
+    memset(&_dummy_train_state, 0, sizeof(_dummy_train_state));
 }
 
 /**
@@ -3819,4 +3882,566 @@ TEST(OpenLcbMainStatemachine, broadcast_time_pid_set_null_handler_falls_through)
     EXPECT_FALSE(load_interaction_rejected_called);
 }
 
-// Final closing message
+// ============================================================================
+// BRANCH COVERAGE TESTS — Train Search, Emergency, Broadcast Time Index,
+//                          Datagram Rejected, Run Loop Fallthrough
+// ============================================================================
+
+// ============================================================================
+// TEST: Train search event — match found (sets valid)
+// Covers: lines 455 (handler non-NULL), 458 (is_train_search true),
+//         461 (train_state non-NULL), 465 (outgoing valid true)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, train_search_event_match_found)
+{
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->train_state = &_dummy_train_state;  // Non-NULL = train node
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PRODUCER_IDENTIFY;
+
+    // Load a train search event ID into the payload
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg, EVENT_TRAIN_SEARCH_SPACE | 0x00000100);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    // Tell mock handler to set outgoing valid (simulates match)
+    train_search_handler_set_valid = true;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    EXPECT_TRUE(train_search_event_handler_called);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+}
+
+// ============================================================================
+// TEST: Train search event — no match, last node triggers no-match handler
+// Covers: lines 474 (is_last true), 475 (no_match_handler non-NULL)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, train_search_event_no_match_last_node)
+{
+    _global_initialize();
+
+    // Reset _train_search_match_found by triggering the enumerate-first path.
+    // After initialize(), openlcb_node is NULL, so handle_try_enumerate_first_node
+    // enters the NULL-node branch which clears the static match flag.
+    node_get_first = nullptr;
+    OpenLcbMainStatemachine_handle_try_enumerate_first_node();
+    _reset_variables();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->train_state = &_dummy_train_state;  // Train node
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PRODUCER_IDENTIFY;
+
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg, EVENT_TRAIN_SEARCH_SPACE | 0x00000100);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    // Handler does NOT set valid (no match), and this is the last node
+    train_search_handler_set_valid = false;
+    force_is_last_node = true;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    EXPECT_TRUE(train_search_event_handler_called);
+    EXPECT_TRUE(train_search_no_match_handler_called);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+}
+
+// ============================================================================
+// TEST: Train search event — match found but is_last is true
+// Covers: line 475 false branch (!_train_search_match_found is false)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, train_search_event_match_found_last_node)
+{
+    _global_initialize();
+
+    // Reset _train_search_match_found
+    node_get_first = nullptr;
+    OpenLcbMainStatemachine_handle_try_enumerate_first_node();
+    _reset_variables();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->train_state = &_dummy_train_state;
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PRODUCER_IDENTIFY;
+
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg, EVENT_TRAIN_SEARCH_SPACE | 0x00000100);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    // Handler SETS valid (match found), AND this is the last node
+    train_search_handler_set_valid = true;
+    force_is_last_node = true;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    // Match was found, so no-match handler should NOT be called
+    EXPECT_TRUE(train_search_event_handler_called);
+    EXPECT_FALSE(train_search_no_match_handler_called);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+}
+
+// ============================================================================
+// TEST: Train search event — no match, last node, no_match_handler NULL
+// Covers: line 474 remaining branch (is_last=true, match=false, handler=NULL)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, train_search_event_no_match_handler_null)
+{
+    // Custom interface: train_search_event_handler set, but no_match_handler NULL
+    interface_openlcb_main_statemachine_t custom_interface = interface_openlcb_main_statemachine;
+    custom_interface.train_search_no_match_handler = nullptr;
+
+    _reset_variables();
+    OpenLcbMainStatemachine_initialize(&custom_interface);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferFifo_initialize();
+
+    // Reset _train_search_match_found
+    node_get_first = nullptr;
+    OpenLcbMainStatemachine_handle_try_enumerate_first_node();
+    _reset_variables();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->train_state = &_dummy_train_state;
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PRODUCER_IDENTIFY;
+
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg, EVENT_TRAIN_SEARCH_SPACE | 0x00000100);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    // No match, last node, but no_match_handler is NULL
+    train_search_handler_set_valid = false;
+    force_is_last_node = true;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    EXPECT_TRUE(train_search_event_handler_called);
+    // no_match_handler is NULL, so it should NOT be called
+    EXPECT_FALSE(train_search_no_match_handler_called);
+}
+
+// ============================================================================
+// TEST: Train search event — non-train node (train_state NULL)
+// Covers: line 461 false branch (train_state is NULL)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, train_search_event_non_train_node)
+{
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->train_state = nullptr;  // NOT a train node
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PRODUCER_IDENTIFY;
+
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg, EVENT_TRAIN_SEARCH_SPACE | 0x00000100);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    // Handler should NOT have been called (non-train node)
+    EXPECT_FALSE(train_search_event_handler_called);
+}
+
+// ============================================================================
+// TEST: PRODUCER_IDENTIFIED_SET — non-zero index skips broadcast time
+// Covers: line 518 false branch (index != 0)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, broadcast_time_pid_set_nonzero_index_skips)
+{
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->index = 1;  // Non-zero index — broadcast time only handled on index 0
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PRODUCER_IDENTIFIED_SET;
+
+    // Load a broadcast time event ID
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg,
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+
+    broadcast_time_handler_called = false;
+    producer_identified_set_handler_called = false;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    // Broadcast time handler should NOT be called (index != 0)
+    EXPECT_FALSE(broadcast_time_handler_called);
+    // Falls through to the regular producer_identified_set handler
+    EXPECT_TRUE(producer_identified_set_handler_called);
+}
+
+// ============================================================================
+// TEST: PC_EVENT_REPORT — non-zero index skips broadcast time
+// Covers: line 592 false branch (index != 0)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, broadcast_time_pc_report_nonzero_index_skips)
+{
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->index = 1;  // Non-zero index
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PC_EVENT_REPORT;
+
+    // Load a broadcast time event ID
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg,
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+
+    broadcast_time_handler_called = false;
+    pc_event_report_handler_called = false;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    // Broadcast time handler should NOT be called (index != 0)
+    EXPECT_FALSE(broadcast_time_handler_called);
+    // Falls through to the regular pc_event_report handler
+    EXPECT_TRUE(pc_event_report_handler_called);
+}
+
+// ============================================================================
+// TEST: PC_EVENT_REPORT — train emergency event
+// Covers: lines 605 (handler && train_state true), 607 (is_emergency true)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, train_emergency_event_on_pc_report)
+{
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->index = 0;  // Index 0 so broadcast time check passes first
+    node->train_state = &_dummy_train_state;  // Train node
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PC_EVENT_REPORT;
+
+    // Load an emergency event ID (NOT a broadcast time event)
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg, EVENT_ID_EMERGENCY_STOP);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+
+    broadcast_time_handler_called = false;
+    train_emergency_event_handler_called = false;
+    pc_event_report_handler_called = false;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    // Emergency event is NOT a broadcast time event, so broadcast time check
+    // enters but is_broadcast_time_event returns false → falls through
+    EXPECT_FALSE(broadcast_time_handler_called);
+    // Emergency handler should be called
+    EXPECT_TRUE(train_emergency_event_handler_called);
+    // Should NOT fall through to regular pc_event_report (break after emergency)
+    EXPECT_FALSE(pc_event_report_handler_called);
+}
+
+// ============================================================================
+// TEST: PC_EVENT_REPORT — non-emergency event on train node (emergency FALSE)
+// Covers: line 607 false branch (is_emergency_event returns false)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, train_node_non_emergency_pc_report)
+{
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->index = 1;  // Non-zero to skip broadcast time check
+    node->train_state = &_dummy_train_state;  // Train node
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PC_EVENT_REPORT;
+
+    // Load a non-emergency, non-broadcast-time event ID
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg, 0x0505050505050505ULL);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+
+    train_emergency_event_handler_called = false;
+    pc_event_report_handler_called = false;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    // Not an emergency event — emergency handler should NOT be called
+    EXPECT_FALSE(train_emergency_event_handler_called);
+    // Falls through to regular pc_event_report handler
+    EXPECT_TRUE(pc_event_report_handler_called);
+}
+
+// ============================================================================
+// TEST: Datagram NULL handler — load_datagram_rejected called
+// Covers: line 693 true branch (load_datagram_rejected non-NULL)
+// Uses a local copy of the null handler interface with load_datagram_rejected
+// wired, so the base null handler struct keeps load_datagram_rejected=NULL
+// for the FALSE branch coverage.
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, datagram_null_handler_sends_rejected)
+{
+    // Create a custom interface: datagram=NULL, load_datagram_rejected=non-NULL
+    interface_openlcb_main_statemachine_t custom_interface = interface_openlcb_main_statemachine_null_handlers;
+    custom_interface.load_datagram_rejected = &_mock_load_datagram_rejected;
+
+    _reset_variables();
+    OpenLcbMainStatemachine_initialize(&custom_interface);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferFifo_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->alias = 0xBBB;
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_DATAGRAM;
+    msg->dest_alias = 0xBBB;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+
+    load_datagram_rejected_called = false;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    // datagram handler is NULL, so load_datagram_rejected should be called
+    EXPECT_TRUE(load_datagram_rejected_called);
+}
+
+// ============================================================================
+// TEST: Run loop — all handlers return false (full fallthrough)
+// Covers: line 1020 false branch (handle_try_enumerate_next_node returns false)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, run_all_handlers_return_false)
+{
+    _reset_variables();
+    _global_initialize();
+
+    // Force ALL handle functions to return false
+    fail_handle_outgoing_openlcb_message = true;
+    fail_handle_try_reenumerate = true;
+    fail_handle_try_pop_next_incoming_openlcb_message = true;
+    fail_handle_try_enumerate_first_node = true;
+    fail_handle_try_enumerate_next_node = true;
+
+    OpenLcbMainStatemachine_run();
+
+    // All five handlers should have been called (all returned false)
+    EXPECT_TRUE(handle_outgoing_called);
+    EXPECT_TRUE(handle_reenumerate_called);
+    EXPECT_TRUE(handle_pop_called);
+    EXPECT_TRUE(handle_enumerate_first_called);
+    EXPECT_TRUE(handle_enumerate_next_called);
+}
+
+// ============================================================================
+// TEST: Sibling dispatch — loopback with DATAGRAM-sized payload
+// Covers: line 161 FALSE branch, line 165 TRUE branch, line 194 TRUE branch
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, loopback_datagram_payload_size)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    // Set outgoing payload_count > BASIC (16) and <= DATAGRAM (72)
+    state->outgoing_msg_info.valid = true;
+    state->outgoing_msg_info.msg_ptr->payload_count = 17;
+    allow_successful_transmit = true;
+
+    bool result = OpenLcbMainStatemachine_handle_outgoing_openlcb_message();
+
+    EXPECT_TRUE(result);
+    EXPECT_FALSE(state->outgoing_msg_info.valid);
+}
+
+// ============================================================================
+// TEST: Sibling dispatch — loopback with SNIP-sized payload
+// Covers: line 165 FALSE branch, line 169 TRUE branch
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, loopback_snip_payload_size)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    // Set outgoing payload_count > DATAGRAM (72) and <= SNIP (256)
+    state->outgoing_msg_info.valid = true;
+    state->outgoing_msg_info.msg_ptr->payload_count = 73;
+    allow_successful_transmit = true;
+
+    bool result = OpenLcbMainStatemachine_handle_outgoing_openlcb_message();
+
+    EXPECT_TRUE(result);
+    EXPECT_FALSE(state->outgoing_msg_info.valid);
+}
+
+// ============================================================================
+// TEST: Sibling dispatch — loopback with STREAM-sized payload
+// Covers: line 169 FALSE branch (else → STREAM)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, loopback_stream_payload_size)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    // Set outgoing payload_count > SNIP (256)
+    state->outgoing_msg_info.valid = true;
+    state->outgoing_msg_info.msg_ptr->payload_count = 257;
+    allow_successful_transmit = true;
+
+    bool result = OpenLcbMainStatemachine_handle_outgoing_openlcb_message();
+
+    EXPECT_TRUE(result);
+    EXPECT_FALSE(state->outgoing_msg_info.valid);
+}
+
+// ============================================================================
+// TEST: does_node_process_msg — loopback self-skip
+// Covers: line 239 compound TRUE branch (loopback && source_id matches node id)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, does_node_process_msg_loopback_self_skip)
+{
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+    node->alias = 0xAAA;
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_VERIFIED_NODE_ID;
+    msg->state.loopback = true;
+    msg->source_id = 0x060504030201;  // Same as node id → self-skip
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+
+    bool result = OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info);
+
+    EXPECT_FALSE(result);  // Should skip its own loopback message
+}
+
+// ============================================================================
+// TEST: Loopback cascade prevention — non-loopback incoming triggers loopback
+// Covers: line 901 branch 0 (msg_ptr present), branch 2/3 (!false = true)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, loopback_cascade_non_loopback_incoming)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    // Set up incoming msg that is NOT a loopback
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->state.loopback = false;
+    state->incoming_msg_info.msg_ptr = incoming;
+
+    // Set up outgoing message to send
+    state->outgoing_msg_info.valid = true;
+    allow_successful_transmit = true;
+
+    bool result = OpenLcbMainStatemachine_handle_outgoing_openlcb_message();
+
+    // Should succeed and loopback IS triggered (non-loopback incoming)
+    EXPECT_TRUE(result);
+    EXPECT_FALSE(state->outgoing_msg_info.valid);
+}
+
+// ============================================================================
+// TEST: Loopback cascade prevention — loopback incoming suppresses re-loopback
+// Covers: line 901 compound FALSE (msg_ptr present AND loopback=true → skip)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, loopback_cascade_prevention_loopback_incoming)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    // Set up incoming msg that IS a loopback
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->state.loopback = true;
+    state->incoming_msg_info.msg_ptr = incoming;
+
+    // Set up outgoing message to send
+    state->outgoing_msg_info.valid = true;
+    allow_successful_transmit = true;
+
+    bool result = OpenLcbMainStatemachine_handle_outgoing_openlcb_message();
+
+    // Should succeed but loopback is SUPPRESSED (cascade prevention)
+    EXPECT_TRUE(result);
+    EXPECT_FALSE(state->outgoing_msg_info.valid);
+}

@@ -102,7 +102,7 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a34815306ff8eb6c29f92168b68c0cdc8" id="r_a34815306ff8eb6c29f92168b68c0cdc8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a34815306ff8eb6c29f92168b68c0cdc8">ListenerAliasTable_initialize</a> (void)</td></tr>
-<tr class="memdesc:a34815306ff8eb6c29f92168b68c0cdc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros all entries in the listener alias table.  <br /></td></tr>
+<tr class="memdesc:a34815306ff8eb6c29f92168b68c0cdc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros all entries in the listener alias table and resets the prober cursor.  <br /></td></tr>
 <tr class="separator:a34815306ff8eb6c29f92168b68c0cdc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1dd4277f9776f44a19b56516416d807" id="r_ad1dd4277f9776f44a19b56516416d807"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1dd4277f9776f44a19b56516416d807">ListenerAliasTable_register</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
 <tr class="memdesc:ad1dd4277f9776f44a19b56516416d807"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a listener Node ID in the table with alias = 0.  <br /></td></tr>
@@ -122,6 +122,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a14fb563e821dd3b4e1d3a211cc44b570" id="r_a14fb563e821dd3b4e1d3a211cc44b570"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14fb563e821dd3b4e1d3a211cc44b570">ListenerAliasTable_clear_alias_by_alias</a> (uint16_t alias)</td></tr>
 <tr class="memdesc:a14fb563e821dd3b4e1d3a211cc44b570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros the alias field for the entry matching a specific alias value.  <br /></td></tr>
 <tr class="separator:a14fb563e821dd3b4e1d3a211cc44b570"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1e5ca2ca0ce988c7c8ebf76fd23cda9" id="r_ac1e5ca2ca0ce988c7c8ebf76fd23cda9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1e5ca2ca0ce988c7c8ebf76fd23cda9">ListenerAliasTable_check_one_verification</a> (uint8_t current_tick)</td></tr>
+<tr class="memdesc:ac1e5ca2ca0ce988c7c8ebf76fd23cda9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Probes one listener entry for alias staleness (round-robin).  <br /></td></tr>
+<tr class="separator:ac1e5ca2ca0ce988c7c8ebf76fd23cda9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>On-demand alias resolution table for consist listener nodes. </p>
@@ -134,7 +137,7 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Single static table instance using a linear array. Empty slots have node_id == 0. First-fit allocation. NOT thread-safe — callers must use lock_shared_resources / unlock_shared_resources around shared access.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>8 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a34815306ff8eb6c29f92168b68c0cdc8" name="a34815306ff8eb6c29f92168b68c0cdc8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a34815306ff8eb6c29f92168b68c0cdc8">&#9670;&#160;</a></span>ListenerAliasTable_initialize()</h2>
@@ -151,8 +154,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Zeros all entries in the listener alias table and resets the prober cursor. </p>
 <p>Zeros all entries in the listener alias table. </p>
-<p>Must be called once at startup before any listener operations. </p>
 
 </div>
 </div>
@@ -308,6 +311,35 @@ Functions</h2></td></tr>
 </ol>
 <pre class="fragment">* @param alias  12-bit CAN alias being released.
 * </pre> 
+</div>
+</div>
+<a id="ac1e5ca2ca0ce988c7c8ebf76fd23cda9" name="ac1e5ca2ca0ce988c7c8ebf76fd23cda9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1e5ca2ca0ce988c7c8ebf76fd23cda9">&#9670;&#160;</a></span>ListenerAliasTable_check_one_verification()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> ListenerAliasTable_check_one_verification </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>current_tick</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Probes one listener entry for alias staleness (round-robin). </p>
+<p>Called periodically from the CAN main state machine. Rate-limited to once per USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL ticks. Each call advances a static cursor to the next registered entry with a resolved alias and checks:</p>
+<p>Algorithm:</p><ol type="1">
+<li>If fewer than PROBE_TICK_INTERVAL ticks have elapsed, return 0</li>
+<li>Scan up to LISTENER_ALIAS_TABLE_DEPTH entries from the cursor</li>
+<li>For each entry with verify_pending set: check timeout, clear alias if expired, continue to next entry</li>
+<li>For each resolved entry not pending: check probe interval, set verify_pending and return node_id if due</li>
+<li>Return 0 if no entry needs probing this tick</li>
+</ol>
+<pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.
+* </pre><dl class="section return"><dt>Returns</dt><dd>The <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> to probe (caller builds and queues targeted AME), or 0 if nothing to do this tick. </dd></dl>
+
 </div>
 </div>
 </div><!-- contents -->

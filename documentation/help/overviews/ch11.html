@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 11 — CAN RX/TX Pipelines</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html" class="active">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 11 — CAN RX and TX Pipelines</h1>
+
+        <p>
+            The receive and transmit pipelines convert between raw CAN frames (8 bytes max) and
+            OpenLCB messages (up to 512 bytes). The RX path classifies, assembles multi-frame
+            messages, and pushes to the OpenLCB FIFO. The TX path fragments OpenLCB messages
+            into CAN frames and transmits them.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>can_rx_statemachine.c</code>, <code>can_rx_message_handler.c</code>,
+            <code>can_tx_statemachine.c</code>, <code>can_tx_message_handler.c</code>
+            (all in <code>src/drivers/canbus/</code>)
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>11.1 RX: Frame Classification</h2>
+
+        <p>
+            <code>CanRxStatemachine_incoming_can_driver_callback()</code> is called directly from
+            the CAN receive ISR (or receive thread). It first checks whether the frame is an
+            OpenLCB message or a CAN control frame:
+        </p>
+
+        <div class="mermaid">
+flowchart TD
+    A["CAN frame received"] --> B{"is_openlcb_message?\n(bit 28 set)"}
+    B -- "Yes" --> C{"Frame subtype\n(bits 27:24)"}
+    B -- "No" --> D{"Sequence number\n== 0?"}
+
+    C -- "Standard" --> E{"Addressed?\n(dest addr bit)"}
+    C -- "Datagram Only" --> F["single_frame(BASIC)"]
+    C -- "Datagram First" --> G["first_frame(DATAGRAM)"]
+    C -- "Datagram Middle" --> H["middle_frame()"]
+    C -- "Datagram Final" --> I["last_frame()"]
+    C -- "Stream" --> J["stream_frame(STREAM)"]
+
+    E -- "Yes" --> K["Check framing bits\nand dispatch"]
+    E -- "No" --> L["Unaddressed handler"]
+
+    D -- "Yes" --> M["Variable-field:\nRID/AMD/AME/AMR/Error"]
+    D -- "No" --> N["CID frame\n(CID7..CID1)"]
+
+    style A fill:#4a90d9,color:#fff
+        </div>
+
+        <div class="callout callout-warning">
+            <strong>ISR context:</strong> The RX callback runs in interrupt context (or a high-priority
+            thread). It must complete quickly. Buffer allocation and FIFO pushes are designed to
+            be lock-free from the RX side.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>11.2 RX: Multi-Frame Assembly</h2>
+
+        <p>
+            OpenLCB messages that exceed 8 bytes are split across multiple CAN frames. The RX
+            path reassembles them using the BufferList as scratch space:
+        </p>
+
+        <h3>Framing Bits (addressed messages)</h3>
+        <p>
+            The high nibble of payload byte 0 carries framing bits for addressed standard frames:
+        </p>
+        <table>
+            <thead>
+                <tr><th>Value</th><th>Meaning</th><th>Handler</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x00</code></td><td>Only frame (complete message)</td><td><code>single_frame()</code></td></tr>
+                <tr><td><code>0x10</code></td><td>First frame of multi-frame</td><td><code>first_frame()</code></td></tr>
+                <tr><td><code>0x20</code></td><td>Middle frame</td><td><code>middle_frame()</code></td></tr>
+                <tr><td><code>0x30</code></td><td>Last frame</td><td><code>last_frame()</code></td></tr>
+            </tbody>
+        </table>
+
+        <h3>Assembly Flow</h3>
+        <ol>
+            <li><strong>first_frame:</strong> Allocate an OpenLCB buffer (sized by type: BASIC, SNIP, or DATAGRAM).
+                Load the message header (source alias, dest alias, MTI). Copy payload bytes.
+                Set <code>state.inprocess = true</code>, stamp <code>timer.assembly_ticks</code>,
+                and add to the BufferList.</li>
+            <li><strong>middle_frame:</strong> Find the in-progress buffer in BufferList by source/dest/MTI.
+                Check the timeout (30 ticks = 3 seconds). Append payload bytes.</li>
+            <li><strong>last_frame:</strong> Find the buffer, append final bytes, clear <code>state.inprocess</code>,
+                release from BufferList, and push to the OpenLCB FIFO.</li>
+        </ol>
+
+        <h3>Assembly Timeout</h3>
+        <p>
+            If a middle or last frame arrives more than 30 ticks (3 seconds) after the first frame,
+            the assembly is considered stale. The buffer is freed and a reject message is sent.
+            The timeout constant is <code>CAN_RX_INPROCESS_TIMEOUT_TICKS = 30</code>.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>11.3 RX: Datagram Assembly</h2>
+
+        <p>
+            Datagrams use a different framing mechanism than standard messages. Instead of framing
+            bits in the payload, the CAN frame type field (bits 27:24) indicates the position:
+        </p>
+        <ul>
+            <li><code>CAN_FRAME_TYPE_DATAGRAM_ONLY</code> -- single frame, up to 8 bytes</li>
+            <li><code>CAN_FRAME_TYPE_DATAGRAM_FIRST</code> -- first of a multi-frame datagram</li>
+            <li><code>CAN_FRAME_TYPE_DATAGRAM_MIDDLE</code> -- continuation frames</li>
+            <li><code>CAN_FRAME_TYPE_DATAGRAM_FINAL</code> -- last frame</li>
+        </ul>
+
+        <p>
+            The assembly logic is the same (first/middle/last handlers) but with
+            <code>offset = 0</code> since the destination alias is in the CAN identifier rather
+            than in the payload.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>11.4 RX: Legacy SNIP</h2>
+
+        <p>
+            Early SNIP implementations did not include framing bits. The handler
+            <code>CanRxMessageHandler_can_legacy_snip()</code> uses null-byte counting to determine
+            frame boundaries: a SNIP reply is complete when 6 null bytes have been accumulated
+            across all frames.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>11.5 TX: Message Routing</h2>
+
+        <p>
+            <code>CanTxStatemachine_send_openlcb_message()</code> is the TX entry point. It routes
+            each outgoing OpenLCB message to the correct frame handler:
+        </p>
+
+        <div class="mermaid">
+flowchart TD
+    A["send_openlcb_message()"] --> V{"state.invalid?"}
+    V -- "Yes" --> DONE["return true (discard)"]
+    V -- "No" --> R{"dest_alias == 0\nand dest_id != 0?"}
+    R -- "Yes" --> RL["Resolve via\nlistener_find_by_node_id"]
+    R -- "No" --> TX
+    RL -- "Found" --> TX
+    RL -- "Not found" --> DONE
+    TX{"is_tx_buffer_empty()?"}
+    TX -- "No" --> BUSY["return false (retry)"]
+    TX -- "Yes" --> B{"Addressed?"}
+    B -- "Yes" --> C{"MTI type"}
+    B -- "No" --> D["unaddressed_msg_frame()"]
+    C -- "MTI_DATAGRAM" --> E["datagram_frame()"]
+    C -- "Stream MTIs" --> F["stream_frame()"]
+    C -- "Other" --> G["addressed_msg_frame()"]
+
+    style A fill:#4a90d9,color:#fff
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>11.6 TX: Fragmentation</h2>
+
+        <p>
+            The TX handlers fragment messages into CAN frames, looping until the entire payload
+            is sent as an atomic sequence:
+        </p>
+
+        <h3>Datagram Fragmentation</h3>
+        <p>
+            Datagrams can be up to 72 bytes. The frame type selection in
+            <code>CanTxMessageHandler_datagram_frame()</code>:
+        </p>
+        <table>
+            <thead>
+                <tr><th>Condition</th><th>Frame Type</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Total payload &lt;= 8 bytes</td><td>Datagram Only</td></tr>
+                <tr><td>payload_index &lt; 8</td><td>Datagram First</td></tr>
+                <tr><td>More data remains after this frame</td><td>Datagram Middle</td></tr>
+                <tr><td>This frame completes the payload</td><td>Datagram Last</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Addressed Message Fragmentation</h3>
+        <p>
+            Standard addressed messages carry the 12-bit destination alias in payload bytes 0-1,
+            leaving only 6 bytes per frame for actual data. The framing bits are set in the high
+            nibble of byte 0:
+        </p>
+        <table>
+            <thead>
+                <tr><th>Condition</th><th>Framing Bits</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Total payload &lt;= 6 bytes</td><td>MULTIFRAME_ONLY (0x00)</td></tr>
+                <tr><td>payload_index &lt; 6</td><td>MULTIFRAME_FIRST (0x10)</td></tr>
+                <tr><td>More data remains</td><td>MULTIFRAME_MIDDLE (0x20)</td></tr>
+                <tr><td>Last frame</td><td>MULTIFRAME_FINAL (0x30)</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>11.7 TX: CAN Header Construction</h2>
+
+        <p>
+            CAN identifiers are built from templates. For example, a datagram-only frame:
+        </p>
+
+        <pre><code>identifier = RESERVED_TOP_BIT
+           | CAN_OPENLCB_MSG
+           | CAN_FRAME_TYPE_DATAGRAM_ONLY
+           | (dest_alias &lt;&lt; 12)
+           | source_alias;</code></pre>
+
+        <p>
+            A standard addressed frame places the MTI (not the destination alias) in bits 23:12.
+            The destination alias goes in payload bytes 0-1 instead.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>11.8 TX: Retry Mechanism</h2>
+
+        <p>
+            Before transmitting, the TX state machine checks <code>is_tx_buffer_empty()</code>.
+            If the hardware TX buffer is busy, the function returns <code>false</code> and the
+            caller retries on the next main-loop iteration. For multi-frame sequences, the
+            <code>payload_index</code> is only advanced on successful transmission, ensuring no
+            data is lost.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>11.9 RX: CAN Control Frame Handling</h2>
+
+        <p>
+            Control frames are handled by dedicated functions in <code>can_rx_message_handler.c</code>:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Frame</th><th>Handler</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>CID</td><td><code>cid_frame()</code></td><td>If alias matches one of ours, reply with RID to defend the alias.</td></tr>
+                <tr><td>RID</td><td><code>rid_frame()</code></td><td>Check for duplicate alias; flag if found.</td></tr>
+                <tr><td>AMD</td><td><code>amd_frame()</code></td><td>Check duplicate; update listener alias table; release held attach messages.</td></tr>
+                <tr><td>AME</td><td><code>ame_frame()</code></td><td>Check duplicate; respond with AMD for matching aliases.</td></tr>
+                <tr><td>AMR</td><td><code>amr_frame()</code></td><td>Check duplicate; scrub BufferList and FIFO for stale source alias; clear listener table.</td></tr>
+                <tr><td>Error Info</td><td><code>error_info_report_frame()</code></td><td>Check for duplicate alias.</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch10.html">Previous: Ch 10 — CAN State Machine</a>
+            <a href="ch12.html">Next: Ch 12 — Message Network</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

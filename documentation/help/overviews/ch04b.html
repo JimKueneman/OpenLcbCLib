@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 4b — CAN Buffer System | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 4b — CAN Buffer System</h1>
+        <p>The CAN buffer system mirrors the OpenLCB buffer system from <a href="ch04.html">Chapter 4</a> but operates at the CAN frame level. It consists of a flat buffer pool and a circular FIFO. These live in the <code>drivers/canbus/</code> directory.</p>
+
+        <h2>4b.1 CAN Frame Buffer Pool</h2>
+        <p>Unlike the OpenLCB buffer store which has four segregated pools, the CAN buffer pool is flat -- all buffers have the same size (a <code>can_msg_t</code> with an 8-byte payload). The pool depth is controlled by <code>USER_DEFINED_CAN_MSG_BUFFER_DEPTH</code> (default: 10, maximum: 254).</p>
+
+        <pre><code>typedef can_msg_t can_msg_array_t[USER_DEFINED_CAN_MSG_BUFFER_DEPTH];</code></pre>
+
+        <h3>API</h3>
+        <pre><code>void CanBufferStore_initialize(void);
+can_msg_t *CanBufferStore_allocate_buffer(void);
+void CanBufferStore_free_buffer(can_msg_t *msg);
+uint16_t CanBufferStore_messages_allocated(void);
+uint16_t CanBufferStore_messages_max_allocated(void);
+void CanBufferStore_clear_max_allocated(void);</code></pre>
+
+        <ul>
+            <li><code>allocate_buffer()</code>: Finds the first free slot, clears it, marks it allocated, and returns the pointer. Returns <code>NULL</code> if exhausted.</li>
+            <li><code>free_buffer()</code>: Clears the allocated flag. Passing <code>NULL</code> is safe.</li>
+            <li>No reference counting -- CAN frame buffers are simpler than OpenLCB message buffers because they are never shared between queues.</li>
+        </ul>
+
+        <div class="callout callout-info">
+            <div class="callout-title">No Segregation Needed</div>
+            <p>CAN 2.0 frames always have exactly 8 data bytes maximum, so there is no need for multiple payload sizes. Every <code>can_msg_t</code> has the same structure regardless of how many data bytes are actually used.</p>
+        </div>
+
+        <h2>4b.2 CAN FIFO</h2>
+        <p>The CAN FIFO is a circular buffer of <code>can_msg_t</code> pointers. It sits between the CAN hardware ISR (producer) and the CAN RX state machine in the main loop (consumer).</p>
+
+        <pre><code>void CanBufferFifo_initialize(void);
+bool CanBufferFifo_push(can_msg_t *new_msg);
+can_msg_t *CanBufferFifo_pop(void);
+uint8_t CanBufferFifo_is_empty(void);
+uint16_t CanBufferFifo_get_allocated_count(void);</code></pre>
+
+        <ul>
+            <li><code>push()</code>: Adds a frame pointer to the tail. Returns <code>true</code> on success, <code>false</code> if the FIFO is full (frame is dropped).</li>
+            <li><code>pop()</code>: Removes and returns the oldest frame from the head. Caller is responsible for freeing the buffer with <code>CanBufferStore_free_buffer()</code> after processing.</li>
+        </ul>
+
+        <p>The FIFO uses one extra slot (total = <code>USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1</code>) so that <code>head == tail</code> always means empty.</p>
+
+        <h2>4b.3 Data Flow: CAN Buffers to OpenLCB Buffers</h2>
+        <p>The CAN RX pipeline converts CAN frames into OpenLCB messages. This is where the two buffer systems connect:</p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant ISR as CAN RX ISR
+    participant CPool as CAN Buffer Store
+    participant CFIFO as CAN FIFO
+    participant RX as CAN RX State Machine
+    participant OPool as OpenLCB Buffer Store
+    participant OFIFO as OpenLCB Buffer FIFO
+
+    Note over ISR: Hardware receives CAN frame
+    ISR->>CPool: CanBufferStore_allocate_buffer()
+    CPool-->>ISR: can_msg_ptr
+    ISR->>ISR: Copy frame data into can_msg_t
+    ISR->>CFIFO: CanBufferFifo_push(can_msg_ptr)
+
+    Note over RX: Main loop iteration
+    RX->>CFIFO: CanBufferFifo_pop()
+    CFIFO-->>RX: can_msg_ptr
+    RX->>RX: Decode CAN identifier, extract MTI
+    RX->>OPool: OpenLcbBufferStore_allocate_buffer(type)
+    OPool-->>RX: openlcb_msg_ptr
+    RX->>RX: Copy/assemble data into openlcb_msg_t
+    RX->>CPool: CanBufferStore_free_buffer(can_msg_ptr)
+    RX->>OFIFO: OpenLcbBufferFifo_push(openlcb_msg_ptr)
+        </div>
+
+        <p>Key points in this flow:</p>
+        <ol>
+            <li>The ISR allocates from the CAN pool and pushes to the CAN FIFO. This is the minimal work needed in interrupt context.</li>
+            <li>The main loop pops from the CAN FIFO, interprets the frame, allocates from the OpenLCB pool, and pushes the assembled message to the OpenLCB FIFO.</li>
+            <li>The CAN frame buffer is freed as soon as its data has been copied into the OpenLCB message. This keeps CAN buffers available for the next interrupt.</li>
+            <li>For multi-frame messages, the CAN RX handler uses the Buffer List (see <a href="ch04.html">Chapter 4</a>) to accumulate frames until the final frame arrives.</li>
+        </ol>
+
+        <h2>4b.4 Thread Safety: The ISR/Main-Loop Boundary</h2>
+        <p>The CAN FIFO is the critical boundary between interrupt context and the main loop. The ISR writes to the FIFO tail; the main loop reads from the FIFO head.</p>
+
+        <div class="mermaid">
+flowchart LR
+    subgraph ISR_CTX["Interrupt Context"]
+        A["CAN RX ISR"]
+        B["CanBufferStore_allocate_buffer()"]
+        C["CanBufferFifo_push()"]
+    end
+
+    subgraph MAIN_CTX["Main Loop Context"]
+        D["CanBufferFifo_pop()"]
+        E["CAN RX State Machine"]
+        F["CanBufferStore_free_buffer()"]
+    end
+
+    A --> B --> C
+    C -.->|"lock boundary"| D
+    D --> E --> F
+
+    style ISR_CTX fill:#ffcdd2,stroke:#c62828
+    style MAIN_CTX fill:#c8e6c9,stroke:#2e7d32
+        </div>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Lock Requirement</div>
+            <p>Both the CAN buffer store and CAN FIFO are marked as NOT thread-safe in their API documentation. The platform must use the <code>lock_shared_resources</code> / <code>unlock_shared_resources</code> callbacks (typically disable/enable interrupts on bare metal) to protect concurrent access. See <a href="ch06.html">Chapter 6 — Thread Safety</a> for details.</p>
+        </div>
+
+        <h2>4b.5 Sizing the CAN Buffer Pool</h2>
+        <p>The CAN buffer pool must be large enough to absorb bursts of incoming frames while the main loop is busy processing previous messages. A too-small pool causes frame drops, which may result in:</p>
+
+        <ul>
+            <li>Lost event reports (no retry mechanism for events)</li>
+            <li>Datagram timeouts (sender retries, but wastes bandwidth)</li>
+            <li>Stalled multi-frame assembly (partial messages time out)</li>
+        </ul>
+
+        <p>Use <code>CanBufferStore_messages_max_allocated()</code> to monitor peak usage and adjust <code>USER_DEFINED_CAN_MSG_BUFFER_DEPTH</code> accordingly.</p>
+
+        <div class="chapter-nav">
+            <a href="ch04.html">&larr; Previous: Ch 4 — OpenLCB Buffer System</a>
+            <a href="ch05.html">Next: Ch 5 — Node Management &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

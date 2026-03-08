@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://openlcb.org/trunk/prototypes/xml/xslt/cdi.xsl"?>
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">
+    <identification>
+        <manufacturer>"Mustangpeak "</manufacturer>
+        <model>" MODEL "</model>
+        <hardwareVersion>2.0</hardwareVersion>
+        <softwareVersion>2.1</softwareVersion>
+    </identification>
+    <acdi/>
+    <segment origin="0" space="253">
+        <group>
+            <name>Node ID</name>
+            <description>User-provided description of the node</description>
+            <string size="62">
+                <name>Node Name</name>
+            </string>
+            <string size="63">
+                <name>Node Description</name>
+            </string>
+        </group>
+    </segment>
+    <segment origin="100" space="253">
+        <group offset="128">
+            <name>Offset of 128</name>
+            <description>Tesing a jump of 128 through the group-&gt;offset attribute</description>
+            <string size="62">
+                <name>Offset Name</name>
+            </string>
+            <string size="63">
+                <name>Offset Description</name>
+            </string>
+        </group>
+    </segment>
+    <segment origin="0" space="253">
+        <group>
+            <name>Origin of 0 then offset 300 for name (300+62) then another offset of 500 for description (300+62+500)</name>
+            <description>Tesing a jump of 128 through the group-&gt;offset attribute</description>
+            <string size="62" offset="300">
+                <name>Offset of 300 more: Name</name>
+            </string>
+            <string size="63" offset="500">
+                <name>Offset of 500 more: Description</name>
+            </string>
+        </group>
+    </segment>
+    <segment origin="0" space="253">
+        <name>Map tests</name>
+        <description>Create map tests for all the data types</description>
+        <group>
+            <name>Integer with a Map Selector</name>
+            <int size="1">
+                <name>Integer Map</name>          
+                <map>
+                    <relation>
+                        <property>238</property>
+                        <value>Selection 2</value>
+                    </relation>
+                    <relation>
+                        <property>51</property>
+                        <value>Selection 2</value>
+                    </relation>
+                    <relation>           
+                        <property>255</property>
+                        <value>Selection 2</value>
+                    </relation>
+                </map>
+            </int>
+        </group>
+        <group>
+            <name>String with a Map Selector</name>
+            <string size="100">
+                <name>String Map</name>
+                <map>
+                    <relation>
+                        <property>Selection1String</property>
+                        <value>Item 1 Label</value>
+                    </relation>
+                    <relation>
+                        <property>Selection2String</property>
+                        <value>Item 2 Label</value>
+                    </relation>
+                    <relation>
+                        <property>Selection3String</property>
+                        <value>Selection 3</value>
+                    </relation>
+                </map>
+            </string>
+        </group>
+        <group>
+            <name>Event ID with a Map Selector</name>
+            <eventid>
+                <name>EventID Map</name>
+                <map>
+                    <relation>
+                        <property>"07.06.05.04.03.02.01.00"</property>
+                        <value>Item 1 Label</value>
+                    </relation>
+                    <relation>
+                        <property>"07.06.05.04.03.02.01.01"</property>
+                        <value>Item 2 Label</value>
+                    </relation>
+                    <relation>
+                        <property>"07.06.05.04.03.02.01.02"</property>
+                        <value>Item 3 Label</value>
+                    </relation>
+                </map>
+            </eventid>
+        </group>
+        <group>
+            <name>Float with a Map Selector</name>
+            <eventid>
+                <name>Float Map</name>
+                <map>
+                    <relation>
+                        <property>1.456</property>
+                        <value>Item 1 Label</value>
+                    </relation>
+                    <relation>
+                        <property>4.55</property>
+                        <value>Item 2 Label</value>
+                    </relation>
+                    <relation>
+                        <property>7.88</property>
+                        <value>Item 3 Label</value>
+                    </relation>
+                </map>
+            </eventid>
+        </group>
+    </segment>
+</cdi>

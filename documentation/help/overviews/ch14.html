@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 14 — Datagram Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html" class="active">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 14 — Datagram Protocol</h1>
+
+        <p>
+            The Datagram protocol provides reliable 0-72 byte addressed transfers. It is the
+            primary mechanism for configuration memory access (read/write) and is used by CDI,
+            ACDI, and firmware upgrade features.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/protocol_datagram_handler.c</code>,
+            <code>src/openlcb/protocol_datagram_handler.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>14.1 Two-Phase ACK Protocol</h2>
+
+        <p>
+            Every datagram request follows a two-phase acknowledgement pattern. The Reply Pending
+            bit (0x80) is always set in the Datagram Received OK reply, indicating that a
+            response datagram will follow:
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Requester
+    participant Server
+
+    Requester->>Server: Datagram (read/write command)
+    Server-->>Requester: Datagram Received OK (Reply Pending=1)
+    Note over Server: Process command
+    Server->>Requester: Datagram (response data / write OK)
+    Requester-->>Server: Datagram Received OK
+        </div>
+
+        <div class="callout callout-warning">
+            <strong>Reply Pending always set:</strong> In this implementation, the Reply Pending
+            flag (0x80 in the flags byte) is always set. A response datagram is guaranteed to
+            follow every request.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>14.2 Address Space Routing</h2>
+
+        <p>
+            The datagram handler routes incoming datagrams to per-address-space callbacks based
+            on the address space byte. The standard spaces are:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Space</th><th>Name</th><th>Typical Use</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0xFF</td><td>CDI</td><td>XML device description (read-only)</td></tr>
+                <tr><td>0xFE</td><td>Configuration Memory</td><td>User-writable settings</td></tr>
+                <tr><td>0xFD</td><td>All</td><td>Full memory space</td></tr>
+                <tr><td>0xFC</td><td>ACDI Manufacturer</td><td>Manufacturer info (read-only)</td></tr>
+                <tr><td>0xFB</td><td>ACDI User</td><td>User name/description</td></tr>
+                <tr><td>0xFA</td><td>Train FDI</td><td>Function Definition Info (train nodes)</td></tr>
+                <tr><td>0xF9</td><td>Train Function Config</td><td>Train function configuration</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>14.3 Command Structure</h2>
+
+        <p>
+            The first byte of the datagram payload identifies the command type, and the second
+            byte identifies the sub-command:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Byte 0 (Command)</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0x20</td><td>Memory Configuration Protocol</td></tr>
+            </tbody>
+        </table>
+
+        <table>
+            <thead>
+                <tr><th>Byte 1 (Sub-command)</th><th>Operation</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0x40</td><td>Read</td></tr>
+                <tr><td>0x50</td><td>Read Reply OK</td></tr>
+                <tr><td>0x58</td><td>Read Reply Fail</td></tr>
+                <tr><td>0x00</td><td>Write</td></tr>
+                <tr><td>0x10</td><td>Write Reply OK</td></tr>
+                <tr><td>0x18</td><td>Write Reply Fail</td></tr>
+                <tr><td>0x08</td><td>Write Under Mask</td></tr>
+                <tr><td>0x60</td><td>Read (Stream)</td></tr>
+                <tr><td>0x20</td><td>Write (Stream)</td></tr>
+                <tr><td>0x80</td><td>Get Configuration Options</td></tr>
+                <tr><td>0x82</td><td>Configuration Options Reply</td></tr>
+                <tr><td>0x84</td><td>Get Address Space Info</td></tr>
+                <tr><td>0x86</td><td>Address Space Present Reply</td></tr>
+                <tr><td>0x87</td><td>Address Space Not Present Reply</td></tr>
+                <tr><td>0x88</td><td>Lock/Reserve</td></tr>
+                <tr><td>0x8A</td><td>Lock/Reserve Reply</td></tr>
+                <tr><td>0x8C</td><td>Get Unique ID</td></tr>
+                <tr><td>0x8E</td><td>Get Unique ID Reply</td></tr>
+                <tr><td>0xA0</td><td>Unfreeze</td></tr>
+                <tr><td>0xA1</td><td>Freeze</td></tr>
+                <tr><td>0xA8</td><td>Update Complete</td></tr>
+                <tr><td>0xA9</td><td>Reset/Reboot</td></tr>
+                <tr><td>0xAA</td><td>Factory Reset</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>14.4 Read Handler Flow</h2>
+
+        <p>
+            When a Read command arrives, the handler:
+        </p>
+        <ol>
+            <li>Sends Datagram Received OK (Reply Pending = 1).</li>
+            <li>Extracts the address space byte from the datagram.</li>
+            <li>Routes to the matching read callback (e.g., <code>memory_read_space_configuration_memory</code>).</li>
+            <li>If the callback is NULL, sends a Datagram Rejected with <code>SUBCOMMAND_UNKNOWN</code>.</li>
+        </ol>
+
+        <!-- ================================================================ -->
+        <h2>14.5 Write Handler Flow</h2>
+
+        <p>
+            Write commands follow the same pattern: acknowledge, extract address space, route
+            to the write callback. The Write Under Mask variant allows bitwise modification
+            of configuration memory (useful for flag bytes).
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>14.6 Retry Logic</h2>
+
+        <p>
+            When a Datagram Rejected reply is received:
+        </p>
+        <ul>
+            <li><strong>Temporary error (0x2xxx):</strong> The <code>resend_datagram</code> flag
+                is set on the node, and the stored datagram will be retried.</li>
+            <li><strong>Permanent error (0x1xxx):</strong> The stored datagram is freed and
+                the retry state is cleared.</li>
+        </ul>
+
+        <p>
+            A Datagram Received OK clears the resend flag and frees the stored datagram buffer.
+            The <code>check_timeouts()</code> function scans for timed-out pending datagrams
+            that have exceeded their maximum retry count.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>14.7 Configuration Memory Operations</h2>
+
+        <p>
+            Beyond read/write, the datagram handler supports several configuration management
+            commands:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Operation</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Get Options</td><td>Query supported write sizes, available address spaces, and capabilities.</td></tr>
+                <tr><td>Get Address Space Info</td><td>Query size, flags, and description of a specific address space.</td></tr>
+                <tr><td>Lock/Reserve</td><td>Exclusive access to a node's configuration for multi-step writes.</td></tr>
+                <tr><td>Freeze / Unfreeze</td><td>Pause a node's normal operation while configuration is being updated.</td></tr>
+                <tr><td>Reset/Reboot</td><td>Request the node to restart (apply new configuration).</td></tr>
+                <tr><td>Factory Reset</td><td>Restore all configuration to factory defaults.</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch13.html">Previous: Ch 13 — Event Transport</a>
+            <a href="ch15.html">Next: Ch 15 — SNIP</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

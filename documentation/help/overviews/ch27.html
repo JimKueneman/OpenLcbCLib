@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 27 — Adding a Transport | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 27 — Adding a New Transport</h1>
+
+        <p>This chapter explains how to add a new transport layer alongside the existing CAN driver. The architecture cleanly separates transport-independent protocol logic (in <code>openlcb/</code>) from transport-specific code (in <code>drivers/</code>), so a new transport only needs to convert between its wire format and <code>openlcb_msg_t</code>.</p>
+
+        <h2>27.1 Architecture Boundary</h2>
+
+        <div class="mermaid">
+flowchart TB
+    subgraph Core["openlcb/ — Transport-Independent Core"]
+        SM["Main Dispatcher"]
+        Login["Login State Machine"]
+        Proto["Protocol Handlers<br/>(SNIP, Events, Datagrams, ...)"]
+        Buf["Buffer System"]
+        Node["Node Management"]
+    end
+
+    subgraph CAN["drivers/canbus/ — CAN Transport"]
+        CANSM["CAN State Machine"]
+        CANRX["CAN RX Pipeline"]
+        CANTX["CAN TX Pipeline"]
+        Alias["Alias Mappings"]
+        CANBuf["CAN Buffer/FIFO"]
+    end
+
+    subgraph TCP["drivers/tcpip/ — TCP/IP Transport (new)"]
+        TCPSM["TCP State Machine"]
+        TCPRX["TCP RX Handler"]
+        TCPTX["TCP TX Handler"]
+        TCPBuf["TCP Buffer"]
+    end
+
+    CANRX -->|"openlcb_msg_t"| SM
+    SM -->|"openlcb_msg_t"| CANTX
+    SM <--> Proto
+    SM <--> Login
+
+    TCPRX -->|"openlcb_msg_t"| SM
+    SM -->|"openlcb_msg_t"| TCPTX
+
+    style Core fill:#e8f5e9,stroke:#2e7d32
+    style CAN fill:#e3f2fd,stroke:#1565c0
+    style TCP fill:#fff3e0,stroke:#e65100
+        </div>
+
+        <p>The key boundary: transport drivers produce and consume <code>openlcb_msg_t</code> structures. Everything above that boundary is shared code that works identically regardless of the transport.</p>
+
+        <h2>27.2 What a Transport Must Provide</h2>
+
+        <p>Every transport driver must implement three fundamental operations:</p>
+
+        <table>
+            <thead>
+                <tr><th>Operation</th><th>Description</th><th>CAN Example</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>RX: Wire to openlcb_msg_t</strong></td>
+                    <td>Convert incoming wire-format data into a populated <code>openlcb_msg_t</code> and push it to the core's incoming FIFO</td>
+                    <td>CAN RX pipeline: multi-frame assembly, alias-to-Node-ID resolution</td>
+                </tr>
+                <tr>
+                    <td><strong>TX: openlcb_msg_t to wire</strong></td>
+                    <td>Convert an outgoing <code>openlcb_msg_t</code> into the transport's wire format and transmit</td>
+                    <td>CAN TX pipeline: fragmentation into CAN frames, Node-ID-to-alias resolution</td>
+                </tr>
+                <tr>
+                    <td><strong>Login sequence</strong></td>
+                    <td>Perform any transport-specific node registration before the core login state machine takes over</td>
+                    <td>CAN login: CID/RID/AMD alias allocation sequence</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>27.3 Driver Folder Structure</h2>
+
+        <p>Create a new folder under <code>drivers/</code> for your transport:</p>
+
+        <pre><code>drivers/
+    canbus/                     // Existing CAN transport
+        can_config.h
+        can_config.c
+        can_main_statemachine.h
+        can_main_statemachine.c
+        can_rx_statemachine.h
+        can_tx_statemachine.h
+        ...
+    tcpip/                      // New TCP/IP transport
+        tcpip_config.h          // User-facing config struct
+        tcpip_config.c          // Internal wiring
+        tcpip_main_statemachine.h
+        tcpip_main_statemachine.c
+        tcpip_rx_handler.h
+        tcpip_rx_handler.c
+        tcpip_tx_handler.h
+        tcpip_tx_handler.c</code></pre>
+
+        <h2>27.4 CAN vs. TCP/IP Comparison</h2>
+
+        <p>The CAN transport has significant complexity due to the constrained bus format. A TCP/IP transport is substantially simpler:</p>
+
+        <table>
+            <thead>
+                <tr><th>Concern</th><th>CAN Transport</th><th>TCP/IP Transport</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Node addressing</strong></td>
+                    <td>12-bit CAN aliases mapped to 48-bit Node IDs via LFSR + alias table</td>
+                    <td>Full 48-bit Node IDs carried directly in every message</td>
+                </tr>
+                <tr>
+                    <td><strong>Message fragmentation</strong></td>
+                    <td>Required: 8-byte CAN frame limit requires multi-frame datagram/stream assembly</td>
+                    <td>Not required: TCP carries arbitrarily large messages intact</td>
+                </tr>
+                <tr>
+                    <td><strong>Login sequence</strong></td>
+                    <td>Complex: CID7/6/5/4, 200ms wait, RID, AMD (per node)</td>
+                    <td>Simple: connect, send Initialization Complete</td>
+                </tr>
+                <tr>
+                    <td><strong>Alias management</strong></td>
+                    <td>Required: alias_mappings module, duplicate detection, AME/AMD/AMR</td>
+                    <td>Not required: no aliases</td>
+                </tr>
+                <tr>
+                    <td><strong>Collision detection</strong></td>
+                    <td>ISR-level alias collision detection with re-seed and re-login</td>
+                    <td>Not applicable</td>
+                </tr>
+                <tr>
+                    <td><strong>Thread safety model</strong></td>
+                    <td>ISR pushes to FIFO, main loop pops (lock/unlock around FIFO operations)</td>
+                    <td>Socket read in main loop or dedicated thread (lock/unlock around FIFO)</td>
+                </tr>
+                <tr>
+                    <td><strong>Buffer pools</strong></td>
+                    <td>Separate CAN frame buffer pool (<code>can_msg_t</code>) plus OpenLCB message buffers</td>
+                    <td>Only OpenLCB message buffers needed (no intermediate frame buffers)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>27.5 Integration with the Core</h2>
+
+        <p>The transport driver connects to the core through the same interfaces the CAN driver uses:</p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant HW as Transport Hardware
+    participant RX as Transport RX Handler
+    participant FIFO as OpenLCB Buffer FIFO
+    participant SM as Main Dispatcher
+    participant TX as Transport TX Handler
+
+    HW->>RX: Raw data received
+    RX->>RX: Convert to openlcb_msg_t
+    RX->>FIFO: Push incoming message
+    Note over FIFO: lock/unlock
+    SM->>FIFO: Pop incoming message
+    SM->>SM: Route to protocol handler
+    SM->>TX: Outgoing openlcb_msg_t
+    TX->>TX: Convert to wire format
+    TX->>HW: Transmit
+        </div>
+
+        <h3>Key Integration Points</h3>
+
+        <ol>
+            <li><strong>Buffer allocation:</strong> The transport allocates <code>openlcb_msg_t</code> from the shared buffer pool (<code>OpenLcbBufferStore_allocate_buffer()</code>) for incoming messages.</li>
+            <li><strong>FIFO push:</strong> Converted messages are pushed to the OpenLCB incoming FIFO using <code>OpenLcbBufferFifo_push()</code>.</li>
+            <li><strong>TX path:</strong> The core calls the transport's send function (via function pointer in the interface struct) when it has a message to transmit.</li>
+            <li><strong>Login coordination:</strong> The transport drives the early login states (CAN-specific alias allocation), then hands off to the core login state machine for the OpenLCB-level login (Initialization Complete, event enumeration).</li>
+        </ol>
+
+        <h2>27.6 Configuration Struct Pattern</h2>
+
+        <p>Follow the same pattern as <code>can_config.h</code>. Create a user-facing config struct with hardware driver function pointers:</p>
+
+        <pre><code>// tcpip_config.h
+
+typedef struct {
+    // REQUIRED: Send raw TCP data
+    bool (*transmit_tcp_message)(uint8_t *data, uint16_t length);
+
+    // REQUIRED: Check if TCP socket is ready to send
+    bool (*is_tx_ready)(void);
+
+    // REQUIRED: Lock/unlock (same as openlcb_config_t)
+    void (*lock_shared_resources)(void);
+    void (*unlock_shared_resources)(void);
+
+    // OPTIONAL: Diagnostic callbacks
+    void (*on_rx)(openlcb_msg_t *msg);
+    void (*on_tx)(openlcb_msg_t *msg);
+
+} tcpip_config_t;
+
+extern void TcpipConfig_initialize(const tcpip_config_t *config);</code></pre>
+
+        <h2>27.7 What Changes in the Application</h2>
+
+        <p>When using a different transport, the application's main loop changes to call the new transport's state machine instead of the CAN state machine:</p>
+
+        <pre><code>// CAN application main loop:
+while (1) {
+    OpenLcb_run();  // Internally calls CanMainStateMachine_run()
+                    // then OpenLcb login/main state machines
+}
+
+// TCP/IP application main loop:
+while (1) {
+    TcpipMainStateMachine_run();    // Transport-specific
+    OpenLcbLoginMainStatemachine_run();  // Shared
+    OpenLcbMainStatemachine_run();       // Shared
+}</code></pre>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Shared Protocol Handlers</div>
+            <p>The protocol handlers (SNIP, Events, Datagrams, Train Control, etc.) are completely transport-independent. They work identically on CAN, TCP/IP, or any future transport. Only the transport driver layer changes.</p>
+        </div>
+
+        <h2>27.8 Checklist for a New Transport</h2>
+
+        <table>
+            <thead>
+                <tr><th>Item</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Config struct</td><td>Create <code>*_config.h</code> with hardware driver function pointers</td></tr>
+                <tr><td>Wiring module</td><td>Create <code>*_config.c</code> to build internal interface structs</td></tr>
+                <tr><td>RX handler</td><td>Convert wire format to <code>openlcb_msg_t</code>, push to FIFO</td></tr>
+                <tr><td>TX handler</td><td>Convert <code>openlcb_msg_t</code> to wire format, transmit</td></tr>
+                <tr><td>Login driver</td><td>Handle transport-specific login steps before handing off to core login SM</td></tr>
+                <tr><td>State machine</td><td>Create main state machine to orchestrate RX/TX/login</td></tr>
+                <tr><td>Thread safety</td><td>Ensure lock/unlock around all shared resource access (buffers, FIFO, node state)</td></tr>
+                <tr><td>Tests</td><td>Write Google Tests with mock hardware interface</td></tr>
+            </tbody>
+        </table>
+
+        <div class="chapter-nav">
+            <a href="ch26.html">&larr; Prev: Ch 26 — Adding a Protocol</a>
+            <a href="ch28.html">Next: Ch 28 — Porting to a Platform &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

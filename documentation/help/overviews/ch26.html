@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 26 — Adding a Protocol | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 26 — Adding a New Protocol</h1>
+
+        <p>This chapter provides a step-by-step guide for adding a new protocol handler to the OpenLCB C Library. Protocol handlers live in the <code>openlcb/</code> directory and must remain transport-independent -- they operate on <code>openlcb_msg_t</code> structures and 48-bit Node IDs, never on CAN frames or aliases directly.</p>
+
+        <h2>26.1 Overview of the Process</h2>
+
+        <div class="mermaid">
+flowchart TD
+    A["Step 1: Define MTI constants"] --> B["Step 2: Add compile-time feature guard"]
+    B --> C["Step 3: Create handler source files"]
+    C --> D["Step 4: Register handler with dispatcher"]
+    D --> E["Step 5: Add application callbacks to openlcb_config_t"]
+    E --> F["Step 6: Wire callbacks in openlcb_config.c"]
+    F --> G["Step 7: Write Google Tests"]
+    G --> H["Step 8: Update documentation"]
+
+    style A fill:#e3f2fd,stroke:#1565c0
+    style D fill:#fff3e0,stroke:#e65100
+    style G fill:#e8f5e9,stroke:#2e7d32
+        </div>
+
+        <h2>26.2 Step 1: Define MTI Constants</h2>
+
+        <p>Add the MTI values for your protocol's request and reply messages to <code>openlcb_defines.h</code>. Follow the existing grouping pattern with Doxygen <code>@defgroup</code> tags:</p>
+
+        <pre><code>/**
+ * @defgroup mti_my_protocol My Protocol MTI Codes
+ * @brief Description of the protocol.
+ * @{
+ */
+
+    /** @brief Request message for My Protocol */
+#define MTI_MY_PROTOCOL_REQUEST 0x0nnn
+
+    /** @brief Reply message for My Protocol */
+#define MTI_MY_PROTOCOL_REPLY 0x0nnn
+
+    /** @} */ // end of mti_my_protocol</code></pre>
+
+        <div class="callout callout-info">
+            <div class="callout-title">MTI Bit Fields</div>
+            <p>MTI values encode addressing mode, priority, and content flags. See <a href="appendix_a.html">Appendix A</a> for the full MTI bit field layout. If your protocol uses addressed messages, set the destination-address-present bit (0x0008). If it carries an Event ID, set the event-present bit (0x0004).</p>
+        </div>
+
+        <p>If your protocol uses Protocol Support Inquiry, also add a PSI bit constant:</p>
+
+        <pre><code>    /** @brief My Protocol support bit in Protocol Support Reply */
+#define PSI_MY_PROTOCOL 0x000nnn</code></pre>
+
+        <h2>26.3 Step 2: Add Compile-Time Feature Guard</h2>
+
+        <p>Define a feature flag macro for the new protocol. The application enables it in <code>openlcb_user_config.h</code>:</p>
+
+        <pre><code>// In the application's openlcb_user_config.h:
+#define OPENLCB_COMPILE_MY_PROTOCOL</code></pre>
+
+        <p>If your protocol depends on another (e.g., it requires datagrams), add a dependency check in <code>openlcb_config.h</code>:</p>
+
+        <pre><code>#if defined(OPENLCB_COMPILE_MY_PROTOCOL) && !defined(OPENLCB_COMPILE_DATAGRAMS)
+#error "OPENLCB_COMPILE_MY_PROTOCOL requires OPENLCB_COMPILE_DATAGRAMS"
+#endif</code></pre>
+
+        <p>The existing dependency validation pattern in <code>openlcb_config.h</code> enforces these at compile time:</p>
+
+        <table>
+            <thead>
+                <tr><th>Feature</th><th>Depends On</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>MEMORY_CONFIGURATION</code></td><td><code>DATAGRAMS</code></td></tr>
+                <tr><td><code>BROADCAST_TIME</code></td><td><code>EVENTS</code></td></tr>
+                <tr><td><code>TRAIN_SEARCH</code></td><td><code>EVENTS</code> + <code>TRAIN</code></td></tr>
+                <tr><td><code>FIRMWARE</code></td><td><code>MEMORY_CONFIGURATION</code></td></tr>
+            </tbody>
+        </table>
+
+        <h2>26.4 Step 3: Create Handler Source Files</h2>
+
+        <p>Create a header and implementation file in the <code>openlcb/</code> directory:</p>
+
+        <pre><code>openlcb/
+    protocol_my_handler.h      // Public API
+    protocol_my_handler.c      // Implementation</code></pre>
+
+        <p>The handler follows the standard callback interface pattern. Define an interface struct that the wiring layer will populate:</p>
+
+        <pre><code>// protocol_my_handler.h
+
+#ifndef __PROTOCOL_MY_HANDLER__
+#define __PROTOCOL_MY_HANDLER__
+
+#include "openlcb_types.h"
+
+#ifdef OPENLCB_COMPILE_MY_PROTOCOL
+
+typedef struct {
+    // Required: function to send a reply message
+    void (*send_openlcb_msg)(openlcb_msg_t *openlcb_msg);
+
+    // Optional: application callback for protocol-specific events
+    void (*on_my_protocol_request)(openlcb_node_t *node, openlcb_msg_t *msg);
+} protocol_my_handler_interface_t;
+
+extern void ProtocolMyHandler_initialize(
+    const protocol_my_handler_interface_t *interface);
+
+extern void ProtocolMyHandler_handle_request(
+    openlcb_statemachine_info_t *statemachine_info);
+
+extern void ProtocolMyHandler_handle_reply(
+    openlcb_statemachine_info_t *statemachine_info);
+
+#endif /* OPENLCB_COMPILE_MY_PROTOCOL */
+#endif /* __PROTOCOL_MY_HANDLER__ */</code></pre>
+
+        <h3>Implementation Pattern</h3>
+
+        <p>The implementation stores a static pointer to the interface struct and uses it to call back into the wiring layer:</p>
+
+        <pre><code>// protocol_my_handler.c
+
+#include "protocol_my_handler.h"
+
+#ifdef OPENLCB_COMPILE_MY_PROTOCOL
+
+static const protocol_my_handler_interface_t *_interface;
+
+void ProtocolMyHandler_initialize(
+    const protocol_my_handler_interface_t *interface) {
+    _interface = interface;
+}
+
+void ProtocolMyHandler_handle_request(
+    openlcb_statemachine_info_t *statemachine_info) {
+
+    openlcb_node_t *node = statemachine_info->openlcb_node;
+    openlcb_msg_t *incoming = statemachine_info->incoming_msg_info.msg_ptr;
+    openlcb_msg_t *outgoing =
+        &statemachine_info->outgoing_msg_info.openlcb_msg.openlcb_msg;
+
+    // Build the reply in the outgoing worker buffer
+    outgoing->mti = MTI_MY_PROTOCOL_REPLY;
+    outgoing->dest_id = incoming->source_id;
+    outgoing->source_id = node->id;
+    // ... populate payload ...
+
+    statemachine_info->outgoing_msg_info.valid = 1;
+
+    // Notify application if callback is provided
+    if (_interface->on_my_protocol_request)
+        _interface->on_my_protocol_request(node, incoming);
+}
+
+#endif /* OPENLCB_COMPILE_MY_PROTOCOL */</code></pre>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Transport Independence</div>
+            <p>Never reference CAN aliases, CAN frame types, or any <code>can_*.h</code> headers in a protocol handler. Protocol handlers operate on <code>openlcb_msg_t</code> with full 48-bit Node IDs. The transport layer handles alias resolution and frame fragmentation.</p>
+        </div>
+
+        <h2>26.5 Step 4: Register with the Main Dispatcher</h2>
+
+        <p>The main dispatcher (<code>openlcb_main_statemachine.c</code>) routes incoming messages to handlers based on MTI. The dispatcher uses an interface struct with function pointers for each supported MTI. To add your protocol:</p>
+
+        <div class="mermaid">
+flowchart LR
+    A["Incoming openlcb_msg_t"] --> B{"MTI?"}
+    B -->|"0x0488"| C["Verify Node ID handler"]
+    B -->|"0x05B4"| D["Event PCER handler"]
+    B -->|"0x1C48"| E["Datagram handler"]
+    B -->|"0x0nnn"| F["Your handler"]
+    B -->|"Unknown"| G["Send OIR"]
+
+    style F fill:#fff3e0,stroke:#e65100
+        </div>
+
+        <ol>
+            <li>Add a function pointer for your MTI to the main state machine's interface struct.</li>
+            <li>Guard it with <code>#ifdef OPENLCB_COMPILE_MY_PROTOCOL</code>.</li>
+            <li>In the dispatcher's MTI switch/if-else chain, add a case for your MTI that calls the function pointer.</li>
+            <li>If the function pointer is NULL (protocol not wired), the dispatcher automatically sends an Optional Interaction Rejected (OIR) response.</li>
+        </ol>
+
+        <h2>26.6 Step 5: Add Application Callbacks</h2>
+
+        <p>If your protocol needs to notify the application of events, add callback function pointers to <code>openlcb_config_t</code> in <code>openlcb_config.h</code>. Guard them with your feature flag:</p>
+
+        <pre><code>// In openlcb_config.h, inside the openlcb_config_t struct:
+
+#ifdef OPENLCB_COMPILE_MY_PROTOCOL
+
+    // =========================================================================
+    // OPTIONAL: My Protocol Callbacks (requires MY_PROTOCOL)
+    // =========================================================================
+
+        /** @brief Called when a My Protocol request is received. Optional. */
+    void (*on_my_protocol_request)(openlcb_node_t *openlcb_node,
+                                    /* protocol-specific parameters */);
+
+#endif /* OPENLCB_COMPILE_MY_PROTOCOL */</code></pre>
+
+        <h2>26.7 Step 6: Wire in openlcb_config.c</h2>
+
+        <p>The wiring module (<code>openlcb_config.c</code>) bridges the user's <code>openlcb_config_t</code> to the internal interface structs. Add wiring for your protocol handler:</p>
+
+        <pre><code>// In openlcb_config.c:
+
+#ifdef OPENLCB_COMPILE_MY_PROTOCOL
+static protocol_my_handler_interface_t _my_protocol_interface;
+#endif
+
+// In the initialization function:
+#ifdef OPENLCB_COMPILE_MY_PROTOCOL
+    _my_protocol_interface.send_openlcb_msg = &_send_openlcb_msg;
+    _my_protocol_interface.on_my_protocol_request =
+        config->on_my_protocol_request;
+    ProtocolMyHandler_initialize(&_my_protocol_interface);
+#endif</code></pre>
+
+        <h2>26.8 Step 7: Write Google Tests</h2>
+
+        <p>Follow the testing pattern established by the existing protocol tests. The test creates a mock interface struct, injects it via <code>initialize()</code>, and verifies the handler's behavior:</p>
+
+        <pre><code>// gTests/test_protocol_my_handler.cpp
+
+#include "gtest/gtest.h"
+
+extern "C" {
+#include "protocol_my_handler.h"
+}
+
+// Mock state
+static openlcb_msg_t last_sent_msg;
+static bool msg_was_sent = false;
+
+static void mock_send(openlcb_msg_t *msg) {
+    last_sent_msg = *msg;
+    msg_was_sent = true;
+}
+
+class ProtocolMyHandlerTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        msg_was_sent = false;
+
+        static protocol_my_handler_interface_t mock_iface = {
+            .send_openlcb_msg = &mock_send,
+            .on_my_protocol_request = nullptr,
+        };
+        ProtocolMyHandler_initialize(&mock_iface);
+    }
+};
+
+TEST_F(ProtocolMyHandlerTest, HandlesRequestAndSendsReply) {
+    openlcb_statemachine_info_t info = { /* set up test context */ };
+    // ... set up incoming message with MTI_MY_PROTOCOL_REQUEST ...
+
+    ProtocolMyHandler_handle_request(&info);
+
+    EXPECT_TRUE(info.outgoing_msg_info.valid);
+    EXPECT_EQ(info.outgoing_msg_info.openlcb_msg.openlcb_msg.mti,
+              MTI_MY_PROTOCOL_REPLY);
+}</code></pre>
+
+        <h2>26.9 Checklist</h2>
+
+        <table>
+            <thead>
+                <tr><th>Step</th><th>File(s)</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><code>openlcb_defines.h</code></td><td>Add MTI constants and PSI bit</td></tr>
+                <tr><td>2</td><td><code>openlcb_config.h</code></td><td>Add <code>#error</code> dependency check (if needed)</td></tr>
+                <tr><td>3</td><td><code>openlcb/protocol_my_handler.h/.c</code></td><td>Create handler with interface struct pattern</td></tr>
+                <tr><td>4</td><td><code>openlcb_main_statemachine.c</code></td><td>Add MTI case to dispatcher</td></tr>
+                <tr><td>5</td><td><code>openlcb_config.h</code></td><td>Add application callbacks to <code>openlcb_config_t</code></td></tr>
+                <tr><td>6</td><td><code>openlcb_config.c</code></td><td>Wire internal interface to user config</td></tr>
+                <tr><td>7</td><td><code>gTests/</code></td><td>Write unit tests with mock interfaces</td></tr>
+                <tr><td>8</td><td>Documentation</td><td>Add chapter to Implementation Guide, update Appendix A and F</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Reference Implementations</div>
+            <p>For a minimal example, study <code>protocol_snip.c</code> (simple request/reply). For a more complex example with state and sub-commands, study <code>protocol_train_handler.c</code>. For a datagram-based protocol, study <code>protocol_datagram_handler.c</code>.</p>
+        </div>
+
+        <div class="chapter-nav">
+            <a href="ch25.html">&larr; Prev: Ch 25 — Debugging Guide</a>
+            <a href="ch27.html">Next: Ch 27 — Adding a Transport &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

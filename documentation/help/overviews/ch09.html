@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 9 — Login State Machine</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html" class="active">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 9 — Login State Machine</h1>
+
+        <p>
+            The login state machine walks each node through the OpenLCB initialization sequence:
+            sending Initialization Complete, announcing all producer and consumer events, and
+            finally transitioning to the <code>RUNSTATE_RUN</code> state where normal protocol
+            processing begins.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/openlcb_login_statemachine.c</code>,
+            <code>src/openlcb/openlcb_login_statemachine.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>9.1 State Progression</h2>
+
+        <p>
+            Each node tracks its current state in <code>openlcb_node->state.run_state</code>.
+            The login state machine only processes nodes whose <code>run_state</code> is less than
+            <code>RUNSTATE_RUN</code>. Nodes already in <code>RUNSTATE_RUN</code> are skipped.
+        </p>
+
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> INIT: Node allocated
+    INIT --> GENERATE_SEED: CAN layer
+    GENERATE_SEED --> SEND_CID: CAN layer
+    SEND_CID --> WAIT_200MS: CAN layer
+    WAIT_200MS --> SEND_RID: CAN layer
+    SEND_RID --> SEND_AMD: CAN layer
+    SEND_AMD --> LOAD_INIT_COMPLETE: CAN layer sets state
+
+    LOAD_INIT_COMPLETE --> LOAD_PRODUCER_EVENTS: Init Complete sent
+    LOAD_PRODUCER_EVENTS --> LOAD_CONSUMER_EVENTS: All producers announced
+    LOAD_CONSUMER_EVENTS --> LOGIN_COMPLETE: All consumers announced
+    LOGIN_COMPLETE --> RUN: on_login_complete callback
+
+    note right of RUN: Normal protocol processing
+    note left of INIT: States before LOAD_INIT_COMPLETE\nare handled by the CAN layer
+        </div>
+
+        <table>
+            <thead>
+                <tr><th>State</th><th>Handler</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>RUNSTATE_INIT</code> through <code>RUNSTATE_SEND_AMD</code></td>
+                    <td>(CAN login state machine)</td>
+                    <td>Transport-specific initialization handled by the CAN layer (alias reservation, CID/RID/AMD).</td>
+                </tr>
+                <tr>
+                    <td><code>RUNSTATE_LOAD_INITIALIZATION_COMPLETE</code></td>
+                    <td><code>load_initialization_complete()</code></td>
+                    <td>Builds and sends the Initialization Complete message with this node's full Node ID.</td>
+                </tr>
+                <tr>
+                    <td><code>RUNSTATE_LOAD_PRODUCER_EVENTS</code></td>
+                    <td><code>load_producer_events()</code></td>
+                    <td>Iterates through the node's producer event list, sending Producer Identified for each. Uses the enumerate flag for multi-message sequencing.</td>
+                </tr>
+                <tr>
+                    <td><code>RUNSTATE_LOAD_CONSUMER_EVENTS</code></td>
+                    <td><code>load_consumer_events()</code></td>
+                    <td>Same as above but for consumer events. Sends Consumer Identified for each event in the list.</td>
+                </tr>
+                <tr>
+                    <td><code>RUNSTATE_LOGIN_COMPLETE</code></td>
+                    <td><code>on_login_complete()</code></td>
+                    <td>Optional callback for application-specific post-login work. If it returns false, the state machine retries next cycle. On success (or if NULL), transitions to RUNSTATE_RUN.</td>
+                </tr>
+                <tr>
+                    <td><code>RUNSTATE_RUN</code></td>
+                    <td>(main dispatcher)</td>
+                    <td>Normal protocol operation. The login state machine skips this node from now on.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>9.2 Priority Dispatch</h2>
+
+        <p>
+            Like the main dispatcher, <code>OpenLcbLoginMainStatemachine_run()</code> uses a priority
+            chain where the first handler that does work causes an immediate return:
+        </p>
+
+        <div class="mermaid">
+flowchart TD
+    A["OpenLcbLoginMainStatemachine_run()"] --> B{"handle_outgoing\n_openlcb_message()"}
+    B -- "true" --> Z["return"]
+    B -- "false" --> C{"handle_try\n_reenumerate()"}
+    C -- "true" --> Z
+    C -- "false" --> D{"handle_try_enumerate\n_first_node()"}
+    D -- "true" --> Z
+    D -- "false" --> E{"handle_try_enumerate\n_next_node()"}
+    E -- "true / false" --> Z
+
+    style A fill:#4a90d9,color:#fff
+    style Z fill:#888,color:#fff
+        </div>
+
+        <div class="callout callout-warning">
+            <strong>No FIFO pop:</strong> Unlike the main dispatcher, the login state machine does
+            not pop from the incoming FIFO. It generates outgoing messages by walking through node
+            states rather than responding to incoming messages.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>9.3 Event Announcement</h2>
+
+        <p>
+            During the <code>RUNSTATE_LOAD_PRODUCER_EVENTS</code> and
+            <code>RUNSTATE_LOAD_CONSUMER_EVENTS</code> phases, the login state machine announces
+            all events a node produces or consumes. This is accomplished through the enumerate flag:
+        </p>
+
+        <ol>
+            <li>The handler checks if the node has events at the current index.</li>
+            <li>If yes, it builds a Producer/Consumer Identified message with the event's status
+                (Unknown, Set, or Clear), sets <code>outgoing_msg_info.valid = true</code> and
+                <code>outgoing_msg_info.enumerate = true</code>, and increments the event index.</li>
+            <li>The dispatcher sends the message, then re-enters the handler (priority 2).</li>
+            <li>When all events have been announced, the handler clears the enumerate flag and
+                advances the node's <code>run_state</code> to the next phase.</li>
+        </ol>
+
+        <!-- ================================================================ -->
+        <h2>9.4 Multi-Node Login</h2>
+
+        <p>
+            The login state machine uses the same round-robin enumeration pattern as the main
+            dispatcher. Each call to <code>_run()</code> processes one node at a time. If a node
+            needs to send multiple messages (event announcements), it uses the enumerate flag
+            to hold the enumeration position until all messages are sent before advancing to the
+            next node.
+        </p>
+
+        <p>
+            The node enumerator key <code>OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX</code>
+            is separate from the main dispatcher's key, so the two state machines maintain
+            independent iteration positions.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>9.5 The on_login_complete Callback</h2>
+
+        <p>
+            The optional <code>on_login_complete</code> callback gives the application a chance to
+            perform post-login initialization (e.g., starting timers, querying the network).
+            The callback signature:
+        </p>
+
+        <pre><code>bool (*on_login_complete)(openlcb_node_t *openlcb_node);</code></pre>
+
+        <ul>
+            <li><strong>Returns true:</strong> Login is finished; node transitions to <code>RUNSTATE_RUN</code>.</li>
+            <li><strong>Returns false:</strong> Login is not ready yet; the state machine retries on the next pass.</li>
+            <li><strong>NULL:</strong> No callback needed; node transitions to <code>RUNSTATE_RUN</code> immediately.</li>
+        </ul>
+
+        <!-- ================================================================ -->
+        <h2>9.6 Login Context Structure</h2>
+
+        <p>
+            The login state machine maintains its own context, <code>openlcb_login_statemachine_info_t</code>,
+            separate from the main dispatcher context. Its outgoing message buffer uses
+            <code>BASIC</code>-sized payload (sufficient for Init Complete and event identification
+            messages, which carry at most 8 bytes of payload).
+        </p>
+
+        <pre><code>typedef struct {
+    openlcb_msg_info_t   outgoing_msg_info;   // worker buffer + valid/enumerate flags
+    openlcb_node_t      *openlcb_node;        // node currently being enumerated
+} openlcb_login_statemachine_info_t;</code></pre>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch08.html">Previous: Ch 8 — Main Dispatcher</a>
+            <a href="ch10.html">Next: Ch 10 — CAN State Machine</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

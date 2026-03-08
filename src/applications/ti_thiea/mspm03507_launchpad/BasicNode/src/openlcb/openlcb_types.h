@@ -35,7 +35,7 @@
  * time — there is no dynamic allocation at runtime.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 8 Mar 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -440,6 +440,7 @@
         bool allocated : 1;     /**< Buffer is in use */
         bool inprocess : 1;     /**< Multi-frame message being assembled */
         bool invalid : 1;       /**< Message invalidated (e.g. AMR) — shall be discarded */
+        bool loopback : 1;      /**< Sibling dispatch copy — skip source node, no re-loopback */
 
     } openlcb_msg_state_t;
 

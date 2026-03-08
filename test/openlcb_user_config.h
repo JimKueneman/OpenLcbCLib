@@ -86,4 +86,12 @@
 #define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         6
 #define USER_DEFINED_MAX_TRAIN_FUNCTIONS             29
 
+// =============================================================================
+// Listener Alias Verification (requires OPENLCB_COMPILE_TRAIN)
+// =============================================================================
+
+#define USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL    1
+#define USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS   250
+#define USER_DEFINED_LISTENER_VERIFY_TIMEOUT_TICKS   30
+
 #endif /* __OPENLCB_USER_CONFIG__ */

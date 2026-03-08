@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 18 — Broadcast Time Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html" class="active">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 18 — Broadcast Time Protocol</h1>
+
+        <p>
+            The Broadcast Time Protocol provides a shared fast-clock for model railroad layouts.
+            A clock generator (producer) broadcasts time, date, year, and rate information as
+            well-known Event IDs. Consumers decode these events and maintain a local clock state
+            that can run at accelerated or decelerated rates.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/protocol_broadcast_time_handler.c</code>,
+            <code>src/openlcb/protocol_broadcast_time_handler.h</code>,
+            <code>src/openlcb/openlcb_application_broadcast_time.c</code>,
+            <code>src/openlcb/openlcb_application_broadcast_time.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>18.1 Clock ID Encoding</h2>
+
+        <p>
+            Each broadcast clock is identified by a 64-bit Event ID base. The upper 6 bytes
+            identify the clock, and the lower 2 bytes encode the specific time data or command.
+            Four well-known clock IDs are defined by the standard, plus up to
+            <code>BROADCAST_TIME_MAX_CUSTOM_CLOCKS</code> (default 4) application-defined clocks.
+        </p>
+
+        <p>
+            The total clock capacity is:
+        </p>
+        <pre><code>BROADCAST_TIME_TOTAL_CLOCK_COUNT = BROADCAST_TIME_WELLKNOWN_CLOCK_COUNT (4)
+                                  + BROADCAST_TIME_MAX_CUSTOM_CLOCKS (4)
+                                  = 8 slots</code></pre>
+
+        <!-- ================================================================ -->
+        <h2>18.2 Event ID Field Encoding</h2>
+
+        <p>
+            The lower 2 bytes of the Event ID encode different data types depending on the
+            event type. The protocol handler uses utility functions to extract the encoded values:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Event Type</th><th>Encoded Data</th><th>Extractor Function</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Report Time / Set Time</td><td>Hour (0-23) and minute (0-59)</td><td><code>OpenLcbUtilities_extract_time_from_event_id()</code></td></tr>
+                <tr><td>Report Date / Set Date</td><td>Month (1-12) and day (1-31)</td><td><code>OpenLcbUtilities_extract_date_from_event_id()</code></td></tr>
+                <tr><td>Report Year / Set Year</td><td>Year (0-4095)</td><td><code>OpenLcbUtilities_extract_year_from_event_id()</code></td></tr>
+                <tr><td>Report Rate / Set Rate</td><td>12-bit signed fixed-point rate</td><td><code>OpenLcbUtilities_extract_rate_from_event_id()</code></td></tr>
+                <tr><td>Start / Stop / Query / Date Rollover</td><td>Command only (no data)</td><td>N/A</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <strong>Rate encoding:</strong> The rate is a 12-bit signed fixed-point value with
+            2 fractional bits. A rate of 0x0004 means 1.0x real-time. The range is -512.00 to
+            +511.75 in 0.25 increments. Negative values run the clock backward.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>18.3 broadcast_clock_state_t</h2>
+
+        <p>
+            Each clock slot stores its state in a <code>broadcast_clock_state_t</code> structure:
+        </p>
+
+        <pre><code>typedef struct {
+    uint64_t clock_id;       // Clock identifier (upper 6 bytes)
+    broadcast_time_t time;   // { hour, minute, valid }
+    broadcast_date_t date;   // { month, day, valid }
+    broadcast_year_t year;   // { year, valid }
+    broadcast_rate_t rate;   // { rate, valid }
+    bool is_running;         // true = running, false = stopped
+    uint32_t ms_accumulator; // Internal: accumulated ms toward next minute
+} broadcast_clock_state_t;</code></pre>
+
+        <p>
+            Each sub-field has a <code>valid</code> flag that is set when data is first received
+            from the network. The <code>ms_accumulator</code> is used internally for fast-clock
+            advancement and is reset whenever a new time or rate event arrives.
+        </p>
+
+        <p>
+            The clock slot wrapper adds subscription metadata:
+        </p>
+
+        <pre><code>typedef struct {
+    broadcast_clock_state_t state;
+    bool is_consumer : 1;  // Registered as a consumer
+    bool is_producer : 1;  // Registered as a producer
+    bool is_allocated : 1; // Slot is in use
+    uint8_t send_query_reply_state; // Per-clock query reply sequence state
+} broadcast_clock_t;</code></pre>
+
+        <!-- ================================================================ -->
+        <h2>18.4 Event Type Dispatch</h2>
+
+        <p>
+            <code>ProtocolBroadcastTime_handle_time_event()</code> is the main entry point. It
+            extracts the clock ID, looks up the matching clock slot, determines the event type,
+            and dispatches to the appropriate sub-handler:
+        </p>
+
+        <div class="mermaid">
+flowchart TD
+    A["Time event received"] --> B["Extract clock_id"]
+    B --> C["Lookup clock slot"]
+    C --> D{{"Clock found?"}}
+    D -- "No" --> Z["return"]
+    D -- "Yes" --> E["Determine event type"]
+    E --> F{{"Event type"}}
+    F -- "Report Time" --> G["_handle_report_time()"]
+    F -- "Report Date" --> H["_handle_report_date()"]
+    F -- "Report Year" --> I["_handle_report_year()"]
+    F -- "Report Rate" --> J["_handle_report_rate()"]
+    F -- "Set Time/Date/Year/Rate" --> K["Producer-only:\nsame as Report handlers"]
+    F -- "Start" --> L["_handle_start()"]
+    F -- "Stop" --> M["_handle_stop()"]
+    F -- "Date Rollover" --> N["_handle_date_rollover()"]
+    F -- "Query" --> O["No-op"]
+
+    style A fill:#4a90d9,color:#fff
+        </div>
+
+        <table>
+            <thead>
+                <tr><th>Event Type Enum</th><th>Value</th><th>Handler</th><th>Producer Only?</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>BROADCAST_TIME_EVENT_REPORT_TIME</td><td>0</td><td><code>_handle_report_time()</code></td><td>No</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_REPORT_DATE</td><td>1</td><td><code>_handle_report_date()</code></td><td>No</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_REPORT_YEAR</td><td>2</td><td><code>_handle_report_year()</code></td><td>No</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_REPORT_RATE</td><td>3</td><td><code>_handle_report_rate()</code></td><td>No</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_SET_TIME</td><td>4</td><td><code>_handle_report_time()</code></td><td>Yes</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_SET_DATE</td><td>5</td><td><code>_handle_report_date()</code></td><td>Yes</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_SET_YEAR</td><td>6</td><td><code>_handle_report_year()</code></td><td>Yes</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_SET_RATE</td><td>7</td><td><code>_handle_report_rate()</code></td><td>Yes</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_QUERY</td><td>8</td><td>No-op</td><td>--</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_STOP</td><td>9</td><td><code>_handle_stop()</code></td><td>No</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_START</td><td>10</td><td><code>_handle_start()</code></td><td>No</td></tr>
+                <tr><td>BROADCAST_TIME_EVENT_DATE_ROLLOVER</td><td>11</td><td><code>_handle_date_rollover()</code></td><td>No</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-warning">
+            <strong>Set vs. Report:</strong> Set commands (SET_TIME, SET_DATE, SET_YEAR, SET_RATE)
+            are only processed if the clock is registered as a producer. These are commands from
+            consumers asking the generator to change its state. Report events are processed by
+            all clocks (consumer or producer).
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>18.5 Producer Sync Sequence (Query Reply)</h2>
+
+        <p>
+            When a consumer sends a Query event, the producer responds with a six-message
+            sequence that fully synchronizes the consumer's clock state:
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Consumer
+    participant Producer as Clock Generator
+
+    Consumer->>Producer: Query Event
+    Producer-->>Consumer: 1. Start or Stop (current state)
+    Producer-->>Consumer: 2. Report Rate
+    Producer-->>Consumer: 3. Report Year
+    Producer-->>Consumer: 4. Report Date
+    Producer-->>Consumer: 5. Report Time (current)
+    Producer-->>Consumer: 6. Report Time (next minute, as PCER)
+
+    Note over Consumer: Clock is now fully synchronized
+        </div>
+
+        <p>
+            The function <code>OpenLcbApplicationBroadcastTime_send_query_reply()</code> sends
+            this sequence. Because the transmit buffer may fill during the sequence, the function
+            uses per-clock state (<code>send_query_reply_state</code>) and must be called
+            repeatedly until it returns true. Messages 1-5 are sent as Producer Identified Set
+            events. Message 6 is sent as a PC Event Report (the next-minute time event).
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>18.6 Consumer Setup</h2>
+
+        <p>
+            To receive broadcast time events, a consumer node registers with:
+        </p>
+
+        <pre><code>broadcast_clock_state_t *clock =
+    OpenLcbApplicationBroadcastTime_setup_consumer(openlcb_node, clock_id);</code></pre>
+
+        <p>
+            This allocates a clock slot, marks it as a consumer, and registers the full
+            32,768-event consumer and producer ranges on the node so it can receive Report events
+            and send the Query event. After setup, the consumer sends a Query to get the current
+            clock state from the generator.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>18.7 Fast-Clock Advancement</h2>
+
+        <p>
+            Consumer clocks are advanced locally between network time updates. The function
+            <code>OpenLcbApplicationBroadcastTime_100ms_time_tick()</code> is called from the
+            main loop with the current global tick. It uses fixed-point accumulation to handle
+            fractional rates without floating-point arithmetic.
+        </p>
+
+        <p>
+            Each tick advances the <code>ms_accumulator</code> by the scaled rate. When the
+            accumulator crosses a minute boundary, the clock's time is incremented and the
+            <code>on_time_changed</code> callback fires. Clocks that are stopped or have a rate
+            of 0 are skipped. Only consumer clocks are advanced; producer clocks manage their
+            own time.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>18.8 Application Callbacks</h2>
+
+        <p>
+            The protocol handler provides 7 optional callbacks in
+            <code>interface_openlcb_protocol_broadcast_time_handler_t</code>:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Callback</th><th>When Fired</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>on_time_received</code></td><td>Time-of-day updated from a Report Time or Set Time event.</td></tr>
+                <tr><td><code>on_date_received</code></td><td>Date updated from a Report Date or Set Date event.</td></tr>
+                <tr><td><code>on_year_received</code></td><td>Year updated from a Report Year or Set Year event.</td></tr>
+                <tr><td><code>on_rate_received</code></td><td>Clock rate changed from a Report Rate or Set Rate event.</td></tr>
+                <tr><td><code>on_clock_started</code></td><td>Clock started (is_running set to true).</td></tr>
+                <tr><td><code>on_clock_stopped</code></td><td>Clock stopped (is_running set to false).</td></tr>
+                <tr><td><code>on_date_rollover</code></td><td>Date rollover event received (midnight crossing).</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <strong>Node index restriction:</strong> The protocol handler only processes broadcast
+            time events for node index 0. Broadcast time events are global and do not need to be
+            processed by every virtual node in a multi-node configuration.
+        </div>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch17.html">Previous: Ch 17 — Train Control</a>
+            <a href="ch19.html">Next: Ch 19 — Alias Mapping</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

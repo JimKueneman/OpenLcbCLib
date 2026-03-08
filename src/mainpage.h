@@ -16,7 +16,14 @@
  * </div>
  * 
  * <hr>
- 
+ *
+ * <h2 style="margin-left: 10px; margin-right: 10px;">Implementation Guide</h2>
+ *   <p style="margin-left: 50px; margin-right: 50px;">
+ *     <a href="../overviews/index.html">OpenLCB C Library Implementation Guide</a> — In-depth documentation covering architecture, state machines, protocol handlers, data flow, and extending the library.
+ *   </p>
+ *
+ * <hr>
+
  * <h2 style="margin-left: 10px; margin-right: 10px;">License</h2>
  *
  *   <p style="margin-left: 50px; margin-right: 50px;">

@@ -107,6 +107,19 @@ extern "C" {
          */
         void (*listener_clear_alias_by_alias)(uint16_t alias);
 
+        /**
+         * @brief OPTIONAL. Flush all cached listener aliases (global AME).
+         *
+         * @details Called when a global AME (empty payload) is received per
+         * CanFrameTransferS Section 6.2.3.  Zeros all alias fields but
+         * preserves registered node_ids.  The AMD replies triggered by the
+         * global AME will re-populate aliases via set_alias.
+         * NULL = feature not linked in.
+         *
+         * @note Typical: ListenerAliasTable_flush_aliases.
+         */
+        void (*listener_flush_aliases)(void);
+
     } interface_can_rx_message_handler_t;
 
 
@@ -290,12 +303,12 @@ extern "C" {
 
 
     /**
-     * @brief Handles CID (Check ID) CAN control frames (CanFrameTransferS 3.5.3).
+     * @brief Handles CID (Check ID) CAN control frames (CanFrameTransferS §6.2.5).
      *
-     * @details Per the standard, nodes that receive a CID frame containing an
-     * alias they are using or have reserved shall respond with an RID frame.
-     * This applies regardless of whether the node is permitted or still
-     * claiming the alias.  CID is a probe during alias reservation — the
+     * @details Per the standard (§6.2.5 Node ID Alias Collision Handling):
+     * "If the frame is a Check ID (CID) frame, send a Reserve ID (RID) frame
+     * in response."  This applies regardless of whether the node is Permitted
+     * or still Inhibited.  CID is a probe during alias reservation — the
      * correct defence is always RID.
      *
      * @param can_msg  Received CID frame.

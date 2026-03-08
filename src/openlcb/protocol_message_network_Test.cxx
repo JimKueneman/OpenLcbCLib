@@ -693,15 +693,16 @@ TEST(ProtocolMessageNetwork, handle_verify_node_id_addressed_full)
     statemachine_info.outgoing_msg_info.enumerate = false;
     statemachine_info.outgoing_msg_info.valid = false;
 
-    // Test addressed verify node ID (always responds)
+    // Test addressed verify node ID (always responds, but reply is always
+    // unaddressed per MessageNetworkS §3.4.2)
     OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_ADDRESSED);
 
     ProtocolMessageNetwork_handle_verify_node_id_addressed(&statemachine_info);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID);
-    EXPECT_EQ(outgoing_msg->dest_alias, SOURCE_ALIAS);
-    EXPECT_EQ(outgoing_msg->dest_id, (uint64_t) SOURCE_ID);
+    EXPECT_EQ(outgoing_msg->dest_alias, 0);
+    EXPECT_EQ(outgoing_msg->dest_id, (uint64_t) 0);
     EXPECT_EQ(outgoing_msg->payload_count, 6);
     EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0), DEST_ID);
 }
@@ -735,15 +736,16 @@ TEST(ProtocolMessageNetwork, handle_verify_node_id_addressed_simple)
     statemachine_info.outgoing_msg_info.enumerate = false;
     statemachine_info.outgoing_msg_info.valid = false;
 
-    // Test addressed verify node ID for simple node
+    // Test addressed verify node ID for simple node (reply is still
+    // unaddressed per MessageNetworkS §3.4.2)
     OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_ADDRESSED);
 
     ProtocolMessageNetwork_handle_verify_node_id_addressed(&statemachine_info);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID_SIMPLE);
-    EXPECT_EQ(outgoing_msg->dest_alias, SOURCE_ALIAS);
-    EXPECT_EQ(outgoing_msg->dest_id, (uint64_t) SOURCE_ID);
+    EXPECT_EQ(outgoing_msg->dest_alias, 0);
+    EXPECT_EQ(outgoing_msg->dest_id, (uint64_t) 0);
     EXPECT_EQ(outgoing_msg->payload_count, 6);
     EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0), DEST_ID);
 }

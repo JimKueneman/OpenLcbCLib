@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 15 — SNIP Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html" class="active">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 15 — SNIP (Simple Node Information Protocol)</h1>
+
+        <p>
+            The Simple Node Information Protocol provides a lightweight way to identify a node
+            without reading its full CDI. A SNIP reply packs manufacturer identification and
+            user-configurable name/description into a single addressed message (up to 256 bytes).
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/protocol_snip.c</code>,
+            <code>src/openlcb/protocol_snip.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>15.1 Request / Reply Exchange</h2>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Requester
+    participant Node
+
+    Requester->>Node: Simple Node Info Request (MTI 0x0DE8)
+    Note over Node: Build 8-field reply
+    Node-->>Requester: Simple Node Info Reply (MTI 0x0A08)
+        </div>
+
+        <p>
+            The handler <code>ProtocolSnip_handle_simple_node_info_request()</code> builds the
+            reply and marks it valid. The incoming reply handler
+            <code>ProtocolSnip_handle_simple_node_info_reply()</code> is a no-op (no automatic
+            response is generated).
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>15.2 Reply Payload Format (8 Fields)</h2>
+
+        <p>
+            The SNIP reply contains exactly 8 fields assembled sequentially. Each string field
+            is null-terminated. The total maximum payload is <code>LEN_MESSAGE_BYTES_SNIP</code>
+            (256 bytes).
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>#</th><th>Field</th><th>Type</th><th>Max Size</th><th>Source</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>Manufacturer Version</td><td>1 byte</td><td>1</td><td><code>snip.mfg_version</code> (node params)</td></tr>
+                <tr><td>2</td><td>Manufacturer Name</td><td>string + null</td><td>41</td><td><code>snip.name</code> (node params)</td></tr>
+                <tr><td>3</td><td>Model</td><td>string + null</td><td>41</td><td><code>snip.model</code> (node params)</td></tr>
+                <tr><td>4</td><td>Hardware Version</td><td>string + null</td><td>21</td><td><code>snip.hardware_version</code> (node params)</td></tr>
+                <tr><td>5</td><td>Software Version</td><td>string + null</td><td>21</td><td><code>snip.software_version</code> (node params)</td></tr>
+                <tr><td>6</td><td>User Version</td><td>1 byte</td><td>1</td><td><code>snip.user_version</code> (node params)</td></tr>
+                <tr><td>7</td><td>User Name</td><td>string + null</td><td>63</td><td>Configuration memory (ACDI User space)</td></tr>
+                <tr><td>8</td><td>User Description</td><td>string + null</td><td>64</td><td>Configuration memory (ACDI User space)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <strong>Total structure size:</strong>
+            <code>LEN_SNIP_STRUCTURE</code> = 264 bytes (includes all max lengths). The wire
+            payload is variable-length depending on actual string lengths.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>15.3 Manufacturer vs. User Fields</h2>
+
+        <p>
+            Fields 1-5 (manufacturer section) come from the node's <code>parameters->snip</code>
+            structure, which is typically stored in flash/ROM. These are read-only and set at
+            compile time:
+        </p>
+
+        <pre><code>typedef struct {
+    uint8_t mfg_version;                                     // Always 1
+    char name[LEN_SNIP_NAME_BUFFER];                         // 41 bytes
+    char model[LEN_SNIP_MODEL_BUFFER];                       // 41 bytes
+    char hardware_version[LEN_SNIP_HARDWARE_VERSION_BUFFER]; // 21 bytes
+    char software_version[LEN_SNIP_SOFTWARE_VERSION_BUFFER]; // 21 bytes
+    uint8_t user_version;                                    // Always 1
+} user_snip_struct_t;</code></pre>
+
+        <p>
+            Fields 7-8 (user section) are read at runtime from configuration memory via the
+            <code>config_memory_read</code> callback. The addresses are defined by the
+            application:
+        </p>
+
+        <ul>
+            <li><strong>User Name:</strong> starts at <code>USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS</code></li>
+            <li><strong>User Description:</strong> starts at <code>USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS</code></li>
+        </ul>
+
+        <p>
+            If the node's <code>address_space_config_memory.low_address_valid</code> flag is set,
+            the low address offset is added to the base address, allowing per-node offsets in a
+            shared configuration space.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>15.4 Field Loader Functions</h2>
+
+        <p>
+            Each of the 8 fields has a dedicated public loader function. All share the same
+            signature pattern:
+        </p>
+
+        <pre><code>uint16_t ProtocolSnip_load_&lt;field&gt;(
+    openlcb_node_t *openlcb_node,
+    openlcb_msg_t  *outgoing_msg,
+    uint16_t        offset,           // current payload offset
+    uint16_t        requested_bytes   // max bytes to write
+);
+// Returns: updated offset after writing</code></pre>
+
+        <table>
+            <thead>
+                <tr><th>Loader Function</th><th>Field</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>ProtocolSnip_load_manufacturer_version_id()</code></td><td>Mfg version byte</td></tr>
+                <tr><td><code>ProtocolSnip_load_name()</code></td><td>Manufacturer name</td></tr>
+                <tr><td><code>ProtocolSnip_load_model()</code></td><td>Model name</td></tr>
+                <tr><td><code>ProtocolSnip_load_hardware_version()</code></td><td>Hardware version</td></tr>
+                <tr><td><code>ProtocolSnip_load_software_version()</code></td><td>Software version</td></tr>
+                <tr><td><code>ProtocolSnip_load_user_version_id()</code></td><td>User version byte</td></tr>
+                <tr><td><code>ProtocolSnip_load_user_name()</code></td><td>User name (from config memory)</td></tr>
+                <tr><td><code>ProtocolSnip_load_user_description()</code></td><td>User description (from config memory)</td></tr>
+            </tbody>
+        </table>
+
+        <p>
+            The internal helper <code>_process_snip_string()</code> handles string copying with
+            truncation. It clamps the string length to the buffer maximum, copies the characters,
+            and always appends a null terminator.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>15.5 Reply Assembly Flow</h2>
+
+        <div class="mermaid">
+flowchart TD
+    A["SNIP Request received"] --> B["Load outgoing header\n(source, dest, MTI 0x0A08)"]
+    B --> C["Load mfg_version (1 byte)"]
+    C --> D["Load name (string + null)"]
+    D --> E["Load model (string + null)"]
+    E --> F["Load hardware_version (string + null)"]
+    F --> G["Load software_version (string + null)"]
+    G --> H["Load user_version (1 byte)"]
+    H --> I["Load user_name\n(config memory read + null)"]
+    I --> J["Load user_description\n(config memory read + null)"]
+    J --> K["Mark outgoing valid"]
+
+    style A fill:#4a90d9,color:#fff
+    style K fill:#27ae60,color:#fff
+        </div>
+
+        <p>
+            Each loader function advances the <code>payload_offset</code> and increments
+            <code>outgoing_msg->payload_count</code>. The loaders are called sequentially so
+            the payload is built in wire order.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>15.6 Validation: Exactly 6 Null Terminators</h2>
+
+        <p>
+            <code>ProtocolSnip_validate_snip_reply()</code> verifies an incoming SNIP reply is
+            well-formed. The three checks are:
+        </p>
+
+        <ol>
+            <li><strong>Length check:</strong> <code>payload_count</code> must not exceed <code>LEN_MESSAGE_BYTES_SNIP</code> (256).</li>
+            <li><strong>MTI check:</strong> must be <code>MTI_SIMPLE_NODE_INFO_REPLY</code> (0x0A08).</li>
+            <li><strong>Null count:</strong> the payload must contain exactly 6 null bytes (0x00).</li>
+        </ol>
+
+        <p>
+            The 6 null bytes correspond to the 6 null terminators expected from the string fields
+            (fields 2-5 and 7-8). The two version bytes (fields 1 and 6) are not null-terminated.
+            The null count is computed by <code>OpenLcbUtilities_count_nulls_in_openlcb_payload()</code>.
+        </p>
+
+        <div class="callout callout-warning">
+            <strong>Why exactly 6?</strong> The SNIP reply has 6 string fields, each with a null
+            terminator. If a string is empty, it contributes a single null byte. The version bytes
+            are not counted. Any other null count indicates a malformed or truncated reply.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>15.7 Callback Interface</h2>
+
+        <p>
+            The SNIP handler requires a single callback:
+        </p>
+
+        <pre><code>typedef struct {
+    uint16_t (*config_memory_read)(
+        openlcb_node_t *openlcb_node,
+        uint32_t address,
+        uint16_t count,
+        configuration_memory_buffer_t *buffer
+    );  // REQUIRED
+} interface_openlcb_protocol_snip_t;</code></pre>
+
+        <p>
+            The <code>config_memory_read</code> callback is used to fetch user name and user
+            description from configuration memory. If this callback is NULL, the user fields
+            are written as empty strings (single null byte each).
+        </p>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch14.html">Previous: Ch 14 — Datagram Protocol</a>
+            <a href="ch16.html">Next: Ch 16 — CDI</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

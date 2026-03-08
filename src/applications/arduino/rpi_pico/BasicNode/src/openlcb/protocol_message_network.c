@@ -93,16 +93,14 @@ static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_in
     /**
      * @brief Build Verified Node ID (or _SIMPLE) reply with this node’s ID.
      *
-     * @details For global (unaddressed) responses, dest fields are zeroed so
-     * the message is transport-independent.  For addressed responses, dest
-     * fields are copied from the requester.
+     * @details Per MessageNetworkS §3.4.2, the Verified Node ID reply is
+     * always unaddressed (dest fields zeroed) regardless of whether the
+     * triggering Verify Node ID was global or addressed.
      *
      * @param statemachine_info  @ref openlcb_statemachine_info_t context.
-     * @param is_addressed       true for addressed reply, false for global.
      */
 static void _load_verified_node_id(
-            openlcb_statemachine_info_t *statemachine_info,
-            bool is_addressed) {
+            openlcb_statemachine_info_t *statemachine_info) {
 
     uint16_t mti = MTI_VERIFIED_NODE_ID;
 
@@ -112,21 +110,11 @@ static void _load_verified_node_id(
 
     }
 
-    uint16_t dest_alias = 0;
-    uint64_t dest_id = 0;
-
-    if (is_addressed) {
-
-        dest_alias = statemachine_info->incoming_msg_info.msg_ptr->source_alias;
-        dest_id = statemachine_info->incoming_msg_info.msg_ptr->source_id;
-
-    }
-
     OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            dest_alias,
-            dest_id,
+            0,
+            0,
             mti);
 
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(
@@ -216,7 +204,7 @@ void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_statemachine_in
 
         if (OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) == statemachine_info->openlcb_node->id) {
 
-            _load_verified_node_id(statemachine_info, false);
+            _load_verified_node_id(statemachine_info);
 
             return;
 
@@ -228,14 +216,14 @@ void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_statemachine_in
 
     }
 
-    _load_verified_node_id(statemachine_info, false);
+    _load_verified_node_id(statemachine_info);
 
 }
 
-    /** @brief Handle addressed Verify Node ID — always replies. */
+    /** @brief Handle addressed Verify Node ID — always replies (unaddressed per §3.4.2). */
 void ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_statemachine_info_t *statemachine_info) {
 
-    _load_verified_node_id(statemachine_info, true);
+    _load_verified_node_id(statemachine_info);
 
 }
 

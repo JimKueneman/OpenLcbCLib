@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 1 — Project Overview | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 1 — Project Overview</h1>
+
+        <h2>1.1 What Is OpenLCB / LCC?</h2>
+        <p>OpenLCB (Open Layout Control Bus) is a networking standard for model railroad control systems. Its NMRA-adopted profile is called LCC (Layout Command Control). The protocol defines a message-based communication system where every device on the network is a <strong>node</strong> identified by a globally unique 48-bit Node ID. Nodes exchange messages identified by a <strong>Message Type Indicator (MTI)</strong> to implement protocols such as events, datagrams, configuration memory access, train control, and broadcast time.</p>
+
+        <p>This library provides a portable, pure-C implementation of the OpenLCB protocol stack. It is designed to run on bare-metal microcontrollers (dsPIC, STM32, ESP32, RP2040) as well as desktop platforms (macOS, Linux) for testing and simulation.</p>
+
+        <h2>1.2 Design Philosophy</h2>
+        <p>Four principles govern every design decision in this library:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Principle</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Zero dynamic allocation</strong></td>
+                    <td>All memory is statically allocated at compile time via fixed-size pools. There are no calls to <code>malloc()</code> or <code>free()</code> anywhere in the library. Pool sizes are controlled by <code>USER_DEFINED_*</code> macros in <code>openlcb_user_config.h</code>.</td>
+                </tr>
+                <tr>
+                    <td><strong>Non-blocking state machines</strong></td>
+                    <td>Every state machine does a fixed, bounded amount of work per call and returns. No function ever spins waiting for a condition. The main loop calls each state machine in round-robin fashion, ensuring all nodes and protocols make progress.</td>
+                </tr>
+                <tr>
+                    <td><strong>Static buffer pools</strong></td>
+                    <td>Message payloads come in four fixed sizes: BASIC (16 bytes), DATAGRAM (72 bytes), SNIP (256 bytes), and STREAM (512 bytes). Each pool has a compile-time depth. Reference counting allows the same buffer to be shared across queues without copying.</td>
+                </tr>
+                <tr>
+                    <td><strong>Callback-based dependency injection</strong></td>
+                    <td>Modules do not call each other directly. Instead, the application creates an interface struct containing function pointers, passes it to the module's <code>*_initialize()</code> function, and the module stores the pointer. This decouples the core protocol logic from platform-specific I/O.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>1.3 Architecture Boundary</h2>
+        <p>The library is split into two major layers separated by the <code>openlcb_msg_t</code> boundary type:</p>
+
+        <div class="mermaid">
+flowchart TB
+    subgraph APP["Application Layer"]
+        A1["openlcb_application.h"]
+        A2["openlcb_application_train.h"]
+        A3["openlcb_application_broadcast_time.h"]
+    end
+
+    subgraph CORE["openlcb/ — Transport-Independent Core"]
+        direction TB
+        B1["openlcb_main_statemachine"]
+        B2["openlcb_login_statemachine"]
+        B3["Protocol Handlers<br/>(message_network, event_transport,<br/>datagram, snip, config)"]
+        B4["Buffer System<br/>(buffer_store, buffer_fifo, buffer_list)"]
+        B5["Node Management<br/>(openlcb_node)"]
+        B6["Utilities<br/>(utilities, float16, gridconnect)"]
+    end
+
+    subgraph CAN["drivers/canbus/ — CAN Transport"]
+        direction TB
+        C1["can_main_statemachine"]
+        C2["can_login_statemachine"]
+        C3["can_rx_statemachine / can_tx_statemachine"]
+        C4["alias_mappings / listener_alias_table"]
+        C5["CAN Buffer System<br/>(can_buffer_store, can_buffer_fifo)"]
+    end
+
+    subgraph FUTURE["drivers/tcpip/ — Future TCP/IP Transport"]
+        D1["(not yet implemented)"]
+    end
+
+    APP --> CORE
+    CORE <-->|"openlcb_msg_t"| CAN
+    CORE <-->|"openlcb_msg_t"| FUTURE
+
+    style APP fill:#e8f5e9,stroke:#388e3c
+    style CORE fill:#e3f2fd,stroke:#1565c0
+    style CAN fill:#fff3e0,stroke:#e65100
+    style FUTURE fill:#f3e5f5,stroke:#7b1fa2
+        </div>
+
+        <p>The <code>openlcb/</code> directory contains everything that is transport-independent: types, defines, buffer management, node management, the main state machine, the login state machine, and all protocol handlers. The <code>drivers/canbus/</code> directory contains the CAN-specific transport layer. A future <code>drivers/tcpip/</code> directory would implement the TCP/IP transport, communicating with the core through the same <code>openlcb_msg_t</code> boundary.</p>
+
+        <h2>1.4 The openlcb_msg_t Boundary Type</h2>
+        <p>The <code>openlcb_msg_t</code> structure is the universal message currency of the library. It carries everything needed to process a message at the protocol level:</p>
+
+        <pre><code>typedef struct {
+    openlcb_msg_state_t state;      // allocated, inprocess, invalid, loopback
+    uint16_t mti;                   // Message Type Indicator
+    uint16_t source_alias;          // 12-bit CAN alias of sender
+    uint16_t dest_alias;            // 12-bit CAN alias of recipient (0 = global)
+    node_id_t source_id;            // 48-bit Node ID of sender
+    node_id_t dest_id;              // 48-bit Node ID of recipient (0 = global)
+    payload_type_enum payload_type; // BASIC, DATAGRAM, SNIP, or STREAM
+    uint16_t payload_count;         // Number of valid bytes in payload
+    openlcb_payload_t *payload;     // Pointer to payload buffer
+    openlcb_msg_timer_t timer;      // Timer/retry union
+    uint8_t reference_count;        // Number of active references
+} openlcb_msg_t;</code></pre>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Note: Alias Fields</div>
+            <p>The <code>source_alias</code> and <code>dest_alias</code> fields are CAN-specific concepts (12-bit alias for the 48-bit Node ID). They ride along in the core <code>openlcb_msg_t</code> structure for convenience, avoiding the need for a separate CAN-specific message wrapper. On a non-CAN transport these fields would simply be zero.</p>
+        </div>
+
+        <h2>1.5 Directory Structure</h2>
+        <pre><code>src/
++-- openlcb/                        # Transport-independent core
+|   +-- openlcb_types.h             # All type definitions
+|   +-- openlcb_defines.h           # All protocol constants (MTI, errors, etc.)
+|   +-- openlcb_buffer_store.h/.c   # Segregated payload buffer pool
+|   +-- openlcb_buffer_fifo.h/.c    # Circular FIFO for message pointers
+|   +-- openlcb_buffer_list.h/.c    # Random-access list for multi-frame assembly
+|   +-- openlcb_node.h/.c           # Node pool and enumeration
+|   +-- openlcb_main_statemachine.h/.c
+|   +-- openlcb_login_statemachine.h/.c
+|   +-- openlcb_message_network.h/.c
+|   +-- openlcb_event_transport.h/.c
+|   +-- openlcb_datagram.h/.c
+|   +-- openlcb_snip.h/.c
+|   +-- openlcb_config.h/.c         # Configuration memory protocol
+|   +-- openlcb_application.h/.c    # Application-level callbacks
+|   +-- openlcb_application_train.h/.c
+|   +-- openlcb_application_broadcast_time.h/.c
+|   +-- openlcb_utilities.h/.c      # Payload insert/extract helpers
+|   +-- openlcb_float16.h/.c        # IEEE 754 half-precision speed encoding
+|   +-- openlcb_gridconnect.h/.c    # GridConnect ASCII format conversion
+|   +-- *_Test.cxx                  # Google Test files
+|
++-- drivers/
+|   +-- canbus/                     # CAN transport layer
+|       +-- can_types.h             # CAN frame types and constants
+|       +-- can_buffer_store.h/.c   # CAN frame buffer pool
+|       +-- can_buffer_fifo.h/.c    # CAN frame FIFO
+|       +-- can_main_statemachine.h/.c
+|       +-- can_login_statemachine.h/.c
+|       +-- can_rx_statemachine.h/.c
+|       +-- can_tx_statemachine.h/.c
+|       +-- alias_mappings.h/.c     # Global alias-to-NodeID table
+|       +-- listener_alias_table.h/.c
+|       +-- *_Test.cxx
+|
++-- applications/                   # Platform-specific demo projects
+|   +-- arduino/                    # ESP32, RP2040
+|   +-- dspic/                      # Microchip dsPIC
+|   +-- platformio/                 # PlatformIO builds (ESP32, macOS)
+|   +-- stm32_cubeide/              # STM32 CubeIDE
+|   +-- ti_thiea/                   # TI MSPM0
+|   +-- xcode/                      # macOS Xcode
+|
++-- utilities/                      # Shared utility code
++-- test/                           # Test infrastructure
++-- build/                          # Build output</code></pre>
+
+        <h2>1.6 Target Platforms</h2>
+        <p>The library has been tested or has demo projects for the following platforms:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Platform</th>
+                    <th>Toolchain</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Microchip dsPIC</td>
+                    <td>MPLAB X / XC16</td>
+                    <td>16-bit, bare-metal, hardware CAN</td>
+                </tr>
+                <tr>
+                    <td>STM32F407</td>
+                    <td>STM32CubeIDE</td>
+                    <td>ARM Cortex-M4, hardware CAN</td>
+                </tr>
+                <tr>
+                    <td>ESP32</td>
+                    <td>Arduino / PlatformIO</td>
+                    <td>WiFi or hardware CAN via MCP2515</td>
+                </tr>
+                <tr>
+                    <td>Raspberry Pi Pico (RP2040)</td>
+                    <td>Arduino</td>
+                    <td>CAN via MCP2515 SPI adapter</td>
+                </tr>
+                <tr>
+                    <td>TI MSPM0</td>
+                    <td>TI THEIA IDE</td>
+                    <td>ARM Cortex-M0+</td>
+                </tr>
+                <tr>
+                    <td>macOS / Linux</td>
+                    <td>Xcode / PlatformIO / CMake</td>
+                    <td>Desktop simulation via GridConnect over TCP or serial</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Because the library is pure C with no OS dependencies in the core, porting to a new platform requires only providing the platform-specific callbacks (CAN driver send/receive, timer tick, lock/unlock) and a suitable <code>openlcb_user_config.h</code>.</p>
+
+        <div class="chapter-nav">
+            <span></span>
+            <a href="ch02.html">Next: Ch 2 — Building and Running &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

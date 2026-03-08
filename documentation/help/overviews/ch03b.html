@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 3b — CAN-Specific Types | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 3b — CAN-Specific Types and Constants</h1>
+        <p>This chapter covers types defined in <code>can_types.h</code> that are specific to the CAN transport layer. These supplement the transport-independent types from <a href="ch03.html">Chapter 3</a>.</p>
+
+        <h2>3b.1 The can_msg_t Structure</h2>
+        <p>A complete CAN 2.0B extended frame:</p>
+
+        <pre><code>typedef struct can_msg_struct {
+    can_msg_state_t state;        // Allocation flag (1-bit bitfield)
+    uint32_t identifier;          // 29-bit extended CAN identifier
+    uint8_t payload_count;        // Number of valid data bytes (0-8)
+    payload_bytes_can_t payload;  // 8-byte data array
+} can_msg_t;</code></pre>
+
+        <p>The <code>can_msg_state_t</code> contains a single <code>allocated</code> bit, used by the CAN buffer store to track ownership:</p>
+        <pre><code>typedef struct can_msg_state_struct {
+    uint8_t allocated : 1;
+} can_msg_state_t;</code></pre>
+
+        <h2>3b.2 CAN Identifier Bit Layout</h2>
+        <p>OpenLCB uses the CAN 2.0B 29-bit extended identifier. The bits are divided into fields depending on whether the frame is a CAN control frame or an OpenLCB message frame:</p>
+
+        <pre><code>29-bit CAN Extended Identifier Layout:
++----+-----+--------+--------------+------------------+
+| 28 | 27  | 26-24  |    23-12     |      11-0        |
++----+-----+--------+--------------+------------------+
+| R  | Msg | Frame  |  Variable    |   Source Alias    |
+|    | Ind | Type / |  Field /     |   (12 bits)       |
+| 0  |     | Seq #  |  MTI field   |                   |
++----+-----+--------+--------------+------------------+
+
+Bit 28:    Reserved (always 0)
+Bit 27:    1 = OpenLCB message frame, 0 = CAN control frame
+Bits 26-24: Frame Type (OpenLCB) or Sequence Number (CAN control)
+Bits 23-12: Variable Field (MTI bits in messages, command in control frames)
+Bits 11-0:  Source Alias (12-bit CAN alias of the sending node)</code></pre>
+
+        <div class="mermaid">
+flowchart LR
+    subgraph ID["29-bit CAN Identifier"]
+        direction LR
+        B28["Bit 28<br/>Reserved<br/>(0)"]
+        B27["Bit 27<br/>Msg Indicator<br/>1=OpenLCB"]
+        B26_24["Bits 26-24<br/>Frame Type /<br/>Seq Number"]
+        B23_12["Bits 23-12<br/>Variable Field<br/>(MTI / Cmd)"]
+        B11_0["Bits 11-0<br/>Source Alias<br/>(12 bits)"]
+    end
+
+    style B28 fill:#ffcdd2,stroke:#c62828
+    style B27 fill:#c8e6c9,stroke:#2e7d32
+    style B26_24 fill:#bbdefb,stroke:#1565c0
+    style B23_12 fill:#fff9c4,stroke:#f57f17
+    style B11_0 fill:#e1bee7,stroke:#7b1fa2
+        </div>
+
+        <h2>3b.3 Frame Type Constants</h2>
+        <p>When bit 27 is set (OpenLCB message), bits 26-24 identify the frame type:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Bits 26-24</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>OPENLCB_MESSAGE_STANDARD_FRAME_TYPE</code></td><td>0x01000000</td><td>001</td><td>Global or addressed OpenLCB message</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_DATAGRAM_ONLY</code></td><td>0x02000000</td><td>010</td><td>Datagram complete in single frame</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_DATAGRAM_FIRST</code></td><td>0x03000000</td><td>011</td><td>First frame of multi-frame datagram</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_DATAGRAM_MIDDLE</code></td><td>0x04000000</td><td>100</td><td>Middle frame of multi-frame datagram</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_DATAGRAM_FINAL</code></td><td>0x05000000</td><td>101</td><td>Final frame of multi-frame datagram</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_RESERVED</code></td><td>0x06000000</td><td>110</td><td>Reserved for future use</td></tr>
+                <tr><td><code>CAN_FRAME_TYPE_STREAM</code></td><td>0x07000000</td><td>111</td><td>Stream data frame</td></tr>
+            </tbody>
+        </table>
+
+        <h2>3b.4 CAN Control Frame Constants</h2>
+        <p>When bit 27 is clear (CAN control frame), bits 26-24 carry a sequence number for CID frames, or the variable field encodes the control command:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>CAN_CONTROL_FRAME_CID7</code></td><td>0x07000000</td><td>Check ID 7 -- first 12 bits of Node ID</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_CID6</code></td><td>0x06000000</td><td>Check ID 6 -- 2nd 12 bits of Node ID</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_CID5</code></td><td>0x05000000</td><td>Check ID 5 -- 3rd 12 bits of Node ID</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_CID4</code></td><td>0x04000000</td><td>Check ID 4 -- last 12 bits of Node ID</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_RID</code></td><td>0x00700000</td><td>Reserve ID -- claims the alias</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_AMD</code></td><td>0x00701000</td><td>Alias Map Definition -- maps alias to Node ID</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_AME</code></td><td>0x00702000</td><td>Alias Mapping Enquiry -- query alias ownership</td></tr>
+                <tr><td><code>CAN_CONTROL_FRAME_AMR</code></td><td>0x00703000</td><td>Alias Map Reset -- node releasing alias</td></tr>
+            </tbody>
+        </table>
+
+        <h2>3b.5 Multi-Frame Indicator Bits</h2>
+        <p>For addressed messages that span multiple CAN frames, bits 5-4 of the first data byte indicate the frame position in the sequence:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Bits 5-4</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>MULTIFRAME_ONLY</code></td><td>0x00</td><td>00</td><td>Single frame (complete message)</td></tr>
+                <tr><td><code>MULTIFRAME_FIRST</code></td><td>0x10</td><td>01</td><td>First frame of multi-frame sequence</td></tr>
+                <tr><td><code>MULTIFRAME_FINAL</code></td><td>0x20</td><td>10</td><td>Final frame of multi-frame sequence</td></tr>
+                <tr><td><code>MULTIFRAME_MIDDLE</code></td><td>0x30</td><td>11</td><td>Middle frame of multi-frame sequence</td></tr>
+            </tbody>
+        </table>
+
+        <p>The mask <code>MASK_MULTIFRAME_BITS</code> (0x30) isolates these two bits from the first data byte.</p>
+
+        <h2>3b.6 CAN Identifier Field Masks</h2>
+        <p>These masks extract individual fields from the 29-bit CAN identifier:</p>
+
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Extracts</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RESERVED_TOP_BIT</code></td><td>0x10000000</td><td>Bit 28 (must be 0)</td></tr>
+                <tr><td><code>CAN_OPENLCB_MSG</code></td><td>0x08000000</td><td>Bit 27 (1 = OpenLCB message)</td></tr>
+                <tr><td><code>MASK_CAN_FRAME_SEQUENCE_NUMBER</code></td><td>0x07000000</td><td>Bits 26-24 (frame type / seq #)</td></tr>
+                <tr><td><code>MASK_CAN_VARIABLE_FIELD</code></td><td>0x00FFF000</td><td>Bits 23-12 (MTI / command)</td></tr>
+                <tr><td><code>MASK_CAN_SOURCE_ALIAS</code></td><td>0x00000FFF</td><td>Bits 11-0 (source alias)</td></tr>
+            </tbody>
+        </table>
+
+        <h2>3b.7 can_statemachine_info_t</h2>
+        <p>Context block passed through the CAN state machine on every iteration:</p>
+
+        <pre><code>typedef struct can_statemachine_info_struct {
+    openlcb_node_t *openlcb_node;            // Node currently being processed
+    can_msg_t *login_outgoing_can_msg;        // Statically-allocated login frame (CID/RID/AMD)
+    uint8_t login_outgoing_can_msg_valid : 1; // Set when login frame needs transmitting
+    can_msg_t *outgoing_can_msg;              // Pool-allocated reply frame; freed after TX
+    uint8_t enumerating : 1;                  // Set when handler will produce N reply frames
+    uint8_t current_tick;                     // Snapshot of global 100ms tick
+} can_statemachine_info_t;</code></pre>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Ownership Rules</div>
+            <p><code>login_outgoing_can_msg</code> points to a static variable inside <code>can_main_statemachine.c</code> -- do not free it. <code>outgoing_can_msg</code> is pool-allocated and must be freed after successful transmission.</p>
+        </div>
+
+        <h2>3b.8 Alias Mapping Types</h2>
+
+        <h3>alias_mapping_t</h3>
+        <p>One entry in the alias mapping table -- a Node ID / 12-bit alias pair:</p>
+
+        <pre><code>typedef struct alias_mapping_struct {
+    node_id_t node_id;        // Permanent 48-bit Node ID
+    uint16_t alias;           // Temporary 12-bit CAN alias (0x001-0xFFF)
+    uint8_t is_duplicate : 1; // Set by ISR when another node claims this alias
+    uint8_t is_permitted : 1; // Set after successful login (AMD transmitted)
+} alias_mapping_t;</code></pre>
+
+        <h3>alias_mapping_info_t</h3>
+        <p>Container for all alias mapping entries plus a fast-check duplicate flag:</p>
+
+        <pre><code>typedef struct alias_mapping_info_struct {
+    alias_mapping_t list[ALIAS_MAPPING_BUFFER_DEPTH]; // All registered mappings
+    bool has_duplicate_alias;  // True if any entry has is_duplicate set
+} alias_mapping_info_t;</code></pre>
+
+        <p>The <code>has_duplicate_alias</code> flag enables the main loop to quickly check if any alias conflict needs resolution, without scanning the entire table on every iteration.</p>
+
+        <h2>3b.9 listener_alias_entry_t</h2>
+        <p>Used by the listener alias table for train consist members:</p>
+
+        <pre><code>typedef struct listener_alias_entry_struct {
+    node_id_t node_id; // Listener Node ID (from protocol layer attach). 0 = unused.
+    uint16_t alias;    // Resolved CAN alias (0 = not yet resolved)
+} listener_alias_entry_t;</code></pre>
+
+        <p>The total number of listener alias table slots is computed as:</p>
+        <pre><code>#define LISTENER_ALIAS_TABLE_DEPTH \
+    (USER_DEFINED_MAX_LISTENERS_PER_TRAIN * USER_DEFINED_TRAIN_NODE_COUNT)</code></pre>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Thread Safety</div>
+            <p>Alias mapping entries and listener alias entries may be written by the CAN RX interrupt (on AMD arrival) and read by the main thread. All accesses must be protected by the <code>lock_shared_resources</code> / <code>unlock_shared_resources</code> mechanism described in <a href="ch06.html">Chapter 6</a>.</p>
+        </div>
+
+        <h2>3b.10 CAN-Specific Constants</h2>
+        <table>
+            <thead>
+                <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>LEN_CAN_BYTE_ARRAY</code></td><td>8</td><td>CAN 2.0 frame data length</td></tr>
+                <tr><td><code>OFFSET_CAN_WITHOUT_DEST_ADDRESS</code></td><td>0</td><td>Data starts at byte 0 (global messages)</td></tr>
+                <tr><td><code>OFFSET_CAN_WITH_DEST_ADDRESS</code></td><td>2</td><td>Data starts at byte 2 (addressed messages, bytes 0-1 carry dest alias)</td></tr>
+                <tr><td><code>LEN_CAN_FIFO_BUFFER</code></td><td><code>USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1</code></td><td>FIFO slot count (extra slot so head==tail means empty)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="chapter-nav">
+            <a href="ch03.html">&larr; Previous: Ch 3 — Types and Constants</a>
+            <a href="ch04.html">Next: Ch 4 — Buffer System &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

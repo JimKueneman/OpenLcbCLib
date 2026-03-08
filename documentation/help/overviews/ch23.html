@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 23 — Wiring It All Together | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 23 — Wiring It All Together</h1>
+
+        <p>This chapter describes how a user application brings up the entire OpenLCB stack: configuring the two configuration structs, calling the initialization functions in the correct order, allocating nodes, running the main loop, and providing the 100ms timer tick.</p>
+
+        <h2>23.1 The can_config_t Structure</h2>
+        <p>The CAN transport layer is configured by populating a <code>can_config_t</code> struct and passing it to <code>CanConfig_initialize()</code>. This struct contains only hardware driver functions -- all internal CAN wiring is handled automatically by <code>can_config.c</code>.</p>
+
+        <table>
+            <thead>
+                <tr><th>Field</th><th>Required?</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>transmit_raw_can_frame</code></td><td>REQUIRED</td><td>Transmit a raw CAN frame to the bus. Returns true on success.</td></tr>
+                <tr><td><code>is_tx_buffer_clear</code></td><td>REQUIRED</td><td>Returns true if the CAN TX hardware can accept another frame.</td></tr>
+                <tr><td><code>lock_shared_resources</code></td><td>REQUIRED</td><td>Disable interrupts or acquire mutex (same function as in openlcb_config_t).</td></tr>
+                <tr><td><code>unlock_shared_resources</code></td><td>REQUIRED</td><td>Re-enable interrupts or release mutex.</td></tr>
+                <tr><td><code>on_rx</code></td><td>Optional</td><td>Callback invoked when a CAN frame is received (for logging/debugging).</td></tr>
+                <tr><td><code>on_tx</code></td><td>Optional</td><td>Callback invoked when a CAN frame is transmitted (for logging/debugging).</td></tr>
+                <tr><td><code>on_alias_change</code></td><td>Optional</td><td>Callback invoked when a node's CAN alias changes.</td></tr>
+            </tbody>
+        </table>
+
+        <h2>23.2 The openlcb_config_t Structure</h2>
+        <p>The OpenLCB protocol layer is configured by populating an <code>openlcb_config_t</code> struct and passing it to <code>OpenLcb_initialize()</code>. Fields are grouped by feature flag.</p>
+
+        <h3>Required Fields (Always)</h3>
+        <table>
+            <thead>
+                <tr><th>Field</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>lock_shared_resources</code></td><td>Disable interrupts / acquire mutex. Same function as CAN config.</td></tr>
+                <tr><td><code>unlock_shared_resources</code></td><td>Re-enable interrupts / release mutex.</td></tr>
+                <tr><td><code>config_mem_read</code></td><td>Read from configuration memory (EEPROM/Flash/file).</td></tr>
+                <tr><td><code>config_mem_write</code></td><td>Write to configuration memory.</td></tr>
+                <tr><td><code>reboot</code></td><td>Reboot the processor.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Optional Fields (Grouped by Feature Flag)</h3>
+        <table>
+            <thead>
+                <tr><th>Feature Flag</th><th>Callbacks Enabled</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>(always)</td><td><code>on_optional_interaction_rejected</code>, <code>on_terminate_due_to_error</code>, <code>on_100ms_timer</code>, <code>on_login_complete</code></td></tr>
+                <tr><td><code>OPENLCB_COMPILE_EVENTS</code></td><td><code>on_consumed_event_pcer</code>, <code>on_consumed_event_identified</code>, <code>on_event_learn</code>, <code>on_pc_event_report</code>, consumer/producer identified callbacks</td></tr>
+                <tr><td><code>OPENLCB_COMPILE_MEMORY_CONFIGURATION</code></td><td><code>factory_reset</code>, <code>config_mem_read_delayed_reply_time</code>, <code>config_mem_write_delayed_reply_time</code></td></tr>
+                <tr><td><code>OPENLCB_COMPILE_FIRMWARE</code></td><td><code>freeze</code>, <code>unfreeze</code>, <code>firmware_write</code></td></tr>
+                <tr><td><code>OPENLCB_COMPILE_BROADCAST_TIME</code></td><td><code>on_broadcast_time_changed</code>, <code>on_broadcast_time_received</code>, <code>on_broadcast_date_received</code>, <code>on_broadcast_year_received</code>, <code>on_broadcast_rate_received</code>, <code>on_broadcast_clock_started</code>, <code>on_broadcast_clock_stopped</code>, <code>on_broadcast_date_rollover</code></td></tr>
+                <tr><td><code>OPENLCB_COMPILE_TRAIN</code></td><td>Speed/function/emergency notifiers, controller assign/release, listener changed, heartbeat, decision callbacks, throttle-side reply notifiers</td></tr>
+                <tr><td><code>OPENLCB_COMPILE_TRAIN_SEARCH</code></td><td><code>on_train_search_matched</code>, <code>on_train_search_no_match</code></td></tr>
+            </tbody>
+        </table>
+
+        <h2>23.3 Initialization Sequence</h2>
+        <p>The correct order for bringing up the stack is:</p>
+
+        <div class="mermaid">
+flowchart TD
+    A["CanConfig_initialize(&can_config)"] --> B["OpenLcb_initialize(&openlcb_config)"]
+    B --> C["OpenLcb_create_node(node_id_1, &params_1)"]
+    C --> D["OpenLcb_create_node(node_id_2, &params_2)"]
+    D --> E["... additional nodes ..."]
+    E --> F["Start 100ms timer interrupt"]
+    F --> G["Enter main loop"]
+
+    style A fill:#fff3e0,stroke:#e65100
+    style B fill:#e3f2fd,stroke:#1565c0
+    style C fill:#e8f5e9,stroke:#388e3c
+    style D fill:#e8f5e9,stroke:#388e3c
+    style F fill:#fce4ec,stroke:#c62828
+    style G fill:#f3e5f5,stroke:#7b1fa2
+        </div>
+
+        <div class="callout callout-warning">
+            <div class="callout-title">Order Matters</div>
+            <p><code>CanConfig_initialize()</code> must be called BEFORE <code>OpenLcb_initialize()</code>. The OpenLCB config wiring module references CAN TX functions (e.g., <code>CanTxStatemachine_send_openlcb_message</code>) that must already be initialized.</p>
+        </div>
+
+        <h3>What happens inside CanConfig_initialize()</h3>
+        <ol>
+            <li>Save the user config pointer.</li>
+            <li>Initialize CAN buffer infrastructure: <code>CanBufferStore_initialize()</code>, <code>CanBufferFifo_initialize()</code>.</li>
+            <li>Build all 7 internal CAN interface structs from user config + library functions.</li>
+            <li>Initialize all CAN modules in dependency order: RX handler, RX SM, TX handler, TX SM, login handler, login SM, main SM, alias mappings, listener alias table.</li>
+        </ol>
+
+        <h3>What happens inside OpenLcb_initialize()</h3>
+        <ol>
+            <li>Save the user config pointer.</li>
+            <li>Initialize OpenLCB buffer infrastructure: <code>OpenLcbBufferStore</code>, <code>OpenLcbBufferList</code>, <code>OpenLcbBufferFifo</code>.</li>
+            <li>Build all internal interface structs from user config and compile flags.</li>
+            <li>Initialize all compiled-in protocol modules: SNIP, Datagram, Config Mem (read/write/ops), Events, Message Network, Broadcast Time, Train, Train Search.</li>
+            <li>Initialize Node management, Login SM, Main SM, Application layer.</li>
+        </ol>
+
+        <h2>23.4 The Main Loop</h2>
+        <p>The application's main loop calls <code>OpenLcb_run()</code> as fast as possible. This single function runs one iteration of all state machines:</p>
+
+        <pre><code>void OpenLcb_run(void) {
+    CanMainStateMachine_run();       // CAN transport layer
+    OpenLcbLoginMainStatemachine_run(); // OpenLCB login (Init Complete, events)
+    OpenLcbMainStatemachine_run();   // OpenLCB protocol dispatch
+
+    _run_periodic_services();        // 100ms timer-driven tasks
+}</code></pre>
+
+        <p>The periodic services, driven by the 100ms tick, include:</p>
+        <ul>
+            <li><code>OpenLcbNode_100ms_timer_tick()</code> -- user timer callback</li>
+            <li><code>ProtocolDatagramHandler_100ms_timer_tick()</code> / <code>_check_timeouts()</code> -- datagram retry/timeout</li>
+            <li><code>OpenLcbApplicationBroadcastTime_100ms_time_tick()</code> -- clock minute accumulation</li>
+            <li><code>OpenLcbApplicationTrain_100ms_timer_tick()</code> -- heartbeat countdown</li>
+        </ul>
+
+        <h2>23.5 The 100ms Timer Tick</h2>
+        <p>The library's timekeeping is built on a single <code>volatile uint8_t</code> counter incremented every 100ms:</p>
+
+        <pre><code>static volatile uint8_t _global_100ms_tick = 0;
+
+void OpenLcb_100ms_timer_tick(void) {
+    _global_100ms_tick++;
+}</code></pre>
+
+        <p>The application must call <code>OpenLcb_100ms_timer_tick()</code> from a hardware timer interrupt or periodic RTOS task. This is the ONLY action performed in the interrupt context. All real protocol work runs in the main loop.</p>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Why volatile uint8_t is Safe</div>
+            <p>A <code>volatile uint8_t</code> read/write is a single instruction on all target architectures (8-bit PIC through 64-bit ARM). Only the timer interrupt performs the increment (read-modify-write), and timer interrupts do not re-enter, so no locking is needed for the counter itself. All other contexts only read.</p>
+        </div>
+
+        <p>Elapsed time is computed by subtraction: <code>elapsed = current_tick - snapshot</code>. The <code>uint8_t</code> wraps at 256, and unsigned subtraction handles the wrap correctly for durations up to 25.5 seconds.</p>
+
+        <h2>23.6 Platform-Specific Lock/Unlock Examples</h2>
+
+        <table>
+            <thead>
+                <tr><th>Platform</th><th>lock_shared_resources()</th><th>unlock_shared_resources()</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Bare-metal (dsPIC)</td>
+                    <td><code>__builtin_disi(0x3FFF);</code> (disable interrupts)</td>
+                    <td><code>__builtin_disi(0);</code> (re-enable)</td>
+                </tr>
+                <tr>
+                    <td>Bare-metal (ARM)</td>
+                    <td><code>__disable_irq();</code></td>
+                    <td><code>__enable_irq();</code></td>
+                </tr>
+                <tr>
+                    <td>FreeRTOS</td>
+                    <td><code>taskENTER_CRITICAL();</code></td>
+                    <td><code>taskEXIT_CRITICAL();</code></td>
+                </tr>
+                <tr>
+                    <td>POSIX (testing)</td>
+                    <td><code>pthread_mutex_lock(&mutex);</code></td>
+                    <td><code>pthread_mutex_unlock(&mutex);</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>23.7 Feature Flag Dependency Tree</h2>
+        <p>Compile-time feature flags control which protocol modules are included. Dependencies are enforced at compile time with <code>#error</code> directives:</p>
+
+        <div class="mermaid">
+flowchart TD
+    EVENTS["OPENLCB_COMPILE_EVENTS"]
+    DATAGRAMS["OPENLCB_COMPILE_DATAGRAMS"]
+    MEMCFG["OPENLCB_COMPILE_MEMORY_CONFIGURATION"]
+    FIRMWARE["OPENLCB_COMPILE_FIRMWARE"]
+    BTIME["OPENLCB_COMPILE_BROADCAST_TIME"]
+    TRAIN["OPENLCB_COMPILE_TRAIN"]
+    TSEARCH["OPENLCB_COMPILE_TRAIN_SEARCH"]
+
+    MEMCFG -->|requires| DATAGRAMS
+    FIRMWARE -->|requires| MEMCFG
+    BTIME -->|requires| EVENTS
+    TSEARCH -->|requires| EVENTS
+    TSEARCH -->|requires| TRAIN
+
+    style EVENTS fill:#e8f5e9,stroke:#388e3c
+    style DATAGRAMS fill:#e3f2fd,stroke:#1565c0
+    style MEMCFG fill:#e3f2fd,stroke:#1565c0
+    style FIRMWARE fill:#fff3e0,stroke:#e65100
+    style BTIME fill:#e8f5e9,stroke:#388e3c
+    style TRAIN fill:#fce4ec,stroke:#c62828
+    style TSEARCH fill:#fce4ec,stroke:#c62828
+        </div>
+
+        <h2>23.8 Minimal Application Template</h2>
+        <pre><code>// openlcb_user_config.h defines all USER_DEFINED_* macros
+// plus feature flags like OPENLCB_COMPILE_EVENTS
+
+#include "drivers/canbus/can_config.h"
+#include "openlcb/openlcb_config.h"
+
+static const can_config_t can_cfg = {
+    .transmit_raw_can_frame  = &MyCanDriver_transmit,
+    .is_tx_buffer_clear      = &MyCanDriver_is_tx_clear,
+    .lock_shared_resources   = &MyPlatform_lock,
+    .unlock_shared_resources = &MyPlatform_unlock,
+};
+
+static const openlcb_config_t olcb_cfg = {
+    .lock_shared_resources   = &MyPlatform_lock,
+    .unlock_shared_resources = &MyPlatform_unlock,
+    .config_mem_read         = &MyEeprom_read,
+    .config_mem_write        = &MyEeprom_write,
+    .reboot                  = &MyPlatform_reboot,
+    .on_login_complete       = &my_login_handler,
+};
+
+int main(void) {
+    // 1. Initialize hardware (CAN, timers, GPIO)
+    MyPlatform_init();
+
+    // 2. Initialize library (order matters!)
+    CanConfig_initialize(&can_cfg);
+    OpenLcb_initialize(&olcb_cfg);
+
+    // 3. Create nodes
+    OpenLcb_create_node(0x050101010001ULL, &my_node_params);
+
+    // 4. Start 100ms timer (calls OpenLcb_100ms_timer_tick)
+    MyPlatform_start_timer();
+
+    // 5. Main loop
+    while (1) {
+        OpenLcb_run();
+    }
+}</code></pre>
+
+        <h2>23.9 Source Files</h2>
+        <table>
+            <thead>
+                <tr><th>File</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>drivers/canbus/can_config.h</code></td><td>CAN configuration struct definition</td></tr>
+                <tr><td><code>drivers/canbus/can_config.c</code></td><td>CAN wiring -- builds 7 interface structs, initializes all CAN modules</td></tr>
+                <tr><td><code>openlcb/openlcb_config.h</code></td><td>OpenLCB configuration struct definition, feature flag validation</td></tr>
+                <tr><td><code>openlcb/openlcb_config.c</code></td><td>OpenLCB wiring -- builds all interface structs, initializes all protocol modules</td></tr>
+            </tbody>
+        </table>
+
+        <div class="chapter-nav">
+            <a href="ch22.html">&larr; Prev: Ch 22 — CAN Login</a>
+            <a href="ch24.html">Next: Ch 24 — Data Flow Walkthrough &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

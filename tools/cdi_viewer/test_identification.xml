@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://openlcb.org/trunk/prototypes/xml/xslt/cdi.xsl"?>
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">
+    <identification>
+        <manufacturer>"Mustangpeak "</manufacturer>
+        <model>" MODEL "</model>
+        <hardwareVersion>2.0</hardwareVersion>
+        <softwareVersion>2.1</softwareVersion>
+        <link ref="www.mustangpeak.net/cdi2node.html"/>
+        <map>
+            <name>Map Text</name>
+            <description>This is the Map Description</description>
+            <relation>
+                <property>Relation 1 Property</property>
+                <value>Relation 1 Value</value>
+            </relation>
+            <relation>
+                <property>Relation 2 Property</property>
+                <value>Relation 2 Value</value>
+            </relation>
+        </map>
+    </identification>
+    <acdi/>
+    <segment space="253">
+        
+        
+    </segment>
+</cdi>

@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLCB CDI Viewer</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            /* Darker blue for segments */
+            --group-header-color: #007bff;
+            /* Brighter blue for groups */
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --border-color: #ddd;
+            --hover-color-segment: #004494;
+            --hover-color-group: #0069d9;
+            --address-text-color: #555;
+            --sticky-bg: #e9ecef;
+            --sticky-border: #ced4da;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: #333;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .upload-section {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .upload-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        input[type="file"] {
+            flex-grow: 1;
+            max-width: 300px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: white;
+            transition: background-color 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: var(--hover-color-segment);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Sticky Address Button */
+        .sticky-controls {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--sticky-bg);
+            border-bottom: 1px solid var(--sticky-border);
+            padding: 10px 0;
+            text-align: center;
+            z-index: 1000;
+            /* Ensure it stays on top */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            /* Space between sticky bar and content */
+        }
+
+        .sticky-controls button {
+            background-color: #6c757d;
+            /* Grey for address button */
+        }
+
+        .sticky-controls button:hover:not(:disabled) {
+            background-color: #5a6268;
+        }
+
+        .sticky-controls button.active {
+            background-color: #28a745;
+            /* Green when active/pressed */
+        }
+
+        .sticky-controls button.active:hover {
+            background-color: #218838;
+        }
+
+        /* Address Info Text */
+        .cdi-address-info {
+            font-size: 0.8em;
+            color: var(--address-text-color);
+            margin-bottom: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: left;
+            /* Align with label */
+        }
+
+        /* ACDI Status */
+        .acdi-status {
+            background: #e8f4fd;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #b6d4fe;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        /* CDI Elements Styling */
+        .cdi-segment {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .cdi-segment-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .cdi-segment-header:hover {
+            background: var(--hover-color-segment);
+        }
+
+        /* Triangle indicator logic */
+        /* Default for expanded state */
+        .cdi-segment-header::after,
+        .cdi-group-header::after {
+            content: '▼';
+            /* Down arrow for expanded */
+            font-size: 0.8em;
+            transition: transform 0.3s;
+        }
+
+        /* When collapsed, rotate arrow to point right */
+        .cdi-segment.collapsed .cdi-segment-header::after,
+        .cdi-group.collapsed .cdi-group-header::after {
+            transform: rotate(-90deg);
+        }
+
+        .cdi-segment-body,
+        .cdi-group-body {
+            padding: 15px;
+            display: block;
+            /* Default visible (expanded) */
+        }
+
+        /* Hide body when collapsed */
+        .cdi-segment.collapsed .cdi-segment-body,
+        .cdi-group.collapsed .cdi-group-body {
+            display: none;
+        }
+
+        /* Styling for Group blocks */
+        .cdi-group {
+            border-left: 4px solid var(--group-header-color);
+            margin: 15px 0;
+            /* Adjust margin for groups */
+            padding: 0;
+            /* Padding moved to cdi-group-body or tab-content */
+            background: #fcfcfc;
+            border-radius: 4px;
+            /* Slight round for groups */
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .cdi-group-header {
+            background: var(--group-header-color);
+            /* Different color */
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .cdi-group-header:hover {
+            background: var(--hover-color-group);
+        }
+
+        .cdi-item {
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .cdi-item label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .cdi-desc {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .cdi-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cdi-item .cdi-input-wrapper>input[type="range"] {
+            width: 100%;
+            /* Make slider fill space */
+            max-width: 300px;
+            /* Constrain its max width */
+            margin-right: 10px;
+        }
+
+        .cdi-item .cdi-input-wrapper>input[type="radio"],
+        .cdi-item .cdi-input-wrapper>input[type="checkbox"] {
+            width: auto;
+            /* Allow checkboxes/radios to be small */
+            margin-right: 5px;
+            max-width: none;
+        }
+
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-msg {
+            color: red;
+            background: #ffe6e6;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .identification-panel {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #b6d4fe;
+        }
+
+        /* Tab Control Styling */
+        .cdi-tab-group {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 15px 0;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .cdi-tab-group-info {
+            padding: 15px;
+            background-color: var(--group-header-color);
+            /* Match group color */
+            color: white;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .cdi-tab-group-info h3 {
+            margin: 0;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .cdi-tab-group-info p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .cdi-tabs-nav {
+            display: flex;
+            flex-wrap: wrap;
+            /* Allow tabs to wrap if too many */
+            border-bottom: 1px solid var(--border-color);
+            background-color: #f8f9fa;
+        }
+
+        .cdi-tab-button {
+            padding: 10px 15px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-weight: bold;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.9em;
+            white-space: nowrap;
+            /* Prevent tab titles from breaking */
+        }
+
+        .cdi-tab-button:hover:not(.active) {
+            color: var(--primary-color);
+            background-color: #e2e6ea;
+        }
+
+        .cdi-tab-button.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            background-color: #ffffff;
+        }
+
+        .cdi-tab-content {
+            padding: 15px;
+            border-top: none;
+            background-color: var(--card-bg);
+        }
+
+        .cdi-tab-pane {
+            display: none;
+        }
+
+        .cdi-tab-pane.active {
+            display: block;
+        }
+
+        .cdi-tab-pane h4.repname-header {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--group-header-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="upload-section">
+            <h1>OpenLCB CDI Viewer</h1>
+            <p>Select an XML file compliant with the OpenLCB CDI Schema, or refresh the last loaded file.</p>
+            <div class="upload-controls">
+                <input type="file" id="fileInput" accept=".xml">
+                <button id="refreshButton" disabled>Refresh</button>
+            </div>
+            <div id="errorMessage" class="error-msg hidden"></div>
+        </div>
+
+        <div class="sticky-controls">
+            <button id="toggleAddressButton" disabled>Toggle Address Info</button>
+        </div>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        let lastLoadedXmlString = null;     // Stores the last successfully loaded XML content
+        let lastParsedXmlDoc = null;        // Stores the last successfully parsed XML DOM object
+        let showAddressInfo = false;        // Global state for showing address info
+        let _runningAddress = 0;            // Global variable for cumulative address, reset on new XML load
+
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+        document.getElementById('refreshButton').addEventListener('click', handleRefresh);
+        document.getElementById('toggleAddressButton').addEventListener('click', toggleAddressInfo);
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                lastLoadedXmlString = e.target.result; // Store for refresh
+                processAndRenderXml(lastLoadedXmlString);
+            };
+            reader.readAsText(file);
+        }
+
+        function handleRefresh() {
+            if (lastLoadedXmlString) {
+                processAndRenderXml(lastLoadedXmlString);
+            }
+        }
+
+        function toggleAddressInfo() {
+            showAddressInfo = !showAddressInfo;
+            const toggleButton = document.getElementById('toggleAddressButton');
+            if (showAddressInfo) {
+                toggleButton.classList.add('active');
+            } else {
+                toggleButton.classList.remove('active');
+            }
+
+            if (lastParsedXmlDoc) { // Use the stored parsed XML document for re-rendering
+                // Re-render the entire CDI to reflect the address info change
+                renderCDI(lastParsedXmlDoc);
+            }
+        }
+
+        function processAndRenderXml(xmlString) {
+            const errorDiv = document.getElementById('errorMessage');
+            const outputDiv = document.getElementById('output');
+            const refreshButton = document.getElementById('refreshButton');
+            const toggleAddressButton = document.getElementById('toggleAddressButton');
+
+            errorDiv.classList.add('hidden');
+            outputDiv.innerHTML = ''; // Clear previous content
+
+            // Reset running address for new XML load
+            _runningAddress = 0;
+
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+
+                if (xmlDoc.getElementsByTagName("parsererror").length > 0) {
+                    throw new Error("Error parsing XML file. Please ensure it's well-formed.");
+                }
+
+                lastParsedXmlDoc = xmlDoc; // Store the parsed document
+                renderCDI(xmlDoc);
+                refreshButton.disabled = false; // Enable refresh button on success
+                toggleAddressButton.disabled = false; // Enable toggle address button on success
+            } catch (err) {
+                errorDiv.textContent = err.message;
+                errorDiv.classList.remove('hidden');
+                refreshButton.disabled = true; // Disable refresh button on error
+                toggleAddressButton.disabled = true; // Disable toggle address button on error
+                lastLoadedXmlString = null; // Clear stored XML if there was an error
+                lastParsedXmlDoc = null; // Clear stored XML DOM if there was an error
+            }
+        }
+
+        function renderCDI(xmlDoc) {
+            const output = document.getElementById('output');
+            output.innerHTML = ''; // Clear output before re-rendering
+
+            // Re-initialize _runningAddress before rendering the entire CDI structure
+            // This ensures the cumulative address starts from 0 for each full render cycle.
+            _runningAddress = 0;
+
+            const cdiRoot = xmlDoc.getElementsByTagName('cdi')[0];
+
+            if (!cdiRoot) {
+                throw new Error("Root element <cdi> not found in the XML.");
+            }
+
+            const identification = cdiRoot.getElementsByTagName('identification')[0];
+            if (identification) {
+                output.appendChild(renderIdentification(identification));
+            }
+
+            // Check for <acdi> tag and render status
+            const acdiTag = cdiRoot.getElementsByTagName('acdi')[0];
+            const acdiStatusDiv = document.createElement('div');
+            acdiStatusDiv.className = 'acdi-status';
+            if (acdiTag) {
+                acdiStatusDiv.innerHTML = 'Abbreviated Configuration Definition Information (ACDI) protocol is available.';
+            } else {
+                acdiStatusDiv.innerHTML = 'Abbreviated Configuration Definition Information (ACDI) protocol is <b>not</b> available.';
+            }
+            output.appendChild(acdiStatusDiv);
+
+
+            const segments = cdiRoot.getElementsByTagName('segment');
+            for (let i = 0; i < segments.length; i++) {
+                // Segment origin and space are displayed in the header but do not directly
+                // influence the _runningAddress variable as per the latest request.
+                output.appendChild(renderSegment(segments[i], i === 0));
+            }
+        }
+
+        function getText(node, tagName) {
+            const el = node.getElementsByTagName(tagName)[0];
+            return el ? el.textContent : '';
+        }
+
+        function getNameAndDesc(node) {
+            let name = "";
+            let desc = "";
+            // Check direct children for name and description
+            for (let i = 0; i < node.children.length; i++) {
+                if (node.children[i].tagName === 'name') name = node.children[i].textContent;
+                if (node.children[i].tagName === 'description') desc = node.children[i].textContent;
+            }
+            return { name, desc };
+        }
+
+        function renderIdentification(node) {
+            const div = document.createElement('div');
+            div.className = 'identification-panel';
+            div.innerHTML = `<h3>Device Identification</h3>`;
+
+            const fields = ['manufacturer', 'model', 'hardwareVersion', 'softwareVersion'];
+            fields.forEach(field => {
+                const val = getText(node, field);
+                if (val) {
+                    div.innerHTML += `<p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> ${val}</p>`;
+                }
+            });
+            return div;
+        }
+
+        function renderSegment(node, isFirst) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'cdi-segment' + (isFirst ? '' : ' collapsed');
+
+            const { name, desc } = getNameAndDesc(node);
+            const segmentSpace = node.getAttribute('space');
+            const segmentOriginAttr = node.getAttribute('origin'); // Read origin attribute
+            const segmentOffsetAttr = node.getAttribute('offset'); // Read offset attribute
+
+            // Reset _runningAddress if segment has an origin
+            if (segmentOriginAttr !== null && segmentOriginAttr.trim() !== '' && !isNaN(parseInt(segmentOriginAttr))) {
+                _runningAddress = parseInt(segmentOriginAttr);
+            }
+            // Add offset if segment has one
+            if (segmentOffsetAttr !== null && segmentOffsetAttr.trim() !== '' && !isNaN(parseInt(segmentOffsetAttr))) {
+                _runningAddress += parseInt(segmentOffsetAttr);
+            }
+
+
+            const header = document.createElement('div');
+            header.className = 'cdi-segment-header';
+            header.innerHTML = `<span>Segment: ${name || 'Untitled'} <small style="font-weight:normal; opacity:0.8;">(Space: ${segmentSpace}${segmentOriginAttr ? `, Origin: ${segmentOriginAttr}` : ''})</small></span>`;
+
+            header.addEventListener('click', () => {
+                wrapper.classList.toggle('collapsed');
+            });
+
+            const body = document.createElement('div');
+            body.className = 'cdi-segment-body';
+
+            if (desc) {
+                body.innerHTML += `<p>${desc}</p>`;
+            }
+
+            const contentDiv = document.createElement('div');
+            processChildren(node, contentDiv);
+            body.appendChild(contentDiv);
+
+            wrapper.appendChild(header);
+            wrapper.appendChild(body);
+            return wrapper;
+        }
+
+        function renderGroup(node) {
+            const replication = parseInt(node.getAttribute('replication')) || 1;
+            const { name, desc } = getNameAndDesc(node);
+            const repNameText = getText(node, 'repname');
+            const groupOffsetAttr = node.getAttribute('offset'); // Read offset attribute
+
+            // Add offset if group has one
+            if (groupOffsetAttr !== null && groupOffsetAttr.trim() !== '' && !isNaN(parseInt(groupOffsetAttr))) {
+                _runningAddress += parseInt(groupOffsetAttr);
+            }
+
+            if (replication > 1) {
+                const groupWrapper = document.createElement('div');
+                groupWrapper.className = 'cdi-tab-group';
+
+                const groupInfo = document.createElement('div');
+                groupInfo.className = 'cdi-tab-group-info';
+                groupInfo.innerHTML += `<h3>${name || 'Replicated Group'}</h3>`;
+                if (desc) {
+                    groupInfo.innerHTML += `<p>${desc}</p>`;
+                }
+                groupWrapper.appendChild(groupInfo);
+
+                const tabsNav = document.createElement('div');
+                tabsNav.className = 'cdi-tabs-nav';
+                groupWrapper.appendChild(tabsNav);
+
+                const tabContent = document.createElement('div');
+                tabContent.className = 'cdi-tab-content';
+                groupWrapper.appendChild(tabContent);
+
+                // Attempt to parse repNameText as an integer
+                const initialRepNameNumber = parseInt(repNameText);
+                const isRepNameInteger = !isNaN(initialRepNameNumber) && repNameText.trim() !== ''; // ensure it's not just whitespace
+
+                for (let i = 0; i < replication; i++) {
+                    let tabDisplayName;
+                    if (isRepNameInteger) {
+                        tabDisplayName = (initialRepNameNumber + i).toString();
+                    } else {
+                        tabDisplayName = repNameText ? `${repNameText} ${i + 1}` : `Item ${i + 1}`;
+                    }
+
+                    // Create tab button
+                    const tabButton = document.createElement('button');
+                    tabButton.className = 'cdi-tab-button';
+                    tabButton.textContent = tabDisplayName;
+                    tabButton.dataset.tabIndex = i;
+
+                    // Create tab pane
+                    const tabPane = document.createElement('div');
+                    tabPane.className = 'cdi-tab-pane';
+                    tabPane.dataset.tabIndex = i;
+
+                    if (i === 0) {
+                        tabButton.classList.add('active');
+                        tabPane.classList.add('active');
+                    }
+
+                    tabButton.addEventListener('click', () => {
+                        tabsNav.querySelectorAll('.cdi-tab-button').forEach(btn => btn.classList.remove('active'));
+                        tabContent.querySelectorAll('.cdi-tab-pane').forEach(pane => pane.classList.remove('active'));
+
+                        tabButton.classList.add('active');
+                        tabPane.classList.add('active');
+                    });
+
+                    tabsNav.appendChild(tabButton);
+
+                    // Add repname header inside each tab pane
+                    const repNameHeader = document.createElement('h4');
+                    repNameHeader.className = 'repname-header';
+                    repNameHeader.textContent = tabDisplayName;
+                    tabPane.appendChild(repNameHeader);
+
+                    // Call processChildren for each tab pane. 
+                    // The _runningAddress is global and will accumulate across all elements,
+                    // regardless of which tab they appear in.
+                    // NOTE: If replication implied separate address spaces, _runningAddress logic would need to be passed
+                    // and potentially reset/managed per tab. For this request, it remains global and sequential.
+                    processChildren(node, tabPane);
+                    tabContent.appendChild(tabPane);
+                }
+                return groupWrapper;
+
+            } else {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'cdi-group';
+
+                const header = document.createElement('div');
+                header.className = 'cdi-group-header';
+                header.innerHTML = `<span>${name || 'Group'}</span>`;
+
+                header.addEventListener('click', () => {
+                    wrapper.classList.toggle('collapsed');
+                });
+
+                const body = document.createElement('div');
+                body.className = 'cdi-group-body';
+
+                if (desc) {
+                    const descP = document.createElement('p');
+                    descP.className = 'cdi-desc';
+                    descP.textContent = desc;
+                    body.appendChild(descP);
+                }
+
+                const contentDiv = document.createElement('div');
+                processChildren(node, contentDiv);
+                body.appendChild(contentDiv);
+
+                wrapper.appendChild(header);
+                wrapper.appendChild(body);
+                return wrapper;
+            }
+        }
+
+        function processChildren(parentNode, targetDiv) {
+            Array.from(parentNode.children).forEach(child => {
+                const tag = child.tagName;
+                // Skip name, description, repname, and hints as they are handled by parent renderers or hints logic
+                if (['name', 'description', 'repname', 'hints'].includes(tag)) return;
+
+                if (tag === 'group') {
+                    targetDiv.appendChild(renderGroup(child));
+                } else if (['bit', 'int', 'float', 'string', 'eventid'].includes(tag)) {
+                    targetDiv.appendChild(renderLeaf(child, tag));
+                }
+            });
+        }
+
+        // Helper to calculate min/max integer values based on size and signedness
+        function getIntegerLimits(size, isSigned) {
+            let minLimit, maxLimit;
+            if (size === 0) {
+                return { min: 0, max: 0 };
+            }
+
+            // JavaScript numbers can only safely represent up to 2^53 - 1
+            // For sizes larger than what JS can handle precisely, cap at MAX_SAFE_INTEGER
+            // This prevents incorrect calculations due to floating point inaccuracies for very large powers
+            if (isSigned) {
+                // maxLimit = 2^((8 * size) - 1) - 1
+                // minLimit = -2^((8 * size) - 1)
+                const power = (8 * size) - 1;
+                if (power >= 53) { // Beyond safe integer range for power
+                    maxLimit = Number.MAX_SAFE_INTEGER;
+                    minLimit = -Number.MAX_SAFE_INTEGER;
+                } else {
+                    maxLimit = Math.pow(2, power) - 1;
+                    minLimit = -Math.pow(2, power);
+                }
+            } else {
+                // maxLimit = 2^(8 * size) - 1
+                // minLimit = 0
+                const power = 8 * size;
+                if (power >= 53) { // Beyond safe integer range for power
+                    maxLimit = Number.MAX_SAFE_INTEGER;
+                } else {
+                    maxLimit = Math.pow(2, power) - 1;
+                }
+                minLimit = 0;
+            }
+
+            return { min: minLimit, max: maxLimit };
+        }
+
+
+        function renderLeaf(node, type) {
+            const div = document.createElement('div');
+            div.className = 'cdi-item';
+
+            const { name, desc } = getNameAndDesc(node);
+            const elementOrigin = node.getAttribute('origin');
+            const elementOffsetAttr = node.getAttribute('offset'); // Read element's own offset
+
+            // Original label text, without the dynamic value part yet
+            const originalLabelText = name || type.charAt(0).toUpperCase() + type.slice(1);
+
+            let labelHtml = ''; // Will be constructed dynamically
+
+            const defaultValue = node.getElementsByTagName('default')[0]?.textContent;
+            const minTag = node.getElementsByTagName('min')[0]?.textContent;
+            const maxTag = node.getElementsByTagName('max')[0]?.textContent;
+
+            let inputHtml = '';
+            let extraInfo = '';
+            let addressInfoHtml = '';
+            let warningHtml = '';
+
+            const nodeSizeAttr = node.getAttribute('size'); // The raw 'size' attribute from XML
+            let calculatedSize = null; // The size determined for address and extraInfo
+
+            // Add offset if leaf element has one, BEFORE determining the address for this element
+            if (elementOffsetAttr !== null && elementOffsetAttr.trim() !== '' && !isNaN(parseInt(elementOffsetAttr))) {
+                _runningAddress += parseInt(elementOffsetAttr);
+            }
+
+            const map = node.getElementsByTagName('map')[0];
+
+            if (map) {
+                // For map, assume no direct size contribution unless explicitly specified in XML
+                calculatedSize = (nodeSizeAttr !== null && nodeSizeAttr.trim() !== '' && !isNaN(parseInt(nodeSizeAttr))) ? parseInt(nodeSizeAttr) : 0;
+
+                // Map specific rendering logic (select dropdown)
+                let options = '';
+                const relations = map.getElementsByTagName('relation');
+                for (let rel of relations) {
+                    const prop = rel.getElementsByTagName('property')[0]?.textContent;
+                    const val = rel.getElementsByTagName('value')[0]?.textContent;
+                    const display = `${val} [${prop}]`;
+                    options += `<option value="${val}">${display}</option>`;
+                }
+                inputHtml = `<select>${options}</select>`;
+                if (defaultValue) extraInfo += ` (Default: ${defaultValue})`;
+
+                labelHtml = `<label>${originalLabelText}</label>`; // Standard label for maps
+            } else {
+                const parsedNodeSize = (nodeSizeAttr !== null && nodeSizeAttr.trim() !== '') ? parseInt(nodeSizeAttr) : NaN; // Convert size attribute to number (can be NaN)
+                let hintUsed = false; // Flag to check if a hint controlled the input type
+
+                switch (type) {
+                    case 'string':
+                        if (showAddressInfo && isNaN(parsedNodeSize)) {
+                            warningHtml = `<div style="color: red; font-weight: bold; margin-bottom: 5px;">Strings must have a 'size' attribute when address info is toggled.</div>`;
+                            calculatedSize = 0; // Don't add to running address if size is missing/ambiguous
+                        } else {
+                            calculatedSize = isNaN(parsedNodeSize) ? 0 : parsedNodeSize; // Default to 0 if no size
+                        }
+                        const maxLengthAttr = (calculatedSize !== null && calculatedSize > 0) ? `maxlength="${calculatedSize}"` : '';
+                        inputHtml = `<input type="text" value="${defaultValue || ''}" ${maxLengthAttr} placeholder="Enter text...">`;
+                        if (calculatedSize > 0) extraInfo = `<span style="font-size:0.8em; margin-left:5px; color:#777;">(Max: ${calculatedSize} chars)</span>`;
+                        labelHtml = `<label>${originalLabelText}</label>`;
+                        break;
+
+                    case 'float':
+                        if (showAddressInfo && isNaN(parsedNodeSize)) {
+                            warningHtml = `<div style="color: red; font-weight: bold; margin-bottom: 5px;">Floats must have a 'size' attribute when address info is toggled.</div>`;
+                            calculatedSize = 0; // Don't add to running address if size is missing/ambiguous
+                        } else {
+                            calculatedSize = isNaN(parsedNodeSize) ? 0 : parsedNodeSize; // Default to 0 if no size
+                        }
+                        inputHtml = `<input type="number" step="any" value="${defaultValue || ''}">`;
+                        if (calculatedSize > 0) extraInfo = `<span style="font-size:0.8em; margin-left:5px; color:#777;">(${calculatedSize} bytes)</span>`;
+                        labelHtml = `<label>${originalLabelText}</label>`;
+                        break;
+
+                    case 'int':
+                        let intEffectiveSize = 1; // Default size for int if not specified or invalid
+                        if (nodeSizeAttr !== null && nodeSizeAttr.trim() !== '' && !isNaN(parsedNodeSize)) {
+                            intEffectiveSize = parsedNodeSize;
+                            // Validate size: 1, 2, 4, 8
+                            if (![1, 2, 4, 8].includes(intEffectiveSize)) {
+                                warningHtml += `<div style="color: red; font-weight: bold; margin-bottom: 5px;">Invalid 'size' for Int: must be 1, 2, 4, or 8 bytes. Using default 1 byte.</div>`;
+                                intEffectiveSize = 1; // Fallback to 1 for calculation
+                            }
+                        }
+                        calculatedSize = intEffectiveSize; // This will be the actual size used for address/extraInfo
+
+                        // Determine signedness
+                        const parsedMinTagValue = parseInt(minTag);
+                        const isSigned = !isNaN(parsedMinTagValue) && parsedMinTagValue < 0;
+
+                        // Get theoretical min/max based on size and signedness
+                        const limits = getIntegerLimits(calculatedSize, isSigned);
+                        let minIntLimit = limits.min;
+                        let maxIntLimit = limits.max;
+
+                        // Apply XML provided min/max, prioritizing them but respecting data type limits
+                        let finalMin = minTag !== null ? Math.max(parsedMinTagValue, minIntLimit) : minIntLimit;
+                        let finalMax = maxTag !== null ? Math.min(parseInt(maxTag), maxIntLimit) : maxIntLimit;
+                        // Ensure finalMin <= finalMax, adjust if not
+                        if (finalMin > finalMax) {
+                            warningHtml += `<div style="color: orange; margin-bottom: 5px;">Warning: min (${minTag}) is greater than max (${maxTag}). Setting min to max.</div>`;
+                            finalMin = finalMax;
+                        }
+                        // If minTag was provided and caused finalMin to be outside theoretical bounds
+                        if (minTag !== null && parseInt(minTag) < minIntLimit) {
+                            warningHtml += `<div style="color: orange; margin-bottom: 5px;">Warning: Provided min (${minTag}) is below theoretical min (${minIntLimit}) for ${calculatedSize} bytes. Using theoretical min.</div>`;
+                        }
+                        // If maxTag was provided and caused finalMax to be outside theoretical bounds
+                        if (maxTag !== null && parseInt(maxTag) > maxIntLimit) {
+                            warningHtml += `<div style="color: orange; margin-bottom: 5px;">Warning: Provided max (${maxTag}) is above theoretical max (${maxIntLimit}) for ${calculatedSize} bytes. Using theoretical max.</div>`;
+                        }
+
+
+                        // --- Handle Hints for <int> ---
+                        const hints = node.getElementsByTagName('hints')[0];
+                        if (hints) {
+                            const checkboxHint = hints.getElementsByTagName('checkbox')[0];
+                            const radiobuttonHint = hints.getElementsByTagName('radiobutton')[0];
+                            const sliderHint = hints.getElementsByTagName('slider')[0];
+
+                            // Prioritize: checkbox > radiobutton > slider
+                            if (checkboxHint) {
+                                labelHtml = `<label>${originalLabelText}</label>`; // Standard label for checkboxes
+                                if (!map) {
+                                    warningHtml += `<div style="color: red; font-weight: bold; margin-bottom: 5px;">Checkbox hint requires a &lt;map&gt; element. Rendering as number input.</div>`;
+                                } else {
+                                    const relations = map.getElementsByTagName('relation');
+                                    if (relations.length !== 2) {
+                                        warningHtml += `<div style="color: red; font-weight: bold; margin-bottom: 5px;">Checkbox hint requires exactly two &lt;relation&gt; entries in &lt;map&gt;. Rendering as number input.</div>`;
+                                    } else {
+                                        hintUsed = true;
+                                        const uncheckedVal = relations[0].getElementsByTagName('value')[0]?.textContent || '';
+                                        const uncheckedProp = relations[0].getElementsByTagName('property')[0]?.textContent || 'Off';
+                                        const checkedVal = relations[1].getElementsByTagName('value')[0]?.textContent || '';
+                                        const checkedProp = relations[1].getElementsByTagName('property')[0]?.textContent || 'On';
+
+                                        const isChecked = (defaultValue === checkedVal);
+                                        // Generate a unique ID for the checkbox input
+                                        const checkboxId = `checkbox_${node.tagName}_${Math.random().toString(36).substr(2, 9)}`;
+                                        inputHtml = `
+                                        <input type="checkbox" id="${checkboxId}" value="${checkedVal}" ${isChecked ? 'checked' : ''}>
+                                        <label for="${checkboxId}" style="font-weight:normal; margin-left: 5px;">${uncheckedProp} / ${checkedProp}</label>
+                                    `;
+                                        extraInfo = `<span style="font-size:0.8em; color:#777;">(Unchecked: ${uncheckedVal}, Checked: ${checkedVal})</span>`;
+                                    }
+                                }
+                            } else if (radiobuttonHint) {
+                                labelHtml = `<label>${originalLabelText}</label>`; // Standard label for radiobuttons
+                                if (!map) {
+                                    warningHtml += `<div style="color: red; font-weight: bold; margin-bottom: 5px;">Radiobutton hint requires a &lt;map&gt; element. Rendering as number input.</div>`;
+                                } else {
+                                    const relations = map.getElementsByTagName('relation');
+                                    if (relations.length === 0) {
+                                        warningHtml += `<div style="color: red; font-weight: bold; margin-bottom: 5px;">Radiobutton hint requires at least one &lt;relation&gt; entry in &lt;map&gt;. Rendering as number input.</div>`;
+                                    } else {
+                                        hintUsed = true;
+                                        const radioGroupName = `${node.tagName}_radio_${Math.random().toString(36).substr(2, 9)}`;
+                                        let radioOptionsHtml = '';
+                                        relations.forEach((rel, index) => {
+                                            const val = rel.getElementsByTagName('value')[0]?.textContent;
+                                            const prop = rel.getElementsByTagName('property')[0]?.textContent;
+                                            const isSelected = (defaultValue === val);
+                                            const radioId = `${radioGroupName}_${index}`;
+                                            radioOptionsHtml += `
+                                            <span style="display:inline-flex; align-items:center; margin-right:10px;">
+                                                <input type="radio" id="${radioId}" name="${radioGroupName}" value="${val}" ${isSelected ? 'checked' : ''}>
+                                                <label for="${radioId}" style="font-weight:normal; margin-left: 3px;">${prop}</label>
+                                            </span>
+                                        `;
+                                        });
+                                        inputHtml = `<div style="display:flex; flex-wrap:wrap; gap:5px;">${radioOptionsHtml}</div>`;
+                                        extraInfo = ''; // Clear original extraInfo as radio buttons are self-descriptive
+                                    }
+                                }
+                            } else if (sliderHint) {
+                                hintUsed = true;
+                                const tickSpacingAttr = sliderHint.getAttribute('tickSpacing');
+                                const parsedTickSpacing = (tickSpacingAttr !== null && tickSpacingAttr.trim() !== '') ? parseInt(tickSpacingAttr) : 0;
+                                const showValueInLabel = sliderHint.getAttribute('showValue') === 'yes'; // Check for 'yes'
+
+                                const initialSliderValue = defaultValue !== null ? parseInt(defaultValue) : finalMin;
+                                // Ensure initial value is within bounds
+                                const clampedInitialValue = Math.min(Math.max(initialSliderValue, finalMin), finalMax);
+
+                                const sliderInputId = `slider_input_${Math.random().toString(36).substr(2, 9)}`;
+                                const dynamicValueSpanId = `slider_value_${Math.random().toString(36).substr(2, 9)}`;
+
+                                // Corrected label: original name + dynamic value span IF showValueInLabel is true
+                                if (showValueInLabel) {
+                                    labelHtml = `<label for="${sliderInputId}">${originalLabelText} <span id="${dynamicValueSpanId}" class="slider-current-value">(Current: ${clampedInitialValue})</span></label>`;
+                                } else {
+                                    labelHtml = `<label for="${sliderInputId}">${originalLabelText}</label>`;
+                                }
+
+                                // Input is always step="1"
+                                inputHtml = `<input type="range" id="${sliderInputId}" value="${clampedInitialValue}" min="${finalMin}" max="${finalMax}" step="1">`;
+
+                                // Add datalist for ticks if tickSpacing is > 0
+                                if (parsedTickSpacing > 0) {
+                                    const datalistId = `datalist_${Math.random().toString(36).substr(2, 9)}`;
+                                    inputHtml += `<datalist id="${datalistId}">`;
+                                    for (let val = finalMin; val <= finalMax; val += parsedTickSpacing) {
+                                        inputHtml += `<option value="${val}"></option>`;
+                                    }
+                                    // Ensure max value is always an option if it's not a multiple of tickSpacing
+                                    // or if max value is not exactly tickSpacing apart from min value
+                                    if ((finalMax - finalMin) % parsedTickSpacing !== 0) {
+                                        inputHtml += `<option value="${finalMax}"></option>`;
+                                    }
+                                    inputHtml += `</datalist>`;
+                                    inputHtml = inputHtml.replace('<input type="range"', `<input type="range" list="${datalistId}"`);
+                                }
+
+                                extraInfo = `<span style="font-size:0.8em; color:#777;">(Slider: Min ${finalMin}, Max ${finalMax}, Step: 1${parsedTickSpacing > 0 ? `, Ticks: ${parsedTickSpacing}` : ''}${showValueInLabel ? ', ShowValue: yes' : ''})</span>`;
+
+                                // Attach event listener to update the displayed value after HTML is inserted, ONLY if showValueInLabel is true
+                                if (showValueInLabel) {
+                                    setTimeout(() => {
+                                        const slider = div.querySelector(`#${sliderInputId}`);
+                                        const dynamicValueSpan = div.querySelector(`#${dynamicValueSpanId}`);
+                                        if (slider && dynamicValueSpan) {
+                                            slider.addEventListener('input', (e) => {
+                                                dynamicValueSpan.textContent = `(Current: ${e.target.value})`;
+                                            });
+                                        }
+                                    }, 0);
+                                }
+                            }
+                        }
+
+                        if (!hintUsed) { // Fallback to number input if no hint or hint invalid
+                            labelHtml = `<label>${originalLabelText}</label>`;
+                            inputHtml = `<input type="number" value="${defaultValue || ''}" min="${finalMin}" max="${finalMax}">`;
+                            extraInfo = `<span style="font-size:0.8em; margin-left:5px; color:#777;">(${calculatedSize} bytes, Min: ${finalMin}, Max: ${finalMax}${isSigned ? ', Signed' : ''})</span>`;
+                        }
+                        break;
+
+                    case 'bit':
+                        // Bit elements are generally part of a larger byte, so their direct size contribution is often 0
+                        calculatedSize = isNaN(parsedNodeSize) ? 0 : parsedNodeSize;
+                        inputHtml = `<input type="checkbox" ${defaultValue === '1' ? 'checked' : ''}>`;
+                        if (calculatedSize > 0) extraInfo = `<span style="font-size:0.8em; margin-left:5px; color:#777;">(${calculatedSize} bits)</span>`;
+                        labelHtml = `<label>${originalLabelText}</label>`;
+                        break;
+
+                    case 'eventid':
+                        if (showAddressInfo) {
+                            calculatedSize = 8; // Force 8 bytes when address info is toggled
+                        } else {
+                            calculatedSize = isNaN(parsedNodeSize) ? 8 : parsedNodeSize; // Default to 8 bytes if not explicit
+                        }
+                        inputHtml = `<input type="text" value="${defaultValue || ''}" placeholder="00.00.00.00.00.00.00.00" style="font-family: monospace;">`;
+                        extraInfo = `<span style="font-size:0.8em; color:#777;">(${calculatedSize} bytes, Event ID)</span>`;
+                        labelHtml = `<label>${originalLabelText}</label>`;
+                        break;
+
+                    default:
+                        calculatedSize = isNaN(parsedNodeSize) ? 0 : parsedNodeSize;
+                        inputHtml = `<input type="text" value="${defaultValue || ''}">`;
+                        if (calculatedSize > 0) extraInfo = `<span style="font-size:0.8em; margin-left:5px; color:#777;">(${calculatedSize} bytes)</span>`;
+                        labelHtml = `<label>${originalLabelText}</label>`;
+                }
+            }
+
+            // Add element-specific origin and offset to extraInfo (if they exist)
+            if (elementOrigin) {
+                extraInfo += (extraInfo ? '<span style="margin-left:5px;">|</span> ' : '') + `<span style="font-size:0.8em; color:#777;">Origin: ${elementOrigin}</span>`;
+            }
+            // Note: element's offset is already added to _runningAddress
+            if (elementOffsetAttr) {
+                extraInfo += (extraInfo ? '<span style="margin-left:5px;">|</span> ' : '') + `<span style="font-size:0.8em; color:#777;">Offset: ${elementOffsetAttr}</span>`;
+            }
+
+            // Calculate and add Address Info if enabled, using the global _runningAddress
+            if (showAddressInfo) {
+                const decimalAddress = _runningAddress;
+                const hexAddress = '0x' + decimalAddress.toString(16).toUpperCase();
+                addressInfoHtml = `<div class="cdi-address-info">Address = ${decimalAddress}; ${hexAddress}</div>`;
+            }
+
+            div.innerHTML = `
+            ${labelHtml}
+            ${desc ? `<div class="cdi-desc">${desc}</div>` : ''}
+            ${warningHtml}
+            ${addressInfoHtml}
+            <div class="cdi-input-wrapper">
+                ${inputHtml}
+                ${extraInfo}
+            </div>
+        `;
+
+            // Update _runningAddress for the next element based on this element's calculated size
+            // Only increment if calculatedSize is a valid number
+            if (calculatedSize !== null && !isNaN(calculatedSize)) {
+                _runningAddress += calculatedSize;
+            }
+
+            return div;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appendix F — Spec Traceability | OpenLCB C Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Appendix F — OpenLCB Specification Traceability</h1>
+
+        <p>This appendix maps OpenLCB specification requirements to the implementing source files and documentation chapters. It is intended to verify spec coverage, identify unimplemented requirements, and aid compliance auditing.</p>
+
+        <p>Spec documents (Standards "S" + Technical Notes "TN") are located in <code>OpenLcb Documents/standards/</code>. Unreleased standards (Stream Transport, TCP/IP Transport) are in <code>drafts/</code> and not yet implemented.</p>
+
+        <h2>F.1 Message Network Standard (MessageNetworkS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>3.1</td><td>All messages shall contain source Node ID and MTI</td><td><code>openlcb_types.h</code> (openlcb_msg_t)</td><td><a href="ch03.html">3</a></td></tr>
+                <tr><td>3.1.2</td><td>Message fully decodable from MTI flag bits</td><td><code>openlcb_defines.h</code></td><td><a href="ch03.html">3</a></td></tr>
+                <tr><td>3.2</td><td>Nodes start in Uninitialized state</td><td><code>openlcb_node.h</code> (openlcb_node_state_t)</td><td><a href="ch05.html">5</a></td></tr>
+                <tr><td>3.2</td><td>Uninitialized node shall not transmit except Init Complete</td><td><code>openlcb_login_statemachine.c</code></td><td><a href="ch09.html">9</a></td></tr>
+                <tr><td>3.3</td><td>Node ID in data content shall be full 48-bit on all transports</td><td><code>openlcb_utilities.c</code></td><td><a href="ch07.html">7</a></td></tr>
+                <tr><td>3.3.4</td><td>Nodes shall process OIR even if not all contents provided</td><td><code>protocol_message_network.c</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td>3.3.5</td><td>Nodes shall process Terminate Due to Error even if incomplete</td><td><code>protocol_message_network.c</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td>3.3.7</td><td>Missing Protocol Support Reply bits interpreted as zero</td><td><code>protocol_message_network.c</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td>3.4</td><td>All nodes shall take part in all standard interactions</td><td><code>openlcb_main_statemachine.c</code></td><td><a href="ch08.html">8</a></td></tr>
+                <tr><td>3.4.1</td><td>Newly functional nodes shall send Init Complete</td><td><code>openlcb_login_statemachine.c</code></td><td><a href="ch09.html">9</a></td></tr>
+                <tr><td>3.4.2</td><td>Addressed Verify Node ID replies Verified Node ID</td><td><code>protocol_message_network.c</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td>3.4.2</td><td>Global Verify Node ID replies Verified Node ID</td><td><code>protocol_message_network.c</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td>3.5.1</td><td>Unknown addressed MTI sends OIR</td><td><code>openlcb_main_statemachine.c</code></td><td><a href="ch08.html">8</a></td></tr>
+                <tr><td>3.5.3</td><td>Error during addressed interaction sends Terminate Due to Error</td><td><code>protocol_message_network.c</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td>3.5.4</td><td>Detect incoming message with own Source Node ID indicates error</td><td><code>protocol_message_network.c</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td>3.6</td><td>Global messages forwarded to all nodes</td><td><code>openlcb_main_statemachine.c</code></td><td><a href="ch08.html">8</a></td></tr>
+                <tr><td>7.3.1.3</td><td>First/Middle CAN frames carry 8 data bytes</td><td><code>can_tx_message_handler.c</code></td><td><a href="ch11.html">11</a></td></tr>
+                <tr><td>7.3.7</td><td>CAN message frames sent consecutively</td><td><code>can_tx_statemachine.c</code></td><td><a href="ch11.html">11</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.2 Event Transport Standard (EventTransportS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>5</td><td>Messages only sent when node is Initialized</td><td><code>openlcb_login_statemachine.c</code></td><td><a href="ch09.html">9</a></td></tr>
+                <tr><td>6</td><td>Before PCER, node shall emit Producer Identified</td><td><code>openlcb_login_statemachine.c</code></td><td><a href="ch09.html">9</a></td></tr>
+                <tr><td>6.1</td><td>To produce event, emit PCER with Event ID</td><td><code>protocol_event_transport.c</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td>6.2</td><td>On Identify Events, reply with all Producer/Consumer Identified</td><td><code>protocol_event_transport.c</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td>6.3</td><td>On Identify Producer, reply if produced</td><td><code>protocol_event_transport.c</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td>6.4</td><td>On Identify Consumer, reply if consumed</td><td><code>protocol_event_transport.c</code></td><td><a href="ch13.html">13</a></td></tr>
+                <tr><td>7</td><td>PCER with payload CAN frames sent together</td><td><code>can_tx_statemachine.c</code></td><td><a href="ch11.html">11</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.3 Datagram Transport Standard (DatagramTransportS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>4.2</td><td>Reserved Datagram OK flag bits sent as zero</td><td><code>protocol_datagram_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>6</td><td>Valid Datagram received sends Datagram OK or Rejected</td><td><code>protocol_datagram_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>6.1</td><td>Shall not send second Datagram before reply/timeout</td><td><code>protocol_datagram_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>6.2</td><td>Permanent Error: abandon, do not resend</td><td><code>protocol_datagram_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>7.2</td><td>Maintain Datagram-started state for each receiving datagram</td><td><code>can_rx_message_handler.c</code></td><td><a href="ch11.html">11</a></td></tr>
+                <tr><td>7.3.1</td><td>No lower-priority frames between datagram frames</td><td><code>can_tx_statemachine.c</code></td><td><a href="ch11.html">11</a></td></tr>
+                <tr><td>7.3.2</td><td>Invalid datagram frame sequence sends Rejected</td><td><code>can_rx_message_handler.c</code></td><td><a href="ch11.html">11</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.4 CAN Frame Transfer Standard (CanFrameTransferS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>3</td><td>Each node shall have unique NodeID</td><td><code>openlcb_node.h</code></td><td><a href="ch05.html">5</a></td></tr>
+                <tr><td>4</td><td>CAN extended format only (29-bit header)</td><td><code>can_types.h</code></td><td><a href="ch03b.html">3b</a></td></tr>
+                <tr><td>5</td><td>Nodes start in Inhibited state</td><td><code>can_login_statemachine.c</code></td><td><a href="ch22.html">22</a></td></tr>
+                <tr><td>6.2.1</td><td>Alias reservation: CID7/6/5/4, wait 200ms, RID</td><td><code>can_login_message_handler.c</code></td><td><a href="ch22.html">22</a></td></tr>
+                <tr><td>6.2.1</td><td>Restart reservation if matching alias received</td><td><code>can_rx_message_handler.c</code></td><td><a href="ch22.html">22</a></td></tr>
+                <tr><td>6.2.2</td><td>Inhibited to Permitted: reserved alias + transmit AMD</td><td><code>can_login_message_handler.c</code></td><td><a href="ch22.html">22</a></td></tr>
+                <tr><td>6.2.3</td><td>AME with matching Node ID replies AMD</td><td><code>can_rx_message_handler.c</code></td><td><a href="ch11.html">11</a></td></tr>
+                <tr><td>6.2.3</td><td>AME with no data: discard cached alias mappings</td><td><code>alias_mappings.c</code>, <code>alias_mapping_listener.c</code></td><td><a href="ch19.html">19</a>, <a href="ch20.html">20</a></td></tr>
+                <tr><td>6.2.4</td><td>On receiving AMR, stop using that alias within 100ms</td><td><code>alias_mappings.c</code></td><td><a href="ch19.html">19</a></td></tr>
+                <tr><td>6.2.5</td><td>Compare source alias in each received frame against reserved</td><td><code>can_rx_statemachine.c</code></td><td><a href="ch11.html">11</a></td></tr>
+                <tr><td>6.3</td><td>Alias values shall not be zero</td><td><code>can_login_message_handler.c</code></td><td><a href="ch22.html">22</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.5 Simple Node Information Protocol (SimpleNodeInformationS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>5.1</td><td>Mfg name max 41 bytes null-terminated</td><td><code>protocol_snip.c</code></td><td><a href="ch15.html">15</a></td></tr>
+                <tr><td>5.1</td><td>Model name max 41 bytes null-terminated</td><td><code>protocol_snip.c</code></td><td><a href="ch15.html">15</a></td></tr>
+                <tr><td>5.1</td><td>HW version max 21 bytes null-terminated</td><td><code>protocol_snip.c</code></td><td><a href="ch15.html">15</a></td></tr>
+                <tr><td>5.1</td><td>SW version max 21 bytes null-terminated</td><td><code>protocol_snip.c</code></td><td><a href="ch15.html">15</a></td></tr>
+                <tr><td>5.1</td><td>User name max 63 bytes null-terminated</td><td><code>protocol_snip.c</code></td><td><a href="ch15.html">15</a></td></tr>
+                <tr><td>5.1</td><td>User description max 64 bytes null-terminated</td><td><code>protocol_snip.c</code></td><td><a href="ch15.html">15</a></td></tr>
+                <tr><td>6.1</td><td>SNIP support indicated in Protocol Support Reply</td><td><code>protocol_message_network.c</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td>6.3</td><td>SNIP Reply constant; change requires re-initialization</td><td><code>protocol_snip.c</code></td><td><a href="ch15.html">15</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.6 Memory Configuration Standard (MemoryConfigurationS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>4.1</td><td>32-bit addresses, byte-addressable</td><td><code>protocol_config_mem_read_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>4.4</td><td>Read command: Reply Pending in Datagram OK</td><td><code>protocol_config_mem_read_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>4.5</td><td>Read reply may return less data but at least 1 byte</td><td><code>protocol_config_mem_read_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>4.24</td><td>Reset/Reboot returns to power-on-reset state</td><td><code>protocol_config_mem_operations_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>4.25</td><td>Factory Reset: Node ID in payload for redundancy</td><td><code>protocol_config_mem_operations_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.7 Train Control Protocol (TrainControlS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>3</td><td>Train Control node shall implement Event Transport and SNIP</td><td><code>protocol_event_transport.c</code>, <code>protocol_snip.c</code></td><td><a href="ch13.html">13</a>, <a href="ch15.html">15</a></td></tr>
+                <tr><td>4.3</td><td>P bit = 0 for Throttle-to-Train, P bit = 1 for Train-to-Listener</td><td><code>protocol_train_handler.c</code></td><td><a href="ch17.html">17</a></td></tr>
+                <tr><td>5</td><td>E-Stop state entered on E-Stop command, exited on Set Speed</td><td><code>protocol_train_handler.c</code></td><td><a href="ch17.html">17</a></td></tr>
+                <tr><td>6.1</td><td>Non-Controller commands produce Terminate Due to Error</td><td><code>protocol_train_handler.c</code></td><td><a href="ch17.html">17</a></td></tr>
+                <tr><td>6.1</td><td>Listener messages (P=1) shall never be rejected</td><td><code>protocol_train_handler.c</code></td><td><a href="ch17.html">17</a></td></tr>
+                <tr><td>6.2</td><td>E-Stop sets Speed 0, preserves direction</td><td><code>protocol_train_handler.c</code></td><td><a href="ch17.html">17</a></td></tr>
+                <tr><td>6.5</td><td>Set speed always forwarded to listeners; Reverse flag flips direction</td><td><code>protocol_train_handler.c</code></td><td><a href="ch17.html">17</a></td></tr>
+                <tr><td>6.6</td><td>Heartbeat timeout sets Speed 0</td><td><code>protocol_train_handler.c</code></td><td><a href="ch17.html">17</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.8 Train Search Protocol (TrainSearchS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>5.1</td><td>Event ID range 09.00.99.FF.xx reserved for Train Search</td><td><code>openlcb_defines.h</code></td><td><a href="ch03.html">3</a></td></tr>
+                <tr><td>5.2</td><td>Search query: 6 nibbles MSB-first</td><td><code>openlcb_utilities.c</code></td><td><a href="ch07.html">7</a></td></tr>
+                <tr><td>6.1</td><td>Match produces Producer Identified</td><td><code>protocol_train_search_handler.c</code></td><td><a href="ch17.html">17</a></td></tr>
+                <tr><td>6.2</td><td>Allocate bit: create Train Node if no reply in 200ms</td><td><code>protocol_train_search_handler.c</code></td><td><a href="ch17.html">17</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.9 Broadcast Time Protocol (BroadcastTimeS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>4</td><td>Upper 6 bytes of event ID from specified clock range</td><td><code>openlcb_defines.h</code>, <code>openlcb_utilities.c</code></td><td><a href="ch03.html">3</a>, <a href="ch07.html">7</a></td></tr>
+                <tr><td>6.1</td><td>Clock generator sends Range Identified at startup</td><td><code>openlcb_application_broadcast_time.c</code></td><td><a href="ch18.html">18</a></td></tr>
+                <tr><td>6.2</td><td>Running clock sends Report Time at least once/hour</td><td><code>openlcb_application_broadcast_time.c</code></td><td><a href="ch18.html">18</a></td></tr>
+                <tr><td>6.4</td><td>Query Event triggers synchronization sequence</td><td><code>protocol_broadcast_time_handler.c</code></td><td><a href="ch18.html">18</a></td></tr>
+                <tr><td>6.5</td><td>Set commands produce Report event</td><td><code>protocol_broadcast_time_handler.c</code></td><td><a href="ch18.html">18</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.10 CDI Standard (ConfigurationDescriptionInformationS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>4</td><td>CDI invariant while node has Initialized connections</td><td><code>protocol_config_mem_read_handler.c</code></td><td><a href="ch16.html">16</a></td></tr>
+                <tr><td>5.1.1</td><td>SNIP Reply matches CDI identification element</td><td><code>protocol_snip.c</code></td><td><a href="ch15.html">15</a></td></tr>
+                <tr><td>5.1.4.2</td><td>Integer stored unsigned unless min < 0, big-endian</td><td>Application config memory</td><td><a href="ch16.html">16</a></td></tr>
+                <tr><td>5.1.4.4</td><td>Event ID stored big-endian</td><td><code>openlcb_utilities.c</code></td><td><a href="ch07.html">7</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.11 FDI Standard (FunctionDescriptionInformationS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>4</td><td>FDI constant while node Initialized</td><td><code>protocol_config_mem_read_handler.c</code></td><td><a href="ch16.html">16</a></td></tr>
+                <tr><td>5.1.4</td><td>Function number 0-16777215</td><td><code>protocol_train_handler.c</code></td><td><a href="ch17.html">17</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.12 Firmware Upgrade Standard (FirmwareUpgradeS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>5.2</td><td>Freeze command transitions to Firmware Upgrade</td><td><code>protocol_config_mem_operations_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>5.2</td><td>Unfreeze transitions to Operating</td><td><code>protocol_config_mem_operations_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>5.3</td><td>Firmware Upgrade Protocol bit in PSI</td><td><code>protocol_message_network.c</code></td><td><a href="ch12.html">12</a></td></tr>
+                <tr><td>5.4.2</td><td>Datagram transfer: 64-byte writes at offset 0</td><td><code>protocol_config_mem_write_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.13 Unique Identifiers Standard (UniqueIdentifiersS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>4</td><td>Unique Identifier is 6 bytes, MSB transmitted first</td><td><code>openlcb_types.h</code></td><td><a href="ch03.html">3</a></td></tr>
+                <tr><td>4</td><td>Every node shall have a Unique Identifier as Node ID</td><td><code>openlcb_node.h</code></td><td><a href="ch05.html">5</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.14 Event Identifiers Standard (EventIdentifiersS.pdf)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Spec Section</th><th>Requirement</th><th>Source File(s)</th><th>Ch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>4</td><td>Event identifier is 8 bytes, MSB first</td><td><code>openlcb_types.h</code></td><td><a href="ch03.html">3</a></td></tr>
+                <tr><td>4</td><td>Byte order significant, MSB transmitted first</td><td><code>openlcb_utilities.c</code></td><td><a href="ch07.html">7</a></td></tr>
+                <tr><td>5</td><td>Well-known events allocated per table</td><td><code>openlcb_defines.h</code></td><td><a href="ch03.html">3</a></td></tr>
+            </tbody>
+        </table>
+
+        <h2>F.15 CAN Physical Layer Standard (CanPhysicalS.pdf)</h2>
+
+        <p>Hardware-level requirements (bus termination, cable, connector, bit rate). Implemented by CAN transceiver hardware, not by this library. Application wiring guide references these requirements (<a href="ch23.html">Ch 23</a>, <a href="ch28.html">Ch 28</a>).</p>
+
+        <h2>F.16 Unreleased Standards (in drafts/)</h2>
+
+        <table>
+            <thead>
+                <tr><th>Standard</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Stream Transport</td><td>Draft -- not yet released, not implemented</td></tr>
+                <tr><td>TCP/IP Transport</td><td>Draft -- not yet released, not implemented</td></tr>
+            </tbody>
+        </table>
+
+        <div class="chapter-nav">
+            <a href="appendix_e.html">&larr; Prev: Appendix E — Compile-Time Config</a>
+            <a href="appendix_g.html">Next: Appendix G — Glossary &rarr;</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

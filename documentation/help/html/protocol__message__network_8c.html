@@ -120,7 +120,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a24ea265253588c2f4e1c8bfc67073fa8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle global Verify Node ID — replies if payload matches or is empty.  <br /></td></tr>
 <tr class="separator:a24ea265253588c2f4e1c8bfc67073fa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b2bdbb0e461bfb459ff560f3fe6a215" id="r_a7b2bdbb0e461bfb459ff560f3fe6a215"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b2bdbb0e461bfb459ff560f3fe6a215">ProtocolMessageNetwork_handle_verify_node_id_addressed</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a7b2bdbb0e461bfb459ff560f3fe6a215"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle addressed Verify Node ID — always replies.  <br /></td></tr>
+<tr class="memdesc:a7b2bdbb0e461bfb459ff560f3fe6a215"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle addressed Verify Node ID — always replies (unaddressed per §3.4.2).  <br /></td></tr>
 <tr class="separator:a7b2bdbb0e461bfb459ff560f3fe6a215"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cc5050fc4c003790bd5deb876fcf842" id="r_a6cc5050fc4c003790bd5deb876fcf842"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cc5050fc4c003790bd5deb876fcf842">ProtocolMessageNetwork_handle_verified_node_id</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:a6cc5050fc4c003790bd5deb876fcf842"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle Verified Node ID — fires duplicate-ID event if IDs match.  <br /></td></tr>
@@ -294,13 +294,8 @@ MessageNetworkS.pdf </dd></dl>
       </table>
 </div><div class="memdoc">
 
+<p>Handle addressed Verify Node ID — always replies (unaddressed per §3.4.2). </p>
 <p>Handle addressed Verify Node ID — always replies. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>

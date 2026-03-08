@@ -124,6 +124,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a14fb563e821dd3b4e1d3a211cc44b570" id="r_a14fb563e821dd3b4e1d3a211cc44b570"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14fb563e821dd3b4e1d3a211cc44b570">ListenerAliasTable_clear_alias_by_alias</a> (uint16_t alias)</td></tr>
 <tr class="memdesc:a14fb563e821dd3b4e1d3a211cc44b570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros the alias field for the entry matching a specific alias value.  <br /></td></tr>
 <tr class="separator:a14fb563e821dd3b4e1d3a211cc44b570"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1e5ca2ca0ce988c7c8ebf76fd23cda9" id="r_ac1e5ca2ca0ce988c7c8ebf76fd23cda9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1e5ca2ca0ce988c7c8ebf76fd23cda9">ListenerAliasTable_check_one_verification</a> (uint8_t current_tick)</td></tr>
+<tr class="memdesc:ac1e5ca2ca0ce988c7c8ebf76fd23cda9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Probes one listener entry for alias staleness (round-robin).  <br /></td></tr>
+<tr class="separator:ac1e5ca2ca0ce988c7c8ebf76fd23cda9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>On-demand alias resolution table for consist listener nodes. </p>
@@ -137,7 +140,7 @@ Functions</h2></td></tr>
 <p>Maps listener Node IDs to their CAN aliases so the CAN TX path can transparently resolve dest_alias when forwarding consist commands. Table is sized to LISTENER_ALIAS_TABLE_DEPTH (USER_DEFINED_MAX_LISTENERS_PER_TRAIN * USER_DEFINED_TRAIN_NODE_COUNT).</p>
 <p>Entries are registered when a listener is attached and populated when the corresponding AMD frame arrives. AMR clears individual entries; global AME flushes all aliases (node_ids preserved).</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>8 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a34815306ff8eb6c29f92168b68c0cdc8" name="a34815306ff8eb6c29f92168b68c0cdc8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a34815306ff8eb6c29f92168b68c0cdc8">&#9670;&#160;</a></span>ListenerAliasTable_initialize()</h2>
@@ -163,7 +166,8 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Zeros all entries in the listener alias table. </p>
-<p>Must be called once at startup before any listener operations. </p>
+<p>Must be called once at startup before any listener operations.</p>
+<p>Zeros all entries in the listener alias table. </p>
 
 </div>
 </div>
@@ -406,6 +410,56 @@ Functions</h2></td></tr>
 </ol>
 <pre class="fragment">* @param alias  12-bit CAN alias being released.
 * </pre> 
+</div>
+</div>
+<a id="ac1e5ca2ca0ce988c7c8ebf76fd23cda9" name="ac1e5ca2ca0ce988c7c8ebf76fd23cda9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1e5ca2ca0ce988c7c8ebf76fd23cda9">&#9670;&#160;</a></span>ListenerAliasTable_check_one_verification()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> ListenerAliasTable_check_one_verification </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>current_tick</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Probes one listener entry for alias staleness (round-robin). </p>
+<p>Rate-limited to once per USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL ticks. At most one entry probed per call. Returns the Node ID whose alias needs verification, or 0 if nothing to do.</p>
+<p>State transitions:</p><ul>
+<li>Resolved + probe interval elapsed -&gt; Verifying (AME sent)</li>
+<li>Verifying + timeout elapsed -&gt; Stale (alias cleared)</li>
+<li>Verifying + AMD arrives (via set_alias) -&gt; Resolved</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> to probe (caller queues targeted AME), or 0.</dd></dl>
+<p>Called periodically from the CAN main state machine. Rate-limited to once per USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL ticks. Each call advances a static cursor to the next registered entry with a resolved alias and checks:</p>
+<p>Algorithm:</p><ol type="1">
+<li>If fewer than PROBE_TICK_INTERVAL ticks have elapsed, return 0</li>
+<li>Scan up to LISTENER_ALIAS_TABLE_DEPTH entries from the cursor</li>
+<li>For each entry with verify_pending set: check timeout, clear alias if expired, continue to next entry</li>
+<li>For each resolved entry not pending: check probe interval, set verify_pending and return node_id if due</li>
+<li>Return 0 if no entry needs probing this tick</li>
+</ol>
+<pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.
+* </pre><dl class="section return"><dt>Returns</dt><dd>The <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> to probe (caller builds and queues targeted AME), or 0 if nothing to do this tick. </dd></dl>
+
 </div>
 </div>
 </div><!-- contents -->
