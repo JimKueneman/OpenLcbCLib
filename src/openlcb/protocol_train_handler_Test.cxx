@@ -252,10 +252,11 @@ static void _mock_on_query_function_reply(openlcb_node_t *openlcb_node,
 }
 
 static void _mock_on_controller_assign_reply(openlcb_node_t *openlcb_node,
-        uint8_t result) {
+        uint8_t result, node_id_t current_controller) {
 
     notifier_called = 103;
     last_result = result;
+    last_node_id = current_controller;
 
 }
 
@@ -974,11 +975,12 @@ TEST(ProtocolTrainHandler, command_controller_assign_no_existing)
     // State updated
     EXPECT_EQ(state->controller_node_id, TEST_CONTROLLER_NODE_ID);
 
-    // Reply built with result=0 (accept)
+    // Reply built with result=0 (accept) — 3 bytes, no Node ID appended
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0), TRAIN_CONTROLLER_CONFIG);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 1), TRAIN_CONTROLLER_ASSIGN);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+    EXPECT_EQ(outgoing->payload_count, 3);
 
     // Notifier fired
     EXPECT_EQ(notifier_called, 4);
@@ -1077,8 +1079,19 @@ TEST(ProtocolTrainHandler, command_controller_assign_different_reject)
 
     // Original controller preserved
     EXPECT_EQ(state->controller_node_id, TEST_CONTROLLER_NODE_ID);
-    // Reply has non-zero result (0xFF = rejected)
+
+    // Reply: 9 bytes — 3 header + 6-byte Node ID of current controller (TN §2.8)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0), TRAIN_CONTROLLER_CONFIG);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 1), TRAIN_CONTROLLER_ASSIGN);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0xFF);
+    EXPECT_EQ(outgoing->payload_count, 9);
+
+    // Node ID in reply matches current controller
+    node_id_t reply_controller =
+            OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 3);
+    EXPECT_EQ(reply_controller, TEST_CONTROLLER_NODE_ID);
+
     // Notifier NOT called when rejected
     EXPECT_NE(notifier_called, 4);
 
@@ -1810,6 +1823,7 @@ TEST(ProtocolTrainHandler, reply_controller_assign)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
+    // Accept reply — 3 bytes, no Node ID
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
@@ -1819,6 +1833,37 @@ TEST(ProtocolTrainHandler, reply_controller_assign)
 
     EXPECT_EQ(notifier_called, 103);
     EXPECT_EQ(last_result, 0x00);
+    EXPECT_EQ(last_node_id, (uint64_t) 0);  // No controller Node ID on accept
+
+}
+
+TEST(ProtocolTrainHandler, reply_controller_assign_reject_with_node_id)
+{
+    // Throttle receives a reject reply with 6-byte Node ID of current controller
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Reject reply — 9 bytes: 3 header + 6-byte Node ID of current controller
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0xFF, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_reply(&sm);
+
+    EXPECT_EQ(notifier_called, 103);
+    EXPECT_EQ(last_result, 0xFF);
+    EXPECT_EQ(last_node_id, TEST_CONTROLLER_NODE_ID);
 
 }
 
@@ -3807,8 +3852,10 @@ TEST(ProtocolTrainHandler, forwarding_no_listeners_no_enumeration)
 
 }
 
-TEST(ProtocolTrainHandler, forwarding_p_bit_not_forwarded_again)
+TEST(ProtocolTrainHandler, forwarding_p_bit_is_forwarded)
 {
+    // P=1 messages (from chained consist) MUST be forwarded per
+    // TrainControlS §6.5.  Loop prevention uses source-skip, not P bit.
 
     _reset_tracking();
     _global_initialize();
@@ -3821,11 +3868,11 @@ TEST(ProtocolTrainHandler, forwarding_p_bit_not_forwarded_again)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    // Attach a listener
+    // Attach a listener (different from source — no source-skip)
     _attach_test_listener(&sm, incoming, TEST_LISTENER_A, 0);
 
     // Send a forwarded command (P bit already set) — simulates receiving
-    // a consist-forwarded speed command
+    // a consist-forwarded speed command from another consist member
     sm.outgoing_msg_info.valid = false;
     sm.incoming_msg_info.enumerate = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming,
@@ -3839,9 +3886,18 @@ TEST(ProtocolTrainHandler, forwarding_p_bit_not_forwarded_again)
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
     EXPECT_EQ(state->set_speed, 0x3C00);
 
-    // Should NOT start forwarding (P bit prevents cascaded forwarding)
-    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
-    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+    // P=1 MUST trigger forwarding to listeners (TrainControlS §6.5)
+    EXPECT_TRUE(sm.incoming_msg_info.enumerate);
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+    // Forwarded message should be addressed to the listener
+    EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, TEST_LISTENER_A);
+
+    // Forwarded payload should have P bit set
+    uint8_t forwarded_instruction =
+            OpenLcbUtilities_extract_byte_from_openlcb_payload(
+                    sm.outgoing_msg_info.msg_ptr, 0);
+    EXPECT_TRUE(forwarded_instruction & TRAIN_INSTRUCTION_P_BIT);
 
 }
 

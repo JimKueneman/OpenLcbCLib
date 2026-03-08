@@ -33,7 +33,7 @@
  * dependency_injection_canbus.c copies.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 6 Mar 2026
  *
  * @see can_config.h - User-facing CAN configuration struct
  * @see openlcb_config.c - OpenLCB protocol layer wiring module
@@ -54,6 +54,7 @@
 #include "can_tx_statemachine.h"
 #include "can_main_statemachine.h"
 #include "alias_mappings.h"
+#include "alias_mapping_listener.h"
 
 // Cross-layer includes
 #include "../../openlcb/openlcb_buffer_store.h"
@@ -135,6 +136,11 @@ static void _build_rx_message_handler(void) {
     _rx_msg.alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag;
     _rx_msg.get_current_tick = &OpenLcb_get_global_100ms_tick;
 
+    // Listener alias table (optional — enables consist alias resolution)
+    _rx_msg.listener_register = &ListenerAliasTable_register;
+    _rx_msg.listener_set_alias = &ListenerAliasTable_set_alias;
+    _rx_msg.listener_clear_alias_by_alias = &ListenerAliasTable_clear_alias_by_alias;
+
 }
 
     /** @brief Wires the receive state machine interface with all 12 frame handlers and user callback. */
@@ -191,6 +197,9 @@ static void _build_tx_statemachine(void) {
     _tx_sm.handle_datagram_frame        = &CanTxMessageHandler_datagram_frame;
     _tx_sm.handle_stream_frame          = &CanTxMessageHandler_stream_frame;
     _tx_sm.handle_can_frame             = &CanTxMessageHandler_can_frame;
+
+    // Listener alias table (optional — enables consist alias resolution at TX)
+    _tx_sm.listener_find_by_node_id = &ListenerAliasTable_find_by_node_id;
 
 }
 
@@ -275,5 +284,6 @@ void CanConfig_initialize(const can_config_t *config) {
     CanMainStatemachine_initialize(&_main_sm);
 
     AliasMappings_initialize();
+    ListenerAliasTable_initialize();
 
 }

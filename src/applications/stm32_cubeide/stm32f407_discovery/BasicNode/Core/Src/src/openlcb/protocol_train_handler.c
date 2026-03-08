@@ -33,7 +33,7 @@
  * callbacks.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 6 Mar 2026
  */
 
 #include "protocol_train_handler.h"
@@ -218,8 +218,18 @@ static void _load_query_function_reply(openlcb_statemachine_info_t *statemachine
 
 }
 
-    /** @brief Build a Controller Assign reply. */
-static void _load_controller_assign_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t result) {
+    /**
+     * @brief Build a Controller Assign reply.
+     *
+     * @details On accept (result == 0x00) the reply is 3 bytes.
+     * On reject (result != 0x00) the reply includes the 6-byte Node ID of the
+     * current controller so the requester can negotiate a handoff.
+     * Per TrainControlTN Section 2.8.
+     */
+static void _load_controller_assign_reply(
+            openlcb_statemachine_info_t *statemachine_info,
+            uint8_t result,
+            node_id_t current_controller) {
 
     _load_reply_header(statemachine_info);
 
@@ -228,6 +238,12 @@ static void _load_controller_assign_reply(openlcb_statemachine_info_t *statemach
     OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, TRAIN_CONTROLLER_ASSIGN, 1);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, result, 2);
+
+    if (result != 0x00) {
+
+        OpenLcbUtilities_copy_node_id_to_openlcb_payload(msg, current_controller, 3);
+
+    }
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -650,7 +666,16 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
             }
 
-            _load_controller_assign_reply(statemachine_info, accepted ? 0x00 : 0xFF);
+            if (accepted) {
+
+                _load_controller_assign_reply(statemachine_info, 0x00, 0);
+
+            } else {
+
+                _load_controller_assign_reply(statemachine_info, 0xFF,
+                        state ? state->controller_node_id : 0);
+
+            }
 
             if (accepted && _interface && _interface->on_controller_assigned) {
 
@@ -983,7 +1008,15 @@ static void _handle_controller_config_reply(openlcb_statemachine_info_t *statema
             if (_interface && _interface->on_controller_assign_reply) {
 
                 uint8_t result = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 2);
-                _interface->on_controller_assign_reply(node, result);
+                node_id_t current_controller = 0;
+
+                if (result != 0x00 && msg->payload_count >= 9) {
+
+                    current_controller = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
+
+                }
+
+                _interface->on_controller_assign_reply(node, result, current_controller);
 
             }
 
@@ -1213,22 +1246,22 @@ void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *stat
 
     }
 
-    // Start listener forwarding for forwardable commands (only if P=0)
-    if (!(raw_instruction & TRAIN_INSTRUCTION_P_BIT)) {
+    // Start listener forwarding for forwardable commands.
+    // Both P=0 (from throttle) and P=1 (from chained consist) are forwarded.
+    // Forwarding of P=1 messages is REQUIRED per TrainControlS §6.5.
+    // Loop prevention: source-skip in _forward_to_next_listener() per §6.5
+    // and spanning-tree topology requirement per TN §2.6.5.
+    if (instruction == TRAIN_SET_SPEED_DIRECTION ||
+            instruction == TRAIN_SET_FUNCTION ||
+            instruction == TRAIN_EMERGENCY_STOP) {
 
-        if (instruction == TRAIN_SET_SPEED_DIRECTION ||
-                instruction == TRAIN_SET_FUNCTION ||
-                instruction == TRAIN_EMERGENCY_STOP) {
+        train_state_t *state = statemachine_info->openlcb_node->train_state;
 
-            train_state_t *state = statemachine_info->openlcb_node->train_state;
+        if (state && state->listener_count > 0) {
 
-            if (state && state->listener_count > 0) {
-
-                state->listener_enum_index = 0;
-                statemachine_info->incoming_msg_info.enumerate = true;
-                _forward_to_next_listener(statemachine_info);
-
-            }
+            state->listener_enum_index = 0;
+            statemachine_info->incoming_msg_info.enumerate = true;
+            _forward_to_next_listener(statemachine_info);
 
         }
 

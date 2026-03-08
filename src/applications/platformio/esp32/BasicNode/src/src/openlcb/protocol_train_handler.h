@@ -42,7 +42,7 @@
  * Called from the main statemachine when a train protocol message is received.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 6 Mar 2026
  *
  * @see openlcb_application_train.h - Layer 2 state and API
  */
@@ -115,8 +115,10 @@
             /** @brief Query Function reply received. */
         void (*on_query_function_reply)(openlcb_node_t *openlcb_node, uint32_t fn_address, uint16_t fn_value);
 
-            /** @brief Controller Assign reply received. */
-        void (*on_controller_assign_reply)(openlcb_node_t *openlcb_node, uint8_t result);
+            /** @brief Controller Assign reply received.
+             * On reject (result != 0), current_controller is the Node ID of
+             * the controller that currently owns the train.  On accept, it is 0. */
+        void (*on_controller_assign_reply)(openlcb_node_t *openlcb_node, uint8_t result, node_id_t current_controller);
 
             /** @brief Controller Query reply received. */
         void (*on_controller_query_reply)(openlcb_node_t *openlcb_node, uint8_t flags, node_id_t controller_node_id);

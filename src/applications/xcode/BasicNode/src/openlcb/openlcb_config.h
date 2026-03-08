@@ -32,7 +32,7 @@
  * to bring up the entire stack.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 6 Mar 2026
  */
 
 #ifndef __OPENLCB_CONFIG__
@@ -426,8 +426,9 @@ typedef struct {
         /** @brief Query function reply received. */
     void (*on_train_query_function_reply)(openlcb_node_t *openlcb_node, uint32_t fn_address, uint16_t fn_value);
 
-        /** @brief Controller assign reply received. 0 = success. */
-    void (*on_train_controller_assign_reply)(openlcb_node_t *openlcb_node, uint8_t result);
+        /** @brief Controller assign reply received. 0 = success.
+         * On reject, current_controller is the Node ID of the current owner. */
+    void (*on_train_controller_assign_reply)(openlcb_node_t *openlcb_node, uint8_t result, node_id_t current_controller);
 
         /** @brief Controller query reply received. */
     void (*on_train_controller_query_reply)(openlcb_node_t *openlcb_node, uint8_t flags, node_id_t controller_node_id);
