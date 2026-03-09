@@ -622,6 +622,11 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
      *        - Subtract the threshold from the accumulator.
      *        - Call _advance_minute_forward() or _advance_minute_backward() depending on rate sign.
      *        - Fire the on_time_changed callback.
+     * -# For each allocated producer clock with a producer_node:
+     *    - Compare previous_run_state with the node's current run_state.
+     *    - On transition to RUNSTATE_RUN, auto-set query_reply_pending to trigger
+     *      the Standard §6.1 startup sync sequence.
+     *    - Update previous_run_state.
      *
      * The threshold 240,000 equals 4 * 60 * 1000, which at rate=4 (1.0x) yields exactly
      * one fast-minute per real minute.  See the accumulator math comment above for details.
@@ -759,6 +764,23 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
                 clock->sync_delay_ticks -= ticks_elapsed;
 
             }
+
+        }
+
+        // --- Producer: auto-trigger startup sync on login completion (Standard §6.1) ---
+
+        if (clock->is_producer && clock->producer_node) {
+
+            openlcb_node_t *node = (openlcb_node_t *)clock->producer_node;
+
+            if (clock->previous_run_state < RUNSTATE_RUN && node->state.run_state >= RUNSTATE_RUN) {
+
+                clock->query_reply_pending = true;
+                clock->send_query_reply_state = 0;
+
+            }
+
+            clock->previous_run_state = node->state.run_state;
 
         }
 

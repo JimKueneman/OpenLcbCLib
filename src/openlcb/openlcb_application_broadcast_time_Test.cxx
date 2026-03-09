@@ -38,6 +38,7 @@
 * - Section 8: Controller Send Function Tests
 * - Section 9: Query Reply (State Machine) Tests
 * - Section 10: Edge Cases
+* - Section 26: Auto-Trigger Startup Sync on Login (Standard §6.1)
 *
 * @author Jim Kueneman
 * @date 14 Feb 2026
@@ -3644,5 +3645,169 @@ TEST(BroadcastTimeApp, producer_no_node_tick_does_not_send_or_crash)
     EXPECT_EQ(ct->report_cooldown_ticks, 4);
     // No crash from producer_node == NULL
     EXPECT_EQ(send_count, 0);
+
+}
+
+
+// ============================================================================
+// Section 26: Auto-Trigger Startup Sync on Login (Standard §6.1)
+// ============================================================================
+
+TEST(BroadcastTimeApp, auto_sync_triggers_on_initial_login)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->state.run_state = RUNSTATE_INIT;
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_setup_producer(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    broadcast_clock_t *ct = (broadcast_clock_t *)cs;
+
+    cs->time.hour = 10;
+    cs->time.minute = 30;
+    cs->time.valid = true;
+    cs->rate.rate = 4;
+    cs->rate.valid = true;
+
+    // previous_run_state starts at 0 (RUNSTATE_INIT) from memset
+    EXPECT_EQ(ct->previous_run_state, RUNSTATE_INIT);
+    EXPECT_FALSE(ct->query_reply_pending);
+
+    // Simulate login completion
+    node->state.run_state = RUNSTATE_RUN;
+
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
+
+    // Auto-sync should have triggered
+    EXPECT_TRUE(ct->query_reply_pending);
+    EXPECT_EQ(ct->previous_run_state, RUNSTATE_RUN);
+
+}
+
+TEST(BroadcastTimeApp, auto_sync_triggers_on_soft_restart)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->state.run_state = RUNSTATE_INIT;
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_setup_producer(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    broadcast_clock_t *ct = (broadcast_clock_t *)cs;
+
+    cs->time.hour = 10;
+    cs->time.minute = 30;
+    cs->time.valid = true;
+    cs->rate.rate = 4;
+    cs->rate.valid = true;
+
+    // First login
+    node->state.run_state = RUNSTATE_RUN;
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
+    EXPECT_TRUE(ct->query_reply_pending);
+
+    // Let the query reply complete
+    ct->query_reply_pending = false;
+    ct->previous_run_state = RUNSTATE_RUN;
+
+    // Simulate soft restart (OpenLcbNode_reset_state)
+    node->state.run_state = RUNSTATE_INIT;
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(2);
+
+    // previous_run_state updated, but no trigger yet
+    EXPECT_EQ(ct->previous_run_state, RUNSTATE_INIT);
+    EXPECT_FALSE(ct->query_reply_pending);
+
+    // Re-login
+    node->state.run_state = RUNSTATE_RUN;
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(3);
+
+    // Auto-sync should trigger again
+    EXPECT_TRUE(ct->query_reply_pending);
+    EXPECT_EQ(ct->previous_run_state, RUNSTATE_RUN);
+
+}
+
+TEST(BroadcastTimeApp, auto_sync_does_not_trigger_for_consumer)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->state.run_state = RUNSTATE_INIT;
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_setup_consumer(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    broadcast_clock_t *ct = (broadcast_clock_t *)cs;
+
+    // Simulate login completion
+    node->state.run_state = RUNSTATE_RUN;
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
+
+    // Consumer should NOT auto-trigger sync
+    EXPECT_FALSE(ct->query_reply_pending);
+
+}
+
+TEST(BroadcastTimeApp, auto_sync_no_spurious_retrigger_at_run_state)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->state.run_state = RUNSTATE_INIT;
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_setup_producer(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    broadcast_clock_t *ct = (broadcast_clock_t *)cs;
+
+    cs->time.hour = 10;
+    cs->time.minute = 30;
+    cs->time.valid = true;
+    cs->rate.rate = 4;
+    cs->rate.valid = true;
+
+    // Initial login triggers sync
+    node->state.run_state = RUNSTATE_RUN;
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
+    EXPECT_TRUE(ct->query_reply_pending);
+
+    // Clear the pending flag as if the sequence completed
+    ct->query_reply_pending = false;
+
+    // Subsequent ticks at RUNSTATE_RUN should NOT re-trigger
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(2);
+    EXPECT_FALSE(ct->query_reply_pending);
+
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(3);
+    EXPECT_FALSE(ct->query_reply_pending);
+
+}
+
+TEST(BroadcastTimeApp, auto_sync_null_producer_node_no_crash)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    // Producer with NULL node — should not crash or trigger
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_setup_producer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    broadcast_clock_t *ct = (broadcast_clock_t *)cs;
+
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
+
+    EXPECT_FALSE(ct->query_reply_pending);
 
 }

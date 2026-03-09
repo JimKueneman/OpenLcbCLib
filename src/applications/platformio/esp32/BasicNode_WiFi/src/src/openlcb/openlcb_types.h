@@ -435,6 +435,7 @@
         uint8_t send_query_reply_state; /**< @brief Per-clock state for query reply sequence (0-5). */
         uint8_t sync_delay_ticks;       /**< @brief Countdown for Set command coalescing (30 = 3s at 100ms). */
         uint16_t report_cooldown_ticks; /**< @brief Cooldown between periodic Report Time events (600 = 60s). */
+        uint8_t previous_run_state;     /**< @brief Last-seen producer node run_state for startup sync detection. */
         void *producer_node; /**< @brief Node pointer for sending (set in setup_producer). */
 
     } broadcast_clock_t;

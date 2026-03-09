@@ -156,6 +156,10 @@ New transport driver directory `src/drivers/tcpip/` with DI interface structs fo
 
 ---
 
+### 4. Broadcast Time Helpers to register the events and ranges for the application user
+
+**Issue:** App users should not have to hunt down what Event IDs they need to register for producers and consumers for common clocks.
+
 ## Design Notes
 
 - **Reply Pending bit (0x80):** ALWAYS set in Datagram Received OK. Write Reply ALWAYS sent. Intentional, spec-compliant. The `bool reply_pending` parameter was removed — do not re-add. See memory file `reply-pending.md`.

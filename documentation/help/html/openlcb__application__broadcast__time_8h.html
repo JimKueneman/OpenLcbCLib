@@ -647,6 +647,12 @@ Only consumer clocks are advanced; producer clocks manage their own time.</dd></
 </li>
 </ul>
 </li>
+<li>For each allocated producer clock with a producer_node:<ul>
+<li>Compare previous_run_state with the node's current run_state.</li>
+<li>On transition to RUNSTATE_RUN, auto-set query_reply_pending to trigger the Standard §6.1 startup sync sequence.</li>
+<li>Update previous_run_state.</li>
+</ul>
+</li>
 </ol>
 <p>The threshold 240,000 equals 4 * 60 * 1000, which at rate=4 (1.0x) yields exactly one fast-minute per real minute. See the accumulator math comment above for details.</p>
 <pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.

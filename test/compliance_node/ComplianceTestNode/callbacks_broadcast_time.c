@@ -71,6 +71,7 @@ bool CallbacksBroadcastTime_on_login_complete_producer(openlcb_node_t *openlcb_n
 
     }
 
-    // Don't start the clock — tests will send Start when they need it
+    // Library auto-triggers the §6.1 startup sync sequence when the
+    // producer node transitions to RUNSTATE_RUN.
     return true;
 }
