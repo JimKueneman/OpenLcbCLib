@@ -181,7 +181,11 @@ run_protocol_test() {
     echo "=== $label ==="
     echo "=========================================="
 
-    "$BINARY" --node-id "$NODE_ID" $node_flag </dev/null &
+    if [ -n "$VERBOSE" ]; then
+        "$BINARY" --node-id "$NODE_ID" $node_flag </dev/null &
+    else
+        "$BINARY" --node-id "$NODE_ID" $node_flag </dev/null >/dev/null 2>&1 &
+    fi
     NODE_PID=$!
     sleep 3
 
