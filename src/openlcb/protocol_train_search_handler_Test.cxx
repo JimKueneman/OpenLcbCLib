@@ -844,16 +844,8 @@ TEST(TrainSearch, handler_reply_contains_train_address)
     // Reply should be a train search event
     EXPECT_TRUE(OpenLcbUtilities_is_train_search_event(reply_event));
 
-    // Reply should contain the train's actual address
-    uint8_t reply_digits[6];
-    OpenLcbUtilities_extract_train_search_digits(reply_event, reply_digits);
-    EXPECT_EQ(OpenLcbUtilities_train_search_digits_to_address(reply_digits), 1234);
-
-    // Reply flags should include DCC + LONG_ADDR + speed steps 128 (0x03)
-    uint8_t reply_flags = OpenLcbUtilities_extract_train_search_flags(reply_event);
-    EXPECT_EQ(reply_flags & TRAIN_SEARCH_FLAG_DCC, TRAIN_SEARCH_FLAG_DCC);
-    EXPECT_EQ(reply_flags & TRAIN_SEARCH_FLAG_LONG_ADDR, TRAIN_SEARCH_FLAG_LONG_ADDR);
-    EXPECT_EQ(reply_flags & TRAIN_SEARCH_SPEED_STEP_MASK, 0x03);
+    // Reply should echo the search event ID
+    EXPECT_EQ(reply_event, search_event);
 
 }
 
@@ -878,11 +870,10 @@ TEST(TrainSearch, handler_reply_long_address_flag)
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
-    // Reply should have long address flag set
+    // Reply should echo the search event ID
     event_id_t reply_event = OpenLcbUtilities_extract_event_id_from_openlcb_payload(
             sm.outgoing_msg_info.msg_ptr);
-    uint8_t reply_flags = OpenLcbUtilities_extract_train_search_flags(reply_event);
-    EXPECT_EQ(reply_flags & TRAIN_SEARCH_FLAG_LONG_ADDR, TRAIN_SEARCH_FLAG_LONG_ADDR);
+    EXPECT_EQ(reply_event, search_event);
 
 }
 
@@ -2277,14 +2268,12 @@ TEST(TrainSearch, no_match_returns_node_with_short_address)
     // Callback invoked
     EXPECT_EQ(_no_match_count, 1);
 
-    // Reply loaded — check DCC flag set but LONG_ADDR flag NOT set
+    // Reply loaded — should echo the search event ID
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
     event_id_t reply_event = OpenLcbUtilities_extract_event_id_from_openlcb_payload(
             sm.outgoing_msg_info.msg_ptr);
-    uint8_t reply_flags = OpenLcbUtilities_extract_train_search_flags(reply_event);
-    EXPECT_EQ(reply_flags & TRAIN_SEARCH_FLAG_DCC, TRAIN_SEARCH_FLAG_DCC);
-    EXPECT_EQ(reply_flags & TRAIN_SEARCH_FLAG_LONG_ADDR, 0);
+    EXPECT_EQ(reply_event, search_event);
 
 }
 

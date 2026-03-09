@@ -1,0 +1,376 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2F9496E02F5E3EEC0007CC6B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		2F9496E22F5E3EEC0007CC6B /* ComplianceTestNode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ComplianceTestNode; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2FA00002BBBB00020007CC6B /* Exceptions for "openlcb" folder in "ComplianceTestNode" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				openlcb_application_Test.cxx,
+				openlcb_application_broadcast_time_Test.cxx,
+				openlcb_application_train_Test.cxx,
+				openlcb_buffer_fifo_Test.cxx,
+				openlcb_buffer_list_Test.cxx,
+				openlcb_buffer_store_Test.cxx,
+				openlcb_float16_Test.cxx,
+				openlcb_gridconnect_Test.cxx,
+				openlcb_login_statemachine_Test.cxx,
+				openlcb_login_statemachine_handler_Test.cxx,
+				openlcb_main_statemachine_Test.cxx,
+				openlcb_node_Test.cxx,
+				openlcb_utilities_Test.cxx,
+				protocol_broadcast_time_handler_Test.cxx,
+				protocol_config_mem_operations_handler_Test.cxx,
+				protocol_config_mem_read_handler_Test.cxx,
+				protocol_config_mem_write_handler_Test.cxx,
+				protocol_datagram_handler_Test.cxx,
+				protocol_event_transport_Test.cxx,
+				protocol_message_network_Test.cxx,
+				protocol_snip_Test.cxx,
+				protocol_train_handler_Test.cxx,
+				protocol_train_search_handler_Test.cxx,
+			);
+			target = 2F9496E12F5E3EEC0007CC6B /* ComplianceTestNode */;
+		};
+		2FA00003CCCC00020007CC6B /* Exceptions for "canbus" folder in "ComplianceTestNode" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				alias_mapping_listener_Test.cxx,
+				alias_mappings_Test.cxx,
+				can_buffer_fifo_Test.cxx,
+				can_buffer_store_Test.cxx,
+				can_login_message_handler_Test.cxx,
+				can_login_statemachine_Test.cxx,
+				can_main_statemachine_Test.cxx,
+				can_rx_message_handler_Test.cxx,
+				can_rx_statemachine_Test.cxx,
+				can_tx_message_handler_Test.cxx,
+				can_tx_statemachine_Test.cxx,
+				can_utilities_Test.cxx,
+			);
+			target = 2F9496E12F5E3EEC0007CC6B /* ComplianceTestNode */;
+		};
+		2FA00004DDDD00020007CC6B /* Exceptions for "utilities" folder in "ComplianceTestNode" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				mustangpeak_endian_helper_Test.cxx,
+				mustangpeak_string_helper_Test.cxx,
+			);
+			target = 2F9496E12F5E3EEC0007CC6B /* ComplianceTestNode */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		2F9496E42F5E3EEC0007CC6B /* ComplianceTestNode */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ComplianceTestNode;
+			sourceTree = "<group>";
+		};
+		2FA00002BBBB00010007CC6B /* openlcb */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2FA00002BBBB00020007CC6B /* Exceptions for "openlcb" folder in "ComplianceTestNode" target */,
+			);
+			path = ../../src/openlcb;
+			sourceTree = "<group>";
+		};
+		2FA00003CCCC00010007CC6B /* canbus */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2FA00003CCCC00020007CC6B /* Exceptions for "canbus" folder in "ComplianceTestNode" target */,
+			);
+			path = ../../src/drivers/canbus;
+			sourceTree = "<group>";
+		};
+		2FA00004DDDD00010007CC6B /* utilities */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2FA00004DDDD00020007CC6B /* Exceptions for "utilities" folder in "ComplianceTestNode" target */,
+			);
+			path = ../../src/utilities;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2F9496DF2F5E3EEC0007CC6B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2F9496D92F5E3EEC0007CC6B = {
+			isa = PBXGroup;
+			children = (
+				2F9496E42F5E3EEC0007CC6B /* ComplianceTestNode */,
+				2FA00002BBBB00010007CC6B /* openlcb */,
+				2FA00003CCCC00010007CC6B /* canbus */,
+				2FA00004DDDD00010007CC6B /* utilities */,
+				2F9496E32F5E3EEC0007CC6B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2F9496E32F5E3EEC0007CC6B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2F9496E22F5E3EEC0007CC6B /* ComplianceTestNode */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2F9496E12F5E3EEC0007CC6B /* ComplianceTestNode */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2F9496E92F5E3EEC0007CC6B /* Build configuration list for PBXNativeTarget "ComplianceTestNode" */;
+			buildPhases = (
+				2F9496DE2F5E3EEC0007CC6B /* Sources */,
+				2F9496DF2F5E3EEC0007CC6B /* Frameworks */,
+				2F9496E02F5E3EEC0007CC6B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				2F9496E42F5E3EEC0007CC6B /* ComplianceTestNode */,
+				2FA00002BBBB00010007CC6B /* openlcb */,
+				2FA00003CCCC00010007CC6B /* canbus */,
+				2FA00004DDDD00010007CC6B /* utilities */,
+			);
+			name = ComplianceTestNode;
+			packageProductDependencies = (
+			);
+			productName = ComplianceTestNode;
+			productReference = 2F9496E22F5E3EEC0007CC6B /* ComplianceTestNode */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2F9496DA2F5E3EEC0007CC6B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					2F9496E12F5E3EEC0007CC6B = {
+						CreatedOnToolsVersion = 26.3;
+					};
+				};
+			};
+			buildConfigurationList = 2F9496DD2F5E3EEC0007CC6B /* Build configuration list for PBXProject "ComplianceTestNode" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2F9496D92F5E3EEC0007CC6B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 2F9496E32F5E3EEC0007CC6B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2F9496E12F5E3EEC0007CC6B /* ComplianceTestNode */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2F9496DE2F5E3EEC0007CC6B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2F9496E72F5E3EEC0007CC6B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.7;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2F9496E82F5E3EEC0007CC6B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.7;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		2F9496EA2F5E3EEC0007CC6B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../..";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2F9496EB2F5E3EEC0007CC6B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../..";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2F9496DD2F5E3EEC0007CC6B /* Build configuration list for PBXProject "ComplianceTestNode" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2F9496E72F5E3EEC0007CC6B /* Debug */,
+				2F9496E82F5E3EEC0007CC6B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2F9496E92F5E3EEC0007CC6B /* Build configuration list for PBXNativeTarget "ComplianceTestNode" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2F9496EA2F5E3EEC0007CC6B /* Debug */,
+				2F9496EB2F5E3EEC0007CC6B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2F9496DA2F5E3EEC0007CC6B /* Project object */;
+}

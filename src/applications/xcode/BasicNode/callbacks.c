@@ -56,10 +56,12 @@ void Callbacks_on_100ms_timer_callback(void)
 
 void Callbacks_on_can_rx_callback(can_msg_t *can_msg)
 {
+#ifdef DEBUG_VERBOSE
     gridconnect_buffer_t gridconnect;
 
     OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
     printf("[R] %s\n", (char*)&gridconnect);
+#endif
 
 }
 

@@ -267,6 +267,13 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
 
                 _handle_report_time(node, clock, event_id);
 
+                // Send immediate Report Time PCER so consumers see the change right away
+                OpenLcbApplicationBroadcastTime_send_report_time(node, clock_id,
+                    clock->time.hour, clock->time.minute);
+
+                // Start/reset 3-second coalescing timer for full sync sequence
+                OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
+
             }
             break;
 
@@ -274,6 +281,7 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
             if (OpenLcbApplicationBroadcastTime_is_producer(clock_id)) {
 
                 _handle_report_date(node, clock, event_id);
+                OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
 
             }
             break;
@@ -282,6 +290,7 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
             if (OpenLcbApplicationBroadcastTime_is_producer(clock_id)) {
 
                 _handle_report_year(node, clock, event_id);
+                OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
 
             }
             break;
@@ -290,16 +299,27 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
             if (OpenLcbApplicationBroadcastTime_is_producer(clock_id)) {
 
                 _handle_report_rate(node, clock, event_id);
+                OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
 
             }
             break;
 
         case BROADCAST_TIME_EVENT_START:
             _handle_start(node, clock);
+            if (OpenLcbApplicationBroadcastTime_is_producer(clock_id)) {
+
+                OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
+
+            }
             break;
 
         case BROADCAST_TIME_EVENT_STOP:
             _handle_stop(node, clock);
+            if (OpenLcbApplicationBroadcastTime_is_producer(clock_id)) {
+
+                OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
+
+            }
             break;
 
         case BROADCAST_TIME_EVENT_DATE_ROLLOVER:
@@ -307,6 +327,11 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
             break;
 
         case BROADCAST_TIME_EVENT_QUERY:
+            if (OpenLcbApplicationBroadcastTime_is_producer(clock_id)) {
+
+                OpenLcbApplicationBroadcastTime_trigger_query_reply(clock_id);
+
+            }
             break;
 
         default:

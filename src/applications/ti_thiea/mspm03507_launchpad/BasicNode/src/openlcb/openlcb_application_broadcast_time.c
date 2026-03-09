@@ -228,6 +228,7 @@ broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_setup_producer(openlcb_
     }
 
     clock->is_producer = 1;
+    clock->producer_node = openlcb_node;
 
     if (openlcb_node) {
 
@@ -645,41 +646,141 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
 
         broadcast_clock_t *clock = &_clocks[i];
 
-        if (!clock->is_allocated || !clock->is_consumer || !clock->state.is_running) {
+        if (!clock->is_allocated) {
 
             continue;
 
         }
 
-        int16_t rate = clock->state.rate.rate;
+        // --- Time advancement (consumer AND producer clocks) ---
 
-        if (rate == 0) {
+        if ((clock->is_consumer || clock->is_producer) && clock->state.is_running) {
 
-            continue;
+            int16_t rate = clock->state.rate.rate;
 
-        }
+            if (rate != 0) {
 
-        uint16_t abs_rate = (rate < 0) ? (uint16_t)(-rate) : (uint16_t)(rate);
+                uint16_t abs_rate = (rate < 0) ? (uint16_t)(-rate) : (uint16_t)(rate);
 
-        clock->state.ms_accumulator += (uint32_t)(100) * abs_rate * ticks_elapsed;
+                clock->state.ms_accumulator += (uint32_t)(100) * abs_rate * ticks_elapsed;
 
-        while (clock->state.ms_accumulator >= BROADCAST_TIME_MS_PER_MINUTE_FIXED_POINT) {
+                while (clock->state.ms_accumulator >= BROADCAST_TIME_MS_PER_MINUTE_FIXED_POINT) {
 
-            clock->state.ms_accumulator -= BROADCAST_TIME_MS_PER_MINUTE_FIXED_POINT;
+                    clock->state.ms_accumulator -= BROADCAST_TIME_MS_PER_MINUTE_FIXED_POINT;
 
-            if (rate > 0) {
+                    uint8_t prev_hour = clock->state.time.hour;
 
-                _advance_minute_forward(&clock->state, NULL);
+                    if (rate > 0) {
 
-            } else {
+                        _advance_minute_forward(&clock->state, (openlcb_node_t *)clock->producer_node);
 
-                _advance_minute_backward(&clock->state, NULL);
+                    } else {
+
+                        _advance_minute_backward(&clock->state, (openlcb_node_t *)clock->producer_node);
+
+                    }
+
+                    if (_interface && _interface->on_time_changed) {
+
+                        _interface->on_time_changed(clock);
+
+                    }
+
+                    // --- Producer: send events on minute boundaries ---
+
+                    if (clock->is_producer && clock->producer_node) {
+
+                        openlcb_node_t *node = (openlcb_node_t *)clock->producer_node;
+
+                        // Periodic Report Time PCER (rate-limited to once per 60 real seconds)
+                        if (clock->report_cooldown_ticks == 0) {
+
+                            OpenLcbApplicationBroadcastTime_send_report_time(
+                                node, clock->state.clock_id,
+                                clock->state.time.hour, clock->state.time.minute);
+
+                            clock->report_cooldown_ticks = 600;  // 60 seconds
+
+                        }
+
+                        // Rollover detection: hour went from 23 to 0
+                        if (prev_hour == 23 && clock->state.time.hour == 0) {
+
+                            OpenLcbApplicationBroadcastTime_send_date_rollover(node, clock->state.clock_id);
+                            OpenLcbApplicationBroadcastTime_send_report_year(
+                                node, clock->state.clock_id, clock->state.year.year);
+                            OpenLcbApplicationBroadcastTime_send_report_date(
+                                node, clock->state.clock_id, clock->state.date.month, clock->state.date.day);
+
+                        }
+
+                    }
+
+                }
 
             }
 
-            if (_interface && _interface->on_time_changed) {
+        }
 
-                _interface->on_time_changed(clock);
+        // --- Producer: decrement report cooldown ---
+
+        if (clock->is_producer && clock->report_cooldown_ticks > 0) {
+
+            if (ticks_elapsed >= clock->report_cooldown_ticks) {
+
+                clock->report_cooldown_ticks = 0;
+
+            } else {
+
+                clock->report_cooldown_ticks -= ticks_elapsed;
+
+            }
+
+        }
+
+        // --- Producer: sync delay countdown ---
+
+        if (clock->is_producer && clock->sync_delay_ticks > 0) {
+
+            if (ticks_elapsed >= clock->sync_delay_ticks) {
+
+                clock->sync_delay_ticks = 0;
+
+                if (clock->sync_pending) {
+
+                    clock->sync_pending = false;
+                    clock->query_reply_pending = true;
+                    clock->send_query_reply_state = 0;
+
+                }
+
+            } else {
+
+                clock->sync_delay_ticks -= ticks_elapsed;
+
+            }
+
+        }
+
+        // --- Producer: drive query reply state machine ---
+
+        if (clock->is_producer && clock->query_reply_pending && clock->producer_node) {
+
+            uint8_t next_hour = clock->state.time.hour;
+            uint8_t next_min = clock->state.time.minute + 1;
+
+            if (next_min >= 60) {
+
+                next_min = 0;
+                next_hour = (next_hour + 1) % 24;
+
+            }
+
+            if (OpenLcbApplicationBroadcastTime_send_query_reply(
+                    (openlcb_node_t *)clock->producer_node, clock->state.clock_id,
+                    next_hour, next_min)) {
+
+                clock->query_reply_pending = false;
 
             }
 
@@ -712,7 +813,7 @@ bool OpenLcbApplicationBroadcastTime_send_report_time(openlcb_node_t *openlcb_no
 
     if (clock) {
 
-        if (clock->is_allocated && clock->is_producer) {
+        if (clock->is_allocated && clock->is_producer && clock->producer_node) {
 
             event_id_t event_id = OpenLcbUtilities_create_time_event_id(clock->state.clock_id, hour, minute, false);
 
@@ -748,7 +849,7 @@ bool OpenLcbApplicationBroadcastTime_send_report_date(openlcb_node_t *openlcb_no
 
     if (clock) {
 
-        if (clock->is_allocated && clock->is_producer) {
+        if (clock->is_allocated && clock->is_producer && clock->producer_node) {
 
             event_id_t event_id = OpenLcbUtilities_create_date_event_id(clock->state.clock_id, month, day, false);
 
@@ -783,7 +884,7 @@ bool OpenLcbApplicationBroadcastTime_send_report_year(openlcb_node_t *openlcb_no
 
     if (clock) {
 
-        if (clock->is_allocated && clock->is_producer) {
+        if (clock->is_allocated && clock->is_producer && clock->producer_node) {
 
             event_id_t event_id = OpenLcbUtilities_create_year_event_id(clock->state.clock_id, year, false);
 
@@ -818,7 +919,7 @@ bool OpenLcbApplicationBroadcastTime_send_report_rate(openlcb_node_t *openlcb_no
 
     if (clock) {
 
-        if (clock->is_allocated && clock->is_producer) {
+        if (clock->is_allocated && clock->is_producer && clock->producer_node) {
 
             event_id_t event_id = OpenLcbUtilities_create_rate_event_id(clock->state.clock_id, rate, false);
 
@@ -852,7 +953,7 @@ bool OpenLcbApplicationBroadcastTime_send_start(openlcb_node_t *openlcb_node, ev
 
     if (clock) {
 
-        if (clock->is_allocated && clock->is_producer) {
+        if (clock->is_allocated && clock->is_producer && clock->producer_node) {
 
             event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_START);
 
@@ -886,7 +987,7 @@ bool OpenLcbApplicationBroadcastTime_send_stop(openlcb_node_t *openlcb_node, eve
 
     if (clock) {
 
-        if (clock->is_allocated && clock->is_producer) {
+        if (clock->is_allocated && clock->is_producer && clock->producer_node) {
 
             event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_STOP);
 
@@ -920,7 +1021,7 @@ bool OpenLcbApplicationBroadcastTime_send_date_rollover(openlcb_node_t *openlcb_
 
     if (clock) {
 
-        if (clock->is_allocated && clock->is_producer) {
+        if (clock->is_allocated && clock->is_producer && clock->producer_node) {
 
             event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
 
@@ -967,7 +1068,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
 
     if (clock) {
 
-        if (clock->is_allocated && clock->is_producer) {
+        if (clock->is_allocated && clock->is_producer && clock->producer_node) {
 
             switch (clock->send_query_reply_state) {
 
@@ -1236,5 +1337,58 @@ bool OpenLcbApplicationBroadcastTime_send_command_stop(openlcb_node_t *openlcb_n
     event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock_id, BROADCAST_TIME_EVENT_STOP);
 
     return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
+}
+
+
+    /**
+     * @brief Triggers an immediate query reply for a producer clock.
+     *
+     * @details Sets the query_reply_pending flag and resets the state machine
+     * so the 100ms tick will drive the 6-message sync sequence.
+     *
+     * @verbatim
+     * @param clock_id  64-bit event_id_t identifying the clock.
+     * @endverbatim
+     */
+void OpenLcbApplicationBroadcastTime_trigger_query_reply(event_id_t clock_id) {
+
+    broadcast_clock_t *clock = _find_clock_by_id(clock_id);
+
+    if (clock && clock->is_producer) {
+
+        clock->query_reply_pending = true;
+        clock->send_query_reply_state = 0;
+
+        // Cancel any pending sync delay — the query reply supersedes it
+        clock->sync_pending = false;
+        clock->sync_delay_ticks = 0;
+
+    }
+
+}
+
+
+    /**
+     * @brief Starts or resets the 3-second sync delay timer for a producer clock.
+     *
+     * @details Each call resets the timer to 30 ticks (3 seconds at 100ms).
+     * When the timer expires, the query reply state machine is triggered
+     * automatically, sending the 6-message sync sequence.
+     *
+     * @verbatim
+     * @param clock_id  64-bit event_id_t identifying the clock.
+     * @endverbatim
+     */
+void OpenLcbApplicationBroadcastTime_trigger_sync_delay(event_id_t clock_id) {
+
+    broadcast_clock_t *clock = _find_clock_by_id(clock_id);
+
+    if (clock && clock->is_producer) {
+
+        clock->sync_delay_ticks = 30;  // 3 seconds at 100ms
+        clock->sync_pending = true;
+
+    }
 
 }

@@ -409,6 +409,29 @@ extern "C" {
          */
     extern bool OpenLcbApplicationBroadcastTime_send_command_stop(openlcb_node_t *openlcb_node, event_id_t clock_id);
 
+        /**
+         * @brief Triggers an immediate query reply (6-message sync sequence) for a producer clock.
+         *
+         * @details Sets the query_reply_pending flag and resets the state machine so the
+         * 100ms tick will drive the 6-message sequence (Start/Stop, Rate, Year, Date,
+         * Time as Producer Identified Set, then next-minute Time as PCER).
+         *
+         * @param clock_id  64-bit @ref event_id_t identifying the clock.
+         */
+    extern void OpenLcbApplicationBroadcastTime_trigger_query_reply(event_id_t clock_id);
+
+        /**
+         * @brief Starts or resets the 3-second sync delay timer for a producer clock.
+         *
+         * @details After Set commands, the producer waits 3 seconds before sending a
+         * sync reply, allowing multiple Set commands to coalesce into one reply.
+         * Each call resets the timer.  When the timer expires, the query reply
+         * state machine is triggered automatically.
+         *
+         * @param clock_id  64-bit @ref event_id_t identifying the clock.
+         */
+    extern void OpenLcbApplicationBroadcastTime_trigger_sync_delay(event_id_t clock_id);
+
 #ifdef __cplusplus
 }
 #endif

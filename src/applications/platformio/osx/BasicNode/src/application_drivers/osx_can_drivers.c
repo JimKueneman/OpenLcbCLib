@@ -62,6 +62,7 @@ uint8_t DriverCan_max_can_fifo_depth = 0;
 StringList _outgoing_gridconnect_strings;
 uint8_t _rx_paused = false;
 uint8_t _is_connected = false;
+volatile uint8_t _data_received = false;
 
 pthread_mutex_t can_mutex;
 
@@ -182,7 +183,7 @@ int _connect_to_server(char ip_address[], uint16_t port)
 
 void *thread_function_can(void *arg)
 {
-    int thread_id = *((int *)arg); // Access argument passed to thread
+    int thread_id = *((int *)arg);
 
     char ip_address[] = "127.0.0.1";
     uint16_t port = PORT_NUMBER;
@@ -191,11 +192,10 @@ void *thread_function_can(void *arg)
 
     gridconnect_buffer_t gridconnect_buffer;
     char *gridconnect_buffer_ptr;
-    uint8_t next_byte;
+    uint8_t rx_buffer[256];
     long result = 0;
     int socket_fd = -1;
     can_msg_t can_message;
-    uint64_t timer = 0;
     char *msg = (void *)0;
 
     can_message.state.allocated = 1;
@@ -210,62 +210,67 @@ void *thread_function_can(void *arg)
     while (1)
     {
 
-        //  if (timer % 5000 == 0)
-        //      printf("thread 1 heartbeat\n");
-        timer++;
-
         pthread_mutex_lock(&can_mutex);
+
         if (!_rx_paused)
         {
-            result = read(socket_fd, &next_byte, sizeof(next_byte));
+
+            result = read(socket_fd, rx_buffer, sizeof(rx_buffer));
 
             if (result > 0)
             {
-                if (OpenLcbGridConnect_copy_out_gridconnect_when_done(next_byte, &gridconnect_buffer))
-                {
-                    OpenLcbGridConnect_to_can_msg(&gridconnect_buffer, &can_message);
 
-                    msg = strcatnew("R", (char *)&gridconnect_buffer);
-                    printf("%s\n", msg);
-                    free(msg);
+                _data_received = true;
 
-                    CanRxStatemachine_incoming_can_driver_callback(&can_message);
-                }
-            }
-            else if (result < 0) // zero is just timout for no data
-            {
-                if ((errno == EWOULDBLOCK) || (errno == EAGAIN)) //  No data available use the dead time to send data
+                for (long i = 0; i < result; i++)
                 {
-                    gridconnect_buffer_ptr = ThreadSafeStringList_pop(&_outgoing_gridconnect_strings);
-                    while (gridconnect_buffer_ptr)
+
+                    if (OpenLcbGridConnect_copy_out_gridconnect_when_done(rx_buffer[i], &gridconnect_buffer))
                     {
-                        msg = strcatnew("S", gridconnect_buffer_ptr);
-                        printf("%s\n", msg);
-                        free(msg);
 
-                        msg = strcatnew(gridconnect_buffer_ptr, "\n\r");
-                        write(socket_fd, msg, strlen(msg));
-                        free(msg);
-                        free(gridconnect_buffer_ptr);
-
-                        gridconnect_buffer_ptr = ThreadSafeStringList_pop(&_outgoing_gridconnect_strings);
+                        OpenLcbGridConnect_to_can_msg(&gridconnect_buffer, &can_message);
+                        CanRxStatemachine_incoming_can_driver_callback(&can_message);
                     }
-
-                    usleep(500);
                 }
-                else
+
+            }
+            else if (result < 0)
+            {
+
+                if (!((errno == EWOULDBLOCK) || (errno == EAGAIN)))
                 {
+
                     _is_connected = false;
                     printf("Connection error detected: %d\n", errno);
-                    printf("Shutting down connection.... \n");
-                    result = shutdown(socket_fd, 2);
-                    result = close(socket_fd);
+                    printf("Shutting down connection....\n");
+                    shutdown(socket_fd, 2);
+                    close(socket_fd);
                     exit(1);
                 }
             }
+
+            // Always drain outgoing queue
+            gridconnect_buffer_ptr = ThreadSafeStringList_pop(&_outgoing_gridconnect_strings);
+            while (gridconnect_buffer_ptr)
+            {
+
+                msg = strcatnew(gridconnect_buffer_ptr, "\n\r");
+                write(socket_fd, msg, strlen(msg));
+                free(msg);
+                free(gridconnect_buffer_ptr);
+
+                gridconnect_buffer_ptr = ThreadSafeStringList_pop(&_outgoing_gridconnect_strings);
+            }
+
         }
+
         pthread_mutex_unlock(&can_mutex);
-        usleep(50);
+
+        // Sleep outside mutex, giving other threads a chance to acquire it
+        if (result <= 0)
+            usleep(500);   // Idle - longer sleep to avoid CPU spin
+        else
+            usleep(10);    // Data flowing - brief yield for timer thread
     }
 }
 
@@ -310,6 +315,13 @@ void OSxCanDriver_resume_can_rx(void)
     pthread_mutex_lock(&can_mutex);
     _rx_paused = false;
     pthread_mutex_unlock(&can_mutex);
+}
+
+uint8_t OSxCanDriver_data_was_received(void) {
+
+    uint8_t val = _data_received;
+    _data_received = false;
+    return val;
 }
 
 void OSxCanDriver_setup(void)

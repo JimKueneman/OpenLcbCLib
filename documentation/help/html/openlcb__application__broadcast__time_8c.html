@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>OpenLcbCLib: src/openlcb/openlcb_application_broadcast_time.c File Reference</title>
+<title>OpenLcbCLib: /Users/jimkueneman/Documents/OpenLcbCLib/src/openlcb/openlcb_application_broadcast_time.c File Reference</title>
 <link rel="icon" href="Diesel.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -179,6 +179,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a06f2abf657d70792d9154e34121b3ba6" id="r_a06f2abf657d70792d9154e34121b3ba6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06f2abf657d70792d9154e34121b3ba6">OpenLcbApplicationBroadcastTime_send_command_stop</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
 <tr class="memdesc:a06f2abf657d70792d9154e34121b3ba6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Stop command to a clock generator.  <br /></td></tr>
 <tr class="separator:a06f2abf657d70792d9154e34121b3ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98960c39660ade69be430714fd07b86e" id="r_a98960c39660ade69be430714fd07b86e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a98960c39660ade69be430714fd07b86e">OpenLcbApplicationBroadcastTime_trigger_query_reply</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a98960c39660ade69be430714fd07b86e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Triggers an immediate query reply for a producer clock.  <br /></td></tr>
+<tr class="separator:a98960c39660ade69be430714fd07b86e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a300a8836a7f8f9c743d64ad36a6d8f86" id="r_a300a8836a7f8f9c743d64ad36a6d8f86"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a300a8836a7f8f9c743d64ad36a6d8f86">OpenLcbApplicationBroadcastTime_trigger_sync_delay</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> clock_id)</td></tr>
+<tr class="memdesc:a300a8836a7f8f9c743d64ad36a6d8f86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts or resets the 3-second sync delay timer for a producer clock.  <br /></td></tr>
+<tr class="separator:a300a8836a7f8f9c743d64ad36a6d8f86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of the application-level Broadcast Time Protocol module. </p>
@@ -1007,6 +1013,49 @@ Functions</h2></td></tr>
 * @param clock_id      64-bit event_id_t identifying the target clock.
 * </pre><dl class="section return"><dt>Returns</dt><dd>true if queued, false if the transmit buffer is full. </dd></dl>
 
+</div>
+</div>
+<a id="a98960c39660ade69be430714fd07b86e" name="a98960c39660ade69be430714fd07b86e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98960c39660ade69be430714fd07b86e">&#9670;&#160;</a></span>OpenLcbApplicationBroadcastTime_trigger_query_reply()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbApplicationBroadcastTime_trigger_query_reply </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Triggers an immediate query reply for a producer clock. </p>
+<p>Triggers an immediate query reply (6-message sync sequence) for a producer clock.</p>
+<p>Sets the query_reply_pending flag and resets the state machine so the 100ms tick will drive the 6-message sync sequence.</p>
+<pre class="fragment">* @param clock_id  64-bit event_id_t identifying the clock.
+* </pre> 
+</div>
+</div>
+<a id="a300a8836a7f8f9c743d64ad36a6d8f86" name="a300a8836a7f8f9c743d64ad36a6d8f86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a300a8836a7f8f9c743d64ad36a6d8f86">&#9670;&#160;</a></span>OpenLcbApplicationBroadcastTime_trigger_sync_delay()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbApplicationBroadcastTime_trigger_sync_delay </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Starts or resets the 3-second sync delay timer for a producer clock. </p>
+<p>Each call resets the timer to 30 ticks (3 seconds at 100ms). When the timer expires, the query reply state machine is triggered automatically, sending the 6-message sync sequence.</p>
+<pre class="fragment">* @param clock_id  64-bit event_id_t identifying the clock.
+* </pre> 
 </div>
 </div>
 </div><!-- contents -->

@@ -52,6 +52,39 @@
 static const interface_protocol_train_search_handler_t *_interface;
 
 
+    /** @brief Return true if the search event contains reserved nibbles (0xA-0xE) or reserved flag bits. */
+static bool _has_reserved_values(const uint8_t *digits, uint8_t flags) {
+
+    // Check for reserved nibbles (0xA-0xE) in the address field
+    for (int i = 0; i < 6; i++) {
+
+        if (digits[i] >= 0x0A && digits[i] <= 0x0E) {
+
+            return true;
+
+        }
+
+    }
+
+    // Check reserved flag bit 4 (0x10)
+    if (flags & 0x10) {
+
+        return true;
+
+    }
+
+    // If DCC flag is not set, lower bits (0-2) must be zero
+    if (!(flags & TRAIN_SEARCH_FLAG_DCC) && (flags & 0x07)) {
+
+        return true;
+
+    }
+
+    return false;
+
+}
+
+
     /**
      * @brief Stores the callback interface.  Call once at startup.
      *
@@ -375,8 +408,16 @@ void ProtocolTrainSearch_handle_search_event(
     // Decode the search query
     uint8_t digits[6];
     OpenLcbUtilities_extract_train_search_digits(event_id, digits);
-    uint16_t search_address = OpenLcbUtilities_train_search_digits_to_address(digits);
     uint8_t flags = OpenLcbUtilities_extract_train_search_flags(event_id);
+
+    // Reject searches with reserved nibbles or flag bits
+    if (_has_reserved_values(digits, flags)) {
+
+        return;
+
+    }
+
+    uint16_t search_address = OpenLcbUtilities_train_search_digits_to_address(digits);
 
     // Check if this train matches
     if (!_does_train_match(train_state, digits, search_address, flags)) {
@@ -385,21 +426,7 @@ void ProtocolTrainSearch_handle_search_event(
 
     }
 
-    // Build reply: Producer Identified Set with this train's search event ID
-    uint8_t reply_flags = 0;
-    if (train_state->is_long_address) {
-
-        reply_flags |= TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR;
-
-    } else {
-
-        reply_flags |= TRAIN_SEARCH_FLAG_DCC;
-
-    }
-    reply_flags |= (train_state->speed_steps & TRAIN_SEARCH_SPEED_STEP_MASK);
-
-    event_id_t reply_event = OpenLcbUtilities_create_train_search_event_id(train_state->dcc_address, reply_flags);
-
+    // Build reply: Producer Identified Set echoing the queried search event ID
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
@@ -408,7 +435,7 @@ void ProtocolTrainSearch_handle_search_event(
             0,
             MTI_PRODUCER_IDENTIFIED_SET);
 
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, reply_event);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, event_id);
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -445,7 +472,16 @@ void ProtocolTrainSearch_handle_search_no_match(
 
     }
 
+    uint8_t digits[6];
+    OpenLcbUtilities_extract_train_search_digits(event_id, digits);
     uint8_t flags = OpenLcbUtilities_extract_train_search_flags(event_id);
+
+    // Reject searches with reserved nibbles or flag bits
+    if (_has_reserved_values(digits, flags)) {
+
+        return;
+
+    }
 
     if (!(flags & TRAIN_SEARCH_FLAG_ALLOCATE)) {
 
@@ -459,30 +495,13 @@ void ProtocolTrainSearch_handle_search_no_match(
 
     }
 
-    uint8_t digits[6];
-    OpenLcbUtilities_extract_train_search_digits(event_id, digits);
     uint16_t search_address = OpenLcbUtilities_train_search_digits_to_address(digits);
 
     openlcb_node_t *new_node = _interface->on_search_no_match(search_address, flags);
 
     if (new_node && new_node->train_state) {
 
-        // Build Producer Identified reply from the newly allocated node
-        uint8_t reply_flags = 0;
-        if (new_node->train_state->is_long_address) {
-
-            reply_flags |= TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR;
-
-        } else {
-
-            reply_flags |= TRAIN_SEARCH_FLAG_DCC;
-
-        }
-        reply_flags |= (new_node->train_state->speed_steps & TRAIN_SEARCH_SPEED_STEP_MASK);
-
-        event_id_t reply_event = OpenLcbUtilities_create_train_search_event_id(
-                new_node->train_state->dcc_address, reply_flags);
-
+        // Build Producer Identified reply echoing the queried search event ID
         OpenLcbUtilities_load_openlcb_message(
                 statemachine_info->outgoing_msg_info.msg_ptr,
                 new_node->alias,
@@ -492,7 +511,7 @@ void ProtocolTrainSearch_handle_search_no_match(
                 MTI_PRODUCER_IDENTIFIED_SET);
 
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-                statemachine_info->outgoing_msg_info.msg_ptr, reply_event);
+                statemachine_info->outgoing_msg_info.msg_ptr, event_id);
 
         statemachine_info->outgoing_msg_info.valid = true;
 

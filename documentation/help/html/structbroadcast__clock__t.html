@@ -105,9 +105,24 @@ Data Fields</h2></td></tr>
 <tr class="separator:ad6dd46df120573b4540c49bfc3e67895"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46e75766403b17e73e356109aee081c7" id="r_a46e75766403b17e73e356109aee081c7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46e75766403b17e73e356109aee081c7">is_allocated</a>: 1</td></tr>
 <tr class="separator:a46e75766403b17e73e356109aee081c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accd78355eaee2c118e88de6c0264254c" id="r_accd78355eaee2c118e88de6c0264254c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#accd78355eaee2c118e88de6c0264254c">query_reply_pending</a>: 1</td></tr>
+<tr class="memdesc:accd78355eaee2c118e88de6c0264254c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Query reply state machine active.  <br /></td></tr>
+<tr class="separator:accd78355eaee2c118e88de6c0264254c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0a652fa7b44b382c8d995523b74325e" id="r_ad0a652fa7b44b382c8d995523b74325e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0a652fa7b44b382c8d995523b74325e">sync_pending</a>: 1</td></tr>
+<tr class="memdesc:ad0a652fa7b44b382c8d995523b74325e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed sync waiting to fire after Set commands.  <br /></td></tr>
+<tr class="separator:ad0a652fa7b44b382c8d995523b74325e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a062a142adbaa422e0e67c9f557d25297" id="r_a062a142adbaa422e0e67c9f557d25297"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a062a142adbaa422e0e67c9f557d25297">send_query_reply_state</a></td></tr>
 <tr class="memdesc:a062a142adbaa422e0e67c9f557d25297"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per-clock state for query reply sequence (0-5).  <br /></td></tr>
 <tr class="separator:a062a142adbaa422e0e67c9f557d25297"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a941dc519e9181ae3a95e805c3ba4964a" id="r_a941dc519e9181ae3a95e805c3ba4964a"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a941dc519e9181ae3a95e805c3ba4964a">sync_delay_ticks</a></td></tr>
+<tr class="memdesc:a941dc519e9181ae3a95e805c3ba4964a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Countdown for Set command coalescing (30 = 3s at 100ms).  <br /></td></tr>
+<tr class="separator:a941dc519e9181ae3a95e805c3ba4964a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6c2847a289cdfa050d0d57faecefc18" id="r_ad6c2847a289cdfa050d0d57faecefc18"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6c2847a289cdfa050d0d57faecefc18">report_cooldown_ticks</a></td></tr>
+<tr class="memdesc:ad6c2847a289cdfa050d0d57faecefc18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cooldown between periodic Report Time events (600 = 60s).  <br /></td></tr>
+<tr class="separator:ad6c2847a289cdfa050d0d57faecefc18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4efb7331b302d698984c0654a25c31e" id="r_ac4efb7331b302d698984c0654a25c31e"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4efb7331b302d698984c0654a25c31e">producer_node</a></td></tr>
+<tr class="memdesc:ac4efb7331b302d698984c0654a25c31e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node pointer for sending (set in setup_producer).  <br /></td></tr>
+<tr class="separator:ac4efb7331b302d698984c0654a25c31e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A clock slot with state and subscription flags. </p>
@@ -168,6 +183,38 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
+<a id="accd78355eaee2c118e88de6c0264254c" name="accd78355eaee2c118e88de6c0264254c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accd78355eaee2c118e88de6c0264254c">&#9670;&#160;</a></span>query_reply_pending</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool query_reply_pending</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Query reply state machine active. </p>
+
+</div>
+</div>
+<a id="ad0a652fa7b44b382c8d995523b74325e" name="ad0a652fa7b44b382c8d995523b74325e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0a652fa7b44b382c8d995523b74325e">&#9670;&#160;</a></span>sync_pending</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sync_pending</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Delayed sync waiting to fire after Set commands. </p>
+
+</div>
+</div>
 <a id="a062a142adbaa422e0e67c9f557d25297" name="a062a142adbaa422e0e67c9f557d25297"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a062a142adbaa422e0e67c9f557d25297">&#9670;&#160;</a></span>send_query_reply_state</h2>
 
@@ -184,8 +231,56 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
+<a id="a941dc519e9181ae3a95e805c3ba4964a" name="a941dc519e9181ae3a95e805c3ba4964a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a941dc519e9181ae3a95e805c3ba4964a">&#9670;&#160;</a></span>sync_delay_ticks</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t sync_delay_ticks</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Countdown for Set command coalescing (30 = 3s at 100ms). </p>
+
+</div>
+</div>
+<a id="ad6c2847a289cdfa050d0d57faecefc18" name="ad6c2847a289cdfa050d0d57faecefc18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6c2847a289cdfa050d0d57faecefc18">&#9670;&#160;</a></span>report_cooldown_ticks</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t report_cooldown_ticks</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Cooldown between periodic Report Time events (600 = 60s). </p>
+
+</div>
+</div>
+<a id="ac4efb7331b302d698984c0654a25c31e" name="ac4efb7331b302d698984c0654a25c31e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4efb7331b302d698984c0654a25c31e">&#9670;&#160;</a></span>producer_node</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* producer_node</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Node pointer for sending (set in setup_producer). </p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/openlcb/<a class="el" href="openlcb__types_8h_source.html">openlcb_types.h</a></li>
+<li>/Users/jimkueneman/Documents/OpenLcbCLib/src/openlcb/<a class="el" href="openlcb__types_8h_source.html">openlcb_types.h</a></li>
 </ul>
 </div><!-- contents -->
 <!doctype html>

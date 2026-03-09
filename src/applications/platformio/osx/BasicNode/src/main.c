@@ -80,9 +80,20 @@ int main(int argc, char *argv[])
   openlcb_node_t *node = OpenLcb_create_node(nodeid, &OpenLcbUserConfig_node_parameters);
   printf("Allocated.....\n");
 
+  int idle_count = 0;
+
   while (1)
   {
 
     OpenLcb_run();
+
+    if (OSxCanDriver_data_was_received())
+        idle_count = 0;
+    else
+        idle_count++;
+
+    if (idle_count > 100)
+        usleep(50);
+
   }
 }

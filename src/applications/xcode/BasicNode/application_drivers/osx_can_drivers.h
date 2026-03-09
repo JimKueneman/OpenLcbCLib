@@ -59,6 +59,8 @@ extern "C"
 
     extern bool OSxCanDriver_is_connected(void);
 
+    extern uint8_t OSxCanDriver_data_was_received(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

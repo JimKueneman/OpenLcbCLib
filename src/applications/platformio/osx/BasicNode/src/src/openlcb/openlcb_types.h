@@ -430,7 +430,12 @@
         bool is_consumer : 1;
         bool is_producer : 1;
         bool is_allocated : 1;
+        bool query_reply_pending : 1;   /**< @brief Query reply state machine active. */
+        bool sync_pending : 1;          /**< @brief Delayed sync waiting to fire after Set commands. */
         uint8_t send_query_reply_state; /**< @brief Per-clock state for query reply sequence (0-5). */
+        uint8_t sync_delay_ticks;       /**< @brief Countdown for Set command coalescing (30 = 3s at 100ms). */
+        uint16_t report_cooldown_ticks; /**< @brief Cooldown between periodic Report Time events (600 = 60s). */
+        void *producer_node; /**< @brief Node pointer for sending (set in setup_producer). */
 
     } broadcast_clock_t;
 

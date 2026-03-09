@@ -62,9 +62,12 @@ void *thread_function_char_read(void *arg) {
     char c;
     
     while (1) {
-        
-        c = getchar();
-        
+
+        int ch = getchar();
+        if (ch == EOF)
+            break;
+        c = (char)ch;
+
         printf("Character received: %c\n", c);
         
         switch (c) {
@@ -105,8 +108,10 @@ void *thread_function_char_read(void *arg) {
             break;
                 
         }
-        
+
     }
+
+    return NULL;
 }
 
 int main(int argc, char *argv[])
@@ -139,12 +144,21 @@ int main(int argc, char *argv[])
   int thread_num4 = 4;
   pthread_create(&thread4, NULL, thread_function_char_read, &thread_num4);
 
+  int idle_count = 0;
+
   while (1)
   {
 
-    usleep(2);
     OpenLcb_run();
-      
+
+    if (OSxCanDriver_data_was_received())
+        idle_count = 0;
+    else
+        idle_count++;
+
+    if (idle_count > 100)
+        usleep(50);
+
   }
     
 }

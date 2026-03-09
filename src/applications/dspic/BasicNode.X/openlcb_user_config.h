@@ -63,6 +63,20 @@
 #define USER_DEFINED_MAX_TRAIN_FUNCTIONS             1
 
 // =============================================================================
+// Listener Alias Verification (requires OPENLCB_COMPILE_TRAIN)
+// =============================================================================
+// LISTENER_PROBE_TICK_INTERVAL  -- how many 100ms ticks between prober calls
+//                                  (1 = every 100ms, 2 = every 200ms, etc.)
+// LISTENER_PROBE_INTERVAL_TICKS -- 100ms ticks between probes of the SAME entry
+//                                  (250 = 25 seconds)
+// LISTENER_VERIFY_TIMEOUT_TICKS -- 100ms ticks to wait for AMD reply before
+//                                  declaring stale (30 = 3 seconds)
+
+#define USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL    1
+#define USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS   250
+#define USER_DEFINED_LISTENER_VERIFY_TIMEOUT_TICKS   30
+
+// =============================================================================
 // Application-defined node parameters
 // =============================================================================
 

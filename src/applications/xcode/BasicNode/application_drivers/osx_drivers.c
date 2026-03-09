@@ -24,9 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \odx_drivers.c
+ * \file osx_drivers.c
  *
- *
+ * macOS platform drivers for the BasicNode demo: 100ms timer thread,
+ * keyboard input thread, configuration memory stubs, and firmware callbacks.
  *
  * @author Jim Kueneman
  * @date 1 Jan 2026
@@ -45,25 +46,23 @@
 
 #include <stdio.h>
 #include <pthread.h>
-#include <unistd.h> // read(), write(), close()
+#include <unistd.h>
 
 uint8_t _is_clock_running = false;
 uint8_t _timer_pause = false;
 char *user_data;
 uint8_t _is_input_running = false;
 
-pthread_mutex_t OSxDdrivers_input_mutex;
+pthread_mutex_t OSxDrivers_input_mutex;
 
-uint8_t OSxDrivers_input_is_connected(void)
-{
+uint8_t OSxDrivers_input_is_connected(void) {
 
     return _is_input_running;
 }
 
-void *thread_function_input(void *arg)
-{
+void *thread_function_input(void *arg) {
 
-    int thread_id = *((int *)arg); // Access argument passed to thread
+    int thread_id = *((int *)arg);
 
     char key;
 
@@ -71,249 +70,147 @@ void *thread_function_input(void *arg)
 
     _is_input_running = true;
 
-    while (1)
-    {
+    while (1) {
 
-        scanf("%c", &key);
+        if (scanf("%c", &key) == EOF)
+            break;
 
-        pthread_mutex_lock(&OSxDdrivers_input_mutex);
+        pthread_mutex_lock(&OSxDrivers_input_mutex);
 
-        switch (key)
-        {
-                
+        switch (key) {
+
             case 'r':
-                
                 printf("reboot\n");
-                
-                openlcb_node_t *node = OpenLcbNode_get_first(2);
-                
-                node->state.run_state = 0;
-                node->state.initialized = false;
-                node->state.permitted = false;
-                
+                OpenLcbNode_reset_state();
                 break;
-                
         }
-        pthread_mutex_unlock(&OSxDdrivers_input_mutex);
+
+        pthread_mutex_unlock(&OSxDrivers_input_mutex);
 
         usleep(100000);
     }
+
+    return NULL;
 }
 
-void *thread_function_timer(void *arg)
-{
-    int thread_id = *((int *)arg); // Access argument passed to thread
+void *thread_function_timer(void *arg) {
+
+    int thread_id = *((int *)arg);
 
     printf("100ms Timer Thread %d started\n", thread_id);
 
     _is_clock_running = true;
 
-    while (1)
-    {
+    while (1) {
 
-        if (_timer_pause == 0)
-        {
-            
+        if (_timer_pause == 0) {
+
             OpenLcb_100ms_timer_tick();
-            
         }
 
         usleep(100000);
     }
 }
 
-uint8_t OSxDrivers_100ms_is_connected(void)
-{
+uint8_t OSxDrivers_100ms_is_connected(void) {
 
     return _is_clock_running;
 }
 
-void OSxDrivers_setup(void)
-{
+void OSxDrivers_setup(void) {
 
-    user_data = strnew_initialized(LEN_SNIP_USER_NAME_BUFFER + LEN_SNIP_USER_DESCRIPTION_BUFFER + 1); // add extra null since these are 2 null terminated strings
+    user_data = strnew_initialized(LEN_SNIP_USER_NAME_BUFFER + LEN_SNIP_USER_DESCRIPTION_BUFFER + 1);
 
     pthread_t thread2;
-
     int thread_num2 = 2;
-
     pthread_create(&thread2, NULL, thread_function_timer, &thread_num2);
 
-    printf("Mutex initialization for Input - Result Code: %d\n", pthread_mutex_init(&OSxDdrivers_input_mutex, NULL));
+    printf("Mutex initialization for Input - Result Code: %d\n", pthread_mutex_init(&OSxDrivers_input_mutex, NULL));
 
     pthread_t thread3;
-
     int thread_num3 = 3;
-
     pthread_create(&thread3, NULL, thread_function_input, &thread_num3);
 }
 
-void OSxDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
-{
+void OSxDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+
+    printf("Reboot requested via protocol\n");
+    OpenLcbNode_reset_state();
 }
 
-uint16_t OSxDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
-{
-    
-    
+uint16_t OSxDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
+
     char str[] = "iMac M1 on XCode";
 
     for (int i = 0; i < count; i++) {
-
         (*buffer)[i] = 0x00;
-
     }
 
     switch (address) {
 
-    case 0:
+        case 0:
+            for (int i = 0; i < count; i++) {
+                (*buffer)[i] = str[i];
+            }
+            break;
 
-        for (int i = 0; i < count; i++) {
-
-            (*buffer)[i] = str[i];
-
-        }
-
-        break;
-
-    default:
-
-        break;
+        default:
+            break;
     }
 
     return count;
-    
-    
-//
-//    //  printf("configmem read count: %d\n", count);
-//    //  printf("configmem read address: %08lX\n", address);
-//
-//    // printf("configmem read address: %02X\n", (*buffer)[0]);
-//
-//    // Null out the buffer in case we have no data
-//    for (int i = 0; i < sizeof(*buffer); i++) {
-//       
-//        (*buffer)[i] = '\0';
-//        
-//    }
-//        
-//
-//    FILE *_file;
-//
-//    _file = fopen("./config_mem.dat", "rb"); // read binary
-//
-//    if (_file)
-//    {
-//
-//        if (fseek(_file, address, SEEK_SET) == 0)
-//        {
-//
-//            if (fread(buffer, 1, count, _file) == count)
-//            {
-//
-//                fclose(_file);
-//                
-//                return count;
-//            }
-//        }
-//
-//        fclose(_file);
-//    }
-//
-//    return count; // just returning 0's
 }
 
-uint16_t OSxDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
-{
+uint16_t OSxDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
     printf("configmem write\n");
 
     if (count == 0) {
-        
         return 0;
-        
     }
-    
-    return count;
 
-//    FILE *_file;
-//
-//    _file = fopen("./config_mem.dat", "r+b"); // append will ONLY add to the EOF not past it but r+ will fail if the file does not exist
-//    if (!_file)
-//        _file = fopen("./config_mem.dat", "w+b"); // append binary
-//
-//    if (_file)
-//    {
-//
-//        if (fseek(_file, address, SEEK_SET) == 0)
-//        {
-//
-//            if (fwrite(buffer, 1, count, _file) == count)
-//            {
-//
-//                fclose(_file);
-//                return count;
-//            }
-//        }
-//
-//        fclose(_file);
-//    }
-//
-//    return 0;
+    return count;
 }
 
-void OSxDrivers_lock_shared_resources(void)
-{
+void OSxDrivers_lock_shared_resources(void) {
 
     OSxCanDriver_pause_can_rx();
-
     _timer_pause = true;
 }
 
-void OSxDrivers_unlock_shared_resources(void)
-{
+void OSxDrivers_unlock_shared_resources(void) {
 
     OSxCanDriver_resume_can_rx();
-
     _timer_pause = false;
 }
 
 void OSxDrivers_write_firmware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
-    
+
     printf("Firmware Write, buffer is in config_mem_write_request_info->writebuffer ");
-    
-    
-    // Assume success.....
+
     OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
-    
-    // Send it
+
     statemachine_info->outgoing_msg_info.valid = true;
 }
 
 void OSxDrivers_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-  
+
     if (config_mem_operations_request_info->space_info->address_space == CONFIG_MEM_SPACE_FIRMWARE) {
 
-        printf("Requesting Firmware update");
-        
-        // Allows the node to reply that it is in Firmware Updgrade Mode if asked
-             statemachine_info->openlcb_node->state.firmware_upgrade_active = true;
+        printf("Requesting Firmware update\n");
 
-             // Per the spec tell the configuration tool  we are ready to receive the data
-             OpenLcbApplication_send_initialization_event(statemachine_info->openlcb_node);
-      
+        statemachine_info->openlcb_node->state.firmware_upgrade_active = true;
+
+        OpenLcbApplication_send_initialization_event(statemachine_info->openlcb_node);
     }
-    
 }
 
 void OSxDrivers_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-  
+
     if (config_mem_operations_request_info->space_info->address_space == CONFIG_MEM_SPACE_FIRMWARE) {
 
-      printf("Requesting Firmware firmware update complete, reboot");
-        
+        printf("Firmware update complete, reboot\n");
+
         statemachine_info->openlcb_node->state.firmware_upgrade_active = false;
-      
     }
-    
 }

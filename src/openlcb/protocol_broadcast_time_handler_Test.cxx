@@ -1728,3 +1728,217 @@ TEST(BroadcastTimeHandler, clock_id_updated_in_state)
     EXPECT_EQ(cs2->time.minute, 30);
 
 }
+
+
+// ============================================================================
+// Section 10: Producer Handler Paths — sync delay & query reply triggers
+// ============================================================================
+
+TEST(BroadcastTimeHandler, start_event_triggers_sync_delay_for_producer)
+{
+
+    _reset_callback_flags();
+
+    OpenLcbBufferStore_initialize();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_TRUE(g_started_callback_called);
+    EXPECT_TRUE(cs->is_running);
+
+    // Producer should have sync delay triggered
+    broadcast_clock_t *ct = (broadcast_clock_t *)cs;
+    EXPECT_EQ(ct->sync_delay_ticks, 30);
+    EXPECT_TRUE(ct->sync_pending);
+
+}
+
+TEST(BroadcastTimeHandler, stop_event_triggers_sync_delay_for_producer)
+{
+
+    _reset_callback_flags();
+
+    OpenLcbBufferStore_initialize();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    cs->is_running = true;
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_TRUE(g_stopped_callback_called);
+    EXPECT_FALSE(cs->is_running);
+
+    broadcast_clock_t *ct = (broadcast_clock_t *)cs;
+    EXPECT_EQ(ct->sync_delay_ticks, 30);
+    EXPECT_TRUE(ct->sync_pending);
+
+}
+
+TEST(BroadcastTimeHandler, query_event_triggers_query_reply_for_producer)
+{
+
+    _reset_callback_flags();
+
+    OpenLcbBufferStore_initialize();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_QUERY);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    broadcast_clock_t *ct = (broadcast_clock_t *)cs;
+    EXPECT_TRUE(ct->query_reply_pending);
+    EXPECT_EQ(ct->send_query_reply_state, 0);
+
+}
+
+
+// ============================================================================
+// Section 11: node->index != 0 Early Return
+// ============================================================================
+
+TEST(BroadcastTimeHandler, nonzero_node_index_returns_early)
+{
+
+    _reset_callback_flags();
+
+    OpenLcbBufferStore_initialize();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+    node.index = 1;  // Non-zero — handler should return early
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 12, 30, false);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    // Should NOT update clock state
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_EQ(cs->time.hour, 0);
+    EXPECT_EQ(cs->time.minute, 0);
+    EXPECT_FALSE(g_time_callback_called);
+
+}
+
+
+// ============================================================================
+// Section 12: Extraction Failure Paths
+// ============================================================================
+
+TEST(BroadcastTimeHandler, invalid_time_minute_too_large_no_update)
+{
+
+    _reset_callback_flags();
+
+    OpenLcbBufferStore_initialize();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    // Invalid time: hour=23, minute=60 (>= 60)
+    // command_data = (23 << 8) | 60 = 0x173C — still in REPORT_TIME range (0x0000-0x17FF)
+    // Extraction will fail because minute >= 60
+    event_id_t event_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | ((uint64_t)23 << 8) | 60;
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_FALSE(g_time_callback_called);
+    EXPECT_EQ(cs->time.valid, 0);
+
+}
+
+TEST(BroadcastTimeHandler, invalid_date_month_zero_no_update)
+{
+
+    _reset_callback_flags();
+
+    OpenLcbBufferStore_initialize();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    // Invalid date: month=0 (< 1), day=1
+    // command_data = 0x2000 + (0 << 8) + 1 = 0x2001 — in REPORT_DATE range
+    // Extraction will fail because month < 1
+    event_id_t event_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2001;
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_FALSE(g_date_callback_called);
+    EXPECT_EQ(cs->date.valid, 0);
+
+}

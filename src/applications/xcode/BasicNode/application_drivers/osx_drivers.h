@@ -1,4 +1,3 @@
-
 /** \copyright
  * Copyright (c) 2026, Jim Kueneman
  * All rights reserved.
@@ -25,15 +24,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file dsPIC33EPxxxGP50x_drivers.h
+ * \file osx_drivers.h
  *
+ * macOS platform driver interface for the BasicNode demo.
  *
  * @author Jim Kueneman
  * @date 1 Jan 2026
  */
 
-// This is a guard condition so that contents of this file are not included
-// more than once.
 #ifndef __OSX_DRIVERS__
 #define __OSX_DRIVERS__
 
@@ -63,12 +61,12 @@ extern "C"
     extern void OSxDrivers_unlock_shared_resources(void);
 
     extern void OSxDrivers_write_firmware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
-    
+
     extern void OSxDrivers_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-    
+
     extern void OSxDrivers_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-    extern pthread_mutex_t OSxDdrivers_input_mutex;
+    extern pthread_mutex_t OSxDrivers_input_mutex;
 
 #ifdef __cplusplus
 }
