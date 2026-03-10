@@ -92,7 +92,7 @@ function clearFdi() {
 
 function generateStarterFDI() {
     var xml =
-        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<?xml version="1.0"?>\n'
       + '<fdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
       + '     xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/fdi/1/1/fdi.xsd">\n'
       + '  <segment origin="0" space="249">\n'

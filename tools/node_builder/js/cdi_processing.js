@@ -114,7 +114,7 @@ function generateStarterCDI() {
     var swVer = document.getElementById('snip-sw-version').value || '1.0';
 
     var xml =
-        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<?xml version="1.0"?>\n'
       + '<?xml-stylesheet type="text/xsl" href="http://openlcb.org/trunk/prototypes/xml/xslt/cdi.xsl"?>\n'
       + '<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
       + '     xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">\n'

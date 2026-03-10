@@ -33,7 +33,7 @@
      * and supports optional per-space handler overrides and delayed replies.
      *
      * @author Jim Kueneman
-     * @date 4 Mar 2026
+     * @date 9 Mar 2026
      */
 
 #ifndef __OPENLCB_PROTOCOL_CONFIG_MEM_READ_HANDLER__

@@ -33,7 +33,7 @@
      * reads from config memory, and returns the data in a reply datagram.
      *
      * @author Jim Kueneman
-     * @date 4 Mar 2026
+     * @date 9 Mar 2026
      *
      * @see protocol_config_mem_read_handler.h
      * @see MemoryConfigurationS.pdf
@@ -122,12 +122,6 @@ static uint16_t _is_valid_read_parameters(config_mem_read_request_info_t *config
 
     }
 
-    if (config_mem_read_request_info->address > config_mem_read_request_info->space_info->highest_address) {
-
-        return ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS;
-
-    }
-
     if (config_mem_read_request_info->bytes > 64) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
@@ -205,8 +199,17 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
 
     // Try to Complete Command Request, we know that config_mem_read_request_info->read_space_func is valid if we get here
 
-    _check_for_read_overrun(statemachine_info, config_mem_read_request_info);
-    config_mem_read_request_info->read_space_func(statemachine_info, config_mem_read_request_info);
+    if (config_mem_read_request_info->address > config_mem_read_request_info->space_info->highest_address) {
+
+        OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+        statemachine_info->outgoing_msg_info.valid = true;
+
+    } else {
+
+        _check_for_read_overrun(statemachine_info, config_mem_read_request_info);
+        config_mem_read_request_info->read_space_func(statemachine_info, config_mem_read_request_info);
+
+    }
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // Done
     statemachine_info->incoming_msg_info.enumerate = false; // done

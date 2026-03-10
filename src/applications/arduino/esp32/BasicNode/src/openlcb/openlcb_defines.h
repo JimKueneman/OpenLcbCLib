@@ -32,7 +32,7 @@
  * Time event IDs, Train Control instruction bytes, and well-known events.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 9 Mar 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -654,14 +654,14 @@
     /** @brief Permanent error base code */
 #define ERROR_PERMANENT 0x1000
 
-    /** @brief Permanent: Unknown or unsupported address space */
-#define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN 0x1001
+    /** @brief Permanent: Unknown or unsupported address space (0x1080 | 0x0001) */
+#define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN 0x1081
 
-    /** @brief Permanent: Address is out of bounds for the address space */
-#define ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS 0x1002
+    /** @brief Permanent: Address is out of bounds for the address space (0x1080 | 0x0002) */
+#define ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS 0x1082
 
-    /** @brief Permanent: Attempted write to read-only memory */
-#define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_WRITE_TO_READ_ONLY 0x1003
+    /** @brief Permanent: Attempted write to read-only memory (0x1080 | 0x0003) */
+#define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_WRITE_TO_READ_ONLY 0x1083
 
     /** @brief Permanent: Source node not permitted to access this resource */
 #define ERROR_PERMANENT_SOURCE_NOT_PERMITTED 0x1020

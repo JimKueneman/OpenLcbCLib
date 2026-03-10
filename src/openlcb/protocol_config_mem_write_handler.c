@@ -124,12 +124,6 @@ static uint16_t _is_valid_write_parameters(config_mem_write_request_info_t *conf
 
     }
 
-    if (config_mem_write_request_info->address > config_mem_write_request_info->space_info->highest_address) {
-
-        return ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS;
-
-    }
-
     if (config_mem_write_request_info->bytes > 64) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
@@ -209,8 +203,17 @@ static void _dispatch_write_request(openlcb_statemachine_info_t *statemachine_in
 
     }
 
-    _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
-    config_mem_write_request_info->write_space_func(statemachine_info, config_mem_write_request_info);
+    if (config_mem_write_request_info->address > config_mem_write_request_info->space_info->highest_address) {
+
+        OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+        statemachine_info->outgoing_msg_info.valid = true;
+
+    } else {
+
+        _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
+        config_mem_write_request_info->write_space_func(statemachine_info, config_mem_write_request_info);
+
+    }
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // Done
     statemachine_info->incoming_msg_info.enumerate = false; // done
@@ -374,12 +377,6 @@ static uint16_t _is_valid_write_under_mask_parameters(openlcb_statemachine_info_
 
     }
 
-    if (config_mem_write_request_info->address > config_mem_write_request_info->space_info->highest_address) {
-
-        return ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS;
-
-    }
-
     if (config_mem_write_request_info->bytes > 64) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
@@ -539,10 +536,19 @@ static void _dispatch_write_under_mask_request(openlcb_statemachine_info_t *stat
 
     }
 
-    _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
+    if (config_mem_write_request_info->address > config_mem_write_request_info->space_info->highest_address) {
 
-    OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
-    _write_data_under_mask(statemachine_info, config_mem_write_request_info);
+        OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+        statemachine_info->outgoing_msg_info.valid = true;
+
+    } else {
+
+        _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
+
+        OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
+        _write_data_under_mask(statemachine_info, config_mem_write_request_info);
+
+    }
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // Done
     statemachine_info->incoming_msg_info.enumerate = false; // done

@@ -862,14 +862,26 @@ TEST(ProtocolConfigMemWriteHandler, memory_write_space_config_mem_bad_size_param
     EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
     // *****************************************
+    // Out-of-bounds address: Phase 1 accepts (Datagram Received OK), Phase 2
+    // returns a Write Reply Fail per MemoryConfigurationS Section 4.9.
     _reset_variables();
-    *incoming_msg->payload[7] = 64;
+    *incoming_msg->payload[7] = 0xAA;  // one data byte
+    incoming_msg->payload_count = 8;   // 7 header + 1 data byte
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, node1->parameters->address_space_configuration_definition.highest_address + 1, 2);
 
     ProtocolConfigMemWriteHandler_write_space_config_memory(&statemachine_info);
 
-    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
-    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_TRUE(node1->state.openlcb_datagram_ack_sent);
+    EXPECT_TRUE(statemachine_info.incoming_msg_info.enumerate);
+
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_space_config_memory(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+    EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
 
     // *****************************************
     _reset_variables();
@@ -3196,11 +3208,21 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_out_of_bounds)
     *incoming_msg->payload[8] = 0xFF;
     incoming_msg->payload_count = 9;
 
-    // Phase 1: Should be rejected (out of bounds)
+    // Phase 1: accepts (Datagram Received OK) per MemoryConfigurationS Section 4.9.
     ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
 
-    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
-    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_TRUE(node1->state.openlcb_datagram_ack_sent);
+    EXPECT_TRUE(statemachine_info.incoming_msg_info.enumerate);
+
+    // Phase 2: returns a Write Reply Fail (out of bounds)
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+    EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
 
 }
 

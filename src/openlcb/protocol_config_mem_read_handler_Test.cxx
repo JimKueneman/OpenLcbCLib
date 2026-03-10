@@ -814,14 +814,25 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
     // *****************************************
+    // Out-of-bounds address: Phase 1 accepts (Datagram Received OK), Phase 2
+    // returns a Read Reply Fail per MemoryConfigurationS Section 4.5.
     _reset_variables();
     *incoming_msg->payload[7] = 64;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, node1->parameters->address_space_configuration_definition.highest_address + 1, 2);
 
     ProtocolConfigMemReadHandler_read_space_config_description_info(&statemachine_info);
 
-    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
-    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_TRUE(node1->state.openlcb_datagram_ack_sent);
+    EXPECT_TRUE(statemachine_info.incoming_msg_info.enumerate);
+
+    _reset_variables();
+    ProtocolConfigMemReadHandler_read_space_config_description_info(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+    EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
 }
 
 TEST(ProtocolConfigMemReadHandler, memory_read_spaces)
