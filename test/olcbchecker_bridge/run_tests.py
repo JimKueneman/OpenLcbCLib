@@ -32,6 +32,7 @@ os.chdir(OLCBCHECKER_DIR)
 
 # Determine which sections to run
 run_sections_env = os.environ.get("RUN_SECTIONS", "")
+single_script = os.environ.get("SINGLE_SCRIPT", "")
 
 if run_sections_env:
     # Multi-pass mode: specific section(s) requested
@@ -50,6 +51,36 @@ import olcbchecker.setup
 
 logger = logging.getLogger("OLCBCHECKER")
 total = 0
+
+# ---- Single-script mode ---------------------------------------------------
+
+if "single" in run_sections and single_script:
+    import importlib
+    logger.info("=== Single: {} ===".format(single_script))
+    try:
+        mod = importlib.import_module(single_script)
+    except ModuleNotFoundError:
+        logger.error("Module '{}' not found in {}".format(single_script, OLCBCHECKER_DIR))
+        olcbchecker.setup.interface.close()
+        sys.exit(1)
+
+    # control_* modules have checkAll(), check_* modules have check()
+    if hasattr(mod, "checkAll"):
+        total += min(mod.checkAll(), 1)
+    elif hasattr(mod, "check"):
+        result = mod.check()
+        total += min(result, 1)
+        if result == 0:
+            logger.info("PASSED")
+        else:
+            logger.warning("FAILED (result={})".format(result))
+    else:
+        logger.error("Module '{}' has neither check() nor checkAll()".format(single_script))
+        olcbchecker.setup.interface.close()
+        sys.exit(1)
+
+    olcbchecker.setup.interface.close()
+    sys.exit(total)
 
 # ---- Core protocol tests --------------------------------------------------
 

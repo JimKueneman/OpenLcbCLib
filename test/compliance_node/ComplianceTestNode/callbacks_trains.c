@@ -81,8 +81,8 @@ void CallbacksTrains_on_heartbeat_timeout(openlcb_node_t *openlcb_node) {
 
 bool CallbacksTrains_on_controller_assign_request(openlcb_node_t *openlcb_node, node_id_t current_controller, node_id_t requesting_controller) {
 
-    printf("Train controller assign request: current=0x%06llX requesting=0x%06llX -> accepting\n", current_controller, requesting_controller);
-    return true;  // Accept all controller requests for compliance testing
+    printf("Train controller assign request: current=0x%06llX requesting=0x%06llX -> rejecting\n", current_controller, requesting_controller);
+    return false;  // Reject takeover from different controller (per TrainControlS section 6.1)
 }
 
 bool CallbacksTrains_on_controller_changed_request(openlcb_node_t *openlcb_node, node_id_t new_controller) {

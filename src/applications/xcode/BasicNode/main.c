@@ -54,6 +54,10 @@ static const openlcb_config_t openlcb_config = {
     
     // Broadcast time callbacks
     .on_broadcast_time_changed    = &Callbacks_on_broadcast_time_changed,
+
+    // Train callbacks
+    .on_train_controller_assigned = &Callbacks_on_train_controller_assigned,
+    .on_train_controller_released = &Callbacks_on_train_controller_released,
 };
 
 

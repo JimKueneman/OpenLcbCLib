@@ -66,7 +66,7 @@ function generateUserConfigH() {
         L.push('#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS  ' + parseIntAuto(getVal('cfg-user-desc-addr')));
     } else {
         L.push('#define USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS    0x00000000');
-        L.push('#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS  62');
+        L.push('#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS  63');
     }
     L.push('');
 

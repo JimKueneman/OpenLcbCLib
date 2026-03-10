@@ -51,7 +51,7 @@
 #define USER_DEFINED_CDI_LENGTH                      2000
 #define USER_DEFINED_FDI_LENGTH                      100
 #define USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS    0x00000000
-#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS  62
+#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS  63
 
 // =============================================================================
 // Train Protocol (requires OPENLCB_COMPILE_TRAIN -- not enabled)

@@ -150,7 +150,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a68dbf07848b654d8eee830405c16edc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Update Complete command to two-phase handler.  <br /></td></tr>
 <tr class="separator:a68dbf07848b654d8eee830405c16edc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae97bdda6c0fe6f2e61ce88b3a78d9fdf" id="r_ae97bdda6c0fe6f2e61ce88b3a78d9fdf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae97bdda6c0fe6f2e61ce88b3a78d9fdf">ProtocolConfigMemOperationsHandler_reset_reboot</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:ae97bdda6c0fe6f2e61ce88b3a78d9fdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Reset/Reboot command to two-phase handler.  <br /></td></tr>
+<tr class="memdesc:ae97bdda6c0fe6f2e61ce88b3a78d9fdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Reset/Reboot command.  <br /></td></tr>
 <tr class="separator:ae97bdda6c0fe6f2e61ce88b3a78d9fdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f8c26d33fcf35ac0a0ea014596a0fa2" id="r_a1f8c26d33fcf35ac0a0ea014596a0fa2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f8c26d33fcf35ac0a0ea014596a0fa2">ProtocolConfigMemOperationsHandler_factory_reset</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:a1f8c26d33fcf35ac0a0ea014596a0fa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatch Factory Reset command to two-phase handler.  <br /></td></tr>
@@ -167,7 +167,7 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Two-phase ACK-then-execute handling for options, address-space info, lock, freeze, reset, and factory-reset sub-commands. Routes each operation to registered callbacks and sends appropriate replies.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>4 Mar 2026</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>9 Mar 2026</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__config__mem__operations__handler_8h.html" title="Configuration memory operations dispatcher.">protocol_config_mem_operations_handler.h</a> </dd>
 <dd>
 MemoryConfigurationS.pdf </dd></dl>
@@ -541,9 +541,11 @@ MemoryConfigurationS.pdf </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Dispatch Reset/Reboot command to two-phase handler. </p>
+<p>Dispatch Reset/Reboot command. </p>
 <p>Handle incoming Reset/Reboot command.</p>
-<p>Per MemoryConfigurationS Section 4.24, the Reset/Reboot command is only [0x20, 0xA9] with no Node ID in the payload. Unlike Factory Reset (0xAA, Section 4.25) which requires a Node ID as a safety guard, Reset/Reboot applies unconditionally to the addressed node. </p>
+<p>Per MemoryConfigurationS Section 4.24, the Reset/Reboot command is only [0x20, 0xA9] with no Node ID in the payload. Unlike Factory Reset (0xAA, Section 4.25) which requires a Node ID as a safety guard, Reset/Reboot applies unconditionally to the addressed node.</p>
+<p>Per Section 4.24: "The receiving node may acknowledge this command with a
+Node Initialization Complete instead of a Datagram Received OK response." We skip the datagram ACK — the Initialization Complete from the reboot serves as acknowledgment. </p>
 
 </div>
 </div>

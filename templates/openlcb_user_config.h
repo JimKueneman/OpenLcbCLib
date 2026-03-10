@@ -106,12 +106,12 @@
 // configuration memory space the user-editable name and description strings
 // begin.  The standard layout puts the user name at address 0 and the user
 // description immediately after at byte 62:
-//   62 = LEN_SNIP_USER_NAME_BUFFER (63) - 1
+//   63 = LEN_SNIP_USER_NAME_BUFFER (63)
 
 #define USER_DEFINED_CDI_LENGTH                      20000
 #define USER_DEFINED_FDI_LENGTH                      1000
 #define USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS    0x00000000
-#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS  62   /* LEN_SNIP_USER_NAME_BUFFER(63) - 1 */
+#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS  63   /* LEN_SNIP_USER_NAME_BUFFER(63) */
 
 // =============================================================================
 // Train Protocol (requires OPENLCB_COMPILE_TRAIN)

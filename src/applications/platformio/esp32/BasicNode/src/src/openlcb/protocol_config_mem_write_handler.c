@@ -33,7 +33,7 @@
  * before performing the actual write operation.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 9 Mar 2026
  *
  * @see protocol_config_mem_write_handler.h
  * @see MemoryConfigurationS.pdf
@@ -318,13 +318,14 @@ void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_inf
 // ============================================================================
 
     /**
-     * @brief Parse address, byte count, encoding, and data/mask pointers from
-     *        incoming write-under-mask datagram.
+     * @brief Parse address, byte count, and encoding from incoming
+     *        write-under-mask datagram.
      *
-     * @details The payload contains N data bytes followed by N mask bytes.
-     * The total data+mask region is (payload_count - header_bytes) and N is
-     * half of that.  The write_buffer pointer is set to the data start;
-     * the mask begins at write_buffer + bytes.
+     * @details Per MemoryConfigurationS section 4.10, the payload after the
+     * header contains interleaved (Mask, Data) byte pairs.  The total
+     * data+mask region is (payload_count - header_bytes) and the number of
+     * memory bytes N is half of that.  The write_buffer pointer is set to the
+     * first (Mask, Data) pair.
      *
      * @param statemachine_info             Context with incoming message.
      * @param config_mem_write_request_info Output: populated request fields.
@@ -408,16 +409,20 @@ static uint16_t _is_valid_write_under_mask_parameters(openlcb_statemachine_info_
     /**
      * @brief Read-modify-write: read current data, apply mask, write back.
      *
-     * @details For each byte position i:
+     * @details Per MemoryConfigurationS section 4.10, the payload after the
+     * header contains interleaved (Mask, Data) byte pairs:
+     *   [Mask0, Data0, Mask1, Data1, ...]
+     *
+     * For each byte position i:
      *   new[i] = (old[i] & ~mask[i]) | (data[i] & mask[i])
      *
      * @param statemachine_info             Context for reply messages.
-     * @param config_mem_write_request_info Request with address, bytes, data pointer.
-     * @param mask_bytes                    Pointer to mask bytes (same length as data).
+     * @param config_mem_write_request_info Request with address, bytes, write_buffer
+     *                                      pointing to the first (Mask, Data) pair.
      *
      * @return Number of bytes written, or 0 on failure.
      */
-static uint16_t _write_data_under_mask(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, uint8_t *mask_bytes) {
+static uint16_t _write_data_under_mask(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
     configuration_memory_buffer_t temp;
     uint16_t read_count = 0;
@@ -448,12 +453,14 @@ static uint16_t _write_data_under_mask(openlcb_statemachine_info_t *statemachine
 
     }
 
-    // Step 2: Apply mask — new[i] = (old[i] & ~mask[i]) | (data[i] & mask[i])
-    uint8_t *data_bytes = (uint8_t *) config_mem_write_request_info->write_buffer;
+    // Step 2: Apply mask — interleaved (Mask, Data) pairs per spec section 4.10
+    uint8_t *pairs = (uint8_t *) config_mem_write_request_info->write_buffer;
 
     for (uint16_t i = 0; i < config_mem_write_request_info->bytes; i++) {
 
-        temp[i] = (temp[i] & ~mask_bytes[i]) | (data_bytes[i] & mask_bytes[i]);
+        uint8_t mask = pairs[i * 2];
+        uint8_t data = pairs[i * 2 + 1];
+        temp[i] = (temp[i] & ~mask) | (data & mask);
 
     }
 
@@ -502,9 +509,6 @@ static void _dispatch_write_under_mask_request(openlcb_statemachine_info_t *stat
 
     _extract_write_under_mask_command_parameters(statemachine_info, config_mem_write_request_info);
 
-    // Save mask pointer before any potential clamping of bytes
-    uint8_t *mask_bytes = ((uint8_t *) config_mem_write_request_info->write_buffer) + config_mem_write_request_info->bytes;
-
     if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
 
         error_code = _is_valid_write_under_mask_parameters(statemachine_info, config_mem_write_request_info);
@@ -538,7 +542,7 @@ static void _dispatch_write_under_mask_request(openlcb_statemachine_info_t *stat
     _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
 
     OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
-    _write_data_under_mask(statemachine_info, config_mem_write_request_info, mask_bytes);
+    _write_data_under_mask(statemachine_info, config_mem_write_request_info);
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // Done
     statemachine_info->incoming_msg_info.enumerate = false; // done
@@ -855,19 +859,56 @@ void ProtocolConfigMemWriteHandler_write_request_config_mem(openlcb_statemachine
     */
 void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
-    OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
+    // Remap ACDI virtual addresses to config memory addresses for the write
+    // callback, but do NOT modify config_mem_write_request_info->address.
+    // Reply messages must echo the original ACDI address back to the requester.
+
+    uint32_t config_address = 0;
+    uint16_t write_count = 0;
 
     switch (config_mem_write_request_info->address) {
 
         case CONFIG_MEM_ACDI_USER_NAME_ADDRESS:
 
-            _write_data(statemachine_info, config_mem_write_request_info);
+            config_address = USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS;
+
+            if (statemachine_info->openlcb_node->parameters->address_space_config_memory.low_address_valid) {
+
+                config_address += statemachine_info->openlcb_node->parameters->address_space_config_memory.low_address;
+
+            }
+
+            if (_interface->config_memory_write) {
+
+                write_count = _interface->config_memory_write(
+                        statemachine_info->openlcb_node,
+                        config_address,
+                        config_mem_write_request_info->bytes,
+                        config_mem_write_request_info->write_buffer);
+
+            }
 
             break;
 
         case CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS:
 
-            _write_data(statemachine_info, config_mem_write_request_info);
+            config_address = USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS;
+
+            if (statemachine_info->openlcb_node->parameters->address_space_config_memory.low_address_valid) {
+
+                config_address += statemachine_info->openlcb_node->parameters->address_space_config_memory.low_address;
+
+            }
+
+            if (_interface->config_memory_write) {
+
+                write_count = _interface->config_memory_write(
+                        statemachine_info->openlcb_node,
+                        config_address,
+                        config_mem_write_request_info->bytes,
+                        config_mem_write_request_info->write_buffer);
+
+            }
 
             break;
 
@@ -875,7 +916,29 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
 
             OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
 
-            break;
+            statemachine_info->outgoing_msg_info.valid = true;
+
+            return;
+
+    }
+
+    // Build the reply using the original ACDI address (untouched in the struct).
+
+    if (!_interface->config_memory_write || write_count < config_mem_write_request_info->bytes) {
+
+        if (!_interface->config_memory_write) {
+
+            OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+
+        } else {
+
+            OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_TEMPORARY_TRANSFER_ERROR);
+
+        }
+
+    } else {
+
+        OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
 
     }
 

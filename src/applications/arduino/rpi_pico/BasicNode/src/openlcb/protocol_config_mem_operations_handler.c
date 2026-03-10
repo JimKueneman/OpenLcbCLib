@@ -32,7 +32,7 @@
      * operation to registered callbacks and sends appropriate replies.
      *
      * @author Jim Kueneman
-     * @date 4 Mar 2026
+     * @date 9 Mar 2026
      *
      * @see protocol_config_mem_operations_handler.h
      * @see MemoryConfigurationS.pdf
@@ -646,20 +646,38 @@ void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_inf
 
 }
 
-    /** @brief Dispatch Reset/Reboot command to two-phase handler.
+    /** @brief Dispatch Reset/Reboot command.
      *
      * Per MemoryConfigurationS Section 4.24, the Reset/Reboot command is only
      * [0x20, 0xA9] with no Node ID in the payload.  Unlike Factory Reset (0xAA,
      * Section 4.25) which requires a Node ID as a safety guard, Reset/Reboot
-     * applies unconditionally to the addressed node. */
+     * applies unconditionally to the addressed node.
+     *
+     * Per Section 4.24: "The receiving node may acknowledge this command with a
+     * Node Initialization Complete instead of a Datagram Received OK response."
+     * We skip the datagram ACK — the Initialization Complete from the reboot
+     * serves as acknowledgment. */
 void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t *statemachine_info) {
+
+    if (!_interface->operations_request_reset_reboot) {
+
+        _load_datagram_reject_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+        return;
+
+    }
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
     config_mem_operations_request_info.operations_func = _interface->operations_request_reset_reboot;
     config_mem_operations_request_info.space_info = NULL;
 
-    _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
+    // No datagram ACK — Initialization Complete is the acknowledgment
+    statemachine_info->outgoing_msg_info.valid = false;
+
+    config_mem_operations_request_info.operations_func(statemachine_info, &config_mem_operations_request_info);
+
+    statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false;
+    statemachine_info->incoming_msg_info.enumerate = false;
 
 }
 

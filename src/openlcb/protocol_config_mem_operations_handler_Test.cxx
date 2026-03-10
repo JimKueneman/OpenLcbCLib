@@ -1114,13 +1114,11 @@ TEST(ProtocolConfigMemOperationsHandler, reset_reboot)
     incoming_msg->payload_count = 2;  // Per MemoryConfigurationS Section 4.24: no Node ID
 
     // *****************************************
+    // Per MemoryConfigurationS Section 4.24: "The receiving node may acknowledge
+    // this command with a Node Initialization Complete instead of a Datagram
+    // Received OK response."  No datagram ACK is sent — single-phase dispatch.
+
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
-
-    _reset_variables();
-    ProtocolConfigMemOperationsHandler_reset_reboot(&statemachine_info);
-
-    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
-    EXPECT_EQ(datagram_reply_code, 0x0000);
 
     _reset_variables();
     ProtocolConfigMemOperationsHandler_reset_reboot(&statemachine_info);
@@ -1128,6 +1126,8 @@ TEST(ProtocolConfigMemOperationsHandler, reset_reboot)
     EXPECT_EQ(called_function_ptr, (void *)&_operations_request_reset_reboot);
     EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_reset_reboot);
     EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+    EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
 
 }
 

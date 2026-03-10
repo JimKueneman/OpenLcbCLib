@@ -967,8 +967,9 @@ TEST(ProtocolTrainHandler, command_controller_assign_no_existing)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1006,8 +1007,9 @@ TEST(ProtocolTrainHandler, command_controller_assign_same_controller)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1039,8 +1041,9 @@ TEST(ProtocolTrainHandler, command_controller_assign_different_accept)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1072,8 +1075,9 @@ TEST(ProtocolTrainHandler, command_controller_assign_different_reject)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1115,8 +1119,9 @@ TEST(ProtocolTrainHandler, command_controller_release_matching)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1146,8 +1151,9 @@ TEST(ProtocolTrainHandler, command_controller_release_non_matching)
     // Release with a different node ID
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1236,8 +1242,9 @@ TEST(ProtocolTrainHandler, command_controller_changed_accept)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CHANGED, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1267,8 +1274,9 @@ TEST(ProtocolTrainHandler, command_controller_changed_reject)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CHANGED, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1551,7 +1559,7 @@ TEST(ProtocolTrainHandler, command_management_reserve)
 
 }
 
-TEST(ProtocolTrainHandler, command_management_reserve_when_already_reserved_fails)
+TEST(ProtocolTrainHandler, command_management_reserve_same_source_succeeds)
 {
 
     _reset_tracking();
@@ -1569,6 +1577,43 @@ TEST(ProtocolTrainHandler, command_management_reserve_when_already_reserved_fail
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
     incoming->payload_count = 2;
+    incoming->source_id = 0x050701010099;
+
+    // First reserve succeeds
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->reserved_node_count, 1);
+    EXPECT_EQ(state->reserved_by_node_id, 0x050701010099);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+    // Second reserve from same source succeeds
+    sm.outgoing_msg_info.valid = false;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->reserved_node_count, 1);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+}
+
+TEST(ProtocolTrainHandler, command_management_reserve_different_source_fails)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
+    incoming->payload_count = 2;
+    incoming->source_id = 0x050701010099;
 
     // First reserve succeeds
     ProtocolTrainHandler_handle_train_command(&sm);
@@ -1576,8 +1621,9 @@ TEST(ProtocolTrainHandler, command_management_reserve_when_already_reserved_fail
     EXPECT_EQ(state->reserved_node_count, 1);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
 
-    // Second reserve fails (already reserved)
+    // Second reserve from different source fails
     sm.outgoing_msg_info.valid = false;
+    incoming->source_id = 0x050701010088;
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_EQ(state->reserved_node_count, 1);
@@ -1594,6 +1640,7 @@ TEST(ProtocolTrainHandler, command_management_release)
     openlcb_node_t *node = _create_train_node();
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
     state->reserved_node_count = 1;
+    state->reserved_by_node_id = 0x050701010099;
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -1608,6 +1655,7 @@ TEST(ProtocolTrainHandler, command_management_release)
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_EQ(state->reserved_node_count, 0);
+    EXPECT_EQ(state->reserved_by_node_id, (node_id_t) 0);
 
     // No reply for release
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -2136,8 +2184,9 @@ TEST(ProtocolTrainHandler, null_callbacks_commands_no_crash)
     sm.outgoing_msg_info.valid = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
     EXPECT_EQ(state->controller_node_id, TEST_CONTROLLER_NODE_ID);
@@ -3121,8 +3170,9 @@ TEST(ProtocolTrainHandler, conformance_2_9_check_controller_configuration) {
     sm.outgoing_msg_info.valid = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_SOURCE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_SOURCE_ID, 3);
+    incoming->payload_count = 9;
     ProtocolTrainHandler_handle_train_command(&sm);
 
     // Check for Assign reply with OK (result = 0)
@@ -3148,8 +3198,9 @@ TEST(ProtocolTrainHandler, conformance_2_9_check_controller_configuration) {
     sm.outgoing_msg_info.valid = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_SOURCE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_SOURCE_ID, 3);
+    incoming->payload_count = 9;
     ProtocolTrainHandler_handle_train_command(&sm);
 
     // Step 7: Controller should now be zero
@@ -3170,19 +3221,21 @@ TEST(ProtocolTrainHandler, conformance_2_9_check_controller_configuration) {
     sm.outgoing_msg_info.valid = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_SOURCE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_SOURCE_ID, 3);
+    incoming->payload_count = 9;
     ProtocolTrainHandler_handle_train_command(&sm);
 
 }
 
 // TN 2.10 — Check Train Control Management command and response
 //
-// 1. Reserve → OK
-// 2. Release (no response)
-// 3. Reserve → OK
-// 4. Reserve again (already reserved) → fail
-// 5. Release (cleanup)
+// 1. Reserve from A → OK
+// 2. Reserve again from A (same source) → OK
+// 3. Release
+// 4. Reserve from A → OK
+// 5. Reserve from B (different source, already reserved) → fail
+// 6. Release (cleanup)
 
 TEST(ProtocolTrainHandler, conformance_2_10_check_management_reserve_release) {
 
@@ -3197,16 +3250,23 @@ TEST(ProtocolTrainHandler, conformance_2_10_check_management_reserve_release) {
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    // Step 1: Reserve → OK
+    // Step 1: Reserve from source A → OK
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
     incoming->payload_count = 2;
+    incoming->source_id = TEST_SOURCE_ID;
     ProtocolTrainHandler_handle_train_command(&sm);
 
-    // Step 2: Check OK
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0), TRAIN_MANAGEMENT);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 1), TRAIN_MGMT_RESERVE);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+    // Step 2: Reserve again from same source A → OK
+    sm.outgoing_msg_info.valid = false;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
 
     // Step 3: Release (no response expected)
@@ -3219,31 +3279,28 @@ TEST(ProtocolTrainHandler, conformance_2_10_check_management_reserve_release) {
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
     EXPECT_EQ(state->reserved_node_count, 0);
 
-    // Step 4: Reserve → OK
+    // Step 4: Reserve from A → OK
     sm.outgoing_msg_info.valid = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
     incoming->payload_count = 2;
     ProtocolTrainHandler_handle_train_command(&sm);
 
-    // Step 5: Check OK
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
 
-    // Step 6: Reserve again (already reserved) → fail
+    // Step 5: Reserve from different source B → fail
     sm.outgoing_msg_info.valid = false;
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
-    incoming->payload_count = 2;
+    incoming->source_id = 0xAABBCCDDEEFFULL;
     ProtocolTrainHandler_handle_train_command(&sm);
 
-    // Step 7: Check fail code
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
     EXPECT_NE(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
     EXPECT_EQ(state->reserved_node_count, 1);
 
-    // Step 8: Release (cleanup, no response expected)
+    // Step 6: Release (cleanup, no response expected)
     sm.outgoing_msg_info.valid = false;
+    incoming->source_id = TEST_SOURCE_ID;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RELEASE, 1);
     incoming->payload_count = 2;
@@ -4588,8 +4645,9 @@ TEST(ProtocolTrainHandler, controller_assign_null_state)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -4625,8 +4683,9 @@ TEST(ProtocolTrainHandler, controller_assign_different_null_decision_callback)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -4661,8 +4720,9 @@ TEST(ProtocolTrainHandler, controller_assign_accepted_null_assigned_callback)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -4698,8 +4758,9 @@ TEST(ProtocolTrainHandler, controller_release_wrong_id)
     // Release with wrong node ID
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -4732,8 +4793,9 @@ TEST(ProtocolTrainHandler, controller_release_null_callback)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -4798,8 +4860,9 @@ TEST(ProtocolTrainHandler, controller_changed_null_callback)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CHANGED, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -5787,8 +5850,9 @@ TEST(ProtocolTrainHandler, null_interface_controller_assign_different)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -5817,8 +5881,9 @@ TEST(ProtocolTrainHandler, null_interface_controller_release)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -5843,8 +5908,9 @@ TEST(ProtocolTrainHandler, null_interface_controller_changed)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CHANGED, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -6190,8 +6256,9 @@ TEST(ProtocolTrainHandler, controller_release_null_state)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 2);
-    incoming->payload_count = 8;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // flags (reserved)
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 

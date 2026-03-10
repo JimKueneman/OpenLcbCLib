@@ -72,6 +72,10 @@ extern "C"
 
     extern void Callbacks_on_broadcast_time_changed(broadcast_clock_t *clock);
 
+    extern void Callbacks_on_train_controller_assigned(openlcb_node_t *openlcb_node, node_id_t controller_node_id);
+
+    extern void Callbacks_on_train_controller_released(openlcb_node_t *openlcb_node);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

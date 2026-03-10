@@ -2687,7 +2687,8 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_config_memory_success)
     statemachine_info.incoming_msg_info.enumerate = false;
 
     // Build write-under-mask datagram: sub-cmd 0x08, space in byte 6
-    // [0x20, 0x08, addr(4), space, data(4), mask(4)]
+    // [0x20, 0x08, addr(4), space, (mask, data) pairs...]
+    // Per MemoryConfigurationS section 4.10: interleaved (Mask, Data) pairs
     incoming_msg->mti = MTI_DATAGRAM;
     incoming_msg->source_id = SOURCE_ID;
     incoming_msg->source_alias = SOURCE_ALIAS;
@@ -2697,17 +2698,16 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_config_memory_success)
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
-    // Data bytes
-    *incoming_msg->payload[7] = 0x00;
-    *incoming_msg->payload[8] = 0x55;
-    *incoming_msg->payload[9] = 0xAA;
-    *incoming_msg->payload[10] = 0x0F;
-    // Mask bytes
-    *incoming_msg->payload[11] = 0xFF;
-    *incoming_msg->payload[12] = 0x0F;
-    *incoming_msg->payload[13] = 0xF0;
-    *incoming_msg->payload[14] = 0xFF;
-    incoming_msg->payload_count = 15; // 7 header + 4 data + 4 mask
+    // (Mask, Data) pairs — 4 memory bytes
+    *incoming_msg->payload[7] = 0xFF;   // mask0
+    *incoming_msg->payload[8] = 0x00;   // data0
+    *incoming_msg->payload[9] = 0x0F;   // mask1
+    *incoming_msg->payload[10] = 0x55;  // data1
+    *incoming_msg->payload[11] = 0xF0;  // mask2
+    *incoming_msg->payload[12] = 0xAA;  // data2
+    *incoming_msg->payload[13] = 0xFF;  // mask3
+    *incoming_msg->payload[14] = 0x0F;  // data3
+    incoming_msg->payload_count = 15; // 7 header + 4 (mask, data) pairs
 
     // Phase 1: Validate and ACK
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
@@ -2786,12 +2786,12 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_mask_all_zeros)
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
-    // Data = 0xAA, 0xBB; Mask = 0x00, 0x00
-    *incoming_msg->payload[7] = 0xAA;
-    *incoming_msg->payload[8] = 0xBB;
-    *incoming_msg->payload[9] = 0x00;
-    *incoming_msg->payload[10] = 0x00;
-    incoming_msg->payload_count = 11; // 7 + 2 data + 2 mask
+    // (Mask, Data) pairs: mask=0x00 data=0xAA, mask=0x00 data=0xBB
+    *incoming_msg->payload[7] = 0x00;   // mask0
+    *incoming_msg->payload[8] = 0xAA;   // data0
+    *incoming_msg->payload[9] = 0x00;   // mask1
+    *incoming_msg->payload[10] = 0xBB;  // data1
+    incoming_msg->payload_count = 11; // 7 + 2 (mask, data) pairs
 
     // Phase 1
     ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
@@ -2850,11 +2850,11 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_mask_all_ones)
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
-    // Data = 0xAA, 0xBB; Mask = 0xFF, 0xFF
-    *incoming_msg->payload[7] = 0xAA;
-    *incoming_msg->payload[8] = 0xBB;
-    *incoming_msg->payload[9] = 0xFF;
-    *incoming_msg->payload[10] = 0xFF;
+    // (Mask, Data) pairs: mask=0xFF data=0xAA, mask=0xFF data=0xBB
+    *incoming_msg->payload[7] = 0xFF;   // mask0
+    *incoming_msg->payload[8] = 0xAA;   // data0
+    *incoming_msg->payload[9] = 0xFF;   // mask1
+    *incoming_msg->payload[10] = 0xBB;  // data1
     incoming_msg->payload_count = 11;
 
     // Phase 1
@@ -2913,10 +2913,10 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_single_byte)
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
-    // Data = 0x0F; Mask = 0xF0
-    *incoming_msg->payload[7] = 0x0F;
-    *incoming_msg->payload[8] = 0xF0;
-    incoming_msg->payload_count = 9; // 7 + 1 data + 1 mask
+    // (Mask, Data) pair: mask=0xF0 data=0x0F
+    *incoming_msg->payload[7] = 0xF0;   // mask
+    *incoming_msg->payload[8] = 0x0F;   // data
+    incoming_msg->payload_count = 9; // 7 + 1 (mask, data) pair
 
     // Phase 1
     ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
@@ -2972,13 +2972,12 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_implicit_space_fd)
     *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FD; // 0x09
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000010, 2);
-    // Data at byte 6 (no space byte)
-    *incoming_msg->payload[6] = 0xFF;
-    *incoming_msg->payload[7] = 0x00;
-    // Mask at byte 8
-    *incoming_msg->payload[8] = 0x0F;
-    *incoming_msg->payload[9] = 0xFF;
-    incoming_msg->payload_count = 10; // 6 + 2 data + 2 mask
+    // (Mask, Data) pairs at byte 6 (no space byte for implicit 0xFD)
+    *incoming_msg->payload[6] = 0x0F;   // mask0
+    *incoming_msg->payload[7] = 0xFF;   // data0
+    *incoming_msg->payload[8] = 0xFF;   // mask1
+    *incoming_msg->payload[9] = 0x00;   // data1
+    incoming_msg->payload_count = 10; // 6 + 2 (mask, data) pairs
 
     // Phase 1
     ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory(&statemachine_info);
@@ -3609,13 +3608,12 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_space_all_success)
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ALL;
-    // Data bytes
-    *incoming_msg->payload[7] = 0x00;
-    *incoming_msg->payload[8] = 0xAA;
-    // Mask bytes
-    *incoming_msg->payload[9] = 0xFF;
-    *incoming_msg->payload[10] = 0x0F;
-    incoming_msg->payload_count = 11; // 7 header + 2 data + 2 mask
+    // (Mask, Data) pairs
+    *incoming_msg->payload[7] = 0xFF;   // mask0
+    *incoming_msg->payload[8] = 0x00;   // data0
+    *incoming_msg->payload[9] = 0x0F;   // mask1
+    *incoming_msg->payload[10] = 0xAA;  // data1
+    incoming_msg->payload_count = 11; // 7 header + 2 (mask, data) pairs
 
     // Phase 1: Validate and ACK
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
@@ -3685,10 +3683,11 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_space_acdi_manufacturer_suc
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = 0x11;
-    *incoming_msg->payload[8] = 0x22;
-    *incoming_msg->payload[9] = 0xFF;
-    *incoming_msg->payload[10] = 0xFF;
+    // (Mask, Data) pairs
+    *incoming_msg->payload[7] = 0xFF;   // mask0
+    *incoming_msg->payload[8] = 0x11;   // data0
+    *incoming_msg->payload[9] = 0xFF;   // mask1
+    *incoming_msg->payload[10] = 0x22;  // data1
     incoming_msg->payload_count = 11;
 
     // Phase 1
@@ -3751,10 +3750,11 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_space_acdi_user_success)
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
-    *incoming_msg->payload[7] = 0x55;
-    *incoming_msg->payload[8] = 0x66;
-    *incoming_msg->payload[9] = 0xF0;
-    *incoming_msg->payload[10] = 0x0F;
+    // (Mask, Data) pairs
+    *incoming_msg->payload[7] = 0xF0;   // mask0
+    *incoming_msg->payload[8] = 0x55;   // data0
+    *incoming_msg->payload[9] = 0x0F;   // mask1
+    *incoming_msg->payload[10] = 0x66;  // data1
     incoming_msg->payload_count = 11;
 
     // Phase 1
@@ -3820,10 +3820,11 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_space_train_function_def_in
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
-    *incoming_msg->payload[7] = 0xFF;
-    *incoming_msg->payload[8] = 0x00;
-    *incoming_msg->payload[9] = 0xFF;
-    *incoming_msg->payload[10] = 0xFF;
+    // (Mask, Data) pairs
+    *incoming_msg->payload[7] = 0xFF;   // mask0
+    *incoming_msg->payload[8] = 0xFF;   // data0
+    *incoming_msg->payload[9] = 0xFF;   // mask1
+    *incoming_msg->payload[10] = 0x00;  // data1
     incoming_msg->payload_count = 11;
 
     // Phase 1
@@ -3889,10 +3890,11 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_space_train_function_config
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
-    *incoming_msg->payload[7] = 0x0F;
-    *incoming_msg->payload[8] = 0xF0;
-    *incoming_msg->payload[9] = 0x0F;
-    *incoming_msg->payload[10] = 0xF0;
+    // (Mask, Data) pairs
+    *incoming_msg->payload[7] = 0x0F;   // mask0
+    *incoming_msg->payload[8] = 0x0F;   // data0
+    *incoming_msg->payload[9] = 0xF0;   // mask1
+    *incoming_msg->payload[10] = 0xF0;  // data1
     incoming_msg->payload_count = 11;
 
     // Phase 1
@@ -3958,10 +3960,11 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_space_firmware_success)
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_FIRMWARE;
-    *incoming_msg->payload[7] = 0x33;
-    *incoming_msg->payload[8] = 0x44;
-    *incoming_msg->payload[9] = 0xFF;
-    *incoming_msg->payload[10] = 0xFF;
+    // (Mask, Data) pairs
+    *incoming_msg->payload[7] = 0xFF;   // mask0
+    *incoming_msg->payload[8] = 0x33;   // data0
+    *incoming_msg->payload[9] = 0xFF;   // mask1
+    *incoming_msg->payload[10] = 0x44;  // data1
     incoming_msg->payload_count = 11;
 
     // Phase 1
@@ -4029,10 +4032,11 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_delayed_reply_time)
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
-    *incoming_msg->payload[7] = 0x00;
-    *incoming_msg->payload[8] = 0xAA;
-    *incoming_msg->payload[9] = 0xFF;
-    *incoming_msg->payload[10] = 0xFF;
+    // (Mask, Data) pairs
+    *incoming_msg->payload[7] = 0xFF;   // mask0
+    *incoming_msg->payload[8] = 0x00;   // data0
+    *incoming_msg->payload[9] = 0xFF;   // mask1
+    *incoming_msg->payload[10] = 0xAA;  // data1
     incoming_msg->payload_count = 11;
 
     // Phase 1: Validate and ACK with delayed reply time
@@ -4285,7 +4289,7 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_too_many_bytes)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
 
-    // Fill 65 data bytes + 65 mask bytes = 130 bytes after header
+    // Fill 65 (mask, data) pairs = 130 bytes after header
     // payload_count = 7 header + 130 = 137
     // This means bytes = 130 / 2 = 65 which is > 64
     for (int i = 7; i < 7 + 130; i++) {

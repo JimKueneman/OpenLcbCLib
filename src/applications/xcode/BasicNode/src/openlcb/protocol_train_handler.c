@@ -33,7 +33,7 @@
  * callbacks.
  *
  * @author Jim Kueneman
- * @date 6 Mar 2026
+ * @date 9 Mar 2026
  */
 
 #include "protocol_train_handler.h"
@@ -637,7 +637,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
         case TRAIN_CONTROLLER_ASSIGN: {
 
-            node_id_t requesting_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
+            node_id_t requesting_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
             bool accepted = true;
 
             if (state) {
@@ -689,7 +689,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
         case TRAIN_CONTROLLER_RELEASE: {
 
-            node_id_t releasing_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
+            node_id_t releasing_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
 
             if (state && state->controller_node_id == releasing_id) {
 
@@ -732,7 +732,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
         case TRAIN_CONTROLLER_CHANGED: {
 
-            node_id_t new_controller_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
+            node_id_t new_controller_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
             bool accepted = true;
 
             if (_interface && _interface->on_controller_changed_request) {
@@ -897,20 +897,23 @@ static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
 
         case TRAIN_MGMT_RESERVE: {
 
-            // Per conformance test TN 2.10: a second reserve without
-            // release shall return a fail code.  Only one reservation
-            // at a time is permitted.
+            // Per TrainControlS: a second reserve from the same source
+            // shall be accepted; a reserve from a different source while
+            // already reserved shall return a fail code.
             uint8_t result = 0;
 
             if (state) {
 
-                if (state->reserved_node_count > 0) {
+                node_id_t requesting_id = msg->source_id;
+
+                if (state->reserved_node_count > 0 && state->reserved_by_node_id != requesting_id) {
 
                     result = 0xFF;
 
                 } else {
 
                     state->reserved_node_count = 1;
+                    state->reserved_by_node_id = requesting_id;
 
                 }
 
@@ -927,6 +930,7 @@ static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
             if (state && state->reserved_node_count > 0) {
 
                 state->reserved_node_count--;
+                state->reserved_by_node_id = 0;
 
             }
 

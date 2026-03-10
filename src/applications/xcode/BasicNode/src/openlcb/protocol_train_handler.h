@@ -42,7 +42,7 @@
  * Called from the main statemachine when a train protocol message is received.
  *
  * @author Jim Kueneman
- * @date 6 Mar 2026
+ * @date 9 Mar 2026
  *
  * @see openlcb_application_train.h - Layer 2 state and API
  */

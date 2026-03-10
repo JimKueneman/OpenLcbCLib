@@ -38,6 +38,7 @@
 #include "src/openlcb/openlcb_gridconnect.h"
 #include "src/drivers/canbus/can_types.h"
 #include "src/openlcb/openlcb_application_broadcast_time.h"
+#include "src/openlcb/openlcb_application_train.h"
 
 
 #define LED_PIN 2
@@ -136,7 +137,35 @@ bool Callbacks_on_login_complete(openlcb_node_t *openlcb_node) {
 
 
 void Callbacks_on_broadcast_time_changed(broadcast_clock_t *clock) {
-    
+
     printf("Time: %2d:%d, rate: %d\n", clock->state.time.hour, clock->state.time.minute, clock->state.rate.rate);
-    
+
+}
+
+#define HEARTBEAT_TIMEOUT_SECONDS 10
+
+void Callbacks_on_train_controller_assigned(openlcb_node_t *openlcb_node, node_id_t controller_node_id) {
+
+    train_state_t *state = OpenLcbApplicationTrain_get_state(openlcb_node);
+
+    if (state) {
+
+        state->heartbeat_timeout_s = HEARTBEAT_TIMEOUT_SECONDS;
+        state->heartbeat_counter_100ms = HEARTBEAT_TIMEOUT_SECONDS * 10;
+
+    }
+
+}
+
+void Callbacks_on_train_controller_released(openlcb_node_t *openlcb_node) {
+
+    train_state_t *state = OpenLcbApplicationTrain_get_state(openlcb_node);
+
+    if (state) {
+
+        state->heartbeat_timeout_s = 0;
+        state->heartbeat_counter_100ms = 0;
+
+    }
+
 }

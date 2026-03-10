@@ -33,7 +33,7 @@
      * optional per-command handler overrides.
      *
      * @author Jim Kueneman
-     * @date 4 Mar 2026
+     * @date 9 Mar 2026
      *
      * @see MemoryConfigurationS.pdf
      */
@@ -205,6 +205,9 @@ extern "C" {
 
         /**
          * @brief Handle incoming Reset/Reboot command.
+         *
+         * @details Per MemoryConfigurationS Section 4.24, the node acknowledges
+         * with Initialization Complete instead of Datagram Received OK.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */

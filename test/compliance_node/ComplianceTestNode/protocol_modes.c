@@ -78,6 +78,15 @@ static void setup_train(openlcb_node_t *node) {
     OpenLcbApplicationTrain_set_dcc_address(node, 3, false);
     OpenLcbApplicationTrain_set_speed_steps(node, 3);
 
+    // Enable heartbeat with 3-second timeout for compliance testing
+    // (TrainControlS section 6.6 — timeout is at the train node's discretion)
+    if (node->train_state) {
+
+        node->train_state->heartbeat_timeout_s = 3;
+        node->train_state->heartbeat_counter_100ms = 30;
+
+    }
+
     // Pre-allocate virtual train nodes for dynamic search allocation
     for (int i = 0; i < VIRTUAL_TRAIN_COUNT; i++) {
         node_id_t virtual_id = node->id + 1 + i;

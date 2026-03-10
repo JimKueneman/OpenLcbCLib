@@ -80,6 +80,24 @@ void OSxDrivers_setup(void) {
 
     user_data = strnew_initialized(LEN_SNIP_USER_NAME_BUFFER + LEN_SNIP_USER_DESCRIPTION_BUFFER + 1);
 
+    // Seed config memory with default user name at address 0.
+    // Note: ACDI User space version byte comes from snip.user_version
+    // in node parameters, NOT from config memory.
+    char default_name[] = "iMac M1 on XCode";
+    for (int i = 0; default_name[i] != '\0' && i < LEN_SNIP_USER_NAME_BUFFER - 1; i++) {
+
+        user_data[i] = default_name[i];
+
+    }
+
+    // Seed config memory with default user description.
+    char default_desc[] = "Compliance Test Node";
+    for (int i = 0; default_desc[i] != '\0' && i < LEN_SNIP_USER_DESCRIPTION_BUFFER - 1; i++) {
+
+        user_data[USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS + i] = default_desc[i];
+
+    }
+
     pthread_t thread2;
     int thread_num2 = 2;
     pthread_create(&thread2, NULL, thread_function_timer, &thread_num2);
@@ -93,36 +111,44 @@ void OSxDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_me
 
 uint16_t OSxDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
-    char str[] = "iMac M1 on XCode";
+    uint16_t user_data_len = LEN_SNIP_USER_NAME_BUFFER + LEN_SNIP_USER_DESCRIPTION_BUFFER;
 
     for (int i = 0; i < count; i++) {
-        (*buffer)[i] = 0x00;
-    }
 
-    switch (address) {
+        if (address + i < user_data_len) {
 
-        case 0:
-            for (int i = 0; i < count; i++) {
-                (*buffer)[i] = str[i];
-            }
-            break;
+            (*buffer)[i] = (uint8_t) user_data[address + i];
 
-        default:
-            break;
+        } else {
+
+            (*buffer)[i] = 0x00;
+
+        }
+
     }
 
     return count;
+
 }
 
 uint16_t OSxDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
-    printf("configmem write\n");
+    uint16_t user_data_len = LEN_SNIP_USER_NAME_BUFFER + LEN_SNIP_USER_DESCRIPTION_BUFFER;
 
-    if (count == 0) {
-        return 0;
+    if (count == 0) { return 0; }
+
+    for (int i = 0; i < count; i++) {
+
+        if (address + i < user_data_len) {
+
+            user_data[address + i] = (char) (*buffer)[i];
+
+        }
+
     }
 
     return count;
+
 }
 
 void OSxDrivers_lock_shared_resources(void) {

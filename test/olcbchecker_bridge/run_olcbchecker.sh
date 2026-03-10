@@ -6,14 +6,12 @@
 # (node process restarted between modes, bridge stays up for all runs).
 #
 # Usage:
-#   ./run_olcbchecker.sh                             # core tests only
-#   ./run_olcbchecker.sh --broadcast-time-consumer   # include broadcast time consumer tests
-#   ./run_olcbchecker.sh --broadcast-time-producer   # include broadcast time producer tests
-#   ./run_olcbchecker.sh --trains                    # include train protocol tests
-#   ./run_olcbchecker.sh --all                       # run all protocol modes
-#   ./run_olcbchecker.sh --auto-reboot               # enable programmatic restart in OlcbChecker
-#   ./run_olcbchecker.sh --verbose                   # show GridConnect traffic
-#   ./run_olcbchecker.sh --skip-build                # reuse last build
+#   ./run_olcbchecker.sh                                 # core tests only
+#   ./run_olcbchecker.sh -m all                          # run all protocol modes
+#   ./run_olcbchecker.sh -m core,trains                  # core + train tests
+#   ./run_olcbchecker.sh -m trains -s check_tr090_controller  # one test in train mode
+#   ./run_olcbchecker.sh -r -w                           # enable reboot + write tests
+#   ./run_olcbchecker.sh -v --skip-build                 # debug with last build
 #
 
 set -e
@@ -33,17 +31,36 @@ COMPLIANCE_BUILD_DIR="$REPO_ROOT/build/compliance"
 COMPLIANCE_XCODE_PROJECT="$REPO_ROOT/test/compliance_node/ComplianceTestNode.xcodeproj"
 
 # ============================================================================
+# Mode registry
+#
+# Each mode maps to a ComplianceTestNode flag, a run_tests.py section name,
+# and a human-readable label.  To add a new protocol mode, add one line here
+# and it works everywhere (CLI, --single, --mode all).
+# ============================================================================
+
+#          mode name                 node flag                    section name                label
+MODES=(
+    "core                           --basic                      core                        Core Compliance"
+    "broadcast-time-consumer        --broadcast-time-consumer    broadcast_time_consumer     Broadcast Time Consumer"
+    "broadcast-time-producer        --broadcast-time-producer    broadcast_time_producer     Broadcast Time Producer"
+    "trains                         --train                      trains                      Train Protocol"
+)
+
+# ============================================================================
 # Parse arguments
 # ============================================================================
 
 VERBOSE=""
 SKIP_BUILD=false
 AUTO_REBOOT=false
-BROADCAST_TIME_CONSUMER=false
-BROADCAST_TIME_PRODUCER=false
-TRAINS=false
+FORCE_WRITES=false
+MODE_LIST="core"
+SINGLE_SCRIPT=""
 
-for arg in "$@"; do
+ARGS=("$@")
+i=0
+while [ $i -lt ${#ARGS[@]} ]; do
+    arg="${ARGS[$i]}"
     case "$arg" in
         --verbose|-v)
             VERBOSE="--verbose"
@@ -51,51 +68,78 @@ for arg in "$@"; do
         --skip-build)
             SKIP_BUILD=true
             ;;
-        --auto-reboot)
+        --auto-reboot|-r)
             AUTO_REBOOT=true
             ;;
-        --broadcast-time-consumer)
-            BROADCAST_TIME_CONSUMER=true
+        --force-writes|-w)
+            FORCE_WRITES=true
             ;;
-        --broadcast-time-producer)
-            BROADCAST_TIME_PRODUCER=true
+        --mode|-m)
+            i=$((i + 1))
+            MODE_LIST="${ARGS[$i]}"
             ;;
-        --broadcast-time)
-            # Shorthand for consumer tests
-            BROADCAST_TIME_CONSUMER=true
-            ;;
-        --trains)
-            TRAINS=true
-            ;;
-        --all)
-            BROADCAST_TIME_CONSUMER=true
-            BROADCAST_TIME_PRODUCER=true
-            TRAINS=true
-            ;;
-        --no-broadcast-time)
-            BROADCAST_TIME_CONSUMER=false
-            BROADCAST_TIME_PRODUCER=false
-            ;;
-        --no-trains)
-            TRAINS=false
+        --single|-s)
+            i=$((i + 1))
+            SINGLE_SCRIPT="${ARGS[$i]}"
             ;;
         --help|-h)
             echo "Usage: $0 [OPTIONS]"
             echo ""
-            echo "  --verbose, -v          Show GridConnect traffic in bridge"
+            echo "  -m, --mode MODES       Comma-separated list of protocol modes to run (default: core)"
+            echo "                         Available: core, broadcast-time-consumer, broadcast-time-producer, trains, all"
+            echo "  -s, --single SCRIPT    Run a single check or control script (use -m to set the node mode)"
+            echo "  -r, --auto-reboot      Pass --auto-reboot to OlcbChecker (programmatic restart)"
+            echo "  -w, --force-writes     Enable tests that write to config memory (0xFD)"
+            echo "  -v, --verbose          Show GridConnect traffic in bridge"
             echo "  --skip-build           Skip xcodebuild step"
-            echo "  --auto-reboot          Pass --auto-reboot to OlcbChecker (programmatic restart)"
-            echo "  --broadcast-time-consumer  Include Broadcast Time consumer tests"
-            echo "  --broadcast-time-producer  Include Broadcast Time producer tests"
-            echo "  --broadcast-time       Alias for --broadcast-time-consumer"
-            echo "  --trains               Include Train Control/Search/FDI tests"
-            echo "  --all                  Run all protocol modes"
-            echo "  --no-broadcast-time    Skip all Broadcast Time tests"
-            echo "  --no-trains            Skip Train protocol tests (default)"
             echo "  --help, -h             Show this help"
             exit 0
             ;;
+        *)
+            echo "Unknown option: $arg (use --help for usage)"
+            exit 1
+            ;;
     esac
+    i=$((i + 1))
+done
+
+# ============================================================================
+# Resolve mode list
+# ============================================================================
+
+# Expand "all" to every registered mode
+if [ "$MODE_LIST" = "all" ]; then
+    MODE_LIST=""
+    for entry in "${MODES[@]}"; do
+        read -r name _ <<< "$entry"
+        [ -n "$MODE_LIST" ] && MODE_LIST="$MODE_LIST,"
+        MODE_LIST="$MODE_LIST$name"
+    done
+fi
+
+# Split comma-separated modes into an array
+IFS=',' read -ra SELECTED_MODES <<< "$MODE_LIST"
+
+# Look up a mode's fields by name.  Sets: MODE_NODE_FLAG, MODE_SECTION, MODE_LABEL
+lookup_mode() {
+    local target="$1"
+    for entry in "${MODES[@]}"; do
+        read -r name node_flag section label_rest <<< "$entry"
+        if [ "$name" = "$target" ]; then
+            MODE_NODE_FLAG="$node_flag"
+            MODE_SECTION="$section"
+            MODE_LABEL="$label_rest"
+            return 0
+        fi
+    done
+    echo "ERROR: Unknown mode '$target'"
+    echo "  Available: core, broadcast-time-consumer, broadcast-time-producer, trains, all"
+    exit 1
+}
+
+# Validate all selected modes up front
+for mode in "${SELECTED_MODES[@]}"; do
+    lookup_mode "$mode"
 done
 
 # ============================================================================
@@ -164,6 +208,9 @@ CHECKER_FLAGS="-i"
 if [ "$AUTO_REBOOT" = true ]; then
     CHECKER_FLAGS="$CHECKER_FLAGS --auto-reboot"
 fi
+if [ "$FORCE_WRITES" = true ]; then
+    CHECKER_FLAGS="$CHECKER_FLAGS -w"
+fi
 
 # ============================================================================
 # Generic test runner: start node, run tests, kill node
@@ -172,9 +219,9 @@ fi
 total=0
 
 run_protocol_test() {
-    local node_flag="$1"      # e.g., "--train" or "--basic"
-    local test_section="$2"   # e.g., "trains" or "core"
-    local label="$3"          # e.g., "Train Protocol"
+    local node_flag="$1"
+    local test_section="$2"
+    local label="$3"
 
     echo ""
     echo "=========================================="
@@ -198,12 +245,15 @@ run_protocol_test() {
 
     echo "  ComplianceTestNode running (PID $NODE_PID) mode=$node_flag"
 
+    local rc=0
     RUN_SECTIONS="$test_section" \
+    SINGLE_SCRIPT="$SINGLE_SCRIPT" \
     python3 "$SCRIPT_DIR/run_tests.py" \
         -a "127.0.0.1:$BRIDGE_PORT" \
         -t "$NODE_ID" \
-        $CHECKER_FLAGS
-    total=$((total + $?))
+        $CHECKER_FLAGS \
+        || rc=$?
+    total=$((total + rc))
 
     kill "$NODE_PID" 2>/dev/null || true
     wait "$NODE_PID" 2>/dev/null || true
@@ -215,23 +265,17 @@ run_protocol_test() {
 # Test runs
 # ============================================================================
 
-# Core compliance (always)
-run_protocol_test "--basic" "core" "Core Compliance"
-
-# Broadcast time consumer
-[ "$BROADCAST_TIME_CONSUMER" = true ] && \
-    run_protocol_test "--broadcast-time-consumer" "broadcast_time_consumer" "Broadcast Time Consumer"
-
-# Broadcast time producer
-[ "$BROADCAST_TIME_PRODUCER" = true ] && \
-    run_protocol_test "--broadcast-time-producer" "broadcast_time_producer" "Broadcast Time Producer"
-
-# Train protocol
-[ "$TRAINS" = true ] && \
-    run_protocol_test "--train" "trains" "Train Protocol"
-
-# ---- Add new protocol runs here ----
-# run_protocol_test "--traction-proxy" "traction_proxy" "Traction Proxy"
+if [ -n "$SINGLE_SCRIPT" ]; then
+    # Single-script mode: use the first selected mode
+    lookup_mode "${SELECTED_MODES[0]}"
+    run_protocol_test "$MODE_NODE_FLAG" "single" "Single: $SINGLE_SCRIPT"
+else
+    # Run each selected mode in order
+    for mode in "${SELECTED_MODES[@]}"; do
+        lookup_mode "$mode"
+        run_protocol_test "$MODE_NODE_FLAG" "$MODE_SECTION" "$MODE_LABEL"
+    done
+fi
 
 # ============================================================================
 # Summary
