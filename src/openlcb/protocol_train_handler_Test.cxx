@@ -6266,3 +6266,342 @@ TEST(ProtocolTrainHandler, controller_release_null_state)
     EXPECT_EQ(notifier_called, 0);
 
 }
+
+
+// ============================================================================
+// Section 13: Heartbeat counter behavior (TrainControlS 6.6)
+// ============================================================================
+
+TEST(ProtocolTrainHandler, heartbeat_any_command_resets_counter)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 50;  // Partially counted down
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Send Set Function command (not speed, not NOOP)
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Counter should be reset to full (10 * 10 = 100)
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 100);
+
+}
+
+TEST(ProtocolTrainHandler, heartbeat_query_speeds_resets_counter)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 5;
+    state->heartbeat_counter_100ms = 20;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Send Query Speeds
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Counter reset to full (5 * 10 = 50)
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 50);
+
+}
+
+TEST(ProtocolTrainHandler, heartbeat_query_function_resets_counter)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 5;
+    state->heartbeat_counter_100ms = 20;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Send Query Function
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    incoming->payload_count = 4;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 50);
+
+}
+
+TEST(ProtocolTrainHandler, heartbeat_noop_resets_counter)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 10;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Send NOOP
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_NOOP, 1);
+    incoming->payload_count = 2;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Counter reset to full (3 * 10 = 30)
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 30);
+
+}
+
+TEST(ProtocolTrainHandler, heartbeat_no_reset_when_counter_zero)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 5;
+    state->heartbeat_counter_100ms = 0;  // Heartbeat inactive
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Send Set Function — should NOT restart counter from 0
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Counter stays at 0 — only Set Speed non-zero starts it
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
+
+}
+
+TEST(ProtocolTrainHandler, heartbeat_no_reset_when_disabled)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 0;  // Heartbeat disabled
+    state->heartbeat_counter_100ms = 0;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Counter untouched — heartbeat disabled
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
+
+}
+
+TEST(ProtocolTrainHandler, heartbeat_set_speed_zero_stops_counter)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 80;  // Active
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Set Speed to zero
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0000, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Counter stopped — no heartbeat when speed is zero
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
+
+}
+
+TEST(ProtocolTrainHandler, heartbeat_set_speed_nonzero_restarts_counter)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 0;  // Inactive (speed was zero)
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Set Speed to non-zero (1.0 forward = 0x3C00)
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x3C00, 1);
+    incoming->payload_count = 3;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Counter started
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 100);
+
+}
+
+TEST(ProtocolTrainHandler, heartbeat_estop_stops_counter)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 80;
+    state->set_speed = 0x3C00;  // Non-zero
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Send Emergency Stop
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_EMERGENCY_STOP, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Counter stopped
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
+    EXPECT_TRUE(state->estop_active);
+
+}
+
+TEST(ProtocolTrainHandler, heartbeat_controller_release_stops_counter)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 80;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Release controller — source must match controller
+    incoming->source_id = TEST_CONTROLLER_NODE_ID;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Counter stopped — no controller means no heartbeat
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
+    EXPECT_EQ(state->controller_node_id, (uint64_t) 0);
+
+}
+
+TEST(ProtocolTrainHandler, heartbeat_controller_release_wrong_id_keeps_counter)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 80;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Release with wrong ID
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_CONTROLLER_NODE_ID_2, 3);
+    incoming->payload_count = 9;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // General dispatch reset still happens (counter was > 0)
+    // but controller is NOT released since IDs don't match
+    EXPECT_EQ(state->controller_node_id, TEST_CONTROLLER_NODE_ID);
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 100);
+
+}

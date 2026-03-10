@@ -80,10 +80,11 @@ static void setup_train(openlcb_node_t *node) {
 
     // Enable heartbeat with 3-second timeout for compliance testing
     // (TrainControlS section 6.6 — timeout is at the train node's discretion)
+    // Counter starts at 0; _handle_set_speed restarts it when speed goes non-zero.
     if (node->train_state) {
 
         node->train_state->heartbeat_timeout_s = 3;
-        node->train_state->heartbeat_counter_100ms = 30;
+        node->train_state->heartbeat_counter_100ms = 0;
 
     }
 

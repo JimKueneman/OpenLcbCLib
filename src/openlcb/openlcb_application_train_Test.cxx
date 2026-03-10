@@ -63,6 +63,7 @@
 #define TEST_DEST_ALIAS 0xBBB
 #define TEST_DEST_ID 0x060504030201ULL
 #define TEST_TRAIN_NODE_ID 0xAABBCCDDEE01ULL
+#define TEST_TRAIN_ALIAS 0x0AA
 #define TEST_CONTROLLER_NODE_ID 0x0A0B0C0D0E0FULL
 #define TEST_LISTENER_NODE_ID 0x112233445566ULL
 
@@ -75,6 +76,10 @@ static bool mock_send_called = false;
 static openlcb_msg_t last_sent_msg;
 static payload_basic_t last_sent_payload;
 static int send_call_count = 0;
+
+#define MAX_SENT_MESSAGES 8
+static openlcb_msg_t sent_msgs[MAX_SENT_MESSAGES];
+static payload_basic_t sent_payloads[MAX_SENT_MESSAGES];
 
 static bool mock_heartbeat_timeout_called = false;
 static openlcb_node_t *mock_heartbeat_timeout_node = NULL;
@@ -89,6 +94,8 @@ static void _reset_tracking(void) {
     mock_send_called = false;
     memset(&last_sent_msg, 0, sizeof(last_sent_msg));
     memset(&last_sent_payload, 0, sizeof(last_sent_payload));
+    memset(sent_msgs, 0, sizeof(sent_msgs));
+    memset(sent_payloads, 0, sizeof(sent_payloads));
     send_call_count = 0;
     mock_heartbeat_timeout_called = false;
     mock_heartbeat_timeout_node = NULL;
@@ -103,6 +110,19 @@ static void _reset_tracking(void) {
 static bool _mock_send_openlcb_msg(openlcb_msg_t *openlcb_msg) {
 
     mock_send_called = true;
+
+    if (send_call_count < MAX_SENT_MESSAGES) {
+
+        memcpy(&sent_msgs[send_call_count], openlcb_msg, sizeof(openlcb_msg_t));
+
+        if (openlcb_msg->payload) {
+
+            memcpy(&sent_payloads[send_call_count], openlcb_msg->payload, LEN_MESSAGE_BYTES_BASIC);
+
+        }
+
+    }
+
     send_call_count++;
 
     memcpy(&last_sent_msg, openlcb_msg, sizeof(openlcb_msg_t));
@@ -369,10 +389,11 @@ TEST(ApplicationTrain, send_set_speed)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    OpenLcbApplicationTrain_send_set_speed(node, TEST_TRAIN_NODE_ID, 0x3C00);
+    OpenLcbApplicationTrain_send_set_speed(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, 0x3C00);
 
     EXPECT_TRUE(mock_send_called);
     EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
+    EXPECT_EQ(last_sent_msg.dest_alias, TEST_TRAIN_ALIAS);
     EXPECT_EQ(last_sent_msg.dest_id, TEST_TRAIN_NODE_ID);
     EXPECT_EQ(last_sent_msg.source_id, TEST_DEST_ID);
     EXPECT_EQ(last_sent_payload[0], TRAIN_SET_SPEED_DIRECTION);
@@ -391,7 +412,7 @@ TEST(ApplicationTrain, send_set_function)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    OpenLcbApplicationTrain_send_set_function(node, TEST_TRAIN_NODE_ID, 0x000005, 0x0001);
+    OpenLcbApplicationTrain_send_set_function(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, 0x000005, 0x0001);
 
     EXPECT_TRUE(mock_send_called);
     EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
@@ -415,7 +436,7 @@ TEST(ApplicationTrain, send_emergency_stop)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    OpenLcbApplicationTrain_send_emergency_stop(node, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_emergency_stop(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
 
     EXPECT_TRUE(mock_send_called);
     EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
@@ -432,7 +453,7 @@ TEST(ApplicationTrain, send_query_speeds)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    OpenLcbApplicationTrain_send_query_speeds(node, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_query_speeds(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
 
     EXPECT_TRUE(mock_send_called);
     EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
@@ -449,7 +470,7 @@ TEST(ApplicationTrain, send_query_function)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    OpenLcbApplicationTrain_send_query_function(node, TEST_TRAIN_NODE_ID, 0x000003);
+    OpenLcbApplicationTrain_send_query_function(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, 0x000003);
 
     EXPECT_TRUE(mock_send_called);
     EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
@@ -469,7 +490,7 @@ TEST(ApplicationTrain, send_assign_controller)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    OpenLcbApplicationTrain_send_assign_controller(node, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_assign_controller(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
 
     EXPECT_TRUE(mock_send_called);
     EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
@@ -487,7 +508,7 @@ TEST(ApplicationTrain, send_release_controller)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    OpenLcbApplicationTrain_send_release_controller(node, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_release_controller(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
 
     EXPECT_TRUE(mock_send_called);
     EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
@@ -505,7 +526,7 @@ TEST(ApplicationTrain, send_noop)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    OpenLcbApplicationTrain_send_noop(node, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_noop(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
 
     EXPECT_TRUE(mock_send_called);
     EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
@@ -520,14 +541,14 @@ TEST(ApplicationTrain, send_null_node_no_crash)
     _reset_tracking();
     _global_initialize();
 
-    OpenLcbApplicationTrain_send_set_speed(NULL, TEST_TRAIN_NODE_ID, 0x3C00);
-    OpenLcbApplicationTrain_send_set_function(NULL, TEST_TRAIN_NODE_ID, 0, 0);
-    OpenLcbApplicationTrain_send_emergency_stop(NULL, TEST_TRAIN_NODE_ID);
-    OpenLcbApplicationTrain_send_query_speeds(NULL, TEST_TRAIN_NODE_ID);
-    OpenLcbApplicationTrain_send_query_function(NULL, TEST_TRAIN_NODE_ID, 0);
-    OpenLcbApplicationTrain_send_assign_controller(NULL, TEST_TRAIN_NODE_ID);
-    OpenLcbApplicationTrain_send_release_controller(NULL, TEST_TRAIN_NODE_ID);
-    OpenLcbApplicationTrain_send_noop(NULL, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_set_speed(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, 0x3C00);
+    OpenLcbApplicationTrain_send_set_function(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, 0, 0);
+    OpenLcbApplicationTrain_send_emergency_stop(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_query_speeds(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_query_function(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, 0);
+    OpenLcbApplicationTrain_send_assign_controller(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_release_controller(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_noop(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
 
     EXPECT_FALSE(mock_send_called);
 
@@ -547,7 +568,7 @@ TEST(ApplicationTrain, send_with_null_interface)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    OpenLcbApplicationTrain_send_set_speed(node, TEST_TRAIN_NODE_ID, 0x3C00);
+    OpenLcbApplicationTrain_send_set_speed(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, 0x3C00);
 
     EXPECT_FALSE(mock_send_called);
 
@@ -759,7 +780,7 @@ TEST(ApplicationTrain, send_with_no_initialization)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    OpenLcbApplicationTrain_send_set_speed(node, TEST_TRAIN_NODE_ID, 0x3C00);
+    OpenLcbApplicationTrain_send_set_speed(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, 0x3C00);
 
     EXPECT_FALSE(mock_send_called);
 
@@ -1015,5 +1036,161 @@ TEST(ApplicationTrain, speed_steps_normal_operation)
     OpenLcbApplicationTrain_set_speed_steps(node, 28);
 
     EXPECT_EQ(OpenLcbApplicationTrain_get_speed_steps(node), (uint8_t) 28);
+
+}
+
+
+// ============================================================================
+// Section 11: Heartbeat listener forwarding (TrainControlS 6.6)
+// ============================================================================
+
+TEST(ApplicationTrain, heartbeat_timeout_forwards_speed_zero_to_listeners)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    // Configure heartbeat
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 1;  // About to expire
+    state->set_speed = 0x3C00;           // Forward 1.0
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    // Add two listeners
+    state->listeners[0].node_id = TEST_LISTENER_NODE_ID;
+    state->listeners[0].flags = 0x00;
+    state->listeners[1].node_id = 0x223344556677ULL;
+    state->listeners[1].flags = 0x00;
+    state->listener_count = 2;
+
+    // Tick past expiry
+    OpenLcbApplicationTrain_100ms_timer_tick(1);
+
+    // Heartbeat request was sent at halfway (not here — counter was at 1)
+    // Timeout fires: speed zeroed, listeners forwarded, callback fired
+    EXPECT_TRUE(mock_heartbeat_timeout_called);
+    EXPECT_TRUE(state->estop_active);
+    EXPECT_EQ(state->set_speed, FLOAT16_POSITIVE_ZERO);
+
+    // Should have sent: 2 listener forwards + (no heartbeat request since
+    // counter jumped from 1 to 0, skipping halfway)
+    EXPECT_EQ(send_call_count, 2);
+
+    // First listener: Set Speed 0 with P bit
+    EXPECT_EQ(sent_msgs[0].dest_id, TEST_LISTENER_NODE_ID);
+    EXPECT_EQ(sent_msgs[0].mti, MTI_TRAIN_PROTOCOL);
+    EXPECT_EQ(sent_payloads[0][0], (uint8_t) (TRAIN_SET_SPEED_DIRECTION | TRAIN_INSTRUCTION_P_BIT));
+    EXPECT_EQ(sent_payloads[0][1], (uint8_t) 0x00);
+    EXPECT_EQ(sent_payloads[0][2], (uint8_t) 0x00);
+
+    // Second listener
+    EXPECT_EQ(sent_msgs[1].dest_id, (uint64_t) 0x223344556677ULL);
+    EXPECT_EQ(sent_payloads[1][0], (uint8_t) (TRAIN_SET_SPEED_DIRECTION | TRAIN_INSTRUCTION_P_BIT));
+
+}
+
+TEST(ApplicationTrain, heartbeat_timeout_respects_listener_reverse_flag)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 1;
+    state->set_speed = 0x3C00;  // Forward
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    // Listener with REVERSE flag
+    state->listeners[0].node_id = TEST_LISTENER_NODE_ID;
+    state->listeners[0].flags = TRAIN_LISTENER_FLAG_REVERSE;
+    state->listener_count = 1;
+
+    OpenLcbApplicationTrain_100ms_timer_tick(1);
+
+    EXPECT_TRUE(mock_heartbeat_timeout_called);
+    EXPECT_EQ(send_call_count, 1);
+
+    // Speed should be negative zero (direction flipped by reverse flag)
+    uint16_t forwarded_speed = ((uint16_t) sent_payloads[0][1] << 8) | sent_payloads[0][2];
+    EXPECT_EQ(forwarded_speed, (uint16_t) FLOAT16_NEGATIVE_ZERO);
+
+}
+
+TEST(ApplicationTrain, heartbeat_timeout_no_listeners_no_forwards)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 1;
+    state->set_speed = 0x3C00;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+    state->listener_count = 0;
+
+    OpenLcbApplicationTrain_100ms_timer_tick(1);
+
+    EXPECT_TRUE(mock_heartbeat_timeout_called);
+    EXPECT_TRUE(state->estop_active);
+
+    // No listeners — no forwards sent (only timeout callback)
+    EXPECT_EQ(send_call_count, 0);
+
+}
+
+TEST(ApplicationTrain, heartbeat_timeout_preserves_reverse_direction)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 1;
+    state->set_speed = 0xBC00;  // Reverse 1.0 (sign bit set)
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    // Listener without reverse flag
+    state->listeners[0].node_id = TEST_LISTENER_NODE_ID;
+    state->listeners[0].flags = 0x00;
+    state->listener_count = 1;
+
+    OpenLcbApplicationTrain_100ms_timer_tick(1);
+
+    EXPECT_TRUE(mock_heartbeat_timeout_called);
+
+    // Direction preserved: negative zero
+    EXPECT_EQ(state->set_speed, FLOAT16_NEGATIVE_ZERO);
+
+    // Forwarded message should also have negative zero
+    uint16_t forwarded_speed = ((uint16_t) sent_payloads[0][1] << 8) | sent_payloads[0][2];
+    EXPECT_EQ(forwarded_speed, (uint16_t) FLOAT16_NEGATIVE_ZERO);
 
 }

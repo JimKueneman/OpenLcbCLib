@@ -293,7 +293,7 @@ const node_parameters_t compliance_train_params = {
 
     .cdi = { BASIC_CDI },
 
-    .fdi = "<?xml version='1.0'?>"
+    .fdi = "<?xml version=\"1.0\"?>"
            "<?xml-stylesheet type='text/xsl' href='xslt/fdi.xsl'?>"
            "<fdi xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
            " xsi:noNamespaceSchemaLocation='https://openlcb.org/schema/fdi/1/0/fdi.xsd'>"

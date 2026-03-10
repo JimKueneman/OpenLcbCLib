@@ -137,10 +137,11 @@ extern "C" {
          * float16 encoding where the sign bit encodes direction.
          *
          * @param openlcb_node    Pointer to the sending (throttle) @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          * @param speed           16-bit speed/direction value in OpenLCB float16 format.
          */
-    extern void OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, node_id_t train_node_id, uint16_t speed);
+    extern void OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint16_t speed);
 
         /**
          * @brief Sends a Set Function command to a train node.
@@ -150,11 +151,12 @@ extern "C" {
          * numbers follow the NMRA function mapping.
          *
          * @param openlcb_node    Pointer to the sending @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          * @param fn_address      24-bit function address.
          * @param fn_value        16-bit function value (0 = off, non-zero = on or analog value).
          */
-    extern void OpenLcbApplicationTrain_send_set_function(openlcb_node_t *openlcb_node, node_id_t train_node_id, uint32_t fn_address, uint16_t fn_value);
+    extern void OpenLcbApplicationTrain_send_set_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address, uint16_t fn_value);
 
         /**
          * @brief Sends an Emergency Stop command to a train node.
@@ -163,9 +165,10 @@ extern "C" {
          * sets its speed to zero and activates its emergency-stop flag.
          *
          * @param openlcb_node    Pointer to the sending @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_emergency_stop(openlcb_node_t *openlcb_node, node_id_t train_node_id);
+    extern void OpenLcbApplicationTrain_send_emergency_stop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a Query Speeds command to a train node.
@@ -174,9 +177,10 @@ extern "C" {
          * speed (if available), and emergency-stop status.
          *
          * @param openlcb_node    Pointer to the sending @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_query_speeds(openlcb_node_t *openlcb_node, node_id_t train_node_id);
+    extern void OpenLcbApplicationTrain_send_query_speeds(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a Query Function command to a train node.
@@ -185,10 +189,11 @@ extern "C" {
          * specified function address.
          *
          * @param openlcb_node    Pointer to the sending @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          * @param fn_address      24-bit function address to query.
          */
-    extern void OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, node_id_t train_node_id, uint32_t fn_address);
+    extern void OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address);
 
         /**
          * @brief Sends an Assign Controller command to a train node.
@@ -198,9 +203,10 @@ extern "C" {
          * assigned controller and begins heartbeat monitoring.
          *
          * @param openlcb_node    Pointer to the sending (throttle) @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node, node_id_t train_node_id);
+    extern void OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a Release Controller command to a train node.
@@ -209,9 +215,10 @@ extern "C" {
          * The train node clears its controller assignment and stops heartbeat monitoring.
          *
          * @param openlcb_node    Pointer to the sending (throttle) @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_node, node_id_t train_node_id);
+    extern void OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a NOOP (no-operation) management command to a train node.
@@ -221,9 +228,10 @@ extern "C" {
          * this periodically to prevent heartbeat timeout and emergency stop.
          *
          * @param openlcb_node    Pointer to the sending @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, node_id_t train_node_id);
+    extern void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sets the DCC address and address type for a train node.

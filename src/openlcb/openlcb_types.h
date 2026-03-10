@@ -657,6 +657,7 @@
         bool global_estop_active;         /**< Global Emergency Stop active */
         bool global_eoff_active;          /**< Global Emergency Off active */
         node_id_t controller_node_id;     /**< Active controller (0 if none) */
+        uint16_t controller_alias;        /**< CAN alias of active controller (0 if none) */
         uint8_t reserved_node_count;      /**< Reservation count */
         node_id_t reserved_by_node_id;    /**< Node ID that holds the reservation (0 if none) */
         uint32_t heartbeat_timeout_s;     /**< Heartbeat deadline in seconds (0 = disabled) */

@@ -525,6 +525,23 @@ static void _handle_set_speed(openlcb_statemachine_info_t *statemachine_info) {
         state->set_speed = speed;
         state->estop_active = false;
 
+        // TrainControlS 6.6: restart heartbeat when speed is non-zero,
+        // stop heartbeat when speed is zero (trains shall not send
+        // heartbeat if the last Set Speed is zero).
+        if (state->heartbeat_timeout_s > 0) {
+
+            if (!OpenLcbFloat16_is_zero(speed)) {
+
+                state->heartbeat_counter_100ms = state->heartbeat_timeout_s * 10;
+
+            } else {
+
+                state->heartbeat_counter_100ms = 0;
+
+            }
+
+        }
+
     }
 
     if (_interface && _interface->on_speed_changed) {
@@ -571,6 +588,9 @@ static void _handle_emergency_stop(openlcb_statemachine_info_t *statemachine_inf
         // Preserve direction, set speed magnitude to zero
         bool reverse = OpenLcbFloat16_get_direction(state->set_speed);
         state->set_speed = reverse ? FLOAT16_NEGATIVE_ZERO : FLOAT16_POSITIVE_ZERO;
+
+        // TrainControlS 6.6: trains shall not send heartbeat in E-Stop state
+        state->heartbeat_counter_100ms = 0;
 
     }
 
@@ -646,6 +666,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
                     // No current controller, or same controller — accept
                     state->controller_node_id = requesting_id;
+                    state->controller_alias = msg->source_alias;
 
                 } else {
 
@@ -659,6 +680,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
                     if (accepted) {
 
                         state->controller_node_id = requesting_id;
+                        state->controller_alias = msg->source_alias;
 
                     }
 
@@ -694,6 +716,12 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
             if (state && state->controller_node_id == releasing_id) {
 
                 state->controller_node_id = 0;
+                state->controller_alias = 0;
+
+                // TrainControlS 6.6: if no assigned Controller, the Train
+                // shall continue operating as last commanded — stop the
+                // heartbeat so the countdown does not e-stop the train.
+                state->heartbeat_counter_100ms = 0;
 
                 if (_interface && _interface->on_controller_released) {
 
@@ -940,12 +968,8 @@ static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
 
         case TRAIN_MGMT_NOOP: {
 
-            if (state && state->heartbeat_timeout_s > 0) {
-
-                state->heartbeat_counter_100ms = state->heartbeat_timeout_s * 10;
-
-            }
-
+            // Heartbeat reset is handled at dispatch entry
+            // (TrainControlS 6.6: any command/query clears heartbeat)
             break;
 
         }
@@ -1201,6 +1225,20 @@ void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *stat
     uint8_t raw_instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(
             statemachine_info->incoming_msg_info.msg_ptr, 0);
     uint8_t instruction = raw_instruction & ~TRAIN_INSTRUCTION_P_BIT;
+
+    // TrainControlS 6.6: any command or query from the Controller clears
+    // the active Heartbeat Request by restarting the countdown.
+    {
+
+        train_state_t *hb_state = statemachine_info->openlcb_node->train_state;
+
+        if (hb_state && hb_state->heartbeat_timeout_s > 0 && hb_state->heartbeat_counter_100ms > 0) {
+
+            hb_state->heartbeat_counter_100ms = hb_state->heartbeat_timeout_s * 10;
+
+        }
+
+    }
 
     switch (instruction) {
 
