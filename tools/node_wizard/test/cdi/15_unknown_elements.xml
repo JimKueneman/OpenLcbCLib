@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 15_unknown_elements.xml
+    PURPOSE: Unknown/non-standard elements inside <cdi> and <segment>.
+             CDI standard Section 6 says future elements with 'size' attribute
+             should be treated as data elements. Elements without size are unknown.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 warning — "Unknown element tag" for each non-standard element
+                Expected warnings for: <custom>, <widget>, <bogus>
+    - Render:   Unknown elements may be ignored or shown as unrecognized
+-->
+<!-- TEST_CHECKS
+name: Unknown Elements
+validate_has | severity:warning | pattern:unknown|unrecognized | Warning about unknown elements
+map_not_null | Map parses
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Unknown Elements</model>
+    </identification>
+
+    <acdi/>
+
+    <!-- Unexpected child of <cdi> -->
+    <custom>This is not a valid CDI element</custom>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- Unknown element without size — not a data element -->
+        <widget>
+            <name>Mystery Widget</name>
+        </widget>
+
+        <!-- Unknown element with size — per Section 6, should be treated as data -->
+        <bogus size="4">
+            <name>Future Element</name>
+        </bogus>
+
+        <int size="1">
+            <name>Normal Field After Unknown</name>
+        </int>
+    </segment>
+</cdi>

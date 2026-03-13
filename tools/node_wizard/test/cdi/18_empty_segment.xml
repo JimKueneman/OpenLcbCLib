@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 18_empty_segment.xml
+    PURPOSE: Segment with no data elements — just a name and description.
+             CDI standard Section 5.1.3 allows zero or more data elements.
+             An empty group should not be rendered per Section 5.1.4.1.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 3 info — "Empty segment (appears to have no configuration items)"
+    - Map:      Space 0xFD shows "(no items)" for the empty segment
+    - Render:   Empty segment may show just the name/description header
+-->
+<!-- TEST_CHECKS
+name: Empty Segment
+map_not_null | Map parses
+validate_has | severity:info | pattern:no configuration items | Info about empty segment
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Empty Segment</model>
+    </identification>
+
+    <acdi/>
+
+    <!-- Empty segment — no data elements -->
+    <segment space="253" origin="0">
+        <name>Empty Config Section</name>
+        <description>This segment intentionally has no data elements</description>
+    </segment>
+
+    <!-- Non-empty segment for comparison -->
+    <segment space="253" origin="128">
+        <name>Real Config</name>
+        <int size="1"><name>Mode</name></int>
+    </segment>
+</cdi>

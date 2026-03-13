@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 14_config_mem_too_small.xml
+    PURPOSE: CDI defines more data in space 253 than the default config memory
+             size of 0x200 (512 bytes). This file uses ~1,200 bytes in space 253.
+
+             At runtime, reads/writes beyond the configured highest address will
+             be rejected by the memory configuration handler or silently fail,
+             causing the node to appear broken to configuration tools.
+
+    EXPECTED RESULTS:
+    - Map stats:  Space 0xFD line shows negative "Additional bytes available" in RED
+                  e.g., "Additional bytes available: -688 (0x2B0) — config memory too small!"
+    - Map:        Config memory warning bar appears (amber) with "Set to 0xXXX" button
+    - Node Config: Red warning below config memory input field
+    - Generated .c: WARNING comment on highest_address line
+    - Validate:   CDI itself is valid — the mismatch is between CDI and config settings
+-->
+<!-- TEST_CHECKS
+name: Config Memory Too Small
+map_not_null | Map parses
+map_space_exceeds | space:253 | maxAddr:0x200 | Space 253 exceeds 0x200 (512) bytes
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Oversized Config</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- Large replicated group pushes well past 0x200 -->
+        <group replication="8">
+            <name>Output</name>
+            <repname>Output</repname>
+
+            <string size="32">
+                <name>Description</name>
+            </string>
+            <eventid>
+                <name>Event Active</name>
+            </eventid>
+            <eventid>
+                <name>Event Inactive</name>
+            </eventid>
+            <int size="2">
+                <name>Pulse Time</name>
+                <min>0</min>
+                <max>60000</max>
+            </int>
+            <int size="1">
+                <name>Startup State</name>
+                <map>
+                    <relation><property>Last</property><value>0</value></relation>
+                    <relation><property>Off</property><value>1</value></relation>
+                    <relation><property>On</property><value>2</value></relation>
+                </map>
+            </int>
+        </group>
+
+        <!-- Another large block -->
+        <group replication="8">
+            <name>Input</name>
+            <repname>Input</repname>
+
+            <string size="32">
+                <name>Description</name>
+            </string>
+            <eventid>
+                <name>Event Active</name>
+            </eventid>
+            <eventid>
+                <name>Event Inactive</name>
+            </eventid>
+            <int size="1">
+                <name>Debounce</name>
+                <min>0</min>
+                <max>255</max>
+            </int>
+        </group>
+    </segment>
+</cdi>

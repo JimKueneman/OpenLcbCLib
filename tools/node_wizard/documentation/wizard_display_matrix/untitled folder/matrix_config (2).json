@@ -1,0 +1,758 @@
+[
+  {
+    "id": "feature-flags",
+    "title": "Feature Flags (openlcb_user_config.h)",
+    "rows": [
+      {
+        "field": "OPENLCB_COMPILE_EVENTS",
+        "basic": "ON",
+        "typical": "ON",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "Always on",
+        "_changed": true
+      },
+      {
+        "field": "OPENLCB_COMPILE_DATAGRAMS",
+        "basic": "OFF",
+        "typical": "ON",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "Typical/Train need datagrams",
+        "_changed": true
+      },
+      {
+        "field": "OPENLCB_COMPILE_MEMORY_CONFIGURATION",
+        "basic": "OFF",
+        "typical": "ON",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "Typical/Train have config-mem",
+        "_changed": true
+      },
+      {
+        "field": "OPENLCB_COMPILE_FIRMWARE",
+        "basic": "OFF",
+        "typical": "OFF",
+        "train": "OFF",
+        "bVis": "Yes",
+        "bDerived": "Firmware add-on",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "Disabled for Basic (needs config-mem)",
+        "_changed": true
+      },
+      {
+        "field": "OPENLCB_COMPILE_BROADCAST_TIME",
+        "basic": "OFF",
+        "typical": "OFF",
+        "train": "OFF",
+        "bVis": "Yes",
+        "bDerived": "Broadcast Time add-on",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "ON if Producer or Consumer selected",
+        "_changed": true
+      },
+      {
+        "field": "OPENLCB_COMPILE_TRAIN",
+        "basic": "OFF",
+        "typical": "OFF",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "Only Train type",
+        "_changed": true
+      },
+      {
+        "field": "OPENLCB_COMPILE_STREAM",
+        "basic": "OFF",
+        "typical": "OFF",
+        "train": "OFF",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "Unreleased, always off",
+        "_changed": true
+      }
+    ]
+  },
+  {
+    "id": "buffer-pool",
+    "title": "Buffer Pool (openlcb_user_config.h)",
+    "rows": [
+      {
+        "field": "USER_DEFINED_BASIC_BUFFER_DEPTH",
+        "basic": "4",
+        "typical": "8",
+        "train": "8",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input (default from node type)",
+        "notes": ""
+      },
+      {
+        "field": "USER_DEFINED_DATAGRAM_BUFFER_DEPTH",
+        "basic": "0",
+        "typical": "4",
+        "train": "4",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input (default from node type)",
+        "notes": "0 for Basic (no datagrams)"
+      },
+      {
+        "field": "USER_DEFINED_SNIP_BUFFER_DEPTH",
+        "basic": "2",
+        "typical": "2",
+        "train": "2",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "Yes",
+        "aDerived": "user input (default 2)",
+        "notes": ""
+      },
+      {
+        "field": "USER_DEFINED_STREAM_BUFFER_DEPTH",
+        "basic": "0",
+        "typical": "0",
+        "train": "0",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "No",
+        "aDerived": "hardcoded",
+        "notes": "Stream unreleased"
+      },
+      {
+        "field": "USER_DEFINED_NODE_BUFFER_DEPTH",
+        "basic": "1",
+        "typical": "1",
+        "train": "1",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input (default from node type)",
+        "notes": "Train may need more for virtual nodes",
+        "_changed": true
+      }
+    ]
+  },
+  {
+    "id": "events",
+    "title": "Events (openlcb_user_config.h)",
+    "rows": [
+      {
+        "field": "USER_DEFINED_PRODUCER_COUNT",
+        "basic": "64",
+        "typical": "64",
+        "train": "64",
+        "bVis": "Yes",
+        "bDerived": "user input",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "Depends on application",
+        "_changed": true
+      },
+      {
+        "field": "USER_DEFINED_PRODUCER_RANGE_COUNT",
+        "basic": "4",
+        "typical": "4",
+        "train": "4",
+        "bVis": "Yes",
+        "bDerived": "user input",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "Broadcast time uses ranges",
+        "_changed": true
+      },
+      {
+        "field": "USER_DEFINED_CONSUMER_COUNT",
+        "basic": "64",
+        "typical": "64",
+        "train": "64",
+        "bVis": "Yes",
+        "bDerived": "user input",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "Depends on application",
+        "_changed": true
+      },
+      {
+        "field": "USER_DEFINED_CONSUMER_RANGE_COUNT",
+        "basic": "4",
+        "typical": "4",
+        "train": "4",
+        "bVis": "Yes",
+        "bDerived": "user input",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "Broadcast time uses ranges",
+        "_changed": true
+      }
+    ]
+  },
+  {
+    "id": "memory-config",
+    "title": "Memory Configuration (openlcb_user_config.h)",
+    "rows": [
+      {
+        "field": "USER_DEFINED_CDI_LENGTH",
+        "basic": "1",
+        "typical": "from CDI",
+        "train": "from CDI",
+        "bVis": "No",
+        "bDerived": "unused basic or CDI file",
+        "aVis": "No",
+        "aDerived": "CDI file",
+        "notes": "Byte length of loaded CDI",
+        "_changed": true
+      },
+      {
+        "field": "USER_DEFINED_FDI_LENGTH",
+        "basic": "1",
+        "typical": "1",
+        "train": "from FDI",
+        "bVis": "No",
+        "bDerived": "unused or FDI train node",
+        "aVis": "No",
+        "aDerived": "FDI file",
+        "notes": "Byte length of loaded FDI",
+        "_changed": true
+      },
+      {
+        "field": "USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS",
+        "basic": "0",
+        "typical": "0",
+        "train": "0",
+        "bVis": "Yes",
+        "bDerived": "user input",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "",
+        "_changed": true
+      },
+      {
+        "field": "USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS",
+        "basic": "63",
+        "typical": "63",
+        "train": "63",
+        "bVis": "No",
+        "bDerived": "user input",
+        "aVis": "Yes",
+        "aDerived": "user input",
+        "notes": "",
+        "_changed": true
+      }
+    ]
+  },
+  {
+    "id": "train-protocol",
+    "title": "Train Protocol (openlcb_user_config.h)",
+    "rows": [
+      {
+        "field": "USER_DEFINED_TRAIN_NODE_COUNT",
+        "basic": "1",
+        "typical": "1",
+        "train": "1",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "Yes",
+        "aDerived": "from ",
+        "notes": "How many trains this node manages",
+        "_changed": true
+      },
+      {
+        "field": "USER_DEFINED_MAX_LISTENERS_PER_TRAIN",
+        "basic": "0",
+        "typical": "0",
+        "train": "1",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "Yes",
+        "aDerived": "user input train only",
+        "notes": "Max listener in a consist",
+        "_changed": true
+      },
+      {
+        "field": "USER_DEFINED_MAX_TRAIN_FUNCTIONS",
+        "basic": "0",
+        "typical": "0",
+        "train": "1",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "Yes",
+        "aDerived": "user input train only",
+        "notes": "F0-F28 or subset",
+        "_changed": true
+      }
+    ]
+  },
+  {
+    "id": "snip",
+    "title": "SNIP (node_parameters_t.snip)",
+    "rows": [
+      {
+        "field": ".snip.mfg_version",
+        "basic": "4",
+        "typical": "4",
+        "train": "4",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "No",
+        "aDerived": "hardcoded",
+        "notes": "Always 4 (spec version)"
+      },
+      {
+        "field": ".snip.name",
+        "basic": "user input",
+        "typical": "from CDI",
+        "train": "from CDI",
+        "bVis": "Yes (Basic only)",
+        "bDerived": "SNIP add-on text",
+        "aVis": "Yes (Basic only)",
+        "aDerived": "SNIP add-on text",
+        "notes": "Others: extracted from CDI"
+      },
+      {
+        "field": ".snip.model",
+        "basic": "user input",
+        "typical": "from CDI",
+        "train": "from CDI",
+        "bVis": "Yes (Basic only)",
+        "bDerived": "SNIP add-on text",
+        "aVis": "Yes (Basic only)",
+        "aDerived": "SNIP add-on text",
+        "notes": "Others: extracted from CDI"
+      },
+      {
+        "field": ".snip.hardware_version",
+        "basic": "user input",
+        "typical": "from CDI",
+        "train": "from CDI",
+        "bVis": "Yes (Basic only)",
+        "bDerived": "SNIP add-on text",
+        "aVis": "Yes (Basic only)",
+        "aDerived": "SNIP add-on text",
+        "notes": "Others: extracted from CDI"
+      },
+      {
+        "field": ".snip.software_version",
+        "basic": "user input",
+        "typical": "from CDI",
+        "train": "from CDI",
+        "bVis": "Yes (Basic only)",
+        "bDerived": "SNIP add-on text",
+        "aVis": "Yes (Basic only)",
+        "aDerived": "SNIP add-on text",
+        "notes": "Others: extracted from CDI"
+      },
+      {
+        "field": ".snip.user_version",
+        "basic": "2",
+        "typical": "2",
+        "train": "2",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "No",
+        "aDerived": "hardcoded",
+        "notes": "Always 2 (spec version)"
+      }
+    ]
+  },
+  {
+    "id": "protocol-support",
+    "title": "Protocol Support (node_parameters_t.protocol_support)",
+    "rows": [
+      {
+        "field": "PSI_SIMPLE_NODE_INFORMATION",
+        "basic": "ON",
+        "typical": "ON",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "No",
+        "aDerived": "hardcoded",
+        "notes": "Always on"
+      },
+      {
+        "field": "PSI_DATAGRAM",
+        "basic": "OFF",
+        "typical": "ON",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Follows datagrams flag"
+      },
+      {
+        "field": "PSI_MEMORY_CONFIGURATION",
+        "basic": "OFF",
+        "typical": "ON",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Follows config-mem flag"
+      },
+      {
+        "field": "PSI_CONFIGURATION_DESCRIPTION_INFO",
+        "basic": "OFF",
+        "typical": "ON",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Follows config-mem flag"
+      },
+      {
+        "field": "PSI_ABBREVIATED_DEFAULT_CDI",
+        "basic": "OFF",
+        "typical": "ON",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Follows config-mem flag"
+      },
+      {
+        "field": "PSI_EVENT_EXCHANGE",
+        "basic": "ON",
+        "typical": "ON",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "All types use events"
+      },
+      {
+        "field": "PSI_TRAIN_CONTROL",
+        "basic": "OFF",
+        "typical": "OFF",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Only Train"
+      },
+      {
+        "field": "PSI_FUNCTION_DESCRIPTION",
+        "basic": "OFF",
+        "typical": "OFF",
+        "train": "ON",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Follows train flag"
+      },
+      {
+        "field": "PSI_FIRMWARE_UPGRADE",
+        "basic": "OFF",
+        "typical": "OFF*",
+        "train": "OFF*",
+        "bVis": "No",
+        "bDerived": "Firmware add-on",
+        "aVis": "No",
+        "aDerived": "Firmware add-on",
+        "notes": "*ON if firmware add-on checked"
+      },
+      {
+        "field": "PSI_STREAM",
+        "basic": "OFF",
+        "typical": "OFF",
+        "train": "OFF",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "No",
+        "aDerived": "hardcoded",
+        "notes": "Unreleased"
+      }
+    ]
+  },
+  {
+    "id": "config-options",
+    "title": "Configuration Options (node_parameters_t.configuration_options)",
+    "rows": [
+      {
+        "field": ".write_under_mask_supported",
+        "basic": "N/A",
+        "typical": "true",
+        "train": "true",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Always on when config-mem present"
+      },
+      {
+        "field": ".unaligned_reads_supported",
+        "basic": "N/A",
+        "typical": "true",
+        "train": "true",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input (default true)",
+        "notes": ""
+      },
+      {
+        "field": ".unaligned_writes_supported",
+        "basic": "N/A",
+        "typical": "true",
+        "train": "true",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input (default true)",
+        "notes": ""
+      },
+      {
+        "field": ".read_from_manufacturer_space_0xfc_supported",
+        "basic": "N/A",
+        "typical": "true",
+        "train": "true",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Always on when config-mem present"
+      },
+      {
+        "field": ".read_from_user_space_0xfb_supported",
+        "basic": "N/A",
+        "typical": "true",
+        "train": "true",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Always on when config-mem present"
+      },
+      {
+        "field": ".write_to_user_space_0xfb_supported",
+        "basic": "N/A",
+        "typical": "true",
+        "train": "true",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Always on when config-mem present"
+      },
+      {
+        "field": ".stream_read_write_supported",
+        "basic": "N/A",
+        "typical": "false",
+        "train": "false",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "No",
+        "aDerived": "hardcoded",
+        "notes": "Stream unreleased"
+      },
+      {
+        "field": ".high_address_space",
+        "basic": "N/A",
+        "typical": "0xFF",
+        "train": "0xFF",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Always CDI space"
+      },
+      {
+        "field": ".low_address_space",
+        "basic": "N/A",
+        "typical": "derived",
+        "train": "derived",
+        "bVis": "No",
+        "bDerived": "node type + add-ons",
+        "aVis": "No",
+        "aDerived": "node type + add-ons",
+        "notes": "Lowest active space"
+      },
+      {
+        "field": ".description",
+        "basic": "N/A",
+        "typical": "",
+        "train": "",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "Yes",
+        "aDerived": "user input (default \"\")",
+        "notes": "Optional config description"
+      }
+    ]
+  },
+  {
+    "id": "address-spaces",
+    "title": "Address Spaces (node_parameters_t.address_space_*)",
+    "rows": [
+      {
+        "field": "0xFF CDI",
+        "basic": "not present",
+        "typical": "present, RO",
+        "train": "present, RO",
+        "bVis": "No",
+        "bDerived": "node type + CDI file",
+        "aVis": "No",
+        "aDerived": "node type + CDI file",
+        "notes": "Highest addr = CDI byte length - 1"
+      },
+      {
+        "field": "0xFE All Memory",
+        "basic": "not present",
+        "typical": "not present",
+        "train": "not present",
+        "bVis": "No",
+        "bDerived": "hardcoded off",
+        "aVis": "Yes",
+        "aDerived": "user input (default off)",
+        "notes": ""
+      },
+      {
+        "field": "0xFD Config Memory",
+        "basic": "not present",
+        "typical": "present, RW",
+        "train": "present, RW",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input (default from node type)",
+        "notes": "Highest addr editable"
+      },
+      {
+        "field": "0xFC ACDI Manufacturer",
+        "basic": "not present",
+        "typical": "present, RO",
+        "train": "present, RO",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Fixed layout (125 bytes)"
+      },
+      {
+        "field": "0xFB ACDI User",
+        "basic": "not present",
+        "typical": "present, RW",
+        "train": "present, RW",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "No",
+        "aDerived": "node type",
+        "notes": "Fixed layout (128 bytes)"
+      },
+      {
+        "field": "0xFA Train FDI",
+        "basic": "not present",
+        "typical": "not present",
+        "train": "present, RO",
+        "bVis": "No",
+        "bDerived": "node type + FDI file",
+        "aVis": "No",
+        "aDerived": "node type + FDI file",
+        "notes": "Highest addr = FDI byte length - 1"
+      },
+      {
+        "field": "0xF9 Train Function Config",
+        "basic": "not present",
+        "typical": "not present",
+        "train": "present, RW",
+        "bVis": "No",
+        "bDerived": "node type",
+        "aVis": "Yes",
+        "aDerived": "user input (default from node type)",
+        "notes": "Highest addr editable"
+      },
+      {
+        "field": "0xEF Firmware",
+        "basic": "not present",
+        "typical": "if firmware",
+        "train": "if firmware",
+        "bVis": "No",
+        "bDerived": "Firmware add-on",
+        "aVis": "No",
+        "aDerived": "Firmware add-on",
+        "notes": "Present only when firmware enabled"
+      }
+    ]
+  },
+  {
+    "id": "auto-create",
+    "title": "Auto-create Counts",
+    "rows": [
+      {
+        "field": ".consumer_count_autocreate",
+        "basic": "0",
+        "typical": "0",
+        "train": "0",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "No",
+        "aDerived": "hardcoded",
+        "notes": "Always 0"
+      },
+      {
+        "field": ".producer_count_autocreate",
+        "basic": "0",
+        "typical": "0",
+        "train": "0",
+        "bVis": "No",
+        "bDerived": "hardcoded",
+        "aVis": "No",
+        "aDerived": "hardcoded",
+        "notes": "Always 0"
+      }
+    ]
+  },
+  {
+    "id": "cdi-fdi",
+    "title": "CDI / FDI Byte Arrays",
+    "rows": [
+      {
+        "field": ".cdi[]",
+        "basic": "{0x00}",
+        "typical": "from file",
+        "train": "from file",
+        "bVis": "Yes",
+        "bDerived": "CDI file upload",
+        "aVis": "Yes",
+        "aDerived": "CDI file upload",
+        "notes": "Typical/Train require CDI file"
+      },
+      {
+        "field": ".fdi[]",
+        "basic": "{0x00}",
+        "typical": "{0x00}",
+        "train": "from file",
+        "bVis": "Yes",
+        "bDerived": "FDI file upload",
+        "aVis": "Yes",
+        "aDerived": "FDI file upload",
+        "notes": "Train requires FDI file"
+      }
+    ]
+  }
+]

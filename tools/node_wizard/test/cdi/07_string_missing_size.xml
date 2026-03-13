@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 07_string_missing_size.xml
+    PURPOSE: <string> element without 'size' attribute.
+             CDI standard Section 5.1.4.3 says size is required.
+             Without it, address calculation will be wrong for all subsequent elements.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 warning — "<string> element missing 'size' attribute"
+    - Map:      The string will show size=0, subsequent addresses may be wrong
+-->
+<!-- TEST_CHECKS
+name: String Missing Size
+validate_has | severity:warning | pattern:string.*size|size.*string | Warning about missing string size
+map_not_null | Map still parses (with wrong addresses)
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>No String Size</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string>
+            <name>User Name (no size!)</name>
+        </string>
+        <string size="64">
+            <name>User Description</name>
+        </string>
+        <int size="1">
+            <name>Mode</name>
+        </int>
+    </segment>
+</cdi>

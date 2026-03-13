@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 03_wrong_root_element.xml
+    PURPOSE: Root element is not <cdi> — violates CDI standard Section 5.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 error — "Root element is not <cdi>"
+    - Map:      May render empty or show "No segments found"
+-->
+<!-- TEST_CHECKS
+name: Wrong Root Element
+validate_has | severity:error | pattern:root.*must.*cdi | Root element error detected
+-->
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Wrong Root</model>
+    </identification>
+
+    <segment space="253" origin="0">
+        <string size="63">
+            <name>User Name</name>
+        </string>
+    </segment>
+</configuration>

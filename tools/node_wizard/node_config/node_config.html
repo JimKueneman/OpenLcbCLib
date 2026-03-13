@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node Configuration — OpenLcbCLib</title>
+    <link rel="stylesheet" href="node_config.css">
+
+    <!-- Syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <!-- ===== LEFT: Options form ===== -->
+        <main class="config-panel" id="config-panel">
+
+            <section class="step-section" id="addons-section">
+                <h2>Options</h2>
+
+                <div class="addon-list">
+
+                    <!-- SNIP (Basic only) -->
+                    <div class="addon-group hidden" id="addon-snip-group">
+                        <div class="addon-group-header">
+                            <label class="addon-item">
+                                <input type="checkbox" id="addon-snip">
+                                <span class="addon-label">Simple Node Identification (SNIP)</span>
+                            </label>
+                            <span class="addon-recommend">Recommended — without SNIP, tools cannot identify this node</span>
+                        </div>
+
+                        <div class="snip-fields hidden" id="snip-fields">
+                            <div class="snip-field">
+                                <label for="snip-manufacturer">Manufacturer Name</label>
+                                <input type="text" id="snip-manufacturer" maxlength="40" placeholder="My Company">
+                            </div>
+                            <div class="snip-field">
+                                <label for="snip-model">Model</label>
+                                <input type="text" id="snip-model" maxlength="40" placeholder="Signal Controller v2">
+                            </div>
+                            <div class="snip-field">
+                                <label for="snip-hw-version">Hardware Version</label>
+                                <input type="text" id="snip-hw-version" maxlength="20" placeholder="1.0">
+                            </div>
+                            <div class="snip-field">
+                                <label for="snip-sw-version">Software Version</label>
+                                <input type="text" id="snip-sw-version" maxlength="20" placeholder="0.1.0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Config Memory options (Typical/Train only) -->
+                    <div class="addon-group hidden" id="addon-config-group">
+                        <span class="addon-group-title">Memory Configuration</span>
+
+                        <label class="addon-item">
+                            <input type="checkbox" id="config-unaligned-reads" checked>
+                            <span class="addon-label">Unaligned Reads Supported</span>
+                            <span class="addon-desc">Uncheck if hardware (EEPROM/FLASH/FRAM/etc.) requires aligned access</span>
+                        </label>
+
+                        <label class="addon-item">
+                            <input type="checkbox" id="config-unaligned-writes" checked>
+                            <span class="addon-label">Unaligned Writes Supported</span>
+                            <span class="addon-desc">Uncheck if hardware (EEPROM/FLASH/FRAM/etc.) requires aligned access</span>
+                        </label>
+
+                        <div class="config-field">
+                            <label for="config-mem-highest-addr">Config memory size (highest address)</label>
+                            <input type="text" id="config-mem-highest-addr" value="0x200" placeholder="0x200">
+                        </div>
+                        <p class="field-note" id="config-mem-warning" style="display:none; color:#b91c1c; background:#fee2e2; padding:6px 8px; border-radius:4px; border:1px solid #fca5a5;">
+                        </p>
+                        <p class="field-note">
+                            ⚠ Bytes 0–126 are reserved by the default CDI for
+                            <strong>User Name</strong> (bytes 0–62, 63 bytes) and
+                            <strong>User Description</strong> (bytes 63–126, 64 bytes).
+                            Your application data must start at byte 127 (<code>0x7F</code>) or higher.
+                        </p>
+                    </div>
+
+                    <!-- Event Buffers (always visible) -->
+                    <div class="addon-group" id="addon-events-group">
+                        <span class="addon-group-title">Event Buffers</span>
+
+                        <div class="event-count-grid">
+
+                            <div class="event-count-field">
+                                <label for="event-producer-count">Producers</label>
+                                <input type="number" id="event-producer-count" value="64" min="1" max="65535">
+                            </div>
+
+                            <div class="event-count-field">
+                                <label for="event-consumer-count">Consumers</label>
+                                <input type="number" id="event-consumer-count" value="64" min="1" max="65535">
+                            </div>
+
+                            <div class="event-count-field">
+                                <label for="event-producer-range-count">Producer Ranges</label>
+                                <input type="number" id="event-producer-range-count" value="4" min="0" max="255">
+                            </div>
+
+                            <div class="event-count-field">
+                                <label for="event-consumer-range-count">Consumer Ranges</label>
+                                <input type="number" id="event-consumer-range-count" value="4" min="0" max="255">
+                            </div>
+
+                        </div>
+
+                        <p class="field-note">
+                            Enter the number of Producers, Consumers and Ranges your node will support.
+                        </p>
+                    </div>
+
+                    <!-- Add-Ons collapsible section -->
+                    <details class="addon-collapsible" id="addon-extras-section">
+                        <summary class="addon-collapsible-toggle">Add-Ons</summary>
+
+                        <div class="addon-collapsible-content">
+
+                            <!-- Broadcast Time -->
+                            <div class="addon-group">
+                                <span class="addon-group-title">Broadcast Time</span>
+
+                                <label class="addon-item">
+                                    <input type="radio" name="addon-broadcast" value="none" checked>
+                                    <span class="addon-label">None</span>
+                                </label>
+
+                                <label class="addon-item">
+                                    <input type="radio" name="addon-broadcast" value="producer">
+                                    <span class="addon-label">Producer</span>
+                                    <span class="addon-desc">This node generates and distributes fast-clock time</span>
+                                </label>
+
+                                <label class="addon-item">
+                                    <input type="radio" name="addon-broadcast" value="consumer">
+                                    <span class="addon-label">Consumer</span>
+                                    <span class="addon-desc">This node receives and tracks fast-clock time</span>
+                                </label>
+
+                                <p class="field-note broadcast-note hidden" id="broadcast-note">
+                                    Broadcast Time will use 2 producer event ranges and 2 consumer event ranges, make sure to account for this in the Event Buffers above.
+                                </p>
+                            </div>
+
+                            <!-- Firmware upgrade -->
+                            <div class="addon-group" id="addon-firmware-label">
+                                <label class="addon-item">
+                                    <input type="checkbox" id="addon-firmware">
+                                    <span class="addon-label">Firmware Update</span>
+                                    <span class="addon-desc">Enable over-the-network firmware upgrades</span>
+                                    <span class="addon-note hidden" id="firmware-note">Requires Config Memory — not available with Basic Node</span>
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </details>
+
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ===== SPLITTER ===== -->
+        <div class="splitter" id="splitter"></div>
+
+        <!-- ===== RIGHT: File browser + code preview ===== -->
+        <aside class="preview-panel">
+
+            <!-- File browser sidebar -->
+            <div class="file-browser" id="file-browser">
+                <!-- Populated dynamically by _rebuildFileBrowser() -->
+            </div>
+
+            <!-- Code display area -->
+            <div class="code-display">
+                <div class="preview-header">
+                    <span class="preview-filename" id="preview-filename">openlcb_user_config.h</span>
+                </div>
+                <pre class="code-preview empty"><code class="language-c" id="code-preview">Select a node type to preview the generated files</code></pre>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- Driver & callback definitions (needed by codegen for main.c wiring) -->
+    <script src="../drivers/js/driver_defs.js"></script>
+    <script src="../callbacks/js/callback_defs.js"></script>
+
+    <!-- Driver & callback code generators (needed for file preview) -->
+    <script src="../drivers/js/driver_codegen.js"></script>
+    <script src="../callbacks/js/callback_codegen.js"></script>
+
+    <script src="js/codegen.js"></script>
+    <script src="js/node_config.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node Wizard — OpenLcbCLib</title>
+    <link rel="stylesheet" href="node_wizard.css">
+</head>
+<body>
+
+    <header>
+        <h1>Node Wizard</h1>
+        <p class="subtitle">Configure your OpenLCB node and preview the generated source files</p>
+        <div class="header-actions">
+            <button class="header-btn" id="btn-save-project" onclick="saveProject()">
+                Save Project
+            </button>
+            <div class="header-btn-wrap">
+                <button class="header-btn">Load Project</button>
+                <input type="file" id="file-load-project" accept=".json" title="Load a saved project file">
+            </div>
+            <span class="header-sep"></span>
+            <label class="header-checkbox" id="arduino-wrap">
+                <input type="checkbox" id="chk-arduino">
+                <span>Arduino (.ino)</span>
+            </label>
+            <button class="header-btn header-btn-primary" id="btn-generate" disabled onclick="requestDownload()">
+                Generate Files
+            </button>
+        </div>
+    </header>
+
+    <div class="layout">
+
+        <!-- ===== LEFT: Navigation sidebar ===== -->
+        <nav class="sidebar" id="sidebar">
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">Node Type</span>
+
+                <div class="sidebar-tile" data-type="basic" onclick="selectNodeType('basic')">
+                    <span class="tile-icon">📦</span>
+                    <div class="tile-content">
+                        <span class="tile-name">Basic</span>
+                        <span class="tile-desc">Events only</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-tile" data-type="typical" onclick="selectNodeType('typical')">
+                    <span class="tile-icon">⚙️</span>
+                    <div class="tile-content">
+                        <span class="tile-name">Typical</span>
+                        <span class="tile-desc">Events + CDI + Config</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-tile" data-type="train" onclick="selectNodeType('train')">
+                    <span class="tile-icon">🚂</span>
+                    <div class="tile-content">
+                        <span class="tile-name">Train</span>
+                        <span class="tile-desc">Locomotive</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-tile" data-type="train-controller" onclick="selectNodeType('train-controller')">
+                    <span class="tile-icon">🎮</span>
+                    <div class="tile-content">
+                        <span class="tile-name">Train Controller</span>
+                        <span class="tile-desc">Throttle</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-tile disabled" data-type="custom">
+                    <span class="tile-icon">🔧</span>
+                    <div class="tile-content">
+                        <span class="tile-name">Custom</span>
+                        <span class="tile-desc">Advanced — coming soon</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">Descriptors</span>
+
+                <div class="sidebar-tile disabled" id="tile-cdi" onclick="selectView('cdi')">
+                    <span class="tile-icon">📄</span>
+                    <div class="tile-content">
+                        <span class="tile-name">CDI</span>
+                        <span class="tile-desc">Configuration Description</span>
+                    </div>
+                    <span class="tile-badge" id="badge-cdi" title="CDI not loaded — required for this node type"></span>
+                </div>
+
+                <div class="sidebar-tile disabled" id="tile-fdi" onclick="selectView('fdi')">
+                    <span class="tile-icon">📋</span>
+                    <div class="tile-content">
+                        <span class="tile-name">FDI</span>
+                        <span class="tile-desc">Function Description</span>
+                    </div>
+                    <span class="tile-badge" id="badge-fdi" title="FDI not loaded — required for Train nodes"></span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">Platform</span>
+
+                <div class="sidebar-tile disabled" id="tile-platform" onclick="selectView('platform')">
+                    <span class="tile-icon">🎯</span>
+                    <div class="tile-content">
+                        <span class="tile-name">Target Platform</span>
+                        <span class="tile-desc">None / Custom</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">Hardware Interface Drivers</span>
+
+                <div class="sidebar-tile disabled" id="tile-can-drivers" onclick="selectView('can-drivers')">
+                    <span class="tile-icon">🔌</span>
+                    <div class="tile-content">
+                        <span class="tile-name">CAN Drivers</span>
+                        <span class="tile-desc">openlcb_can_drivers.c/h</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-tile disabled" id="tile-olcb-drivers" onclick="selectView('olcb-drivers')">
+                    <span class="tile-icon">🖥️</span>
+                    <div class="tile-content">
+                        <span class="tile-name">OLCB/LCC Drivers</span>
+                        <span class="tile-desc">openlcb_drivers.c/h</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">Callbacks</span>
+
+                <div class="sidebar-tile disabled" id="tile-cb-can" onclick="selectView('cb-can')">
+                    <span class="tile-icon">🔌</span>
+                    <div class="tile-content">
+                        <span class="tile-name">CAN</span>
+                        <span class="tile-desc">callbacks_can.c/h</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-tile disabled" id="tile-cb-olcb" onclick="selectView('cb-olcb')">
+                    <span class="tile-icon">🖥️</span>
+                    <div class="tile-content">
+                        <span class="tile-name">OLCB/LCC</span>
+                        <span class="tile-desc">callbacks_olcb.c/h</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-tile disabled" id="tile-cb-events" onclick="selectView('cb-events')">
+                    <span class="tile-icon">📡</span>
+                    <div class="tile-content">
+                        <span class="tile-name">Events</span>
+                        <span class="tile-desc">callbacks_events.c/h</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-tile disabled" id="tile-cb-config-mem" onclick="selectView('cb-config-mem')">
+                    <span class="tile-icon">💾</span>
+                    <div class="tile-content">
+                        <span class="tile-name">Config Memory</span>
+                        <span class="tile-desc">callbacks_config_mem.c/h</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-tile disabled" id="tile-cb-train" onclick="selectView('cb-train')">
+                    <span class="tile-icon">🚂</span>
+                    <div class="tile-content">
+                        <span class="tile-name">Train</span>
+                        <span class="tile-desc">callbacks_train.c/h</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-tile disabled" id="tile-cb-bcast-time" onclick="selectView('cb-bcast-time')">
+                    <span class="tile-icon">🕐</span>
+                    <div class="tile-content">
+                        <span class="tile-name">Broadcast Time</span>
+                        <span class="tile-desc">callbacks_broadcast_time.c/h</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer"></div>
+
+        </nav>
+
+        <!-- ===== RIGHT: Workspace (iframe) ===== -->
+        <main class="workspace" id="workspace">
+
+            <div class="workspace-empty" id="workspace-empty">
+                <div class="empty-icon">👈</div>
+                <div class="empty-text">Select a node type to get started</div>
+            </div>
+
+            <iframe id="workspace-iframe"
+                    style="display:none"></iframe>
+
+        </main>
+
+    </div>
+
+    <!-- JSZip for ZIP file generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- Definition + codegen scripts (needed by ZIP export) -->
+    <script src="callbacks/js/callback_defs.js"></script>
+    <script src="callbacks/js/callback_codegen.js"></script>
+    <script src="drivers/js/driver_defs.js"></script>
+    <script src="drivers/js/driver_codegen.js"></script>
+    <script src="node_config/js/codegen.js"></script>
+
+    <!-- Application scripts -->
+    <script src="js/zip_export.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>

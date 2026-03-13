@@ -349,7 +349,9 @@ static void _build_snip(void) {
 
     memset(&_snip, 0, sizeof(_snip));
 
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
     _snip.config_memory_read = _config->config_mem_read;
+#endif
 
 }
 
@@ -608,8 +610,11 @@ static void _build_application(void) {
     memset(&_app, 0, sizeof(_app));
 
     _app.send_openlcb_msg    = &CanTxStatemachine_send_openlcb_message;
+
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
     _app.config_memory_read  = _config->config_mem_read;
     _app.config_memory_write = _config->config_mem_write;
+#endif
 
 }
 

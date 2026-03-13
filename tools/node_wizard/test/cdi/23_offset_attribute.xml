@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 23_offset_attribute.xml
+    PURPOSE: Elements with offset attributes (including negative offsets).
+             CDI standard Section 5.1.4: "Each time an offset attribute is
+             encountered, the value of the address is incremented by the offset
+             (which may be negative) before any other processing."
+
+    EXPECTED RESULTS:
+    - Map:      Addresses reflect offset adjustments:
+                User Name:       0x0000 (63 bytes)
+                User Description: 0x003F (64 bytes)
+                [offset +16 = skip 16 bytes of padding]
+                Padded Field:    0x008F (not 0x007F)
+                [offset -4 = back up 4 bytes] — NO OVERLAP since offset is before the element
+                Backtrack Field: 0x008F + 1 - 4 = starts at 0x008C... check actual behavior
+    - This tests proper address arithmetic with positive and negative offsets
+-->
+<!-- TEST_CHECKS
+name: Offset Attribute (Gaps)
+map_not_null | Map parses
+map_no_overlaps | No overlaps (positive offsets only)
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Offset Test</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- Skip 16 bytes of padding before this field -->
+        <int size="1" offset="16">
+            <name>Padded Field</name>
+        </int>
+
+        <!-- Normal field, no offset -->
+        <int size="2">
+            <name>Normal After Pad</name>
+        </int>
+
+        <!-- Skip a large gap (e.g. reserved area) -->
+        <int size="4" offset="64">
+            <name>Far Field</name>
+        </int>
+
+        <int size="1">
+            <name>Right After Far</name>
+        </int>
+    </segment>
+</cdi>

@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 21_all_data_types.xml
+    PURPOSE: Exercise every CDI data element type in a single file:
+             int (1,2,4,8), string, eventid, float (4,8), action, blob.
+             Verifies the tool handles all types for rendering, map, and code gen.
+
+    EXPECTED RESULTS:
+    - Map:      Each element shows correct size:
+                int size=1: 1 byte, int size=2: 2 bytes, int size=4: 4 bytes, int size=8: 8 bytes
+                string size=32: 32 bytes
+                eventid: always 8 bytes
+                float size=4: 4 bytes, float size=8: 8 bytes
+                action size=2: 2 bytes
+    - Render:   All element types render with appropriate UI hints
+    - Validate: Clean — all types are valid per CDI spec
+-->
+<!-- TEST_CHECKS
+name: All Data Element Types
+validate_count | severity:error | expected:0 | No validation errors
+map_not_null | Map parses
+map_no_overlaps | No overlaps
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>All Types</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <group>
+            <name>Integer Types</name>
+            <int size="1"><name>Byte Value</name></int>
+            <int size="2"><name>Short Value</name></int>
+            <int size="4"><name>Long Value</name></int>
+            <int size="8"><name>Big Value</name></int>
+        </group>
+
+        <group>
+            <name>String Types</name>
+            <string size="32"><name>Short String</name></string>
+        </group>
+
+        <group>
+            <name>Event Types</name>
+            <eventid><name>Event Alpha</name></eventid>
+            <eventid><name>Event Beta</name></eventid>
+        </group>
+
+        <group>
+            <name>Float Types</name>
+            <float size="4">
+                <name>Single Precision</name>
+                <min>0.0</min>
+                <max>100.0</max>
+            </float>
+            <float size="8">
+                <name>Double Precision</name>
+            </float>
+        </group>
+
+        <group>
+            <name>Action Type</name>
+            <action size="2">
+                <name>Reset Command</name>
+                <buttonText>Reset Now</buttonText>
+                <dialogText>Are you sure you want to reset?</dialogText>
+                <value>1</value>
+            </action>
+        </group>
+    </segment>
+</cdi>

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 16_segment_with_origin.xml
+    PURPOSE: Segment with non-zero origin attribute.
+             CDI standard Section 5.1.3: origin initializes the address counter.
+             The tool must start address calculation at the origin, not at 0.
+
+    EXPECTED RESULTS:
+    - Map:      Space 0xFD addresses start at 0x0100 (origin=256), not 0x0000
+                First element at 0x0100, not 0x0000
+    - Defines:  #define offsets should reflect the origin-based addresses
+    - Render:   Preview addresses should start at 256
+    - Stats:    Byte range shows 0x0100–0xXXXX
+-->
+<!-- TEST_CHECKS
+name: Non-Zero Segment Origin
+map_not_null | Map parses
+map_origin | space:253 | expectedOrigin:256 | Space 253 segment origin is 256 (0x100)
+map_first_addr | space:253 | minAddr:256 | First element address >= 256 (0x100)
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Origin Test</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="256">
+        <name>Config Data (starts at 0x100)</name>
+
+        <string size="32">
+            <name>Device Label</name>
+        </string>
+
+        <int size="2">
+            <name>Timeout</name>
+            <min>0</min>
+            <max>65535</max>
+        </int>
+
+        <eventid>
+            <name>Heartbeat Event</name>
+        </eventid>
+    </segment>
+</cdi>

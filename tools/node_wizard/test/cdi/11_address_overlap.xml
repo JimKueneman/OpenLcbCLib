@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 11_address_overlap.xml
+    PURPOSE: Overlapping address ranges in the same address space.
+             Uses negative offsets to force elements to overlap.
+             At runtime this causes EEPROM/FLASH data corruption — multiple
+             CDI variables map to the same physical bytes, so writing one
+             silently overwrites part of another.
+
+    EXPECTED RESULTS:
+    - Render:   Renders but with overlap indicators in the map
+    - Map:      Overlap report section appears (red) showing:
+                "Space 0xFD: "Overlapping Field" at 0x007B–0x007C overlaps previous region"
+    - Validate: May also report the overlap as a structural issue
+-->
+<!-- TEST_CHECKS
+name: Address Space Overlap
+map_not_null | Map parses
+map_has_overlaps | Overlaps detected in map
+map_overlap_count | space:253 | min:1 | At least 1 overlap in space 253
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Overlap Test</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- Normal field: occupies bytes 0x7F–0x82 (4 bytes) -->
+        <int size="4">
+            <name>Normal Field</name>
+        </int>
+
+        <!-- Negative offset pulls address back, causing overlap with previous field.
+             This means this field's EEPROM bytes overlap with "Normal Field" above.
+             Writing to either one corrupts the other at runtime. -->
+        <int size="2" offset="-2">
+            <name>Overlapping Field</name>
+        </int>
+
+        <int size="1">
+            <name>After Overlap</name>
+        </int>
+    </segment>
+</cdi>

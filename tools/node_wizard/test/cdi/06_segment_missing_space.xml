@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 06_segment_missing_space.xml
+    PURPOSE: <segment> missing required 'space' attribute.
+             CDI standard Section 5.1.3 requires the space attribute.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 error — "<segment> missing required 'space' attribute"
+    - Map:      May fail to render this segment or show space as NaN
+-->
+<!-- TEST_CHECKS
+name: Segment Missing Space Attribute
+validate_has | severity:error | pattern:space.*attribute|attribute.*space | Error about missing space attribute
+-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Missing Space Attr</model>
+    </identification>
+
+    <acdi/>
+
+    <segment origin="0">
+        <name>Config Data</name>
+        <string size="63">
+            <name>User Name</name>
+        </string>
+    </segment>
+</cdi>

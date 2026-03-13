@@ -103,15 +103,6 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a654fa7c6260aa2ac2c0589f57fcd67e9" id="r_a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a654fa7c6260aa2ac2c0589f57fcd67e9">unlock_shared_resources</a> )(void)</td></tr>
 <tr class="memdesc:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-enable interrupts / release mutex. REQUIRED.  <br /></td></tr>
 <tr class="separator:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1dd7ccbff75adc9b458812a73e45be69" id="r_a1dd7ccbff75adc9b458812a73e45be69"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1dd7ccbff75adc9b458812a73e45be69">config_mem_read</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
-<tr class="memdesc:a1dd7ccbff75adc9b458812a73e45be69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from configuration memory (EEPROM/Flash/file). REQUIRED.  <br /></td></tr>
-<tr class="separator:a1dd7ccbff75adc9b458812a73e45be69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40205ff1fb1258614ed2e7b840d98202" id="r_a40205ff1fb1258614ed2e7b840d98202"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a40205ff1fb1258614ed2e7b840d98202">config_mem_write</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
-<tr class="memdesc:a40205ff1fb1258614ed2e7b840d98202"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write to configuration memory (EEPROM/Flash/file). REQUIRED.  <br /></td></tr>
-<tr class="separator:a40205ff1fb1258614ed2e7b840d98202"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e69453bb4a864b0b98fb8be0a06afd4" id="r_a6e69453bb4a864b0b98fb8be0a06afd4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e69453bb4a864b0b98fb8be0a06afd4">reboot</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
-<tr class="memdesc:a6e69453bb4a864b0b98fb8be0a06afd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reboot the processor. REQUIRED.  <br /></td></tr>
-<tr class="separator:a6e69453bb4a864b0b98fb8be0a06afd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9f6d2c1199cd290f9644bcab8128f74" id="r_aa9f6d2c1199cd290f9644bcab8128f74"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9f6d2c1199cd290f9644bcab8128f74">on_optional_interaction_rejected</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> source_node_id, uint16_t error_code, uint16_t rejected_mti)</td></tr>
 <tr class="memdesc:aa9f6d2c1199cd290f9644bcab8128f74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional Interaction Rejected received. Optional. Notifies the application that a message was rejected by a remote node.  <br /></td></tr>
 <tr class="separator:aa9f6d2c1199cd290f9644bcab8128f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -131,14 +122,14 @@ Data Fields</h2></td></tr>
 <div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> <a class="code hl_struct" href="structopenlcb__config__t.html">openlcb_config_t</a> my_config = {</div>
 <div class="line">    .lock_shared_resources   = &amp;MyDriver_lock,</div>
 <div class="line">    .unlock_shared_resources = &amp;MyDriver_unlock,</div>
-<div class="line">    .config_mem_read         = &amp;MyDriver_eeprom_read,</div>
-<div class="line">    .config_mem_write        = &amp;MyDriver_eeprom_write,</div>
-<div class="line">    .reboot                  = &amp;MyDriver_reboot,</div>
+<div class="line">    .config_mem_read         = &amp;MyDriver_eeprom_read,  <span class="comment">// only with MEMORY_CONFIGURATION</span></div>
+<div class="line">    .config_mem_write        = &amp;MyDriver_eeprom_write, <span class="comment">// only with MEMORY_CONFIGURATION</span></div>
+<div class="line">    .reboot                  = &amp;MyDriver_reboot,       <span class="comment">// only with MEMORY_CONFIGURATION</span></div>
 <div class="line">    .on_login_complete       = &amp;my_login_handler,</div>
 <div class="line">    .on_consumed_event_pcer  = &amp;my_event_handler,</div>
 <div class="line">};</div>
 <div class="line"><a class="code hl_function" href="openlcb__config_8h.html#acc5207f2b2fb16cc8ef8cbacac9f71ca">OpenLcb_initialize</a>(&amp;my_config);</div>
-<div class="ttc" id="aopenlcb__config_8h_html_acc5207f2b2fb16cc8ef8cbacac9f71ca"><div class="ttname"><a href="openlcb__config_8h.html#acc5207f2b2fb16cc8ef8cbacac9f71ca">OpenLcb_initialize</a></div><div class="ttdeci">void OpenLcb_initialize(const openlcb_config_t *config)</div><div class="ttdoc">Initializes the entire OpenLCB stack with one call.</div><div class="ttdef"><b>Definition</b> openlcb_config.c:631</div></div>
+<div class="ttc" id="aopenlcb__config_8h_html_acc5207f2b2fb16cc8ef8cbacac9f71ca"><div class="ttname"><a href="openlcb__config_8h.html#acc5207f2b2fb16cc8ef8cbacac9f71ca">OpenLcb_initialize</a></div><div class="ttdeci">void OpenLcb_initialize(const openlcb_config_t *config)</div><div class="ttdoc">Initializes the entire OpenLCB stack with one call.</div><div class="ttdef"><b>Definition</b> openlcb_config.c:636</div></div>
 <div class="ttc" id="astructopenlcb__config__t_html"><div class="ttname"><a href="structopenlcb__config__t.html">openlcb_config_t</a></div><div class="ttdoc">User configuration for OpenLcbCLib.</div><div class="ttdef"><b>Definition</b> openlcb_config.h:158</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
@@ -170,81 +161,6 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Re-enable interrupts / release mutex. REQUIRED. </p>
-
-</div>
-</div>
-<a id="a1dd7ccbff75adc9b458812a73e45be69" name="a1dd7ccbff75adc9b458812a73e45be69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1dd7ccbff75adc9b458812a73e45be69">&#9670;&#160;</a></span>config_mem_read</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t(* config_mem_read) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Read from configuration memory (EEPROM/Flash/file). REQUIRED. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>The <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> requesting the read </td></tr>
-    <tr><td class="paramname">address</td><td>Starting address in configuration memory </td></tr>
-    <tr><td class="paramname">count</td><td>Number of bytes to read </td></tr>
-    <tr><td class="paramname">buffer</td><td>Destination <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes actually read </dd></dl>
-
-</div>
-</div>
-<a id="a40205ff1fb1258614ed2e7b840d98202" name="a40205ff1fb1258614ed2e7b840d98202"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40205ff1fb1258614ed2e7b840d98202">&#9670;&#160;</a></span>config_mem_write</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t(* config_mem_write) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Write to configuration memory (EEPROM/Flash/file). REQUIRED. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>The <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> requesting the write </td></tr>
-    <tr><td class="paramname">address</td><td>Starting address in configuration memory </td></tr>
-    <tr><td class="paramname">count</td><td>Number of bytes to write </td></tr>
-    <tr><td class="paramname">buffer</td><td>Source <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes actually written </dd></dl>
-
-</div>
-</div>
-<a id="a6e69453bb4a864b0b98fb8be0a06afd4" name="a6e69453bb4a864b0b98fb8be0a06afd4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e69453bb4a864b0b98fb8be0a06afd4">&#9670;&#160;</a></span>reboot</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* reboot) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Reboot the processor. REQUIRED. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context </td></tr>
-    <tr><td class="paramname">config_mem_operations_request_info</td><td><a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> context </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>

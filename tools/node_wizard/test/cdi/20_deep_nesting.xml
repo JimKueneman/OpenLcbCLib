@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 20_deep_nesting.xml
+    PURPOSE: Deeply nested groups to test address calculation through multiple
+             levels and replication at multiple depths.
+             CDI standard allows groups to be nested and replicated.
+
+    EXPECTED RESULTS:
+    - Map:      Addresses should accumulate correctly through nested groups
+                Total bytes in space 253: 127 + (3 banks * (2 channels * (8+8+1))) = 127 + 153 = 280
+                (Actual sizes depend on nesting calculation)
+    - Defines:  Should show hierarchical names to avoid collisions
+    - Struct:   Should show nested struct definitions
+    - Render:   Nested groups render with proper indentation
+-->
+<!-- TEST_CHECKS
+name: Deep Nesting with Replication
+map_not_null | Map parses
+map_has_items | space:253 | min:20 | Replication expands to 20+ items (3x2x3 + 2 strings)
+map_no_overlaps | No overlaps despite deep nesting
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Deep Nesting</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <group replication="3">
+            <name>Bank</name>
+            <repname>Bank</repname>
+
+            <group replication="2">
+                <name>Channel</name>
+                <repname>Channel</repname>
+
+                <eventid>
+                    <name>Event On</name>
+                </eventid>
+                <eventid>
+                    <name>Event Off</name>
+                </eventid>
+                <int size="1">
+                    <name>Mode</name>
+                </int>
+            </group>
+        </group>
+    </segment>
+</cdi>

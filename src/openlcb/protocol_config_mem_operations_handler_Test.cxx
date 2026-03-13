@@ -169,7 +169,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_config_memory.present = true,
     .address_space_config_memory.low_address_valid = false,                            // assume the low address starts at 0
     .address_space_config_memory.low_address = 0,                                      // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
     .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
@@ -178,7 +178,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_acdi_manufacturer.present = true,
     .address_space_acdi_manufacturer.low_address_valid = false, // assume the low address starts at 0
     .address_space_acdi_manufacturer.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_acdi_manufacturer.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_acdi_manufacturer.highest_address = 0x0100, 
     .address_space_acdi_manufacturer.address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
     .address_space_acdi_manufacturer.description = "ADCI Manufacturer storage",
 
@@ -187,7 +187,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_acdi_user.present = true,
     .address_space_acdi_user.low_address_valid = false, // assume the low address starts at 0
     .address_space_acdi_user.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_acdi_user.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_acdi_user.highest_address = 0x0100, 
     .address_space_acdi_user.address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "ADCI User storage",
 
@@ -196,7 +196,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_train_function_definition_info.present = true,
     .address_space_train_function_definition_info.low_address_valid = true, // assume the low address starts at 0
     .address_space_train_function_definition_info.low_address = 0x100,      // ignored if low_address_valid is false
-    .address_space_train_function_definition_info.highest_address = 0x0200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_train_function_definition_info.highest_address = 0x0200,
     .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
     .address_space_train_function_definition_info.description = "Train Configuration Definition Info",
 
@@ -205,7 +205,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_train_function_config_memory.present = true,
     .address_space_train_function_config_memory.low_address_valid = true, // assume the low address starts at 0
     .address_space_train_function_config_memory.low_address = 0x100,       // ignored if low_address_valid is false
-    .address_space_train_function_config_memory.highest_address = 0x200,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_train_function_config_memory.highest_address = 0x200,  
     .address_space_train_function_config_memory.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
     .address_space_train_function_config_memory.description = "Train Configuration Memory storage",
 
@@ -214,7 +214,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_firmware.present = false,
     .address_space_firmware.low_address_valid = false, // assume the low address starts at 0
     .address_space_firmware.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_firmware.highest_address = 0x100,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_firmware.highest_address = 0x100,  
     .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware Bootloader",
 

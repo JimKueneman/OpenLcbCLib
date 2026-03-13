@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 13_duplicate_names_across_groups.xml
+    PURPOSE: Duplicate element names across different groups and replicated groups.
+             When flattened for C code generation (Defines/Struct views), group
+             context may or may not provide disambiguation.
+
+             Key scenarios:
+             1. Same name in two different non-replicated groups
+             2. Same name in a replicated group (each replica has "Brightness")
+             3. Groups themselves with the same <repname>
+
+    EXPECTED RESULTS:
+    - Defines view: Check whether group prefixes prevent #define collisions
+                    Without prefixes: #define OFFSET_BRIGHTNESS appears multiple times
+    - Struct view:  Check whether nested structs prevent member collisions
+    - This tests the tool's name-scoping strategy for C code generation
+-->
+<!-- TEST_CHECKS
+name: Duplicate Names Across Groups
+map_not_null | Map parses
+map_has_items | space:253 | min:5 | Multiple items in space 253
+defines_no_dupes | No duplicate #define names (group prefixes disambiguate)
+struct_no_dupes | No duplicate struct field names (nested structs disambiguate)-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Cross-Group Dupes</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- Group A has "Brightness" -->
+        <group>
+            <name>Inputs</name>
+            <int size="1">
+                <name>Brightness</name>
+            </int>
+            <int size="1">
+                <name>Threshold</name>
+            </int>
+        </group>
+
+        <!-- Group B also has "Brightness" — different group, same leaf name -->
+        <group>
+            <name>Outputs</name>
+            <int size="1">
+                <name>Brightness</name>
+            </int>
+            <int size="1">
+                <name>Timeout</name>
+            </int>
+        </group>
+
+        <!-- Replicated group: each replica has identical child names -->
+        <group replication="4">
+            <name>Channel</name>
+            <repname>Ch</repname>
+
+            <eventid>
+                <name>Event On</name>
+            </eventid>
+            <eventid>
+                <name>Event Off</name>
+            </eventid>
+            <int size="1">
+                <name>Brightness</name>
+            </int>
+        </group>
+    </segment>
+</cdi>

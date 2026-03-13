@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Editor — OpenLcbCLib</title>
+    <link rel="stylesheet" href="platform.css">
+
+    <!-- Syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <!-- ===== LEFT: Platform selector + config ===== -->
+        <main class="config-panel">
+            <h2>Target Platform</h2>
+            <p class="panel-desc">Select your target chip to generate working driver code from demo implementations</p>
+
+            <div id="platform-cards" class="platform-cards"></div>
+            <div id="config-area"></div>
+        </main>
+
+        <!-- ===== SPLITTER ===== -->
+        <div class="splitter" id="splitter"></div>
+
+        <!-- ===== RIGHT: Live code preview ===== -->
+        <aside class="preview-panel">
+
+            <div class="preview-header">
+                <div class="preview-tabs">
+                    <button class="tab-btn active" id="tab-can" onclick="switchTab('can')">CAN Drivers</button>
+                    <button class="tab-btn"        id="tab-olcb" onclick="switchTab('olcb')">OLCB Drivers</button>
+                </div>
+                <span class="preview-badge" id="preview-badge" style="display:none"></span>
+                <span class="preview-filename" id="preview-filename"></span>
+            </div>
+
+            <pre class="code-preview empty"><code class="language-c" id="code-preview">Select a platform to preview the generated driver code</code></pre>
+
+        </aside>
+
+    </div>
+
+    <script src="js/platform_defs.js"></script>
+    <script src="js/platform.js"></script>
+
+</body>
+</html>

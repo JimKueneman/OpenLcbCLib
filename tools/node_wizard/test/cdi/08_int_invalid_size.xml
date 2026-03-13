@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 08_int_invalid_size.xml
+    PURPOSE: <int> with invalid size attribute (3 and 5 are not valid).
+             CDI standard Section 5.1.4.2: valid int sizes are 1, 2, 4, and 8.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 error — "<int> has invalid size attribute (must be 1, 2, 4, or 8)"
+                Two errors expected (one for size="3", one for size="5")
+    - Map:      Will still render with the stated sizes for address calculation
+-->
+<!-- TEST_CHECKS
+name: Int with Invalid Size
+validate_has | severity:error | pattern:int.*size|size.*1.*2.*4.*8 | Error about invalid int size
+validate_min_count | severity:error | min:2 | At least 2 errors (size=3 and size=5)
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Bad Int Sizes</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <int size="3">
+            <name>Bad Three Byte Int</name>
+        </int>
+
+        <int size="5">
+            <name>Bad Five Byte Int</name>
+        </int>
+
+        <int size="4">
+            <name>Good Four Byte Int</name>
+        </int>
+    </segment>
+</cdi>

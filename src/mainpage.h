@@ -23,6 +23,13 @@
  *   </p>
  *
  * <hr>
+ *
+ * <h2 style="margin-left: 10px; margin-right: 10px;">Node Wizard</h2>
+ *   <p style="margin-left: 50px; margin-right: 50px;">
+ *     <a href="../../../tools/node_wizard/node_wizard.html">Node Wizard</a> — Browser-based tool for configuring OpenLCB nodes. Generates the user configuration files, CDI/FDI descriptors, and application main.c for your target platform.
+ *   </p>
+ *
+ * <hr>
 
  * <h2 style="margin-left: 10px; margin-right: 10px;">License</h2>
  *

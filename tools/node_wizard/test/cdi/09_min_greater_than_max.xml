@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 09_min_greater_than_max.xml
+    PURPOSE: <int> and <float> where min > max — the spec says values outside
+             min/max are invalid and shall not be written (Sections 5.1.4.2, 5.1.4.5).
+             A min > max makes the entire range invalid.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 warning — "<min> value is greater than <max> value"
+                Two warnings expected (one for int, one for float)
+-->
+<!-- TEST_CHECKS
+name: Min Greater Than Max
+validate_has | severity:warning | pattern:min.*max|max.*min|greater | Warning about inverted min/max
+validate_min_count | severity:warning | min:2 | At least 2 warnings (int and float)
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Min GT Max</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <int size="2">
+            <name>Inverted Int Range</name>
+            <min>100</min>
+            <max>10</max>
+        </int>
+
+        <float size="4">
+            <name>Inverted Float Range</name>
+            <min>99.5</min>
+            <max>1.0</max>
+        </float>
+    </segment>
+</cdi>

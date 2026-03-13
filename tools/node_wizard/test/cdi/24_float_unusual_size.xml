@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 24_float_unusual_size.xml
+    PURPOSE: <float> with unusual size attribute.
+             CDI standard Section 5.1.4.5: valid float sizes are 2, 4, and 8.
+             Size 2 is valid (IEEE half-precision) but uncommon.
+             Size 3 is invalid.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 warning — "<float> has unusual size attribute (expected 4 or 8)"
+                for size="2" (uncommon but valid per spec)
+                Layer 2 error or warning for size="3" (invalid)
+-->
+<!-- TEST_CHECKS
+name: Float Unusual Size
+validate_has | severity:warning | pattern:float.*size|unusual | Warning about unusual float size
+map_not_null | Map parses
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Float Sizes</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- Valid but unusual: half-precision float -->
+        <float size="2">
+            <name>Half Precision</name>
+        </float>
+
+        <!-- Invalid: 3 is not a valid IEEE float size -->
+        <float size="3">
+            <name>Invalid Float Size</name>
+        </float>
+
+        <!-- Normal: single precision -->
+        <float size="4">
+            <name>Normal Single</name>
+        </float>
+
+        <!-- Normal: double precision -->
+        <float size="8">
+            <name>Normal Double</name>
+        </float>
+    </segment>
+</cdi>

@@ -1,0 +1,2715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLCB CDI Editor / Viewer</title>
+
+    <!-- Syntax highlighting — same CDN/version as cdi_to_array_webbrowser tool -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+
+    <style>
+
+        /* ===== Reset & base ================================================ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --color-primary:        #0056b3;
+            --color-primary-dark:   #004494;
+            --color-group:          #007bff;
+            --color-group-dark:     #0069d9;
+            --color-bg:             #f4f4f9;
+            --color-surface:        #ffffff;
+            --color-border:         #ddd;
+            --color-text:           #333;
+            --color-muted:          #666;
+            --color-error-bg:       #fee2e2;
+            --color-error-text:     #b91c1c;
+            --color-warning-bg:     #fef3c7;
+            --color-warning-text:   #92400e;
+            --color-info-bg:        #e0f2fe;
+            --color-info-text:      #075985;
+            --color-success:        #15803d;
+            --color-header-h:       44px;
+            --color-toolbar-h:      40px;
+            --color-validation-h:   0px;   /* updated by JS */
+            --splitter-size:        6px;
+            --font-mono:            'Consolas', 'Menlo', 'Courier New', monospace;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* ===== Top header ================================================== */
+        .app-header {
+            height: var(--color-header-h);
+            background: var(--color-primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            gap: 12px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .app-header h1 {
+            font-size: 15px;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-right: auto;
+        }
+
+        /* ===== Toolbar ===================================================== */
+        .toolbar {
+            height: var(--color-toolbar-h);
+            background: #e9ecef;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .toolbar button {
+            padding: 0 12px;
+            height: 28px;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            background: #fff;
+            color: var(--color-text);
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .toolbar button:hover:not(:disabled) { background: #dee2e6; }
+
+        .toolbar button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        .toolbar button.btn-primary {
+            background: var(--color-primary);
+            color: #fff;
+            border-color: var(--color-primary-dark);
+        }
+
+        .toolbar button.btn-primary:hover:not(:disabled) { background: var(--color-primary-dark); }
+
+        .toolbar button.btn-active {
+            background: #d1fae5;
+            border-color: var(--color-success);
+            color: var(--color-success);
+        }
+
+        .toolbar-sep { width: 1px; height: 22px; background: #bbb; margin: 0 4px; }
+
+        .toolbar label.toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .toolbar label.toggle input[type="checkbox"] { cursor: pointer; }
+
+        .toolbar .file-btn-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .toolbar .file-btn-wrap input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .toolbar .file-btn-wrap button { pointer-events: none; }
+
+        .toolbar .loaded-filename {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #4ec9b0;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 2px 6px;
+            background: #1e1e1e;
+            border: 1px solid #3c3c3c;
+            border-radius: 3px;
+        }
+
+        .toolbar .loaded-filename:empty { display: none; }
+
+        /* ===== Validation footer (fixed at bottom of XML editor) ============ */
+        .validation-footer {
+            height: 68px;
+            min-height: 68px;
+            max-height: 68px;
+            background: #1a3a5c;
+            border-top: 1px solid #2a5a8c;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: #c0c0c0;
+            overflow-y: auto;
+            flex-shrink: 0;
+            line-height: 1.6;
+        }
+
+        .validation-footer .validation-list { list-style: none; }
+
+        .validation-footer .validation-list li {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            padding: 2px 10px;
+            border-bottom: 1px solid #1a4a6c;
+            cursor: pointer;
+        }
+
+        .validation-footer .validation-list li:hover { background: #1a4a6c; }
+
+        .validation-footer .val-ok {
+            color: #4ade80;
+            padding: 4px 10px;
+        }
+
+        .v-badge {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .v-error   { background: var(--color-error-bg);   color: var(--color-error-text);   }
+        .v-warning { background: var(--color-warning-bg);  color: var(--color-warning-text); }
+        .v-info    { background: var(--color-info-bg);     color: var(--color-info-text);    }
+
+        .v-line { color: var(--color-muted); font-size: 10px; flex-shrink: 0; }
+
+        /* ===== Main workspace ============================================== */
+        .workspace {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        /* horizontal: editor | splitter | preview (side by side) */
+        .workspace.horizontal { flex-direction: row; }
+
+        /* vertical: editor / splitter / preview (top and bottom) */
+        .workspace.vertical   { flex-direction: column; }
+
+        /* ===== Editor pane ================================================= */
+        .editor-pane {
+            display: flex;
+            flex-direction: column;
+            flex: 0 0 40%;
+            min-width: 120px;
+            min-height: 80px;
+            overflow: hidden;
+            background: #1e1e1e;
+        }
+
+        .editor-inner {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* line-number gutter */
+        .line-numbers {
+            width: 42px;
+            flex-shrink: 0;
+            background: #252526;
+            color: #858585;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 8px 0;
+            text-align: right;
+            padding-right: 8px;
+            overflow: hidden;
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .line-numbers div { height: 19.5px; }
+
+        /* Wrapper for the textarea + highlight overlay */
+        .editor-text-wrap {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Highlight.js overlay — sits behind the transparent textarea */
+        .hl-overlay {
+            position: absolute;
+            inset: 0;
+            margin: 0;
+            padding: 8px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.5;
+            tab-size: 2;
+            white-space: pre;
+            overflow: hidden;
+            pointer-events: none;
+            border: none;
+            border-radius: 0;
+            background: #1e1e1e;
+            z-index: 1;
+            word-break: normal;
+            overflow-wrap: normal;
+        }
+
+        /* highlight.js resets its code background; keep ours transparent */
+        .hl-overlay code.hljs {
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            background: transparent !important;
+            padding: 0;
+            white-space: inherit;
+            display: block;
+        }
+
+        /* Textarea is transparent so the highlighted overlay shows through */
+        textarea#xml-editor {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            color: transparent;
+            caret-color: #aeafad;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 8px;
+            border: none;
+            outline: none;
+            resize: none;
+            tab-size: 2;
+            overflow-y: scroll;
+            overflow-x: auto;
+            white-space: pre;
+            z-index: 2;
+        }
+
+        textarea#xml-editor::placeholder { color: #555; }
+
+        /* editor status bar */
+        .editor-statusbar {
+            height: 22px;
+            background: #007acc;
+            color: #fff;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        /* ===== Workspace splitter ========================================== */
+        .ws-splitter {
+            flex-shrink: 0;
+            background: #c8c8c8;
+            transition: background 0.15s;
+            z-index: 10;
+        }
+
+        .workspace.horizontal .ws-splitter {
+            width: var(--splitter-size);
+            cursor: col-resize;
+        }
+
+        .workspace.vertical .ws-splitter {
+            height: var(--splitter-size);
+            cursor: row-resize;
+        }
+
+        .ws-splitter:hover,
+        .ws-splitter.dragging { background: #0078d4; }
+
+        /* ===== Preview pane ================================================ */
+        .preview-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--color-bg);
+            min-width: 120px;
+            min-height: 80px;
+        }
+
+        .preview-toolbar {
+            height: 28px;
+            background: #f0f4f8;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            gap: 8px;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .preview-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .preview-empty {
+            color: var(--color-muted);
+            font-size: 14px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        /* ===== CDI rendered styles ========================================= */
+        .cdi-identification {
+            background: #e8f4fd;
+            border: 1px solid #b6d4fe;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 16px;
+        }
+
+        .cdi-identification h3 { margin-bottom: 8px; color: #1e3a5f; }
+
+        .cdi-identification table { border-collapse: collapse; }
+
+        .cdi-identification td {
+            padding: 2px 12px 2px 0;
+            font-size: 13px;
+        }
+
+        .cdi-identification td:first-child { font-weight: 600; color: var(--color-muted); }
+
+        .cdi-acdi-status {
+            background: #e8f4fd;
+            border: 1px solid #b6d4fe;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            color: #1e3a5f;
+        }
+
+        .cdi-segment {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        }
+
+        .cdi-segment-header {
+            background: var(--color-primary);
+            color: #fff;
+            padding: 11px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .cdi-segment-header:hover { background: var(--color-primary-dark); }
+
+        .cdi-segment-header::after,
+        .cdi-group-header::after {
+            content: '▼';
+            font-size: 0.75em;
+            transition: transform 0.25s;
+        }
+
+        .cdi-segment.collapsed .cdi-segment-header::after,
+        .cdi-group.collapsed   .cdi-group-header::after { transform: rotate(-90deg); }
+
+        .cdi-segment-body,
+        .cdi-group-body { padding: 14px; }
+
+        .cdi-segment.collapsed .cdi-segment-body,
+        .cdi-group.collapsed   .cdi-group-body { display: none; }
+
+        .cdi-group {
+            border-left: 4px solid var(--color-group);
+            margin: 14px 0;
+            background: #fcfcfc;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .cdi-group-header {
+            background: var(--color-group);
+            color: #fff;
+            padding: 9px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .cdi-group-header:hover { background: var(--color-group-dark); }
+
+        .cdi-item {
+            margin: 8px 0;
+            padding: 8px;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .cdi-item label { font-weight: 600; font-size: 0.92em; display: block; margin-bottom: 4px; }
+
+        .cdi-desc { font-size: 0.82em; color: var(--color-muted); font-style: italic; margin-bottom: 6px; }
+
+        .cdi-input-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        .cdi-extra { font-size: 0.78em; color: #888; }
+
+        .cdi-address-info {
+            font-size: 0.78em;
+            color: #555;
+            font-family: var(--font-mono);
+            margin-bottom: 4px;
+        }
+
+        .cdi-warning {
+            background: var(--color-warning-bg);
+            color: var(--color-warning-text);
+            font-size: 0.8em;
+            padding: 3px 7px;
+            border-radius: 3px;
+            margin-bottom: 4px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            max-width: 360px;
+            width: 100%;
+        }
+
+        input[type="range"] { max-width: 260px; width: 100%; }
+
+        .slider-val { font-weight: normal; font-size: 0.85em; color: var(--color-muted); }
+
+        /* tabs (replicated groups) */
+        .cdi-tab-group { border: 1px solid var(--color-border); border-radius: 8px; margin: 14px 0; background: var(--color-surface); }
+
+        .cdi-tab-group-info {
+            padding: 12px 14px;
+            background: var(--color-group);
+            color: #fff;
+            border-radius: 7px 7px 0 0;
+        }
+
+        .cdi-tab-group-info h3 { margin: 0; font-size: 1.05em; color: #fff; }
+        .cdi-tab-group-info p  { margin: 4px 0 0; font-size: 0.88em; opacity: 0.9; }
+
+        .cdi-tabs-nav { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--color-border); background: #f8f9fa; }
+
+        .cdi-tab-button {
+            padding: 8px 14px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.15s;
+            font-size: 0.88em;
+        }
+
+        .cdi-tab-button:hover:not(.active) { color: var(--color-primary); background: #e2e6ea; }
+        .cdi-tab-button.active { color: var(--color-primary); border-bottom-color: var(--color-primary); background: #fff; }
+
+        .cdi-tab-content { padding: 14px; }
+
+        .cdi-tab-pane { display: none; }
+        .cdi-tab-pane.active { display: block; }
+
+        .cdi-tab-pane h4.repname-header {
+            margin: 0 0 12px;
+            color: var(--color-group);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            font-size: 1.05em;
+        }
+
+        /* ===== Sub-splitter (inside editor pane, separates editor+map) ===== */
+        .xml-sub-pane {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .sub-splitter {
+            flex-shrink: 0;
+            background: #444;
+            transition: background 0.15s;
+            z-index: 5;
+        }
+
+        /* horizontal sub-split (map below editor) — default when main is side-by-side */
+        .editor-pane .sub-splitter {
+            height: 5px;
+            cursor: row-resize;
+            width: 100%;
+        }
+
+        /* vertical sub-split (map beside editor) — when main is stacked */
+        .editor-pane.map-beside .sub-splitter {
+            width: 5px;
+            height: auto;
+            cursor: col-resize;
+        }
+
+        .editor-pane.map-beside {
+            flex-direction: row;
+        }
+
+        .sub-splitter:hover,
+        .sub-splitter.dragging { background: #0078d4; }
+
+        /* ===== Memory map pane ============================================= */
+        .map-pane {
+            flex: 0 0 180px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #1e1e1e;
+            min-height: 60px;
+            min-width: 80px;
+        }
+
+        .map-header {
+            height: 38px;
+            background: #3c3c3c;
+            color: #aaa;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            flex-shrink: 0;
+            border-bottom: 1px solid #555;
+        }
+
+        .map-content {
+            flex: 1;
+            overflow: auto;
+            padding: 4px 0;
+            font-family: var(--font-mono);
+            font-size: 11px;
+        }
+
+        .map-empty {
+            color: #555;
+            text-align: center;
+            margin-top: 24px;
+            font-size: 11px;
+        }
+
+        /* Map table */
+        .map-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #ccc;
+            font-size: 11px;
+        }
+
+        .map-table th {
+            background: #2d2d2d;
+            color: #888;
+            font-weight: 600;
+            text-align: left;
+            padding: 3px 6px;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+            border-bottom: 1px solid #444;
+        }
+
+        .map-table td {
+            padding: 2px 6px;
+            border-bottom: 1px solid #2a2a2a;
+            white-space: nowrap;
+        }
+
+        .map-table tr:hover td { background: #2a2a2a; }
+
+        .map-row-overlap td { background: #3b1111 !important; color: #f87171; }
+
+        .map-seg-header td {
+            background: #252526;
+            color: #569cd6;
+            font-weight: 700;
+            padding: 4px 6px 2px;
+            border-top: 1px solid #3c3c3c;
+        }
+
+        /* type colour dots */
+        .map-type { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+        .map-type-int     { background: #4ec9b0; }
+        .map-type-float   { background: #c586c0; }
+        .map-type-string  { background: #ce9178; }
+        .map-type-eventid { background: #dcdcaa; }
+        .map-type-bit     { background: #9cdcfe; }
+
+        .map-gap { color: #555; font-style: italic; }
+
+        /* ===== Map view toggle (Flat | Tree) =============================== */
+        .map-view-toggle { display: flex; gap: 4px; margin-left: auto; }
+
+        .map-toggle-btn {
+            padding: 4px 10px;
+            font-size: 11px;
+            border: 1px solid #666;
+            border-radius: 4px;
+            background: #2a2a2a;
+            color: #aaa;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            line-height: 18px;
+        }
+
+        .map-toggle-btn:hover { background: #444; color: #eee; border-color: #888; }
+        .map-toggle-btn.active { background: #0078d4; color: #fff; border-color: #005a9e; }
+
+        /* ===== Stats bar (bottom of map pane) ================================ */
+        .map-stats-bar {
+            padding: 6px 10px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: #c0c0c0;
+            background: #1a3a5c;
+            border-top: 1px solid #2a5a8c;
+            flex-shrink: 0;
+            line-height: 1.6;
+        }
+
+        .map-stats-bar:empty { display: none; }
+        .map-stats-space strong { color: #7ec8f8; }
+        .map-stats-user  { color: #4ec9b0; }
+        .map-stats-sub   { margin-left: 10px; color: #8899aa; font-size: 9.5px; line-height: 1.7; }
+        .map-stats-sub .map-stats-user { color: #4ec9b0; }
+        .map-stats-avail-pos  { color: #4ade80; font-weight: bold; }
+        .map-stats-avail-neg  { color: #f87171; font-weight: bold; }
+        .map-stats-avail-note { color: #8899aa; font-style: italic; }
+
+        /* ===== Overlap report (above stats bar) ============================== */
+        .map-overlap-report {
+            padding: 6px 10px;
+            font-family: var(--font-mono);
+            font-size: 10.5px;
+            color: #f87171;
+            background: #3b1111;
+            border-top: 1px solid #6b2020;
+            flex-shrink: 0;
+            line-height: 1.6;
+        }
+
+        .map-overlap-report:empty { display: none; }
+
+        .map-overlap-report .overlap-title {
+            font-weight: bold;
+            margin-bottom: 2px;
+            color: #fca5a5;
+        }
+
+        .map-overlap-report .overlap-item {
+            padding-left: 12px;
+            color: #f87171;
+        }
+
+        /* ===== Config memory size warning ==================================== */
+        .map-config-warning {
+            padding: 6px 10px;
+            font-family: var(--font-mono);
+            font-size: 10.5px;
+            color: #fbbf24;
+            background: #3b2f11;
+            border-top: 1px solid #6b5020;
+            flex-shrink: 0;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .map-config-warning:empty { display: none; }
+
+        .map-config-warning .cfg-warn-text { flex: 1; }
+
+        .map-config-warning .cfg-warn-btn {
+            padding: 2px 8px;
+            font-size: 10px;
+            border: 1px solid #fbbf24;
+            border-radius: 3px;
+            background: #4a3a15;
+            color: #fbbf24;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .map-config-warning .cfg-warn-btn:hover {
+            background: #5a4a20;
+        }
+
+        /* ===== Tree view =================================================== */
+        .map-tree-group { border: none; margin: 0; }
+
+        .map-tree-group > summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 2px 6px;
+            color: #569cd6;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .map-tree-group > summary::-webkit-details-marker { display: none; }
+        .map-tree-group > summary:hover { background: #2a2a2a; }
+
+        .map-tree-arrow {
+            display: inline-block;
+            width: 10px;
+            font-size: 8px;
+            flex-shrink: 0;
+            transition: transform 0.15s;
+        }
+
+        .map-tree-group[open] > summary .map-tree-arrow { transform: rotate(90deg); }
+
+        .map-tree-group-label { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+
+        .map-tree-range { color: #555; font-size: 10px; margin-left: 6px; flex-shrink: 0; }
+
+        .map-tree-children { margin-left: 14px; }
+
+        .map-tree-leaf {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 1px 6px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #ccc;
+            white-space: nowrap;
+        }
+
+        .map-tree-leaf:hover { background: #2a2a2a; }
+        .map-tree-leaf.overlap { color: #f87171 !important; background: #3b1111; }
+
+        .map-tree-leaf-label { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+        .map-tree-leaf-addr  { color: #666; font-size: 10px; }
+        .map-tree-leaf-size  { color: #555; font-size: 10px; margin-left: 4px; }
+
+        /* ===== App layout shell ============================================ */
+        .app-shell {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .workspace-wrap {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- ===== Header ======================================================= -->
+    <header class="app-header">
+        <h1>OpenLCB CDI Editor / Viewer</h1>
+    </header>
+
+    <!-- ===== Toolbar ====================================================== -->
+    <div class="toolbar">
+
+        <!-- Open file -->
+        <div class="file-btn-wrap">
+            <button>📂 Open XML</button>
+            <input type="file" id="file-input" accept=".xml" title="Open CDI XML file">
+        </div>
+
+        <span class="loaded-filename" id="loaded-filename" title="Loaded XML file"></span>
+
+        <div class="toolbar-sep"></div>
+
+        <button id="btn-basic-xml">✦ Basic XML</button>
+
+        <div class="toolbar-sep"></div>
+
+        <button id="btn-render"   class="btn-primary" disabled>▶ Render</button>
+        <button id="btn-validate" disabled>✓ Validate</button>
+        <button id="btn-clear">✕ Clear</button>
+
+        <div class="toolbar-sep"></div>
+
+        <label class="toggle" title="Show rendered CDI preview panel">
+            <input type="checkbox" id="chk-show-preview">
+            Show Preview
+        </label>
+
+        <label class="toggle" title="Show memory map panel">
+            <input type="checkbox" id="chk-show-map">
+            Show Map
+        </label>
+
+        <div class="toolbar-sep"></div>
+
+        <label class="toggle" title="Vertical divider: editor and preview side-by-side. Unchecked: stacked top/bottom.">
+            <input type="checkbox" id="chk-vertical">
+            Vertical Split
+        </label>
+
+    </div>
+
+    <!-- ===== Workspace ==================================================== -->
+    <div class="workspace-wrap">
+        <div class="workspace horizontal" id="workspace">
+
+            <!-- Editor pane (contains xml sub-pane + splitter + map pane) -->
+            <div class="editor-pane" id="editor-pane">
+
+                <!-- XML editor sub-pane -->
+                <div class="xml-sub-pane" id="xml-sub-pane">
+
+                    <div class="editor-inner" id="editor-inner">
+                        <div class="line-numbers" id="line-numbers"></div>
+                        <div class="editor-text-wrap">
+                            <!-- highlight.js overlay (behind textarea) -->
+                            <pre class="hl-overlay" id="hl-overlay" aria-hidden="true"><code id="hl-code" class="language-xml"></code></pre>
+                            <textarea id="xml-editor"
+                                      spellcheck="false"
+                                      autocomplete="off"
+                                      autocorrect="off"
+                                      autocapitalize="off"
+                                      placeholder="Paste or open a CDI XML file to begin..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="editor-statusbar" id="editor-statusbar">
+                        <span id="status-bytes">0 bytes (UTF-8)</span>
+                        <span id="status-chars">0 chars</span>
+                        <span id="status-lines">0 lines</span>
+                        <span id="status-cursor">Ln 1, Col 1</span>
+                    </div>
+
+                    <!-- Validation footer (always visible) -->
+                    <div class="validation-footer" id="validation-footer">
+                        <div class="val-ok" id="validation-ok">No issues detected</div>
+                        <ul class="validation-list" id="validation-list"></ul>
+                    </div>
+
+                </div>
+
+                <!-- Sub-splitter between editor and memory map -->
+                <div class="sub-splitter" id="sub-splitter"></div>
+
+                <!-- Memory map pane -->
+                <div class="map-pane" id="map-pane">
+                    <div class="map-header">
+                        <span>Memory Map</span>
+                        <div class="map-view-toggle">
+                            <button class="map-toggle-btn active" id="btn-map-flat"    title="Flat table view">≡ Flat</button>
+                            <button class="map-toggle-btn"        id="btn-map-tree"    title="Collapsible tree view">⊞ Tree</button>
+                            <button class="map-toggle-btn"        id="btn-map-defines" title="C #define address header">{} Defines</button>
+                            <button class="map-toggle-btn"        id="btn-map-struct"  title="C struct layout">⊡ Struct</button>
+                        </div>
+                    </div>
+                    <div class="map-content" id="map-content">
+                        <div class="map-empty">Render CDI to see memory map</div>
+                    </div>
+                    <div class="map-overlap-report" id="map-overlap-report"></div>
+                    <div class="map-config-warning" id="map-config-warning"></div>
+                    <div class="map-stats-bar" id="map-stats-bar"></div>
+                </div>
+
+            </div>
+
+            <!-- Splitter -->
+            <div class="ws-splitter" id="ws-splitter"></div>
+
+            <!-- Preview pane (always on the right / bottom) -->
+            <div class="preview-pane" id="preview-pane">
+                <div class="preview-toolbar">
+                    <label class="toggle" title="Show memory address of each field">
+                        <input type="checkbox" id="chk-address">
+                        Show Addresses
+                    </label>
+                </div>
+                <div class="preview-scroll">
+                    <div class="preview-empty" id="preview-empty">
+                        Open or paste CDI XML, then click <strong>▶ Render</strong>.
+                    </div>
+                    <div id="cdi-output"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="js/cdi_renderer.js"></script>
+<script src="js/cdi_validator.js"></script>
+<script>
+
+/* =========================================================================
+ * cdi_view.html — application shell script
+ * ========================================================================= */
+
+'use strict';
+
+/* ---------- Element refs -------------------------------------------------- */
+const elEditor      = document.getElementById('xml-editor');
+const elHlCode      = document.getElementById('hl-code');
+const elHlOverlay   = document.getElementById('hl-overlay');
+const elLineNums    = document.getElementById('line-numbers');
+const elOutput      = document.getElementById('cdi-output');
+const elEmpty       = document.getElementById('preview-empty');
+const elWorkspace   = document.getElementById('workspace');
+const elSplitter    = document.getElementById('ws-splitter');
+const elEditorPane  = document.getElementById('editor-pane');
+const elPreviewPane = document.getElementById('preview-pane');
+const elSubSplitter = document.getElementById('sub-splitter');
+const elMapPane     = document.getElementById('map-pane');
+const elMapContent  = document.getElementById('map-content');
+const elValFooter   = document.getElementById('validation-footer');
+const elValList     = document.getElementById('validation-list');
+const elValOk       = document.getElementById('validation-ok');
+const elStatusBytes = document.getElementById('status-bytes');
+const elStatusChars = document.getElementById('status-chars');
+const elStatusLines = document.getElementById('status-lines');
+const elStatusCur   = document.getElementById('status-cursor');
+const chkAddress     = document.getElementById('chk-address');
+const chkVertical    = document.getElementById('chk-vertical');
+const chkShowPreview = document.getElementById('chk-show-preview');
+const chkShowMap     = document.getElementById('chk-show-map');
+const btnRender     = document.getElementById('btn-render');
+const btnValidate   = document.getElementById('btn-validate');
+const btnClear      = document.getElementById('btn-clear');
+const fileInput     = document.getElementById('file-input');
+
+/* ---------- Embedded mode detection --------------------------------------- */
+const _isEmbedded = window.parent !== window;
+let _postTimer = null;
+let _configMemHighest = 0;   /* config memory size from parent wizard */
+
+function _postXmlToParent() {
+
+    if (!_isEmbedded) { return; }
+
+    clearTimeout(_postTimer);
+    _postTimer = setTimeout(function () {
+
+        window.parent.postMessage({
+            type: 'xmlChanged',
+            xml:  elEditor.value,
+            filename: _loadedFilename || null
+        }, '*');
+
+    }, 300);
+
+}
+
+/* ---------- State --------------------------------------------------------- */
+let currentXml    = '';
+let _loadedFilename = '';
+
+const elFilename = document.getElementById('loaded-filename');
+
+function _setFilename(name) {
+    _loadedFilename = name || '';
+    elFilename.textContent = _loadedFilename;
+    elFilename.title       = _loadedFilename ? 'Loaded: ' + _loadedFilename : '';
+}
+
+/* ---------- File open ----------------------------------------------------- */
+fileInput.addEventListener('change', e => {
+
+    const file = e.target.files[0];
+    if (!file) { return; }
+
+    _setFilename(file.name);
+
+    const reader = new FileReader();
+    reader.onload = ev => {
+        elEditor.value = ev.target.result;
+        onEditorChange();
+        render();
+    };
+    reader.readAsText(file);
+    fileInput.value = '';   /* allow re-selecting same file */
+});
+
+/* ---------- Editor events ------------------------------------------------- */
+elEditor.addEventListener('input',  onEditorChange);
+elEditor.addEventListener('keydown', onEditorKeydown);
+elEditor.addEventListener('scroll', syncLineNumbers);
+elEditor.addEventListener('click',  updateCursor);
+elEditor.addEventListener('keyup',  updateCursor);
+
+let _validateTimer = null;
+
+function onEditorChange() {
+
+    currentXml = elEditor.value;
+    _updateLineNumbers();
+    _updateStatusBar();
+    _updateHighlight();
+
+    const hasContent = currentXml.trim().length > 0;
+    btnRender.disabled   = !hasContent;
+    btnValidate.disabled = !hasContent;
+
+    /* Auto-validate after a short debounce */
+    clearTimeout(_validateTimer);
+    if (hasContent) {
+        _validateTimer = setTimeout(validate, 500);
+    }
+
+    /* Notify parent of content change (embedded mode) */
+    if (_isEmbedded) { _postXmlToParent(); }
+}
+
+/* ---------- Syntax highlighting ------------------------------------------ */
+
+function _updateHighlight() {
+
+    /* set raw text — hljs will escape HTML entities automatically */
+    elHlCode.textContent = elEditor.value;
+
+    /* clear the cached highlighted flag so hljs re-processes */
+    delete elHlCode.dataset.highlighted;
+    hljs.highlightElement(elHlCode);
+
+    /* keep overlay scroll position in sync with the textarea */
+    _syncHighlightScroll();
+}
+
+function _syncHighlightScroll() {
+    elHlOverlay.scrollTop  = elEditor.scrollTop;
+    elHlOverlay.scrollLeft = elEditor.scrollLeft;
+}
+
+/* Tab key inserts two spaces instead of losing focus */
+function onEditorKeydown(e) {
+
+    if (e.key !== 'Tab') { return; }
+    e.preventDefault();
+
+    const start = elEditor.selectionStart;
+    const end   = elEditor.selectionEnd;
+
+    elEditor.value = elEditor.value.substring(0, start) + '  ' + elEditor.value.substring(end);
+    elEditor.selectionStart = elEditor.selectionEnd = start + 2;
+    onEditorChange();
+}
+
+function updateCursor() {
+
+    const pos  = elEditor.selectionStart;
+    const text = elEditor.value.substring(0, pos);
+    const line = (text.match(/\n/g) || []).length + 1;
+    const col  = pos - text.lastIndexOf('\n');
+
+    elStatusCur.textContent = `Ln ${line}, Col ${col}`;
+}
+
+function _updateStatusBar() {
+
+    const chars = elEditor.value.length;
+    const lines = elEditor.value === '' ? 0 : (elEditor.value.match(/\n/g) || []).length + 1;
+    const bytes = typeof TextEncoder !== 'undefined'
+        ? new TextEncoder().encode(elEditor.value).length
+        : chars;
+
+    elStatusBytes.textContent = `${bytes.toLocaleString()} bytes (UTF-8)`;
+    elStatusChars.textContent = `${chars.toLocaleString()} chars`;
+    elStatusLines.textContent = `${lines.toLocaleString()} lines`;
+}
+
+/* ---------- Line numbers -------------------------------------------------- */
+function _updateLineNumbers() {
+
+    const lines = elEditor.value === '' ? 1 : (elEditor.value.match(/\n/g) || []).length + 1;
+    const frag  = document.createDocumentFragment();
+
+    for (let i = 1; i <= lines; i++) {
+        const d = document.createElement('div');
+        d.textContent = i;
+        frag.appendChild(d);
+    }
+
+    elLineNums.innerHTML = '';
+    elLineNums.appendChild(frag);
+}
+
+function syncLineNumbers() {
+    elLineNums.scrollTop = elEditor.scrollTop;
+    _syncHighlightScroll();
+}
+
+/* ---------- Render -------------------------------------------------------- */
+btnRender.addEventListener('click', () => render(true));
+
+function render(autoShowPreview) {
+
+    const xml = elEditor.value.trim();
+    if (!xml) { return; }
+
+    elOutput.innerHTML = '';
+    elEmpty.style.display = 'none';
+
+    const result = CdiRenderer.render(xml, elOutput, { showAddressInfo: chkAddress.checked });
+
+    if (!result.ok) {
+        elOutput.innerHTML = '<div style="color:#b91c1c;padding:16px">XML is not well-formed — click <strong>✓ Validate</strong> for details.</div>';
+    }
+
+    renderMemoryMap(xml);
+
+    /* Auto-show the preview pane only when triggered by the Render button */
+    if (autoShowPreview && !chkShowPreview.checked) {
+        chkShowPreview.checked = true;
+        applyPaneVisibility();
+    }
+}
+
+/* re-render when address toggle changes (only if there is content) */
+chkAddress.addEventListener('change', () => {
+    if (elOutput.children.length > 0) { render(); }
+});
+
+/* ---------- Memory map ---------------------------------------------------- */
+
+const TYPE_COLOURS = {
+    int:     'map-type-int',
+    float:   'map-type-float',
+    string:  'map-type-string',
+    eventid: 'map-type-eventid',
+    bit:     'map-type-bit'
+};
+
+let _mapView = 'flat';
+
+const MAP_TOGGLE_BTNS = ['btn-map-flat', 'btn-map-tree', 'btn-map-defines', 'btn-map-struct'];
+
+function _setMapView(view) {
+    _mapView = view;
+    MAP_TOGGLE_BTNS.forEach(id => {
+        document.getElementById(id).classList.toggle('active', id === `btn-map-${view}`);
+    });
+    const xml = elEditor.value.trim();
+    if (xml) { renderMemoryMap(xml); }
+    _saveCdiEditorState();
+}
+
+document.getElementById('btn-map-flat').addEventListener('click',    () => _setMapView('flat'));
+document.getElementById('btn-map-tree').addEventListener('click',    () => _setMapView('tree'));
+document.getElementById('btn-map-defines').addEventListener('click', () => _setMapView('defines'));
+document.getElementById('btn-map-struct').addEventListener('click',  () => _setMapView('struct'));
+
+function renderMemoryMap(xmlString) {
+
+    const mapData = CdiRenderer.buildMap(xmlString);
+    const statsEl    = document.getElementById('map-stats-bar');
+    const overlapEl  = document.getElementById('map-overlap-report');
+    const cfgWarnEl  = document.getElementById('map-config-warning');
+
+    if (!mapData) {
+        elMapContent.innerHTML = '<div class="map-empty">Cannot parse XML</div>';
+        statsEl.innerHTML = '';
+        overlapEl.innerHTML = '';
+        cfgWarnEl.innerHTML = '';
+        return;
+    }
+
+    if (mapData.length === 0) {
+        elMapContent.innerHTML = '<div class="map-empty">No segments found</div>';
+        statsEl.innerHTML = '';
+        overlapEl.innerHTML = '';
+        cfgWarnEl.innerHTML = '';
+        return;
+    }
+
+    _renderMapStats(mapData, statsEl);
+    _renderOverlapReport(mapData, overlapEl);
+    _renderConfigMemWarning(mapData, cfgWarnEl);
+
+    if (_mapView === 'tree') {
+        _renderMapTree(mapData);
+    } else if (_mapView === 'defines') {
+        _renderMapDefines(mapData);
+    } else if (_mapView === 'struct') {
+        _renderMapStruct(mapData);
+    } else {
+        _renderMapFlat(mapData);
+    }
+}
+
+/* --- Flat (table) view ---------------------------------------------------- */
+
+function _renderMapFlat(mapData) {
+
+    const table = document.createElement('table');
+    table.className = 'map-table';
+
+    const thead = table.createTHead();
+    const hrow  = thead.insertRow();
+    ['Space', 'Addr (hex)', 'Addr (dec)', 'Size', 'Type', 'Name'].forEach(h => {
+        const th = document.createElement('th');
+        th.textContent = h;
+        hrow.appendChild(th);
+    });
+
+    const tbody = table.createTBody();
+
+    mapData.forEach(seg => {
+
+        const segRow = tbody.insertRow();
+        segRow.className = 'map-seg-header';
+        const segCell = segRow.insertCell();
+        segCell.colSpan = 6;
+        const spaceHex  = '0x' + seg.space.toString(16).toUpperCase().padStart(2, '0');
+        const originHex = '0x' + seg.origin.toString(16).toUpperCase();
+        segCell.textContent =
+            `Space ${spaceHex} (${seg.space})` +
+            (seg.name ? `  —  ${seg.name}` : '') +
+            `  [origin ${originHex}]`;
+
+        if (seg.items.length === 0) {
+            const er = tbody.insertRow();
+            const ec = er.insertCell();
+            ec.colSpan = 6;
+            ec.className = 'map-gap';
+            ec.textContent = '  (no items)';
+            return;
+        }
+
+        let prevEnd = seg.origin;
+
+        seg.items.forEach(item => {
+
+            if (item.addr > prevEnd) {
+                const gap = item.addr - prevEnd;
+                const gr  = tbody.insertRow();
+                gr.className = 'map-gap';
+                const gc = gr.insertCell();
+                gc.colSpan = 6;
+                gc.textContent =
+                    `  ↕ gap: 0x${prevEnd.toString(16).toUpperCase().padStart(4, '0')}` +
+                    ` – 0x${(item.addr - 1).toString(16).toUpperCase().padStart(4, '0')} (${gap} bytes)`;
+            }
+
+            const row = tbody.insertRow();
+            if (item.overlap) { row.className = 'map-row-overlap'; }
+
+            const addrHex = '0x' + item.addr.toString(16).toUpperCase().padStart(4, '0');
+
+            _cell(row, seg.space);
+            _cell(row, addrHex);
+            _cell(row, item.addr);
+            _cell(row, item.size || '?');
+
+            const typeCell = row.insertCell();
+            const dot = document.createElement('span');
+            dot.className = 'map-type ' + (TYPE_COLOURS[item.type] || '');
+            typeCell.appendChild(dot);
+            typeCell.appendChild(document.createTextNode(item.type));
+
+            _cell(row, item.name + (item.overlap ? ' ⚠ OVERLAP' : ''));
+
+            prevEnd = item.addr + (item.size || 0);
+        });
+    });
+
+    _resetMapContentStyle();
+    elMapContent.innerHTML = '';
+    elMapContent.appendChild(table);
+}
+
+function _cell(row, text) {
+    const td = row.insertCell();
+    td.textContent = text;
+    return td;
+}
+
+/* --- Tree view ------------------------------------------------------------ */
+
+function _renderMapTree(mapData) {
+
+    const frag = document.createDocumentFragment();
+
+    mapData.forEach(seg => {
+
+        const spaceHex  = '0x' + seg.space.toString(16).toUpperCase().padStart(2, '0');
+        const originHex = '0x' + seg.origin.toString(16).toUpperCase().padStart(4, '0');
+
+        const segHead = document.createElement('div');
+        segHead.style.cssText =
+            'padding:4px 6px;color:#569cd6;font-weight:700;font-size:11px;' +
+            'border-top:1px solid #3c3c3c;background:#252526;font-family:var(--font-mono)';
+        segHead.textContent =
+            `Space ${spaceHex} (${seg.space})` +
+            (seg.name ? `  —  ${seg.name}` : '') +
+            `  [origin ${originHex}]`;
+        frag.appendChild(segHead);
+
+        if (seg.items.length === 0) {
+            const empty = document.createElement('div');
+            empty.style.cssText = 'padding:2px 12px;color:#555;font-style:italic;font-size:11px;font-family:var(--font-mono)';
+            empty.textContent = '(no items)';
+            frag.appendChild(empty);
+        } else {
+            frag.appendChild(_renderTreeNode(_buildPathTree(seg.items)));
+        }
+    });
+
+    _resetMapContentStyle();
+    elMapContent.innerHTML = '';
+    elMapContent.appendChild(frag);
+}
+
+function _buildPathTree(items) {
+
+    /* Builds { children: {label → node}, leaves: [item] } from flat › -path items */
+    const root = { children: {}, leaves: [] };
+
+    items.forEach(item => {
+        const parts = item.name.split(' › ');
+        let node = root;
+        for (let i = 0; i < parts.length - 1; i++) {
+            const key = parts[i];
+            if (!node.children[key]) {
+                node.children[key] = { label: key, children: {}, leaves: [] };
+            }
+            node = node.children[key];
+        }
+        node.leaves.push({ ...item, label: parts[parts.length - 1] });
+    });
+
+    return root;
+}
+
+function _getAllLeaves(node) {
+    const result = [...node.leaves];
+    Object.values(node.children).forEach(child => result.push(..._getAllLeaves(child)));
+    return result;
+}
+
+function _renderTreeNode(node) {
+
+    const container = document.createElement('div');
+
+    /* groups */
+    Object.values(node.children).forEach(child => {
+
+        const details = document.createElement('details');
+        details.className = 'map-tree-group';
+        details.open = true;
+
+        const summary = document.createElement('summary');
+
+        const arrow = document.createElement('span');
+        arrow.className = 'map-tree-arrow';
+        arrow.textContent = '▶';
+
+        const labelEl = document.createElement('span');
+        labelEl.className = 'map-tree-group-label';
+        labelEl.textContent = child.label;
+
+        summary.appendChild(arrow);
+        summary.appendChild(labelEl);
+
+        const leaves = _getAllLeaves(child);
+        if (leaves.length > 0) {
+            const minAddr = Math.min(...leaves.map(l => l.addr));
+            const maxAddr = Math.max(...leaves.map(l => l.addr + (l.size || 0)));
+            const rangeEl = document.createElement('span');
+            rangeEl.className = 'map-tree-range';
+            rangeEl.textContent =
+                `0x${minAddr.toString(16).toUpperCase().padStart(4, '0')}` +
+                `–0x${(maxAddr - 1).toString(16).toUpperCase().padStart(4, '0')}`;
+            summary.appendChild(rangeEl);
+        }
+
+        details.appendChild(summary);
+        const childrenDiv = _renderTreeNode(child);
+        childrenDiv.classList.add('map-tree-children');
+        details.appendChild(childrenDiv);
+
+        container.appendChild(details);
+    });
+
+    /* leaf items */
+    node.leaves.forEach(item => {
+
+        const leafDiv = document.createElement('div');
+        leafDiv.className = 'map-tree-leaf' + (item.overlap ? ' overlap' : '');
+        leafDiv.title = item.name;
+
+        const dot = document.createElement('span');
+        dot.className = 'map-type ' + (TYPE_COLOURS[item.type] || '');
+
+        const labelEl = document.createElement('span');
+        labelEl.className = 'map-tree-leaf-label';
+        labelEl.textContent = item.label + (item.overlap ? ' ⚠' : '');
+
+        const addrEl = document.createElement('span');
+        addrEl.className = 'map-tree-leaf-addr';
+        addrEl.textContent = '0x' + item.addr.toString(16).toUpperCase().padStart(4, '0');
+
+        const sizeEl = document.createElement('span');
+        sizeEl.className = 'map-tree-leaf-size';
+        sizeEl.textContent = item.size ? `${item.size}b` : '?b';
+
+        leafDiv.appendChild(dot);
+        leafDiv.appendChild(labelEl);
+        leafDiv.appendChild(addrEl);
+        leafDiv.appendChild(sizeEl);
+
+        container.appendChild(leafDiv);
+    });
+
+    return container;
+}
+
+/* --- Defines (C header) view ---------------------------------------------- */
+
+/* Convert an arbitrary string to a valid, uppercase C identifier fragment */
+function _toCName(str) {
+    return str
+        .toUpperCase()
+        .replace(/[^A-Z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+}
+
+/* Syntax-highlight a C preprocessor defines file.
+ * hljs C mode colours the entire #define line as one 'meta' span, losing
+ * individual token colours. This custom highlighter gives distinct colours to
+ * #define, identifiers, numeric values, and comments using the vs2015 class names. */
+function _highlightDefineLine(line, esc) {
+
+    /* Split off any trailing inline block comment */
+    const ciIdx = line.indexOf('/*');
+    let body = line;
+    let commentHtml = '';
+    if (ciIdx >= 0) {
+        body = line.slice(0, ciIdx);
+        const ceIdx = line.indexOf('*/', ciIdx + 2);
+        const raw   = ceIdx < 0 ? line.slice(ciIdx) : line.slice(ciIdx, ceIdx + 2);
+        commentHtml = `<span class="hljs-comment">${esc(raw)}</span>`;
+        if (ceIdx >= 0 && ceIdx + 2 < line.length) { commentHtml += esc(line.slice(ceIdx + 2)); }
+    }
+
+    /* #define IDENTIFIER   VALUE */
+    const m = body.match(/^(#define)(\s+)([A-Z0-9_]+)(\s+)(0x[0-9A-Fa-f]+|\d+)(\s*)$/);
+    if (m) {
+        return `<span class="hljs-keyword">${esc(m[1])}</span>${esc(m[2])}` +
+               `<span class="hljs-variable">${esc(m[3])}</span>${esc(m[4])}` +
+               `<span class="hljs-number">${esc(m[5])}</span>${esc(m[6])}` + commentHtml;
+    }
+
+    /* #pragma, #include, etc. */
+    const m2 = body.match(/^(#\w+)(.*)/s);
+    if (m2) {
+        return `<span class="hljs-keyword">${esc(m2[1])}</span>${esc(m2[2])}` + commentHtml;
+    }
+
+    return esc(body) + commentHtml;
+}
+
+function _highlightDefinesText(rawText) {
+
+    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    let result = '';
+    let i = 0;
+
+    while (i < rawText.length) {
+
+        /* Block comment (may span lines) */
+        if (rawText[i] === '/' && rawText[i + 1] === '*') {
+            const end  = rawText.indexOf('*/', i + 2);
+            const span = end < 0 ? rawText.slice(i) : rawText.slice(i, end + 2);
+            result += `<span class="hljs-comment">${esc(span)}</span>`;
+            i += span.length;
+            continue;
+        }
+
+        /* Preprocessor directive — take the whole line */
+        if (rawText[i] === '#') {
+            const nl   = rawText.indexOf('\n', i);
+            const line = nl < 0 ? rawText.slice(i) : rawText.slice(i, nl);
+            result += _highlightDefineLine(line, esc);
+            i += line.length;
+            continue;
+        }
+
+        result += esc(rawText[i]);
+        i++;
+    }
+
+    return result;
+}
+
+/* De-duplicate a C identifier within a set. If already used, appends _2, _3, etc. */
+function _uniqueId(name, usedSet) {
+
+    if (!usedSet.has(name)) { usedSet.add(name); return name; }
+    let n = 2;
+    while (usedSet.has(name + '_' + n)) { n++; }
+    const unique = name + '_' + n;
+    usedSet.add(unique);
+    return unique;
+}
+
+function _renderMapDefines(mapData) {
+
+    const lines = [];
+    const usedIds = new Set();
+    lines.push('/* ================================================================');
+    lines.push(' * OpenLCB CDI Memory Map — Auto-generated address defines');
+    lines.push(' * Generated by CDI Viewer. Do not edit manually.');
+    lines.push(' * ================================================================ */');
+    lines.push('');
+    lines.push('#pragma once');
+    lines.push('');
+
+    mapData.forEach(seg => {
+
+        const spaceHex  = '0x' + seg.space.toString(16).toUpperCase().padStart(2, '0');
+        const baseName  = seg.name ? _toCName(seg.name) : `SPACE_${seg.space}`;
+        const segCName  = _uniqueId(baseName, usedIds);
+        const segPrefix = `SPACE_${seg.space}_${segCName}`;
+
+        lines.push(`/* ----- Space ${spaceHex} (${seg.space})${seg.name ? ' — ' + seg.name : ''} ----- */`);
+
+        if (seg.items.length === 0) {
+            lines.push('/* (no items) */');
+            lines.push('');
+            return;
+        }
+
+        /* Find longest define name for alignment */
+        const nameFor = item => {
+            const parts = item.name.split(' › ').map(_toCName);
+            return `#define ${segPrefix}_${parts.join('_')}`;
+        };
+        const maxLen = Math.max(...seg.items.map(item => nameFor(item).length));
+
+        seg.items.forEach(item => {
+
+            const define  = nameFor(item);
+            const pad     = ' '.repeat(Math.max(1, maxLen - define.length + 2));
+            const addrHex = '0x' + item.addr.toString(16).toUpperCase().padStart(4, '0');
+            const sizeStr = item.size != null ? `${item.size} byte${item.size !== 1 ? 's' : ''}` : '? bytes';
+            const comment = `/* ${item.type}, ${sizeStr}${item.overlap ? ', OVERLAP' : ''} */`;
+
+            lines.push(`${define}${pad}${addrHex}  ${comment}`);
+
+            /* SIZE companion define */
+            if (item.size != null) {
+                const sizeDef = `#define ${segPrefix}_${item.name.split(' › ').map(_toCName).join('_')}_SIZE`;
+                const sizePad = ' '.repeat(Math.max(1, maxLen - sizeDef.length + 2));
+                lines.push(`${sizeDef}${sizePad}${item.size}`);
+            }
+        });
+
+        lines.push('');
+    });
+
+    /* Render into a selectable <pre> block with a Copy button */
+    const text = lines.join('\n');
+
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'display:flex;flex-direction:column;height:100%';
+
+    const copyBar = document.createElement('div');
+    copyBar.style.cssText =
+        'display:flex;justify-content:flex-end;padding:3px 6px;background:#2d2d2d;border-bottom:1px solid #444;flex-shrink:0';
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy';
+    copyBtn.style.cssText =
+        'padding:1px 10px;font-size:10px;border:1px solid #555;border-radius:3px;' +
+        'background:#3c3c3c;color:#ccc;cursor:pointer;font-family:var(--font-mono)';
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(text).then(() => {
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1500);
+        });
+    });
+    copyBar.appendChild(copyBtn);
+    wrapper.appendChild(copyBar);
+
+    const pre = document.createElement('pre');
+    pre.className = 'hljs';
+    pre.style.cssText =
+        'flex:1;overflow:auto;margin:0;padding:8px;' +
+        'font-family:var(--font-mono);font-size:11px;white-space:pre;';
+    const code = document.createElement('code');
+    code.className = 'language-c';
+    code.innerHTML = _highlightDefinesText(text);
+    pre.appendChild(code);
+    wrapper.appendChild(pre);
+
+    elMapContent.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;padding:0';
+    elMapContent.innerHTML = '';
+    elMapContent.appendChild(wrapper);
+}
+
+/* --- Struct (C layout) view ----------------------------------------------- */
+
+/* Convert an arbitrary string to a valid, lowercase C snake_case identifier */
+function _toSnakeCase(str) {
+    return str
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '')
+        || '_field';
+}
+
+/* Return the C type token and optional array suffix for a CDI item */
+function _cTypeOf(item) {
+    const sz = item.size || 1;
+    switch (item.type) {
+        case 'string':  return { type: 'char',     suffix: `[${sz}]` };
+        case 'eventid': return { type: 'uint8_t',  suffix: '[8]' };
+        case 'float':   return { type: sz >= 8 ? 'double' : 'float', suffix: '' };
+        case 'int':
+        case 'bit':
+        default:
+            if (sz === 1)  { return { type: 'uint8_t',  suffix: '' }; }
+            if (sz === 2)  { return { type: 'uint16_t', suffix: '' }; }
+            if (sz === 4)  { return { type: 'uint32_t', suffix: '' }; }
+            if (sz === 8)  { return { type: 'uint64_t', suffix: '' }; }
+            return { type: 'uint8_t', suffix: `[${sz}]` };
+    }
+}
+
+/*
+ * Build a structural tree from flat CDI map items.
+ * Replicated groups (path parts like "Channel [1]", "Channel [2]") become
+ * { kind:'array', label, count, stride, addr, children } nodes.
+ * Regular groups (multi-segment paths) become { kind:'group', label, children }.
+ * Leaf items become { kind:'field', item }.
+ */
+function _buildStructTree(items) {
+
+    const order  = [];
+    const groups = {};
+
+    items.forEach(item => {
+
+        const parts    = item.name.split(' \u203a ');  /* › separator */
+        const top      = parts[0];
+        const repMatch = top.match(/^(.+) \[(\d+)\]$/);
+
+        if (repMatch) {
+            /* replicated group instance: "Name [N]" */
+            const base = repMatch[1];
+            const idx  = parseInt(repMatch[2]);
+            if (!groups[base]) {
+                groups[base] = { kind: 'array', label: base, maxRep: 0, reps: {} };
+                order.push(base);
+            }
+            const g = groups[base];
+            g.maxRep = Math.max(g.maxRep, idx);
+            if (!g.reps[idx]) { g.reps[idx] = []; }
+            g.reps[idx].push({ ...item, name: parts.slice(1).join(' \u203a ') || top });
+
+        } else if (parts.length > 1) {
+            /* regular nested group */
+            if (!groups[top]) {
+                groups[top] = { kind: 'group', label: top, items: [] };
+                order.push(top);
+            }
+            groups[top].items.push({ ...item, name: parts.slice(1).join(' \u203a ') });
+
+        } else {
+            /* plain leaf field */
+            order.push(top);
+            groups[top] = { kind: 'field', item };
+        }
+    });
+
+    return order.map(key => {
+
+        const g = groups[key];
+
+        if (g.kind === 'array') {
+            const repKeys = Object.keys(g.reps).map(Number).sort((a, b) => a - b);
+            const rep1    = g.reps[repKeys[0]];
+            const rep2    = repKeys.length > 1 ? g.reps[repKeys[1]] : null;
+            const stride  = (rep1.length && rep2 && rep2.length)
+                ? rep2[0].addr - rep1[0].addr
+                : null;
+            return {
+                kind:     'array',
+                label:    g.label,
+                count:    g.maxRep,
+                addr:     rep1.length ? rep1[0].addr : null,
+                stride,
+                children: _buildStructTree(rep1)
+            };
+        }
+
+        if (g.kind === 'group') {
+            return { kind: 'group', label: g.label, children: _buildStructTree(g.items) };
+        }
+
+        return { kind: 'field', item: g.item };
+    });
+}
+
+/* Return the first absolute address reachable in a tree node */
+function _nodeFirstAddr(node) {
+    if (node.kind === 'field') { return node.item.addr; }
+    for (const c of (node.children || [])) {
+        const a = _nodeFirstAddr(c);
+        if (a !== null) { return a; }
+    }
+    return null;
+}
+
+/* Format an address: relative (+0x…) when inside a sub-struct, absolute otherwise */
+function _structAddrStr(addr, baseAddr) {
+    const h = n => '0x' + n.toString(16).toUpperCase().padStart(4, '0');
+    return baseAddr !== null ? '+' + h(addr - baseAddr) : h(addr);
+}
+
+/*
+ * Emit C lines for a struct tree.
+ * state = { cursor: absolute byte cursor, padN: padding counter, baseAddr: null|start }
+ */
+function _emitStructNodes(nodes, lines, indent, state) {
+
+    const sp = '    '.repeat(indent);
+
+    for (const node of nodes) {
+
+        const nodeAddr = _nodeFirstAddr(node);
+
+        /* insert gap padding if there is a hole before this node */
+        if (nodeAddr !== null && nodeAddr > state.cursor) {
+            const gap    = nodeAddr - state.cursor;
+            const offStr = _structAddrStr(state.cursor, state.baseAddr);
+            lines.push(`${sp}uint8_t   _pad_${state.padN++}[${gap}];` +
+                `  /* ${offStr}: gap (${gap} byte${gap !== 1 ? 's' : ''}) */`);
+            state.cursor = nodeAddr;
+        }
+
+        if (node.kind === 'field') {
+
+            const { type, suffix } = _cTypeOf(node.item);
+            const fname   = _toSnakeCase(node.item.name.split(' \u203a ').pop() || node.item.name);
+            const sz      = node.item.size || 1;
+            const offStr  = _structAddrStr(node.item.addr, state.baseAddr);
+            const decl    = `${type}  ${fname}${suffix};`;
+            lines.push(`${sp}${decl.padEnd(32)}  /* ${offStr}: ${node.item.type}, ${sz}b */`);
+            state.cursor = node.item.addr + sz;
+
+        } else if (node.kind === 'group') {
+
+            const startAddr = nodeAddr ?? state.cursor;
+            const offStr    = _structAddrStr(startAddr, state.baseAddr);
+            lines.push(`${sp}/* \u2014 ${node.label} @ ${offStr} \u2014 */`);
+            lines.push(`${sp}struct __attribute__((packed)) {`);
+            const sub = { cursor: startAddr, padN: state.padN, baseAddr: startAddr };
+            _emitStructNodes(node.children, lines, indent + 1, sub);
+            state.padN   = sub.padN;
+            state.cursor = sub.cursor;
+            lines.push(`${sp}} ${_toSnakeCase(node.label)};`);
+
+        } else if (node.kind === 'array') {
+
+            const startAddr  = node.addr ?? state.cursor;
+            const offStr     = _structAddrStr(startAddr, null);   /* always absolute */
+            const strideNote = node.stride != null ? `, stride ${node.stride}b` : '';
+            lines.push(`${sp}/* \u2014 ${node.label} \u00d7 ${node.count} @ ${offStr}${strideNote} \u2014 */`);
+            lines.push(`${sp}struct __attribute__((packed)) {`);
+            const sub = { cursor: startAddr, padN: state.padN, baseAddr: startAddr };
+            _emitStructNodes(node.children, lines, indent + 1, sub);
+            state.padN = sub.padN;
+            const strideActual = node.stride ?? (sub.cursor - startAddr);
+            lines.push(`${sp}} ${_toSnakeCase(node.label)}[${node.count}];`);
+            state.cursor = startAddr + node.count * strideActual;
+        }
+    }
+}
+
+/* Syntax-highlight a C struct file.
+ * Preprocessor lines use the custom _highlightDefineLine.
+ * Struct lines get C type/keyword/number/comment colouring. */
+function _highlightStructLine(line, esc) {
+
+    /* Split off any trailing inline comment */
+    const ciIdx = line.indexOf('/*');
+    let body = line;
+    let commentHtml = '';
+    if (ciIdx >= 0) {
+        body = line.slice(0, ciIdx);
+        const ceIdx = line.indexOf('*/', ciIdx + 2);
+        const raw   = ceIdx < 0 ? line.slice(ciIdx) : line.slice(ciIdx, ceIdx + 2);
+        commentHtml = `<span class="hljs-comment">${esc(raw)}</span>`;
+        if (ceIdx >= 0 && ceIdx + 2 < line.length) { commentHtml += esc(line.slice(ceIdx + 2)); }
+    }
+
+    /* Tokenise the body: types, keywords, numbers, identifiers, punctuation */
+    const html = body.replace(
+        /\b(uint8_t|uint16_t|uint32_t|uint64_t|char|float|double|int)\b|\b(typedef|struct|__attribute__)\b|\b(0x[0-9A-Fa-f]+|\d+)\b/g,
+        (m, typ, kw, num) => {
+            if (typ) { return `<span class="hljs-type">${esc(typ)}</span>`; }
+            if (kw)  { return `<span class="hljs-keyword">${esc(kw)}</span>`; }
+            if (num) { return `<span class="hljs-number">${esc(num)}</span>`; }
+            return esc(m);
+        }
+    );
+
+    return html + commentHtml;
+}
+
+function _highlightStructText(rawText) {
+
+    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    let result = '';
+    let i = 0;
+
+    while (i < rawText.length) {
+
+        /* Block comment (may span lines) */
+        if (rawText[i] === '/' && rawText[i + 1] === '*') {
+            const end  = rawText.indexOf('*/', i + 2);
+            const span = end < 0 ? rawText.slice(i) : rawText.slice(i, end + 2);
+            result += `<span class="hljs-comment">${esc(span)}</span>`;
+            i += span.length;
+            continue;
+        }
+
+        /* Preprocessor directive — use custom define highlighter */
+        if (rawText[i] === '#') {
+            const nl   = rawText.indexOf('\n', i);
+            const line = nl < 0 ? rawText.slice(i) : rawText.slice(i, nl);
+            result += _highlightDefineLine(line, esc);
+            i += line.length;
+            continue;
+        }
+
+        /* Regular line — take until newline */
+        if (rawText[i] === '\n') {
+            result += '\n';
+            i++;
+            continue;
+        }
+        const nl   = rawText.indexOf('\n', i);
+        const line = nl < 0 ? rawText.slice(i) : rawText.slice(i, nl);
+        result += _highlightStructLine(line, esc);
+        i += line.length;
+    }
+
+    return result;
+}
+
+function _renderMapStruct(mapData) {
+
+    const lines = [];
+    const usedStructs  = new Set();
+    const usedDefines  = new Set();
+    lines.push('/* ================================================================');
+    lines.push(' * OpenLCB CDI Memory Map — Auto-generated C struct layout');
+    lines.push(' * Use __attribute__((packed)) or #pragma pack(1) for correct');
+    lines.push(' * byte offsets with no compiler-inserted padding.');
+    lines.push(' * Generated by CDI Viewer. Do not edit manually.');
+    lines.push(' * ================================================================ */');
+    lines.push('');
+    lines.push('#pragma once');
+    lines.push('#include <stdint.h>');
+    lines.push('');
+
+    mapData.forEach(seg => {
+
+        const spaceHex   = '0x' + seg.space.toString(16).toUpperCase().padStart(2, '0');
+        const originHex  = '0x' + seg.origin.toString(16).toUpperCase().padStart(4, '0');
+        const baseName   = _toSnakeCase(seg.name || `space_${seg.space}`);
+        const structName = _uniqueId(baseName + '_t', usedStructs);
+        const defBase    = structName.replace(/_t$/, '').toUpperCase();
+
+        lines.push(`/* Space ${spaceHex} (${seg.space})${seg.name ? ' \u2014 ' + seg.name : ''} */`);
+        lines.push(`#define ${defBase}_ORIGIN  ${originHex}`);
+        lines.push('');
+        lines.push(`typedef struct __attribute__((packed)) {`);
+        lines.push('');
+
+        if (seg.items.length === 0) {
+            lines.push('    uint8_t _reserved[1];');
+        } else {
+            const sorted = [...seg.items].sort((a, b) => a.addr - b.addr);
+            const tree   = _buildStructTree(sorted);
+            const state  = { cursor: seg.origin, padN: 0, baseAddr: null };
+            _emitStructNodes(tree, lines, 1, state);
+        }
+
+        lines.push('');
+        lines.push(`} ${structName};`);
+        lines.push('');
+    });
+
+    /* Render into a selectable <pre> block with a Copy button */
+    const text = lines.join('\n');
+
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'display:flex;flex-direction:column;height:100%';
+
+    const copyBar = document.createElement('div');
+    copyBar.style.cssText =
+        'display:flex;justify-content:flex-end;padding:3px 6px;background:#2d2d2d;border-bottom:1px solid #444;flex-shrink:0';
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy';
+    copyBtn.style.cssText =
+        'padding:1px 10px;font-size:10px;border:1px solid #555;border-radius:3px;' +
+        'background:#3c3c3c;color:#ccc;cursor:pointer;font-family:var(--font-mono)';
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(text).then(() => {
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1500);
+        });
+    });
+    copyBar.appendChild(copyBtn);
+    wrapper.appendChild(copyBar);
+
+    const pre = document.createElement('pre');
+    pre.className = 'hljs';
+    pre.style.cssText =
+        'flex:1;overflow:auto;margin:0;padding:8px;' +
+        'font-family:var(--font-mono);font-size:11px;white-space:pre;';
+    const code = document.createElement('code');
+    code.className = 'language-c';
+    code.innerHTML = _highlightStructText(text);
+    pre.appendChild(code);
+    wrapper.appendChild(pre);
+
+    elMapContent.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;padding:0';
+    elMapContent.innerHTML = '';
+    elMapContent.appendChild(wrapper);
+}
+
+/* Restore default map-content style for flat/tree views */
+function _resetMapContentStyle() {
+    elMapContent.style.cssText = '';
+}
+
+/* --- Stats bar ------------------------------------------------------------ */
+
+function _renderMapStats(mapData, statsEl) {
+
+    const lines = [];
+
+    /* Group items per address space */
+    const bySpace = {};
+    mapData.forEach(seg => {
+        if (!bySpace[seg.space]) { bySpace[seg.space] = { segs: [], items: [] }; }
+        bySpace[seg.space].segs.push(seg);
+        bySpace[seg.space].items.push(...seg.items);
+    });
+
+    Object.entries(bySpace).sort((a, b) => Number(a[0]) - Number(b[0])).forEach(([spaceStr, data]) => {
+
+        const spaceNum = parseInt(spaceStr);
+        const spaceHex = '0x' + spaceNum.toString(16).toUpperCase().padStart(2, '0');
+
+        if (data.items.length === 0) {
+            lines.push(`<div class="map-stats-space"><strong>Space ${spaceHex}:</strong> (empty)</div>`);
+            return;
+        }
+
+        const ends  = data.items.map(i => i.addr + (i.size || 0));
+        const lo    = Math.min(...data.items.map(i => i.addr));
+        const hi    = Math.max(...ends);
+        const total = hi - lo;
+        const loHex = '0x' + lo.toString(16).toUpperCase().padStart(4, '0');
+        const hiHex = '0x' + (hi - 1).toString(16).toUpperCase().padStart(4, '0');
+
+        /* Space 253 (0xFD): special three-line breakdown */
+        if (spaceNum === 253 && _configMemHighest > 0) {
+
+            const spaceTotal    = _configMemHighest;
+            const spaceLo       = 0;
+            const spaceHi       = _configMemHighest - 1;
+            const spaceLoHex    = '0x' + spaceLo.toString(16).toUpperCase().padStart(4, '0');
+            const spaceHiHex    = '0x' + spaceHi.toString(16).toUpperCase().padStart(4, '0');
+
+            /* Line 1: total space available */
+            lines.push(
+                `<div class="map-stats-space">` +
+                `<strong>Space 0xFD</strong> bytes available total: ` +
+                `${spaceTotal.toLocaleString()} (${spaceLoHex}–${spaceHiHex})` +
+                `</div>`
+            );
+
+            /* Line 2: bytes assigned by CDI */
+            const cdiBytes = hi;   /* hi = one past last byte used by CDI */
+            const cdiHiHex = '0x' + (hi - 1).toString(16).toUpperCase().padStart(4, '0');
+            lines.push(
+                `<div class="map-stats-sub">` +
+                `Bytes assigned by CDI: ${cdiBytes.toLocaleString()} (0x${cdiBytes.toString(16).toUpperCase()})` +
+                ` &nbsp; address range ${lo.toLocaleString()} to ${(hi - 1).toLocaleString()}` +
+                ` (${loHex} to ${cdiHiHex})` +
+                `</div>`
+            );
+
+            /* Line 3: additional bytes available */
+            const extra    = _configMemHighest - hi;
+            const extraHex = '0x' + Math.abs(extra).toString(16).toUpperCase();
+
+            if (extra >= 0) {
+
+                const extraLoHex = '0x' + hi.toString(16).toUpperCase().padStart(4, '0');
+                lines.push(
+                    `<div class="map-stats-sub">` +
+                    `<span class="map-stats-avail-pos">Additional bytes available: ` +
+                    `${extra.toLocaleString()} (${extraHex})` +
+                    ` &nbsp; address range ${hi.toLocaleString()} to ${spaceHi.toLocaleString()}` +
+                    ` (${extraLoHex} to ${spaceHiHex})</span>` +
+                    `</div>`
+                );
+
+            } else {
+
+                lines.push(
+                    `<div class="map-stats-sub">` +
+                    `<span class="map-stats-avail-neg">Additional bytes available: ` +
+                    `${extra.toLocaleString()} (${extraHex}) — config memory too small!</span>` +
+                    `</div>`
+                );
+
+            }
+
+        } else {
+
+            /* All other spaces: simple one-line summary */
+            lines.push(
+                `<div class="map-stats-space">` +
+                `<strong>Space ${spaceHex} (${spaceNum}):</strong> ` +
+                `${loHex}–${hiHex} &nbsp; ${total.toLocaleString()} bytes defined` +
+                `</div>`
+            );
+
+        }
+    });
+
+    statsEl.innerHTML = lines.join('');
+}
+
+/* --- Overlap report ------------------------------------------------------ */
+
+function _renderOverlapReport(mapData, overlapEl) {
+
+    const overlaps = [];
+
+    mapData.forEach(seg => {
+
+        const spaceHex = '0x' + seg.space.toString(16).toUpperCase().padStart(2, '0');
+
+        seg.items.forEach(item => {
+
+            if (item.overlap) {
+                const addrHex = '0x' + item.addr.toString(16).toUpperCase().padStart(4, '0');
+                const endHex  = '0x' + (item.addr + (item.size || 0) - 1).toString(16).toUpperCase().padStart(4, '0');
+                overlaps.push(
+                    `<div class="overlap-item">Space ${spaceHex}: "${item.name}" ` +
+                    `at ${addrHex}–${endHex} (${item.size || '?'} bytes) overlaps previous region</div>`
+                );
+            }
+
+        });
+    });
+
+    if (overlaps.length === 0) {
+        overlapEl.innerHTML = '';
+        return;
+    }
+
+    overlapEl.innerHTML =
+        `<div class="overlap-title">⚠ ${overlaps.length} overlap${overlaps.length > 1 ? 's' : ''} detected</div>` +
+        overlaps.join('');
+}
+
+/* --- Config memory size warning ------------------------------------------ */
+
+function _renderConfigMemWarning(mapData, warnEl) {
+
+    /* Only relevant when embedded and we know the configured size */
+    if (!_isEmbedded || _configMemHighest <= 0) {
+        warnEl.innerHTML = '';
+        return;
+    }
+
+    /* Find the highest address used in space 253 (config memory) */
+    let cdiHighest = 0;
+    mapData.forEach(seg => {
+        if (seg.space !== 253) { return; }
+        seg.items.forEach(item => {
+            const end = item.addr + (item.size || 0);
+            if (end > cdiHighest) { cdiHighest = end; }
+        });
+    });
+
+    if (cdiHighest <= 0 || cdiHighest <= _configMemHighest) {
+        warnEl.innerHTML = '';
+        return;
+    }
+
+    const reqHex = '0x' + cdiHighest.toString(16).toUpperCase();
+    const cfgHex = '0x' + _configMemHighest.toString(16).toUpperCase();
+
+    warnEl.innerHTML =
+        `<span class="cfg-warn-text">⚠ Space 0xFD requires ${cdiHighest} bytes (${reqHex}) ` +
+        `but config memory size is ${_configMemHighest} (${cfgHex})</span>` +
+        `<button class="cfg-warn-btn" id="btn-fix-config-mem">Set to ${reqHex}</button>`;
+
+    document.getElementById('btn-fix-config-mem').addEventListener('click', () => {
+
+        window.parent.postMessage({
+            type: 'updateConfigMemSize',
+            value: reqHex
+        }, '*');
+
+        _configMemHighest = cdiHighest;
+        warnEl.innerHTML = '';
+
+        /* Refresh stats bar with updated config memory size */
+        const fixXml = elEditor.value.trim();
+        if (fixXml) {
+            const fixMap = CdiRenderer.buildMap(fixXml);
+            if (fixMap) {
+                _renderMapStats(fixMap, document.getElementById('map-stats-bar'));
+            }
+        }
+
+    });
+
+}
+
+/* ---------- Validate ------------------------------------------------------ */
+btnValidate.addEventListener('click', validate);
+
+function validate() {
+
+    const xml = elEditor.value.trim();
+    if (!xml) {
+        elValList.innerHTML = '';
+        elValOk.textContent = 'No issues detected';
+        elValOk.style.display = '';
+        if (_isEmbedded) {
+            window.parent.postMessage({ type: 'validationStatus', view: 'cdi', errors: 0, warnings: 0 }, '*');
+        }
+        return;
+    }
+
+    const issues = CdiValidator.validate(xml);
+
+    elValList.innerHTML = '';
+
+    if (issues.length === 0) {
+        elValOk.textContent = 'No issues detected';
+        elValOk.style.display = '';
+    } else {
+        elValOk.style.display = 'none';
+        issues.forEach(issue => {
+            elValList.appendChild(_buildIssueItem(issue));
+        });
+    }
+
+    /* Report validation status to parent shell for badge display */
+    if (_isEmbedded) {
+
+        var errorCount   = issues.filter(i => i.severity === 'error').length;
+        var warningCount = issues.filter(i => i.severity === 'warning').length;
+
+        window.parent.postMessage({
+            type:     'validationStatus',
+            view:     'cdi',
+            errors:   errorCount,
+            warnings: warningCount
+        }, '*');
+
+    }
+}
+
+function _buildIssueItem(issue) {
+
+    const li = document.createElement('li');
+
+    const badge = document.createElement('span');
+    badge.className = `v-badge v-${issue.severity}`;
+    badge.textContent = issue.severity;
+
+    li.appendChild(badge);
+
+    if (issue.line) {
+        const ln = document.createElement('span');
+        ln.className   = 'v-line';
+        ln.textContent = `Ln ${issue.line}${issue.col ? ':' + issue.col : ''}`;
+        li.appendChild(ln);
+
+        /* clicking a line hint jumps editor to that line */
+        li.addEventListener('click', () => _jumpToLine(issue.line));
+    }
+
+    const msg = document.createElement('span');
+    msg.textContent = issue.message;
+    li.appendChild(msg);
+
+    return li;
+}
+
+function _jumpToLine(lineNum) {
+
+    const lines = elEditor.value.split('\n');
+    let pos = 0;
+    for (let i = 0; i < Math.min(lineNum - 1, lines.length); i++) {
+        pos += lines[i].length + 1;
+    }
+    elEditor.focus();
+    elEditor.setSelectionRange(pos, pos + (lines[lineNum - 1] || '').length);
+    updateCursor();
+}
+
+/* ---------- Clear --------------------------------------------------------- */
+btnClear.addEventListener('click', () => {
+    elEditor.value  = '';
+    elOutput.innerHTML = '';
+    elEmpty.style.display = '';
+    elValList.innerHTML = '';
+    elValOk.textContent = 'No issues detected';
+    elValOk.style.display = '';
+    btnRender.disabled   = true;
+    btnValidate.disabled = true;
+    elMapContent.innerHTML = '<div class="map-empty">Render CDI to see memory map</div>';
+    document.getElementById('map-stats-bar').innerHTML = '';
+    document.getElementById('map-overlap-report').innerHTML = '';
+    document.getElementById('map-config-warning').innerHTML = '';
+    _setFilename('');
+    onEditorChange();
+});
+
+
+/* ---------- Vertical Split toggle ----------------------------------------- */
+
+/*
+ * Workspace is ALWAYS horizontal (row): [Editor+Map | Preview]
+ * Preview is always on the right.
+ *
+ * "Vertical Split" controls the editor/map sub-split inside the left pane:
+ *   CHECKED   = editor | map  side-by-side (vertical divider, map-beside)
+ *   UNCHECKED = editor / map  stacked      (horizontal divider, map below)
+ */
+
+function applySplitMode() {
+
+    /* Workspace is always horizontal — preview always on the right */
+    elWorkspace.classList.remove('vertical');
+    elWorkspace.classList.add('horizontal');
+
+    /* Editor pane always uses width (it's in a row) */
+    elEditorPane.style.width     = elEditorPane.style.width || '50%';
+    elEditorPane.style.height    = '';
+    elEditorPane.style.flexBasis = elEditorPane.style.width;
+
+    if (chkVertical.checked) {
+
+        /* editor | map  side-by-side within the left pane */
+        elEditorPane.classList.add('map-beside');
+        elMapPane.style.width     = elMapPane.style.width || '220px';
+        elMapPane.style.height    = '';
+        elMapPane.style.flexBasis = elMapPane.style.width;
+
+    } else {
+
+        /* editor on top, map below within the left pane */
+        elEditorPane.classList.remove('map-beside');
+        elMapPane.style.height    = elMapPane.style.height || '180px';
+        elMapPane.style.width     = '';
+        elMapPane.style.flexBasis = elMapPane.style.height;
+
+    }
+
+    _restoreSplitterPositions();
+}
+
+chkVertical.addEventListener('change', applySplitMode);
+
+/* ---------- Pane visibility toggles -------------------------------------- */
+
+function applyPaneVisibility() {
+
+    const showPrev = chkShowPreview.checked;
+    const showMap  = chkShowMap.checked;
+
+    /* preview pane + main splitter */
+    elSplitter.style.display    = showPrev ? '' : 'none';
+    elPreviewPane.style.display = showPrev ? '' : 'none';
+
+    if (showPrev) {
+        /* restore CSS-driven / splitter-set flex sizing */
+        elEditorPane.style.removeProperty('flex');
+    } else {
+        /* editor expands to fill entire workspace */
+        elEditorPane.style.flex = '1 1 auto';
+    }
+
+    /* map pane + sub-splitter */
+    elSubSplitter.style.display = showMap ? '' : 'none';
+    elMapPane.style.display     = showMap ? '' : 'none';
+}
+
+chkShowPreview.addEventListener('change', applyPaneVisibility);
+chkShowMap.addEventListener('change', applyPaneVisibility);
+
+/* ---------- Generic splitter drag factory --------------------------------- */
+
+function initSplitterDrag(splitterEl, opts) {
+
+    /*
+     * opts.isVertical()  → bool  true = drag moves left/right (col-resize)
+     * opts.getSize()     → px    current size of the pane being resized
+     * opts.setSize(px)   → void  apply the new size
+     * opts.min           → px    minimum size
+     */
+
+    let dragging = false;
+    let startPos = 0;
+    let startSize = 0;
+
+    splitterEl.addEventListener('mousedown', e => {
+        dragging  = true;
+        splitterEl.classList.add('dragging');
+        document.body.style.cursor     = opts.isVertical() ? 'col-resize' : 'row-resize';
+        document.body.style.userSelect = 'none';
+        startPos  = opts.isVertical() ? e.clientX : e.clientY;
+        startSize = opts.getSize();
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', e => {
+        if (!dragging) { return; }
+        const pos   = opts.isVertical() ? e.clientX : e.clientY;
+        const delta = (pos - startPos) * (opts.invert ? -1 : 1);
+        opts.setSize(Math.max(opts.min, startSize + delta));
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (!dragging) { return; }
+        dragging = false;
+        splitterEl.classList.remove('dragging');
+        document.body.style.cursor     = '';
+        document.body.style.userSelect = '';
+        if (opts.onDragEnd) { opts.onDragEnd(opts.getSize()); }
+    });
+}
+
+/* main splitter — resizes editor pane width (workspace is always row) */
+initSplitterDrag(elSplitter, {
+    isVertical: () => true,   /* always vertical divider (col-resize) */
+    getSize:    () => elEditorPane.getBoundingClientRect().width,
+    setSize:    px => {
+        elEditorPane.style.width     = px + 'px';
+        elEditorPane.style.flexBasis = px + 'px';
+    },
+    min: 100,
+    onDragEnd: px => {
+        localStorage.setItem('cdi_sp_main', px);
+    }
+});
+
+/* sub-splitter — resizes map pane; orientation is opposite to main.
+ * invert: true because map pane is AFTER the splitter (below/right), so
+ * dragging toward it should grow it, not shrink it. */
+initSplitterDrag(elSubSplitter, {
+    isVertical: () => elEditorPane.classList.contains('map-beside'),  /* map-beside = col-resize */
+    invert:     true,
+    getSize:    () => elEditorPane.classList.contains('map-beside')
+                        ? elMapPane.getBoundingClientRect().width
+                        : elMapPane.getBoundingClientRect().height,
+    setSize:    px => {
+        if (elEditorPane.classList.contains('map-beside')) {
+            elMapPane.style.width  = px + 'px';
+            elMapPane.style.flexBasis = px + 'px';
+        } else {
+            elMapPane.style.height = px + 'px';
+            elMapPane.style.flexBasis = px + 'px';
+        }
+    },
+    min: 60,
+    onDragEnd: px => {
+        const beside = elEditorPane.classList.contains('map-beside');
+        localStorage.setItem(beside ? 'cdi_sp_sub_beside' : 'cdi_sp_sub_below', px);
+    }
+});
+
+function _restoreSplitterPositions() {
+
+    /* Main splitter — always controls editor pane width */
+    const mainPx = parseFloat(localStorage.getItem('cdi_sp_main'));
+    if (mainPx > 0) {
+        elEditorPane.style.width     = mainPx + 'px';
+        elEditorPane.style.flexBasis = mainPx + 'px';
+    }
+
+    /* Sub-splitter — map width (beside) or height (below) */
+    const beside = elEditorPane.classList.contains('map-beside');
+    const subKey = beside ? 'cdi_sp_sub_beside' : 'cdi_sp_sub_below';
+    const subPx  = parseFloat(localStorage.getItem(subKey));
+    if (subPx > 0) {
+        if (beside) {
+            elMapPane.style.width     = subPx + 'px';
+            elMapPane.style.flexBasis = subPx + 'px';
+        } else {
+            elMapPane.style.height    = subPx + 'px';
+            elMapPane.style.flexBasis = subPx + 'px';
+        }
+    }
+}
+
+/* ---------- Generate Basic XML ------------------------------------------- */
+
+const BASIC_CDI_XML =
+`<?xml version="1.0"?>
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+  <identification>
+    <manufacturer>Your Manufacturer Name</manufacturer>
+    <model>Your Model Name</model>
+    <hardwareVersion>1.0</hardwareVersion>
+    <softwareVersion>1.0</softwareVersion>
+  </identification>
+
+  <!-- ACDI: declares Abbreviated CDI protocol support -->
+  <acdi/>
+
+  <!--
+    Space 253 (0xFD) — Configuration Memory
+    Bytes 0-127 are RESERVED by the default CDI:
+      Byte   0-61  : User Node Name        (62-byte null-terminated string)
+      Byte  62-124 : User Node Description (63-byte null-terminated string)
+
+    Place your custom configuration at origin 128 or higher.
+  -->
+  <segment space="253" origin="0">
+    <name>User Identification</name>
+    <group>
+      <name>User Identification</name>
+      <description>User-assigned name and description for this node</description>
+      <string size="62">
+        <name>Node Name</name>
+        <description>Short user-assigned name (max 62 characters)</description>
+      </string>
+      <string size="63">
+        <name>Node Description</name>
+        <description>Longer description of this node (max 63 characters)</description>
+      </string>
+    </group>
+  </segment>
+
+  <!-- Add your custom configuration here (origin >= 128 keeps reserved bytes intact) -->
+  <segment space="253" origin="128">
+    <name>Configuration</name>
+    <group>
+      <name>Configuration</name>
+      <description>Node configuration settings</description>
+
+      <!-- Example: integer field
+      <int size="1">
+        <name>My Setting</name>
+        <description>A simple 1-byte configuration value</description>
+        <min>0</min>
+        <max>255</max>
+        <default>0</default>
+      </int>
+      -->
+
+      <!-- Example: Event ID
+      <eventid>
+        <name>My Event</name>
+        <description>An event this node produces or consumes</description>
+      </eventid>
+      -->
+
+    </group>
+  </segment>
+
+</cdi>`;
+
+document.getElementById('btn-basic-xml').addEventListener('click', () => {
+
+    if (elEditor.value.trim().length > 0) {
+        if (!confirm('Replace the current content with a basic CDI template?')) { return; }
+    }
+
+    elEditor.value = BASIC_CDI_XML;
+    _setFilename('(Basic template)');
+    onEditorChange();
+    render();
+    elEditor.focus();
+});
+
+/* ---------- State persistence --------------------------------------------- */
+
+function _saveCdiEditorState() {
+
+    const state = {
+        showPreview: chkShowPreview.checked,
+        showMap:     chkShowMap.checked,
+        vertical:    chkVertical.checked,
+        showAddr:    chkAddress.checked,
+        mapView:     _mapView
+    };
+    localStorage.setItem('cdi_editor_state', JSON.stringify(state));
+
+}
+
+function _restoreCdiEditorState() {
+
+    const raw = localStorage.getItem('cdi_editor_state');
+    if (!raw) { return; }
+
+    try {
+
+        const state = JSON.parse(raw);
+        if (typeof state.showPreview === 'boolean') { chkShowPreview.checked = state.showPreview; }
+        if (typeof state.showMap     === 'boolean') { chkShowMap.checked     = state.showMap; }
+        if (typeof state.vertical    === 'boolean') { chkVertical.checked    = state.vertical; }
+        if (typeof state.showAddr    === 'boolean') { chkAddress.checked     = state.showAddr; }
+        if (state.mapView) { _setMapView(state.mapView); }
+
+    } catch (e) { }
+
+}
+
+/* Save state when checkboxes change */
+[chkShowPreview, chkShowMap, chkVertical, chkAddress].forEach(cb => {
+    cb.addEventListener('change', _saveCdiEditorState);
+});
+
+/* ---------- Init ---------------------------------------------------------- */
+_restoreCdiEditorState();
+_updateLineNumbers();
+_updateStatusBar();
+applySplitMode();
+applyPaneVisibility();
+
+/* ---------- Embedded mode (iframe inside Node Wizard) --------------------- */
+
+if (_isEmbedded) {
+
+    /* Hide the header to save vertical space */
+    const appHeader = document.querySelector('.app-header');
+    if (appHeader) { appHeader.style.display = 'none'; }
+
+    /* Listen for messages from the parent wizard */
+    window.addEventListener('message', function (e) {
+
+        if (!e.data) { return; }
+
+        if (e.data.type === 'loadXml') {
+
+            /* Only replace editor content if parent actually has XML to restore */
+            if (e.data.xml && e.data.xml.trim().length > 0) {
+                elEditor.value = e.data.xml;
+                if (e.data.filename) { _setFilename(e.data.filename); }
+                onEditorChange();
+                render();
+            }
+
+        } else if (e.data.type === 'setConfigMemSize') {
+
+            _configMemHighest = parseInt(e.data.value) || 0;
+
+            /* Re-render stats and warnings with updated config memory size */
+            const xml = elEditor.value.trim();
+            if (xml) {
+                const mapData = CdiRenderer.buildMap(xml);
+                if (mapData) {
+                    _renderMapStats(mapData, document.getElementById('map-stats-bar'));
+                    _renderConfigMemWarning(mapData, document.getElementById('map-config-warning'));
+                }
+            }
+
+        }
+
+    });
+
+    /* Notify parent that we are ready */
+    window.parent.postMessage({ type: 'ready', view: 'cdi' }, '*');
+
+    /* If editor already has content, notify parent */
+    if (elEditor.value.trim().length > 0) {
+        _postXmlToParent();
+    }
+
+}
+
+</script>
+</body>
+</html>

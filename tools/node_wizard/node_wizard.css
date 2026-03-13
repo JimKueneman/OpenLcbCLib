@@ -1,0 +1,500 @@
+/* =========================================================================
+ * Node Wizard — Sidebar Shell Styles
+ * ========================================================================= */
+
+:root {
+
+    --color-bg: #f5f6f8;
+    --color-surface: #ffffff;
+    --color-text: #1a1a2e;
+    --color-text-secondary: #5a5a7a;
+    --color-border: #e0e0e8;
+    --color-accent: #2563eb;
+    --color-accent-light: #eff4ff;
+    --color-accent-border: #93b4f8;
+    --color-disabled: #c0c0cc;
+
+    --radius: 8px;
+
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                  "Helvetica Neue", Arial, sans-serif;
+
+}
+
+/* ---- Reset & Base ---- */
+
+*, *::before, *::after {
+
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+}
+
+body {
+
+    font-family: var(--font-stack);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-text);
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+
+}
+
+/* ---- Header ---- */
+
+header {
+
+    flex: 0 0 auto;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+
+}
+
+header h1 {
+
+    font-size: 18px;
+    font-weight: 600;
+
+}
+
+header .subtitle {
+
+    color: var(--color-text-secondary);
+    font-size: 13px;
+
+}
+
+/* ---- Header action buttons ---- */
+
+.header-actions {
+
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+}
+
+.header-btn {
+
+    padding: 0 12px;
+    height: 30px;
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.12s, border-color 0.12s;
+
+}
+
+.header-btn:hover:not(:disabled) {
+
+    background: #edf0f4;
+    border-color: #b0b8c4;
+
+}
+
+.header-btn:disabled {
+
+    opacity: 0.4;
+    cursor: not-allowed;
+
+}
+
+.header-btn-primary {
+
+    background: var(--color-accent);
+    color: #fff;
+    border-color: var(--color-accent);
+
+}
+
+.header-btn-primary:hover:not(:disabled) {
+
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+
+}
+
+.header-btn-primary:disabled {
+
+    background: var(--color-disabled);
+    border-color: var(--color-disabled);
+
+}
+
+.header-btn-wrap {
+
+    position: relative;
+    display: inline-block;
+
+}
+
+.header-btn-wrap input[type="file"] {
+
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+
+}
+
+.header-btn-wrap .header-btn {
+
+    pointer-events: none;
+
+}
+
+.header-checkbox {
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+
+}
+
+.header-checkbox input[type="checkbox"] {
+
+    margin: 0;
+    cursor: pointer;
+
+}
+
+.header-sep {
+
+    width: 1px;
+    height: 20px;
+    background: var(--color-border);
+    margin: 0 4px;
+
+}
+
+/* ---- Layout: sidebar + workspace ---- */
+
+.layout {
+
+    flex: 1 1 auto;
+    display: flex;
+    overflow: hidden;
+
+}
+
+/* ---- Sidebar ---- */
+
+.sidebar {
+
+    flex: 0 0 220px;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+}
+
+.sidebar-section {
+
+    padding: 16px 12px 8px;
+
+}
+
+.sidebar-section + .sidebar-section {
+
+    border-top: 1px solid var(--color-border);
+
+}
+
+.sidebar-label {
+
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+    padding-left: 4px;
+
+}
+
+/* ---- Sidebar Tiles ---- */
+
+.sidebar-tile {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    margin-bottom: 2px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: background 0.12s, border-color 0.12s;
+
+}
+
+.sidebar-tile:hover:not(.disabled) {
+
+    background: var(--color-accent-light);
+
+}
+
+.sidebar-tile.selected {
+
+    border-color: var(--color-accent);
+    background: var(--color-accent-light);
+
+}
+
+/* Node type tiles use "chosen" — subtler than the active view's "selected" */
+
+.sidebar-tile.chosen {
+
+    border-color: #a5b4c8;
+    background: #f0f2f5;
+
+}
+
+.sidebar-tile.disabled {
+
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+
+}
+
+.tile-icon {
+
+    font-size: 18px;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+
+}
+
+.tile-content {
+
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+}
+
+.tile-name {
+
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+
+}
+
+.tile-desc {
+
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    line-height: 1.3;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+}
+
+.tile-desc.has-file {
+
+    color: #4ec9b0;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 10px;
+
+}
+
+/* ---- Warning badge on tiles ---- */
+
+.sidebar-tile {
+
+    position: relative;
+
+}
+
+.tile-badge {
+
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f59e0b;
+    display: none;
+
+}
+
+.tile-badge.visible {
+
+    display: block;
+
+}
+
+.tile-badge.badge-error {
+
+    background: #ef4444;
+
+}
+
+/* ---- Sidebar Footer ---- */
+
+.sidebar-footer {
+
+    margin-top: auto;
+    padding: 16px 12px;
+    border-top: 1px solid var(--color-border);
+
+}
+
+.btn-primary {
+
+    width: 100%;
+    background: var(--color-accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+
+}
+
+.btn-primary:hover:not(:disabled) {
+
+    background: #1d4ed8;
+
+}
+
+.btn-primary:disabled {
+
+    background: var(--color-disabled);
+    cursor: not-allowed;
+
+}
+
+/* ---- Workspace ---- */
+
+.workspace {
+
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    background: var(--color-bg);
+
+}
+
+#workspace-iframe {
+
+    width: 100%;
+    height: 100%;
+    border: none;
+    flex: 1;
+
+}
+
+.workspace-empty {
+
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--color-text-secondary);
+
+}
+
+.empty-icon {
+
+    font-size: 36px;
+    opacity: 0.4;
+
+}
+
+.empty-text {
+
+    font-size: 15px;
+    font-style: italic;
+
+}
+
+/* ---- Utility ---- */
+
+.hidden {
+
+    display: none !important;
+
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 700px) {
+
+    .layout {
+
+        flex-direction: column;
+
+    }
+
+    .sidebar {
+
+        flex: 0 0 auto;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+
+    }
+
+    .sidebar-section {
+
+        display: flex;
+        gap: 4px;
+        padding: 8px;
+
+    }
+
+    .sidebar-label {
+
+        display: none;
+
+    }
+
+    .sidebar-footer {
+
+        margin-top: 0;
+        border-top: none;
+        padding: 8px;
+
+    }
+
+}

@@ -1,0 +1,715 @@
+/* =========================================================================
+ * Node Configuration — Standalone styles
+ * ========================================================================= */
+
+:root {
+
+    --color-bg: #f5f6f8;
+    --color-surface: #ffffff;
+    --color-text: #1a1a2e;
+    --color-text-secondary: #5a5a7a;
+    --color-border: #e0e0e8;
+    --color-accent: #2563eb;
+    --color-accent-light: #eff4ff;
+    --color-accent-border: #93b4f8;
+    --color-disabled: #c0c0cc;
+    --color-note: #b45309;
+    --color-note-bg: #fef3c7;
+    --color-success: #16a34a;
+
+    --radius: 8px;
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.10), 0 2px 4px rgba(0, 0, 0, 0.06);
+
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                  "Helvetica Neue", Arial, sans-serif;
+    --font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas,
+                 'Courier New', monospace;
+
+    /* preview panel dark theme (Catppuccin Mocha palette) */
+    --preview-bg: #1e1e2e;
+    --preview-bg-bar: #181825;
+    --preview-border: #313244;
+    --preview-text: #cdd6f4;
+    --preview-muted: #6c7086;
+    --preview-tab-active-bg: #1e1e2e;
+    --preview-tab-active-border: #45475a;
+
+}
+
+/* ---- Reset & Base ---- */
+
+*, *::before, *::after {
+
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+}
+
+body {
+
+    font-family: var(--font-stack);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-text);
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+
+}
+
+/* ---- Layout ---- */
+
+.layout {
+
+    flex: 1 1 auto;
+    display: flex;
+    overflow: hidden;
+
+}
+
+/* ---- Config panel (left, scrollable) ---- */
+
+.config-panel {
+
+    flex: 1 1 50%;
+    min-width: 280px;
+    max-width: 900px;
+    overflow-y: auto;
+    padding: 28px 24px;
+
+}
+
+/* ---- Splitter ---- */
+
+.splitter {
+
+    flex: 0 0 5px;
+    cursor: col-resize;
+    background: var(--color-border);
+    transition: background 0.15s;
+    position: relative;
+
+}
+
+.splitter::after {
+
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 32px;
+    width: 3px;
+    border-left: 1px solid var(--color-text-secondary);
+    border-right: 1px solid var(--color-text-secondary);
+    opacity: 0.3;
+
+}
+
+.splitter:hover,
+.splitter.dragging {
+
+    background: var(--color-accent-border);
+
+}
+
+.splitter.dragging::after {
+
+    opacity: 0.7;
+
+}
+
+/* ---- Step Sections ---- */
+
+.step-section {
+
+    margin-bottom: 28px;
+
+}
+
+.step-section h2 {
+
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 14px;
+
+}
+
+/* ---- Add-ons Section ---- */
+
+.addon-list {
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
+
+.addon-group {
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    background: var(--color-bg);
+
+}
+
+.addon-group-title {
+
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--color-text);
+
+}
+
+.addon-item {
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    cursor: pointer;
+
+}
+
+.addon-item input[type="checkbox"],
+.addon-item input[type="radio"] {
+
+    width: 15px;
+    height: 15px;
+    accent-color: var(--color-accent);
+    flex-shrink: 0;
+
+}
+
+.addon-label {
+
+    font-size: 13px;
+    font-weight: 500;
+
+}
+
+.addon-desc {
+
+    flex-basis: 100%;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    padding-left: 23px;
+
+}
+
+.addon-note {
+
+    flex-basis: 100%;
+    font-size: 12px;
+    color: var(--color-note);
+    background: var(--color-note-bg);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-left: 23px;
+    margin-top: 2px;
+
+}
+
+/* ---- SNIP Fields ---- */
+
+.addon-group-header {
+
+    margin-bottom: 2px;
+
+}
+
+.addon-recommend {
+
+    display: block;
+    font-size: 12px;
+    color: var(--color-accent);
+    font-weight: 500;
+    padding-left: 23px;
+    margin-top: 2px;
+
+}
+
+.snip-fields {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-border);
+
+}
+
+.snip-field label {
+
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-bottom: 4px;
+
+}
+
+.snip-field input[type="text"] {
+
+    width: 100%;
+    padding: 5px 8px;
+    font-size: 13px;
+    font-family: var(--font-stack);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+
+}
+
+.snip-field input[type="text"]:focus {
+
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent-light);
+
+}
+
+/* ---- Config field ---- */
+
+.config-field {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0 2px 0;
+
+}
+
+.config-field label {
+
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+
+}
+
+.config-field input[type="text"] {
+
+    width: 140px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+
+}
+
+.config-field input[type="text"]:focus {
+
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent-light);
+
+}
+
+/* ---- Event Buffer count grid ---- */
+
+.event-count-grid {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+    margin-bottom: 6px;
+
+}
+
+.event-count-field label {
+
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text);
+    margin-bottom: 3px;
+
+}
+
+.event-count-field input[type="number"] {
+
+    width: 100%;
+    padding: 5px 8px;
+    font-size: 13px;
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    box-sizing: border-box;
+
+}
+
+.event-count-field input[type="number"]:focus {
+
+    outline: none;
+    border-color: var(--color-accent);
+    background: var(--color-surface);
+
+}
+
+/* ---- Field-level note ---- */
+
+.field-note {
+
+    font-size: 11.5px;
+    color: var(--color-note);
+    background: var(--color-note-bg);
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-top: 8px;
+    line-height: 1.55;
+
+}
+
+.field-note code {
+
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: rgba(0, 0, 0, 0.08);
+    padding: 0 3px;
+    border-radius: 2px;
+
+}
+
+/* ---- File upload row ---- */
+
+.file-upload-row {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+
+}
+
+.file-upload-row input[type="file"] {
+
+    display: none;
+
+}
+
+.file-upload-btn {
+
+    padding: 4px 12px;
+    font-size: 12px;
+    font-family: var(--font-stack);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    cursor: pointer;
+    color: var(--color-text);
+    transition: background 0.1s;
+    white-space: nowrap;
+
+}
+
+.file-upload-btn:hover {
+
+    background: var(--color-accent-light);
+    border-color: var(--color-accent-border);
+
+}
+
+.file-status {
+
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-style: italic;
+
+}
+
+.file-status.loaded {
+
+    color: var(--color-success);
+    font-style: normal;
+    font-weight: 500;
+
+}
+
+/* ---- Collapsible Add-Ons section ---- */
+
+.addon-collapsible {
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+
+}
+
+.addon-collapsible-toggle {
+
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+
+}
+
+.addon-collapsible-toggle::before {
+
+    content: '\25b6';
+    display: inline-block;
+    margin-right: 6px;
+    font-size: 10px;
+    transition: transform 0.15s;
+
+}
+
+.addon-collapsible[open] > .addon-collapsible-toggle::before {
+
+    transform: rotate(90deg);
+
+}
+
+.addon-collapsible-toggle:hover { color: var(--color-accent); }
+
+.addon-collapsible-content {
+
+    padding: 0 14px 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
+
+/* ---- Disabled State ---- */
+
+.addon-item.disabled,
+.addon-group.disabled {
+
+    opacity: 0.5;
+    cursor: not-allowed;
+
+}
+
+.addon-item.disabled input,
+.addon-group.disabled input {
+
+    pointer-events: none;
+
+}
+
+/* ---- Preview Panel (right) ---- */
+
+.preview-panel {
+
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: row;
+    min-width: 0;
+    background: var(--preview-bg);
+
+}
+
+/* ---- File Browser sidebar (inside preview panel) ---- */
+
+.file-browser {
+
+    flex: 0 0 200px;
+    background: var(--preview-bg-bar);
+    border-right: 1px solid var(--preview-border);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.fb-section {
+
+    padding: 10px 10px 6px;
+
+}
+
+.fb-section + .fb-section {
+
+    border-top: 1px solid var(--preview-border);
+
+}
+
+.fb-label {
+
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--preview-muted);
+    margin-bottom: 4px;
+    padding-left: 4px;
+
+}
+
+.fb-item {
+
+    display: block;
+    padding: 4px 8px;
+    margin-bottom: 1px;
+    font-size: 11.5px;
+    font-family: var(--font-mono);
+    color: var(--preview-text);
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 0.1s;
+    border: 1px solid transparent;
+
+}
+
+.fb-item:hover {
+
+    background: var(--preview-bg);
+
+}
+
+.fb-item.selected {
+
+    border-color: var(--color-accent);
+    background: var(--preview-bg);
+    color: #93b4f8;
+
+}
+
+/* ---- Code display area ---- */
+
+.code-display {
+
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+}
+
+.preview-header {
+
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    background: var(--preview-bg-bar);
+    border-bottom: 1px solid var(--preview-border);
+    height: 38px;
+
+}
+
+.preview-filename {
+
+    margin-left: auto;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--preview-muted);
+    padding-right: 4px;
+    letter-spacing: 0.02em;
+
+}
+
+.code-preview {
+
+    flex: 1;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+
+}
+
+.code-preview code,
+.code-preview code.hljs {
+
+    display: block;
+    padding: 20px 28px !important;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.75;
+    white-space: pre !important;
+    tab-size: 4;
+    background: transparent !important;
+
+}
+
+.code-preview.empty {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.code-preview.empty code {
+
+    white-space: normal;
+    color: var(--preview-muted);
+    font-style: italic;
+    font-family: var(--font-stack);
+    font-size: 14px;
+    text-align: center;
+
+}
+
+/* ---- Utility ---- */
+
+.hidden {
+
+    display: none !important;
+
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 900px) {
+
+    body {
+
+        height: auto;
+        overflow: auto;
+
+    }
+
+    .layout {
+
+        flex-direction: column;
+
+    }
+
+    .config-panel {
+
+        flex: none;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+
+    }
+
+    .preview-panel {
+
+        flex: none;
+        min-height: 50vh;
+
+    }
+
+    .file-browser {
+
+        flex: 0 0 160px;
+
+    }
+
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 05_missing_acdi.xml
+    PURPOSE: No <acdi/> tag — ACDI protocol will not be advertised.
+             CDI standard Section 5.1.2 says acdi shall only be specified
+             if Protocol Support Reply carries the ACDI bit.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 3 info — "No <acdi/> tag (ACDI protocol will not be advertised)"
+    - Render:   Renders normally
+-->
+<!-- TEST_CHECKS
+name: No ACDI Tag
+validate_has | severity:info | pattern:acdi | Info about missing acdi
+validate_count | severity:error | expected:0 | No errors
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>No ACDI</model>
+        <hardwareVersion>1.0</hardwareVersion>
+        <softwareVersion>1.0</softwareVersion>
+    </identification>
+
+    <segment space="253" origin="0">
+        <string size="63">
+            <name>User Name</name>
+        </string>
+    </segment>
+</cdi>

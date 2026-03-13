@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 01_valid_typical.xml
+    PURPOSE: Baseline valid CDI for a typical node — should pass all checks cleanly.
+
+    EXPECTED RESULTS:
+    - Render:   Clean render, no errors
+    - Validate: All checks pass (no errors, no warnings)
+    - Map:      Space 0xFD shows addresses 0x0000–0x00FF (256 bytes)
+                No overlaps
+    - Config:   With config memory >= 0x100, stats show positive available bytes
+-->
+<!-- TEST_CHECKS
+name: Baseline Valid CDI
+validate_count | severity:error | expected:0 | No validation errors
+validate_count | severity:warning | expected:0 | No validation warnings
+map_not_null | Map parses successfully
+map_no_overlaps | No address overlaps
+map_has_space | space:253 | Has space 253 (config memory)
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test Manufacturer</manufacturer>
+        <model>Test Model</model>
+        <hardwareVersion>1.0</hardwareVersion>
+        <softwareVersion>2.0</softwareVersion>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <name>User Data</name>
+        <description>User name and description</description>
+
+        <string size="63">
+            <name>User Name</name>
+        </string>
+
+        <string size="64">
+            <name>User Description</name>
+        </string>
+
+        <group>
+            <name>Output Settings</name>
+            <int size="1">
+                <name>Output Mode</name>
+                <min>0</min>
+                <max>3</max>
+                <map>
+                    <relation><property>Off</property><value>0</value></relation>
+                    <relation><property>On</property><value>1</value></relation>
+                    <relation><property>Blink</property><value>2</value></relation>
+                    <relation><property>Pulse</property><value>3</value></relation>
+                </map>
+            </int>
+
+            <int size="2">
+                <name>Pulse Duration (ms)</name>
+                <min>0</min>
+                <max>10000</max>
+            </int>
+        </group>
+
+        <group replication="4">
+            <name>Channel</name>
+            <repname>Channel</repname>
+
+            <eventid>
+                <name>Event Produced On</name>
+            </eventid>
+            <eventid>
+                <name>Event Produced Off</name>
+            </eventid>
+            <int size="1">
+                <name>Restore</name>
+                <map>
+                    <relation><property>Last state</property><value>0</value></relation>
+                    <relation><property>Always off</property><value>1</value></relation>
+                    <relation><property>Always on</property><value>2</value></relation>
+                </map>
+            </int>
+        </group>
+    </segment>
+</cdi>

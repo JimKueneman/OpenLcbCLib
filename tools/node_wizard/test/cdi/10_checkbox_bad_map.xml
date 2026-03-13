@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 10_checkbox_bad_map.xml
+    PURPOSE: <int> with checkbox hint but wrong number of map relations.
+             CDI standard Section 5.1.4.2: checkbox hint requires <map> with
+             exactly 2 relations (unchecked = first, checked = second).
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 error — checkbox hint map has wrong number of relations
+                First int: 3 relations instead of 2
+                Second int: 1 relation instead of 2
+                Third int: checkbox hint but no <map> at all
+-->
+<!-- TEST_CHECKS
+name: Checkbox with Wrong Map Count
+validate_has | severity:error | pattern:checkbox|map.*relation|2.*relation | Error about checkbox map relations
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Bad Checkbox Maps</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- 3 relations — should be exactly 2 -->
+        <int size="1">
+            <name>Three Option Checkbox</name>
+            <hints><checkbox/></hints>
+            <map>
+                <relation><property>Off</property><value>0</value></relation>
+                <relation><property>On</property><value>1</value></relation>
+                <relation><property>Maybe</property><value>2</value></relation>
+            </map>
+        </int>
+
+        <!-- 1 relation — should be exactly 2 -->
+        <int size="1">
+            <name>One Option Checkbox</name>
+            <hints><checkbox/></hints>
+            <map>
+                <relation><property>On</property><value>1</value></relation>
+            </map>
+        </int>
+
+        <!-- checkbox with no map at all -->
+        <int size="1">
+            <name>Checkbox No Map</name>
+            <hints><checkbox/></hints>
+        </int>
+    </segment>
+</cdi>

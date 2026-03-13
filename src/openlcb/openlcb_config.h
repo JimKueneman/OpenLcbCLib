@@ -146,9 +146,9 @@
      * static const openlcb_config_t my_config = {
      *     .lock_shared_resources   = &MyDriver_lock,
      *     .unlock_shared_resources = &MyDriver_unlock,
-     *     .config_mem_read         = &MyDriver_eeprom_read,
-     *     .config_mem_write        = &MyDriver_eeprom_write,
-     *     .reboot                  = &MyDriver_reboot,
+     *     .config_mem_read         = &MyDriver_eeprom_read,  // only with MEMORY_CONFIGURATION
+     *     .config_mem_write        = &MyDriver_eeprom_write, // only with MEMORY_CONFIGURATION
+     *     .reboot                  = &MyDriver_reboot,       // only with MEMORY_CONFIGURATION
      *     .on_login_complete       = &my_login_handler,
      *     .on_consumed_event_pcer  = &my_event_handler,
      * };
@@ -167,8 +167,14 @@ typedef struct {
         /** @brief Re-enable interrupts / release mutex. REQUIRED. */
     void (*unlock_shared_resources)(void);
 
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+
+    // =========================================================================
+    // Memory Configuration (requires MEMORY_CONFIGURATION)
+    // =========================================================================
+
         /**
-         * @brief Read from configuration memory (EEPROM/Flash/file). REQUIRED.
+         * @brief Read from configuration memory (EEPROM/Flash/file). REQUIRED when MEMORY_CONFIGURATION enabled.
          *
          * @param openlcb_node The @ref openlcb_node_t requesting the read
          * @param address Starting address in configuration memory
@@ -180,7 +186,7 @@ typedef struct {
     uint16_t (*config_mem_read)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
         /**
-         * @brief Write to configuration memory (EEPROM/Flash/file). REQUIRED.
+         * @brief Write to configuration memory (EEPROM/Flash/file). REQUIRED when MEMORY_CONFIGURATION enabled.
          *
          * @param openlcb_node The @ref openlcb_node_t requesting the write
          * @param address Starting address in configuration memory
@@ -192,21 +198,15 @@ typedef struct {
     uint16_t (*config_mem_write)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
         /**
-         * @brief Reboot the processor. REQUIRED.
+         * @brief Reboot the processor. Optional but highly recommended (NULL = NACK with not-implemented).
          *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_operations_request_info @ref config_mem_operations_request_info_t context
          */
     void (*reboot)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
-
-    // =========================================================================
-    // OPTIONAL: Memory Configuration Extensions (requires MEMORY_CONFIGURATION)
-    // =========================================================================
-
         /**
-         * @brief Factory reset -- erase user config and restore defaults. Optional.
+         * @brief Factory reset -- erase user config and restore defaults. Optional but highly recommended (NULL = NACK with not-implemented).
          *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_operations_request_info @ref config_mem_operations_request_info_t context
@@ -240,11 +240,11 @@ typedef struct {
 #ifdef OPENLCB_COMPILE_FIRMWARE
 
     // =========================================================================
-    // OPTIONAL: Firmware Upgrade Callbacks (requires FIRMWARE)
+    // Firmware Upgrade Callbacks (requires FIRMWARE)
     // =========================================================================
 
         /**
-         * @brief Freeze the node for firmware upgrade. Optional.
+         * @brief Freeze the node for firmware upgrade. REQUIRED when FIRMWARE enabled.
          *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_operations_request_info @ref config_mem_operations_request_info_t context
@@ -252,7 +252,7 @@ typedef struct {
     void (*freeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
         /**
-         * @brief Unfreeze the node after firmware upgrade. Optional.
+         * @brief Unfreeze the node after firmware upgrade. REQUIRED when FIRMWARE enabled.
          *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_operations_request_info @ref config_mem_operations_request_info_t context
@@ -260,7 +260,7 @@ typedef struct {
     void (*unfreeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
         /**
-         * @brief Write firmware data during upgrade. Optional.
+         * @brief Write firmware data during upgrade. REQUIRED when FIRMWARE enabled.
          *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_write_request_info @ref config_mem_write_request_info_t context

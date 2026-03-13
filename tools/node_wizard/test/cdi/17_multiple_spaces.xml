@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 17_multiple_spaces.xml
+    PURPOSE: CDI with segments in multiple address spaces.
+             Tests that the tool correctly separates spaces in the memory map
+             and doesn't confuse addresses across spaces.
+
+    EXPECTED RESULTS:
+    - Map:      Three separate space sections:
+                Space 0xFD (253): config memory data
+                Space 0xFE (254): events in all-memory space (unusual — should get info)
+                Space 0xFB (251): ACDI user space
+    - Stats:    Each space shows its own byte range independently
+    - Validate: Layer 3 info — "Event IDs found in space 0xFE (254)"
+-->
+<!-- TEST_CHECKS
+name: Multiple Address Spaces
+map_not_null | Map parses
+map_has_space | space:253 | Has space 253
+map_has_space | space:254 | Has space 254
+map_has_space | space:251 | Has space 251
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Multi-Space</model>
+    </identification>
+
+    <acdi/>
+
+    <!-- Space 253 (0xFD): config memory -->
+    <segment space="253" origin="0">
+        <name>Configuration</name>
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+        <int size="1"><name>Mode</name></int>
+    </segment>
+
+    <!-- Space 254 (0xFE): all-memory space — unusual for events -->
+    <segment space="254" origin="0">
+        <name>All Memory Events</name>
+        <eventid><name>Global Event A</name></eventid>
+        <eventid><name>Global Event B</name></eventid>
+    </segment>
+
+    <!-- Space 251 (0xFB): ACDI user space -->
+    <segment space="251" origin="0">
+        <name>ACDI User Data</name>
+        <int size="1"><name>Version</name></int>
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+    </segment>
+</cdi>

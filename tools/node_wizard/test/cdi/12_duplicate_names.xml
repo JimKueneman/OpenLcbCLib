@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 12_duplicate_names.xml
+    PURPOSE: Multiple elements with identical names within the same scope.
+             The Defines view generates C #define macros from element names.
+             The Struct view generates C struct field names from element names.
+             Duplicate names produce non-compilable C code:
+               - #define OFFSET_MODE 0x7F
+               - #define OFFSET_MODE 0x83   // ERROR: redefinition
+               - struct { uint8_t mode; uint8_t mode; }  // ERROR: duplicate member
+
+    EXPECTED RESULTS:
+    - Defines view: Should show duplicate #define names (check if tool de-duplicates)
+    - Struct view:  Should show duplicate struct member names
+    - Validate:     Ideally warns about duplicate names within same group/segment
+    - NOTE:         If the tool does NOT de-duplicate, the generated C code will
+                    fail to compile. This is the primary test case for that.
+-->
+<!-- TEST_CHECKS
+name: Duplicate Names (Same Scope)
+map_not_null | Map parses
+map_duplicate_names | space:253 | Duplicate leaf names detected in space 253
+defines_has_dupes | Duplicate #define names expected (same-scope duplicates)
+struct_has_dupes | Duplicate struct field names expected (same-scope duplicates)-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Duplicate Names</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- Duplicate: two ints both named "Mode" in the same segment -->
+        <int size="1">
+            <name>Mode</name>
+            <description>First mode setting</description>
+        </int>
+
+        <int size="1">
+            <name>Mode</name>
+            <description>Second mode setting — same name as above!</description>
+        </int>
+
+        <!-- Duplicate: two strings both named "Label" -->
+        <string size="32">
+            <name>Label</name>
+        </string>
+
+        <string size="32">
+            <name>Label</name>
+        </string>
+
+        <!-- Duplicate: two eventids both named "Event On" -->
+        <eventid>
+            <name>Event On</name>
+        </eventid>
+
+        <eventid>
+            <name>Event On</name>
+        </eventid>
+    </segment>
+</cdi>

@@ -152,7 +152,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_config_memory.present = 0,
     .address_space_config_memory.low_address_valid = 0, // assume the low address starts at 0
     .address_space_config_memory.low_address = 0,       // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = 0,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_config_memory.highest_address = 0,  
     .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
@@ -161,7 +161,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_firmware.present = 1,
     .address_space_firmware.low_address_valid = 0,   // assume the low address starts at 0
     .address_space_firmware.low_address = 0,         // ignored if low_address_valid is false
-    .address_space_firmware.highest_address = 0x200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_firmware.highest_address = 0x200,
     .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware Bootloader",
 

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Editor — OpenLcbCLib</title>
+    <link rel="stylesheet" href="drivers.css">
+
+    <!-- Syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <!-- ===== LEFT: Function list ===== -->
+        <main class="fn-panel" id="fn-panel">
+            <h2 id="group-title">Driver Functions</h2>
+            <p class="group-desc" id="group-desc">Select the functions to generate stubs for</p>
+            <div id="fn-list"></div>
+        </main>
+
+        <!-- ===== SPLITTER ===== -->
+        <div class="splitter" id="splitter"></div>
+
+        <!-- ===== RIGHT: Live code preview ===== -->
+        <aside class="preview-panel">
+
+            <div class="preview-header">
+                <div class="preview-tabs">
+                    <button class="tab-btn active" id="tab-h" onclick="switchTab('h')">driver.h</button>
+                    <button class="tab-btn"        id="tab-c" onclick="switchTab('c')">driver.c</button>
+                </div>
+                <span class="preview-filename" id="preview-filename"></span>
+            </div>
+
+            <pre class="code-preview empty"><code class="language-c" id="code-preview">Select a driver group to preview</code></pre>
+
+        </aside>
+
+    </div>
+
+    <script src="js/driver_defs.js"></script>
+    <script src="../platform/js/platform_defs.js"></script>
+    <script src="js/driver_codegen.js"></script>
+
+    <script>
+
+    /* =========================================================================
+     * Driver Editor — main logic
+     * ========================================================================= */
+
+    let _currentGroup    = null;
+    let _currentTab      = 'h';
+    let _nodeType        = null;
+    let _firmwareEnabled = false;
+    let _platformState   = null;   /* { platform, params } from parent */
+
+    /* ---------- Tab switching ---------- */
+
+    function switchTab(tab) {
+
+        _currentTab = tab;
+
+        document.getElementById('tab-h').classList.toggle('active', tab === 'h');
+        document.getElementById('tab-c').classList.toggle('active', tab === 'c');
+
+        _renderPreview();
+
+    }
+
+    /* ---------- Build checkbox list for a group ---------- */
+
+    /* ---------- Determine if a function is visible for current context ---------- */
+
+    function _isFunctionVisible(fn) {
+
+        var isBasic   = _nodeType === 'basic';
+        var hasCfgMem = !isBasic;
+
+        if (fn.requiresConfigMem && !hasCfgMem) { return false; }
+        if (fn.requiresFirmware  && !_firmwareEnabled) { return false; }
+
+        return true;
+
+    }
+
+    function _renderFunctionList(group) {
+
+        document.getElementById('group-title').textContent = group.title;
+        document.getElementById('group-desc').textContent  = group.description;
+
+        const container = document.getElementById('fn-list');
+        container.innerHTML = '';
+
+        group.functions.forEach(function (fn) {
+
+            if (!_isFunctionVisible(fn)) { return; }
+
+            const item = document.createElement('label');
+            item.className = 'fn-item';
+
+            const cb = document.createElement('input');
+            cb.type    = 'checkbox';
+            cb.checked = fn.required;
+            cb.dataset.fnName = fn.name;
+
+            if (fn.required) {
+                cb.checked  = true;
+                cb.disabled = true;
+            }
+
+            cb.addEventListener('change', function () {
+
+                _renderPreview();
+                _postStateToParent();
+
+            });
+
+            const content = document.createElement('div');
+            content.className = 'fn-item-content';
+
+            const nameEl = document.createElement('span');
+            nameEl.className   = 'fn-name';
+            nameEl.textContent = group.functionPrefix + '_' + fn.name + '()';
+
+            const descEl = document.createElement('span');
+            descEl.className   = 'fn-desc';
+            descEl.textContent = fn.description;
+
+            content.appendChild(nameEl);
+            content.appendChild(descEl);
+
+            if (fn.detail) {
+
+                const moreLink = document.createElement('a');
+                moreLink.className   = 'fn-detail-toggle';
+                moreLink.textContent = 'more';
+                moreLink.href        = '#';
+
+                const detailEl = document.createElement('span');
+                detailEl.className   = 'fn-detail';
+                detailEl.textContent = fn.detail;
+                detailEl.style.display = 'none';
+
+                moreLink.addEventListener('click', function (ev) {
+
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    var showing = detailEl.style.display !== 'none';
+                    detailEl.style.display = showing ? 'none' : 'block';
+                    moreLink.textContent   = showing ? 'more' : 'less';
+
+                });
+
+                content.appendChild(moreLink);
+                content.appendChild(detailEl);
+
+            }
+
+            const tagEl = document.createElement('span');
+            tagEl.className   = fn.required ? 'fn-required' : 'fn-optional';
+            tagEl.textContent = fn.required ? 'REQUIRED' : 'Optional';
+
+            content.appendChild(tagEl);
+
+            item.appendChild(cb);
+            item.appendChild(content);
+            container.appendChild(item);
+
+        });
+
+    }
+
+    /* ---------- Get checked functions ---------- */
+
+    function _getCheckedFunctions() {
+
+        if (!_currentGroup) { return []; }
+
+        const group = DRIVER_GROUPS[_currentGroup];
+        const checked = [];
+
+        const checkboxes = document.querySelectorAll('#fn-list input[type="checkbox"]');
+
+        checkboxes.forEach(function (cb) {
+
+            if (cb.checked) {
+
+                const fn = group.functions.find(function (f) { return f.name === cb.dataset.fnName; });
+                if (fn && _isFunctionVisible(fn)) { checked.push(fn); }
+
+            }
+
+        });
+
+        return checked;
+
+    }
+
+    /* ---------- Render code preview ---------- */
+
+    function _renderPreview() {
+
+        const codeEl = document.getElementById('code-preview');
+        const fnameEl = document.getElementById('preview-filename');
+
+        if (!_currentGroup) {
+
+            codeEl.textContent = 'Select a driver group to preview';
+            codeEl.parentElement.classList.add('empty');
+            return;
+
+        }
+
+        codeEl.parentElement.classList.remove('empty');
+
+        const group   = DRIVER_GROUPS[_currentGroup];
+        const checked = _getCheckedFunctions();
+
+        document.getElementById('tab-h').textContent = group.filePrefix + '.h';
+        document.getElementById('tab-c').textContent = group.filePrefix + '.c';
+
+        if (_currentTab === 'h') {
+
+            fnameEl.textContent = group.filePrefix + '.h';
+            codeEl.textContent  = DriverCodegen.generateH(group, checked, _platformState);
+
+        } else {
+
+            fnameEl.textContent = group.filePrefix + '.c';
+            codeEl.textContent  = DriverCodegen.generateC(group, checked, _platformState);
+
+        }
+
+        codeEl.removeAttribute('data-highlighted');
+        hljs.highlightElement(codeEl);
+
+    }
+
+    /* ---------- State management ---------- */
+
+    function _postStateToParent() {
+
+        if (!_currentGroup) { return; }
+
+        const checked = [];
+        document.querySelectorAll('#fn-list input[type="checkbox"]').forEach(function (cb) {
+
+            if (cb.checked) { checked.push(cb.dataset.fnName); }
+
+        });
+
+        window.parent.postMessage({
+            type:  'driverStateChanged',
+            group: _currentGroup,
+            state: { checked: checked }
+        }, '*');
+
+    }
+
+    function _restoreState(state) {
+
+        if (!state || !state.checked) { return; }
+
+        document.querySelectorAll('#fn-list input[type="checkbox"]').forEach(function (cb) {
+
+            if (!cb.disabled) {
+                cb.checked = state.checked.indexOf(cb.dataset.fnName) >= 0;
+            }
+
+        });
+
+        _renderPreview();
+
+    }
+
+    /* ---------- Listen for messages from parent ---------- */
+
+    window.addEventListener('message', function (e) {
+
+        if (!e.data || !e.data.type) { return; }
+
+        switch (e.data.type) {
+
+            case 'setNodeType':
+
+                _nodeType        = e.data.nodeType || null;
+                _firmwareEnabled = !!e.data.firmwareEnabled;
+
+                /* Re-render if a group is already loaded */
+                if (_currentGroup && DRIVER_GROUPS[_currentGroup]) {
+                    _renderFunctionList(DRIVER_GROUPS[_currentGroup]);
+                    _renderPreview();
+                    _postStateToParent();
+                }
+                break;
+
+            case 'setPlatform':
+
+                _platformState = e.data.state || null;
+                _renderPreview();
+                break;
+
+            case 'setGroup':
+
+                _currentGroup = e.data.group;
+
+                if (DRIVER_GROUPS[_currentGroup]) {
+                    _renderFunctionList(DRIVER_GROUPS[_currentGroup]);
+                    _renderPreview();
+                }
+                break;
+
+            case 'restoreState':
+
+                _restoreState(e.data.state);
+                break;
+
+        }
+
+    });
+
+    /* ---------- Signal ready ---------- */
+
+    window.parent.postMessage({ type: 'ready' }, '*');
+
+    </script>
+
+</body>
+</html>

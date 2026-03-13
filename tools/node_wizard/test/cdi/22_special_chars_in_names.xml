@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 22_special_chars_in_names.xml
+    PURPOSE: Element names with characters that are invalid in C identifiers.
+             The Defines and Struct views must sanitize names to produce valid C.
+             Characters like spaces, hyphens, parentheses, slashes, dots, and
+             Unicode must be converted to underscores or removed.
+
+    EXPECTED RESULTS:
+    - Defines:  Names must be sanitized to valid C identifiers:
+                "Input/Output Mode" -> OFFSET_INPUT_OUTPUT_MODE (or similar)
+                "Delay (ms)"        -> OFFSET_DELAY_MS
+                "LED #1"            -> OFFSET_LED_1
+                "Über-Setting"      -> OFFSET_UBER_SETTING
+    - Struct:   Same sanitization for struct member names
+    - Validate: No validation errors — names are cosmetic per CDI spec
+    - If the tool does NOT sanitize, the generated C code will fail to compile.
+-->
+<!-- TEST_CHECKS
+name: Special Characters in Names
+validate_count | severity:error | expected:0 | No validation errors (names are cosmetic)
+map_not_null | Map parses
+defines_no_dupes | No duplicate #define names (special chars sanitized)
+struct_no_dupes | No duplicate struct field names (special chars sanitized)-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Special Characters</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <int size="1">
+            <name>Input/Output Mode</name>
+        </int>
+
+        <int size="2">
+            <name>Delay (ms)</name>
+        </int>
+
+        <int size="1">
+            <name>LED #1</name>
+        </int>
+
+        <string size="16">
+            <name>Über-Setting</name>
+        </string>
+
+        <int size="1">
+            <name>100% Brightness</name>
+        </int>
+
+        <int size="1">
+            <name>on.off.toggle</name>
+        </int>
+    </segment>
+</cdi>

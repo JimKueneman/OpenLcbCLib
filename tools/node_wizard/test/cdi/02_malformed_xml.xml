@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 02_malformed_xml.xml
+    PURPOSE: Malformed XML — unclosed tag and mismatched nesting.
+
+    EXPECTED RESULTS:
+    - Render:   "Cannot parse XML" error in memory map
+    - Validate: Layer 1 error — XML parse error with line/column info
+    - Map:      Empty / error state
+-->
+<!-- TEST_CHECKS
+name: Malformed XML
+validate_has | severity:error | pattern:parse|malformed|xml | XML parse error detected
+map_is_null | Map returns null (unparseable)
+-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Broken XML
+    </identification>
+
+    <segment space="253" origin="0">
+        <string size="63">
+            <name>User Name</name>
+        </string>
+    </segment>
+</cdi>

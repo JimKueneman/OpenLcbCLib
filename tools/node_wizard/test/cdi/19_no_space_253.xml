@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 19_no_space_253.xml
+    PURPOSE: CDI with no segment in space 253 (0xFD).
+             Space 253 is the standard config memory space where user name
+             and description live. Without it, the node is not user-configurable.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 3 info — "No segment in space 0xFD (253)"
+    - Map:      Only shows space 0xF9, no space 0xFD section at all
+    - Stats:    No Space 0xFD line — the three-line config mem breakdown won't appear
+-->
+<!-- TEST_CHECKS
+name: No Config Memory Space (253)
+map_not_null | Map parses
+map_missing_space | space:253 | Space 253 is absent
+validate_has | severity:info | pattern:253|0xFD | Info about missing space 253
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>No Config Space</model>
+    </identification>
+
+    <acdi/>
+
+    <!-- Only space 249 (0xF9) — train function config, no 253 -->
+    <segment space="249" origin="0">
+        <name>Train Functions</name>
+        <int size="2"><name>Function Count</name></int>
+        <group replication="4">
+            <name>Function</name>
+            <repname>Fn</repname>
+            <string size="16"><name>Label</name></string>
+            <int size="1"><name>Type</name></int>
+        </group>
+    </segment>
+</cdi>

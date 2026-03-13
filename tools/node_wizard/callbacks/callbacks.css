@@ -1,0 +1,315 @@
+/* =========================================================================
+ * Callback Editor — Styles
+ * Identical layout to drivers editor
+ * ========================================================================= */
+
+:root {
+
+    --color-bg: #f5f6f8;
+    --color-surface: #ffffff;
+    --color-text: #1a1a2e;
+    --color-text-secondary: #5a5a7a;
+    --color-border: #e0e0e8;
+    --color-accent: #2563eb;
+    --color-accent-light: #eff4ff;
+    --color-disabled: #c0c0cc;
+
+    --radius: 8px;
+
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                  "Helvetica Neue", Arial, sans-serif;
+    --font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas,
+                 'Courier New', monospace;
+
+    --preview-bg: #1e1e2e;
+    --preview-bg-bar: #181825;
+    --preview-border: #313244;
+    --preview-text: #cdd6f4;
+    --preview-muted: #6c7086;
+    --preview-tab-active-bg: #1e1e2e;
+    --preview-tab-active-border: #45475a;
+
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+
+    font-family: var(--font-stack);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-text);
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+
+}
+
+.layout { flex: 1 1 auto; display: flex; overflow: hidden; }
+
+.fn-panel {
+
+    flex: 0 0 480px;
+    min-width: 280px;
+    overflow-y: auto;
+    padding: 28px 24px;
+
+}
+
+.fn-panel h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+
+.fn-panel .group-desc {
+
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-bottom: 20px;
+
+}
+
+.fn-item {
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: background 0.1s;
+
+}
+
+.fn-item:hover { background: var(--color-accent-light); }
+
+.fn-item input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; }
+
+.fn-item-content { display: flex; flex-direction: column; min-width: 0; }
+
+.fn-name {
+
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text);
+
+}
+
+.fn-desc {
+
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    margin-top: 2px;
+
+}
+
+.fn-required { font-size: 10px; font-weight: 600; color: #dc2626; text-transform: uppercase; letter-spacing: 0.05em; }
+.fn-optional { font-size: 10px; color: var(--color-text-secondary); }
+
+/* ---- Detail toggle ---- */
+
+.fn-detail-toggle {
+
+    font-size: 10px;
+    color: var(--color-accent);
+    cursor: pointer;
+    text-decoration: none;
+    margin-top: 2px;
+    display: inline-block;
+
+}
+
+.fn-detail-toggle:hover { text-decoration: underline; }
+
+.fn-detail {
+
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-top: 4px;
+    padding: 6px 8px;
+    background: var(--color-accent-light);
+    border-radius: 4px;
+
+}
+
+/* --- Collapsible section groups --- */
+
+.section-collapsible {
+
+    margin-bottom: 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+
+}
+
+.section-toggle {
+
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+    padding: 8px 12px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+
+}
+
+.section-toggle::before {
+
+    content: '\25b6';
+    display: inline-block;
+    margin-right: 6px;
+    font-size: 10px;
+    transition: transform 0.15s;
+
+}
+
+.section-collapsible[open] > .section-toggle::before {
+
+    transform: rotate(90deg);
+
+}
+
+.section-toggle:hover { color: var(--color-accent); }
+
+.section-list { padding: 0 0 4px 0; }
+
+/* --- Advanced collapsible section --- */
+
+.advanced-section {
+
+    margin-top: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+
+}
+
+.advanced-toggle {
+
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    padding: 8px 12px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+
+}
+
+.advanced-toggle::before {
+
+    content: '\25b6';
+    display: inline-block;
+    margin-right: 6px;
+    font-size: 10px;
+    transition: transform 0.15s;
+
+}
+
+.advanced-section[open] > .advanced-toggle::before {
+
+    transform: rotate(90deg);
+
+}
+
+.advanced-toggle:hover { color: var(--color-text); }
+
+.advanced-list { padding: 0 0 4px 0; }
+
+.splitter { flex: 0 0 5px; cursor: col-resize; background: var(--color-border); }
+
+.preview-panel {
+
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--preview-bg);
+
+}
+
+.preview-header {
+
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    background: var(--preview-bg-bar);
+    border-bottom: 1px solid var(--preview-border);
+
+}
+
+.preview-tabs { display: flex; gap: 0; }
+
+.tab-btn {
+
+    background: transparent;
+    border: none;
+    color: var(--preview-muted);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    padding: 10px 16px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+
+}
+
+.tab-btn:hover { color: var(--preview-text); }
+
+.tab-btn.active {
+
+    color: var(--preview-text);
+    border-bottom-color: var(--preview-tab-active-border);
+    background: var(--preview-tab-active-bg);
+
+}
+
+.preview-filename {
+
+    margin-left: auto;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--preview-muted);
+
+}
+
+.code-preview { flex: 1; overflow: auto; margin: 0; padding: 0; background: transparent; }
+
+.code-preview code,
+.code-preview code.hljs {
+
+    display: block;
+    padding: 20px 28px !important;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.75;
+    white-space: pre !important;
+    tab-size: 4;
+    background: transparent !important;
+
+}
+
+.code-preview.empty { display: flex; align-items: center; justify-content: center; }
+
+.code-preview.empty code {
+
+    white-space: normal;
+    color: var(--preview-muted);
+    font-style: italic;
+    font-family: var(--font-stack);
+    font-size: 14px;
+    text-align: center;
+
+}
+
+@media (max-width: 700px) {
+
+    .layout { flex-direction: column; }
+    .fn-panel { flex: none; max-height: 50vh; }
+    .preview-panel { flex: none; min-height: 50vh; }
+
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 04_missing_identification.xml
+    PURPOSE: No <identification> element — CDI standard says it's optional but
+             validator should warn since SNIP won't have manufacturer/model info.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 3 warning — "No <identification> element"
+                Layer 3 info — "No <manufacturer>" and "No <model>"
+    - Render:   Renders normally (identification is optional per spec)
+-->
+<!-- TEST_CHECKS
+name: No Identification
+validate_has | severity:warning | pattern:identification | Warning about missing identification
+validate_count | severity:error | expected:0 | No errors (identification is optional)
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <segment space="253" origin="0">
+        <string size="63">
+            <name>User Name</name>
+        </string>
+        <string size="64">
+            <name>User Description</name>
+        </string>
+    </segment>
+</cdi>
