@@ -94,7 +94,7 @@ void OSxDrivers_setup(void) {
     char default_desc[] = "Compliance Test Node";
     for (int i = 0; default_desc[i] != '\0' && i < LEN_SNIP_USER_DESCRIPTION_BUFFER - 1; i++) {
 
-        user_data[USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS + i] = default_desc[i];
+        user_data[CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET + i] = default_desc[i];
 
     }
 

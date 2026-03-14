@@ -31,8 +31,12 @@ let fdiValidation     = null;    /* { errors: N, warnings: N } from FDI editor (
 const elIframe        = document.getElementById('workspace-iframe');
 const elEmpty         = document.getElementById('workspace-empty');
 const elBtnGenerate   = document.getElementById('btn-generate');
+
+/* Descriptor tiles */
 const elTileCdi       = document.getElementById('tile-cdi');
 const elTileFdi       = document.getElementById('tile-fdi');
+const elBadgeCdi      = document.getElementById('badge-cdi');
+const elBadgeFdi      = document.getElementById('badge-fdi');
 
 /* Driver tiles */
 const elTileCanDrivers  = document.getElementById('tile-can-drivers');
@@ -47,18 +51,14 @@ const elTileCbBcastTime = document.getElementById('tile-cb-bcast-time');
 /* Platform tile */
 const elTilePlatform    = document.getElementById('tile-platform');
 
-/* Warning badges */
-const elBadgeCdi        = document.getElementById('badge-cdi');
-const elBadgeFdi        = document.getElementById('badge-fdi');
-
 /* All selectable view tiles (for highlight management) */
 const elTileCbCan       = document.getElementById('tile-cb-can');
 const elTileCbOlcb      = document.getElementById('tile-cb-olcb');
 
 const VIEW_TILES = {
-    'platform':     elTilePlatform,
     'cdi':          elTileCdi,
     'fdi':          elTileFdi,
+    'platform':     elTilePlatform,
     'can-drivers':  elTileCanDrivers,
     'olcb-drivers': elTileOlcbDrivers,
     'cb-can':       elTileCbCan,
@@ -87,9 +87,9 @@ document.getElementById('chk-arduino').addEventListener('change', function () {
 
 const VIEW_URLS = {
     'config':       'node_config/node_config.html',
-    'platform':     'platform/platform.html',
     'cdi':          'cdi_editor/cdi_view.html',
     'fdi':          'fdi_editor/fdi_editor.html',
+    'platform':     'platform/platform.html',
     'can-drivers':  'drivers/drivers.html',
     'olcb-drivers': 'drivers/drivers.html',
     'cb-can':       'callbacks/callbacks.html',
@@ -238,77 +238,52 @@ function _updatePlatformTile() {
 
 /* ---------- Warning badges for descriptors ------------------------------- */
 
+function _computeCdiBadge() {
+
+    var needsCdi = selectedNodeType && selectedNodeType !== 'basic';
+    if (needsCdi && !cdiUserXml) {
+        return { visible: true, error: false, title: 'CDI not loaded — required for this node type' };
+    } else if (needsCdi && cdiValidation && cdiValidation.errors > 0) {
+        return { visible: true, error: true, title: cdiValidation.errors + ' validation error' + (cdiValidation.errors > 1 ? 's' : '') };
+    } else if (needsCdi && cdiValidation && cdiValidation.warnings > 0) {
+        return { visible: true, error: false, title: cdiValidation.warnings + ' validation warning' + (cdiValidation.warnings > 1 ? 's' : '') };
+    }
+    return { visible: false, error: false, title: '' };
+
+}
+
+function _computeFdiBadge() {
+
+    var needsFdi = selectedNodeType === 'train';
+    if (needsFdi && !fdiUserXml) {
+        return { visible: true, error: false, title: 'FDI not loaded — required for Train nodes' };
+    } else if (needsFdi && fdiValidation && fdiValidation.errors > 0) {
+        return { visible: true, error: true, title: fdiValidation.errors + ' validation error' + (fdiValidation.errors > 1 ? 's' : '') };
+    } else if (needsFdi && fdiValidation && fdiValidation.warnings > 0) {
+        return { visible: true, error: false, title: fdiValidation.warnings + ' validation warning' + (fdiValidation.warnings > 1 ? 's' : '') };
+    }
+    return { visible: false, error: false, title: '' };
+
+}
+
 function _updateDescriptorBadges() {
 
-    if (!selectedNodeType) {
+    var cdiBadge = _computeCdiBadge();
+    var fdiBadge = _computeFdiBadge();
 
-        elBadgeCdi.classList.remove('visible');
-        elBadgeCdi.classList.remove('badge-error');
-        elBadgeFdi.classList.remove('visible');
-        elBadgeFdi.classList.remove('badge-error');
-        return;
+    /* CDI badge */
+    elBadgeCdi.classList.toggle('visible', cdiBadge.visible);
+    elBadgeCdi.classList.toggle('badge-error', cdiBadge.error);
+    elBadgeCdi.title = cdiBadge.title;
 
-    }
+    /* FDI badge */
+    elBadgeFdi.classList.toggle('visible', fdiBadge.visible);
+    elBadgeFdi.classList.toggle('badge-error', fdiBadge.error);
+    elBadgeFdi.title = fdiBadge.title;
 
-    /* CDI is needed for Typical, Train, and Train Controller */
-    var needsCdi = selectedNodeType !== 'basic';
-
-    if (needsCdi && !cdiUserXml) {
-
-        /* Not loaded — amber badge */
-        elBadgeCdi.classList.add('visible');
-        elBadgeCdi.classList.remove('badge-error');
-        elBadgeCdi.title = 'CDI not loaded — required for this node type';
-
-    } else if (needsCdi && cdiValidation && cdiValidation.errors > 0) {
-
-        /* Loaded but has validation errors — red badge */
-        elBadgeCdi.classList.add('visible');
-        elBadgeCdi.classList.add('badge-error');
-        elBadgeCdi.title = cdiValidation.errors + ' validation error' + (cdiValidation.errors > 1 ? 's' : '');
-
-    } else if (needsCdi && cdiValidation && cdiValidation.warnings > 0) {
-
-        /* Loaded with warnings only — amber badge */
-        elBadgeCdi.classList.add('visible');
-        elBadgeCdi.classList.remove('badge-error');
-        elBadgeCdi.title = cdiValidation.warnings + ' validation warning' + (cdiValidation.warnings > 1 ? 's' : '');
-
-    } else {
-
-        /* All good or not needed */
-        elBadgeCdi.classList.remove('visible');
-        elBadgeCdi.classList.remove('badge-error');
-
-    }
-
-    /* FDI is needed only for Train (locomotive) */
-    var needsFdi = selectedNodeType === 'train';
-
-    if (needsFdi && !fdiUserXml) {
-
-        elBadgeFdi.classList.add('visible');
-        elBadgeFdi.classList.remove('badge-error');
-        elBadgeFdi.title = 'FDI not loaded — required for Train nodes';
-
-    } else if (needsFdi && fdiValidation && fdiValidation.errors > 0) {
-
-        elBadgeFdi.classList.add('visible');
-        elBadgeFdi.classList.add('badge-error');
-        elBadgeFdi.title = fdiValidation.errors + ' validation error' + (fdiValidation.errors > 1 ? 's' : '');
-
-    } else if (needsFdi && fdiValidation && fdiValidation.warnings > 0) {
-
-        elBadgeFdi.classList.add('visible');
-        elBadgeFdi.classList.remove('badge-error');
-        elBadgeFdi.title = fdiValidation.warnings + ' validation warning' + (fdiValidation.warnings > 1 ? 's' : '');
-
-    } else {
-
-        elBadgeFdi.classList.remove('visible');
-        elBadgeFdi.classList.remove('badge-error');
-
-    }
+    /* Update tile filenames */
+    _updateTileFilename(elTileCdi, cdiFilename, 'Configuration Description');
+    _updateTileFilename(elTileFdi, fdiFilename, 'Function Description');
 
 }
 
@@ -317,13 +292,16 @@ function _updateDescriptorBadges() {
 function _updateTileStates(type) {
 
     var hasCfgMem    = type !== 'basic';
+    var isTrainNode  = type === 'train';
     var isTrainRole  = type === 'train' || type === 'train-controller';
     var hasBcastTime = configFormState && configFormState.broadcast && configFormState.broadcast !== 'none';
     var hasEvents    = type !== 'basic';
 
-    /* Descriptors */
-    elTileCdi.classList.toggle('disabled', type === 'basic');
-    elTileFdi.classList.toggle('disabled', type !== 'train');   /* FDI only for locomotive nodes */
+    /* CDI — enabled for anything with config memory */
+    elTileCdi.classList.toggle('disabled', !hasCfgMem);
+
+    /* FDI — only for train (locomotive) */
+    elTileFdi.classList.toggle('disabled', !isTrainNode);
 
     /* Platform — enabled when a node type is selected and feature is on */
     if (ENABLE_PLATFORM) { elTilePlatform.classList.remove('disabled'); }
@@ -602,14 +580,12 @@ window.addEventListener('message', function (e) {
                 cdiUserXml  = e.data.xml;
                 cdiFilename = e.data.filename || null;
                 if (!cdiUserXml) { cdiValidation = null; }
-                _updateTileFilename(elTileCdi, cdiFilename, 'Configuration Description');
 
             } else if (currentView === 'fdi') {
 
                 fdiUserXml  = e.data.xml;
                 fdiFilename = e.data.filename || null;
                 if (!fdiUserXml) { fdiValidation = null; }
-                _updateTileFilename(elTileFdi, fdiFilename, 'Function Description');
 
             }
             _updateDescriptorBadges();
@@ -662,6 +638,14 @@ window.addEventListener('message', function (e) {
                 platformState = e.data.state;
                 _updatePlatformTile();
                 _saveState();
+            }
+            break;
+
+        case 'switchView':
+
+            /* Child iframe requests a view switch */
+            if (e.data.view) {
+                selectView(e.data.view);
             }
             break;
 
@@ -793,8 +777,7 @@ document.getElementById('file-load-project').addEventListener('change', function
                 _updateDescriptorBadges();
                 elBtnGenerate.disabled = false;
 
-                if (cdiFilename) { _updateTileFilename(elTileCdi, cdiFilename, 'Configuration Description'); }
-                if (fdiFilename) { _updateTileFilename(elTileFdi, fdiFilename, 'Function Description'); }
+                /* CDI/FDI filenames shown on sidebar tiles */
                 _updatePlatformTile();
 
                 var viewToLoad = currentView || 'config';
@@ -847,9 +830,7 @@ if (selectedNodeType) {
     _updateDescriptorBadges();
     elBtnGenerate.disabled = false;
 
-    /* Restore filenames on sidebar tiles */
-    if (cdiFilename) { _updateTileFilename(elTileCdi, cdiFilename, 'Configuration Description'); }
-    if (fdiFilename) { _updateTileFilename(elTileFdi, fdiFilename, 'Function Description'); }
+    /* CDI/FDI filenames shown on sidebar tiles */
     _updatePlatformTile();
 
     /* Load the last active view */

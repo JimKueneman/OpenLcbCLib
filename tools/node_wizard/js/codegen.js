@@ -210,8 +210,6 @@ function generateH(s) {
     L.push('/* ---- Memory Configuration ---- */');
     L.push(_def('USER_DEFINED_CDI_LENGTH',               s.cdiLength.toString()));
     L.push(_def('USER_DEFINED_FDI_LENGTH',               s.fdiLength.toString()));
-    L.push(_def('USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS',        '0'));
-    L.push(_def('USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS', '63'));
     L.push('');
 
     /* ---- Train Protocol ---- */

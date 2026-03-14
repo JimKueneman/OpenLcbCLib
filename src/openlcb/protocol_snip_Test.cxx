@@ -515,7 +515,7 @@ TEST(ProtocolSnip, load_user_name_no_low_address)
     
     uint16_t offset = ProtocolSnip_load_user_name(node1, msg, 0, LEN_SNIP_USER_NAME_BUFFER - 1);
     
-    EXPECT_EQ(config_read_address, USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS);
+    EXPECT_EQ(config_read_address, CONFIG_MEM_CONFIG_USER_NAME_OFFSET);
     EXPECT_EQ(offset, 6);  // "Short" + null
     EXPECT_EQ(msg->payload_count, 6);
 }
@@ -542,7 +542,7 @@ TEST(ProtocolSnip, load_user_name_with_low_address)
     // Requesting LEN_SNIP_USER_NAME_BUFFER - 1 = 62 bytes
     uint16_t offset = ProtocolSnip_load_user_name(node1, msg, 0, LEN_SNIP_USER_NAME_BUFFER - 1);
     
-    EXPECT_EQ(config_read_address, USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS + CONFIG_MEM_START_ADDRESS);
+    EXPECT_EQ(config_read_address, CONFIG_MEM_CONFIG_USER_NAME_OFFSET + CONFIG_MEM_START_ADDRESS);
     // The actual returned size depends on mock returning up to 62 bytes (requested) or 63 bytes (buffer limit)
     EXPECT_GT(offset, 0);  // Should return some offset
     EXPECT_GT(msg->payload_count, 0);  // Should have some payload
@@ -569,7 +569,7 @@ TEST(ProtocolSnip, load_user_description_no_low_address)
     
     uint16_t offset = ProtocolSnip_load_user_description(node1, msg, 0, LEN_SNIP_USER_DESCRIPTION_BUFFER - 1);
     
-    EXPECT_EQ(config_read_address, USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS);
+    EXPECT_EQ(config_read_address, CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET);
     EXPECT_EQ(offset, 6);
     EXPECT_EQ(msg->payload_count, 6);
 }
@@ -596,7 +596,7 @@ TEST(ProtocolSnip, load_user_description_with_low_address)
     // Requesting LEN_SNIP_USER_DESCRIPTION_BUFFER - 1 = 63 bytes
     uint16_t offset = ProtocolSnip_load_user_description(node1, msg, 0, LEN_SNIP_USER_DESCRIPTION_BUFFER - 1);
     
-    EXPECT_EQ(config_read_address, USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS + CONFIG_MEM_START_ADDRESS);
+    EXPECT_EQ(config_read_address, CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET + CONFIG_MEM_START_ADDRESS);
     // The actual returned size depends on mock returning up to 63 bytes
     EXPECT_GT(offset, 0);  // Should return some offset
     EXPECT_GT(msg->payload_count, 0);  // Should have some payload

@@ -6,10 +6,9 @@
     <title>Platform Editor — OpenLcbCLib</title>
     <link rel="stylesheet" href="platform.css">
 
-    <!-- Syntax highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    <!-- CodeMirror 6 (read-only C preview) -->
+    <script src="../vendor/codemirror/dist/codemirror.min.js"></script>
+    <script src="../vendor/codemirror/cm-readonly.js"></script>
 </head>
 <body>
 
@@ -39,7 +38,7 @@
                 <span class="preview-filename" id="preview-filename"></span>
             </div>
 
-            <pre class="code-preview empty"><code class="language-c" id="code-preview">Select a platform to preview the generated driver code</code></pre>
+            <div class="code-preview" id="code-preview"></div>
 
         </aside>
 

@@ -121,6 +121,12 @@ Macros</h2></td></tr>
 <tr class="memitem:ga1530ea724f2fac7211f1fc233a3c3e46" id="r_ga1530ea724f2fac7211f1fc233a3c3e46"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga1530ea724f2fac7211f1fc233a3c3e46">CONFIG_MEM_ACDI_USER_DESCRIPTION_LEN</a>&#160;&#160;&#160;64</td></tr>
 <tr class="memdesc:ga1530ea724f2fac7211f1fc233a3c3e46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum length of user description (64 bytes including null)  <br /></td></tr>
 <tr class="separator:ga1530ea724f2fac7211f1fc233a3c3e46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1f751cfcc621f2bf5ce6ac4e16eb5e85" id="r_ga1f751cfcc621f2bf5ce6ac4e16eb5e85"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga1f751cfcc621f2bf5ce6ac4e16eb5e85">CONFIG_MEM_CONFIG_USER_NAME_OFFSET</a>&#160;&#160;&#160;0x00000000</td></tr>
+<tr class="memdesc:ga1f751cfcc621f2bf5ce6ac4e16eb5e85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Offset of user name in Configuration Memory (0xFD) address space.  <br /></td></tr>
+<tr class="separator:ga1f751cfcc621f2bf5ce6ac4e16eb5e85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga26f06e3fb4e9da2d552bd7f639425c10" id="r_ga26f06e3fb4e9da2d552bd7f639425c10"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga26f06e3fb4e9da2d552bd7f639425c10">CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET</a>&#160;&#160;&#160;63   /* <a class="el" href="#gaef6cb5469bff0a34b60ee115109b1c9c">CONFIG_MEM_ACDI_USER_NAME_LEN</a> (63) */</td></tr>
+<tr class="memdesc:ga26f06e3fb4e9da2d552bd7f639425c10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Offset of user description in Configuration Memory (0xFD) address space.  <br /></td></tr>
+<tr class="separator:ga26f06e3fb4e9da2d552bd7f639425c10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Space 0xFB: user-assignable name and description strings. </p>
@@ -250,6 +256,38 @@ Macros</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Maximum length of user description (64 bytes including null) </p>
+
+</div>
+</div>
+<a id="ga1f751cfcc621f2bf5ce6ac4e16eb5e85" name="ga1f751cfcc621f2bf5ce6ac4e16eb5e85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1f751cfcc621f2bf5ce6ac4e16eb5e85">&#9670;&#160;</a></span>CONFIG_MEM_CONFIG_USER_NAME_OFFSET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CONFIG_MEM_CONFIG_USER_NAME_OFFSET&#160;&#160;&#160;0x00000000</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Offset of user name in Configuration Memory (0xFD) address space. </p>
+
+</div>
+</div>
+<a id="ga26f06e3fb4e9da2d552bd7f639425c10" name="ga26f06e3fb4e9da2d552bd7f639425c10"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga26f06e3fb4e9da2d552bd7f639425c10">&#9670;&#160;</a></span>CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET&#160;&#160;&#160;63   /* <a class="el" href="#gaef6cb5469bff0a34b60ee115109b1c9c">CONFIG_MEM_ACDI_USER_NAME_LEN</a> (63) */</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Offset of user description in Configuration Memory (0xFD) address space. </p>
 
 </div>
 </div>

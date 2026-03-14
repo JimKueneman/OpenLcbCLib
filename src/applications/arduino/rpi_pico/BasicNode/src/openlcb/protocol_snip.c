@@ -231,7 +231,7 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
 
 
     configuration_memory_buffer_t configuration_memory_buffer;
-    uint32_t data_address = USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS; // User Name is by default the first 63 Bytes in the Configuration Space
+    uint32_t data_address = CONFIG_MEM_CONFIG_USER_NAME_OFFSET; // User Name is by default the first 63 Bytes in the Configuration Space
 
     if (openlcb_node->parameters->address_space_config_memory.low_address_valid) {
 
@@ -275,7 +275,7 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
 uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     configuration_memory_buffer_t configuration_memory_buffer;
-    uint32_t data_address = USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS; // User Name is by default the first 63 Bytes in the Configuration Space and Description next 64 bytes
+    uint32_t data_address = CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET; // User Name is by default the first 63 Bytes in the Configuration Space and Description next 64 bytes
 
     if (openlcb_node->parameters->address_space_config_memory.low_address_valid) {
 

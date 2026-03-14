@@ -67,6 +67,19 @@ function applyNodeType(type) {
     const configGroup = document.getElementById('addon-config-group');
     configGroup.classList.toggle('hidden', type === 'basic');
 
+    /* Advanced: Train Protocol and Listener groups — train/train-controller only */
+    const isTrain = type === 'train' || type === 'train-controller';
+    document.getElementById('adv-train-group').classList.toggle('hidden', !isTrain);
+    document.getElementById('adv-listener-group').classList.toggle('hidden', !isTrain);
+
+    /* Advanced: Set datagram buf default based on type */
+    const dgBuf = document.getElementById('adv-datagram-buf');
+    if (type === 'basic' && dgBuf.value === '8') {
+        dgBuf.value = '0';
+    } else if (type !== 'basic' && dgBuf.value === '0') {
+        dgBuf.value = '8';
+    }
+
     /* Show the options section */
     document.getElementById('addons-section').classList.remove('hidden');
 
@@ -81,6 +94,87 @@ document.getElementById('addon-snip').addEventListener('change', function () {
     document.getElementById('snip-fields').classList.toggle('hidden', !this.checked);
     updatePreview();
 
+});
+
+/* ---------- Clamp number inputs to their min/max on change ---------- */
+
+document.getElementById('config-panel').addEventListener('change', function (e) {
+
+    var el = e.target;
+    if (el.type !== 'number') { return; }
+
+    var val = parseInt(el.value, 10);
+    if (isNaN(val)) { return; }
+
+    var min = el.hasAttribute('min') ? parseInt(el.min, 10) : null;
+    var max = el.hasAttribute('max') ? parseInt(el.max, 10) : null;
+
+    if (min !== null && val < min) { el.value = min; }
+    if (max !== null && val > max) { el.value = max; }
+
+});
+
+/* ---------- Live tally helpers ---------- */
+
+/* Map: input id -> tally <strong> id */
+const _TALLY_MAP = {
+    'event-producer-count':       'evt-prod-tally',
+    'event-consumer-count':       'evt-cons-tally',
+    'event-producer-range-count': 'evt-prod-range-tally',
+    'event-consumer-range-count': 'evt-cons-range-tally',
+    'adv-node-buf':               'node-buf-tally',
+    'adv-can-buf':                'can-buf-tally',
+    'adv-train-node-count':       'train-node-tally',
+    'adv-train-listeners':        'train-listener-tally',
+    'adv-train-functions':        'train-func-tally',
+    'adv-probe-tick':             'probe-tick-tally',
+    'adv-probe-interval':         'probe-interval-tally',
+    'adv-verify-timeout':         'verify-timeout-tally'
+};
+
+function _updateTally(inputId) {
+
+    var input = document.getElementById(inputId);
+    var tally = document.getElementById(_TALLY_MAP[inputId]);
+    if (!input || !tally) { return; }
+
+    var val = parseInt(input.value, 10) || 0;
+    var max = input.hasAttribute('max') ? parseInt(input.max, 10) : null;
+
+    tally.textContent = val;
+    tally.classList.toggle('over-limit', max !== null && val > max);
+
+}
+
+Object.keys(_TALLY_MAP).forEach(function (id) {
+
+    document.getElementById(id).addEventListener('input', function () {
+        _updateTally(id);
+    });
+
+});
+
+/* Message Buffer Pool — composite total */
+const _BUF_IDS = ['adv-basic-buf', 'adv-datagram-buf', 'adv-snip-buf', 'adv-stream-buf'];
+const _BUF_MAX = 65534;
+
+function _updateBufferTotal() {
+
+    var total = 0;
+    _BUF_IDS.forEach(function (id) {
+        total += parseInt(document.getElementById(id).value, 10) || 0;
+    });
+
+    var el = document.getElementById('buffer-total-value');
+    if (el) {
+        el.textContent = total;
+        el.classList.toggle('over-limit', total > _BUF_MAX);
+    }
+
+}
+
+_BUF_IDS.forEach(function (id) {
+    document.getElementById(id).addEventListener('input', _updateBufferTotal);
 });
 
 /* ---------- Wire inputs to live-update the preview ---------- */
@@ -114,6 +208,14 @@ document.querySelectorAll('input[name="addon-broadcast"]').forEach(el => {
     document.getElementById(id).addEventListener('input', updatePreview);
 });
 
+/* Advanced panel inputs */
+['adv-basic-buf', 'adv-datagram-buf', 'adv-snip-buf', 'adv-stream-buf',
+ 'adv-node-buf', 'adv-can-buf',
+ 'adv-train-node-count', 'adv-train-listeners', 'adv-train-functions',
+ 'adv-probe-tick', 'adv-probe-interval', 'adv-verify-timeout'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updatePreview);
+});
+
 /* ---------- Collect current UI state ---------- */
 
 function getState() {
@@ -126,9 +228,10 @@ function getState() {
     /* For Typical/Train/TrainController, fall back to the embedded default CDI when no user file */
     const activeCdi    = (!isBasic && !cdiUserBytes) ? DEFAULT_CDI_BYTES : cdiUserBytes;
     const activeCdiXml = (!isBasic && !cdiUserText)  ? DEFAULT_CDI_XML  : cdiUserText;
-    /* For Train (locomotive) only, fall back to the embedded default FDI when no user file */
-    const activeFdi    = (isTrainNode && !fdiUserBytes)  ? DEFAULT_FDI_BYTES : fdiUserBytes;
-    const activeFdiXml = (isTrainNode && !fdiUserText)   ? DEFAULT_FDI_XML  : fdiUserText;
+    /* For Train (locomotive) only, fall back to the embedded default FDI when no user file.
+     * Non-train node types never use FDI, so force null even if the user loaded one earlier. */
+    const activeFdi    = isTrainNode ? (fdiUserBytes  || DEFAULT_FDI_BYTES) : null;
+    const activeFdiXml = isTrainNode ? (fdiUserText   || DEFAULT_FDI_XML)  : null;
 
     return {
         nodeType:         selectedNodeType,
@@ -150,8 +253,22 @@ function getState() {
         cdiLength:           activeCdi ? activeCdi.length : 1,
         cdiXml:              activeCdiXml || null,
         fdiBytes:            activeFdi,
-        fdiLength:           activeFdi ? activeFdi.length : 1,
+        fdiLength:           activeFdi ? activeFdi.length : 0,
         fdiXml:              activeFdiXml || null,
+        /* Advanced panel */
+        advBasicBuf:         parseInt(document.getElementById('adv-basic-buf').value, 10) || 16,
+        advDatagramBuf:      parseInt(document.getElementById('adv-datagram-buf').value, 10),
+        advSnipBuf:          parseInt(document.getElementById('adv-snip-buf').value, 10) || 4,
+        advStreamBuf:        parseInt(document.getElementById('adv-stream-buf').value, 10) || 0,
+        advNodeBuf:          parseInt(document.getElementById('adv-node-buf').value, 10) || 1,
+        advCanBuf:           parseInt(document.getElementById('adv-can-buf').value, 10) || 20,
+        advTrainNodeCount:   parseInt(document.getElementById('adv-train-node-count').value, 10),
+        advTrainListeners:   parseInt(document.getElementById('adv-train-listeners').value, 10),
+        advTrainFunctions:   parseInt(document.getElementById('adv-train-functions').value, 10),
+        advProbeTick:        parseInt(document.getElementById('adv-probe-tick').value, 10) || 1,
+        advProbeInterval:    parseInt(document.getElementById('adv-probe-interval').value, 10) || 250,
+        advVerifyTimeout:    parseInt(document.getElementById('adv-verify-timeout').value, 10) || 30,
+
         driverState:         driverStateFromParent,
         callbackState:       callbackStateFromParent,
         platformState:       platformStateFromParent
@@ -365,22 +482,32 @@ function _rebuildFileBrowser() {
 
 }
 
+/* ---------- CodeMirror read-only viewer ---------- */
+
+let _cmViewer = null;
+
+function _ensureCMViewer() {
+
+    if (_cmViewer) { return _cmViewer; }
+
+    var container = document.getElementById('code-preview');
+    _cmViewer = createCMReadonly(container);
+    return _cmViewer;
+
+}
+
 /* ---------- Render the code preview ---------- */
 
 function renderPreview() {
 
-    const pre = document.getElementById('code-preview');
+    var viewer = _ensureCMViewer();
 
     if (!selectedNodeType) {
 
-        pre.textContent = 'Select a node type to preview the generated files';
-        pre.parentElement.classList.add('empty');
-        pre.removeAttribute('data-highlighted');
+        viewer.value = '// Select a node type to preview the generated files';
         return;
 
     }
-
-    pre.parentElement.classList.remove('empty');
 
     const state = getState();
 
@@ -388,11 +515,7 @@ function renderPreview() {
     _rebuildFileBrowser();
 
     var code = _generateForTab(currentTab, state);
-    pre.textContent = code;
-
-    /* Apply syntax highlighting */
-    pre.removeAttribute('data-highlighted');
-    hljs.highlightElement(pre);
+    viewer.value = code;
 
     /* Check config memory size vs CDI requirements */
     _checkConfigMemSize(state);
@@ -584,6 +707,19 @@ function _postStateToParent(state) {
             producerRangeCount: state.producerRangeCount,
             consumerCount:      state.consumerCount,
             consumerRangeCount: state.consumerRangeCount,
+            /* Advanced panel */
+            advBasicBuf:        state.advBasicBuf,
+            advDatagramBuf:     state.advDatagramBuf,
+            advSnipBuf:         state.advSnipBuf,
+            advStreamBuf:       state.advStreamBuf,
+            advNodeBuf:         state.advNodeBuf,
+            advCanBuf:          state.advCanBuf,
+            advTrainNodeCount:  state.advTrainNodeCount,
+            advTrainListeners:  state.advTrainListeners,
+            advTrainFunctions:  state.advTrainFunctions,
+            advProbeTick:       state.advProbeTick,
+            advProbeInterval:   state.advProbeInterval,
+            advVerifyTimeout:   state.advVerifyTimeout,
             currentTab:         currentTab,
             splitterWidth:      document.getElementById('config-panel').offsetWidth
         }
@@ -601,7 +737,7 @@ window.addEventListener('message', function (e) {
 
     } else if (e.data.type === 'setCdiBytes') {
 
-        /* Parent sends updated CDI bytes from the CDI editor */
+        /* Parent sends updated CDI bytes from CDI editor */
         cdiUserText  = e.data.xml;
         const raw    = new TextEncoder().encode(cdiUserText);
         cdiUserBytes = new Uint8Array(raw.length + 1);
@@ -611,7 +747,7 @@ window.addEventListener('message', function (e) {
 
     } else if (e.data.type === 'setFdiBytes') {
 
-        /* Parent sends updated FDI bytes from the FDI editor */
+        /* Parent sends updated FDI bytes from FDI editor */
         fdiUserText  = e.data.xml;
         const raw    = new TextEncoder().encode(fdiUserText);
         fdiUserBytes = new Uint8Array(raw.length + 1);
@@ -663,6 +799,20 @@ window.addEventListener('message', function (e) {
         if (f.producerRangeCount !== undefined) { document.getElementById('event-producer-range-count').value = f.producerRangeCount; }
         if (f.consumerCount      !== undefined) { document.getElementById('event-consumer-count').value       = f.consumerCount; }
         if (f.consumerRangeCount !== undefined) { document.getElementById('event-consumer-range-count').value = f.consumerRangeCount; }
+
+        /* Advanced panel */
+        if (f.advBasicBuf       !== undefined) { document.getElementById('adv-basic-buf').value       = f.advBasicBuf; }
+        if (f.advDatagramBuf    !== undefined) { document.getElementById('adv-datagram-buf').value    = f.advDatagramBuf; }
+        if (f.advSnipBuf        !== undefined) { document.getElementById('adv-snip-buf').value        = f.advSnipBuf; }
+        if (f.advStreamBuf      !== undefined) { document.getElementById('adv-stream-buf').value      = f.advStreamBuf; }
+        if (f.advNodeBuf        !== undefined) { document.getElementById('adv-node-buf').value        = f.advNodeBuf; }
+        if (f.advCanBuf         !== undefined) { document.getElementById('adv-can-buf').value         = f.advCanBuf; }
+        if (f.advTrainNodeCount !== undefined) { document.getElementById('adv-train-node-count').value = f.advTrainNodeCount; }
+        if (f.advTrainListeners !== undefined) { document.getElementById('adv-train-listeners').value = f.advTrainListeners; }
+        if (f.advTrainFunctions !== undefined) { document.getElementById('adv-train-functions').value = f.advTrainFunctions; }
+        if (f.advProbeTick      !== undefined) { document.getElementById('adv-probe-tick').value      = f.advProbeTick; }
+        if (f.advProbeInterval  !== undefined) { document.getElementById('adv-probe-interval').value  = f.advProbeInterval; }
+        if (f.advVerifyTimeout  !== undefined) { document.getElementById('adv-verify-timeout').value  = f.advVerifyTimeout; }
 
         /* SNIP fields visibility */
         document.getElementById('snip-fields').classList.toggle('hidden', !document.getElementById('addon-snip').checked);

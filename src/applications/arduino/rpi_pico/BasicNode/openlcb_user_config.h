@@ -26,7 +26,7 @@
 //   SNIP     (256 bytes each) -- SNIP replies and Events with Payload
 //   STREAM   (512 bytes each) -- stream data transfer (future use)
 
-#define USER_DEFINED_BASIC_BUFFER_DEPTH              32
+#define USER_DEFINED_BASIC_BUFFER_DEPTH              64
 #define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4
 #define USER_DEFINED_SNIP_BUFFER_DEPTH               4
 #define USER_DEFINED_STREAM_BUFFER_DEPTH             1
@@ -47,9 +47,9 @@
 // that work with contiguous blocks of event IDs.
 // Range counts must be at least 1 for valid array sizing.
 
-#define USER_DEFINED_PRODUCER_COUNT                  64
+#define USER_DEFINED_PRODUCER_COUNT                  200
 #define USER_DEFINED_PRODUCER_RANGE_COUNT            5
-#define USER_DEFINED_CONSUMER_COUNT                  32
+#define USER_DEFINED_CONSUMER_COUNT                  200
 #define USER_DEFINED_CONSUMER_RANGE_COUNT            5
 
 // =============================================================================
@@ -68,8 +68,6 @@
 
 #define USER_DEFINED_CDI_LENGTH                      20000
 #define USER_DEFINED_FDI_LENGTH                      1000
-#define USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS    0x00000000
-#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS  63   /* LEN_SNIP_USER_NAME_BUFFER(63) */
 
 // =============================================================================
 // Train Protocol (requires OPENLCB_COMPILE_TRAIN)

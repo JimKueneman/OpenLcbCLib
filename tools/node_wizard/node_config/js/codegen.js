@@ -347,10 +347,10 @@ function generateH(s) {
     L.push('//   SNIP     (256 bytes each) -- SNIP replies and Events with Payload');
     L.push('//   STREAM   (512 bytes each) -- stream data transfer (future use)');
     L.push('');
-    L.push(_def('USER_DEFINED_BASIC_BUFFER_DEPTH',    '16'));
-    L.push(_def('USER_DEFINED_DATAGRAM_BUFFER_DEPTH', hasCfgMem ? '8' : '0'));
-    L.push(_def('USER_DEFINED_SNIP_BUFFER_DEPTH',     '4'));
-    L.push(_def('USER_DEFINED_STREAM_BUFFER_DEPTH',   '0'));
+    L.push(_def('USER_DEFINED_BASIC_BUFFER_DEPTH',    (s.advBasicBuf    !== undefined ? s.advBasicBuf    : 16).toString()));
+    L.push(_def('USER_DEFINED_DATAGRAM_BUFFER_DEPTH', (s.advDatagramBuf !== undefined ? s.advDatagramBuf : (hasCfgMem ? 8 : 0)).toString()));
+    L.push(_def('USER_DEFINED_SNIP_BUFFER_DEPTH',     (s.advSnipBuf     !== undefined ? s.advSnipBuf     : 4).toString()));
+    L.push(_def('USER_DEFINED_STREAM_BUFFER_DEPTH',   (s.advStreamBuf   !== undefined ? s.advStreamBuf   : 0).toString()));
     L.push('');
 
     /* ---- Virtual Node Allocation ---- */
@@ -358,7 +358,7 @@ function generateH(s) {
     L.push('// How many virtual nodes this device can host.  Most simple devices use 1.');
     L.push('// Train command stations may need more (one per locomotive being controlled).');
     L.push('');
-    L.push(_def('USER_DEFINED_NODE_BUFFER_DEPTH',     '1'));
+    L.push(_def('USER_DEFINED_NODE_BUFFER_DEPTH',     (s.advNodeBuf !== undefined ? s.advNodeBuf : 1).toString()));
     L.push('');
 
     /* ---- Events ---- */
@@ -383,21 +383,15 @@ function generateH(s) {
     L.push('//');
     L.push('// The two address values tell the SNIP protocol where in your node\'s');
     L.push('// configuration memory space the user-editable name and description strings');
-    L.push('// begin.  The standard layout puts the user name at address 0 and the user');
-    L.push('// description immediately after at byte 63:');
-    L.push('//   63 = LEN_SNIP_USER_NAME_BUFFER (63)');
-    L.push('');
     L.push(_def('USER_DEFINED_CDI_LENGTH',                                 s.cdiLength.toString()));
     L.push(_def('USER_DEFINED_FDI_LENGTH',                                 s.fdiLength.toString()));
-    L.push(_def('USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS',               '0x00000000'));
-    L.push(_def('USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS',        '63   /* LEN_SNIP_USER_NAME_BUFFER(63) */'));
     L.push('');
 
     /* ---- CAN Message Buffers ---- */
     L.push(_section('CAN Message Buffers'));
     L.push('// How many raw CAN messages can be queued.  Tune for your CAN driver.');
     L.push('');
-    L.push(_def('USER_DEFINED_CAN_MSG_BUFFER_DEPTH', '20'));
+    L.push(_def('USER_DEFINED_CAN_MSG_BUFFER_DEPTH', (s.advCanBuf !== undefined ? s.advCanBuf : 20).toString()));
     L.push('');
 
     /* ---- Train Protocol ---- */
@@ -407,9 +401,9 @@ function generateH(s) {
     L.push('// MAX_LISTENERS_PER_TRAIN -- max consist members (listener slots) per train');
     L.push('// MAX_TRAIN_FUNCTIONS     -- number of DCC function outputs: 29 = F0 through F28');
     L.push('');
-    L.push(_def('USER_DEFINED_TRAIN_NODE_COUNT',         isTrain ? '1' : '0'));
-    L.push(_def('USER_DEFINED_MAX_LISTENERS_PER_TRAIN',  isTrain ? '6' : '0'));
-    L.push(_def('USER_DEFINED_MAX_TRAIN_FUNCTIONS',      isTrain ? '29' : '0'));
+    L.push(_def('USER_DEFINED_TRAIN_NODE_COUNT',         isTrain ? (s.advTrainNodeCount  !== undefined ? s.advTrainNodeCount  : 1).toString() : '0'));
+    L.push(_def('USER_DEFINED_MAX_LISTENERS_PER_TRAIN',  isTrain ? (s.advTrainListeners !== undefined ? s.advTrainListeners : 6).toString() : '0'));
+    L.push(_def('USER_DEFINED_MAX_TRAIN_FUNCTIONS',      isTrain ? (s.advTrainFunctions !== undefined ? s.advTrainFunctions : 29).toString() : '0'));
     L.push('');
 
     /* ---- Listener Alias Verification ---- */
@@ -421,9 +415,9 @@ function generateH(s) {
     L.push('// LISTENER_VERIFY_TIMEOUT_TICKS -- 100ms ticks to wait for AMD reply before');
     L.push('//                                  declaring stale (30 = 3 seconds)');
     L.push('');
-    L.push(_def('USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL',  '1'));
-    L.push(_def('USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS', '250'));
-    L.push(_def('USER_DEFINED_LISTENER_VERIFY_TIMEOUT_TICKS', '30'));
+    L.push(_def('USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL',  (s.advProbeTick     !== undefined ? s.advProbeTick     : 1).toString()));
+    L.push(_def('USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS', (s.advProbeInterval !== undefined ? s.advProbeInterval : 250).toString()));
+    L.push(_def('USER_DEFINED_LISTENER_VERIFY_TIMEOUT_TICKS', (s.advVerifyTimeout !== undefined ? s.advVerifyTimeout : 30).toString()));
     L.push('');
 
     /* ---- Forward declaration ---- */
@@ -582,10 +576,8 @@ function generateC(s) {
         psi.push('PSI_CONFIGURATION_DESCRIPTION_INFO');
     }
 
-    if (isTrainRole) {
-        psi.push('PSI_TRAIN_CONTROL');
-    }
     if (isTrainNode) {
+        psi.push('PSI_TRAIN_CONTROL');
         psi.push('PSI_FUNCTION_DESCRIPTION');
     }
 

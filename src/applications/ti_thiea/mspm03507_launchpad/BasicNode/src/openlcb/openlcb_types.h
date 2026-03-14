@@ -122,15 +122,6 @@
 #error "USER_DEFINED_CONSUMER_RANGE_COUNT must be defined in openlcb_user_config.h"
 #endif
 
-    /** @brief Config Memory address for user-defined node name */
-#ifndef USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS
-#error "USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS must be defined in openlcb_user_config.h"
-#endif
-
-    /** @brief Config Memory address for user description */
-#ifndef USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS
-#error "USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS must be defined in openlcb_user_config.h"
-#endif
 
     /** @brief Maximum number of train nodes that can be allocated */
 #ifndef USER_DEFINED_TRAIN_NODE_COUNT

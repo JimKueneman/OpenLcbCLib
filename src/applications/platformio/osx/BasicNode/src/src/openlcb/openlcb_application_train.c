@@ -244,7 +244,7 @@ static void _forward_estop_to_listeners(train_state_t *state) {
 
     }
 
-    for (uint8_t i = 0; i < state->listener_count; i++) {
+    for (int i = 0; i < state->listener_count; i++) {
 
         train_listener_entry_t *entry = &state->listeners[i];
 
@@ -309,7 +309,7 @@ void OpenLcbApplicationTrain_100ms_timer_tick(uint8_t current_tick) {
 
     _last_heartbeat_tick = current_tick;
 
-    for (uint8_t i = 0; i < _train_pool_count; i++) {
+    for (int i = 0; i < _train_pool_count; i++) {
 
         train_state_t *state = &_train_pool[i];
 

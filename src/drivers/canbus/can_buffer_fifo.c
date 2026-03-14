@@ -48,8 +48,8 @@
 /** @brief Internal circular buffer for queuing @ref can_msg_t pointers. */
 typedef struct {
     can_msg_t *list[LEN_CAN_FIFO_BUFFER];  /**< @brief Message pointer slots. */
-    uint8_t head;                           /**< @brief Next write position. */
-    uint8_t tail;                           /**< @brief Next read position. */
+    uint16_t head;                          /**< @brief Next write position. */
+    uint16_t tail;                          /**< @brief Next read position. */
 } can_fifo_t;
 
 /** @brief Single global FIFO instance. */
@@ -91,7 +91,7 @@ void CanBufferFifo_initialize(void) {
      */
 bool CanBufferFifo_push(can_msg_t *new_msg) {
 
-    uint8_t next = can_msg_buffer_fifo.head + 1;
+    uint16_t next = can_msg_buffer_fifo.head + 1;
 
     if (next >= LEN_CAN_FIFO_BUFFER) {
 

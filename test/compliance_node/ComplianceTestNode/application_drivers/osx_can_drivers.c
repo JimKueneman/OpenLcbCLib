@@ -30,7 +30,7 @@
  * localhost:12021 and translates between GridConnect strings and CAN frames.
  *
  * @author Jim Kueneman
- * @date 1 Jan 2026
+ * @date 14 Mar 2026
  */
 
 #include "src/drivers/canbus/can_types.h"
@@ -49,6 +49,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <netinet/tcp.h>
 #include <pthread.h>
 
 #define PORT_NUMBER 12021
@@ -109,6 +110,17 @@ uint16_t _wait_for_connect_non_blocking(int socket_fd) {
     }
 }
 
+    /**
+     * @brief Creates a TCP socket and connects to the bridge server.
+     *
+     * @details Opens a non-blocking TCP connection with TCP_NODELAY enabled
+     * to prevent Nagle's algorithm from coalescing small GridConnect frames.
+     *
+     * @param ip_address  Dotted-decimal IPv4 address string.
+     * @param port        TCP port number.
+     *
+     * @return Socket file descriptor on success, -1 on failure.
+     */
 int _connect_to_server(char ip_address[], uint16_t port) {
 
     int socket_fd, connect_result;
@@ -128,6 +140,9 @@ int _connect_to_server(char ip_address[], uint16_t port) {
         printf("Socket creation failed: %d\n", socket_fd);
         return -1;
     }
+
+    int flag = 1;
+    setsockopt(socket_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag));
 
     printf("Socket successfully created: %d\n", socket_fd);
 

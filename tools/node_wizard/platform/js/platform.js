@@ -14,9 +14,18 @@ let _firmwareEnabled  = false;
 
 const elCards     = document.getElementById('platform-cards');
 const elConfig    = document.getElementById('config-area');
-const elCodeEl    = document.getElementById('code-preview');
 const elFnameEl   = document.getElementById('preview-filename');
 const elBadge     = document.getElementById('preview-badge');
+
+let _cmViewer = null;
+
+function _ensureCMViewer() {
+
+    if (_cmViewer) { return _cmViewer; }
+    _cmViewer = createCMReadonly(document.getElementById('code-preview'));
+    return _cmViewer;
+
+}
 const elTabCan    = document.getElementById('tab-can');
 const elTabOlcb   = document.getElementById('tab-olcb');
 
@@ -233,19 +242,18 @@ function switchTab(tab) {
 
 function _renderPreview() {
 
+    var viewer = _ensureCMViewer();
     var def = PLATFORM_DEFS[_selectedPlatform];
 
     if (_selectedPlatform === 'none') {
 
-        elCodeEl.textContent = 'Select a platform to preview the generated driver code';
-        elCodeEl.parentElement.classList.add('empty');
+        viewer.value = '// Select a platform to preview the generated driver code';
         elBadge.style.display = 'none';
         elFnameEl.textContent = '';
         return;
 
     }
 
-    elCodeEl.parentElement.classList.remove('empty');
     elBadge.textContent   = def.name;
     elBadge.style.display = 'inline-block';
 
@@ -320,9 +328,7 @@ function _renderPreview() {
 
     }
 
-    elCodeEl.textContent = lines.join('\n');
-    elCodeEl.removeAttribute('data-highlighted');
-    hljs.highlightElement(elCodeEl);
+    viewer.value = lines.join('\n');
 
 }
 

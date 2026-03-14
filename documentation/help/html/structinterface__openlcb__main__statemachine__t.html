@@ -118,6 +118,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a5e8a26235e1c2b3044baacd241fe7e44" id="r_a5e8a26235e1c2b3044baacd241fe7e44"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e8a26235e1c2b3044baacd241fe7e44">openlcb_node_is_last</a> )(uint8_t key)</td></tr>
 <tr class="memdesc:a5e8a26235e1c2b3044baacd241fe7e44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if current enumeration position is the last node. REQUIRED.  <br /></td></tr>
 <tr class="separator:a5e8a26235e1c2b3044baacd241fe7e44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab28344dcc06781f315f127e455dbe37a" id="r_ab28344dcc06781f315f127e455dbe37a"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab28344dcc06781f315f127e455dbe37a">openlcb_node_get_count</a> )(void)</td></tr>
+<tr class="memdesc:ab28344dcc06781f315f127e455dbe37a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of allocated nodes. REQUIRED.  <br /></td></tr>
+<tr class="separator:ab28344dcc06781f315f127e455dbe37a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb82224cbc102121448b6e90c211d19a" id="r_acb82224cbc102121448b6e90c211d19a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb82224cbc102121448b6e90c211d19a">load_interaction_rejected</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:acb82224cbc102121448b6e90c211d19a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build Optional Interaction Rejected for unhandled MTIs. REQUIRED.  <br /></td></tr>
 <tr class="separator:acb82224cbc102121448b6e90c211d19a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -390,6 +393,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Return true if current enumeration position is the last node. REQUIRED. </p>
+
+</div>
+</div>
+<a id="ab28344dcc06781f315f127e455dbe37a" name="ab28344dcc06781f315f127e455dbe37a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab28344dcc06781f315f127e455dbe37a">&#9670;&#160;</a></span>openlcb_node_get_count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t(* openlcb_node_get_count) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the number of allocated nodes. REQUIRED. </p>
 
 </div>
 </div>

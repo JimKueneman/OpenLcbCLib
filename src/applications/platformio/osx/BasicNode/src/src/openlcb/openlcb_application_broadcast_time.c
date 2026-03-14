@@ -54,6 +54,9 @@ static const interface_openlcb_application_broadcast_time_t *_interface;
     /** @brief Tracks the last tick value to gate broadcast time processing. */
 static uint8_t _last_bcast_tick = 0;
 
+    /** @brief Forward declaration: drives the 6-message query reply state machine. */
+static bool _send_query_reply_for_clock(broadcast_clock_t *clock, openlcb_node_t *openlcb_node, uint8_t next_hour, uint8_t next_minute);
+
 
     /**
      * @brief Searches the clock array for a slot matching clock_id.
@@ -71,17 +74,29 @@ static uint8_t _last_bcast_tick = 0;
      */
 static broadcast_clock_t *_find_clock_by_id(event_id_t clock_id) {
 
+    broadcast_clock_t *first_match = NULL;
+
     for (int i = 0; i < BROADCAST_TIME_TOTAL_CLOCK_COUNT; i++) {
 
         if (_clocks[i].is_allocated && _clocks[i].state.clock_id == clock_id) {
 
-            return &_clocks[i];
+            if (_clocks[i].is_producer && _clocks[i].producer_node) {
+
+                return &_clocks[i];
+
+            }
+
+            if (!first_match) {
+
+                first_match = &_clocks[i];
+
+            }
 
         }
 
     }
 
-    return NULL;
+    return first_match;
 
 }
 
@@ -798,8 +813,8 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
 
             }
 
-            if (OpenLcbApplicationBroadcastTime_send_query_reply(
-                    (openlcb_node_t *)clock->producer_node, clock->state.clock_id,
+            if (_send_query_reply_for_clock(clock,
+                    (openlcb_node_t *)clock->producer_node,
                     next_hour, next_min)) {
 
                 clock->query_reply_pending = false;
@@ -1058,11 +1073,9 @@ bool OpenLcbApplicationBroadcastTime_send_date_rollover(openlcb_node_t *openlcb_
 }
 
     /**
-     * @brief Sends the full query reply sequence for a producer clock.
+     * @brief Internal: drives the 6-message query reply state machine on a known clock.
      *
-     * @details Algorithm:
-     * Uses a static state variable (_send_query_reply_state) to send messages one per call,
-     * allowing the caller to retry when the transmit buffer is full.  The sequence is:
+     * @details Sends one message per call in the Standard §6.3 sequence:
      * -# State 0: Start or Stop (Producer Identified Set).
      * -# State 1: Rate (Producer Identified Set).
      * -# State 2: Year (Producer Identified Set).
@@ -1070,6 +1083,114 @@ bool OpenLcbApplicationBroadcastTime_send_date_rollover(openlcb_node_t *openlcb_
      * -# State 4: Current Time (Producer Identified Set).
      * -# State 5: Next minute Time (PC Event Report).
      * Each state advances only when the send succeeds.  Returns true when state 5 completes.
+     *
+     * @param clock         Pointer to the broadcast_clock_t to operate on.
+     * @param openlcb_node  Pointer to the sending openlcb_node_t.
+     * @param next_hour     Hour of the next scheduled time event (0-23).
+     * @param next_minute   Minute of the next scheduled time event (0-59).
+     *
+     * @return true when all six messages have been queued, false if more calls are needed.
+     */
+static bool _send_query_reply_for_clock(broadcast_clock_t *clock, openlcb_node_t *openlcb_node, uint8_t next_hour, uint8_t next_minute) {
+
+    event_id_t event_id;
+
+    switch (clock->send_query_reply_state) {
+
+        case 0:  // 1. Start or Stop ------------------------------------------
+
+            if (clock->state.is_running) {
+
+                event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_START);
+
+            } else {
+
+                event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_STOP);
+
+            }
+
+            if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
+
+                clock->send_query_reply_state = 1;
+
+            }
+
+            break;
+
+        case 1:  // 2. Rate ------------------------------------------
+
+            event_id = OpenLcbUtilities_create_rate_event_id(clock->state.clock_id, clock->state.rate.rate, false);
+
+            if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
+
+                clock->send_query_reply_state = 2;
+
+            }
+
+            break;
+
+        case 2:  // 3. Year ------------------------------------------
+
+            event_id = OpenLcbUtilities_create_year_event_id(clock->state.clock_id, clock->state.year.year, false);
+
+            if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
+
+                clock->send_query_reply_state = 3;
+
+            }
+
+            break;
+
+        case 3:  // 4. Date ------------------------------------------
+
+            event_id = OpenLcbUtilities_create_date_event_id(clock->state.clock_id, clock->state.date.month, clock->state.date.day, false);
+
+            if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
+
+                clock->send_query_reply_state = 4;
+
+            }
+
+            break;
+
+        case 4:  // 5. Time (Producer Identified Valid) ------------------------------------------
+
+            event_id = OpenLcbUtilities_create_time_event_id(clock->state.clock_id, clock->state.time.hour, clock->state.time.minute, false);
+
+            if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
+
+                clock->send_query_reply_state = 5;
+
+            }
+
+            break;
+
+        case 5:  // 6. Next minute (PC Event Report) ------------------------------------------
+
+            event_id = OpenLcbUtilities_create_time_event_id(clock->state.clock_id, next_hour, next_minute, false);
+
+            if (OpenLcbApplication_send_event_pc_report(openlcb_node, event_id)) {
+
+                clock->send_query_reply_state = 0;
+
+                return true; // done
+
+            }
+
+            break;
+
+    }
+
+    return false; // not done, more states to send
+
+}
+
+
+    /**
+     * @brief Sends the full query reply sequence for a producer clock.
+     *
+     * @details Looks up the clock by clock_id and delegates to the internal
+     * state machine.  See _send_query_reply_for_clock for the full sequence.
      *
      * @verbatim
      * @param openlcb_node  Pointer to the sending openlcb_node_t.
@@ -1080,109 +1201,22 @@ bool OpenLcbApplicationBroadcastTime_send_date_rollover(openlcb_node_t *openlcb_
      *
      * @return true when all six messages have been queued, false if more calls are needed.
      *
-     * @note State is now stored per-clock in broadcast_clock_t.send_query_reply_state,
+     * @note State is stored per-clock in broadcast_clock_t.send_query_reply_state,
      *       allowing concurrent query replies for different clocks.
      */
 bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t next_hour, uint8_t next_minute) {
 
     broadcast_clock_t *clock = _find_clock_by_id(clock_id);
-    event_id_t event_id;
 
     if (clock) {
 
         if (clock->is_allocated && clock->is_producer && clock->producer_node) {
 
-            switch (clock->send_query_reply_state) {
+            return _send_query_reply_for_clock(clock, openlcb_node, next_hour, next_minute);
 
-                case 0:  // 1. Start or Stop ------------------------------------------
+        }
 
-                    if (clock->state.is_running) {
-
-                        event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_START);
-
-                    } else {
-
-                        event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_STOP);
-
-                    }
-
-                    if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
-
-                        clock->send_query_reply_state = 1;
-
-                    }
-
-                    break;
-
-                case 1:  // 2. Rate ------------------------------------------
-
-                    event_id = OpenLcbUtilities_create_rate_event_id(clock->state.clock_id, clock->state.rate.rate, false);
-
-                    if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
-
-                        clock->send_query_reply_state = 2;
-
-                    }
-
-                    break;
-
-                case 2:  // 3. Year ------------------------------------------
-
-                    event_id = OpenLcbUtilities_create_year_event_id(clock->state.clock_id, clock->state.year.year, false);
-
-                    if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
-
-                        clock->send_query_reply_state = 3;
-
-                    }
-
-                    break;
-
-                case 3:  // 4. Date ------------------------------------------
-
-                    event_id = OpenLcbUtilities_create_date_event_id(clock->state.clock_id, clock->state.date.month, clock->state.date.day, false);
-
-                    if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
-
-                        clock->send_query_reply_state = 4;
-
-                    }
-
-                    break;
-
-                case 4:  // 5. Time (Producer Identified Valid) ------------------------------------------
-
-                    event_id = OpenLcbUtilities_create_time_event_id(clock->state.clock_id, clock->state.time.hour, clock->state.time.minute, false);
-
-                    if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
-
-                        clock->send_query_reply_state = 5;
-
-                    }
-
-                    break;
-
-                case 5:  // 6. Next minute (PC Event Report) ------------------------------------------
-
-                    event_id = OpenLcbUtilities_create_time_event_id(clock->state.clock_id, next_hour, next_minute, false);
-
-                    if (OpenLcbApplication_send_event_pc_report(openlcb_node, event_id)) {
-
-                        clock->send_query_reply_state = 0;
-
-                        return true; // done
-
-                    }
-
-                    break;
-
-            }
-
-            return false; // not done, more states to send
-
-        }  // if (clock->is_allocated && clock->is_producer)
-
-    }  // if (clock)
+    }
 
     return true;  // done (no clock or not a producer)
 

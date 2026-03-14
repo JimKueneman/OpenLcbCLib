@@ -6,10 +6,9 @@
     <title>Callback Editor — OpenLcbCLib</title>
     <link rel="stylesheet" href="callbacks.css">
 
-    <!-- Syntax highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    <!-- CodeMirror 6 (read-only C preview) -->
+    <script src="../vendor/codemirror/dist/codemirror.min.js"></script>
+    <script src="../vendor/codemirror/cm-readonly.js"></script>
 </head>
 <body>
 
@@ -36,7 +35,7 @@
                 <span class="preview-filename" id="preview-filename"></span>
             </div>
 
-            <pre class="code-preview empty"><code class="language-c" id="code-preview">Select a callback group to preview</code></pre>
+            <div class="code-preview" id="code-preview"></div>
 
         </aside>
 
@@ -278,20 +277,29 @@
 
     }
 
+    /* ---------- CodeMirror read-only viewer ---------- */
+
+    let _cmViewer = null;
+
+    function _ensureCMViewer() {
+
+        if (_cmViewer) { return _cmViewer; }
+        _cmViewer = createCMReadonly(document.getElementById('code-preview'));
+        return _cmViewer;
+
+    }
+
     function _renderPreview() {
 
-        const codeEl  = document.getElementById('code-preview');
+        const viewer  = _ensureCMViewer();
         const fnameEl = document.getElementById('preview-filename');
 
         if (!_currentGroup) {
 
-            codeEl.textContent = 'Select a callback group to preview';
-            codeEl.parentElement.classList.add('empty');
+            viewer.value = '// Select a callback group to preview';
             return;
 
         }
-
-        codeEl.parentElement.classList.remove('empty');
 
         const group   = CALLBACK_GROUPS[_currentGroup];
         const checked = _getCheckedFunctions();
@@ -302,17 +310,14 @@
         if (_currentTab === 'h') {
 
             fnameEl.textContent = group.filePrefix + '.h';
-            codeEl.textContent  = CallbackCodegen.generateH(group, checked);
+            viewer.value = CallbackCodegen.generateH(group, checked);
 
         } else {
 
             fnameEl.textContent = group.filePrefix + '.c';
-            codeEl.textContent  = CallbackCodegen.generateC(group, checked);
+            viewer.value = CallbackCodegen.generateC(group, checked);
 
         }
-
-        codeEl.removeAttribute('data-highlighted');
-        hljs.highlightElement(codeEl);
 
     }
 

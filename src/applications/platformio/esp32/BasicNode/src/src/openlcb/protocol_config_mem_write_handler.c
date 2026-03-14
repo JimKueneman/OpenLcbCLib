@@ -876,7 +876,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
 
         case CONFIG_MEM_ACDI_USER_NAME_ADDRESS:
 
-            config_address = USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS;
+            config_address = CONFIG_MEM_CONFIG_USER_NAME_OFFSET;
 
             if (statemachine_info->openlcb_node->parameters->address_space_config_memory.low_address_valid) {
 
@@ -898,7 +898,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
 
         case CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS:
 
-            config_address = USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS;
+            config_address = CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET;
 
             if (statemachine_info->openlcb_node->parameters->address_space_config_memory.low_address_valid) {
 

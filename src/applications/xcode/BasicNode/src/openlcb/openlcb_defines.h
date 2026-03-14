@@ -1080,6 +1080,12 @@
     /** @brief Maximum length of user description (64 bytes including null) */
 #define CONFIG_MEM_ACDI_USER_DESCRIPTION_LEN 64
 
+    /** @brief Offset of user name in Configuration Memory (0xFD) address space */
+#define CONFIG_MEM_CONFIG_USER_NAME_OFFSET 0x00000000
+
+    /** @brief Offset of user description in Configuration Memory (0xFD) address space */
+#define CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET 63   /* CONFIG_MEM_ACDI_USER_NAME_LEN (63) */
+
     /** @} */ // end of acdi_user_layout
 
 /**

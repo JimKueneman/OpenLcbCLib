@@ -6,10 +6,9 @@
     <title>Node Configuration — OpenLcbCLib</title>
     <link rel="stylesheet" href="node_config.css">
 
-    <!-- Syntax highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    <!-- CodeMirror 6 (read-only C preview) -->
+    <script src="../vendor/codemirror/dist/codemirror.min.js"></script>
+    <script src="../vendor/codemirror/cm-readonly.js"></script>
 </head>
 <body>
 
@@ -91,12 +90,12 @@
 
                             <div class="event-count-field">
                                 <label for="event-producer-count">Producers</label>
-                                <input type="number" id="event-producer-count" value="64" min="1" max="65535">
+                                <input type="number" id="event-producer-count" value="64" min="1" max="255">
                             </div>
 
                             <div class="event-count-field">
                                 <label for="event-consumer-count">Consumers</label>
-                                <input type="number" id="event-consumer-count" value="64" min="1" max="65535">
+                                <input type="number" id="event-consumer-count" value="64" min="1" max="255">
                             </div>
 
                             <div class="event-count-field">
@@ -111,8 +110,11 @@
 
                         </div>
 
-                        <p class="field-note">
-                            Enter the number of Producers, Consumers and Ranges your node will support.
+                        <p class="buffer-tally">
+                            Producers: <strong id="evt-prod-tally">64</strong> / 255 &nbsp;
+                            Consumers: <strong id="evt-cons-tally">64</strong> / 255 &nbsp;
+                            Producer Ranges: <strong id="evt-prod-range-tally">4</strong> / 255 &nbsp;
+                            Consumer Ranges: <strong id="evt-cons-range-tally">4</strong> / 255
                         </p>
                     </div>
 
@@ -162,6 +164,128 @@
 
                     </details>
 
+                    <!-- Advanced collapsible section -->
+                    <details class="addon-collapsible" id="addon-advanced-section">
+                        <summary class="addon-collapsible-toggle">Advanced</summary>
+
+                        <div class="addon-collapsible-content">
+
+                            <!-- Message Buffer Pool -->
+                            <div class="addon-group" id="adv-buffers-group">
+                                <span class="addon-group-title">Message Buffer Pool</span>
+                                <p class="adv-desc">Tune for your platform's available RAM. The combined total of all buffer pools must not exceed 65534.</p>
+
+                                <div class="event-count-grid">
+                                    <div class="event-count-field">
+                                        <label for="adv-basic-buf">Basic (16B each)</label>
+                                        <input type="number" id="adv-basic-buf" value="16" min="1" max="65534">
+                                    </div>
+                                    <div class="event-count-field">
+                                        <label for="adv-datagram-buf">Datagram (72B each)</label>
+                                        <input type="number" id="adv-datagram-buf" value="8" min="0" max="65534">
+                                    </div>
+                                    <div class="event-count-field">
+                                        <label for="adv-snip-buf">SNIP (256B each)</label>
+                                        <input type="number" id="adv-snip-buf" value="4" min="1" max="65534">
+                                    </div>
+                                    <div class="event-count-field">
+                                        <label for="adv-stream-buf">Stream (512B each)</label>
+                                        <input type="number" id="adv-stream-buf" value="0" min="0" max="65534">
+                                    </div>
+                                </div>
+
+                                <p class="buffer-tally" id="buffer-total-note">
+                                    Total buffers: <strong id="buffer-total-value">28</strong> / 65534
+                                </p>
+                            </div>
+
+                            <!-- Virtual Node Allocation -->
+                            <div class="addon-group" id="adv-nodes-group">
+                                <span class="addon-group-title">Virtual Node Allocation</span>
+                                <p class="adv-desc">How many virtual nodes this device hosts. Most simple devices use 1.</p>
+
+                                <div class="event-count-grid">
+                                    <div class="event-count-field">
+                                        <label for="adv-node-buf">Node Buffer Depth</label>
+                                        <input type="number" id="adv-node-buf" value="1" min="1" max="255">
+                                    </div>
+                                </div>
+                                <p class="buffer-tally">
+                                    Node Buffer Depth: <strong id="node-buf-tally">1</strong> / 255
+                                </p>
+                            </div>
+
+                            <!-- CAN Message Buffers -->
+                            <div class="addon-group" id="adv-can-group">
+                                <span class="addon-group-title">CAN Message Buffers</span>
+                                <p class="adv-desc">How many raw CAN messages can be queued. Tune for your CAN driver.</p>
+
+                                <div class="event-count-grid">
+                                    <div class="event-count-field">
+                                        <label for="adv-can-buf">CAN Msg Buffer Depth</label>
+                                        <input type="number" id="adv-can-buf" value="20" min="1" max="65534">
+                                    </div>
+                                </div>
+                                <p class="buffer-tally">
+                                    CAN Msg Buffer Depth: <strong id="can-buf-tally">20</strong> / 65534
+                                </p>
+                            </div>
+
+                            <!-- Train Protocol -->
+                            <div class="addon-group hidden" id="adv-train-group">
+                                <span class="addon-group-title">Train Protocol</span>
+
+                                <div class="event-count-grid">
+                                    <div class="event-count-field">
+                                        <label for="adv-train-node-count">Train Node Count</label>
+                                        <input type="number" id="adv-train-node-count" value="1" min="0" max="255">
+                                    </div>
+                                    <div class="event-count-field">
+                                        <label for="adv-train-listeners">Max Listeners/Train</label>
+                                        <input type="number" id="adv-train-listeners" value="6" min="0" max="255">
+                                    </div>
+                                    <div class="event-count-field">
+                                        <label for="adv-train-functions">Max Train Functions</label>
+                                        <input type="number" id="adv-train-functions" value="29" min="0" max="65535">
+                                    </div>
+                                </div>
+                                <p class="buffer-tally">
+                                    Train Nodes: <strong id="train-node-tally">1</strong> / 255 &nbsp;
+                                    Listeners: <strong id="train-listener-tally">6</strong> / 255 &nbsp;
+                                    Functions: <strong id="train-func-tally">29</strong> / 65535
+                                </p>
+                            </div>
+
+                            <!-- Listener Alias Verification -->
+                            <div class="addon-group hidden" id="adv-listener-group">
+                                <span class="addon-group-title">Listener Alias Verification</span>
+                                <p class="adv-desc">Timing for consist member (listener) alias probing. Units are 100ms ticks.</p>
+
+                                <div class="event-count-grid">
+                                    <div class="event-count-field">
+                                        <label for="adv-probe-tick">Probe Tick Interval</label>
+                                        <input type="number" id="adv-probe-tick" value="1" min="1" max="255">
+                                    </div>
+                                    <div class="event-count-field">
+                                        <label for="adv-probe-interval">Probe Interval (ticks)</label>
+                                        <input type="number" id="adv-probe-interval" value="250" min="1" max="65535">
+                                    </div>
+                                    <div class="event-count-field">
+                                        <label for="adv-verify-timeout">Verify Timeout (ticks)</label>
+                                        <input type="number" id="adv-verify-timeout" value="30" min="1" max="65535">
+                                    </div>
+                                </div>
+                                <p class="buffer-tally">
+                                    Probe Tick: <strong id="probe-tick-tally">1</strong> / 255 &nbsp;
+                                    Probe Interval: <strong id="probe-interval-tally">250</strong> / 65535 &nbsp;
+                                    Verify Timeout: <strong id="verify-timeout-tally">30</strong> / 65535
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </details>
+
                 </div>
             </section>
 
@@ -179,11 +303,11 @@
             </div>
 
             <!-- Code display area -->
-            <div class="code-display">
+            <div class="code-display" id="code-display">
                 <div class="preview-header">
                     <span class="preview-filename" id="preview-filename">openlcb_user_config.h</span>
                 </div>
-                <pre class="code-preview empty"><code class="language-c" id="code-preview">Select a node type to preview the generated files</code></pre>
+                <div class="code-preview" id="code-preview"></div>
             </div>
 
         </aside>

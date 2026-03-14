@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenLCB CDI Editor / Viewer</title>
 
-    <!-- Syntax highlighting — same CDN/version as cdi_to_array_webbrowser tool -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    <!-- CodeMirror 6 — local bundle (no internet required) -->
+    <script src="../vendor/codemirror/dist/codemirror.min.js"></script>
+    <script src="../vendor/codemirror/cm-adapter.js"></script>
+
+    <!-- CodeMirror read-only viewer — used for C code preview in the map pane -->
+    <script src="../vendor/codemirror/cm-readonly.js"></script>
 
     <style>
 
@@ -237,89 +238,15 @@
             position: relative;
         }
 
-        /* line-number gutter */
-        .line-numbers {
-            width: 42px;
-            flex-shrink: 0;
-            background: #252526;
-            color: #858585;
-            font-family: var(--font-mono);
-            font-size: 13px;
-            line-height: 1.5;
-            padding: 8px 0;
-            text-align: right;
-            padding-right: 8px;
-            overflow: hidden;
-            user-select: none;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .line-numbers div { height: 19.5px; }
-
-        /* Wrapper for the textarea + highlight overlay */
+        /* CodeMirror container — fills the editor-inner area */
         .editor-text-wrap {
             flex: 1;
-            position: relative;
             overflow: hidden;
         }
 
-        /* Highlight.js overlay — sits behind the transparent textarea */
-        .hl-overlay {
-            position: absolute;
-            inset: 0;
-            margin: 0;
-            padding: 8px;
-            font-family: var(--font-mono);
-            font-size: 13px;
-            line-height: 1.5;
-            tab-size: 2;
-            white-space: pre;
-            overflow: hidden;
-            pointer-events: none;
-            border: none;
-            border-radius: 0;
-            background: #1e1e1e;
-            z-index: 1;
-            word-break: normal;
-            overflow-wrap: normal;
-        }
-
-        /* highlight.js resets its code background; keep ours transparent */
-        .hl-overlay code.hljs {
-            font-family: inherit;
-            font-size: inherit;
-            line-height: inherit;
-            background: transparent !important;
-            padding: 0;
-            white-space: inherit;
-            display: block;
-        }
-
-        /* Textarea is transparent so the highlighted overlay shows through */
-        textarea#xml-editor {
-            position: absolute;
-            inset: 0;
-            width: 100%;
+        .editor-text-wrap .cm-editor {
             height: 100%;
-            background: transparent;
-            color: transparent;
-            caret-color: #aeafad;
-            font-family: var(--font-mono);
-            font-size: 13px;
-            line-height: 1.5;
-            padding: 8px;
-            border: none;
-            outline: none;
-            resize: none;
-            tab-size: 2;
-            overflow-y: scroll;
-            overflow-x: auto;
-            white-space: pre;
-            z-index: 2;
         }
-
-        textarea#xml-editor::placeholder { color: #555; }
 
         /* editor status bar */
         .editor-statusbar {
@@ -901,6 +828,7 @@
         <button id="btn-render"   class="btn-primary" disabled>▶ Render</button>
         <button id="btn-validate" disabled>✓ Validate</button>
         <button id="btn-clear">✕ Clear</button>
+        <button id="btn-export-xml" disabled>💾 Export XML</button>
 
         <div class="toolbar-sep"></div>
 
@@ -934,16 +862,8 @@
                 <div class="xml-sub-pane" id="xml-sub-pane">
 
                     <div class="editor-inner" id="editor-inner">
-                        <div class="line-numbers" id="line-numbers"></div>
-                        <div class="editor-text-wrap">
-                            <!-- highlight.js overlay (behind textarea) -->
-                            <pre class="hl-overlay" id="hl-overlay" aria-hidden="true"><code id="hl-code" class="language-xml"></code></pre>
-                            <textarea id="xml-editor"
-                                      spellcheck="false"
-                                      autocomplete="off"
-                                      autocorrect="off"
-                                      autocapitalize="off"
-                                      placeholder="Paste or open a CDI XML file to begin..."></textarea>
+                        <div class="editor-text-wrap" id="cm-host">
+                            <!-- CodeMirror 6 instance created by JS -->
                         </div>
                     </div>
 
@@ -968,12 +888,13 @@
                 <!-- Memory map pane -->
                 <div class="map-pane" id="map-pane">
                     <div class="map-header">
-                        <span>Memory Map</span>
+                        <span>CDI Tools</span>
                         <div class="map-view-toggle">
                             <button class="map-toggle-btn active" id="btn-map-flat"    title="Flat table view">≡ Flat</button>
                             <button class="map-toggle-btn"        id="btn-map-tree"    title="Collapsible tree view">⊞ Tree</button>
                             <button class="map-toggle-btn"        id="btn-map-defines" title="C #define address header">{} Defines</button>
                             <button class="map-toggle-btn"        id="btn-map-struct"  title="C struct layout">⊡ Struct</button>
+                            <button class="map-toggle-btn"        id="btn-map-array"   title="C byte array for openlcb_user_config.c">[] Array</button>
                         </div>
                     </div>
                     <div class="map-content" id="map-content">
@@ -1021,10 +942,9 @@
 'use strict';
 
 /* ---------- Element refs -------------------------------------------------- */
-const elEditor      = document.getElementById('xml-editor');
-const elHlCode      = document.getElementById('hl-code');
-const elHlOverlay   = document.getElementById('hl-overlay');
-const elLineNums    = document.getElementById('line-numbers');
+const elEditor      = createCMEditor(document.getElementById('cm-host'), {
+    placeholder: 'Paste or open a CDI XML file to begin...'
+});
 const elOutput      = document.getElementById('cdi-output');
 const elEmpty       = document.getElementById('preview-empty');
 const elWorkspace   = document.getElementById('workspace');
@@ -1048,6 +968,7 @@ const chkShowMap     = document.getElementById('chk-show-map');
 const btnRender     = document.getElementById('btn-render');
 const btnValidate   = document.getElementById('btn-validate');
 const btnClear      = document.getElementById('btn-clear');
+const btnExportXml  = document.getElementById('btn-export-xml');
 const fileInput     = document.getElementById('file-input');
 
 /* ---------- Embedded mode detection --------------------------------------- */
@@ -1103,11 +1024,8 @@ fileInput.addEventListener('change', e => {
 });
 
 /* ---------- Editor events ------------------------------------------------- */
-elEditor.addEventListener('input',  onEditorChange);
-elEditor.addEventListener('keydown', onEditorKeydown);
-elEditor.addEventListener('scroll', syncLineNumbers);
-elEditor.addEventListener('click',  updateCursor);
-elEditor.addEventListener('keyup',  updateCursor);
+elEditor.onChange(onEditorChange);
+elEditor.onCursorChange(updateCursor);
 
 let _validateTimer = null;
 
@@ -1119,8 +1037,9 @@ function onEditorChange() {
     _updateHighlight();
 
     const hasContent = currentXml.trim().length > 0;
-    btnRender.disabled   = !hasContent;
-    btnValidate.disabled = !hasContent;
+    btnRender.disabled    = !hasContent;
+    btnValidate.disabled  = !hasContent;
+    btnExportXml.disabled = !hasContent;
 
     /* Auto-validate after a short debounce */
     clearTimeout(_validateTimer);
@@ -1130,85 +1049,38 @@ function onEditorChange() {
 
     /* Notify parent of content change (embedded mode) */
     if (_isEmbedded) { _postXmlToParent(); }
+
+    /* Persist state */
+    if (typeof _saveCdiEditorState === 'function') { _saveCdiEditorState(); }
 }
 
-/* ---------- Syntax highlighting ------------------------------------------ */
-
-function _updateHighlight() {
-
-    /* set raw text — hljs will escape HTML entities automatically */
-    elHlCode.textContent = elEditor.value;
-
-    /* clear the cached highlighted flag so hljs re-processes */
-    delete elHlCode.dataset.highlighted;
-    hljs.highlightElement(elHlCode);
-
-    /* keep overlay scroll position in sync with the textarea */
-    _syncHighlightScroll();
-}
-
-function _syncHighlightScroll() {
-    elHlOverlay.scrollTop  = elEditor.scrollTop;
-    elHlOverlay.scrollLeft = elEditor.scrollLeft;
-}
-
-/* Tab key inserts two spaces instead of losing focus */
-function onEditorKeydown(e) {
-
-    if (e.key !== 'Tab') { return; }
-    e.preventDefault();
-
-    const start = elEditor.selectionStart;
-    const end   = elEditor.selectionEnd;
-
-    elEditor.value = elEditor.value.substring(0, start) + '  ' + elEditor.value.substring(end);
-    elEditor.selectionStart = elEditor.selectionEnd = start + 2;
-    onEditorChange();
-}
+/* ---------- Cursor & status bar ------------------------------------------ */
+/* CodeMirror handles syntax highlighting, line numbers, scrolling, and
+ * tab-key indentation natively — no overlay or manual gutter needed. */
 
 function updateCursor() {
 
-    const pos  = elEditor.selectionStart;
-    const text = elEditor.value.substring(0, pos);
-    const line = (text.match(/\n/g) || []).length + 1;
-    const col  = pos - text.lastIndexOf('\n');
+    const lc = elEditor.posToLineCol(elEditor.selectionStart);
+    elStatusCur.textContent = `Ln ${lc.line}, Col ${lc.col}`;
 
-    elStatusCur.textContent = `Ln ${line}, Col ${col}`;
 }
 
 function _updateStatusBar() {
 
-    const chars = elEditor.value.length;
-    const lines = elEditor.value === '' ? 0 : (elEditor.value.match(/\n/g) || []).length + 1;
-    const bytes = typeof TextEncoder !== 'undefined'
-        ? new TextEncoder().encode(elEditor.value).length
-        : chars;
+    const text  = elEditor.value;
+    const chars = text.length;
+    const lines = elEditor.lineCount;
+    const bytes = elEditor.byteCount;
 
     elStatusBytes.textContent = `${bytes.toLocaleString()} bytes (UTF-8)`;
     elStatusChars.textContent = `${chars.toLocaleString()} chars`;
     elStatusLines.textContent = `${lines.toLocaleString()} lines`;
+
 }
 
-/* ---------- Line numbers -------------------------------------------------- */
-function _updateLineNumbers() {
-
-    const lines = elEditor.value === '' ? 1 : (elEditor.value.match(/\n/g) || []).length + 1;
-    const frag  = document.createDocumentFragment();
-
-    for (let i = 1; i <= lines; i++) {
-        const d = document.createElement('div');
-        d.textContent = i;
-        frag.appendChild(d);
-    }
-
-    elLineNums.innerHTML = '';
-    elLineNums.appendChild(frag);
-}
-
-function syncLineNumbers() {
-    elLineNums.scrollTop = elEditor.scrollTop;
-    _syncHighlightScroll();
-}
+/* Stubs — no longer needed with CodeMirror but called from onEditorChange */
+function _updateLineNumbers() { }
+function _updateHighlight() { }
 
 /* ---------- Render -------------------------------------------------------- */
 btnRender.addEventListener('click', () => render(true));
@@ -1253,7 +1125,7 @@ const TYPE_COLOURS = {
 
 let _mapView = 'flat';
 
-const MAP_TOGGLE_BTNS = ['btn-map-flat', 'btn-map-tree', 'btn-map-defines', 'btn-map-struct'];
+const MAP_TOGGLE_BTNS = ['btn-map-flat', 'btn-map-tree', 'btn-map-defines', 'btn-map-struct', 'btn-map-array'];
 
 function _setMapView(view) {
     _mapView = view;
@@ -1269,6 +1141,7 @@ document.getElementById('btn-map-flat').addEventListener('click',    () => _setM
 document.getElementById('btn-map-tree').addEventListener('click',    () => _setMapView('tree'));
 document.getElementById('btn-map-defines').addEventListener('click', () => _setMapView('defines'));
 document.getElementById('btn-map-struct').addEventListener('click',  () => _setMapView('struct'));
+document.getElementById('btn-map-array').addEventListener('click',   () => _setMapView('array'));
 
 function renderMemoryMap(xmlString) {
 
@@ -1303,6 +1176,8 @@ function renderMemoryMap(xmlString) {
         _renderMapDefines(mapData);
     } else if (_mapView === 'struct') {
         _renderMapStruct(mapData);
+    } else if (_mapView === 'array') {
+        _renderMapArray();
     } else {
         _renderMapFlat(mapData);
     }
@@ -1545,73 +1420,6 @@ function _toCName(str) {
         .replace(/^_+|_+$/g, '');
 }
 
-/* Syntax-highlight a C preprocessor defines file.
- * hljs C mode colours the entire #define line as one 'meta' span, losing
- * individual token colours. This custom highlighter gives distinct colours to
- * #define, identifiers, numeric values, and comments using the vs2015 class names. */
-function _highlightDefineLine(line, esc) {
-
-    /* Split off any trailing inline block comment */
-    const ciIdx = line.indexOf('/*');
-    let body = line;
-    let commentHtml = '';
-    if (ciIdx >= 0) {
-        body = line.slice(0, ciIdx);
-        const ceIdx = line.indexOf('*/', ciIdx + 2);
-        const raw   = ceIdx < 0 ? line.slice(ciIdx) : line.slice(ciIdx, ceIdx + 2);
-        commentHtml = `<span class="hljs-comment">${esc(raw)}</span>`;
-        if (ceIdx >= 0 && ceIdx + 2 < line.length) { commentHtml += esc(line.slice(ceIdx + 2)); }
-    }
-
-    /* #define IDENTIFIER   VALUE */
-    const m = body.match(/^(#define)(\s+)([A-Z0-9_]+)(\s+)(0x[0-9A-Fa-f]+|\d+)(\s*)$/);
-    if (m) {
-        return `<span class="hljs-keyword">${esc(m[1])}</span>${esc(m[2])}` +
-               `<span class="hljs-variable">${esc(m[3])}</span>${esc(m[4])}` +
-               `<span class="hljs-number">${esc(m[5])}</span>${esc(m[6])}` + commentHtml;
-    }
-
-    /* #pragma, #include, etc. */
-    const m2 = body.match(/^(#\w+)(.*)/s);
-    if (m2) {
-        return `<span class="hljs-keyword">${esc(m2[1])}</span>${esc(m2[2])}` + commentHtml;
-    }
-
-    return esc(body) + commentHtml;
-}
-
-function _highlightDefinesText(rawText) {
-
-    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    let result = '';
-    let i = 0;
-
-    while (i < rawText.length) {
-
-        /* Block comment (may span lines) */
-        if (rawText[i] === '/' && rawText[i + 1] === '*') {
-            const end  = rawText.indexOf('*/', i + 2);
-            const span = end < 0 ? rawText.slice(i) : rawText.slice(i, end + 2);
-            result += `<span class="hljs-comment">${esc(span)}</span>`;
-            i += span.length;
-            continue;
-        }
-
-        /* Preprocessor directive — take the whole line */
-        if (rawText[i] === '#') {
-            const nl   = rawText.indexOf('\n', i);
-            const line = nl < 0 ? rawText.slice(i) : rawText.slice(i, nl);
-            result += _highlightDefineLine(line, esc);
-            i += line.length;
-            continue;
-        }
-
-        result += esc(rawText[i]);
-        i++;
-    }
-
-    return result;
-}
 
 /* De-duplicate a C identifier within a set. If already used, appends _2, _3, etc. */
 function _uniqueId(name, usedSet) {
@@ -1702,20 +1510,16 @@ function _renderMapDefines(mapData) {
     copyBar.appendChild(copyBtn);
     wrapper.appendChild(copyBar);
 
-    const pre = document.createElement('pre');
-    pre.className = 'hljs';
-    pre.style.cssText =
-        'flex:1;overflow:auto;margin:0;padding:8px;' +
-        'font-family:var(--font-mono);font-size:11px;white-space:pre;';
-    const code = document.createElement('code');
-    code.className = 'language-c';
-    code.innerHTML = _highlightDefinesText(text);
-    pre.appendChild(code);
-    wrapper.appendChild(pre);
+    const cmContainer = document.createElement('div');
+    cmContainer.style.cssText = 'flex:1;overflow:hidden;';
+    wrapper.appendChild(cmContainer);
 
     elMapContent.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;padding:0';
     elMapContent.innerHTML = '';
     elMapContent.appendChild(wrapper);
+
+    var viewer = createCMReadonly(cmContainer);
+    viewer.value = text;
 }
 
 /* --- Struct (C layout) view ----------------------------------------------- */
@@ -1898,77 +1702,7 @@ function _emitStructNodes(nodes, lines, indent, state) {
     }
 }
 
-/* Syntax-highlight a C struct file.
- * Preprocessor lines use the custom _highlightDefineLine.
- * Struct lines get C type/keyword/number/comment colouring. */
-function _highlightStructLine(line, esc) {
 
-    /* Split off any trailing inline comment */
-    const ciIdx = line.indexOf('/*');
-    let body = line;
-    let commentHtml = '';
-    if (ciIdx >= 0) {
-        body = line.slice(0, ciIdx);
-        const ceIdx = line.indexOf('*/', ciIdx + 2);
-        const raw   = ceIdx < 0 ? line.slice(ciIdx) : line.slice(ciIdx, ceIdx + 2);
-        commentHtml = `<span class="hljs-comment">${esc(raw)}</span>`;
-        if (ceIdx >= 0 && ceIdx + 2 < line.length) { commentHtml += esc(line.slice(ceIdx + 2)); }
-    }
-
-    /* Tokenise the body: types, keywords, numbers, identifiers, punctuation */
-    const html = body.replace(
-        /\b(uint8_t|uint16_t|uint32_t|uint64_t|char|float|double|int)\b|\b(typedef|struct|__attribute__)\b|\b(0x[0-9A-Fa-f]+|\d+)\b/g,
-        (m, typ, kw, num) => {
-            if (typ) { return `<span class="hljs-type">${esc(typ)}</span>`; }
-            if (kw)  { return `<span class="hljs-keyword">${esc(kw)}</span>`; }
-            if (num) { return `<span class="hljs-number">${esc(num)}</span>`; }
-            return esc(m);
-        }
-    );
-
-    return html + commentHtml;
-}
-
-function _highlightStructText(rawText) {
-
-    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    let result = '';
-    let i = 0;
-
-    while (i < rawText.length) {
-
-        /* Block comment (may span lines) */
-        if (rawText[i] === '/' && rawText[i + 1] === '*') {
-            const end  = rawText.indexOf('*/', i + 2);
-            const span = end < 0 ? rawText.slice(i) : rawText.slice(i, end + 2);
-            result += `<span class="hljs-comment">${esc(span)}</span>`;
-            i += span.length;
-            continue;
-        }
-
-        /* Preprocessor directive — use custom define highlighter */
-        if (rawText[i] === '#') {
-            const nl   = rawText.indexOf('\n', i);
-            const line = nl < 0 ? rawText.slice(i) : rawText.slice(i, nl);
-            result += _highlightDefineLine(line, esc);
-            i += line.length;
-            continue;
-        }
-
-        /* Regular line — take until newline */
-        if (rawText[i] === '\n') {
-            result += '\n';
-            i++;
-            continue;
-        }
-        const nl   = rawText.indexOf('\n', i);
-        const line = nl < 0 ? rawText.slice(i) : rawText.slice(i, nl);
-        result += _highlightStructLine(line, esc);
-        i += line.length;
-    }
-
-    return result;
-}
 
 function _renderMapStruct(mapData) {
 
@@ -2037,20 +1771,131 @@ function _renderMapStruct(mapData) {
     copyBar.appendChild(copyBtn);
     wrapper.appendChild(copyBar);
 
-    const pre = document.createElement('pre');
-    pre.className = 'hljs';
-    pre.style.cssText =
-        'flex:1;overflow:auto;margin:0;padding:8px;' +
-        'font-family:var(--font-mono);font-size:11px;white-space:pre;';
-    const code = document.createElement('code');
-    code.className = 'language-c';
-    code.innerHTML = _highlightStructText(text);
-    pre.appendChild(code);
-    wrapper.appendChild(pre);
+    const cmContainer = document.createElement('div');
+    cmContainer.style.cssText = 'flex:1;overflow:hidden;';
+    wrapper.appendChild(cmContainer);
 
     elMapContent.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;padding:0';
     elMapContent.innerHTML = '';
     elMapContent.appendChild(wrapper);
+
+    var viewer = createCMReadonly(cmContainer);
+    viewer.value = text;
+}
+
+/* --- Array (C byte array) view -------------------------------------------- */
+
+function _renderMapArray() {
+
+    const xmlRawText = elEditor.value.trim();
+    if (!xmlRawText) {
+        elMapContent.innerHTML = '<div class="map-empty">No CDI XML to convert</div>';
+        return;
+    }
+
+    function isPrintable(ch) {
+        const code = ch.charCodeAt(0);
+        return code >= 32 && code <= 126;
+    }
+
+    const rawLines = xmlRawText.split(/\r\n|\n|\r/);
+    const resultLines = [];
+    let totalChars = 0;
+
+    resultLines.push('// CDI (Configuration Description Information) byte array.');
+    resultLines.push('// Paste this into the .cdi field of the node_parameters_t struct');
+    resultLines.push('// in openlcb_user_config.c to define the node\'s configuration layout.');
+    resultLines.push('');
+    resultLines.push('.cdi = {');
+
+    rawLines.forEach(function (originalLine) {
+
+        /* Skip lines that are empty after removing non-printables and whitespace */
+        const forSkip = originalLine
+            .replace(/[^\x20-\x7E]/g, '')
+            .replace(/\s+/g, '');
+        if (forSkip.length === 0) { return; }
+
+        /* Find first and last printable non-whitespace characters */
+        let firstIdx = -1;
+        let lastIdx  = -1;
+
+        for (let i = 0; i < originalLine.length; i++) {
+            const ch = originalLine[i];
+            if (isPrintable(ch) && !/\s/.test(ch)) { firstIdx = i; break; }
+        }
+        for (let i = originalLine.length - 1; i >= 0; i--) {
+            const ch = originalLine[i];
+            if (isPrintable(ch) && !/\s/.test(ch)) { lastIdx = i; break; }
+        }
+        if (firstIdx === -1 || lastIdx === -1 || firstIdx > lastIdx) { return; }
+
+        let converted = '';
+
+        for (let i = firstIdx; i <= lastIdx; i++) {
+            const ch = originalLine[i];
+            if (!isPrintable(ch)) { continue; }
+            const hex = '0x' + ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
+            converted += hex + ', ';
+            totalChars++;
+        }
+
+        /* Comment: original segment trimmed */
+        let comment = originalLine.slice(firstIdx, lastIdx + 1).replace(/^\s+|\s+$/g, '');
+        converted += '  // ' + comment;
+
+        resultLines.push(converted);
+
+    });
+
+    /* Null terminator */
+    resultLines.push('0x00    // String terminating null');
+    totalChars += 1;
+
+    resultLines.push('},');
+    resultLines.push('');
+    resultLines.push('#define USER_CDI_ARRAY_SIZE  ' + totalChars + '  // Total bytes including null terminator');
+
+    const text = resultLines.join('\n');
+
+    /* Render with copy bar + CodeMirror viewer */
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'display:flex;flex-direction:column;height:100%';
+
+    const copyBar = document.createElement('div');
+    copyBar.style.cssText =
+        'display:flex;justify-content:flex-end;align-items:center;padding:3px 6px;background:#2d2d2d;border-bottom:1px solid #444;flex-shrink:0';
+
+    const countLabel = document.createElement('span');
+    countLabel.style.cssText = 'font-size:11px;color:#aaa;font-family:var(--font-mono);margin-right:auto';
+    countLabel.textContent = 'Total bytes (including null): ' + totalChars;
+    copyBar.appendChild(countLabel);
+
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy';
+    copyBtn.style.cssText =
+        'padding:1px 10px;font-size:10px;border:1px solid #555;border-radius:3px;' +
+        'background:#3c3c3c;color:#ccc;cursor:pointer;font-family:var(--font-mono)';
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(text).then(() => {
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1500);
+        });
+    });
+    copyBar.appendChild(copyBtn);
+    wrapper.appendChild(copyBar);
+
+    const cmContainer = document.createElement('div');
+    cmContainer.style.cssText = 'flex:1;overflow:hidden;';
+    wrapper.appendChild(cmContainer);
+
+    elMapContent.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;padding:0';
+    elMapContent.innerHTML = '';
+    elMapContent.appendChild(wrapper);
+
+    var viewer = createCMReadonly(cmContainer);
+    viewer.value = text;
+
 }
 
 /* Restore default map-content style for flat/tree views */
@@ -2325,14 +2170,14 @@ function _buildIssueItem(issue) {
 
 function _jumpToLine(lineNum) {
 
-    const lines = elEditor.value.split('\n');
-    let pos = 0;
-    for (let i = 0; i < Math.min(lineNum - 1, lines.length); i++) {
-        pos += lines[i].length + 1;
-    }
-    elEditor.focus();
-    elEditor.setSelectionRange(pos, pos + (lines[lineNum - 1] || '').length);
+    const doc  = elEditor.view.state.doc;
+    const line = doc.line(Math.min(lineNum, doc.lines));
+    elEditor.setSelectionRange(line.from, line.to);
+    elEditor.view.dispatch({
+        effects: CM.EditorView.scrollIntoView(line.from, { y: 'center' })
+    });
     updateCursor();
+
 }
 
 /* ---------- Clear --------------------------------------------------------- */
@@ -2343,14 +2188,36 @@ btnClear.addEventListener('click', () => {
     elValList.innerHTML = '';
     elValOk.textContent = 'No issues detected';
     elValOk.style.display = '';
-    btnRender.disabled   = true;
-    btnValidate.disabled = true;
+    btnRender.disabled    = true;
+    btnValidate.disabled  = true;
+    btnExportXml.disabled = true;
     elMapContent.innerHTML = '<div class="map-empty">Render CDI to see memory map</div>';
     document.getElementById('map-stats-bar').innerHTML = '';
     document.getElementById('map-overlap-report').innerHTML = '';
     document.getElementById('map-config-warning').innerHTML = '';
     _setFilename('');
     onEditorChange();
+});
+
+/* ---------- Export XML ---------------------------------------------------- */
+btnExportXml.addEventListener('click', () => {
+
+    const xml = elEditor.value;
+    if (!xml.trim()) { return; }
+
+    const blob = new Blob([xml], { type: 'application/xml' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+
+    a.href     = url;
+    a.download = _loadedFilename && _loadedFilename !== '(Basic template)'
+        ? _loadedFilename
+        : 'cdi.xml';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
 });
 
 
@@ -2616,14 +2483,25 @@ document.getElementById('btn-basic-xml').addEventListener('click', () => {
 
 /* ---------- State persistence --------------------------------------------- */
 
+var _cdiSaveTimer = null;
+
 function _saveCdiEditorState() {
+
+    clearTimeout(_cdiSaveTimer);
+    _cdiSaveTimer = setTimeout(_saveCdiEditorStateNow, 500);
+
+}
+
+function _saveCdiEditorStateNow() {
 
     const state = {
         showPreview: chkShowPreview.checked,
         showMap:     chkShowMap.checked,
         vertical:    chkVertical.checked,
         showAddr:    chkAddress.checked,
-        mapView:     _mapView
+        mapView:     _mapView,
+        xml:         elEditor.value,
+        filename:    _loadedFilename || ''
     };
     localStorage.setItem('cdi_editor_state', JSON.stringify(state));
 
@@ -2642,6 +2520,11 @@ function _restoreCdiEditorState() {
         if (typeof state.vertical    === 'boolean') { chkVertical.checked    = state.vertical; }
         if (typeof state.showAddr    === 'boolean') { chkAddress.checked     = state.showAddr; }
         if (state.mapView) { _setMapView(state.mapView); }
+        if (state.xml) {
+            elEditor.value = state.xml;
+            if (state.filename) { _setFilename(state.filename); }
+            onEditorChange();
+        }
 
     } catch (e) { }
 
@@ -2654,7 +2537,6 @@ function _restoreCdiEditorState() {
 
 /* ---------- Init ---------------------------------------------------------- */
 _restoreCdiEditorState();
-_updateLineNumbers();
 _updateStatusBar();
 applySplitMode();
 applyPaneVisibility();

@@ -83,6 +83,9 @@ typedef struct {
         /** @brief Return true if current enumeration position is the last node.  REQUIRED. */
     bool (*openlcb_node_is_last)(uint8_t key);
 
+        /** @brief Return the number of allocated nodes.  REQUIRED. */
+    uint16_t (*openlcb_node_get_count)(void);
+
     // =========================================================================
     // Core Handlers (all REQUIRED)
     // =========================================================================

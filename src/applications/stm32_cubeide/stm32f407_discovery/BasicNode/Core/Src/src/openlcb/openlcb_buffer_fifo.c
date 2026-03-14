@@ -54,8 +54,8 @@
 typedef struct {
 
     openlcb_msg_t *list[LEN_MESSAGE_FIFO_BUFFER];  ///< Circular buffer of message pointers
-    uint8_t head;                                   ///< Next insertion position
-    uint8_t tail;                                   ///< Next removal position
+    uint16_t head;                                  ///< Next insertion position
+    uint16_t tail;                                  ///< Next removal position
 
 } openlcb_msg_fifo_t;
 
@@ -98,7 +98,7 @@ void OpenLcbBufferFifo_initialize(void) {
     */
 openlcb_msg_t *OpenLcbBufferFifo_push(openlcb_msg_t *new_msg) {
 
-    uint8_t next = _openlcb_msg_buffer_fifo.head + 1;
+    uint16_t next = _openlcb_msg_buffer_fifo.head + 1;
     if (next >= LEN_MESSAGE_FIFO_BUFFER) {
 
         next = 0;
@@ -181,7 +181,7 @@ void OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(uint16_t al
 
     }
 
-    uint8_t index = _openlcb_msg_buffer_fifo.tail;
+    uint16_t index = _openlcb_msg_buffer_fifo.tail;
 
     while (index != _openlcb_msg_buffer_fifo.head) {
 
@@ -220,7 +220,7 @@ void OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(uint16_t al
     */
 openlcb_msg_t *OpenLcbBufferFifo_push_to_head(openlcb_msg_t *new_msg) {
 
-    uint8_t prev = (_openlcb_msg_buffer_fifo.tail == 0)
+    uint16_t prev = (_openlcb_msg_buffer_fifo.tail == 0)
         ? LEN_MESSAGE_FIFO_BUFFER - 1
         : _openlcb_msg_buffer_fifo.tail - 1;
 

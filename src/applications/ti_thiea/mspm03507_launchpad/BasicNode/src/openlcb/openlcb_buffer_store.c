@@ -205,8 +205,8 @@ static void _update_buffer_telemetry(payload_type_enum payload_type) {
     */
 openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type) {
 
-    uint8_t offset_start = 0;
-    uint8_t offset_end = 0;
+    uint16_t offset_start = 0;
+    uint16_t offset_end = 0;
 
     switch (payload_type) {
 

@@ -470,3 +470,14 @@ void OpenLcbNode_reset_state(void) {
     }
 
 }
+
+    /**
+     * @brief Returns the number of allocated nodes.
+     *
+     * @return Current allocated node count.
+     */
+uint16_t OpenLcbNode_get_count(void) {
+
+    return _openlcb_nodes.count;
+
+}

@@ -694,169 +694,173 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l01079" name="l01079"></a><span class="lineno"> 1079</span> </div>
 <div class="line"><a id="l01081" name="l01081"></a><span class="lineno"><a class="line" href="group__acdi__user__layout.html#ga1530ea724f2fac7211f1fc233a3c3e46"> 1081</a></span><span class="preprocessor">#define CONFIG_MEM_ACDI_USER_DESCRIPTION_LEN 64</span></div>
 <div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span> </div>
-<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span> <span class="comment">// end of acdi_user_layout</span></div>
-<div class="line"><a id="l01084" name="l01084"></a><span class="lineno"> 1084</span> </div>
-<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"><a class="line" href="group__config__mem__reply__offsets.html#ga3267125f5fa84015d58c9e15fae78187"> 1092</a></span><span class="preprocessor">#define CONFIG_MEM_REPLY_OK_OFFSET 0x10</span></div>
-<div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span> </div>
-<div class="line"><a id="l01095" name="l01095"></a><span class="lineno"><a class="line" href="group__config__mem__reply__offsets.html#ga2147bcc7e171862007c5ae0acd2568d6"> 1095</a></span><span class="preprocessor">#define CONFIG_MEM_REPLY_FAIL_OFFSET 0x18</span></div>
-<div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span> </div>
-<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span> <span class="comment">// end of config_mem_reply_offsets</span></div>
-<div class="line"><a id="l01098" name="l01098"></a><span class="lineno"> 1098</span> </div>
-<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#ga82541cca998dde6475c32819e1c380da"> 1106</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_WRITE_UNDER_MASK 0x8000</span></div>
-<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"> 1107</span> </div>
-<div class="line"><a id="l01109" name="l01109"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#gab4353092d3fe84dd190c71f66af7458e"> 1109</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_UNALIGNED_READS 0x4000</span></div>
-<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span> </div>
-<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#gacaedcfaa095034ae9632fe589877d9e2"> 1112</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_UNALIGNED_WRITES 0x2000</span></div>
+<div class="line"><a id="l01084" name="l01084"></a><span class="lineno"><a class="line" href="group__acdi__user__layout.html#ga1f751cfcc621f2bf5ce6ac4e16eb5e85"> 1084</a></span><span class="preprocessor">#define CONFIG_MEM_CONFIG_USER_NAME_OFFSET 0x00000000</span></div>
+<div class="line"><a id="l01085" name="l01085"></a><span class="lineno"> 1085</span> </div>
+<div class="line"><a id="l01087" name="l01087"></a><span class="lineno"><a class="line" href="group__acdi__user__layout.html#ga26f06e3fb4e9da2d552bd7f639425c10"> 1087</a></span><span class="preprocessor">#define CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET 63   </span><span class="comment">/* CONFIG_MEM_ACDI_USER_NAME_LEN (63) */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l01088" name="l01088"></a><span class="lineno"> 1088</span> </div>
+<div class="line"><a id="l01089" name="l01089"></a><span class="lineno"> 1089</span> <span class="comment">// end of acdi_user_layout</span></div>
+<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span> </div>
+<div class="line"><a id="l01098" name="l01098"></a><span class="lineno"><a class="line" href="group__config__mem__reply__offsets.html#ga3267125f5fa84015d58c9e15fae78187"> 1098</a></span><span class="preprocessor">#define CONFIG_MEM_REPLY_OK_OFFSET 0x10</span></div>
+<div class="line"><a id="l01099" name="l01099"></a><span class="lineno"> 1099</span> </div>
+<div class="line"><a id="l01101" name="l01101"></a><span class="lineno"><a class="line" href="group__config__mem__reply__offsets.html#ga2147bcc7e171862007c5ae0acd2568d6"> 1101</a></span><span class="preprocessor">#define CONFIG_MEM_REPLY_FAIL_OFFSET 0x18</span></div>
+<div class="line"><a id="l01102" name="l01102"></a><span class="lineno"> 1102</span> </div>
+<div class="line"><a id="l01103" name="l01103"></a><span class="lineno"> 1103</span> <span class="comment">// end of config_mem_reply_offsets</span></div>
+<div class="line"><a id="l01104" name="l01104"></a><span class="lineno"> 1104</span> </div>
+<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#ga82541cca998dde6475c32819e1c380da"> 1112</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_WRITE_UNDER_MASK 0x8000</span></div>
 <div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span> </div>
-<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#gaddba67b091b5c64e4c16c129ff83b874"> 1115</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_ACDI_MANUFACTURER_READ 0x0800</span></div>
+<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#gab4353092d3fe84dd190c71f66af7458e"> 1115</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_UNALIGNED_READS 0x4000</span></div>
 <div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span> </div>
-<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#ga48c910f92fdcc41db31e3191066e5897"> 1118</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_ACDI_USER_READ 0x0400</span></div>
+<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#gacaedcfaa095034ae9632fe589877d9e2"> 1118</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_UNALIGNED_WRITES 0x2000</span></div>
 <div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span> </div>
-<div class="line"><a id="l01121" name="l01121"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#gaa3c691ccfb39d502a767b576a2263aa3"> 1121</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_ACDI_USER_WRITE 0x0200</span></div>
+<div class="line"><a id="l01121" name="l01121"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#gaddba67b091b5c64e4c16c129ff83b874"> 1121</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_ACDI_MANUFACTURER_READ 0x0800</span></div>
 <div class="line"><a id="l01122" name="l01122"></a><span class="lineno"> 1122</span> </div>
-<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span> <span class="comment">// end of config_options_bits</span></div>
-<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"> 1124</span> </div>
-<div class="line"><a id="l01133" name="l01133"></a><span class="lineno"><a class="line" href="group__config__write__length__flags.html#gafcb0a6386ecd353429889cb1a1048a07"> 1133</a></span><span class="preprocessor">#define CONFIG_OPTIONS_WRITE_LENGTH_RESERVED (0x80 | 0x40 | 0x20 | 0x02)</span></div>
-<div class="line"><a id="l01134" name="l01134"></a><span class="lineno"> 1134</span> </div>
-<div class="line"><a id="l01136" name="l01136"></a><span class="lineno"><a class="line" href="group__config__write__length__flags.html#ga6f8169e150386d6398122f437aa87c80"> 1136</a></span><span class="preprocessor">#define CONFIG_OPTIONS_WRITE_LENGTH_STREAM_READ_WRITE 0x01</span></div>
-<div class="line"><a id="l01137" name="l01137"></a><span class="lineno"> 1137</span> </div>
-<div class="line"><a id="l01138" name="l01138"></a><span class="lineno"> 1138</span> <span class="comment">// end of config_write_length_flags</span></div>
-<div class="line"><a id="l01139" name="l01139"></a><span class="lineno"> 1139</span> </div>
-<div class="line"><a id="l01148" name="l01148"></a><span class="lineno"><a class="line" href="group__address__space__info__flags.html#gadfbd3b207c44aa9c682e77d10a372cf8"> 1148</a></span><span class="preprocessor">#define CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY 0x01</span></div>
-<div class="line"><a id="l01149" name="l01149"></a><span class="lineno"> 1149</span> </div>
-<div class="line"><a id="l01151" name="l01151"></a><span class="lineno"><a class="line" href="group__address__space__info__flags.html#gadeecaf8074bb3933d5c7ebd4dc198b0a"> 1151</a></span><span class="preprocessor">#define CONFIG_OPTIONS_SPACE_INFO_FLAG_USE_LOW_ADDRESS 0x02</span></div>
-<div class="line"><a id="l01152" name="l01152"></a><span class="lineno"> 1152</span> </div>
-<div class="line"><a id="l01153" name="l01153"></a><span class="lineno"> 1153</span> <span class="comment">// end of address_space_info_flags</span></div>
-<div class="line"><a id="l01154" name="l01154"></a><span class="lineno"> 1154</span> </div>
-<div class="line"><a id="l01162" name="l01162"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga52ee1977cf86c2fb34f066f1d15ea171"> 1162</a></span><span class="preprocessor">#define MAX_INTERNAL_ENUM_KEYS_VALUES 4</span></div>
-<div class="line"><a id="l01163" name="l01163"></a><span class="lineno"> 1163</span> </div>
-<div class="line"><a id="l01165" name="l01165"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga1fe7bb4d4f1c2796865f4247918e2ff1"> 1165</a></span><span class="preprocessor">#define MAX_USER_ENUM_KEYS_VALUES 4</span></div>
-<div class="line"><a id="l01166" name="l01166"></a><span class="lineno"> 1166</span> </div>
-<div class="line"><a id="l01168" name="l01168"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga1fb318496fd88293457e4b6f39cbb381"> 1168</a></span><span class="preprocessor">#define USER_ENUM_KEYS_VALUES_1 0</span></div>
+<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#ga48c910f92fdcc41db31e3191066e5897"> 1124</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_ACDI_USER_READ 0x0400</span></div>
+<div class="line"><a id="l01125" name="l01125"></a><span class="lineno"> 1125</span> </div>
+<div class="line"><a id="l01127" name="l01127"></a><span class="lineno"><a class="line" href="group__config__options__bits.html#gaa3c691ccfb39d502a767b576a2263aa3"> 1127</a></span><span class="preprocessor">#define CONFIG_OPTIONS_COMMANDS_ACDI_USER_WRITE 0x0200</span></div>
+<div class="line"><a id="l01128" name="l01128"></a><span class="lineno"> 1128</span> </div>
+<div class="line"><a id="l01129" name="l01129"></a><span class="lineno"> 1129</span> <span class="comment">// end of config_options_bits</span></div>
+<div class="line"><a id="l01130" name="l01130"></a><span class="lineno"> 1130</span> </div>
+<div class="line"><a id="l01139" name="l01139"></a><span class="lineno"><a class="line" href="group__config__write__length__flags.html#gafcb0a6386ecd353429889cb1a1048a07"> 1139</a></span><span class="preprocessor">#define CONFIG_OPTIONS_WRITE_LENGTH_RESERVED (0x80 | 0x40 | 0x20 | 0x02)</span></div>
+<div class="line"><a id="l01140" name="l01140"></a><span class="lineno"> 1140</span> </div>
+<div class="line"><a id="l01142" name="l01142"></a><span class="lineno"><a class="line" href="group__config__write__length__flags.html#ga6f8169e150386d6398122f437aa87c80"> 1142</a></span><span class="preprocessor">#define CONFIG_OPTIONS_WRITE_LENGTH_STREAM_READ_WRITE 0x01</span></div>
+<div class="line"><a id="l01143" name="l01143"></a><span class="lineno"> 1143</span> </div>
+<div class="line"><a id="l01144" name="l01144"></a><span class="lineno"> 1144</span> <span class="comment">// end of config_write_length_flags</span></div>
+<div class="line"><a id="l01145" name="l01145"></a><span class="lineno"> 1145</span> </div>
+<div class="line"><a id="l01154" name="l01154"></a><span class="lineno"><a class="line" href="group__address__space__info__flags.html#gadfbd3b207c44aa9c682e77d10a372cf8"> 1154</a></span><span class="preprocessor">#define CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY 0x01</span></div>
+<div class="line"><a id="l01155" name="l01155"></a><span class="lineno"> 1155</span> </div>
+<div class="line"><a id="l01157" name="l01157"></a><span class="lineno"><a class="line" href="group__address__space__info__flags.html#gadeecaf8074bb3933d5c7ebd4dc198b0a"> 1157</a></span><span class="preprocessor">#define CONFIG_OPTIONS_SPACE_INFO_FLAG_USE_LOW_ADDRESS 0x02</span></div>
+<div class="line"><a id="l01158" name="l01158"></a><span class="lineno"> 1158</span> </div>
+<div class="line"><a id="l01159" name="l01159"></a><span class="lineno"> 1159</span> <span class="comment">// end of address_space_info_flags</span></div>
+<div class="line"><a id="l01160" name="l01160"></a><span class="lineno"> 1160</span> </div>
+<div class="line"><a id="l01168" name="l01168"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga52ee1977cf86c2fb34f066f1d15ea171"> 1168</a></span><span class="preprocessor">#define MAX_INTERNAL_ENUM_KEYS_VALUES 4</span></div>
 <div class="line"><a id="l01169" name="l01169"></a><span class="lineno"> 1169</span> </div>
-<div class="line"><a id="l01171" name="l01171"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#gad59cab51314182eb0942aeeb2452bed6"> 1171</a></span><span class="preprocessor">#define USER_ENUM_KEYS_VALUES_2 1</span></div>
+<div class="line"><a id="l01171" name="l01171"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga1fe7bb4d4f1c2796865f4247918e2ff1"> 1171</a></span><span class="preprocessor">#define MAX_USER_ENUM_KEYS_VALUES 4</span></div>
 <div class="line"><a id="l01172" name="l01172"></a><span class="lineno"> 1172</span> </div>
-<div class="line"><a id="l01174" name="l01174"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga7f632835e06cf81f365acb76b4784679"> 1174</a></span><span class="preprocessor">#define USER_ENUM_KEYS_VALUES_3 2</span></div>
+<div class="line"><a id="l01174" name="l01174"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga1fb318496fd88293457e4b6f39cbb381"> 1174</a></span><span class="preprocessor">#define USER_ENUM_KEYS_VALUES_1 0</span></div>
 <div class="line"><a id="l01175" name="l01175"></a><span class="lineno"> 1175</span> </div>
-<div class="line"><a id="l01177" name="l01177"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#gac3a7f96aaa25cfe69f0d7f0389349494"> 1177</a></span><span class="preprocessor">#define USER_ENUM_KEYS_VALUES_4 3</span></div>
+<div class="line"><a id="l01177" name="l01177"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#gad59cab51314182eb0942aeeb2452bed6"> 1177</a></span><span class="preprocessor">#define USER_ENUM_KEYS_VALUES_2 1</span></div>
 <div class="line"><a id="l01178" name="l01178"></a><span class="lineno"> 1178</span> </div>
-<div class="line"><a id="l01180" name="l01180"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga0d1bc491fc184c518796b2cd5ccfd532"> 1180</a></span><span class="preprocessor">#define MAX_NODE_ENUM_KEY_VALUES (MAX_USER_ENUM_KEYS_VALUES + MAX_INTERNAL_ENUM_KEYS_VALUES)</span></div>
+<div class="line"><a id="l01180" name="l01180"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga7f632835e06cf81f365acb76b4784679"> 1180</a></span><span class="preprocessor">#define USER_ENUM_KEYS_VALUES_3 2</span></div>
 <div class="line"><a id="l01181" name="l01181"></a><span class="lineno"> 1181</span> </div>
-<div class="line"><a id="l01183" name="l01183"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#gadda3c94abbd1a6bbc2041256afe3755e"> 1183</a></span><span class="preprocessor">#define OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX MAX_USER_ENUM_KEYS_VALUES</span></div>
+<div class="line"><a id="l01183" name="l01183"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#gac3a7f96aaa25cfe69f0d7f0389349494"> 1183</a></span><span class="preprocessor">#define USER_ENUM_KEYS_VALUES_4 3</span></div>
 <div class="line"><a id="l01184" name="l01184"></a><span class="lineno"> 1184</span> </div>
-<div class="line"><a id="l01186" name="l01186"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#gaad373a5580bf74102fd15f057be715bf"> 1186</a></span><span class="preprocessor">#define OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX (MAX_USER_ENUM_KEYS_VALUES + 1)</span></div>
+<div class="line"><a id="l01186" name="l01186"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga0d1bc491fc184c518796b2cd5ccfd532"> 1186</a></span><span class="preprocessor">#define MAX_NODE_ENUM_KEY_VALUES (MAX_USER_ENUM_KEYS_VALUES + MAX_INTERNAL_ENUM_KEYS_VALUES)</span></div>
 <div class="line"><a id="l01187" name="l01187"></a><span class="lineno"> 1187</span> </div>
-<div class="line"><a id="l01189" name="l01189"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#gacbaa33daf2692ac9f60b92a5a3a0c916"> 1189</a></span><span class="preprocessor">#define CAN_STATEMACHINE_NODE_ENUMRATOR_KEY (MAX_USER_ENUM_KEYS_VALUES + 2)</span></div>
+<div class="line"><a id="l01189" name="l01189"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#gadda3c94abbd1a6bbc2041256afe3755e"> 1189</a></span><span class="preprocessor">#define OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX MAX_USER_ENUM_KEYS_VALUES</span></div>
 <div class="line"><a id="l01190" name="l01190"></a><span class="lineno"> 1190</span> </div>
-<div class="line"><a id="l01192" name="l01192"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga2241487403ef575ce4e6f12991e1b285"> 1192</a></span><span class="preprocessor">#define DATAGRAM_TIMEOUT_ENUM_KEY (MAX_USER_ENUM_KEYS_VALUES + 3)</span></div>
+<div class="line"><a id="l01192" name="l01192"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#gaad373a5580bf74102fd15f057be715bf"> 1192</a></span><span class="preprocessor">#define OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX (MAX_USER_ENUM_KEYS_VALUES + 1)</span></div>
 <div class="line"><a id="l01193" name="l01193"></a><span class="lineno"> 1193</span> </div>
-<div class="line"><a id="l01194" name="l01194"></a><span class="lineno"> 1194</span> <span class="comment">// end of node_enum_keys</span></div>
-<div class="line"><a id="l01195" name="l01195"></a><span class="lineno"> 1195</span> </div>
-<div class="line"><a id="l01203" name="l01203"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gaa87b955873986a06589e0739b1c421c9"> 1203</a></span><span class="preprocessor">#define BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK       0x0101000001000000ULL</span></div>
-<div class="line"><a id="l01204" name="l01204"></a><span class="lineno"> 1204</span> </div>
-<div class="line"><a id="l01206" name="l01206"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gaf3b7096cbf2c7af604579ae78818d012"> 1206</a></span><span class="preprocessor">#define BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK   0x0101000001010000ULL</span></div>
-<div class="line"><a id="l01207" name="l01207"></a><span class="lineno"> 1207</span> </div>
-<div class="line"><a id="l01209" name="l01209"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga5ac1773942202a46037d6c2fd34cb78d"> 1209</a></span><span class="preprocessor">#define BROADCAST_TIME_ID_ALTERNATE_CLOCK_1        0x0101000001020000ULL</span></div>
+<div class="line"><a id="l01195" name="l01195"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#gacbaa33daf2692ac9f60b92a5a3a0c916"> 1195</a></span><span class="preprocessor">#define CAN_STATEMACHINE_NODE_ENUMRATOR_KEY (MAX_USER_ENUM_KEYS_VALUES + 2)</span></div>
+<div class="line"><a id="l01196" name="l01196"></a><span class="lineno"> 1196</span> </div>
+<div class="line"><a id="l01198" name="l01198"></a><span class="lineno"><a class="line" href="group__node__enum__keys.html#ga2241487403ef575ce4e6f12991e1b285"> 1198</a></span><span class="preprocessor">#define DATAGRAM_TIMEOUT_ENUM_KEY (MAX_USER_ENUM_KEYS_VALUES + 3)</span></div>
+<div class="line"><a id="l01199" name="l01199"></a><span class="lineno"> 1199</span> </div>
+<div class="line"><a id="l01200" name="l01200"></a><span class="lineno"> 1200</span> <span class="comment">// end of node_enum_keys</span></div>
+<div class="line"><a id="l01201" name="l01201"></a><span class="lineno"> 1201</span> </div>
+<div class="line"><a id="l01209" name="l01209"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gaa87b955873986a06589e0739b1c421c9"> 1209</a></span><span class="preprocessor">#define BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK       0x0101000001000000ULL</span></div>
 <div class="line"><a id="l01210" name="l01210"></a><span class="lineno"> 1210</span> </div>
-<div class="line"><a id="l01212" name="l01212"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gafa67ede26ad239b888bb52f0888e5eb9"> 1212</a></span><span class="preprocessor">#define BROADCAST_TIME_ID_ALTERNATE_CLOCK_2        0x0101000001030000ULL</span></div>
+<div class="line"><a id="l01212" name="l01212"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gaf3b7096cbf2c7af604579ae78818d012"> 1212</a></span><span class="preprocessor">#define BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK   0x0101000001010000ULL</span></div>
 <div class="line"><a id="l01213" name="l01213"></a><span class="lineno"> 1213</span> </div>
-<div class="line"><a id="l01215" name="l01215"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gaa660f0e811458386f2e21f644ac0aade"> 1215</a></span><span class="preprocessor">#define BROADCAST_TIME_MASK_CLOCK_ID               0xFFFFFFFFFFFF0000ULL</span></div>
+<div class="line"><a id="l01215" name="l01215"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga5ac1773942202a46037d6c2fd34cb78d"> 1215</a></span><span class="preprocessor">#define BROADCAST_TIME_ID_ALTERNATE_CLOCK_1        0x0101000001020000ULL</span></div>
 <div class="line"><a id="l01216" name="l01216"></a><span class="lineno"> 1216</span> </div>
-<div class="line"><a id="l01218" name="l01218"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga9d66d6d2cdd8476d52f52278acaa719e"> 1218</a></span><span class="preprocessor">#define BROADCAST_TIME_MASK_COMMAND_DATA           0x000000000000FFFFULL</span></div>
+<div class="line"><a id="l01218" name="l01218"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gafa67ede26ad239b888bb52f0888e5eb9"> 1218</a></span><span class="preprocessor">#define BROADCAST_TIME_ID_ALTERNATE_CLOCK_2        0x0101000001030000ULL</span></div>
 <div class="line"><a id="l01219" name="l01219"></a><span class="lineno"> 1219</span> </div>
-<div class="line"><a id="l01221" name="l01221"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gababd20209d26aafe85c2ad9a20614d74"> 1221</a></span><span class="preprocessor">#define BROADCAST_TIME_REPORT_TIME_BASE            0x0000</span></div>
+<div class="line"><a id="l01221" name="l01221"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gaa660f0e811458386f2e21f644ac0aade"> 1221</a></span><span class="preprocessor">#define BROADCAST_TIME_MASK_CLOCK_ID               0xFFFFFFFFFFFF0000ULL</span></div>
 <div class="line"><a id="l01222" name="l01222"></a><span class="lineno"> 1222</span> </div>
-<div class="line"><a id="l01224" name="l01224"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gabf2a1ba918d7a2c3a86b2f3a4723720c"> 1224</a></span><span class="preprocessor">#define BROADCAST_TIME_REPORT_DATE_BASE            0x2100</span></div>
+<div class="line"><a id="l01224" name="l01224"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga9d66d6d2cdd8476d52f52278acaa719e"> 1224</a></span><span class="preprocessor">#define BROADCAST_TIME_MASK_COMMAND_DATA           0x000000000000FFFFULL</span></div>
 <div class="line"><a id="l01225" name="l01225"></a><span class="lineno"> 1225</span> </div>
-<div class="line"><a id="l01227" name="l01227"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga84fa0c3d315f57dbf0fd6c9ecb6bb496"> 1227</a></span><span class="preprocessor">#define BROADCAST_TIME_REPORT_YEAR_BASE            0x3000</span></div>
+<div class="line"><a id="l01227" name="l01227"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gababd20209d26aafe85c2ad9a20614d74"> 1227</a></span><span class="preprocessor">#define BROADCAST_TIME_REPORT_TIME_BASE            0x0000</span></div>
 <div class="line"><a id="l01228" name="l01228"></a><span class="lineno"> 1228</span> </div>
-<div class="line"><a id="l01230" name="l01230"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gad1486c000dbbe5eaca6ee1007caf9598"> 1230</a></span><span class="preprocessor">#define BROADCAST_TIME_REPORT_RATE_BASE            0x4000</span></div>
+<div class="line"><a id="l01230" name="l01230"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gabf2a1ba918d7a2c3a86b2f3a4723720c"> 1230</a></span><span class="preprocessor">#define BROADCAST_TIME_REPORT_DATE_BASE            0x2100</span></div>
 <div class="line"><a id="l01231" name="l01231"></a><span class="lineno"> 1231</span> </div>
-<div class="line"><a id="l01233" name="l01233"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gaea0d8846c5e551601076e14b2409aa37"> 1233</a></span><span class="preprocessor">#define BROADCAST_TIME_SET_TIME_BASE               0x8000</span></div>
+<div class="line"><a id="l01233" name="l01233"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga84fa0c3d315f57dbf0fd6c9ecb6bb496"> 1233</a></span><span class="preprocessor">#define BROADCAST_TIME_REPORT_YEAR_BASE            0x3000</span></div>
 <div class="line"><a id="l01234" name="l01234"></a><span class="lineno"> 1234</span> </div>
-<div class="line"><a id="l01236" name="l01236"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga4be966e764a4c2b9872ab077f646e7d3"> 1236</a></span><span class="preprocessor">#define BROADCAST_TIME_SET_DATE_BASE               0xA100</span></div>
+<div class="line"><a id="l01236" name="l01236"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gad1486c000dbbe5eaca6ee1007caf9598"> 1236</a></span><span class="preprocessor">#define BROADCAST_TIME_REPORT_RATE_BASE            0x4000</span></div>
 <div class="line"><a id="l01237" name="l01237"></a><span class="lineno"> 1237</span> </div>
-<div class="line"><a id="l01239" name="l01239"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga1b0f7379f8ffbdf70efa0d681bade3d0"> 1239</a></span><span class="preprocessor">#define BROADCAST_TIME_SET_YEAR_BASE               0xB000</span></div>
+<div class="line"><a id="l01239" name="l01239"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gaea0d8846c5e551601076e14b2409aa37"> 1239</a></span><span class="preprocessor">#define BROADCAST_TIME_SET_TIME_BASE               0x8000</span></div>
 <div class="line"><a id="l01240" name="l01240"></a><span class="lineno"> 1240</span> </div>
-<div class="line"><a id="l01242" name="l01242"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga09181ad036e77a3b6a107e4f2025a666"> 1242</a></span><span class="preprocessor">#define BROADCAST_TIME_SET_RATE_BASE               0xC000</span></div>
+<div class="line"><a id="l01242" name="l01242"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga4be966e764a4c2b9872ab077f646e7d3"> 1242</a></span><span class="preprocessor">#define BROADCAST_TIME_SET_DATE_BASE               0xA100</span></div>
 <div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span> </div>
-<div class="line"><a id="l01245" name="l01245"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga5a8d04fead4cc6ad1e20672a9147b5b8"> 1245</a></span><span class="preprocessor">#define BROADCAST_TIME_QUERY                       0xF000</span></div>
+<div class="line"><a id="l01245" name="l01245"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga1b0f7379f8ffbdf70efa0d681bade3d0"> 1245</a></span><span class="preprocessor">#define BROADCAST_TIME_SET_YEAR_BASE               0xB000</span></div>
 <div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span> </div>
-<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga8854a92daee991b988a36ecd4750118c"> 1248</a></span><span class="preprocessor">#define BROADCAST_TIME_STOP                        0xF001</span></div>
+<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga09181ad036e77a3b6a107e4f2025a666"> 1248</a></span><span class="preprocessor">#define BROADCAST_TIME_SET_RATE_BASE               0xC000</span></div>
 <div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span> </div>
-<div class="line"><a id="l01251" name="l01251"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga3c42a9845cd58cb9375c31e013fb5302"> 1251</a></span><span class="preprocessor">#define BROADCAST_TIME_START                       0xF002</span></div>
+<div class="line"><a id="l01251" name="l01251"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga5a8d04fead4cc6ad1e20672a9147b5b8"> 1251</a></span><span class="preprocessor">#define BROADCAST_TIME_QUERY                       0xF000</span></div>
 <div class="line"><a id="l01252" name="l01252"></a><span class="lineno"> 1252</span> </div>
-<div class="line"><a id="l01254" name="l01254"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gad25323df79572a59115da2b144d434b5"> 1254</a></span><span class="preprocessor">#define BROADCAST_TIME_DATE_ROLLOVER               0xF003</span></div>
+<div class="line"><a id="l01254" name="l01254"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga8854a92daee991b988a36ecd4750118c"> 1254</a></span><span class="preprocessor">#define BROADCAST_TIME_STOP                        0xF001</span></div>
 <div class="line"><a id="l01255" name="l01255"></a><span class="lineno"> 1255</span> </div>
-<div class="line"><a id="l01257" name="l01257"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gae72fb454718791ffa79bff7fda19edd7"> 1257</a></span><span class="preprocessor">#define BROADCAST_TIME_SET_COMMAND_OFFSET          0x8000</span></div>
+<div class="line"><a id="l01257" name="l01257"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#ga3c42a9845cd58cb9375c31e013fb5302"> 1257</a></span><span class="preprocessor">#define BROADCAST_TIME_START                       0xF002</span></div>
 <div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span> </div>
-<div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span> <span class="comment">// end of broadcast_time_events</span></div>
-<div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span> </div>
-<div class="line"><a id="l01267" name="l01267"></a><span class="lineno"> 1267</span>    <span class="comment">// Train instruction byte bit fields</span></div>
-<div class="line"><a id="l01268" name="l01268"></a><span class="lineno"> 1268</span> </div>
-<div class="line"><a id="l01270" name="l01270"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga708746bc0e2e3f6057cbd8df85aa1871"> 1270</a></span><span class="preprocessor">#define TRAIN_INSTRUCTION_P_BIT          0x80</span></div>
-<div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span> </div>
-<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span>    <span class="comment">// Train instruction bytes (byte 0 of payload, bits 6:0)</span></div>
-<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span> </div>
-<div class="line"><a id="l01275" name="l01275"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga9adb2d0872aebce56a761f3d6af686d1"> 1275</a></span><span class="preprocessor">#define TRAIN_SET_SPEED_DIRECTION    0x00</span></div>
-<div class="line"><a id="l01276" name="l01276"></a><span class="lineno"> 1276</span> </div>
-<div class="line"><a id="l01278" name="l01278"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gaeb35a89ce268ee6263dc0dbcbbe04514"> 1278</a></span><span class="preprocessor">#define TRAIN_SET_FUNCTION           0x01</span></div>
+<div class="line"><a id="l01260" name="l01260"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gad25323df79572a59115da2b144d434b5"> 1260</a></span><span class="preprocessor">#define BROADCAST_TIME_DATE_ROLLOVER               0xF003</span></div>
+<div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span> </div>
+<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"><a class="line" href="group__broadcast__time__events.html#gae72fb454718791ffa79bff7fda19edd7"> 1263</a></span><span class="preprocessor">#define BROADCAST_TIME_SET_COMMAND_OFFSET          0x8000</span></div>
+<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span> </div>
+<div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span> <span class="comment">// end of broadcast_time_events</span></div>
+<div class="line"><a id="l01266" name="l01266"></a><span class="lineno"> 1266</span> </div>
+<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>    <span class="comment">// Train instruction byte bit fields</span></div>
+<div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span> </div>
+<div class="line"><a id="l01276" name="l01276"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga708746bc0e2e3f6057cbd8df85aa1871"> 1276</a></span><span class="preprocessor">#define TRAIN_INSTRUCTION_P_BIT          0x80</span></div>
+<div class="line"><a id="l01277" name="l01277"></a><span class="lineno"> 1277</span> </div>
+<div class="line"><a id="l01278" name="l01278"></a><span class="lineno"> 1278</span>    <span class="comment">// Train instruction bytes (byte 0 of payload, bits 6:0)</span></div>
 <div class="line"><a id="l01279" name="l01279"></a><span class="lineno"> 1279</span> </div>
-<div class="line"><a id="l01281" name="l01281"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga1d83f02f4acdf39f0d716e26b9d69634"> 1281</a></span><span class="preprocessor">#define TRAIN_EMERGENCY_STOP         0x02</span></div>
+<div class="line"><a id="l01281" name="l01281"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga9adb2d0872aebce56a761f3d6af686d1"> 1281</a></span><span class="preprocessor">#define TRAIN_SET_SPEED_DIRECTION    0x00</span></div>
 <div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span> </div>
-<div class="line"><a id="l01284" name="l01284"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gabd2456c53cc6a5e143a3f0e8536faf09"> 1284</a></span><span class="preprocessor">#define TRAIN_QUERY_SPEEDS           0x10</span></div>
+<div class="line"><a id="l01284" name="l01284"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gaeb35a89ce268ee6263dc0dbcbbe04514"> 1284</a></span><span class="preprocessor">#define TRAIN_SET_FUNCTION           0x01</span></div>
 <div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span> </div>
-<div class="line"><a id="l01287" name="l01287"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gab964bedc38bbc1ad9f8c7b685c4ca825"> 1287</a></span><span class="preprocessor">#define TRAIN_QUERY_FUNCTION         0x11</span></div>
+<div class="line"><a id="l01287" name="l01287"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga1d83f02f4acdf39f0d716e26b9d69634"> 1287</a></span><span class="preprocessor">#define TRAIN_EMERGENCY_STOP         0x02</span></div>
 <div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span> </div>
-<div class="line"><a id="l01290" name="l01290"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga1d822bdfe7a3c32fa537406a329c2325"> 1290</a></span><span class="preprocessor">#define TRAIN_CONTROLLER_CONFIG      0x20</span></div>
+<div class="line"><a id="l01290" name="l01290"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gabd2456c53cc6a5e143a3f0e8536faf09"> 1290</a></span><span class="preprocessor">#define TRAIN_QUERY_SPEEDS           0x10</span></div>
 <div class="line"><a id="l01291" name="l01291"></a><span class="lineno"> 1291</span> </div>
-<div class="line"><a id="l01293" name="l01293"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga945ac8349d0f36b657aedce2fd371ba2"> 1293</a></span><span class="preprocessor">#define TRAIN_LISTENER_CONFIG        0x30</span></div>
+<div class="line"><a id="l01293" name="l01293"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gab964bedc38bbc1ad9f8c7b685c4ca825"> 1293</a></span><span class="preprocessor">#define TRAIN_QUERY_FUNCTION         0x11</span></div>
 <div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span> </div>
-<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gad512b3cd6d3b02e9ce56a0aa9123da6f"> 1296</a></span><span class="preprocessor">#define TRAIN_MANAGEMENT             0x40</span></div>
+<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga1d822bdfe7a3c32fa537406a329c2325"> 1296</a></span><span class="preprocessor">#define TRAIN_CONTROLLER_CONFIG      0x20</span></div>
 <div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span> </div>
-<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span>    <span class="comment">// Controller config sub-commands (byte 1)</span></div>
-<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span> </div>
-<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gaac9d3f53d842deeaaf8e6fb41d773c1f"> 1301</a></span><span class="preprocessor">#define TRAIN_CONTROLLER_ASSIGN      0x01</span></div>
-<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span> </div>
-<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gad82d802fc7aee74d245852bd43733c6d"> 1304</a></span><span class="preprocessor">#define TRAIN_CONTROLLER_RELEASE     0x02</span></div>
+<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga945ac8349d0f36b657aedce2fd371ba2"> 1299</a></span><span class="preprocessor">#define TRAIN_LISTENER_CONFIG        0x30</span></div>
+<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span> </div>
+<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gad512b3cd6d3b02e9ce56a0aa9123da6f"> 1302</a></span><span class="preprocessor">#define TRAIN_MANAGEMENT             0x40</span></div>
+<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span> </div>
+<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>    <span class="comment">// Controller config sub-commands (byte 1)</span></div>
 <div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span> </div>
-<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gaaf15df94b11c3376a219b42df048eaf7"> 1307</a></span><span class="preprocessor">#define TRAIN_CONTROLLER_QUERY       0x03</span></div>
+<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gaac9d3f53d842deeaaf8e6fb41d773c1f"> 1307</a></span><span class="preprocessor">#define TRAIN_CONTROLLER_ASSIGN      0x01</span></div>
 <div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span> </div>
-<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga0c25e2b9f045d5b34c27b282dcdca3c7"> 1310</a></span><span class="preprocessor">#define TRAIN_CONTROLLER_CHANGED     0x04</span></div>
+<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gad82d802fc7aee74d245852bd43733c6d"> 1310</a></span><span class="preprocessor">#define TRAIN_CONTROLLER_RELEASE     0x02</span></div>
 <div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span> </div>
-<div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span>    <span class="comment">// Listener config sub-commands (byte 1)</span></div>
-<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span> </div>
-<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gac0f2b226fb29687982d871e2dbe7c2a1"> 1315</a></span><span class="preprocessor">#define TRAIN_LISTENER_ATTACH        0x01</span></div>
-<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span> </div>
-<div class="line"><a id="l01318" name="l01318"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga1058330cdca45701f927e1ea01200311"> 1318</a></span><span class="preprocessor">#define TRAIN_LISTENER_DETACH        0x02</span></div>
+<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gaaf15df94b11c3376a219b42df048eaf7"> 1313</a></span><span class="preprocessor">#define TRAIN_CONTROLLER_QUERY       0x03</span></div>
+<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span> </div>
+<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga0c25e2b9f045d5b34c27b282dcdca3c7"> 1316</a></span><span class="preprocessor">#define TRAIN_CONTROLLER_CHANGED     0x04</span></div>
+<div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span> </div>
+<div class="line"><a id="l01318" name="l01318"></a><span class="lineno"> 1318</span>    <span class="comment">// Listener config sub-commands (byte 1)</span></div>
 <div class="line"><a id="l01319" name="l01319"></a><span class="lineno"> 1319</span> </div>
-<div class="line"><a id="l01321" name="l01321"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga6dbfb7f2b22654ab0cb8d0cbcb694c1e"> 1321</a></span><span class="preprocessor">#define TRAIN_LISTENER_QUERY         0x03</span></div>
+<div class="line"><a id="l01321" name="l01321"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gac0f2b226fb29687982d871e2dbe7c2a1"> 1321</a></span><span class="preprocessor">#define TRAIN_LISTENER_ATTACH        0x01</span></div>
 <div class="line"><a id="l01322" name="l01322"></a><span class="lineno"> 1322</span> </div>
-<div class="line"><a id="l01323" name="l01323"></a><span class="lineno"> 1323</span>    <span class="comment">// Management sub-commands (byte 1)</span></div>
-<div class="line"><a id="l01324" name="l01324"></a><span class="lineno"> 1324</span> </div>
-<div class="line"><a id="l01326" name="l01326"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga8e6269015bbd8e9d717202466cf5af70"> 1326</a></span><span class="preprocessor">#define TRAIN_MGMT_RESERVE           0x01</span></div>
-<div class="line"><a id="l01327" name="l01327"></a><span class="lineno"> 1327</span> </div>
-<div class="line"><a id="l01329" name="l01329"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gac5df5f7e84701403c25d9850db99098c"> 1329</a></span><span class="preprocessor">#define TRAIN_MGMT_RELEASE           0x02</span></div>
+<div class="line"><a id="l01324" name="l01324"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga1058330cdca45701f927e1ea01200311"> 1324</a></span><span class="preprocessor">#define TRAIN_LISTENER_DETACH        0x02</span></div>
+<div class="line"><a id="l01325" name="l01325"></a><span class="lineno"> 1325</span> </div>
+<div class="line"><a id="l01327" name="l01327"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga6dbfb7f2b22654ab0cb8d0cbcb694c1e"> 1327</a></span><span class="preprocessor">#define TRAIN_LISTENER_QUERY         0x03</span></div>
+<div class="line"><a id="l01328" name="l01328"></a><span class="lineno"> 1328</span> </div>
+<div class="line"><a id="l01329" name="l01329"></a><span class="lineno"> 1329</span>    <span class="comment">// Management sub-commands (byte 1)</span></div>
 <div class="line"><a id="l01330" name="l01330"></a><span class="lineno"> 1330</span> </div>
-<div class="line"><a id="l01332" name="l01332"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gacc3637a24e5cfc78238dd22bb243babf"> 1332</a></span><span class="preprocessor">#define TRAIN_MGMT_NOOP             0x03</span></div>
+<div class="line"><a id="l01332" name="l01332"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga8e6269015bbd8e9d717202466cf5af70"> 1332</a></span><span class="preprocessor">#define TRAIN_MGMT_RESERVE           0x01</span></div>
 <div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span> </div>
-<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>    <span class="comment">// Listener flags</span></div>
-<div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span> </div>
-<div class="line"><a id="l01337" name="l01337"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gae44ee6e65580dafb0f26a1dbbeb61538"> 1337</a></span><span class="preprocessor">#define TRAIN_LISTENER_FLAG_REVERSE       0x02</span></div>
-<div class="line"><a id="l01338" name="l01338"></a><span class="lineno"> 1338</span> </div>
-<div class="line"><a id="l01340" name="l01340"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga152d5ba93ab7a6de131e427e8171bc8e"> 1340</a></span><span class="preprocessor">#define TRAIN_LISTENER_FLAG_LINK_F0       0x04</span></div>
+<div class="line"><a id="l01335" name="l01335"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gac5df5f7e84701403c25d9850db99098c"> 1335</a></span><span class="preprocessor">#define TRAIN_MGMT_RELEASE           0x02</span></div>
+<div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span> </div>
+<div class="line"><a id="l01338" name="l01338"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gacc3637a24e5cfc78238dd22bb243babf"> 1338</a></span><span class="preprocessor">#define TRAIN_MGMT_NOOP             0x03</span></div>
+<div class="line"><a id="l01339" name="l01339"></a><span class="lineno"> 1339</span> </div>
+<div class="line"><a id="l01340" name="l01340"></a><span class="lineno"> 1340</span>    <span class="comment">// Listener flags</span></div>
 <div class="line"><a id="l01341" name="l01341"></a><span class="lineno"> 1341</span> </div>
-<div class="line"><a id="l01343" name="l01343"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gafd3fe035b90a6e7e49ae5b163b29d9fd"> 1343</a></span><span class="preprocessor">#define TRAIN_LISTENER_FLAG_LINK_FN       0x08</span></div>
+<div class="line"><a id="l01343" name="l01343"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gae44ee6e65580dafb0f26a1dbbeb61538"> 1343</a></span><span class="preprocessor">#define TRAIN_LISTENER_FLAG_REVERSE       0x02</span></div>
 <div class="line"><a id="l01344" name="l01344"></a><span class="lineno"> 1344</span> </div>
-<div class="line"><a id="l01346" name="l01346"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gaf8d3f4ef1d6dbce9cfa558b0e3d36131"> 1346</a></span><span class="preprocessor">#define TRAIN_LISTENER_FLAG_HIDE          0x80</span></div>
+<div class="line"><a id="l01346" name="l01346"></a><span class="lineno"><a class="line" href="group__train__protocol.html#ga152d5ba93ab7a6de131e427e8171bc8e"> 1346</a></span><span class="preprocessor">#define TRAIN_LISTENER_FLAG_LINK_F0       0x04</span></div>
 <div class="line"><a id="l01347" name="l01347"></a><span class="lineno"> 1347</span> </div>
-<div class="line"><a id="l01348" name="l01348"></a><span class="lineno"> 1348</span> <span class="comment">// end of train_protocol</span></div>
-<div class="line"><a id="l01349" name="l01349"></a><span class="lineno"> 1349</span> </div>
-<div class="line"><a id="l01350" name="l01350"></a><span class="lineno"> 1350</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l01351" name="l01351"></a><span class="lineno"> 1351</span>}</div>
-<div class="line"><a id="l01352" name="l01352"></a><span class="lineno"> 1352</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l01349" name="l01349"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gafd3fe035b90a6e7e49ae5b163b29d9fd"> 1349</a></span><span class="preprocessor">#define TRAIN_LISTENER_FLAG_LINK_FN       0x08</span></div>
+<div class="line"><a id="l01350" name="l01350"></a><span class="lineno"> 1350</span> </div>
+<div class="line"><a id="l01352" name="l01352"></a><span class="lineno"><a class="line" href="group__train__protocol.html#gaf8d3f4ef1d6dbce9cfa558b0e3d36131"> 1352</a></span><span class="preprocessor">#define TRAIN_LISTENER_FLAG_HIDE          0x80</span></div>
 <div class="line"><a id="l01353" name="l01353"></a><span class="lineno"> 1353</span> </div>
-<div class="line"><a id="l01354" name="l01354"></a><span class="lineno"> 1354</span><span class="preprocessor">#endif </span><span class="comment">/* __OPENLCB_OPENLCB_DEFINES__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l01354" name="l01354"></a><span class="lineno"> 1354</span> <span class="comment">// end of train_protocol</span></div>
+<div class="line"><a id="l01355" name="l01355"></a><span class="lineno"> 1355</span> </div>
+<div class="line"><a id="l01356" name="l01356"></a><span class="lineno"> 1356</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l01357" name="l01357"></a><span class="lineno"> 1357</span>}</div>
+<div class="line"><a id="l01358" name="l01358"></a><span class="lineno"> 1358</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l01359" name="l01359"></a><span class="lineno"> 1359</span> </div>
+<div class="line"><a id="l01360" name="l01360"></a><span class="lineno"> 1360</span><span class="preprocessor">#endif </span><span class="comment">/* __OPENLCB_OPENLCB_DEFINES__ */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!doctype html>
 <html>

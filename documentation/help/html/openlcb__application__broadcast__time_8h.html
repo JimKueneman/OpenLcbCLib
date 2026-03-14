@@ -1087,20 +1087,13 @@ Only consumer clocks are advanced; producer clocks manage their own time.</dd></
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true when all six messages have been queued, false if more calls are needed.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>State is stored per-clock in <a class="el" href="structbroadcast__clock__t.html#a062a142adbaa422e0e67c9f557d25297" title="Per-clock state for query reply sequence (0-5).">broadcast_clock_t.send_query_reply_state</a>, allowing concurrent query replies for different clocks.</dd></dl>
-<p>Algorithm: Uses a static state variable (_send_query_reply_state) to send messages one per call, allowing the caller to retry when the transmit buffer is full. The sequence is:</p><ol type="1">
-<li>State 0: Start or Stop (Producer Identified Set).</li>
-<li>State 1: Rate (Producer Identified Set).</li>
-<li>State 2: Year (Producer Identified Set).</li>
-<li>State 3: Date (Producer Identified Set).</li>
-<li>State 4: Current Time (Producer Identified Set).</li>
-<li>State 5: Next minute Time (PC Event Report). Each state advances only when the send succeeds. Returns true when state 5 completes.</li>
-</ol>
+<p>Looks up the clock by clock_id and delegates to the internal state machine. See _send_query_reply_for_clock for the full sequence.</p>
 <pre class="fragment">* @param openlcb_node  Pointer to the sending openlcb_node_t.
 * @param clock_id      64-bit event_id_t identifying the clock.
 * @param next_hour     Hour of the next scheduled time event (0-23).
 * @param next_minute   Minute of the next scheduled time event (0-59).
 * </pre><dl class="section return"><dt>Returns</dt><dd>true when all six messages have been queued, false if more calls are needed.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>State is now stored per-clock in <a class="el" href="structbroadcast__clock__t.html#a062a142adbaa422e0e67c9f557d25297" title="Per-clock state for query reply sequence (0-5).">broadcast_clock_t.send_query_reply_state</a>, allowing concurrent query replies for different clocks. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>State is stored per-clock in <a class="el" href="structbroadcast__clock__t.html#a062a142adbaa422e0e67c9f557d25297" title="Per-clock state for query reply sequence (0-5).">broadcast_clock_t.send_query_reply_state</a>, allowing concurrent query replies for different clocks. </dd></dl>
 
 </div>
 </div>

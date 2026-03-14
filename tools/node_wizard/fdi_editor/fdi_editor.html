@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FDI Editor — OpenLcbCLib</title>
 
-    <!-- Syntax highlighting — same CDN/version as CDI editor -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+    <!-- CodeMirror 6 — local bundle (no internet required) -->
+    <script src="../vendor/codemirror/dist/codemirror.min.js"></script>
+    <script src="../vendor/codemirror/cm-adapter.js"></script>
+    <script src="../vendor/codemirror/cm-readonly.js"></script>
 
     <style>
 
@@ -157,85 +157,15 @@
             position: relative;
         }
 
-        /* line-number gutter */
-        .line-numbers {
-            width: 42px;
-            flex-shrink: 0;
-            background: #252526;
-            color: #858585;
-            font-family: var(--font-mono);
-            font-size: 13px;
-            line-height: 1.5;
-            padding: 8px 0;
-            text-align: right;
-            padding-right: 8px;
-            overflow: hidden;
-            user-select: none;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .line-numbers div { height: 19.5px; }
-
+        /* CodeMirror container — fills the editor-inner area */
         .editor-text-wrap {
             flex: 1;
-            position: relative;
             overflow: hidden;
         }
 
-        .hl-overlay {
-            position: absolute;
-            inset: 0;
-            margin: 0;
-            padding: 8px;
-            font-family: var(--font-mono);
-            font-size: 13px;
-            line-height: 1.5;
-            tab-size: 2;
-            white-space: pre;
-            overflow: hidden;
-            pointer-events: none;
-            border: none;
-            border-radius: 0;
-            background: #1e1e1e;
-            z-index: 1;
-            word-break: normal;
-            overflow-wrap: normal;
-        }
-
-        .hl-overlay code.hljs {
-            font-family: inherit;
-            font-size: inherit;
-            line-height: inherit;
-            background: transparent !important;
-            padding: 0;
-            white-space: inherit;
-            display: block;
-        }
-
-        textarea#xml-editor {
-            position: absolute;
-            inset: 0;
-            width: 100%;
+        .editor-text-wrap .cm-editor {
             height: 100%;
-            background: transparent;
-            color: transparent;
-            caret-color: #aeafad;
-            font-family: var(--font-mono);
-            font-size: 13px;
-            line-height: 1.5;
-            padding: 8px;
-            border: none;
-            outline: none;
-            resize: none;
-            tab-size: 2;
-            overflow-y: scroll;
-            overflow-x: auto;
-            white-space: pre;
-            z-index: 2;
         }
-
-        textarea#xml-editor::placeholder { color: #555; }
 
         .editor-statusbar {
             height: 22px;
@@ -317,27 +247,31 @@
             display: flex;
             flex-direction: column;
             min-width: 200px;
-            background: var(--color-bg);
+            background: #1e1e1e;
             overflow: hidden;
         }
 
         .fn-grid-header {
-            height: 32px;
-            background: #e9ecef;
-            border-bottom: 1px solid var(--color-border);
+            height: 38px;
+            background: #3c3c3c;
+            color: #aaa;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 12px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--color-text);
             flex-shrink: 0;
+            border-bottom: 1px solid #555;
         }
 
         .fn-grid-scroll {
             flex: 1;
             overflow-y: auto;
             padding: 10px;
+            background: #1e1e1e;
         }
 
         .fn-grid {
@@ -355,9 +289,9 @@
             justify-content: center;
             min-height: 56px;
             padding: 6px 4px;
-            border: 1px solid var(--color-border);
+            border: 1px solid #444;
             border-radius: 6px;
-            background: var(--color-surface);
+            background: #2a2a2a;
             cursor: pointer;
             transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
             text-align: center;
@@ -370,26 +304,26 @@
         }
 
         .fn-btn.fn-defined {
-            background: #e8f4fd;
-            border-color: #90caf9;
+            background: #1a3a5c;
+            border-color: #2a6aaa;
         }
 
         .fn-btn.fn-defined:hover {
-            background: #d0eafb;
+            background: #1e4a70;
             border-color: #0078d4;
         }
 
         .fn-btn .fn-number {
             font-size: 10px;
             font-weight: 700;
-            color: var(--color-muted);
+            color: #888;
             margin-bottom: 2px;
         }
 
         .fn-btn .fn-name {
             font-size: 11px;
             font-weight: 600;
-            color: var(--color-text);
+            color: #ccc;
             line-height: 1.2;
             word-break: break-word;
             max-width: 100%;
@@ -406,17 +340,17 @@
         }
 
         .fn-kind-binary {
-            background: #dbeafe;
-            color: #1e40af;
+            background: #1e3a5f;
+            color: #7db8e8;
         }
 
         .fn-kind-momentary {
-            background: #fef3c7;
-            color: #92400e;
+            background: #4a3a1a;
+            color: #e8c870;
         }
 
         .fn-btn.fn-empty .fn-name {
-            color: #bbb;
+            color: #666;
             font-weight: 400;
             font-style: italic;
         }
@@ -433,10 +367,10 @@
         .fn-popover-overlay.visible { display: flex; align-items: center; justify-content: center; }
 
         .fn-popover {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: #2d2d2d;
+            border: 1px solid #555;
             border-radius: 8px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             padding: 16px 20px;
             width: 280px;
             max-width: 90vw;
@@ -445,14 +379,14 @@
         .fn-popover h3 {
             font-size: 14px;
             margin-bottom: 12px;
-            color: var(--color-text);
+            color: #ddd;
         }
 
         .fn-popover label {
             display: block;
             font-size: 11px;
             font-weight: 600;
-            color: var(--color-muted);
+            color: #999;
             margin-bottom: 4px;
             margin-top: 10px;
         }
@@ -464,11 +398,11 @@
             width: 100%;
             height: 30px;
             padding: 0 8px;
-            border: 1px solid var(--color-border);
+            border: 1px solid #555;
             border-radius: 4px;
             font-size: 13px;
-            background: #fff;
-            color: var(--color-text);
+            background: #1e1e1e;
+            color: #ddd;
         }
 
         .fn-popover input[type="text"]:focus,
@@ -487,7 +421,7 @@
         .fn-popover-actions button {
             flex: 1;
             height: 30px;
-            border: 1px solid #bbb;
+            border: 1px solid #555;
             border-radius: 4px;
             font-size: 12px;
             cursor: pointer;
@@ -503,21 +437,96 @@
         .fn-popover-actions .btn-save:hover { background: #005fa3; }
 
         .fn-popover-actions .btn-cancel {
-            background: #fff;
-            color: var(--color-text);
+            background: #3c3c3c;
+            color: #ccc;
         }
 
-        .fn-popover-actions .btn-cancel:hover { background: #f0f0f0; }
+        .fn-popover-actions .btn-cancel:hover { background: #4c4c4c; }
 
         .fn-popover-actions .btn-remove {
-            background: #fff;
-            color: var(--color-error-text);
-            border-color: var(--color-error-text);
+            background: #3c3c3c;
+            color: #f87171;
+            border-color: #f87171;
             flex: 0 0 auto;
             padding: 0 10px;
         }
 
-        .fn-popover-actions .btn-remove:hover { background: var(--color-error-bg); }
+        .fn-popover-actions .btn-remove:hover { background: #4a2020; }
+
+        /* ===== FDI Tools toggle buttons ====================================== */
+        .fdi-view-toggle {
+            display: flex;
+            gap: 2px;
+        }
+
+        .fdi-toggle-btn {
+            padding: 4px 10px;
+            font-size: 11px;
+            border: 1px solid #666;
+            border-radius: 4px;
+            background: #2a2a2a;
+            color: #aaa;
+            cursor: pointer;
+            font-weight: 600;
+            line-height: 18px;
+            transition: background 0.12s;
+        }
+
+        .fdi-toggle-btn:hover { background: #444; color: #eee; border-color: #888; }
+
+        .fdi-toggle-btn.active {
+            background: #0078d4;
+            color: #fff;
+            border-color: #005a9e;
+        }
+
+        /* ===== FDI Tools content (Array view) ================================ */
+        .fdi-tools-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #1e1e1e;
+        }
+
+        .fdi-tools-content.hidden { display: none; }
+
+        .fdi-tools-copybar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 3px 6px;
+            background: #2d2d2d;
+            border-bottom: 1px solid #444;
+            flex-shrink: 0;
+        }
+
+        .fdi-tools-copybar .fdi-byte-count {
+            font-size: 11px;
+            color: #aaa;
+            font-family: var(--font-mono);
+            margin-right: auto;
+        }
+
+        .fdi-tools-copybar button {
+            padding: 1px 10px;
+            font-size: 10px;
+            border: 1px solid #555;
+            border-radius: 3px;
+            background: #3c3c3c;
+            color: #ccc;
+            cursor: pointer;
+            font-family: var(--font-mono);
+        }
+
+        .fdi-tools-copybar button:hover { background: #4c4c4c; }
+
+        .fdi-tools-cm {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .fdi-tools-cm .cm-editor { height: 100%; }
 
     </style>
 </head>
@@ -548,6 +557,7 @@
 
         <button id="btn-validate" disabled>&#x2713; Validate</button>
         <button id="btn-clear">&#x2715; Clear</button>
+        <button id="btn-export-xml" disabled>&#x1F4BE; Export XML</button>
 
     </div>
 
@@ -558,15 +568,8 @@
         <div class="editor-pane" id="editor-pane">
 
             <div class="editor-inner" id="editor-inner">
-                <div class="line-numbers" id="line-numbers"></div>
-                <div class="editor-text-wrap">
-                    <pre class="hl-overlay" id="hl-overlay" aria-hidden="true"><code id="hl-code" class="language-xml"></code></pre>
-                    <textarea id="xml-editor"
-                              spellcheck="false"
-                              autocomplete="off"
-                              autocorrect="off"
-                              autocapitalize="off"
-                              placeholder="Paste or open an FDI XML file to begin..."></textarea>
+                <div class="editor-text-wrap" id="cm-host">
+                    <!-- CodeMirror 6 instance created by JS -->
                 </div>
             </div>
 
@@ -588,12 +591,19 @@
         <!-- Splitter -->
         <div class="ws-splitter" id="ws-splitter"></div>
 
-        <!-- Function grid pane (RH) -->
+        <!-- FDI Tools pane (RH) -->
         <div class="fn-grid-pane" id="fn-grid-pane">
-            <div class="fn-grid-header">Function Map (F0 – F28)</div>
+            <div class="fn-grid-header">
+                <span>FDI Tools</span>
+                <div class="fdi-view-toggle">
+                    <button class="fdi-toggle-btn active" id="btn-fdi-fnmap" title="Function grid view">⊞ Function Map</button>
+                    <button class="fdi-toggle-btn"        id="btn-fdi-array" title="C byte array for openlcb_user_config.c">[ ] Array</button>
+                </div>
+            </div>
             <div class="fn-grid-scroll" id="fn-grid-scroll">
                 <div class="fn-grid" id="fn-grid"></div>
             </div>
+            <div class="fdi-tools-content hidden" id="fdi-tools-content"></div>
         </div>
 
     </div>
@@ -633,10 +643,9 @@
 'use strict';
 
 /* ---------- Element refs -------------------------------------------------- */
-var elEditor      = document.getElementById('xml-editor');
-var elHlCode      = document.getElementById('hl-code');
-var elHlOverlay   = document.getElementById('hl-overlay');
-var elLineNums    = document.getElementById('line-numbers');
+var elEditor      = createCMEditor(document.getElementById('cm-host'), {
+    placeholder: 'Paste or open an FDI XML file to begin...'
+});
 var elValList     = document.getElementById('validation-list');
 var elValOk       = document.getElementById('validation-ok');
 var elStatusBytes = document.getElementById('status-bytes');
@@ -645,6 +654,7 @@ var elStatusLines = document.getElementById('status-lines');
 var elStatusCur   = document.getElementById('status-cursor');
 var btnValidate   = document.getElementById('btn-validate');
 var btnClear      = document.getElementById('btn-clear');
+var btnExportXml  = document.getElementById('btn-export-xml');
 var fileInput     = document.getElementById('file-input');
 var elWorkspace   = document.getElementById('workspace');
 var elEditorPane  = document.getElementById('editor-pane');
@@ -707,11 +717,8 @@ fileInput.addEventListener('change', function (e) {
 });
 
 /* ---------- Editor events ------------------------------------------------- */
-elEditor.addEventListener('input',  onEditorChange);
-elEditor.addEventListener('keydown', onEditorKeydown);
-elEditor.addEventListener('scroll', syncScroll);
-elEditor.addEventListener('click',  updateCursor);
-elEditor.addEventListener('keyup',  updateCursor);
+elEditor.onChange(onEditorChange);
+elEditor.onCursorChange(updateCursor);
 
 var _validateTimer = null;
 var _gridSyncTimer = null;
@@ -724,7 +731,8 @@ function onEditorChange() {
     _updateHighlight();
 
     var hasContent = currentXml.trim().length > 0;
-    btnValidate.disabled = !hasContent;
+    btnValidate.disabled  = !hasContent;
+    btnExportXml.disabled = !hasContent;
 
     /* Auto-validate after a short debounce */
     clearTimeout(_validateTimer);
@@ -747,59 +755,28 @@ function onEditorChange() {
     /* Notify parent of content change (embedded mode) */
     if (_isEmbedded) { _postXmlToParent(); }
 
-}
-
-/* ---------- Syntax highlighting ------------------------------------------ */
-
-function _updateHighlight() {
-
-    elHlCode.textContent = elEditor.value;
-    delete elHlCode.dataset.highlighted;
-    hljs.highlightElement(elHlCode);
-    _syncHighlightScroll();
+    /* Persist state */
+    if (typeof _saveState === 'function') { _saveState(); }
 
 }
 
-function _syncHighlightScroll() {
-
-    elHlOverlay.scrollTop  = elEditor.scrollTop;
-    elHlOverlay.scrollLeft = elEditor.scrollLeft;
-
-}
-
-/* Tab key inserts two spaces instead of losing focus */
-function onEditorKeydown(e) {
-
-    if (e.key !== 'Tab') { return; }
-    e.preventDefault();
-
-    var start = elEditor.selectionStart;
-    var end   = elEditor.selectionEnd;
-
-    elEditor.value = elEditor.value.substring(0, start) + '  ' + elEditor.value.substring(end);
-    elEditor.selectionStart = elEditor.selectionEnd = start + 2;
-    onEditorChange();
-
-}
+/* ---------- Cursor & status bar ------------------------------------------ */
+/* CodeMirror handles syntax highlighting, line numbers, scrolling, and
+ * tab-key indentation natively — no overlay or manual gutter needed. */
 
 function updateCursor() {
 
-    var pos  = elEditor.selectionStart;
-    var text = elEditor.value.substring(0, pos);
-    var line = (text.match(/\n/g) || []).length + 1;
-    var col  = pos - text.lastIndexOf('\n');
-
-    elStatusCur.textContent = 'Ln ' + line + ', Col ' + col;
+    var lc = elEditor.posToLineCol(elEditor.selectionStart);
+    elStatusCur.textContent = 'Ln ' + lc.line + ', Col ' + lc.col;
 
 }
 
 function _updateStatusBar() {
 
-    var chars = elEditor.value.length;
-    var lines = elEditor.value === '' ? 0 : (elEditor.value.match(/\n/g) || []).length + 1;
-    var bytes = typeof TextEncoder !== 'undefined'
-        ? new TextEncoder().encode(elEditor.value).length
-        : chars;
+    var text  = elEditor.value;
+    var chars = text.length;
+    var lines = elEditor.lineCount;
+    var bytes = elEditor.byteCount;
 
     elStatusBytes.textContent = bytes.toLocaleString() + ' bytes (UTF-8)';
     elStatusChars.textContent = chars.toLocaleString() + ' chars';
@@ -807,31 +784,9 @@ function _updateStatusBar() {
 
 }
 
-/* ---------- Line numbers -------------------------------------------------- */
-function _updateLineNumbers() {
-
-    var lines = elEditor.value === '' ? 1 : (elEditor.value.match(/\n/g) || []).length + 1;
-    var frag  = document.createDocumentFragment();
-
-    for (var i = 1; i <= lines; i++) {
-
-        var d = document.createElement('div');
-        d.textContent = i;
-        frag.appendChild(d);
-
-    }
-
-    elLineNums.innerHTML = '';
-    elLineNums.appendChild(frag);
-
-}
-
-function syncScroll() {
-
-    elLineNums.scrollTop = elEditor.scrollTop;
-    _syncHighlightScroll();
-
-}
+/* Stubs — no longer needed with CodeMirror but called from onEditorChange */
+function _updateLineNumbers() { }
+function _updateHighlight() { }
 
 /* ---------- Validate ------------------------------------------------------ */
 btnValidate.addEventListener('click', validate);
@@ -918,16 +873,12 @@ function _buildIssueItem(issue) {
 
 function _jumpToLine(lineNum) {
 
-    var lines = elEditor.value.split('\n');
-    var pos   = 0;
-
-    for (var i = 0; i < lineNum - 1 && i < lines.length; i++) {
-        pos += lines[i].length + 1;
-    }
-
-    elEditor.focus();
-    elEditor.selectionStart = pos;
-    elEditor.selectionEnd   = pos;
+    var doc  = elEditor.view.state.doc;
+    var line = doc.line(Math.min(lineNum, doc.lines));
+    elEditor.setSelectionRange(line.from, line.from);
+    elEditor.view.dispatch({
+        effects: CM.EditorView.scrollIntoView(line.from, { y: 'center' })
+    });
     updateCursor();
 
 }
@@ -939,9 +890,31 @@ btnClear.addEventListener('click', function () {
     elValList.innerHTML = '';
     elValOk.textContent = 'No issues detected';
     elValOk.style.display = '';
-    btnValidate.disabled = true;
+    btnValidate.disabled  = true;
+    btnExportXml.disabled = true;
     _setFilename('');
     onEditorChange();
+
+});
+
+/* ---------- Export XML ---------------------------------------------------- */
+btnExportXml.addEventListener('click', function () {
+
+    var xml = elEditor.value;
+    if (!xml.trim()) { return; }
+
+    var blob = new Blob([xml], { type: 'application/xml' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+
+    a.href     = url;
+    a.download = _loadedFilename && _loadedFilename !== '(Basic template)'
+        ? _loadedFilename
+        : 'fdi.xml';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 
 });
 
@@ -1126,6 +1099,7 @@ window.addEventListener('mouseup', function () {
     elSplitter.classList.remove('dragging');
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
+    _saveState();
 
 });
 
@@ -1156,8 +1130,208 @@ FdiFunctionGrid.init(
     onFunctionGridChanged
 );
 
-_updateLineNumbers();
 _updateStatusBar();
+
+/* ---------- FDI Tools — view toggle (Function Map | Array) --------------- */
+
+var _fdiToolsView = 'fnmap';
+var _fdiArrayViewer = null;
+
+var elFdiToolsContent = document.getElementById('fdi-tools-content');
+var elFnGridScroll    = document.getElementById('fn-grid-scroll');
+
+document.getElementById('btn-fdi-fnmap').addEventListener('click', function () {
+
+    _setFdiToolsView('fnmap');
+
+});
+
+document.getElementById('btn-fdi-array').addEventListener('click', function () {
+
+    _setFdiToolsView('array');
+
+});
+
+function _setFdiToolsView(view) {
+
+    _fdiToolsView = view;
+
+    document.getElementById('btn-fdi-fnmap').classList.toggle('active', view === 'fnmap');
+    document.getElementById('btn-fdi-array').classList.toggle('active', view === 'array');
+
+    if (view === 'fnmap') {
+
+        elFnGridScroll.style.display = '';
+        elFdiToolsContent.classList.add('hidden');
+
+    } else {
+
+        elFnGridScroll.style.display = 'none';
+        elFdiToolsContent.classList.remove('hidden');
+        _renderFdiArray();
+
+    }
+
+    _saveState();
+
+}
+
+function _renderFdiArray() {
+
+    var xmlRawText = elEditor.value.trim();
+
+    if (!xmlRawText) {
+
+        elFdiToolsContent.innerHTML = '<div style="color:#888;font-style:italic;padding:20px;font-size:13px;">No FDI XML to convert</div>';
+        return;
+
+    }
+
+    function isPrintable(ch) {
+        var code = ch.charCodeAt(0);
+        return code >= 32 && code <= 126;
+    }
+
+    var rawLines = xmlRawText.split(/\r\n|\n|\r/);
+    var resultLines = [];
+    var totalChars = 0;
+
+    resultLines.push('// FDI (Function Description Information) byte array.');
+    resultLines.push('// Paste this into the .fdi field of the node_parameters_t struct');
+    resultLines.push('// in openlcb_user_config.c to define the train function descriptions.');
+    resultLines.push('');
+    resultLines.push('.fdi = {');
+
+    rawLines.forEach(function (originalLine) {
+
+        var forSkip = originalLine
+            .replace(/[^\x20-\x7E]/g, '')
+            .replace(/\s+/g, '');
+        if (forSkip.length === 0) { return; }
+
+        var firstIdx = -1;
+        var lastIdx  = -1;
+
+        for (var i = 0; i < originalLine.length; i++) {
+            var ch = originalLine[i];
+            if (isPrintable(ch) && !/\s/.test(ch)) { firstIdx = i; break; }
+        }
+        for (var i = originalLine.length - 1; i >= 0; i--) {
+            var ch = originalLine[i];
+            if (isPrintable(ch) && !/\s/.test(ch)) { lastIdx = i; break; }
+        }
+        if (firstIdx === -1 || lastIdx === -1 || firstIdx > lastIdx) { return; }
+
+        var converted = '';
+
+        for (var i = firstIdx; i <= lastIdx; i++) {
+            var ch = originalLine[i];
+            if (!isPrintable(ch)) { continue; }
+            var hex = '0x' + ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
+            converted += hex + ', ';
+            totalChars++;
+        }
+
+        var comment = originalLine.slice(firstIdx, lastIdx + 1).replace(/^\s+|\s+$/g, '');
+        converted += '  // ' + comment;
+
+        resultLines.push(converted);
+
+    });
+
+    resultLines.push('0x00    // String terminating null');
+    totalChars += 1;
+
+    resultLines.push('},');
+    resultLines.push('');
+    resultLines.push('#define USER_FDI_ARRAY_SIZE  ' + totalChars + '  // Total bytes including null terminator');
+
+    var text = resultLines.join('\n');
+
+    /* Build the UI */
+    elFdiToolsContent.innerHTML = '';
+
+    var copyBar = document.createElement('div');
+    copyBar.className = 'fdi-tools-copybar';
+
+    var countLabel = document.createElement('span');
+    countLabel.className = 'fdi-byte-count';
+    countLabel.textContent = 'Total bytes (including null): ' + totalChars;
+    copyBar.appendChild(countLabel);
+
+    var copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy';
+    copyBtn.addEventListener('click', function () {
+        navigator.clipboard.writeText(text).then(function () {
+            copyBtn.textContent = 'Copied!';
+            setTimeout(function () { copyBtn.textContent = 'Copy'; }, 1500);
+        });
+    });
+    copyBar.appendChild(copyBtn);
+    elFdiToolsContent.appendChild(copyBar);
+
+    var cmContainer = document.createElement('div');
+    cmContainer.className = 'fdi-tools-cm';
+    elFdiToolsContent.appendChild(cmContainer);
+
+    _fdiArrayViewer = createCMReadonly(cmContainer);
+    _fdiArrayViewer.value = text;
+
+}
+
+/* ---------- Persistence (localStorage) ------------------------------------ */
+
+var _STORAGE_KEY = 'fdi_editor_state';
+var _saveTimer   = null;
+
+function _saveState() {
+
+    clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(function () {
+
+        var state = {
+            xml:          elEditor.value,
+            filename:     _loadedFilename || '',
+            splitterPx:   elEditorPane.style.flexBasis || '',
+            fdiToolsView: _fdiToolsView
+        };
+
+        try { localStorage.setItem(_STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* quota */ }
+
+    }, 500);
+
+}
+
+function _restoreState() {
+
+    var raw;
+    try { raw = localStorage.getItem(_STORAGE_KEY); } catch (e) { return; }
+    if (!raw) { return; }
+
+    var state;
+    try { state = JSON.parse(raw); } catch (e) { return; }
+
+    /* Splitter position */
+    if (state.splitterPx) {
+        elEditorPane.style.flexBasis = state.splitterPx;
+        elEditorPane.style.flexGrow  = '0';
+    }
+
+    /* XML content */
+    if (state.xml) {
+        elEditor.value = state.xml;
+        if (state.filename) { _setFilename(state.filename); }
+        onEditorChange();
+    }
+
+    /* FDI tools view */
+    if (state.fdiToolsView) {
+        _setFdiToolsView(state.fdiToolsView);
+    }
+
+}
+
+_restoreState();
 
 /* ---------- Embedded mode (iframe inside Node Wizard) --------------------- */
 

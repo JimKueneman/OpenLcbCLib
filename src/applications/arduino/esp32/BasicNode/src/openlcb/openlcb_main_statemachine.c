@@ -895,12 +895,16 @@ bool OpenLcbMainStatemachine_handle_outgoing_openlcb_message(void) {
 
         if (_interface->send_openlcb_msg(_statemachine_info.outgoing_msg_info.msg_ptr)) {
 
-            // Loopback to siblings only when the trigger was NOT itself
-            // a loopback (one-level cascade prevention).
-            if (!_statemachine_info.incoming_msg_info.msg_ptr ||
-                    !_statemachine_info.incoming_msg_info.msg_ptr->state.loopback) {
+            // Loopback to siblings only when there are multiple nodes and
+            // the trigger was NOT itself a loopback (one-level cascade prevention).
+            if (_interface->openlcb_node_get_count() > 1) {
 
-                _loopback_to_siblings();
+                if (!_statemachine_info.incoming_msg_info.msg_ptr ||
+                        !_statemachine_info.incoming_msg_info.msg_ptr->state.loopback) {
+
+                    _loopback_to_siblings();
+
+                }
 
             }
 

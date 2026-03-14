@@ -80,28 +80,6 @@
             </div>
 
             <div class="sidebar-section">
-                <span class="sidebar-label">Descriptors</span>
-
-                <div class="sidebar-tile disabled" id="tile-cdi" onclick="selectView('cdi')">
-                    <span class="tile-icon">📄</span>
-                    <div class="tile-content">
-                        <span class="tile-name">CDI</span>
-                        <span class="tile-desc">Configuration Description</span>
-                    </div>
-                    <span class="tile-badge" id="badge-cdi" title="CDI not loaded — required for this node type"></span>
-                </div>
-
-                <div class="sidebar-tile disabled" id="tile-fdi" onclick="selectView('fdi')">
-                    <span class="tile-icon">📋</span>
-                    <div class="tile-content">
-                        <span class="tile-name">FDI</span>
-                        <span class="tile-desc">Function Description</span>
-                    </div>
-                    <span class="tile-badge" id="badge-fdi" title="FDI not loaded — required for Train nodes"></span>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
                 <span class="sidebar-label">Platform</span>
 
                 <div class="sidebar-tile disabled" id="tile-platform" onclick="selectView('platform')">
@@ -110,6 +88,28 @@
                         <span class="tile-name">Target Platform</span>
                         <span class="tile-desc">None / Custom</span>
                     </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">Descriptors</span>
+
+                <div class="sidebar-tile disabled" id="tile-cdi" onclick="selectView('cdi')">
+                    <span class="tile-icon">📄</span>
+                    <div class="tile-content">
+                        <span class="tile-name">CDI</span>
+                        <span class="tile-desc">Configuration Description</span>
+                    </div>
+                    <span class="tile-badge" id="badge-cdi"></span>
+                </div>
+
+                <div class="sidebar-tile disabled" id="tile-fdi" onclick="selectView('fdi')">
+                    <span class="tile-icon">📋</span>
+                    <div class="tile-content">
+                        <span class="tile-name">FDI</span>
+                        <span class="tile-desc">Function Description</span>
+                    </div>
+                    <span class="tile-badge" id="badge-fdi"></span>
                 </div>
             </div>
 
@@ -205,7 +205,7 @@
     </div>
 
     <!-- JSZip for ZIP file generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="vendor/jszip/jszip.min.js"></script>
 
     <!-- Definition + codegen scripts (needed by ZIP export) -->
     <script src="callbacks/js/callback_defs.js"></script>

@@ -6,10 +6,9 @@
     <title>Driver Editor — OpenLcbCLib</title>
     <link rel="stylesheet" href="drivers.css">
 
-    <!-- Syntax highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    <!-- CodeMirror 6 (read-only C preview) -->
+    <script src="../vendor/codemirror/dist/codemirror.min.js"></script>
+    <script src="../vendor/codemirror/cm-readonly.js"></script>
 </head>
 <body>
 
@@ -36,7 +35,7 @@
                 <span class="preview-filename" id="preview-filename"></span>
             </div>
 
-            <pre class="code-preview empty"><code class="language-c" id="code-preview">Select a driver group to preview</code></pre>
+            <div class="code-preview" id="code-preview"></div>
 
         </aside>
 
@@ -200,22 +199,31 @@
 
     }
 
+    /* ---------- CodeMirror read-only viewer ---------- */
+
+    let _cmViewer = null;
+
+    function _ensureCMViewer() {
+
+        if (_cmViewer) { return _cmViewer; }
+        _cmViewer = createCMReadonly(document.getElementById('code-preview'));
+        return _cmViewer;
+
+    }
+
     /* ---------- Render code preview ---------- */
 
     function _renderPreview() {
 
-        const codeEl = document.getElementById('code-preview');
+        const viewer = _ensureCMViewer();
         const fnameEl = document.getElementById('preview-filename');
 
         if (!_currentGroup) {
 
-            codeEl.textContent = 'Select a driver group to preview';
-            codeEl.parentElement.classList.add('empty');
+            viewer.value = '// Select a driver group to preview';
             return;
 
         }
-
-        codeEl.parentElement.classList.remove('empty');
 
         const group   = DRIVER_GROUPS[_currentGroup];
         const checked = _getCheckedFunctions();
@@ -226,17 +234,14 @@
         if (_currentTab === 'h') {
 
             fnameEl.textContent = group.filePrefix + '.h';
-            codeEl.textContent  = DriverCodegen.generateH(group, checked, _platformState);
+            viewer.value = DriverCodegen.generateH(group, checked, _platformState);
 
         } else {
 
             fnameEl.textContent = group.filePrefix + '.c';
-            codeEl.textContent  = DriverCodegen.generateC(group, checked, _platformState);
+            viewer.value = DriverCodegen.generateC(group, checked, _platformState);
 
         }
-
-        codeEl.removeAttribute('data-highlighted');
-        hljs.highlightElement(codeEl);
 
     }
 

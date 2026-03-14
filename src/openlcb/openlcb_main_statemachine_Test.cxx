@@ -89,6 +89,7 @@ bool node_get_next_called = false;
 bool does_node_process_msg = false;
 openlcb_node_t *node_get_first = nullptr;
 openlcb_node_t *node_get_next = nullptr;
+uint16_t mock_node_count = 2;
 bool allow_successful_transmit = true;
 bool force_true_does_node_process_msg = false;
 bool force_false_does_node_process_msg = false;
@@ -524,6 +525,13 @@ bool _OpenLcbNode_is_last(uint8_t key)
     return force_is_last_node;
 }
 
+uint16_t _OpenLcbNode_get_count(void)
+{
+
+    return mock_node_count;
+
+}
+
 // ============================================================================
 // Mock Required Functions - Message Transmission
 // ============================================================================
@@ -803,6 +811,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .openlcb_node_get_first = &_OpenLcbNode_get_first,
     .openlcb_node_get_next = &_OpenLcbNode_get_next,
     .openlcb_node_is_last = &_OpenLcbNode_is_last,
+    .openlcb_node_get_count = &_OpenLcbNode_get_count,
     .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
 
     .handle_outgoing_openlcb_message = &_OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
@@ -878,6 +887,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .openlcb_node_get_first = &_OpenLcbNode_get_first,
     .openlcb_node_get_next = &_OpenLcbNode_get_next,
     .openlcb_node_is_last = &_OpenLcbNode_is_last,
+    .openlcb_node_get_count = &_OpenLcbNode_get_count,
     .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
 
     .handle_outgoing_openlcb_message = &_OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
@@ -916,6 +926,7 @@ void _reset_variables(void)
     does_node_process_msg = false;
     node_get_first = nullptr;
     node_get_next = nullptr;
+    mock_node_count = 2;
     allow_successful_transmit = true;
     force_true_does_node_process_msg = false;
     force_false_does_node_process_msg = false;

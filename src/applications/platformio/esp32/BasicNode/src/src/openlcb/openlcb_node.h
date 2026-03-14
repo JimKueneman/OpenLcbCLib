@@ -149,6 +149,13 @@ extern "C" {
     extern void OpenLcbNode_reset_state(void);
 
         /**
+         * @brief Returns the number of allocated nodes.
+         *
+         * @return Current allocated node count.
+         */
+    extern uint16_t OpenLcbNode_get_count(void);
+
+        /**
          * @brief 100ms timer tick handler — gates the application callback.
          *
          * @details Called from the main loop with the current global tick.

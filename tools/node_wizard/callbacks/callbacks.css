@@ -277,34 +277,9 @@ body {
 
 }
 
-.code-preview { flex: 1; overflow: auto; margin: 0; padding: 0; background: transparent; }
+.code-preview { flex: 1; overflow: hidden; margin: 0; padding: 0; background: transparent; }
 
-.code-preview code,
-.code-preview code.hljs {
-
-    display: block;
-    padding: 20px 28px !important;
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    line-height: 1.75;
-    white-space: pre !important;
-    tab-size: 4;
-    background: transparent !important;
-
-}
-
-.code-preview.empty { display: flex; align-items: center; justify-content: center; }
-
-.code-preview.empty code {
-
-    white-space: normal;
-    color: var(--preview-muted);
-    font-style: italic;
-    font-family: var(--font-stack);
-    font-size: 14px;
-    text-align: center;
-
-}
+.code-preview .cm-editor { height: 100%; }
 
 @media (max-width: 700px) {
 

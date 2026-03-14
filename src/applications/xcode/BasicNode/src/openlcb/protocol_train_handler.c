@@ -77,7 +77,7 @@ static bool _attach_listener(train_state_t *state, node_id_t node_id, uint8_t fl
     }
 
     // Check if already attached — update flags if so
-    for (uint8_t i = 0; i < state->listener_count; i++) {
+    for (int i = 0; i < state->listener_count; i++) {
 
         if (state->listeners[i].node_id == node_id) {
 
@@ -112,12 +112,12 @@ static bool _detach_listener(train_state_t *state, node_id_t node_id) {
 
     }
 
-    for (uint8_t i = 0; i < state->listener_count; i++) {
+    for (int i = 0; i < state->listener_count; i++) {
 
         if (state->listeners[i].node_id == node_id) {
 
             // Shift remaining entries down
-            for (uint8_t j = i; j < state->listener_count - 1; j++) {
+            for (int j = i; j < state->listener_count - 1; j++) {
 
                 state->listeners[j] = state->listeners[j + 1];
 

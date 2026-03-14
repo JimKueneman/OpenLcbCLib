@@ -134,6 +134,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a68c1a3c6196e96d3f17b68023607d163" id="r_a68c1a3c6196e96d3f17b68023607d163"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68c1a3c6196e96d3f17b68023607d163">OpenLcbNode_reset_state</a> (void)</td></tr>
 <tr class="memdesc:a68c1a3c6196e96d3f17b68023607d163"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets all allocated nodes to their initial login state.  <br /></td></tr>
 <tr class="separator:a68c1a3c6196e96d3f17b68023607d163"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66926f9aa0a67e6aae948d16b5bac80d" id="r_a66926f9aa0a67e6aae948d16b5bac80d"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66926f9aa0a67e6aae948d16b5bac80d">OpenLcbNode_get_count</a> (void)</td></tr>
+<tr class="memdesc:a66926f9aa0a67e6aae948d16b5bac80d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of allocated nodes.  <br /></td></tr>
+<tr class="separator:a66926f9aa0a67e6aae948d16b5bac80d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc55f58d898314a7b7f725c5a679ca1e" id="r_afc55f58d898314a7b7f725c5a679ca1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc55f58d898314a7b7f725c5a679ca1e">OpenLcbNode_100ms_timer_tick</a> (uint8_t current_tick)</td></tr>
 <tr class="memdesc:afc55f58d898314a7b7f725c5a679ca1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">100ms timer tick handler — gates the application callback.  <br /></td></tr>
 <tr class="separator:afc55f58d898314a7b7f725c5a679ca1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -477,6 +480,34 @@ Functions</h2></td></tr>
 <li>For each allocated node, set run_state to RUNSTATE_INIT</li>
 <li>Clear permitted and initialized flags </li>
 </ol>
+
+</div>
+</div>
+<a id="a66926f9aa0a67e6aae948d16b5bac80d" name="a66926f9aa0a67e6aae948d16b5bac80d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66926f9aa0a67e6aae948d16b5bac80d">&#9670;&#160;</a></span>OpenLcbNode_get_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t OpenLcbNode_get_count </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the number of allocated nodes. </p>
+<dl class="section return"><dt>Returns</dt><dd>Current allocated node count. </dd></dl>
 
 </div>
 </div>
