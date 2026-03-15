@@ -33,9 +33,9 @@ The library core has no hardware dependencies. If your platform has a C compiler
 
 The fastest path is the ESP32 BasicNode demo. Copy the example project, open it in Arduino IDE, and upload.
 
-See the [Quick Start Guide](documentation/QuickStartGuide.pdf) for step-by-step instructions.
+See the [Quick Start Guide](https://jimkueneman.github.io/OpenLcbCLib/documentation/QuickStartGuide.pdf) for step-by-step instructions.
 
-For all other platforms, the [Developer Guide](documentation/DeveloperGuide.pdf) covers the Node Wizard, driver callbacks, CDI configuration, and project structure in detail.
+For all other platforms, the [Developer Guide](https://jimkueneman.github.io/OpenLcbCLib/documentation/DeveloperGuide.pdf) covers the Node Wizard, driver callbacks, CDI configuration, and project structure in detail.
 
 Full documentation: [https://jimkueneman.github.io/OpenLcbCLib/documentation/help/html/](https://jimkueneman.github.io/OpenLcbCLib/documentation/help/html/)
 
