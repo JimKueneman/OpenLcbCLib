@@ -27,7 +27,7 @@ Initial production release.
 
 ### Platforms with working examples
 - ESP32 + TWAI (Arduino IDE, PlatformIO)
-- ESP32 + WiFi (Arduino IDE, PlatformIO)
+- ESP32 + WiFi GridConnect (Arduino IDE, PlatformIO)
 - Raspberry Pi Pico / RP2040 + MCP2517FD (Arduino IDE)
 - STM32F4xx + CAN (STM32CubeIDE)
 - TI MSPM0 + MCAN (Code Composer Theia)

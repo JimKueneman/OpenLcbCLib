@@ -37,7 +37,9 @@ See the [Quick Start Guide](https://jimkueneman.github.io/OpenLcbCLib/documentat
 
 For all other platforms, the [Developer Guide](https://jimkueneman.github.io/OpenLcbCLib/documentation/DeveloperGuide.pdf) covers the Node Wizard, driver callbacks, CDI configuration, and project structure in detail.
 
-Full documentation: [https://jimkueneman.github.io/OpenLcbCLib/documentation/help/html/](https://jimkueneman.github.io/OpenLcbCLib/documentation/help/html/)
+For a deep dive into the library architecture, state machines, and protocol internals, see the [Implementation Guide](https://jimkueneman.github.io/OpenLcbCLib/documentation/help/overviews/index.html).
+
+API reference: [https://jimkueneman.github.io/OpenLcbCLib/documentation/help/html/](https://jimkueneman.github.io/OpenLcbCLib/documentation/help/html/)
 
 ## Repository layout
 
@@ -47,10 +49,16 @@ src/                        library source and platform examples
   drivers/                  CAN and platform driver implementations
   applications/             ready-to-run example projects
     arduino/esp32/BasicNode/    ESP32 starting point
+  utilities/                endian and string helpers
+  test/                     unit tests
+templates/                  CDI/FDI XML templates and user config template
 tools/
   node_wizard/              browser-based project generator
+  cdi_to_array/             Python script — convert CDI XML to a C byte array
+  cdi_to_array_webbrowser/  browser-based CDI to C array converter
+  update_applications/      script to sync platform application files
 documentation/              guides, design notes, style guides
-test/                       unit and compliance tests
+test/                       compliance and integration tests
 ```
 
 ## Node Wizard
