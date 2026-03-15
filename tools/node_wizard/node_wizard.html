@@ -19,14 +19,6 @@
                 <button class="header-btn">Load Project</button>
                 <input type="file" id="file-load-project" accept=".json" title="Load a saved project file">
             </div>
-            <span class="header-sep"></span>
-            <label class="header-checkbox" id="arduino-wrap">
-                <input type="checkbox" id="chk-arduino">
-                <span>Arduino (.ino)</span>
-            </label>
-            <button class="header-btn header-btn-primary" id="btn-generate" disabled onclick="requestDownload()">
-                Generate Files
-            </button>
         </div>
     </header>
 
@@ -38,55 +30,11 @@
             <div class="sidebar-section">
                 <span class="sidebar-label">Node Type</span>
 
-                <div class="sidebar-tile" data-type="basic" onclick="selectNodeType('basic')">
+                <div class="sidebar-tile" id="tile-node-type" onclick="selectView('config')">
                     <span class="tile-icon">📦</span>
                     <div class="tile-content">
-                        <span class="tile-name">Basic</span>
-                        <span class="tile-desc">Events only</span>
-                    </div>
-                </div>
-
-                <div class="sidebar-tile" data-type="typical" onclick="selectNodeType('typical')">
-                    <span class="tile-icon">⚙️</span>
-                    <div class="tile-content">
-                        <span class="tile-name">Typical</span>
-                        <span class="tile-desc">Events + CDI + Config</span>
-                    </div>
-                </div>
-
-                <div class="sidebar-tile" data-type="train" onclick="selectNodeType('train')">
-                    <span class="tile-icon">🚂</span>
-                    <div class="tile-content">
-                        <span class="tile-name">Train</span>
-                        <span class="tile-desc">Locomotive</span>
-                    </div>
-                </div>
-
-                <div class="sidebar-tile" data-type="train-controller" onclick="selectNodeType('train-controller')">
-                    <span class="tile-icon">🎮</span>
-                    <div class="tile-content">
-                        <span class="tile-name">Train Controller</span>
-                        <span class="tile-desc">Throttle</span>
-                    </div>
-                </div>
-
-                <div class="sidebar-tile disabled" data-type="custom">
-                    <span class="tile-icon">🔧</span>
-                    <div class="tile-content">
-                        <span class="tile-name">Custom</span>
-                        <span class="tile-desc">Advanced — coming soon</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <span class="sidebar-label">Platform</span>
-
-                <div class="sidebar-tile disabled" id="tile-platform" onclick="selectView('platform')">
-                    <span class="tile-icon">🎯</span>
-                    <div class="tile-content">
-                        <span class="tile-name">Target Platform</span>
-                        <span class="tile-desc">None / Custom</span>
+                        <span class="tile-name">Node Type</span>
+                        <span class="tile-desc" id="tile-node-type-desc">Select a type...</span>
                     </div>
                 </div>
             </div>
@@ -114,21 +62,13 @@
             </div>
 
             <div class="sidebar-section">
-                <span class="sidebar-label">Hardware Interface Drivers</span>
+                <span class="sidebar-label">Platform Drivers</span>
 
-                <div class="sidebar-tile disabled" id="tile-can-drivers" onclick="selectView('can-drivers')">
-                    <span class="tile-icon">🔌</span>
+                <div class="sidebar-tile disabled" id="tile-platform-drivers" onclick="selectView('platform-drivers')">
+                    <span class="tile-icon">🎯</span>
                     <div class="tile-content">
-                        <span class="tile-name">CAN Drivers</span>
-                        <span class="tile-desc">openlcb_can_drivers.c/h</span>
-                    </div>
-                </div>
-
-                <div class="sidebar-tile disabled" id="tile-olcb-drivers" onclick="selectView('olcb-drivers')">
-                    <span class="tile-icon">🖥️</span>
-                    <div class="tile-content">
-                        <span class="tile-name">OLCB/LCC Drivers</span>
-                        <span class="tile-desc">openlcb_drivers.c/h</span>
+                        <span class="tile-name">Target Platform</span>
+                        <span class="tile-desc">None / Custom</span>
                     </div>
                 </div>
             </div>
@@ -136,51 +76,23 @@
             <div class="sidebar-section">
                 <span class="sidebar-label">Callbacks</span>
 
-                <div class="sidebar-tile disabled" id="tile-cb-can" onclick="selectView('cb-can')">
-                    <span class="tile-icon">🔌</span>
+                <div class="sidebar-tile disabled" id="tile-callbacks" onclick="selectView('callbacks')">
+                    <span class="tile-icon">🔗</span>
                     <div class="tile-content">
-                        <span class="tile-name">CAN</span>
-                        <span class="tile-desc">callbacks_can.c/h</span>
+                        <span class="tile-name">Callbacks</span>
+                        <span class="tile-desc">Application notification hooks</span>
                     </div>
                 </div>
+            </div>
 
-                <div class="sidebar-tile disabled" id="tile-cb-olcb" onclick="selectView('cb-olcb')">
-                    <span class="tile-icon">🖥️</span>
-                    <div class="tile-content">
-                        <span class="tile-name">OLCB/LCC</span>
-                        <span class="tile-desc">callbacks_olcb.c/h</span>
-                    </div>
-                </div>
+            <div class="sidebar-section">
+                <span class="sidebar-label">File Preview</span>
 
-                <div class="sidebar-tile disabled" id="tile-cb-events" onclick="selectView('cb-events')">
-                    <span class="tile-icon">📡</span>
+                <div class="sidebar-tile disabled" id="tile-file-preview" onclick="selectView('file-preview')">
+                    <span class="tile-icon">📁</span>
                     <div class="tile-content">
-                        <span class="tile-name">Events</span>
-                        <span class="tile-desc">callbacks_events.c/h</span>
-                    </div>
-                </div>
-
-                <div class="sidebar-tile disabled" id="tile-cb-config-mem" onclick="selectView('cb-config-mem')">
-                    <span class="tile-icon">💾</span>
-                    <div class="tile-content">
-                        <span class="tile-name">Config Memory</span>
-                        <span class="tile-desc">callbacks_config_mem.c/h</span>
-                    </div>
-                </div>
-
-                <div class="sidebar-tile disabled" id="tile-cb-train" onclick="selectView('cb-train')">
-                    <span class="tile-icon">🚂</span>
-                    <div class="tile-content">
-                        <span class="tile-name">Train</span>
-                        <span class="tile-desc">callbacks_train.c/h</span>
-                    </div>
-                </div>
-
-                <div class="sidebar-tile disabled" id="tile-cb-bcast-time" onclick="selectView('cb-bcast-time')">
-                    <span class="tile-icon">🕐</span>
-                    <div class="tile-content">
-                        <span class="tile-name">Broadcast Time</span>
-                        <span class="tile-desc">callbacks_broadcast_time.c/h</span>
+                        <span class="tile-name">Generated Files</span>
+                        <span class="tile-desc">Preview output file tree</span>
                     </div>
                 </div>
             </div>

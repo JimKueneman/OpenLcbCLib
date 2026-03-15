@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Pico board shape (elongated) -->
+  <rect x="25" y="10" width="70" height="100" rx="5" fill="#303446" stroke="#a6d189" stroke-width="2.5"/>
+  <!-- USB connector -->
+  <rect x="42" y="5" width="36" height="12" rx="3" fill="#414559" stroke="#737994" stroke-width="1.5"/>
+  <rect x="48" y="8" width="24" height="6" rx="1" fill="#626880"/>
+  <!-- RP2040 chip -->
+  <rect x="38" y="35" width="44" height="30" rx="3" fill="#414559" stroke="#626880" stroke-width="1.5"/>
+  <text x="60" y="50" text-anchor="middle" font-family="monospace" font-size="8" font-weight="bold" fill="#c6d0f5">RP2040</text>
+  <text x="60" y="60" text-anchor="middle" font-family="monospace" font-size="6" fill="#a6d189">Pico</text>
+  <!-- Pin headers left -->
+  <circle cx="31" cy="25" r="2" fill="#e5c890"/>
+  <circle cx="31" cy="33" r="2" fill="#e5c890"/>
+  <circle cx="31" cy="41" r="2" fill="#e5c890"/>
+  <circle cx="31" cy="49" r="2" fill="#e5c890"/>
+  <circle cx="31" cy="57" r="2" fill="#e5c890"/>
+  <circle cx="31" cy="65" r="2" fill="#e5c890"/>
+  <circle cx="31" cy="73" r="2" fill="#e5c890"/>
+  <circle cx="31" cy="81" r="2" fill="#e5c890"/>
+  <!-- Pin headers right -->
+  <circle cx="89" cy="25" r="2" fill="#e5c890"/>
+  <circle cx="89" cy="33" r="2" fill="#e5c890"/>
+  <circle cx="89" cy="41" r="2" fill="#e5c890"/>
+  <circle cx="89" cy="49" r="2" fill="#e5c890"/>
+  <circle cx="89" cy="57" r="2" fill="#e5c890"/>
+  <circle cx="89" cy="65" r="2" fill="#e5c890"/>
+  <circle cx="89" cy="73" r="2" fill="#e5c890"/>
+  <circle cx="89" cy="81" r="2" fill="#e5c890"/>
+  <!-- MCP2517 label -->
+  <rect x="40" y="80" width="40" height="16" rx="2" fill="#414559" stroke="#626880" stroke-width="1"/>
+  <text x="60" y="91" text-anchor="middle" font-family="monospace" font-size="7" fill="#e78284">MCP2517</text>
+</svg>

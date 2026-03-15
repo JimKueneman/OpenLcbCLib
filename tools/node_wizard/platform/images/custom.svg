@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Circuit board with wrench -->
+  <rect x="15" y="20" width="90" height="70" rx="6" stroke="#8caaee" stroke-width="2.5" fill="#303446"/>
+  <!-- Traces -->
+  <line x1="30" y1="40" x2="60" y2="40" stroke="#626880" stroke-width="1.5"/>
+  <line x1="60" y1="40" x2="60" y2="60" stroke="#626880" stroke-width="1.5"/>
+  <line x1="60" y1="60" x2="90" y2="60" stroke="#626880" stroke-width="1.5"/>
+  <line x1="40" y1="55" x2="75" y2="55" stroke="#626880" stroke-width="1.5"/>
+  <!-- Pads -->
+  <circle cx="30" cy="40" r="3" fill="#a6d189"/>
+  <circle cx="90" cy="60" r="3" fill="#a6d189"/>
+  <circle cx="40" cy="55" r="3" fill="#e5c890"/>
+  <circle cx="75" cy="55" r="3" fill="#e5c890"/>
+  <!-- Chip -->
+  <rect x="48" y="45" width="24" height="20" rx="2" fill="#414559" stroke="#737994" stroke-width="1"/>
+  <!-- Wrench overlay -->
+  <path d="M85 25 L78 32 L80 34 L87 27 C89 29 89 32 87 34 L79 42 C77 44 74 44 72 42 L70 40 L68 42 L70 44 C73 47 78 47 81 44 L89 36 C92 33 92 28 89 25 Z" fill="#ca9ee6" opacity="0.9"/>
+</svg>

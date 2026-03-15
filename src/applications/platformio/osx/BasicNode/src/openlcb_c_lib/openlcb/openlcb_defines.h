@@ -40,6 +40,14 @@
 #ifndef __OPENLCB_OPENLCB_DEFINES__
 #define __OPENLCB_OPENLCB_DEFINES__
 
+// ---------------------------------------------------------------------------
+// Library version
+// ---------------------------------------------------------------------------
+#define OPENLCB_C_LIB_VERSION_MAJOR  1
+#define OPENLCB_C_LIB_VERSION_MINOR  0
+#define OPENLCB_C_LIB_VERSION_PATCH  0
+#define OPENLCB_C_LIB_VERSION        "1.0.0"
+
 #include <stdbool.h>
 #include <stdint.h>
 

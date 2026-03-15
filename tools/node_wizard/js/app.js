@@ -6,13 +6,10 @@
 
 const STORAGE_KEY = 'node_wizard_state';
 
-/* Set to true to show the Platform section in the sidebar */
-const ENABLE_PLATFORM = false;
-
 /* ---------- State ---------- */
 
 let selectedNodeType  = null;
-let currentView       = null;    /* 'config' | 'cdi' | 'fdi' | 'can-drivers' | 'olcb-drivers' | 'cb-events' | ... */
+let currentView       = null;    /* 'config' | 'cdi' | 'fdi' | 'platform-drivers' | 'callbacks' | 'file-preview' */
 let cdiUserXml        = null;    /* XML text from CDI editor */
 let fdiUserXml        = null;    /* XML text from FDI editor */
 let cdiFilename       = null;    /* loaded CDI filename */
@@ -21,16 +18,18 @@ let configMemHighest  = 0x200;   /* config memory size — tracked from node_con
 let configFormState   = null;    /* last-known form state from node_config */
 let driverState       = {};      /* per-group state from drivers iframe, keyed by group */
 let callbackState     = {};      /* per-group state from callbacks iframe, keyed by group */
-let platformState     = null;    /* { platform, params, framework, libraries, notes } */
-let arduinoMode       = false;   /* true → ZIP uses main.ino instead of main.c */
+let platformState     = null;    /* { platform, params, isArduino, framework, libraries, notes } */
 let cdiValidation     = null;    /* { errors: N, warnings: N } from CDI editor */
 let fdiValidation     = null;    /* { errors: N, warnings: N } from FDI editor (future) */
+let filePreviewSelection = null; /* last selected file path in file-preview */
 
 /* ---------- DOM refs ---------- */
 
 const elIframe        = document.getElementById('workspace-iframe');
 const elEmpty         = document.getElementById('workspace-empty');
-const elBtnGenerate   = document.getElementById('btn-generate');
+
+/* Node Type tile */
+const elTileNodeType  = document.getElementById('tile-node-type');
 
 /* Descriptor tiles */
 const elTileCdi       = document.getElementById('tile-cdi');
@@ -38,72 +37,53 @@ const elTileFdi       = document.getElementById('tile-fdi');
 const elBadgeCdi      = document.getElementById('badge-cdi');
 const elBadgeFdi      = document.getElementById('badge-fdi');
 
-/* Driver tiles */
-const elTileCanDrivers  = document.getElementById('tile-can-drivers');
-const elTileOlcbDrivers = document.getElementById('tile-olcb-drivers');
-
-/* Callback tiles */
-const elTileCbEvents    = document.getElementById('tile-cb-events');
-const elTileCbConfigMem = document.getElementById('tile-cb-config-mem');
-const elTileCbTrain     = document.getElementById('tile-cb-train');
-const elTileCbBcastTime = document.getElementById('tile-cb-bcast-time');
-
-/* Platform tile */
-const elTilePlatform    = document.getElementById('tile-platform');
+/* New tiles */
+const elTilePlatformDrivers = document.getElementById('tile-platform-drivers');
+const elTileCallbacks       = document.getElementById('tile-callbacks');
+const elTileFilePreview     = document.getElementById('tile-file-preview');
 
 /* All selectable view tiles (for highlight management) */
-const elTileCbCan       = document.getElementById('tile-cb-can');
-const elTileCbOlcb      = document.getElementById('tile-cb-olcb');
-
 const VIEW_TILES = {
-    'cdi':          elTileCdi,
-    'fdi':          elTileFdi,
-    'platform':     elTilePlatform,
-    'can-drivers':  elTileCanDrivers,
-    'olcb-drivers': elTileOlcbDrivers,
-    'cb-can':       elTileCbCan,
-    'cb-olcb':      elTileCbOlcb,
-    'cb-events':    elTileCbEvents,
-    'cb-config-mem': elTileCbConfigMem,
-    'cb-train':     elTileCbTrain,
-    'cb-bcast-time': elTileCbBcastTime
+    'config':           elTileNodeType,
+    'cdi':              elTileCdi,
+    'fdi':              elTileFdi,
+    'platform-drivers': elTilePlatformDrivers,
+    'callbacks':        elTileCallbacks,
+    'file-preview':     elTileFilePreview
 };
-
-/* ---------- Arduino checkbox ---------- */
-
-document.getElementById('chk-arduino').addEventListener('change', function () {
-
-    arduinoMode = this.checked;
-    _saveState();
-
-    /* Notify config iframe so the preview updates the filename */
-    if (_loadedView === 'config' && _iframeReady) {
-        elIframe.contentWindow.postMessage({ type: 'setArduinoMode', arduino: arduinoMode }, '*');
-    }
-
-});
 
 /* ---------- iframe paths ---------- */
 
 const VIEW_URLS = {
-    'config':       'node_config/node_config.html',
-    'cdi':          'cdi_editor/cdi_view.html',
-    'fdi':          'fdi_editor/fdi_editor.html',
-    'platform':     'platform/platform.html',
-    'can-drivers':  'drivers/drivers.html',
-    'olcb-drivers': 'drivers/drivers.html',
-    'cb-can':       'callbacks/callbacks.html',
-    'cb-olcb':      'callbacks/callbacks.html',
-    'cb-events':    'callbacks/callbacks.html',
-    'cb-config-mem': 'callbacks/callbacks.html',
-    'cb-train':     'callbacks/callbacks.html',
-    'cb-bcast-time': 'callbacks/callbacks.html'
+    'config':           'node_config/node_config.html',
+    'cdi':              'cdi_editor/cdi_view.html',
+    'fdi':              'fdi_editor/fdi_editor.html',
+    'platform-drivers': 'platform/platform.html',
+    'callbacks':        'callbacks/callbacks.html',
+    'file-preview':     'file_preview/file_preview.html'
 };
 
 /* Track which view is currently loaded in the iframe */
 let _loadedView   = null;
 let _iframeReady  = false;
 let _pendingMsgs  = [];   /* messages to send once iframe is ready */
+
+/* ---------- Derived state helpers ---------- */
+
+function _isArduino() {
+
+    return !!(platformState && platformState.isArduino);
+
+}
+
+function _getAddons() {
+
+    return {
+        broadcast: (configFormState && configFormState.broadcast) || 'none',
+        firmware:  !!(configFormState && configFormState.firmware)
+    };
+
+}
 
 /* ---------- Persistence -------------------------------------------------- */
 
@@ -126,7 +106,7 @@ function _saveState() {
             driverState:      driverState,
             callbackState:    callbackState,
             platformState:    platformState,
-            arduinoMode:      arduinoMode
+            filePreviewSelection: filePreviewSelection
         };
 
         try {
@@ -179,9 +159,13 @@ function _restoreState() {
         if (state.platformState) {
             platformState = state.platformState;
         }
-        if (state.arduinoMode) {
-            arduinoMode = state.arduinoMode;
-            document.getElementById('chk-arduino').checked = true;
+        if (state.filePreviewSelection) {
+            filePreviewSelection = state.filePreviewSelection;
+        }
+
+        /* Migration: convert old arduinoMode to platform isArduino */
+        if (state.arduinoMode && platformState && !platformState.isArduino) {
+            platformState.isArduino = true;
         }
 
     } catch (e) { /* corrupt data — ignore */ }
@@ -207,16 +191,15 @@ function _updateTileFilename(tileEl, filename, defaultDesc) {
 
 }
 
-/* ---------- Update platform tile description ---------- */
+/* ---------- Update platform drivers tile description ---------- */
 
 function _updatePlatformTile() {
 
-    var descEl = elTilePlatform.querySelector('.tile-desc');
+    var descEl = elTilePlatformDrivers.querySelector('.tile-desc');
     if (!descEl) { return; }
 
     if (platformState && platformState.platform && platformState.platform !== 'none') {
 
-        /* Show a short name from the state — we don't load PLATFORM_DEFS here */
         var names = {
             'esp32-twai': 'ESP32 + TWAI',
             'esp32-wifi': 'ESP32 + WiFi',
@@ -287,15 +270,38 @@ function _updateDescriptorBadges() {
 
 }
 
+/* ---------- Update Node Type tile description and icon ------------------- */
+
+const NODE_TYPE_INFO = {
+    'basic':            { icon: '\uD83D\uDCE6', name: 'Basic',            desc: 'Events only' },
+    'typical':          { icon: '\u2699\uFE0F',  name: 'Typical',          desc: 'Events + CDI + Config' },
+    'train':            { icon: '\uD83D\uDE82',  name: 'Train',            desc: 'Locomotive' },
+    'train-controller': { icon: '\uD83C\uDFAE',  name: 'Train Controller', desc: 'Throttle' },
+    'custom':           { icon: '\uD83D\uDD27',  name: 'Custom',           desc: 'Advanced \u2014 coming soon' }
+};
+
+function _updateNodeTypeTile() {
+
+    var info = NODE_TYPE_INFO[selectedNodeType];
+    var descEl = document.getElementById('tile-node-type-desc');
+    var iconEl = elTileNodeType.querySelector('.tile-icon');
+
+    if (info) {
+        if (descEl) { descEl.textContent = info.name + ' \u2014 ' + info.desc; }
+        if (iconEl) { iconEl.textContent = info.icon; }
+    } else {
+        if (descEl) { descEl.textContent = 'Select a type...'; }
+        if (iconEl) { iconEl.textContent = '\uD83D\uDCE6'; }
+    }
+
+}
+
 /* ---------- Enable/disable tiles based on node type ---------------------- */
 
 function _updateTileStates(type) {
 
     var hasCfgMem    = type !== 'basic';
     var isTrainNode  = type === 'train';
-    var isTrainRole  = type === 'train' || type === 'train-controller';
-    var hasBcastTime = configFormState && configFormState.broadcast && configFormState.broadcast !== 'none';
-    var hasEvents    = type !== 'basic';
 
     /* CDI — enabled for anything with config memory */
     elTileCdi.classList.toggle('disabled', !hasCfgMem);
@@ -303,45 +309,26 @@ function _updateTileStates(type) {
     /* FDI — only for train (locomotive) */
     elTileFdi.classList.toggle('disabled', !isTrainNode);
 
-    /* Platform — enabled when a node type is selected and feature is on */
-    if (ENABLE_PLATFORM) { elTilePlatform.classList.remove('disabled'); }
+    /* Platform Drivers — enabled when a node type is selected */
+    elTilePlatformDrivers.classList.remove('disabled');
 
-    /* Drivers — always enabled when a node type is selected */
-    elTileCanDrivers.classList.remove('disabled');
-    elTileOlcbDrivers.classList.remove('disabled');
+    /* Callbacks — enabled when a node type is selected */
+    elTileCallbacks.classList.remove('disabled');
 
-    /* Callbacks — gated by feature flags */
-    elTileCbCan.classList.remove('disabled');                                   /* all types */
-    elTileCbOlcb.classList.remove('disabled');                                  /* all types */
-    elTileCbEvents.classList.toggle('disabled', !hasEvents);
-    elTileCbConfigMem.classList.toggle('disabled', !hasCfgMem);
-    elTileCbTrain.classList.toggle('disabled', !isTrainRole);
-    elTileCbBcastTime.classList.toggle('disabled', !hasBcastTime);
+    /* File Preview — enabled when a node type is selected */
+    elTileFilePreview.classList.remove('disabled');
 
 }
 
 /* ---------- Node type selection ---------- */
 
-function selectNodeType(type) {
+function selectNodeType(type, fromConfig) {
 
     selectedNodeType = type;
 
-    /* Highlight the chosen node-type tile as "selected" (blue — it's focused) */
-    document.querySelectorAll('.sidebar-tile[data-type]').forEach(tile => {
-        tile.classList.toggle('selected', tile.dataset.type === type);
-        tile.classList.remove('chosen');
-    });
-
-    /* Clear "selected" from all view tiles (node type area is now focused) */
-    Object.keys(VIEW_TILES).forEach(function (key) {
-        VIEW_TILES[key].classList.remove('selected');
-    });
-
+    _updateNodeTypeTile();
     _updateTileStates(type);
     _updateDescriptorBadges();
-
-    /* Enable Generate button */
-    elBtnGenerate.disabled = false;
 
     /* If currently on a view that just became disabled, switch to config */
     const tileEl = VIEW_TILES[currentView];
@@ -349,10 +336,13 @@ function selectNodeType(type) {
 
         _loadView('config');
 
-    } else {
+    } else if (!fromConfig && _loadedView === 'config' && _iframeReady) {
 
-        /* Load or notify the config view */
-        _loadView('config');
+        /* Config view is already showing — send updated node type */
+        elIframe.contentWindow.postMessage({
+            type: 'setNodeType',
+            nodeType: selectedNodeType
+        }, '*');
 
     }
 
@@ -385,22 +375,6 @@ function _loadView(view) {
 
     });
 
-    /* Downgrade node-type tiles from "selected" (blue) to "chosen" (gray)
-       only when a real view tile is being activated (not the config view,
-       which has no sidebar tile — node types stay blue there) */
-    if (VIEW_TILES[view]) {
-
-        document.querySelectorAll('.sidebar-tile[data-type]').forEach(tile => {
-
-            if (tile.classList.contains('selected')) {
-                tile.classList.remove('selected');
-                tile.classList.add('chosen');
-            }
-
-        });
-
-    }
-
     /* Hide the empty placeholder, show the iframe */
     elEmpty.style.display  = 'none';
     elIframe.style.display = 'block';
@@ -408,7 +382,7 @@ function _loadView(view) {
     /* Determine the actual URL for this view */
     const newUrl = VIEW_URLS[view];
 
-    /* If the same URL is loaded (e.g., switching callback groups), just send new group */
+    /* If the same URL is loaded, just send new init messages */
     if (_loadedView && VIEW_URLS[_loadedView] === newUrl && _iframeReady) {
 
         _loadedView = view;
@@ -460,7 +434,7 @@ function _buildInitMessages(view) {
         });
 
         /* Forward Arduino mode so preview shows main.ino vs main.c */
-        msgs.push({ type: 'setArduinoMode', arduino: arduinoMode });
+        msgs.push({ type: 'setArduinoMode', arduino: _isArduino() });
 
     } else if (view === 'cdi') {
 
@@ -478,34 +452,27 @@ function _buildInitMessages(view) {
             msgs.push({ type: 'loadXml', xml: fdiUserXml, filename: fdiFilename });
         }
 
-    } else if (view === 'platform') {
+    } else if (view === 'platform-drivers') {
 
         if (platformState) {
             msgs.push({ type: 'restoreState', state: platformState });
         }
 
-    } else if (view === 'can-drivers' || view === 'olcb-drivers') {
+    } else if (view === 'callbacks') {
 
-        var firmwareOn = configFormState && configFormState.firmware;
-        msgs.push({ type: 'setNodeType', nodeType: selectedNodeType, firmwareEnabled: !!firmwareOn });
-        msgs.push({ type: 'setGroup', group: view });
+        msgs.push({
+            type: 'restoreState',
+            state: callbackState,
+            nodeType: selectedNodeType,
+            addons: _getAddons()
+        });
 
-        /* Forward platform state so driver codegen can use templates */
-        if (platformState) {
-            msgs.push({ type: 'setPlatform', state: platformState });
-        }
+    } else if (view === 'file-preview') {
 
-        if (driverState[view]) {
-            msgs.push({ type: 'restoreState', state: driverState[view] });
-        }
-
-    } else if (view.startsWith('cb-')) {
-
-        msgs.push({ type: 'setGroup', group: view, nodeType: selectedNodeType });
-
-        if (callbackState[view]) {
-            msgs.push({ type: 'restoreState', state: callbackState[view] });
-        }
+        msgs.push({
+            type: 'setWizardState',
+            state: _buildWizardState()
+        });
 
     }
 
@@ -521,6 +488,30 @@ function _sendInitMessages(view) {
     msgs.forEach(msg => {
         elIframe.contentWindow.postMessage(msg, '*');
     });
+
+}
+
+/* ---------- Build full wizard state for file preview / ZIP ---------- */
+
+function _buildWizardState() {
+
+    return {
+        _format:          'node_wizard_project',
+        _version:         1,
+        selectedNodeType: selectedNodeType,
+        currentView:      currentView,
+        cdiUserXml:       cdiUserXml,
+        fdiUserXml:       fdiUserXml,
+        cdiFilename:      cdiFilename,
+        fdiFilename:      fdiFilename,
+        configMemHighest: configMemHighest,
+        configFormState:  configFormState,
+        driverState:      driverState,
+        callbackState:    callbackState,
+        platformState:    platformState,
+        arduino:          _isArduino(),
+        filePreviewSelection: filePreviewSelection
+    };
 
 }
 
@@ -624,10 +615,27 @@ window.addEventListener('message', function (e) {
 
         case 'callbackStateChanged':
 
-            /* Callback editor reports state for a specific group */
+            /* Legacy: single-group callback state (kept for compatibility) */
             if (e.data.group) {
                 callbackState[e.data.group] = e.data.state;
                 _saveState();
+            }
+            break;
+
+        case 'allCallbackStateChanged':
+
+            /* Unified callbacks editor reports state for all groups */
+            if (e.data.state) {
+                callbackState = e.data.state;
+                _saveState();
+            }
+            break;
+
+        case 'nodeTypeChanged':
+
+            /* Config editor button bar changed node type */
+            if (e.data.nodeType) {
+                selectNodeType(e.data.nodeType, true);
             }
             break;
 
@@ -639,6 +647,21 @@ window.addEventListener('message', function (e) {
                 _updatePlatformTile();
                 _saveState();
             }
+            break;
+
+        case 'filePreviewSelection':
+
+            /* File preview reports which file the user selected */
+            if (e.data.selectedFile) {
+                filePreviewSelection = e.data.selectedFile;
+                _saveState();
+            }
+            break;
+
+        case 'requestDownload':
+
+            /* File preview requests ZIP generation */
+            requestDownload();
             break;
 
         case 'switchView':
@@ -670,25 +693,7 @@ function requestDownload() {
 
     if (!selectedNodeType) { return; }
 
-    /* Gather the full wizard state and generate a ZIP with all project files */
-    var wizardState = {
-        _format:          'node_wizard_project',
-        _version:         1,
-        selectedNodeType: selectedNodeType,
-        currentView:      currentView,
-        cdiUserXml:       cdiUserXml,
-        fdiUserXml:       fdiUserXml,
-        cdiFilename:      cdiFilename,
-        fdiFilename:      fdiFilename,
-        configMemHighest: configMemHighest,
-        configFormState:  configFormState,
-        driverState:      driverState,
-        callbackState:    callbackState,
-        platformState:    platformState,
-        arduino:          arduinoMode
-    };
-
-    ZipExport.generateZip(wizardState);
+    ZipExport.generateZip(_buildWizardState());
 
 }
 
@@ -696,23 +701,7 @@ function requestDownload() {
 
 function saveProject() {
 
-    /* Gather the same state blob that localStorage uses */
-    var state = {
-        _format:          'node_wizard_project',
-        _version:         1,
-        selectedNodeType: selectedNodeType,
-        currentView:      currentView,
-        cdiUserXml:       cdiUserXml,
-        fdiUserXml:       fdiUserXml,
-        cdiFilename:      cdiFilename,
-        fdiFilename:      fdiFilename,
-        configMemHighest: configMemHighest,
-        configFormState:  configFormState,
-        driverState:      driverState,
-        callbackState:    callbackState,
-        platformState:    platformState,
-        arduinoMode:      arduinoMode
-    };
+    var state = _buildWizardState();
 
     var json = JSON.stringify(state, null, 2);
     var blob = new Blob([json], { type: 'application/json' });
@@ -720,7 +709,10 @@ function saveProject() {
 
     var a = document.createElement('a');
     a.href     = url;
-    a.download = (selectedNodeType || 'node') + '_project.json';
+    var projName = (configFormState && configFormState.projectName)
+        ? configFormState.projectName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '')
+        : '';
+    a.download = (projName || selectedNodeType || 'node') + '_project.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -757,10 +749,14 @@ document.getElementById('file-load-project').addEventListener('change', function
             driverState      = state.driverState       || {};
             callbackState    = state.callbackState     || {};
             platformState    = state.platformState     || null;
-            arduinoMode      = !!state.arduinoMode;
-            document.getElementById('chk-arduino').checked = arduinoMode;
+            filePreviewSelection = state.filePreviewSelection || null;
             cdiValidation    = null;
             fdiValidation    = null;
+
+            /* Migration: old arduinoMode flag */
+            if (state.arduinoMode && platformState && !platformState.isArduino) {
+                platformState.isArduino = true;
+            }
 
             /* Persist to localStorage so refresh works */
             _saveState();
@@ -768,14 +764,9 @@ document.getElementById('file-load-project').addEventListener('change', function
             /* Reload UI */
             if (selectedNodeType) {
 
-                document.querySelectorAll('.sidebar-tile[data-type]').forEach(function (tile) {
-                    tile.classList.toggle('selected', tile.dataset.type === selectedNodeType);
-                    tile.classList.remove('chosen');
-                });
-
+                _updateNodeTypeTile();
                 _updateTileStates(selectedNodeType);
                 _updateDescriptorBadges();
-                elBtnGenerate.disabled = false;
 
                 /* CDI/FDI filenames shown on sidebar tiles */
                 _updatePlatformTile();
@@ -804,31 +795,13 @@ document.getElementById('file-load-project').addEventListener('change', function
 
 /* ---------- Init: restore state and apply sidebar ----------------------- */
 
-/* Hide the Platform sidebar section if disabled */
-if (!ENABLE_PLATFORM) {
-
-    var platSection = elTilePlatform.closest('.sidebar-section');
-    if (platSection) { platSection.style.display = 'none'; }
-
-}
-
 _restoreState();
 
 if (selectedNodeType) {
 
-    /* Restore sidebar tile selection — blue if config view (no competing tile),
-       gray if a view tile will be focused */
-    var viewToRestore = currentView || 'config';
-    var useChosen = !!VIEW_TILES[viewToRestore];
-    document.querySelectorAll('.sidebar-tile[data-type]').forEach(tile => {
-        var isMatch = tile.dataset.type === selectedNodeType;
-        tile.classList.toggle('chosen', isMatch && useChosen);
-        tile.classList.toggle('selected', isMatch && !useChosen);
-    });
-
+    _updateNodeTypeTile();
     _updateTileStates(selectedNodeType);
     _updateDescriptorBadges();
-    elBtnGenerate.disabled = false;
 
     /* CDI/FDI filenames shown on sidebar tiles */
     _updatePlatformTile();
@@ -837,5 +810,10 @@ if (selectedNodeType) {
     const viewToLoad = currentView || 'config';
     currentView = null;   /* force _loadView to actually load */
     _loadView(viewToLoad);
+
+} else {
+
+    /* No node type yet — load config view so user can pick one from the button bar */
+    _loadView('config');
 
 }

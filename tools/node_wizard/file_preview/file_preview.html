@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Preview — OpenLcbCLib</title>
+    <link rel="stylesheet" href="file_preview.css">
+
+    <!-- CodeMirror 6 (read-only C preview) -->
+    <script src="../vendor/codemirror/dist/codemirror.min.js"></script>
+    <script src="../vendor/codemirror/cm-readonly.js"></script>
+</head>
+<body>
+
+    <div class="layout">
+
+        <!-- ===== LEFT: File tree ===== -->
+        <div class="tree-panel">
+            <h3>Generated Files</h3>
+            <div id="file-tree" class="file-tree"></div>
+            <div class="tree-actions">
+                <button class="generate-btn" id="btn-generate" onclick="requestDownload()">
+                    Generate Files
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== SPLITTER ===== -->
+        <div class="splitter" id="splitter"></div>
+
+        <!-- ===== RIGHT: Code viewer ===== -->
+        <div class="viewer-panel">
+            <div class="viewer-header">
+                <span class="viewer-filename" id="viewer-filename">Select a file to preview</span>
+            </div>
+            <div class="code-viewer" id="code-viewer"></div>
+        </div>
+
+    </div>
+
+    <!-- Codegen scripts (needed for file content generation) -->
+    <script src="../callbacks/js/callback_defs.js"></script>
+    <script src="../callbacks/js/callback_codegen.js"></script>
+    <script src="../drivers/js/driver_defs.js"></script>
+    <script src="../drivers/js/driver_codegen.js"></script>
+    <script src="../platform/js/platform_defs.js"></script>
+    <script src="../node_config/js/wke_defs.js"></script>
+    <script src="../node_config/js/codegen.js"></script>
+
+    <script src="js/file_preview.js"></script>
+
+</body>
+</html>

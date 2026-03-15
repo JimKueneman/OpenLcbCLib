@@ -5,70 +5,174 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Callback Editor — OpenLcbCLib</title>
     <link rel="stylesheet" href="callbacks.css">
-
-    <!-- CodeMirror 6 (read-only C preview) -->
-    <script src="../vendor/codemirror/dist/codemirror.min.js"></script>
-    <script src="../vendor/codemirror/cm-readonly.js"></script>
 </head>
 <body>
 
-    <div class="layout">
+    <header class="page-header">
+        <h2>Application Callbacks</h2>
+        <p class="panel-desc">Select the callback functions your application needs. Sections are shown based on the selected node type.</p>
+    </header>
 
-        <!-- ===== LEFT: Callback list ===== -->
-        <main class="fn-panel" id="fn-panel">
-            <h2 id="group-title">Callback Functions</h2>
-            <p class="group-desc" id="group-desc">Select the callbacks to generate stubs for</p>
-            <div id="fn-list"></div>
+    <div class="content-row">
+
+        <main class="callbacks-panel">
+            <div class="callbacks-inner" id="callbacks-inner">
+                <div id="callback-sections"></div>
+            </div>
         </main>
 
-        <!-- ===== SPLITTER ===== -->
-        <div class="splitter" id="splitter"></div>
-
-        <!-- ===== RIGHT: Live code preview ===== -->
-        <aside class="preview-panel">
-
-            <div class="preview-header">
-                <div class="preview-tabs">
-                    <button class="tab-btn active" id="tab-h" onclick="switchTab('h')">callback.h</button>
-                    <button class="tab-btn"        id="tab-c" onclick="switchTab('c')">callback.c</button>
+        <aside class="detail-panel" id="detail-panel">
+            <div class="detail-panel-placeholder" id="detail-placeholder">Hover over a callback to see details</div>
+            <div class="detail-content" id="detail-content" style="display:none">
+                <div class="detail-section detail-prototype" id="detail-prototype"></div>
+                <div class="detail-section">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-text" id="detail-desc"></div>
                 </div>
-                <span class="preview-filename" id="preview-filename"></span>
+                <div class="detail-section" id="detail-detail-section" style="display:none">
+                    <div class="detail-label">Details</div>
+                    <div class="detail-text" id="detail-detail"></div>
+                </div>
+                <div class="detail-section detail-meta" id="detail-meta"></div>
             </div>
-
-            <div class="code-preview" id="code-preview"></div>
-
         </aside>
 
     </div>
 
     <script src="js/callback_defs.js"></script>
-    <script src="js/callback_codegen.js"></script>
 
     <script>
 
-    let _currentGroup = null;
-    let _currentTab   = 'h';
-    let _currentNodeType = null;
+    /* ===================================================================== */
+    /* State                                                                 */
+    /* ===================================================================== */
 
-    function switchTab(tab) {
+    var _currentNodeType = null;
+    var _allGroupState   = {};   /* { 'cb-can': { checked: ['on_rx'] }, ... } */
 
-        _currentTab = tab;
-        document.getElementById('tab-h').classList.toggle('active', tab === 'h');
-        document.getElementById('tab-c').classList.toggle('active', tab === 'c');
-        _renderPreview();
+    /* Detail panel DOM refs */
+    var _elDetailPlaceholder   = document.getElementById('detail-placeholder');
+    var _elDetailContent       = document.getElementById('detail-content');
+    var _elDetailPrototype     = document.getElementById('detail-prototype');
+    var _elDetailDesc          = document.getElementById('detail-desc');
+    var _elDetailDetailSection = document.getElementById('detail-detail-section');
+    var _elDetailDetail        = document.getElementById('detail-detail');
+    var _elDetailMeta          = document.getElementById('detail-meta');
+
+    /* ===================================================================== */
+    /* Show detail for a callback in the right panel                        */
+    /* ===================================================================== */
+
+    function _showDetail(group, fn) {
+
+        _elDetailPlaceholder.style.display = 'none';
+        _elDetailContent.style.display     = 'block';
+
+        /* Full C prototype */
+        var fullName = group.functionPrefix + '_' + fn.name;
+        var proto    = fn.returnType + ' ' + fullName + '(' + fn.params + ')';
+        _elDetailPrototype.textContent = proto;
+
+        /* Description */
+        _elDetailDesc.textContent = fn.description;
+
+        /* Extended detail */
+        if (fn.detail) {
+
+            _elDetailDetailSection.style.display = 'block';
+            _elDetailDetail.textContent = fn.detail;
+
+        } else {
+
+            _elDetailDetailSection.style.display = 'none';
+
+        }
+
+        /* Meta info */
+        var meta = [];
+
+        if (fn.returnType !== 'void') {
+            meta.push('Returns: ' + fn.returnType);
+        }
+
+        meta.push('Config field: ' + group.diStruct + '.' + fn.configField);
+        meta.push('Header: ' + group.filePrefix + '.h');
+
+        if (fn.required) {
+            meta.push('This callback is required — it is always included.');
+        }
+
+        _elDetailMeta.innerHTML = meta.map(function (m) {
+
+            return '<div class="detail-meta-row">' + _escHtml(m) + '</div>';
+
+        }).join('');
 
     }
 
-    /* ---------- Build a single checkbox item ---------- */
+    function _escHtml(str) {
+
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+
+    }
+
+    /* Base groups for each node type (before add-on filtering) */
+    var _baseGroups = {
+        'basic':            ['cb-can', 'cb-olcb', 'cb-events'],
+        'typical':          ['cb-can', 'cb-olcb', 'cb-events', 'cb-config-mem'],
+        'train':            ['cb-can', 'cb-olcb', 'cb-events', 'cb-config-mem', 'cb-train'],
+        'train-controller': ['cb-can', 'cb-olcb', 'cb-events', 'cb-train']
+    };
+
+    /* Current add-on selections from the config editor */
+    var _addons = { broadcast: 'none', firmware: false };
+
+    /*
+     * Maps add-on keys to the callback group they unlock.
+     * Each entry: { key: add-on property name, test: predicate, group: group id }
+     * To add a new add-on, just append an entry here.
+     */
+    var _addonGroupMap = [
+        { key: 'broadcast', test: function (v) { return v && v !== 'none'; }, group: 'cb-bcast-time' },
+        { key: 'firmware',  test: function (v) { return !!v; },              group: 'cb-firmware' }
+    ];
+
+    /* Build the effective visibility list from node type + add-ons */
+    function _getVisibleGroups() {
+
+        var groups = (_baseGroups[_currentNodeType] || []).slice();
+
+        _addonGroupMap.forEach(function (entry) {
+
+            if (entry.test(_addons[entry.key])) {
+                groups.push(entry.group);
+            }
+
+        });
+
+        return groups;
+
+    }
+
+    /* Train callback section filtering by role */
+    var _trainSections      = ['Train Node \u2014 Notifications', 'Train Node \u2014 Decisions', 'Train Search'];
+    var _controllerSections = ['Throttle \u2014 Replies', 'Train Search'];
+
+    /* ===================================================================== */
+    /* Build a single checkbox item                                          */
+    /* ===================================================================== */
 
     function _createFnItem(group, fn) {
 
-        const item = document.createElement('label');
+        var item = document.createElement('label');
         item.className = 'fn-item';
 
-        const cb = document.createElement('input');
-        cb.type    = 'checkbox';
-        cb.dataset.fnName = fn.name;
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.dataset.fnName  = fn.name;
+        cb.dataset.groupKey = '';  /* set by caller */
 
         if (fn.required) {
             cb.checked  = true;
@@ -77,57 +181,44 @@
 
         cb.addEventListener('change', function () {
 
-            _renderPreview();
+            _collectState();
             _postStateToParent();
 
         });
 
-        const content = document.createElement('div');
+        var content = document.createElement('div');
         content.className = 'fn-item-content';
 
-        const nameEl = document.createElement('span');
+        var nameEl = document.createElement('span');
         nameEl.className   = 'fn-name';
         nameEl.textContent = group.functionPrefix + '_' + fn.name + '()';
 
-        const descEl = document.createElement('span');
+        var descEl = document.createElement('span');
         descEl.className   = 'fn-desc';
         descEl.textContent = fn.description;
 
         content.appendChild(nameEl);
         content.appendChild(descEl);
 
-        if (fn.detail) {
+        if (fn.required) {
 
-            const moreLink = document.createElement('a');
-            moreLink.className   = 'fn-detail-toggle';
-            moreLink.textContent = 'more';
-            moreLink.href        = '#';
-
-            const detailEl = document.createElement('span');
-            detailEl.className   = 'fn-detail';
-            detailEl.textContent = fn.detail;
-            detailEl.style.display = 'none';
-
-            moreLink.addEventListener('click', function (ev) {
-
-                ev.preventDefault();
-                ev.stopPropagation();
-                var showing = detailEl.style.display !== 'none';
-                detailEl.style.display = showing ? 'none' : 'block';
-                moreLink.textContent   = showing ? 'more' : 'less';
-
-            });
-
-            content.appendChild(moreLink);
-            content.appendChild(detailEl);
+            var tagEl = document.createElement('span');
+            tagEl.className   = 'fn-required';
+            tagEl.textContent = 'REQUIRED';
+            content.appendChild(tagEl);
 
         }
 
-        const tagEl = document.createElement('span');
-        tagEl.className   = fn.required ? 'fn-required' : 'fn-optional';
-        tagEl.textContent = fn.required ? 'REQUIRED' : 'Optional';
+        /* Hover shows detail in the right panel */
+        (function (g, f) {
 
-        content.appendChild(tagEl);
+            item.addEventListener('mouseenter', function () {
+
+                _showDetail(g, f);
+
+            });
+
+        })(group, fn);
 
         item.appendChild(cb);
         item.appendChild(content);
@@ -136,39 +227,19 @@
 
     }
 
-    /* ---------- Build checkbox list for a group ---------- */
+    /* ===================================================================== */
+    /* Filter train callbacks by node role                                   */
+    /* ===================================================================== */
 
-    function _createSectionDetails(title) {
+    function _filterFunctionsForRole(groupKey, functions) {
 
-        var details = document.createElement('details');
-        details.className = 'section-collapsible';
-
-        var summary = document.createElement('summary');
-        summary.className   = 'section-toggle';
-        summary.textContent = title;
-        details.appendChild(summary);
-
-        var list = document.createElement('div');
-        list.className = 'section-list';
-        details.appendChild(list);
-
-        return { details: details, list: list };
-
-    }
-
-    function _filterFunctionsForRole(functions) {
-
-        /* Only filter when viewing cb-train with a known node type */
-        if (_currentGroup !== 'cb-train' || !_currentNodeType) { return functions; }
-
-        var trainSections = ['Train Node — Notifications', 'Train Node — Decisions', 'Train Search'];
-        var controllerSections = ['Throttle — Replies', 'Train Search'];
+        if (groupKey !== 'cb-train' || !_currentNodeType) { return functions; }
 
         var allowed;
         if (_currentNodeType === 'train') {
-            allowed = trainSections;
+            allowed = _trainSections;
         } else if (_currentNodeType === 'train-controller') {
-            allowed = controllerSections;
+            allowed = _controllerSections;
         } else {
             return functions;
         }
@@ -182,179 +253,219 @@
 
     }
 
-    function _renderFunctionList(group) {
+    /* ===================================================================== */
+    /* Render all visible groups                                             */
+    /* ===================================================================== */
 
-        document.getElementById('group-title').textContent = group.title;
-        document.getElementById('group-desc').textContent  = group.description;
+    function _renderAllGroups() {
 
-        const container = document.getElementById('fn-list');
+        var container = document.getElementById('callback-sections');
         container.innerHTML = '';
 
-        /* Filter functions by train role when applicable */
-        var visibleFunctions = _filterFunctionsForRole(group.functions);
+        var visibleGroupKeys = _getVisibleGroups();
 
-        /* Check if any function uses sections or advanced */
-        var hasSections = visibleFunctions.some(function (fn) { return !!fn.section; });
-        var hasAdvanced = visibleFunctions.some(function (fn) { return !!fn.advanced; });
+        visibleGroupKeys.forEach(function (groupKey) {
 
-        if (hasSections) {
+            var group = CALLBACK_GROUPS[groupKey];
+            if (!group) { return; }
 
-            /* Section-based layout: each section is a collapsible <details> */
-            var lastSection = null;
-            var currentList = null;
+            var visibleFunctions = _filterFunctionsForRole(groupKey, group.functions);
+            if (visibleFunctions.length === 0) { return; }
 
-            visibleFunctions.forEach(function (fn) {
+            /* Group <details> wrapper */
+            var details = document.createElement('details');
+            details.className = 'group-section';
+            details.dataset.groupKey = groupKey;
+            details.open = true;
 
-                if (fn.section !== lastSection) {
-                    var sec = _createSectionDetails(fn.section);
-                    container.appendChild(sec.details);
-                    currentList = sec.list;
-                    lastSection = fn.section;
-                }
+            var summary = document.createElement('summary');
+            summary.className = 'group-header';
 
-                currentList.appendChild(_createFnItem(group, fn));
+            var titleText = document.createTextNode(group.title);
+            summary.appendChild(titleText);
 
-            });
+            var descSpan = document.createElement('span');
+            descSpan.className = 'group-header-desc';
+            descSpan.textContent = '\u2014 ' + group.description;
+            summary.appendChild(descSpan);
 
-        } else {
+            details.appendChild(summary);
 
-            /* Flat layout with optional Advanced collapsible */
-            visibleFunctions.forEach(function (fn) {
+            var body = document.createElement('div');
+            body.className = 'group-body';
 
-                if (fn.advanced) { return; }
-                container.appendChild(_createFnItem(group, fn));
+            /* Check for section-based layout (Train callbacks) */
+            var hasSections = visibleFunctions.some(function (fn) { return !!fn.section; });
+            var hasAdvanced = visibleFunctions.some(function (fn) { return !!fn.advanced; });
 
-            });
+            if (hasSections) {
 
-            if (hasAdvanced) {
-
-                var details = document.createElement('details');
-                details.className = 'advanced-section';
-
-                var summary = document.createElement('summary');
-                summary.className   = 'advanced-toggle';
-                summary.textContent = 'Advanced';
-                details.appendChild(summary);
-
-                var advContainer = document.createElement('div');
-                advContainer.className = 'advanced-list';
+                var lastSection = null;
+                var currentList = null;
 
                 visibleFunctions.forEach(function (fn) {
 
-                    if (!fn.advanced) { return; }
-                    advContainer.appendChild(_createFnItem(group, fn));
+                    if (fn.section !== lastSection) {
+
+                        var sec = document.createElement('details');
+                        sec.className = 'sub-section';
+                        sec.open = true;
+
+                        var secSummary = document.createElement('summary');
+                        secSummary.className   = 'sub-section-toggle';
+                        secSummary.textContent = fn.section;
+                        sec.appendChild(secSummary);
+
+                        currentList = document.createElement('div');
+                        currentList.className = 'sub-section-list';
+                        sec.appendChild(currentList);
+
+                        body.appendChild(sec);
+                        lastSection = fn.section;
+
+                    }
+
+                    var item = _createFnItem(group, fn);
+                    item.querySelector('input').dataset.groupKey = groupKey;
+                    currentList.appendChild(item);
 
                 });
 
-                details.appendChild(advContainer);
-                container.appendChild(details);
+            } else {
+
+                /* Flat layout with optional Advanced collapsible */
+                visibleFunctions.forEach(function (fn) {
+
+                    if (fn.advanced) { return; }
+                    var item = _createFnItem(group, fn);
+                    item.querySelector('input').dataset.groupKey = groupKey;
+                    body.appendChild(item);
+
+                });
+
+                if (hasAdvanced) {
+
+                    var advDetails = document.createElement('details');
+                    advDetails.className = 'advanced-section';
+
+                    var advSummary = document.createElement('summary');
+                    advSummary.className   = 'advanced-toggle';
+                    advSummary.textContent = 'Advanced';
+                    advDetails.appendChild(advSummary);
+
+                    var advContainer = document.createElement('div');
+                    advContainer.className = 'advanced-list';
+
+                    visibleFunctions.forEach(function (fn) {
+
+                        if (!fn.advanced) { return; }
+                        var item = _createFnItem(group, fn);
+                        item.querySelector('input').dataset.groupKey = groupKey;
+                        advContainer.appendChild(item);
+
+                    });
+
+                    advDetails.appendChild(advContainer);
+                    body.appendChild(advDetails);
+
+                }
 
             }
 
-        }
+            details.appendChild(body);
+            container.appendChild(details);
+
+        });
+
+        /* Restore checked state */
+        _applyState();
+
+        /* Equalize all section widths to the widest */
+        _equalizeSectionWidths();
 
     }
 
-    function _getCheckedFunctions() {
+    function _equalizeSectionWidths() {
 
-        if (!_currentGroup) { return []; }
+        var sections = document.querySelectorAll('.group-section');
+        var inner    = document.getElementById('callbacks-inner');
+        if (sections.length === 0) { return; }
 
-        const group = CALLBACK_GROUPS[_currentGroup];
-        const checked = [];
+        /* Reset to natural width first */
+        sections.forEach(function (s) { s.style.width = ''; });
+        if (inner) { inner.style.width = ''; }
 
-        document.querySelectorAll('#fn-list input[type="checkbox"]').forEach(function (cb) {
+        /* Measure widest */
+        var maxW = 0;
+        sections.forEach(function (s) {
+
+            var w = s.offsetWidth;
+            if (w > maxW) { maxW = w; }
+
+        });
+
+        /* Apply uniform width to sections and container */
+        sections.forEach(function (s) { s.style.width = maxW + 'px'; });
+        if (inner) { inner.style.width = maxW + 'px'; }
+
+    }
+
+    /* ===================================================================== */
+    /* State management                                                      */
+    /* ===================================================================== */
+
+    function _collectState() {
+
+        _allGroupState = {};
+
+        document.querySelectorAll('#callback-sections input[type="checkbox"]').forEach(function (cb) {
+
+            var groupKey = cb.dataset.groupKey;
+            if (!groupKey) { return; }
+
+            if (!_allGroupState[groupKey]) {
+                _allGroupState[groupKey] = { checked: [] };
+            }
 
             if (cb.checked) {
-
-                const fn = group.functions.find(function (f) { return f.name === cb.dataset.fnName; });
-                if (fn) { checked.push(fn); }
-
+                _allGroupState[groupKey].checked.push(cb.dataset.fnName);
             }
 
         });
 
-        return checked;
-
     }
 
-    /* ---------- CodeMirror read-only viewer ---------- */
+    function _applyState() {
 
-    let _cmViewer = null;
+        document.querySelectorAll('#callback-sections input[type="checkbox"]').forEach(function (cb) {
 
-    function _ensureCMViewer() {
+            if (cb.disabled) { return; }
 
-        if (_cmViewer) { return _cmViewer; }
-        _cmViewer = createCMReadonly(document.getElementById('code-preview'));
-        return _cmViewer;
+            var groupKey = cb.dataset.groupKey;
+            var gs = _allGroupState[groupKey];
 
-    }
+            if (gs && gs.checked) {
+                cb.checked = gs.checked.indexOf(cb.dataset.fnName) >= 0;
+            } else {
+                cb.checked = false;
+            }
 
-    function _renderPreview() {
-
-        const viewer  = _ensureCMViewer();
-        const fnameEl = document.getElementById('preview-filename');
-
-        if (!_currentGroup) {
-
-            viewer.value = '// Select a callback group to preview';
-            return;
-
-        }
-
-        const group   = CALLBACK_GROUPS[_currentGroup];
-        const checked = _getCheckedFunctions();
-
-        document.getElementById('tab-h').textContent = group.filePrefix + '.h';
-        document.getElementById('tab-c').textContent = group.filePrefix + '.c';
-
-        if (_currentTab === 'h') {
-
-            fnameEl.textContent = group.filePrefix + '.h';
-            viewer.value = CallbackCodegen.generateH(group, checked);
-
-        } else {
-
-            fnameEl.textContent = group.filePrefix + '.c';
-            viewer.value = CallbackCodegen.generateC(group, checked);
-
-        }
+        });
 
     }
 
     function _postStateToParent() {
 
-        if (!_currentGroup) { return; }
-
-        const checked = [];
-        document.querySelectorAll('#fn-list input[type="checkbox"]').forEach(function (cb) {
-
-            if (cb.checked) { checked.push(cb.dataset.fnName); }
-
-        });
-
         window.parent.postMessage({
-            type:  'callbackStateChanged',
-            group: _currentGroup,
-            state: { checked: checked }
+            type:  'allCallbackStateChanged',
+            state: _allGroupState
         }, '*');
 
     }
 
-    function _restoreState(state) {
-
-        if (!state || !state.checked) { return; }
-
-        document.querySelectorAll('#fn-list input[type="checkbox"]').forEach(function (cb) {
-
-            if (!cb.disabled) {
-                cb.checked = state.checked.indexOf(cb.dataset.fnName) >= 0;
-            }
-
-        });
-
-        _renderPreview();
-
-    }
+    /* ===================================================================== */
+    /* Message listener                                                      */
+    /* ===================================================================== */
 
     window.addEventListener('message', function (e) {
 
@@ -362,25 +473,38 @@
 
         switch (e.data.type) {
 
-            case 'setGroup':
+            case 'setNodeType':
 
-                _currentGroup    = e.data.group;
                 _currentNodeType = e.data.nodeType || null;
+                if (e.data.addons) { _addons = e.data.addons; }
+                _renderAllGroups();
+                break;
 
-                if (CALLBACK_GROUPS[_currentGroup]) {
-                    _renderFunctionList(CALLBACK_GROUPS[_currentGroup]);
-                    _renderPreview();
-                }
+            case 'setAddons':
+
+                if (e.data.addons) { _addons = e.data.addons; }
+                _renderAllGroups();
                 break;
 
             case 'restoreState':
 
-                _restoreState(e.data.state);
+                if (e.data.state) {
+                    _allGroupState = e.data.state;
+                }
+                if (e.data.nodeType) {
+                    _currentNodeType = e.data.nodeType;
+                }
+                if (e.data.addons) { _addons = e.data.addons; }
+                _renderAllGroups();
                 break;
 
         }
 
     });
+
+    /* ===================================================================== */
+    /* Init                                                                  */
+    /* ===================================================================== */
 
     window.parent.postMessage({ type: 'ready' }, '*');
 

@@ -6,24 +6,50 @@
     <title>Node Configuration — OpenLcbCLib</title>
     <link rel="stylesheet" href="node_config.css">
 
-    <!-- CodeMirror 6 (read-only C preview) -->
-    <script src="../vendor/codemirror/dist/codemirror.min.js"></script>
-    <script src="../vendor/codemirror/cm-readonly.js"></script>
+    <!-- CodeMirror scripts removed — preview panel now in File Preview view -->
 </head>
 <body>
+
+    <!-- ===== Node Type selector ===== -->
+    <div class="node-type-area" id="node-type-area">
+        <div class="node-type-header">
+            <span class="node-type-label">Node Type</span>
+            <button class="reset-defaults-btn" id="btn-reset-defaults" title="Reset all settings to defaults">Reset to Defaults</button>
+        </div>
+        <div class="node-type-buttons">
+            <button class="node-type-btn" data-type="basic" title="Events only">
+                <span class="btn-icon">&#x1F4E6;</span>
+                <span class="btn-label">Basic</span>
+            </button>
+            <button class="node-type-btn" data-type="typical" title="Events + CDI + Config Memory">
+                <span class="btn-icon">&#x2699;&#xFE0F;</span>
+                <span class="btn-label">Typical</span>
+            </button>
+            <button class="node-type-btn" data-type="train" title="Locomotive node">
+                <span class="btn-icon">&#x1F682;</span>
+                <span class="btn-label">Train</span>
+            </button>
+            <button class="node-type-btn" data-type="train-controller" title="Throttle node">
+                <span class="btn-icon">&#x1F3AE;</span>
+                <span class="btn-label">Train Controller</span>
+            </button>
+            <!-- Custom node type hidden — complexity not needed yet -->
+        </div>
+        <div class="node-type-desc-box hidden" id="node-type-desc-box"></div>
+    </div>
 
     <div class="layout">
 
         <!-- ===== LEFT: Options form ===== -->
         <main class="config-panel" id="config-panel">
 
-            <section class="step-section" id="addons-section">
+            <section class="step-section hidden" id="addons-section">
                 <h2>Options</h2>
 
                 <div class="addon-list">
 
                     <!-- SNIP (Basic only) -->
-                    <div class="addon-group hidden" id="addon-snip-group">
+                    <div class="addon-group hidden" id="addon-snip-group" data-help="snip">
                         <div class="addon-group-header">
                             <label class="addon-item">
                                 <input type="checkbox" id="addon-snip">
@@ -33,125 +59,219 @@
                         </div>
 
                         <div class="snip-fields hidden" id="snip-fields">
-                            <div class="snip-field">
+                            <div class="snip-field" data-help="snip-manufacturer">
                                 <label for="snip-manufacturer">Manufacturer Name</label>
                                 <input type="text" id="snip-manufacturer" maxlength="40" placeholder="My Company">
                             </div>
-                            <div class="snip-field">
+                            <div class="snip-field" data-help="snip-model">
                                 <label for="snip-model">Model</label>
                                 <input type="text" id="snip-model" maxlength="40" placeholder="Signal Controller v2">
                             </div>
-                            <div class="snip-field">
+                            <div class="snip-field" data-help="snip-hw-version">
                                 <label for="snip-hw-version">Hardware Version</label>
                                 <input type="text" id="snip-hw-version" maxlength="20" placeholder="1.0">
                             </div>
-                            <div class="snip-field">
+                            <div class="snip-field" data-help="snip-sw-version">
                                 <label for="snip-sw-version">Software Version</label>
                                 <input type="text" id="snip-sw-version" maxlength="20" placeholder="0.1.0">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Config Memory options (Typical/Train only) -->
-                    <div class="addon-group hidden" id="addon-config-group">
-                        <span class="addon-group-title">Memory Configuration</span>
+                    <!-- Project Options (always visible, always first) -->
+                    <details class="addon-collapsible" id="project-options-section" open>
+                        <summary class="addon-collapsible-toggle">Project Options <span class="toggle-hint" id="project-summary-hint">— name, author, and Node ID</span></summary>
 
-                        <label class="addon-item">
-                            <input type="checkbox" id="config-unaligned-reads" checked>
-                            <span class="addon-label">Unaligned Reads Supported</span>
-                            <span class="addon-desc">Uncheck if hardware (EEPROM/FLASH/FRAM/etc.) requires aligned access</span>
-                        </label>
+                        <div class="addon-collapsible-content">
 
-                        <label class="addon-item">
-                            <input type="checkbox" id="config-unaligned-writes" checked>
-                            <span class="addon-label">Unaligned Writes Supported</span>
-                            <span class="addon-desc">Uncheck if hardware (EEPROM/FLASH/FRAM/etc.) requires aligned access</span>
-                        </label>
+                            <div class="project-fields">
 
-                        <div class="config-field">
-                            <label for="config-mem-highest-addr">Config memory size (highest address)</label>
-                            <input type="text" id="config-mem-highest-addr" value="0x200" placeholder="0x200">
+                                <div class="snip-field" data-help="project-name">
+                                    <label for="project-name">Project Name</label>
+                                    <input type="text" id="project-name" maxlength="60" placeholder="my_signal_controller">
+                                </div>
+
+                                <div class="snip-field" data-help="project-author">
+                                    <label for="project-author">Author</label>
+                                    <input type="text" id="project-author" maxlength="60" placeholder="Your Name or Company">
+                                </div>
+
+                            </div>
+
+                            <div class="project-node-id-row" data-help="project-node-id">
+                                <label for="project-node-id">Node ID</label>
+                                <input type="text" id="project-node-id" maxlength="17" placeholder="XX.XX.XX.XX.XX.XX" pattern="[0-9A-Fa-f]{2}\.[0-9A-Fa-f]{2}\.[0-9A-Fa-f]{2}\.[0-9A-Fa-f]{2}\.[0-9A-Fa-f]{2}\.[0-9A-Fa-f]{2}">
+                                <span class="node-id-validation" id="node-id-validation"></span>
+                            </div>
+
+                            <p class="field-note">
+                                Every OpenLCB node needs a <strong>globally unique 48-bit Node ID</strong>.
+                                <a href="https://registry.openlcb.org/uniqueidranges" target="_blank" rel="noopener">Register your own range</a>
+                                or see the
+                                <a href="https://openlcb.org/specifications/" target="_blank" rel="noopener">OpenLCB Unique Identifiers Standard</a>
+                                for details.
+                            </p>
+
                         </div>
-                        <p class="field-note" id="config-mem-warning" style="display:none; color:#b91c1c; background:#fee2e2; padding:6px 8px; border-radius:4px; border:1px solid #fca5a5;">
-                        </p>
-                        <p class="field-note">
-                            ⚠ Bytes 0–126 are reserved by the default CDI for
-                            <strong>User Name</strong> (bytes 0–62, 63 bytes) and
-                            <strong>User Description</strong> (bytes 63–126, 64 bytes).
-                            Your application data must start at byte 127 (<code>0x7F</code>) or higher.
-                        </p>
-                    </div>
+
+                    </details>
 
                     <!-- Event Buffers (always visible) -->
-                    <div class="addon-group" id="addon-events-group">
-                        <span class="addon-group-title">Event Buffers</span>
+                    <details class="addon-collapsible" id="addon-events-group" data-help="events">
+                        <summary class="addon-collapsible-toggle">Event Buffers <span class="toggle-hint" id="evt-buf-summary-hint">— producer/consumer counts and range allocations</span></summary>
 
-                        <div class="event-count-grid">
+                        <div class="addon-collapsible-content">
 
-                            <div class="event-count-field">
-                                <label for="event-producer-count">Producers</label>
-                                <input type="number" id="event-producer-count" value="64" min="1" max="255">
+                            <p class="adv-desc">How many events this node can produce, consume, or match by range. Size these to cover every Event ID your application registers. Range events let a single entry cover a contiguous block of Event IDs.</p>
+
+                            <div class="event-count-grid">
+
+                                <div class="event-count-field" data-help="evt-producers">
+                                    <label for="event-producer-count">Producers</label>
+                                    <input type="number" id="event-producer-count" value="64" min="1" max="255">
+                                </div>
+
+                                <div class="event-count-field" data-help="evt-consumers">
+                                    <label for="event-consumer-count">Consumers</label>
+                                    <input type="number" id="event-consumer-count" value="64" min="1" max="255">
+                                </div>
+
+                                <div class="event-count-field" data-help="evt-producer-ranges">
+                                    <label for="event-producer-range-count">Producer Ranges</label>
+                                    <input type="number" id="event-producer-range-count" value="4" min="0" max="255">
+                                </div>
+
+                                <div class="event-count-field" data-help="evt-consumer-ranges">
+                                    <label for="event-consumer-range-count">Consumer Ranges</label>
+                                    <input type="number" id="event-consumer-range-count" value="4" min="0" max="255">
+                                </div>
+
                             </div>
 
-                            <div class="event-count-field">
-                                <label for="event-consumer-count">Consumers</label>
-                                <input type="number" id="event-consumer-count" value="64" min="1" max="255">
+                            <p class="buffer-tally">
+                                Producers: <strong id="evt-prod-tally">64</strong> / 255 &nbsp;
+                                Consumers: <strong id="evt-cons-tally">64</strong> / 255 &nbsp;
+                                Producer Ranges: <strong id="evt-prod-range-tally">4</strong> / 255 &nbsp;
+                                Consumer Ranges: <strong id="evt-cons-range-tally">4</strong> / 255
+                            </p>
+                            <p class="buffer-tally" id="cdi-eventid-info" style="display:none"></p>
+
+                        </div>
+                    </details>
+
+                    <!-- Well Known Events collapsible section -->
+                    <details class="addon-collapsible" id="wellknown-events-section">
+                        <summary class="addon-collapsible-toggle">Well Known Events <span class="toggle-hint" id="wke-summary-hint">— register standard OpenLCB event IDs as producers or consumers</span></summary>
+
+                        <div class="addon-collapsible-content">
+
+                            <p class="adv-desc">Register standard OpenLCB Well Known Event IDs as producers or consumers. These are generated as event registrations in your main application file. Broadcast Time events are registered automatically by the protocol handler.</p>
+
+                            <div class="wellknown-cols">
+
+                                <!-- Register Producer -->
+                                <div class="addon-group" data-help="wellknown-producers">
+                                    <div class="wke-col-header">
+                                        <span class="addon-group-title">Register Producer</span>
+                                        <span class="wke-col-actions">
+                                            <button type="button" class="wke-expand-btn" onclick="wkeExpandAll('wke-producer-list')">Expand All</button>
+                                            <button type="button" class="wke-expand-btn" onclick="wkeCollapseAll('wke-producer-list')">Collapse All</button>
+                                        </span>
+                                    </div>
+                                    <div id="wke-producer-list"></div>
+                                </div>
+
+                                <!-- Register Consumer -->
+                                <div class="addon-group" data-help="wellknown-consumers">
+                                    <div class="wke-col-header">
+                                        <span class="addon-group-title">Register Consumer</span>
+                                        <span class="wke-col-actions">
+                                            <button type="button" class="wke-expand-btn" onclick="wkeExpandAll('wke-consumer-list')">Expand All</button>
+                                            <button type="button" class="wke-expand-btn" onclick="wkeCollapseAll('wke-consumer-list')">Collapse All</button>
+                                        </span>
+                                    </div>
+                                    <div id="wke-consumer-list"></div>
+                                </div>
+
                             </div>
 
-                            <div class="event-count-field">
-                                <label for="event-producer-range-count">Producer Ranges</label>
-                                <input type="number" id="event-producer-range-count" value="4" min="0" max="255">
-                            </div>
-
-                            <div class="event-count-field">
-                                <label for="event-consumer-range-count">Consumer Ranges</label>
-                                <input type="number" id="event-consumer-range-count" value="4" min="0" max="255">
-                            </div>
+                            <p class="buffer-tally" id="wke-tally" style="display:none"></p>
 
                         </div>
 
-                        <p class="buffer-tally">
-                            Producers: <strong id="evt-prod-tally">64</strong> / 255 &nbsp;
-                            Consumers: <strong id="evt-cons-tally">64</strong> / 255 &nbsp;
-                            Producer Ranges: <strong id="evt-prod-range-tally">4</strong> / 255 &nbsp;
-                            Consumer Ranges: <strong id="evt-cons-range-tally">4</strong> / 255
-                        </p>
-                    </div>
+                    </details>
+
+                    <!-- Config Memory options (Typical/Train only) -->
+                    <details class="addon-collapsible hidden" id="addon-config-group" data-help="config-mem">
+                        <summary class="addon-collapsible-toggle">Memory Configuration <span class="toggle-hint">— alignment, size, and address space settings</span></summary>
+
+                        <div class="addon-collapsible-content">
+
+                            <label class="addon-item" data-help="config-unaligned-reads">
+                                <input type="checkbox" id="config-unaligned-reads" checked>
+                                <span class="addon-label">Unaligned Reads Supported</span>
+                                <span class="addon-desc">Uncheck if hardware (EEPROM/FLASH/FRAM/etc.) requires aligned access</span>
+                            </label>
+
+                            <label class="addon-item" data-help="config-unaligned-writes">
+                                <input type="checkbox" id="config-unaligned-writes" checked>
+                                <span class="addon-label">Unaligned Writes Supported</span>
+                                <span class="addon-desc">Uncheck if hardware (EEPROM/FLASH/FRAM/etc.) requires aligned access</span>
+                            </label>
+
+                            <div class="config-field" data-help="config-highest-addr">
+                                <label for="config-mem-highest-addr">Config memory size (highest address)</label>
+                                <input type="text" id="config-mem-highest-addr" value="0x200" placeholder="0x200">
+                            </div>
+                            <p class="field-note" id="config-mem-warning" style="display:none; color:#b91c1c; background:#fee2e2; padding:6px 8px; border-radius:4px; border:1px solid #fca5a5;">
+                            </p>
+                            <p class="field-note" id="snip-length-warning" style="display:none; color:#92400e; background:#fef3c7; padding:6px 8px; border-radius:4px; border:1px solid #fcd34d;">
+                            </p>
+                            <p class="field-note" id="cdi-segment-warning" style="display:none; color:#92400e; background:#fef3c7; padding:6px 8px; border-radius:4px; border:1px solid #fcd34d;">
+                            </p>
+                            <p class="field-note">
+                                Bytes 0-126 are reserved by the default CDI for
+                                <strong>User Name</strong> (bytes 0-62, 63 bytes) and
+                                <strong>User Description</strong> (bytes 63-126, 64 bytes).
+                                Your application data must start at byte 127 (<code>0x7F</code>) or higher.
+                            </p>
+
+                        </div>
+                    </details>
 
                     <!-- Add-Ons collapsible section -->
                     <details class="addon-collapsible" id="addon-extras-section">
-                        <summary class="addon-collapsible-toggle">Add-Ons</summary>
+                        <summary class="addon-collapsible-toggle">Add-Ons <span class="toggle-hint" id="addons-summary-hint">— none selected</span></summary>
 
                         <div class="addon-collapsible-content">
 
                             <!-- Broadcast Time -->
-                            <div class="addon-group">
+                            <div class="addon-group" data-help="broadcast-time">
                                 <span class="addon-group-title">Broadcast Time</span>
 
-                                <label class="addon-item">
+                                <label class="addon-item" data-help="broadcast-none">
                                     <input type="radio" name="addon-broadcast" value="none" checked>
                                     <span class="addon-label">None</span>
+                                    <span class="addon-desc">This node does not support fast-clock</span>
                                 </label>
 
-                                <label class="addon-item">
+                                <label class="addon-item" data-help="broadcast-producer">
                                     <input type="radio" name="addon-broadcast" value="producer">
                                     <span class="addon-label">Producer</span>
                                     <span class="addon-desc">This node generates and distributes fast-clock time</span>
                                 </label>
 
-                                <label class="addon-item">
+                                <label class="addon-item" data-help="broadcast-consumer">
                                     <input type="radio" name="addon-broadcast" value="consumer">
                                     <span class="addon-label">Consumer</span>
                                     <span class="addon-desc">This node receives and tracks fast-clock time</span>
                                 </label>
 
-                                <p class="field-note broadcast-note hidden" id="broadcast-note">
-                                    Broadcast Time will use 2 producer event ranges and 2 consumer event ranges, make sure to account for this in the Event Buffers above.
-                                </p>
+                                <p class="buffer-tally hidden" id="broadcast-note"></p>
                             </div>
 
                             <!-- Firmware upgrade -->
-                            <div class="addon-group" id="addon-firmware-label">
+                            <div class="addon-group" id="addon-firmware-label" data-help="firmware">
                                 <label class="addon-item">
                                     <input type="checkbox" id="addon-firmware">
                                     <span class="addon-label">Firmware Update</span>
@@ -166,30 +286,30 @@
 
                     <!-- Advanced collapsible section -->
                     <details class="addon-collapsible" id="addon-advanced-section">
-                        <summary class="addon-collapsible-toggle">Advanced</summary>
+                        <summary class="addon-collapsible-toggle">Advanced <span class="toggle-hint">— defaults are acceptable for most applications</span></summary>
 
                         <div class="addon-collapsible-content">
 
                             <!-- Message Buffer Pool -->
-                            <div class="addon-group" id="adv-buffers-group">
+                            <div class="addon-group" id="adv-buffers-group" data-help="buf-pool">
                                 <span class="addon-group-title">Message Buffer Pool</span>
                                 <p class="adv-desc">Tune for your platform's available RAM. The combined total of all buffer pools must not exceed 65534.</p>
 
                                 <div class="event-count-grid">
-                                    <div class="event-count-field">
-                                        <label for="adv-basic-buf">Basic (16B each)</label>
+                                    <div class="event-count-field" data-help="buf-basic">
+                                        <label for="adv-basic-buf">Basic (16 bytes each)</label>
                                         <input type="number" id="adv-basic-buf" value="16" min="1" max="65534">
                                     </div>
-                                    <div class="event-count-field">
-                                        <label for="adv-datagram-buf">Datagram (72B each)</label>
+                                    <div class="event-count-field" data-help="buf-datagram">
+                                        <label for="adv-datagram-buf">Datagram (72 bytes each)</label>
                                         <input type="number" id="adv-datagram-buf" value="8" min="0" max="65534">
                                     </div>
-                                    <div class="event-count-field">
-                                        <label for="adv-snip-buf">SNIP (256B each)</label>
+                                    <div class="event-count-field" data-help="buf-snip">
+                                        <label for="adv-snip-buf">SNIP (256 bytes each)</label>
                                         <input type="number" id="adv-snip-buf" value="4" min="1" max="65534">
                                     </div>
-                                    <div class="event-count-field">
-                                        <label for="adv-stream-buf">Stream (512B each)</label>
+                                    <div class="event-count-field" data-help="buf-stream">
+                                        <label for="adv-stream-buf">Stream (512 bytes each)</label>
                                         <input type="number" id="adv-stream-buf" value="0" min="0" max="65534">
                                     </div>
                                 </div>
@@ -200,7 +320,7 @@
                             </div>
 
                             <!-- Virtual Node Allocation -->
-                            <div class="addon-group" id="adv-nodes-group">
+                            <div class="addon-group" id="adv-nodes-group" data-help="virtual-nodes">
                                 <span class="addon-group-title">Virtual Node Allocation</span>
                                 <p class="adv-desc">How many virtual nodes this device hosts. Most simple devices use 1.</p>
 
@@ -216,7 +336,7 @@
                             </div>
 
                             <!-- CAN Message Buffers -->
-                            <div class="addon-group" id="adv-can-group">
+                            <div class="addon-group" id="adv-can-group" data-help="can-buffers">
                                 <span class="addon-group-title">CAN Message Buffers</span>
                                 <p class="adv-desc">How many raw CAN messages can be queued. Tune for your CAN driver.</p>
 
@@ -232,19 +352,19 @@
                             </div>
 
                             <!-- Train Protocol -->
-                            <div class="addon-group hidden" id="adv-train-group">
+                            <div class="addon-group hidden" id="adv-train-group" data-help="train-protocol">
                                 <span class="addon-group-title">Train Protocol</span>
 
                                 <div class="event-count-grid">
-                                    <div class="event-count-field">
+                                    <div class="event-count-field" data-help="train-node-count">
                                         <label for="adv-train-node-count">Train Node Count</label>
                                         <input type="number" id="adv-train-node-count" value="1" min="0" max="255">
                                     </div>
-                                    <div class="event-count-field">
+                                    <div class="event-count-field" data-help="train-listeners">
                                         <label for="adv-train-listeners">Max Listeners/Train</label>
                                         <input type="number" id="adv-train-listeners" value="6" min="0" max="255">
                                     </div>
-                                    <div class="event-count-field">
+                                    <div class="event-count-field" data-help="train-functions">
                                         <label for="adv-train-functions">Max Train Functions</label>
                                         <input type="number" id="adv-train-functions" value="29" min="0" max="65535">
                                     </div>
@@ -254,23 +374,24 @@
                                     Listeners: <strong id="train-listener-tally">6</strong> / 255 &nbsp;
                                     Functions: <strong id="train-func-tally">29</strong> / 65535
                                 </p>
+                                <p class="buffer-tally" id="fdi-function-info" style="display:none"></p>
                             </div>
 
                             <!-- Listener Alias Verification -->
-                            <div class="addon-group hidden" id="adv-listener-group">
+                            <div class="addon-group hidden" id="adv-listener-group" data-help="listener-verify">
                                 <span class="addon-group-title">Listener Alias Verification</span>
                                 <p class="adv-desc">Timing for consist member (listener) alias probing. Units are 100ms ticks.</p>
 
                                 <div class="event-count-grid">
-                                    <div class="event-count-field">
+                                    <div class="event-count-field" data-help="listener-probe-tick">
                                         <label for="adv-probe-tick">Probe Tick Interval</label>
                                         <input type="number" id="adv-probe-tick" value="1" min="1" max="255">
                                     </div>
-                                    <div class="event-count-field">
+                                    <div class="event-count-field" data-help="listener-probe-interval">
                                         <label for="adv-probe-interval">Probe Interval (ticks)</label>
                                         <input type="number" id="adv-probe-interval" value="250" min="1" max="65535">
                                     </div>
-                                    <div class="event-count-field">
+                                    <div class="event-count-field" data-help="listener-verify-timeout">
                                         <label for="adv-verify-timeout">Verify Timeout (ticks)</label>
                                         <input type="number" id="adv-verify-timeout" value="30" min="1" max="65535">
                                     </div>
@@ -291,25 +412,19 @@
 
         </main>
 
-        <!-- ===== SPLITTER ===== -->
-        <div class="splitter" id="splitter"></div>
-
-        <!-- ===== RIGHT: File browser + code preview ===== -->
-        <aside class="preview-panel">
-
-            <!-- File browser sidebar -->
-            <div class="file-browser" id="file-browser">
-                <!-- Populated dynamically by _rebuildFileBrowser() -->
-            </div>
-
-            <!-- Code display area -->
-            <div class="code-display" id="code-display">
-                <div class="preview-header">
-                    <span class="preview-filename" id="preview-filename">openlcb_user_config.h</span>
+        <aside class="detail-panel" id="detail-panel">
+            <div class="detail-panel-placeholder" id="detail-placeholder">Hover over a setting to see details</div>
+            <div class="detail-content" id="detail-content" style="display:none">
+                <div class="detail-section detail-title-box" id="detail-title-box"></div>
+                <div class="detail-section">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-text" id="detail-desc"></div>
                 </div>
-                <div class="code-preview" id="code-preview"></div>
+                <div class="detail-section" id="detail-detail-section" style="display:none">
+                    <div class="detail-label">Details</div>
+                    <div class="detail-text" id="detail-detail"></div>
+                </div>
             </div>
-
         </aside>
 
     </div>
@@ -322,6 +437,7 @@
     <script src="../drivers/js/driver_codegen.js"></script>
     <script src="../callbacks/js/callback_codegen.js"></script>
 
+    <script src="js/wke_defs.js"></script>
     <script src="js/codegen.js"></script>
     <script src="js/node_config.js"></script>
 

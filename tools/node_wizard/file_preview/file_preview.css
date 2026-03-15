@@ -1,0 +1,292 @@
+/* =========================================================================
+ * File Preview — Styles
+ * Split-pane: file tree on left, code viewer on right
+ * ========================================================================= */
+
+:root {
+
+    --color-bg: #f5f6f8;
+    --color-surface: #ffffff;
+    --color-text: #1a1a2e;
+    --color-text-secondary: #5a5a7a;
+    --color-border: #e0e0e8;
+    --color-accent: #2563eb;
+    --color-accent-light: #eff4ff;
+
+    --radius: 8px;
+
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                  "Helvetica Neue", Arial, sans-serif;
+    --font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas,
+                 'Courier New', monospace;
+
+    --preview-bg: #1e1e2e;
+    --preview-bg-bar: #181825;
+    --preview-border: #313244;
+    --preview-text: #cdd6f4;
+    --preview-muted: #6c7086;
+
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+
+    font-family: var(--font-stack);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-text);
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+
+}
+
+/* ---- Layout ---- */
+
+.layout {
+
+    flex: 1 1 auto;
+    display: flex;
+    overflow: hidden;
+
+}
+
+/* ---- Left: tree panel ---- */
+
+.tree-panel {
+
+    flex: 0 0 280px;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 16px 0;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+
+}
+
+.tree-panel h3 {
+
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0 16px 12px;
+    flex-shrink: 0;
+
+}
+
+.file-tree {
+
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 0 8px;
+
+}
+
+/* ---- Tree items ---- */
+
+.tree-folder,
+.tree-file {
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+
+}
+
+.tree-folder {
+
+    font-weight: 600;
+    color: var(--color-text);
+
+}
+
+.tree-folder:hover { background: var(--color-accent-light); }
+
+.tree-folder-icon {
+
+    font-size: 10px;
+    width: 12px;
+    text-align: center;
+    transition: transform 0.15s;
+
+}
+
+.tree-folder-icon.open {
+
+    transform: rotate(90deg);
+
+}
+
+.tree-folder-name {
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+}
+
+.tree-folder-name::before {
+
+    content: '\1F4C1';
+    font-size: 13px;
+
+}
+
+.tree-children {
+
+    padding-left: 16px;
+
+}
+
+.tree-children.collapsed {
+
+    display: none;
+
+}
+
+.tree-file {
+
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--color-text);
+
+}
+
+.tree-file:hover { background: var(--color-accent-light); }
+
+.tree-file.selected {
+
+    background: var(--color-accent);
+    color: #ffffff;
+
+}
+
+.tree-file-icon::before {
+
+    content: '\1F4C4';
+    font-size: 12px;
+
+}
+
+.tree-placeholder {
+
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    padding: 4px 8px 4px 28px;
+
+}
+
+/* ---- Generate button ---- */
+
+.tree-actions {
+
+    flex-shrink: 0;
+    padding: 12px 16px 0;
+    border-top: 1px solid var(--color-border);
+    margin-top: 8px;
+
+}
+
+.generate-btn {
+
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    background: var(--color-accent);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.12s;
+
+}
+
+.generate-btn:hover {
+
+    background: #1d4ed8;
+
+}
+
+/* ---- Splitter ---- */
+
+.splitter {
+
+    flex: 0 0 5px;
+    cursor: col-resize;
+    background: var(--color-border);
+
+}
+
+/* ---- Right: code viewer ---- */
+
+.viewer-panel {
+
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--preview-bg);
+
+}
+
+.viewer-header {
+
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: var(--preview-bg-bar);
+    border-bottom: 1px solid var(--preview-border);
+
+}
+
+.viewer-filename {
+
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--preview-muted);
+
+}
+
+.code-viewer {
+
+    flex: 1;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+
+}
+
+.code-viewer .cm-editor {
+
+    height: 100%;
+
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 700px) {
+
+    .layout { flex-direction: column; }
+    .tree-panel { flex: none; max-height: 40vh; }
+    .viewer-panel { flex: none; min-height: 60vh; }
+
+}

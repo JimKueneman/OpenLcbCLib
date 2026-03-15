@@ -1,12 +1,11 @@
 /* =========================================================================
  * Platform Editor — UI logic
- * Card-style platform selector, dynamic parameter form, live code preview.
+ * Card-style platform selector with images, dynamic parameter form.
  * Communicates with parent (app.js) via postMessage.
  * ========================================================================= */
 
 let _selectedPlatform = 'none';
 let _paramValues      = {};     /* { paramId: value } */
-let _currentTab       = 'can';  /* 'can' | 'olcb' */
 let _nodeType         = null;
 let _firmwareEnabled  = false;
 
@@ -14,20 +13,6 @@ let _firmwareEnabled  = false;
 
 const elCards     = document.getElementById('platform-cards');
 const elConfig    = document.getElementById('config-area');
-const elFnameEl   = document.getElementById('preview-filename');
-const elBadge     = document.getElementById('preview-badge');
-
-let _cmViewer = null;
-
-function _ensureCMViewer() {
-
-    if (_cmViewer) { return _cmViewer; }
-    _cmViewer = createCMReadonly(document.getElementById('code-preview'));
-    return _cmViewer;
-
-}
-const elTabCan    = document.getElementById('tab-can');
-const elTabOlcb   = document.getElementById('tab-olcb');
 
 /* ========================================================================= */
 /* Platform cards                                                            */
@@ -44,6 +29,16 @@ function _renderCards() {
         var card = document.createElement('div');
         card.className = 'platform-card' + (key === _selectedPlatform ? ' selected' : '');
         card.dataset.platform = key;
+
+        if (def.image) {
+
+            var img = document.createElement('img');
+            img.className = 'platform-card-image';
+            img.src = def.image;
+            img.alt = def.name;
+            card.appendChild(img);
+
+        }
 
         var nameEl = document.createElement('span');
         nameEl.className   = 'platform-card-name';
@@ -84,7 +79,6 @@ function _selectPlatform(key) {
 
     _renderCards();
     _renderConfig();
-    _renderPreview();
     _postStateToParent();
 
 }
@@ -126,6 +120,16 @@ function _renderConfig() {
         noteBox.className = 'info-box notes';
         noteBox.innerHTML = def.notes.map(function (n) { return _escHtml(n); }).join('<br>');
         elConfig.appendChild(noteBox);
+
+    }
+
+    /* Arduino indicator */
+    if (def.isArduino) {
+
+        var arduinoBox = document.createElement('div');
+        arduinoBox.className = 'info-box arduino';
+        arduinoBox.innerHTML = '<strong>Arduino mode:</strong> main file will be generated as <code>.ino</code>, driver files as <code>.cpp</code>';
+        elConfig.appendChild(arduinoBox);
 
     }
 
@@ -177,7 +181,6 @@ function _renderConfig() {
             input.addEventListener('input', function () {
 
                 _paramValues[p.id] = input.value;
-                _renderPreview();
                 _postStateToParent();
 
             });
@@ -185,7 +188,6 @@ function _renderConfig() {
             input.addEventListener('change', function () {
 
                 _paramValues[p.id] = input.value;
-                _renderPreview();
                 _postStateToParent();
 
             });
@@ -212,127 +214,6 @@ function _renderConfig() {
 }
 
 /* ========================================================================= */
-/* Template substitution                                                     */
-/* ========================================================================= */
-
-function _substituteParams(text) {
-
-    if (!text) { return text; }
-
-    return text.replace(/\{\{(\w+)\}\}/g, function (match, paramId) {
-
-        return (_paramValues[paramId] !== undefined) ? _paramValues[paramId] : match;
-
-    });
-
-}
-
-/* ========================================================================= */
-/* Code preview                                                              */
-/* ========================================================================= */
-
-function switchTab(tab) {
-
-    _currentTab = tab;
-    elTabCan.classList.toggle('active', tab === 'can');
-    elTabOlcb.classList.toggle('active', tab === 'olcb');
-    _renderPreview();
-
-}
-
-function _renderPreview() {
-
-    var viewer = _ensureCMViewer();
-    var def = PLATFORM_DEFS[_selectedPlatform];
-
-    if (_selectedPlatform === 'none') {
-
-        viewer.value = '// Select a platform to preview the generated driver code';
-        elBadge.style.display = 'none';
-        elFnameEl.textContent = '';
-        return;
-
-    }
-
-    elBadge.textContent   = def.name;
-    elBadge.style.display = 'inline-block';
-
-    var drivers;
-    var filePrefix;
-
-    if (_currentTab === 'can') {
-
-        drivers    = def.canDrivers;
-        filePrefix = 'openlcb_can_drivers';
-        elFnameEl.textContent = filePrefix + '.c';
-
-    } else {
-
-        drivers    = def.olcbDrivers;
-        filePrefix = 'openlcb_drivers';
-        elFnameEl.textContent = filePrefix + '.c';
-
-    }
-
-    /* Build preview code */
-    var lines = [];
-
-    lines.push('');
-    lines.push('#include "' + filePrefix + '.h"');
-
-    /* Extra includes */
-    if (drivers.extraIncludes && drivers.extraIncludes.length > 0) {
-
-        drivers.extraIncludes.forEach(function (inc) {
-
-            lines.push(_substituteParams(inc));
-
-        });
-
-    }
-
-    /* Globals */
-    if (drivers.globals) {
-
-        lines.push(_substituteParams(drivers.globals));
-
-    }
-
-    lines.push('');
-    lines.push('');
-
-    /* Show each template function */
-    var templateKeys = Object.keys(drivers.templates);
-
-    if (templateKeys.length === 0) {
-
-        lines.push('// No platform-specific code — functions will be empty TODO stubs.');
-
-    } else {
-
-        /* Determine which driver group to use for function signatures */
-        var groupKey = (_currentTab === 'can') ? 'can-drivers' : 'olcb-drivers';
-
-        /* We don't have DRIVER_GROUPS loaded here, so just show the template bodies */
-        templateKeys.forEach(function (fnName) {
-
-            var body = _substituteParams(drivers.templates[fnName]);
-
-            var prefix = (_currentTab === 'can') ? 'CanDriver' : 'Drivers';
-            lines.push('// ' + prefix + '_' + fnName + '()');
-            lines.push('// ────────────────────────────');
-            lines.push(body);
-            lines.push('');
-
-        });
-
-    }
-
-    viewer.value = lines.join('\n');
-
-}
-
-/* ========================================================================= */
 /* State communication                                                       */
 /* ========================================================================= */
 
@@ -345,6 +226,7 @@ function _postStateToParent() {
         state: {
             platform:   _selectedPlatform,
             params:     _paramValues,
+            isArduino:  !!def.isArduino,
             framework:  def.framework || '',
             libraries:  def.libraries || [],
             notes:      def.notes || []
@@ -379,7 +261,6 @@ function _restoreState(state) {
 
     _renderCards();
     _renderConfig();
-    _renderPreview();
 
 }
 
@@ -426,6 +307,5 @@ function _escHtml(str) {
 
 _renderCards();
 _renderConfig();
-_renderPreview();
 
 window.parent.postMessage({ type: 'ready' }, '*');

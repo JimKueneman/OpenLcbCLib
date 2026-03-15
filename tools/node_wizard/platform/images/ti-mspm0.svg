@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- LaunchPad board shape -->
+  <rect x="20" y="8" width="80" height="104" rx="5" fill="#303446" stroke="#e78284" stroke-width="2.5"/>
+  <!-- TI logo area -->
+  <rect x="35" y="18" width="50" height="24" rx="3" fill="#414559"/>
+  <text x="60" y="30" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="bold" fill="#e78284">Texas</text>
+  <text x="60" y="40" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e78284">Instruments</text>
+  <!-- MSPM0 chip -->
+  <rect x="38" y="50" width="44" height="28" rx="3" fill="#414559" stroke="#626880" stroke-width="1.5"/>
+  <text x="60" y="64" text-anchor="middle" font-family="monospace" font-size="8" font-weight="bold" fill="#c6d0f5">MSPM0</text>
+  <text x="60" y="74" text-anchor="middle" font-family="monospace" font-size="7" fill="#e5c890">MCAN</text>
+  <!-- Pin headers left -->
+  <circle cx="26" cy="50" r="2" fill="#a6d189"/>
+  <circle cx="26" cy="58" r="2" fill="#a6d189"/>
+  <circle cx="26" cy="66" r="2" fill="#a6d189"/>
+  <circle cx="26" cy="74" r="2" fill="#a6d189"/>
+  <circle cx="26" cy="82" r="2" fill="#a6d189"/>
+  <circle cx="26" cy="90" r="2" fill="#a6d189"/>
+  <!-- Pin headers right -->
+  <circle cx="94" cy="50" r="2" fill="#a6d189"/>
+  <circle cx="94" cy="58" r="2" fill="#a6d189"/>
+  <circle cx="94" cy="66" r="2" fill="#a6d189"/>
+  <circle cx="94" cy="74" r="2" fill="#a6d189"/>
+  <circle cx="94" cy="82" r="2" fill="#a6d189"/>
+  <circle cx="94" cy="90" r="2" fill="#a6d189"/>
+  <!-- USB connector -->
+  <rect x="45" y="100" width="30" height="12" rx="2" fill="#414559" stroke="#737994" stroke-width="1"/>
+  <rect x="50" y="103" width="20" height="6" rx="1" fill="#626880"/>
+  <!-- LEDs -->
+  <circle cx="36" cy="92" r="2.5" fill="#a6d189" opacity="0.8"/>
+  <circle cx="44" cy="92" r="2.5" fill="#e78284" opacity="0.8"/>
+</svg>

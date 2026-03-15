@@ -419,9 +419,12 @@ var ZipExport = (function () {
         var activeCallbacks = _getActiveCallbackGroups(codegenState);
 
         /* ---- Label for filenames ---- */
-        var nodeLabel = wizardState.selectedNodeType === 'train-controller'
+        var projName = (wizardState.configFormState && wizardState.configFormState.projectName)
+            ? wizardState.configFormState.projectName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '')
+            : '';
+        var nodeLabel = projName || (wizardState.selectedNodeType === 'train-controller'
             ? 'train_controller'
-            : wizardState.selectedNodeType;
+            : wizardState.selectedNodeType);
 
         /* ---- Build ZIP ---- */
         var zip = new JSZip();

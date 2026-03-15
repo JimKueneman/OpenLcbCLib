@@ -1,6 +1,6 @@
 /* =========================================================================
  * Platform Editor — Styles
- * Split-pane: platform selector + config on left, code preview on right
+ * Single-panel: image card selector + parameter config form
  * ========================================================================= */
 
 :root {
@@ -21,14 +21,6 @@
                   "Helvetica Neue", Arial, sans-serif;
     --font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas,
                  'Courier New', monospace;
-
-    --preview-bg: #1e1e2e;
-    --preview-bg-bar: #181825;
-    --preview-border: #313244;
-    --preview-text: #cdd6f4;
-    --preview-muted: #6c7086;
-    --preview-tab-active-bg: #1e1e2e;
-    --preview-tab-active-border: #45475a;
 
 }
 
@@ -52,7 +44,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    overflow: hidden;
+    overflow-y: auto;
 
 }
 
@@ -66,14 +58,14 @@ body {
 
 }
 
-/* ---- Left: config panel ---- */
+/* ---- Config panel (full width now) ---- */
 
 .config-panel {
 
-    flex: 0 0 480px;
-    min-width: 280px;
+    flex: 1 1 auto;
     overflow-y: auto;
-    padding: 28px 24px;
+    padding: 28px 32px;
+    max-width: 900px;
 
 }
 
@@ -93,13 +85,13 @@ body {
 
 }
 
-/* ---- Platform cards ---- */
+/* ---- Platform cards with images ---- */
 
 .platform-cards {
 
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 12px;
     margin-bottom: 24px;
 
 }
@@ -107,18 +99,23 @@ body {
 .platform-card {
 
     flex: 0 0 auto;
-    min-width: 130px;
-    padding: 10px 14px;
+    width: 150px;
+    padding: 12px;
     border: 2px solid var(--color-border);
     border-radius: var(--radius);
     cursor: pointer;
-    transition: border-color 0.12s, background 0.12s;
+    transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 
 }
 
 .platform-card:hover {
 
     background: var(--color-accent-light);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
 
 }
 
@@ -126,14 +123,25 @@ body {
 
     border-color: var(--color-accent);
     background: var(--color-accent-light);
+    box-shadow: 0 2px 12px rgba(37, 99, 235, 0.15);
+
+}
+
+.platform-card-image {
+
+    width: 80px;
+    height: 80px;
+    margin-bottom: 8px;
+    object-fit: contain;
 
 }
 
 .platform-card-name {
 
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     display: block;
+    line-height: 1.3;
 
 }
 
@@ -143,7 +151,7 @@ body {
     color: var(--color-text-secondary);
     line-height: 1.3;
     display: block;
-    margin-top: 2px;
+    margin-top: 3px;
 
 }
 
@@ -242,139 +250,26 @@ body {
 
 }
 
+.info-box.arduino {
+
+    background: #faf5ff;
+    border: 1px solid #e9d5ff;
+    color: #6b21a8;
+
+}
+
+.info-box.arduino code {
+
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: rgba(0, 0, 0, 0.06);
+    padding: 1px 4px;
+    border-radius: 3px;
+
+}
+
 .info-box strong {
 
     font-weight: 600;
-
-}
-
-/* ---- Splitter ---- */
-
-.splitter {
-
-    flex: 0 0 5px;
-    cursor: col-resize;
-    background: var(--color-border);
-
-}
-
-/* ---- Right: code preview ---- */
-
-.preview-panel {
-
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    background: var(--preview-bg);
-
-}
-
-.preview-header {
-
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    background: var(--preview-bg-bar);
-    border-bottom: 1px solid var(--preview-border);
-
-}
-
-.preview-tabs {
-
-    display: flex;
-    gap: 0;
-
-}
-
-.tab-btn {
-
-    background: transparent;
-    border: none;
-    color: var(--preview-muted);
-    font-size: 12px;
-    font-family: var(--font-mono);
-    padding: 10px 16px;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: color 0.15s, border-color 0.15s;
-
-}
-
-.tab-btn:hover {
-
-    color: var(--preview-text);
-
-}
-
-.tab-btn.active {
-
-    color: var(--preview-text);
-    border-bottom-color: var(--preview-tab-active-border);
-    background: var(--preview-tab-active-bg);
-
-}
-
-.preview-filename {
-
-    margin-left: auto;
-    font-size: 11px;
-    font-family: var(--font-mono);
-    color: var(--preview-muted);
-
-}
-
-.preview-badge {
-
-    font-size: 10px;
-    font-family: var(--font-mono);
-    padding: 2px 8px;
-    border-radius: 3px;
-    background: #1e40af;
-    color: #bfdbfe;
-    margin-left: 12px;
-
-}
-
-.code-preview {
-
-    flex: 1;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-
-}
-
-.code-preview .cm-editor {
-
-    height: 100%;
-
-}
-
-/* ---- Responsive ---- */
-
-@media (max-width: 700px) {
-
-    .layout {
-
-        flex-direction: column;
-
-    }
-
-    .config-panel {
-
-        flex: none;
-        max-height: 50vh;
-
-    }
-
-    .preview-panel {
-
-        flex: none;
-        min-height: 50vh;
-
-    }
 
 }

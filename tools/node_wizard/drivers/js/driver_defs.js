@@ -130,9 +130,9 @@ const DRIVER_GROUPS = {
                 name: 'reboot',
                 returnType: 'void',
                 params: 'openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info',
-                description: 'Reboot the processor after configuration changes (highly recommended)',
-                detail: 'Perform a hardware reset of the processor. A configuration tool sends this command after writing changes so the node restarts with updated settings. Use the platform-specific reset function: esp_restart() on ESP32, rp2040.reboot() on Pico, HAL_NVIC_SystemReset() on STM32, asm("RESET") on dsPIC. The library sends an Initialization Complete message on reboot to notify the network. If NULL, the reboot command is reported as not supported.',
-                required: false,
+                description: 'Reboot the processor after configuration changes',
+                detail: 'Perform a hardware reset of the processor. A configuration tool sends this command after writing changes so the node restarts with updated settings. Use the platform-specific reset function: esp_restart() on ESP32, rp2040.reboot() on Pico, HAL_NVIC_SystemReset() on STM32, asm("RESET") on dsPIC. The library sends an Initialization Complete message on reboot to notify the network.',
+                required: true,
                 configField: 'reboot',
                 requiresConfigMem: true
             },

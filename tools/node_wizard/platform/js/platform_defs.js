@@ -23,6 +23,8 @@ const PLATFORM_DEFS = {
 
         name: 'None / Custom',
         description: 'Generate empty stub functions (fill in your own)',
+        image: 'images/custom.svg',
+        isArduino: false,
         framework: '',
         libraries: [],
         notes: [],
@@ -47,6 +49,8 @@ const PLATFORM_DEFS = {
 
         name: 'ESP32 + TWAI',
         description: 'Espressif ESP32 with built-in TWAI CAN controller',
+        image: 'images/esp32-twai.svg',
+        isArduino: true,
         framework: 'Arduino / PlatformIO',
         libraries: [],
         notes: [],
@@ -223,6 +227,8 @@ const PLATFORM_DEFS = {
 
         name: 'ESP32 + WiFi GridConnect',
         description: 'ESP32 using WiFi TCP/IP CAN gateway (no physical CAN bus)',
+        image: 'images/esp32-wifi.svg',
+        isArduino: true,
         framework: 'Arduino / PlatformIO',
         libraries: [],
         notes: [
@@ -391,6 +397,8 @@ const PLATFORM_DEFS = {
 
         name: 'RP2040 + MCP2517FD',
         description: 'Raspberry Pi Pico with MCP2517FD CAN controller via SPI',
+        image: 'images/rp2040-mcp2517.svg',
+        isArduino: true,
         framework: 'Arduino (Earle Philhower core)',
         libraries: ['ACAN2517'],
         notes: [
@@ -577,6 +585,8 @@ const PLATFORM_DEFS = {
 
         name: 'STM32F4xx + CAN',
         description: 'STM32F4 with built-in CAN peripheral (CubeIDE / HAL)',
+        image: 'images/stm32f4.svg',
+        isArduino: false,
         framework: 'STM32 HAL (CubeIDE)',
         libraries: [],
         notes: [
@@ -772,6 +782,8 @@ const PLATFORM_DEFS = {
 
         name: 'TI MSPM0 + MCAN',
         description: 'TI MSPM0 with built-in MCAN peripheral (DriverLib)',
+        image: 'images/ti-mspm0.svg',
+        isArduino: false,
         framework: 'TI DriverLib (Code Composer / Theia)',
         libraries: [],
         notes: [

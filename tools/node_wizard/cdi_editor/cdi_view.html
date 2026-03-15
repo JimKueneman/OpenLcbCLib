@@ -144,14 +144,14 @@
         .toolbar .loaded-filename {
             font-family: var(--font-mono);
             font-size: 11px;
-            color: #4ec9b0;
+            color: var(--color-primary);
             max-width: 220px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             padding: 2px 6px;
-            background: #1e1e1e;
-            border: 1px solid #3c3c3c;
+            background: #e0f2fe;
+            border: 1px solid var(--color-border);
             border-radius: 3px;
         }
 
@@ -209,16 +209,11 @@
         /* ===== Main workspace ============================================== */
         .workspace {
             display: flex;
+            flex-direction: row;
             flex: 1;
             min-height: 0;
             overflow: hidden;
         }
-
-        /* horizontal: editor | splitter | preview (side by side) */
-        .workspace.horizontal { flex-direction: row; }
-
-        /* vertical: editor / splitter / preview (top and bottom) */
-        .workspace.vertical   { flex-direction: column; }
 
         /* ===== Editor pane ================================================= */
         .editor-pane {
@@ -265,31 +260,21 @@
         .ws-splitter {
             flex-shrink: 0;
             background: #c8c8c8;
-            transition: background 0.15s;
-            z-index: 10;
-        }
-
-        .workspace.horizontal .ws-splitter {
             width: var(--splitter-size);
             cursor: col-resize;
-        }
-
-        .workspace.vertical .ws-splitter {
-            height: var(--splitter-size);
-            cursor: row-resize;
+            transition: background 0.15s;
+            z-index: 10;
         }
 
         .ws-splitter:hover,
         .ws-splitter.dragging { background: #0078d4; }
 
-        /* ===== Preview pane ================================================ */
-        .preview-pane {
+        /* ===== Preview content (inside map pane, shown for Preview tool) ==== */
+        .preview-content {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: var(--color-bg);
-            min-width: 120px;
-            min-height: 80px;
+            overflow: hidden;
         }
 
         .preview-toolbar {
@@ -501,70 +486,58 @@
             font-size: 1.05em;
         }
 
-        /* ===== Sub-splitter (inside editor pane, separates editor+map) ===== */
-        .xml-sub-pane {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            min-height: 0;
-            min-width: 0;
-            overflow: hidden;
-        }
-
-        .sub-splitter {
-            flex-shrink: 0;
-            background: #444;
-            transition: background 0.15s;
-            z-index: 5;
-        }
-
-        /* horizontal sub-split (map below editor) — default when main is side-by-side */
-        .editor-pane .sub-splitter {
-            height: 5px;
-            cursor: row-resize;
-            width: 100%;
-        }
-
-        /* vertical sub-split (map beside editor) — when main is stacked */
-        .editor-pane.map-beside .sub-splitter {
-            width: 5px;
-            height: auto;
-            cursor: col-resize;
-        }
-
-        .editor-pane.map-beside {
-            flex-direction: row;
-        }
-
-        .sub-splitter:hover,
-        .sub-splitter.dragging { background: #0078d4; }
-
-        /* ===== Memory map pane ============================================= */
+        /* ===== CDI Tools pane (right side) =================================== */
         .map-pane {
-            flex: 0 0 180px;
+            flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            background: #1e1e1e;
-            min-height: 60px;
-            min-width: 80px;
+            background: var(--color-bg);
+            min-width: 120px;
+            min-height: 80px;
         }
 
         .map-header {
-            height: 38px;
-            background: #3c3c3c;
-            color: #aaa;
+            background: #e9ecef;
+            color: var(--color-muted);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.8px;
             text-transform: uppercase;
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            padding: 0 12px;
+            padding: 4px 12px;
             flex-shrink: 0;
-            border-bottom: 1px solid #555;
+            border-bottom: 1px solid var(--color-border);
+            gap: 2px;
         }
+
+        .map-header-desc {
+            width: 100%;
+            font-size: 10px;
+            font-weight: 400;
+            letter-spacing: normal;
+            text-transform: none;
+            color: var(--color-muted);
+            padding-bottom: 2px;
+        }
+
+        .map-rebuild-btn {
+            padding: 3px 10px;
+            font-size: 10px;
+            font-weight: 600;
+            border: 1px solid var(--color-primary);
+            border-radius: 4px;
+            background: var(--color-surface);
+            color: var(--color-primary);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            line-height: 16px;
+            margin-left: 8px;
+        }
+        .map-rebuild-btn:hover { background: var(--color-primary); color: #fff; }
 
         .map-content {
             flex: 1;
@@ -575,7 +548,7 @@
         }
 
         .map-empty {
-            color: #555;
+            color: var(--color-muted);
             text-align: center;
             margin-top: 24px;
             font-size: 11px;
@@ -585,38 +558,38 @@
         .map-table {
             width: 100%;
             border-collapse: collapse;
-            color: #ccc;
+            color: var(--color-text);
             font-size: 11px;
         }
 
         .map-table th {
-            background: #2d2d2d;
-            color: #888;
+            background: #e9ecef;
+            color: var(--color-muted);
             font-weight: 600;
             text-align: left;
             padding: 3px 6px;
             position: sticky;
             top: 0;
             white-space: nowrap;
-            border-bottom: 1px solid #444;
+            border-bottom: 1px solid var(--color-border);
         }
 
         .map-table td {
             padding: 2px 6px;
-            border-bottom: 1px solid #2a2a2a;
+            border-bottom: 1px solid #eee;
             white-space: nowrap;
         }
 
-        .map-table tr:hover td { background: #2a2a2a; }
+        .map-table tr:hover td { background: #f0f4f8; }
 
-        .map-row-overlap td { background: #3b1111 !important; color: #f87171; }
+        .map-row-overlap td { background: var(--color-error-bg) !important; color: var(--color-error-text); }
 
         .map-seg-header td {
-            background: #252526;
-            color: #569cd6;
+            background: #e0f2fe;
+            color: var(--color-primary);
             font-weight: 700;
             padding: 4px 6px 2px;
-            border-top: 1px solid #3c3c3c;
+            border-top: 1px solid var(--color-border);
         }
 
         /* type colour dots */
@@ -627,7 +600,7 @@
         .map-type-eventid { background: #dcdcaa; }
         .map-type-bit     { background: #9cdcfe; }
 
-        .map-gap { color: #555; font-style: italic; }
+        .map-gap { color: var(--color-muted); font-style: italic; }
 
         /* ===== Map view toggle (Flat | Tree) =============================== */
         .map-view-toggle { display: flex; gap: 4px; margin-left: auto; }
@@ -635,48 +608,48 @@
         .map-toggle-btn {
             padding: 4px 10px;
             font-size: 11px;
-            border: 1px solid #666;
+            border: 1px solid var(--color-border);
             border-radius: 4px;
-            background: #2a2a2a;
-            color: #aaa;
+            background: var(--color-surface);
+            color: var(--color-muted);
             cursor: pointer;
             font-family: var(--font-mono);
             font-weight: 600;
             line-height: 18px;
         }
 
-        .map-toggle-btn:hover { background: #444; color: #eee; border-color: #888; }
-        .map-toggle-btn.active { background: #0078d4; color: #fff; border-color: #005a9e; }
+        .map-toggle-btn:hover { background: #dee2e6; color: var(--color-text); border-color: #bbb; }
+        .map-toggle-btn.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary-dark); }
 
-        /* ===== Stats bar (bottom of map pane) ================================ */
+        /* ===== Stats bar (bottom of CDI Tools pane) ========================== */
         .map-stats-bar {
             padding: 6px 10px;
             font-family: var(--font-mono);
             font-size: 10px;
-            color: #c0c0c0;
-            background: #1a3a5c;
-            border-top: 1px solid #2a5a8c;
+            color: var(--color-text);
+            background: #e0f2fe;
+            border-top: 1px solid var(--color-border);
             flex-shrink: 0;
             line-height: 1.6;
         }
 
         .map-stats-bar:empty { display: none; }
-        .map-stats-space strong { color: #7ec8f8; }
-        .map-stats-user  { color: #4ec9b0; }
-        .map-stats-sub   { margin-left: 10px; color: #8899aa; font-size: 9.5px; line-height: 1.7; }
-        .map-stats-sub .map-stats-user { color: #4ec9b0; }
-        .map-stats-avail-pos  { color: #4ade80; font-weight: bold; }
-        .map-stats-avail-neg  { color: #f87171; font-weight: bold; }
-        .map-stats-avail-note { color: #8899aa; font-style: italic; }
+        .map-stats-space strong { color: var(--color-primary); }
+        .map-stats-user  { color: var(--color-success); }
+        .map-stats-sub   { margin-left: 10px; color: var(--color-muted); font-size: 9.5px; line-height: 1.7; }
+        .map-stats-sub .map-stats-user { color: var(--color-success); }
+        .map-stats-avail-pos  { color: var(--color-success); font-weight: bold; }
+        .map-stats-avail-neg  { color: var(--color-error-text); font-weight: bold; }
+        .map-stats-avail-note { color: var(--color-muted); font-style: italic; }
 
         /* ===== Overlap report (above stats bar) ============================== */
         .map-overlap-report {
             padding: 6px 10px;
             font-family: var(--font-mono);
             font-size: 10.5px;
-            color: #f87171;
-            background: #3b1111;
-            border-top: 1px solid #6b2020;
+            color: var(--color-error-text);
+            background: var(--color-error-bg);
+            border-top: 1px solid #fca5a5;
             flex-shrink: 0;
             line-height: 1.6;
         }
@@ -686,12 +659,12 @@
         .map-overlap-report .overlap-title {
             font-weight: bold;
             margin-bottom: 2px;
-            color: #fca5a5;
+            color: var(--color-error-text);
         }
 
         .map-overlap-report .overlap-item {
             padding-left: 12px;
-            color: #f87171;
+            color: var(--color-error-text);
         }
 
         /* ===== Config memory size warning ==================================== */
@@ -699,9 +672,9 @@
             padding: 6px 10px;
             font-family: var(--font-mono);
             font-size: 10.5px;
-            color: #fbbf24;
-            background: #3b2f11;
-            border-top: 1px solid #6b5020;
+            color: var(--color-warning-text);
+            background: var(--color-warning-bg);
+            border-top: 1px solid #fbbf24;
             flex-shrink: 0;
             line-height: 1.6;
             display: flex;
@@ -716,17 +689,17 @@
         .map-config-warning .cfg-warn-btn {
             padding: 2px 8px;
             font-size: 10px;
-            border: 1px solid #fbbf24;
+            border: 1px solid var(--color-warning-text);
             border-radius: 3px;
-            background: #4a3a15;
-            color: #fbbf24;
+            background: var(--color-warning-bg);
+            color: var(--color-warning-text);
             cursor: pointer;
             white-space: nowrap;
             flex-shrink: 0;
         }
 
         .map-config-warning .cfg-warn-btn:hover {
-            background: #5a4a20;
+            background: #fde68a;
         }
 
         /* ===== Tree view =================================================== */
@@ -736,7 +709,7 @@
             list-style: none;
             cursor: pointer;
             padding: 2px 6px;
-            color: #569cd6;
+            color: var(--color-primary);
             font-family: var(--font-mono);
             font-size: 11px;
             display: flex;
@@ -747,7 +720,7 @@
         }
 
         .map-tree-group > summary::-webkit-details-marker { display: none; }
-        .map-tree-group > summary:hover { background: #2a2a2a; }
+        .map-tree-group > summary:hover { background: #f0f4f8; }
 
         .map-tree-arrow {
             display: inline-block;
@@ -761,7 +734,7 @@
 
         .map-tree-group-label { flex: 1; overflow: hidden; text-overflow: ellipsis; }
 
-        .map-tree-range { color: #555; font-size: 10px; margin-left: 6px; flex-shrink: 0; }
+        .map-tree-range { color: var(--color-muted); font-size: 10px; margin-left: 6px; flex-shrink: 0; }
 
         .map-tree-children { margin-left: 14px; }
 
@@ -772,16 +745,16 @@
             padding: 1px 6px;
             font-family: var(--font-mono);
             font-size: 11px;
-            color: #ccc;
+            color: var(--color-text);
             white-space: nowrap;
         }
 
-        .map-tree-leaf:hover { background: #2a2a2a; }
-        .map-tree-leaf.overlap { color: #f87171 !important; background: #3b1111; }
+        .map-tree-leaf:hover { background: #f0f4f8; }
+        .map-tree-leaf.overlap { color: var(--color-error-text) !important; background: var(--color-error-bg); }
 
         .map-tree-leaf-label { flex: 1; overflow: hidden; text-overflow: ellipsis; }
-        .map-tree-leaf-addr  { color: #666; font-size: 10px; }
-        .map-tree-leaf-size  { color: #555; font-size: 10px; margin-left: 4px; }
+        .map-tree-leaf-addr  { color: var(--color-muted); font-size: 10px; }
+        .map-tree-leaf-size  { color: var(--color-muted); font-size: 10px; margin-left: 4px; }
 
         /* ===== App layout shell ============================================ */
         .app-shell {
@@ -821,33 +794,13 @@
 
         <div class="toolbar-sep"></div>
 
-        <button id="btn-basic-xml">✦ Basic XML</button>
+        <button id="btn-export-xml" disabled>💾 Export XML</button>
+        <button id="btn-basic-xml">✦ Generate Basic XML</button>
 
         <div class="toolbar-sep"></div>
 
-        <button id="btn-render"   class="btn-primary" disabled>▶ Render</button>
         <button id="btn-validate" disabled>✓ Validate</button>
         <button id="btn-clear">✕ Clear</button>
-        <button id="btn-export-xml" disabled>💾 Export XML</button>
-
-        <div class="toolbar-sep"></div>
-
-        <label class="toggle" title="Show rendered CDI preview panel">
-            <input type="checkbox" id="chk-show-preview">
-            Show Preview
-        </label>
-
-        <label class="toggle" title="Show memory map panel">
-            <input type="checkbox" id="chk-show-map">
-            Show Map
-        </label>
-
-        <div class="toolbar-sep"></div>
-
-        <label class="toggle" title="Vertical divider: editor and preview side-by-side. Unchecked: stacked top/bottom.">
-            <input type="checkbox" id="chk-vertical">
-            Vertical Split
-        </label>
 
     </div>
 
@@ -855,54 +808,26 @@
     <div class="workspace-wrap">
         <div class="workspace horizontal" id="workspace">
 
-            <!-- Editor pane (contains xml sub-pane + splitter + map pane) -->
+            <!-- Editor pane (XML editor only) -->
             <div class="editor-pane" id="editor-pane">
 
-                <!-- XML editor sub-pane -->
-                <div class="xml-sub-pane" id="xml-sub-pane">
-
-                    <div class="editor-inner" id="editor-inner">
-                        <div class="editor-text-wrap" id="cm-host">
-                            <!-- CodeMirror 6 instance created by JS -->
-                        </div>
+                <div class="editor-inner" id="editor-inner">
+                    <div class="editor-text-wrap" id="cm-host">
+                        <!-- CodeMirror 6 instance created by JS -->
                     </div>
-
-                    <div class="editor-statusbar" id="editor-statusbar">
-                        <span id="status-bytes">0 bytes (UTF-8)</span>
-                        <span id="status-chars">0 chars</span>
-                        <span id="status-lines">0 lines</span>
-                        <span id="status-cursor">Ln 1, Col 1</span>
-                    </div>
-
-                    <!-- Validation footer (always visible) -->
-                    <div class="validation-footer" id="validation-footer">
-                        <div class="val-ok" id="validation-ok">No issues detected</div>
-                        <ul class="validation-list" id="validation-list"></ul>
-                    </div>
-
                 </div>
 
-                <!-- Sub-splitter between editor and memory map -->
-                <div class="sub-splitter" id="sub-splitter"></div>
+                <div class="editor-statusbar" id="editor-statusbar">
+                    <span id="status-bytes">0 bytes (UTF-8)</span>
+                    <span id="status-chars">0 chars</span>
+                    <span id="status-lines">0 lines</span>
+                    <span id="status-cursor">Ln 1, Col 1</span>
+                </div>
 
-                <!-- Memory map pane -->
-                <div class="map-pane" id="map-pane">
-                    <div class="map-header">
-                        <span>CDI Tools</span>
-                        <div class="map-view-toggle">
-                            <button class="map-toggle-btn active" id="btn-map-flat"    title="Flat table view">≡ Flat</button>
-                            <button class="map-toggle-btn"        id="btn-map-tree"    title="Collapsible tree view">⊞ Tree</button>
-                            <button class="map-toggle-btn"        id="btn-map-defines" title="C #define address header">{} Defines</button>
-                            <button class="map-toggle-btn"        id="btn-map-struct"  title="C struct layout">⊡ Struct</button>
-                            <button class="map-toggle-btn"        id="btn-map-array"   title="C byte array for openlcb_user_config.c">[] Array</button>
-                        </div>
-                    </div>
-                    <div class="map-content" id="map-content">
-                        <div class="map-empty">Render CDI to see memory map</div>
-                    </div>
-                    <div class="map-overlap-report" id="map-overlap-report"></div>
-                    <div class="map-config-warning" id="map-config-warning"></div>
-                    <div class="map-stats-bar" id="map-stats-bar"></div>
+                <!-- Validation footer (always visible) -->
+                <div class="validation-footer" id="validation-footer">
+                    <div class="val-ok" id="validation-ok">No issues detected</div>
+                    <ul class="validation-list" id="validation-list"></ul>
                 </div>
 
             </div>
@@ -910,20 +835,42 @@
             <!-- Splitter -->
             <div class="ws-splitter" id="ws-splitter"></div>
 
-            <!-- Preview pane (always on the right / bottom) -->
-            <div class="preview-pane" id="preview-pane">
-                <div class="preview-toolbar">
-                    <label class="toggle" title="Show memory address of each field">
-                        <input type="checkbox" id="chk-address">
-                        Show Addresses
-                    </label>
-                </div>
-                <div class="preview-scroll">
-                    <div class="preview-empty" id="preview-empty">
-                        Open or paste CDI XML, then click <strong>▶ Render</strong>.
+            <!-- CDI Tools pane (always visible on the right) -->
+            <div class="map-pane" id="map-pane">
+                <div class="map-header">
+                    <span>CDI Tools</span>
+                    <div class="map-view-toggle">
+                        <button class="map-toggle-btn active" id="btn-map-flat"    title="Flat table view">≡ Flat</button>
+                        <button class="map-toggle-btn"        id="btn-map-tree"    title="Collapsible tree view">⊞ Tree</button>
+                        <button class="map-toggle-btn"        id="btn-map-defines" title="C #define address header">{} Defines</button>
+                        <button class="map-toggle-btn"        id="btn-map-struct"  title="C struct layout">⊡ Struct</button>
+                        <button class="map-toggle-btn"        id="btn-map-array"   title="C byte array for openlcb_user_config.c">[] Array</button>
+                        <button class="map-toggle-btn"        id="btn-map-preview" title="Rendered CDI preview">⊟ Preview</button>
+                        <button class="map-rebuild-btn"       id="btn-map-rebuild" title="Rebuild views from current XML">↻ Rebuild</button>
                     </div>
-                    <div id="cdi-output"></div>
+                    <div class="map-header-desc" id="map-header-desc">Flat table of all CDI memory addresses, sizes, and types</div>
                 </div>
+                <div class="map-content" id="map-content">
+                    <div class="map-empty">Enter CDI XML to see memory map</div>
+                </div>
+                <!-- Preview content (shown when Preview tool is active) -->
+                <div class="preview-content" id="preview-content" style="display:none">
+                    <div class="preview-toolbar">
+                        <label class="toggle" title="Show memory address of each field">
+                            <input type="checkbox" id="chk-address">
+                            Show Addresses
+                        </label>
+                    </div>
+                    <div class="preview-scroll">
+                        <div class="preview-empty" id="preview-empty">
+                            Enter or load CDI XML to see preview.
+                        </div>
+                        <div id="cdi-output"></div>
+                    </div>
+                </div>
+                <div class="map-overlap-report" id="map-overlap-report"></div>
+                <div class="map-config-warning" id="map-config-warning"></div>
+                <div class="map-stats-bar" id="map-stats-bar"></div>
             </div>
 
         </div>
@@ -945,31 +892,26 @@
 const elEditor      = createCMEditor(document.getElementById('cm-host'), {
     placeholder: 'Paste or open a CDI XML file to begin...'
 });
-const elOutput      = document.getElementById('cdi-output');
-const elEmpty       = document.getElementById('preview-empty');
-const elWorkspace   = document.getElementById('workspace');
-const elSplitter    = document.getElementById('ws-splitter');
-const elEditorPane  = document.getElementById('editor-pane');
-const elPreviewPane = document.getElementById('preview-pane');
-const elSubSplitter = document.getElementById('sub-splitter');
-const elMapPane     = document.getElementById('map-pane');
-const elMapContent  = document.getElementById('map-content');
-const elValFooter   = document.getElementById('validation-footer');
-const elValList     = document.getElementById('validation-list');
-const elValOk       = document.getElementById('validation-ok');
-const elStatusBytes = document.getElementById('status-bytes');
-const elStatusChars = document.getElementById('status-chars');
-const elStatusLines = document.getElementById('status-lines');
-const elStatusCur   = document.getElementById('status-cursor');
-const chkAddress     = document.getElementById('chk-address');
-const chkVertical    = document.getElementById('chk-vertical');
-const chkShowPreview = document.getElementById('chk-show-preview');
-const chkShowMap     = document.getElementById('chk-show-map');
-const btnRender     = document.getElementById('btn-render');
-const btnValidate   = document.getElementById('btn-validate');
-const btnClear      = document.getElementById('btn-clear');
-const btnExportXml  = document.getElementById('btn-export-xml');
-const fileInput     = document.getElementById('file-input');
+const elOutput         = document.getElementById('cdi-output');
+const elEmpty          = document.getElementById('preview-empty');
+const elWorkspace      = document.getElementById('workspace');
+const elSplitter       = document.getElementById('ws-splitter');
+const elEditorPane     = document.getElementById('editor-pane');
+const elMapPane        = document.getElementById('map-pane');
+const elMapContent     = document.getElementById('map-content');
+const elPreviewContent = document.getElementById('preview-content');
+const elValFooter      = document.getElementById('validation-footer');
+const elValList        = document.getElementById('validation-list');
+const elValOk          = document.getElementById('validation-ok');
+const elStatusBytes    = document.getElementById('status-bytes');
+const elStatusChars    = document.getElementById('status-chars');
+const elStatusLines    = document.getElementById('status-lines');
+const elStatusCur      = document.getElementById('status-cursor');
+const chkAddress       = document.getElementById('chk-address');
+const btnValidate      = document.getElementById('btn-validate');
+const btnClear         = document.getElementById('btn-clear');
+const btnExportXml     = document.getElementById('btn-export-xml');
+const fileInput        = document.getElementById('file-input');
 
 /* ---------- Embedded mode detection --------------------------------------- */
 const _isEmbedded = window.parent !== window;
@@ -1028,6 +970,7 @@ elEditor.onChange(onEditorChange);
 elEditor.onCursorChange(updateCursor);
 
 let _validateTimer = null;
+let _renderTimer   = null;
 
 function onEditorChange() {
 
@@ -1037,7 +980,6 @@ function onEditorChange() {
     _updateHighlight();
 
     const hasContent = currentXml.trim().length > 0;
-    btnRender.disabled    = !hasContent;
     btnValidate.disabled  = !hasContent;
     btnExportXml.disabled = !hasContent;
 
@@ -1045,6 +987,12 @@ function onEditorChange() {
     clearTimeout(_validateTimer);
     if (hasContent) {
         _validateTimer = setTimeout(validate, 500);
+    }
+
+    /* Auto-render after a short debounce */
+    clearTimeout(_renderTimer);
+    if (hasContent) {
+        _renderTimer = setTimeout(function () { render(); }, 600);
     }
 
     /* Notify parent of content change (embedded mode) */
@@ -1083,9 +1031,8 @@ function _updateLineNumbers() { }
 function _updateHighlight() { }
 
 /* ---------- Render -------------------------------------------------------- */
-btnRender.addEventListener('click', () => render(true));
 
-function render(autoShowPreview) {
+function render() {
 
     const xml = elEditor.value.trim();
     if (!xml) { return; }
@@ -1099,12 +1046,9 @@ function render(autoShowPreview) {
         elOutput.innerHTML = '<div style="color:#b91c1c;padding:16px">XML is not well-formed — click <strong>✓ Validate</strong> for details.</div>';
     }
 
-    renderMemoryMap(xml);
-
-    /* Auto-show the preview pane only when triggered by the Render button */
-    if (autoShowPreview && !chkShowPreview.checked) {
-        chkShowPreview.checked = true;
-        applyPaneVisibility();
+    /* Only update map content when not viewing Preview (avoids unhiding map-content) */
+    if (_mapView !== 'preview') {
+        renderMemoryMap(xml);
     }
 }
 
@@ -1125,15 +1069,36 @@ const TYPE_COLOURS = {
 
 let _mapView = 'flat';
 
-const MAP_TOGGLE_BTNS = ['btn-map-flat', 'btn-map-tree', 'btn-map-defines', 'btn-map-struct', 'btn-map-array'];
+const MAP_TOGGLE_BTNS = ['btn-map-flat', 'btn-map-tree', 'btn-map-defines', 'btn-map-struct', 'btn-map-array', 'btn-map-preview'];
+
+const MAP_VIEW_DESCRIPTIONS = {
+    flat:    'Flat table of all CDI memory addresses, sizes, and types',
+    tree:    'Collapsible tree view grouped by CDI segment and group hierarchy',
+    defines: 'C #define constants mapping symbolic names to memory addresses',
+    struct:  'C struct layout mirroring the CDI memory organization',
+    array:   'C byte array initializer for default CDI values in openlcb_user_config.c',
+    preview: 'Rendered CDI preview as an end-user configuration dialog'
+};
+
+const elMapHeaderDesc = document.getElementById('map-header-desc');
 
 function _setMapView(view) {
     _mapView = view;
     MAP_TOGGLE_BTNS.forEach(id => {
         document.getElementById(id).classList.toggle('active', id === `btn-map-${view}`);
     });
-    const xml = elEditor.value.trim();
-    if (xml) { renderMemoryMap(xml); }
+    elMapHeaderDesc.textContent = MAP_VIEW_DESCRIPTIONS[view] || '';
+
+    /* Toggle between map-content and preview-content */
+    if (view === 'preview') {
+        elMapContent.style.display     = 'none';
+        elPreviewContent.style.display = '';
+    } else {
+        elMapContent.style.display     = '';
+        elPreviewContent.style.display = 'none';
+        const xml = elEditor.value.trim();
+        if (xml) { renderMemoryMap(xml); }
+    }
     _saveCdiEditorState();
 }
 
@@ -1142,6 +1107,17 @@ document.getElementById('btn-map-tree').addEventListener('click',    () => _setM
 document.getElementById('btn-map-defines').addEventListener('click', () => _setMapView('defines'));
 document.getElementById('btn-map-struct').addEventListener('click',  () => _setMapView('struct'));
 document.getElementById('btn-map-array').addEventListener('click',   () => _setMapView('array'));
+document.getElementById('btn-map-preview').addEventListener('click', () => _setMapView('preview'));
+
+document.getElementById('btn-map-rebuild').addEventListener('click', () => {
+    const xml = elEditor.value.trim();
+    if (!xml) { return; }
+    if (_mapView === 'preview') {
+        render();
+    } else {
+        renderMemoryMap(xml);
+    }
+});
 
 function renderMemoryMap(xmlString) {
 
@@ -1283,8 +1259,8 @@ function _renderMapTree(mapData) {
 
         const segHead = document.createElement('div');
         segHead.style.cssText =
-            'padding:4px 6px;color:#569cd6;font-weight:700;font-size:11px;' +
-            'border-top:1px solid #3c3c3c;background:#252526;font-family:var(--font-mono)';
+            'padding:4px 6px;color:var(--color-primary);font-weight:700;font-size:11px;' +
+            'border-top:1px solid var(--color-border);background:#e0f2fe;font-family:var(--font-mono)';
         segHead.textContent =
             `Space ${spaceHex} (${seg.space})` +
             (seg.name ? `  —  ${seg.name}` : '') +
@@ -1293,7 +1269,7 @@ function _renderMapTree(mapData) {
 
         if (seg.items.length === 0) {
             const empty = document.createElement('div');
-            empty.style.cssText = 'padding:2px 12px;color:#555;font-style:italic;font-size:11px;font-family:var(--font-mono)';
+            empty.style.cssText = 'padding:2px 12px;color:var(--color-muted);font-style:italic;font-size:11px;font-family:var(--font-mono)';
             empty.textContent = '(no items)';
             frag.appendChild(empty);
         } else {
@@ -1495,12 +1471,12 @@ function _renderMapDefines(mapData) {
 
     const copyBar = document.createElement('div');
     copyBar.style.cssText =
-        'display:flex;justify-content:flex-end;padding:3px 6px;background:#2d2d2d;border-bottom:1px solid #444;flex-shrink:0';
+        'display:flex;justify-content:flex-end;padding:3px 6px;background:#e9ecef;border-bottom:1px solid #ddd;flex-shrink:0';
     const copyBtn = document.createElement('button');
     copyBtn.textContent = 'Copy';
     copyBtn.style.cssText =
-        'padding:1px 10px;font-size:10px;border:1px solid #555;border-radius:3px;' +
-        'background:#3c3c3c;color:#ccc;cursor:pointer;font-family:var(--font-mono)';
+        'padding:1px 10px;font-size:10px;border:1px solid #bbb;border-radius:3px;' +
+        'background:#fff;color:#333;cursor:pointer;font-family:var(--font-mono)';
     copyBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(text).then(() => {
             copyBtn.textContent = 'Copied!';
@@ -1756,12 +1732,12 @@ function _renderMapStruct(mapData) {
 
     const copyBar = document.createElement('div');
     copyBar.style.cssText =
-        'display:flex;justify-content:flex-end;padding:3px 6px;background:#2d2d2d;border-bottom:1px solid #444;flex-shrink:0';
+        'display:flex;justify-content:flex-end;padding:3px 6px;background:#e9ecef;border-bottom:1px solid #ddd;flex-shrink:0';
     const copyBtn = document.createElement('button');
     copyBtn.textContent = 'Copy';
     copyBtn.style.cssText =
-        'padding:1px 10px;font-size:10px;border:1px solid #555;border-radius:3px;' +
-        'background:#3c3c3c;color:#ccc;cursor:pointer;font-family:var(--font-mono)';
+        'padding:1px 10px;font-size:10px;border:1px solid #bbb;border-radius:3px;' +
+        'background:#fff;color:#333;cursor:pointer;font-family:var(--font-mono)';
     copyBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(text).then(() => {
             copyBtn.textContent = 'Copied!';
@@ -1864,18 +1840,18 @@ function _renderMapArray() {
 
     const copyBar = document.createElement('div');
     copyBar.style.cssText =
-        'display:flex;justify-content:flex-end;align-items:center;padding:3px 6px;background:#2d2d2d;border-bottom:1px solid #444;flex-shrink:0';
+        'display:flex;justify-content:flex-end;align-items:center;padding:3px 6px;background:#e9ecef;border-bottom:1px solid #ddd;flex-shrink:0';
 
     const countLabel = document.createElement('span');
-    countLabel.style.cssText = 'font-size:11px;color:#aaa;font-family:var(--font-mono);margin-right:auto';
+    countLabel.style.cssText = 'font-size:11px;color:var(--color-muted);font-family:var(--font-mono);margin-right:auto';
     countLabel.textContent = 'Total bytes (including null): ' + totalChars;
     copyBar.appendChild(countLabel);
 
     const copyBtn = document.createElement('button');
     copyBtn.textContent = 'Copy';
     copyBtn.style.cssText =
-        'padding:1px 10px;font-size:10px;border:1px solid #555;border-radius:3px;' +
-        'background:#3c3c3c;color:#ccc;cursor:pointer;font-family:var(--font-mono)';
+        'padding:1px 10px;font-size:10px;border:1px solid #bbb;border-radius:3px;' +
+        'background:#fff;color:#333;cursor:pointer;font-family:var(--font-mono)';
     copyBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(text).then(() => {
             copyBtn.textContent = 'Copied!';
@@ -2188,10 +2164,9 @@ btnClear.addEventListener('click', () => {
     elValList.innerHTML = '';
     elValOk.textContent = 'No issues detected';
     elValOk.style.display = '';
-    btnRender.disabled    = true;
     btnValidate.disabled  = true;
     btnExportXml.disabled = true;
-    elMapContent.innerHTML = '<div class="map-empty">Render CDI to see memory map</div>';
+    elMapContent.innerHTML = '<div class="map-empty">Enter CDI XML to see memory map</div>';
     document.getElementById('map-stats-bar').innerHTML = '';
     document.getElementById('map-overlap-report').innerHTML = '';
     document.getElementById('map-config-warning').innerHTML = '';
@@ -2221,77 +2196,7 @@ btnExportXml.addEventListener('click', () => {
 });
 
 
-/* ---------- Vertical Split toggle ----------------------------------------- */
-
-/*
- * Workspace is ALWAYS horizontal (row): [Editor+Map | Preview]
- * Preview is always on the right.
- *
- * "Vertical Split" controls the editor/map sub-split inside the left pane:
- *   CHECKED   = editor | map  side-by-side (vertical divider, map-beside)
- *   UNCHECKED = editor / map  stacked      (horizontal divider, map below)
- */
-
-function applySplitMode() {
-
-    /* Workspace is always horizontal — preview always on the right */
-    elWorkspace.classList.remove('vertical');
-    elWorkspace.classList.add('horizontal');
-
-    /* Editor pane always uses width (it's in a row) */
-    elEditorPane.style.width     = elEditorPane.style.width || '50%';
-    elEditorPane.style.height    = '';
-    elEditorPane.style.flexBasis = elEditorPane.style.width;
-
-    if (chkVertical.checked) {
-
-        /* editor | map  side-by-side within the left pane */
-        elEditorPane.classList.add('map-beside');
-        elMapPane.style.width     = elMapPane.style.width || '220px';
-        elMapPane.style.height    = '';
-        elMapPane.style.flexBasis = elMapPane.style.width;
-
-    } else {
-
-        /* editor on top, map below within the left pane */
-        elEditorPane.classList.remove('map-beside');
-        elMapPane.style.height    = elMapPane.style.height || '180px';
-        elMapPane.style.width     = '';
-        elMapPane.style.flexBasis = elMapPane.style.height;
-
-    }
-
-    _restoreSplitterPositions();
-}
-
-chkVertical.addEventListener('change', applySplitMode);
-
-/* ---------- Pane visibility toggles -------------------------------------- */
-
-function applyPaneVisibility() {
-
-    const showPrev = chkShowPreview.checked;
-    const showMap  = chkShowMap.checked;
-
-    /* preview pane + main splitter */
-    elSplitter.style.display    = showPrev ? '' : 'none';
-    elPreviewPane.style.display = showPrev ? '' : 'none';
-
-    if (showPrev) {
-        /* restore CSS-driven / splitter-set flex sizing */
-        elEditorPane.style.removeProperty('flex');
-    } else {
-        /* editor expands to fill entire workspace */
-        elEditorPane.style.flex = '1 1 auto';
-    }
-
-    /* map pane + sub-splitter */
-    elSubSplitter.style.display = showMap ? '' : 'none';
-    elMapPane.style.display     = showMap ? '' : 'none';
-}
-
-chkShowPreview.addEventListener('change', applyPaneVisibility);
-chkShowMap.addEventListener('change', applyPaneVisibility);
+/* ---------- Layout (always horizontal: editor | CDI Tools) ---------------- */
 
 /* ---------- Generic splitter drag factory --------------------------------- */
 
@@ -2335,9 +2240,9 @@ function initSplitterDrag(splitterEl, opts) {
     });
 }
 
-/* main splitter — resizes editor pane width (workspace is always row) */
+/* main splitter — resizes editor pane width */
 initSplitterDrag(elSplitter, {
-    isVertical: () => true,   /* always vertical divider (col-resize) */
+    isVertical: () => true,
     getSize:    () => elEditorPane.getBoundingClientRect().width,
     setSize:    px => {
         elEditorPane.style.width     = px + 'px';
@@ -2349,53 +2254,14 @@ initSplitterDrag(elSplitter, {
     }
 });
 
-/* sub-splitter — resizes map pane; orientation is opposite to main.
- * invert: true because map pane is AFTER the splitter (below/right), so
- * dragging toward it should grow it, not shrink it. */
-initSplitterDrag(elSubSplitter, {
-    isVertical: () => elEditorPane.classList.contains('map-beside'),  /* map-beside = col-resize */
-    invert:     true,
-    getSize:    () => elEditorPane.classList.contains('map-beside')
-                        ? elMapPane.getBoundingClientRect().width
-                        : elMapPane.getBoundingClientRect().height,
-    setSize:    px => {
-        if (elEditorPane.classList.contains('map-beside')) {
-            elMapPane.style.width  = px + 'px';
-            elMapPane.style.flexBasis = px + 'px';
-        } else {
-            elMapPane.style.height = px + 'px';
-            elMapPane.style.flexBasis = px + 'px';
-        }
-    },
-    min: 60,
-    onDragEnd: px => {
-        const beside = elEditorPane.classList.contains('map-beside');
-        localStorage.setItem(beside ? 'cdi_sp_sub_beside' : 'cdi_sp_sub_below', px);
-    }
-});
-
 function _restoreSplitterPositions() {
 
-    /* Main splitter — always controls editor pane width */
     const mainPx = parseFloat(localStorage.getItem('cdi_sp_main'));
     if (mainPx > 0) {
         elEditorPane.style.width     = mainPx + 'px';
         elEditorPane.style.flexBasis = mainPx + 'px';
     }
 
-    /* Sub-splitter — map width (beside) or height (below) */
-    const beside = elEditorPane.classList.contains('map-beside');
-    const subKey = beside ? 'cdi_sp_sub_beside' : 'cdi_sp_sub_below';
-    const subPx  = parseFloat(localStorage.getItem(subKey));
-    if (subPx > 0) {
-        if (beside) {
-            elMapPane.style.width     = subPx + 'px';
-            elMapPane.style.flexBasis = subPx + 'px';
-        } else {
-            elMapPane.style.height    = subPx + 'px';
-            elMapPane.style.flexBasis = subPx + 'px';
-        }
-    }
 }
 
 /* ---------- Generate Basic XML ------------------------------------------- */
@@ -2484,9 +2350,11 @@ document.getElementById('btn-basic-xml').addEventListener('click', () => {
 /* ---------- State persistence --------------------------------------------- */
 
 var _cdiSaveTimer = null;
+var _restoring    = false;   /* true during restore — suppresses saves */
 
 function _saveCdiEditorState() {
 
+    if (_restoring) { return; }
     clearTimeout(_cdiSaveTimer);
     _cdiSaveTimer = setTimeout(_saveCdiEditorStateNow, 500);
 
@@ -2495,15 +2363,16 @@ function _saveCdiEditorState() {
 function _saveCdiEditorStateNow() {
 
     const state = {
-        showPreview: chkShowPreview.checked,
-        showMap:     chkShowMap.checked,
-        vertical:    chkVertical.checked,
         showAddr:    chkAddress.checked,
         mapView:     _mapView,
         xml:         elEditor.value,
         filename:    _loadedFilename || ''
     };
     localStorage.setItem('cdi_editor_state', JSON.stringify(state));
+
+    /* Clean up orphaned keys from the old split-pane layout */
+    localStorage.removeItem('cdi_sp_sub_beside');
+    localStorage.removeItem('cdi_sp_sub_below');
 
 }
 
@@ -2512,14 +2381,19 @@ function _restoreCdiEditorState() {
     const raw = localStorage.getItem('cdi_editor_state');
     if (!raw) { return; }
 
+    _restoring = true;
+
     try {
 
         const state = JSON.parse(raw);
-        if (typeof state.showPreview === 'boolean') { chkShowPreview.checked = state.showPreview; }
-        if (typeof state.showMap     === 'boolean') { chkShowMap.checked     = state.showMap; }
-        if (typeof state.vertical    === 'boolean') { chkVertical.checked    = state.vertical; }
-        if (typeof state.showAddr    === 'boolean') { chkAddress.checked     = state.showAddr; }
-        if (state.mapView) { _setMapView(state.mapView); }
+        if (typeof state.showAddr === 'boolean') { chkAddress.checked = state.showAddr; }
+
+        /* Validate mapView against known views; fall back to 'flat' */
+        var validViews = ['flat', 'tree', 'defines', 'struct', 'array', 'preview'];
+        var restoredView = (state.mapView && validViews.indexOf(state.mapView) !== -1)
+            ? state.mapView : 'flat';
+        _setMapView(restoredView);
+
         if (state.xml) {
             elEditor.value = state.xml;
             if (state.filename) { _setFilename(state.filename); }
@@ -2528,18 +2402,17 @@ function _restoreCdiEditorState() {
 
     } catch (e) { }
 
+    _restoring = false;
+
 }
 
-/* Save state when checkboxes change */
-[chkShowPreview, chkShowMap, chkVertical, chkAddress].forEach(cb => {
-    cb.addEventListener('change', _saveCdiEditorState);
-});
+/* Save state when address checkbox changes */
+chkAddress.addEventListener('change', _saveCdiEditorState);
 
 /* ---------- Init ---------------------------------------------------------- */
 _restoreCdiEditorState();
 _updateStatusBar();
-applySplitMode();
-applyPaneVisibility();
+_restoreSplitterPositions();
 
 /* ---------- Embedded mode (iframe inside Node Wizard) --------------------- */
 

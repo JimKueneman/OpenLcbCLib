@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- STM32 chip body (QFP package) -->
+  <rect x="30" y="25" width="60" height="60" rx="3" fill="#303446" stroke="#8caaee" stroke-width="2.5"/>
+  <!-- Pin 1 dot -->
+  <circle cx="38" cy="33" r="2.5" fill="#e5c890"/>
+  <!-- STM32 label -->
+  <text x="60" y="50" text-anchor="middle" font-family="monospace" font-size="9" font-weight="bold" fill="#c6d0f5">STM32</text>
+  <text x="60" y="62" text-anchor="middle" font-family="monospace" font-size="8" fill="#8caaee">F4xx</text>
+  <text x="60" y="74" text-anchor="middle" font-family="monospace" font-size="7" fill="#737994">CAN</text>
+  <!-- Pins top -->
+  <rect x="38" y="18" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <rect x="46" y="18" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <rect x="54" y="18" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <rect x="62" y="18" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <rect x="70" y="18" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <rect x="78" y="18" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <!-- Pins bottom -->
+  <rect x="38" y="83" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <rect x="46" y="83" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <rect x="54" y="83" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <rect x="62" y="83" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <rect x="70" y="83" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <rect x="78" y="83" width="3" height="9" rx="0.5" fill="#a6d189"/>
+  <!-- Pins left -->
+  <rect x="22" y="33" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <rect x="22" y="41" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <rect x="22" y="49" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <rect x="22" y="57" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <rect x="22" y="65" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <rect x="22" y="73" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <!-- Pins right -->
+  <rect x="89" y="33" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <rect x="89" y="41" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <rect x="89" y="49" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <rect x="89" y="57" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <rect x="89" y="65" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <rect x="89" y="73" width="9" height="3" rx="0.5" fill="#a6d189"/>
+  <!-- HAL badge -->
+  <text x="60" y="108" text-anchor="middle" font-family="monospace" font-size="8" fill="#626880">CubeIDE / HAL</text>
+</svg>

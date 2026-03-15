@@ -24,6 +24,16 @@
  *
  * <hr>
  *
+ * <h2 style="margin-left: 10px; margin-right: 10px;">Getting Started Guides</h2>
+ *   <p style="margin-left: 50px; margin-right: 50px;">
+ *     <a href="../../QuickStartGuide.pdf">Quick Start Guide</a> — Get an OpenLCB/LCC node running on ESP32 with Arduino IDE in minutes. Covers hardware wiring, project setup from the BasicNode demo, Node IDs, and uploading your first sketch.
+ *   </p>
+ *   <p style="margin-left: 50px; margin-right: 50px;">
+ *     <a href="../../DeveloperGuide.pdf">Developer Guide</a> — In-depth walkthrough of the Node Wizard, project file structure, driver implementation, callbacks, events, configuration memory, and all supported platforms.
+ *   </p>
+ *
+ * <hr>
+ *
  * <h2 style="margin-left: 10px; margin-right: 10px;">Node Wizard</h2>
  *   <p style="margin-left: 50px; margin-right: 50px;">
  *     <a href="../../../tools/node_wizard/node_wizard.html">Node Wizard</a> — Browser-based tool for configuring OpenLCB nodes. Generates the user configuration files, CDI/FDI descriptors, and application main.c for your target platform.
