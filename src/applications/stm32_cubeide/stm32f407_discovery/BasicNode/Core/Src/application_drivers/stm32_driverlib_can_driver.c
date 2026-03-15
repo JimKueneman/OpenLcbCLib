@@ -41,9 +41,9 @@
 
 #include "stm32f4xx_hal.h"
 
-#include "../src/openlcb/openlcb_types.h"
-#include "../src/drivers/canbus/can_types.h"
-#include "../src/drivers/canbus/can_rx_statemachine.h"
+#include "../openlcb_c_lib/openlcb/openlcb_types.h"
+#include "../openlcb_c_lib/drivers/canbus/can_types.h"
+#include "../openlcb_c_lib/drivers/canbus/can_rx_statemachine.h"
 
 static bool _is_transmitting = false;
 static CAN_HandleTypeDef *_hcan1;

@@ -12,7 +12,7 @@
 #ifndef __NODE_DEFINITION__
 #define	__NODE_DEFINITION__
 
-#include "../../../openlcb/openlcb_types.h"
+#include "openlcb_c_lib/openlcb/openlcb_types.h"
 
 
 // nice reply for multiple ways of defining constant structures

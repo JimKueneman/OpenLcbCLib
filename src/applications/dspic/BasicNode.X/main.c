@@ -93,19 +93,19 @@
 #include "string.h"
 #include "stdlib.h"
 
-#include "drivers.h"
+#include "application_drivers/drivers.h"
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "node_parameters.h"
-#include "dependency_injection.h"
-#include "dependency_injection_canbus.h"
+#include "application_drivers/dependency_injection.h"
+#include "application_drivers/dependency_injection_canbus.h"
 
-#include "dependency_injectors.h"
+#include "application_drivers/dependency_injectors.h"
 
-#include "../../../drivers/canbus/can_main_statemachine.h"
+#include "openlcb_c_lib/drivers/canbus/can_main_statemachine.h"
 
-#include "../../../openlcb/openlcb_node.h"
-#include "../../../openlcb/openlcb_main_statemachine.h"
-#include "../../../openlcb/openlcb_login_statemachine.h"
+#include "openlcb_c_lib/openlcb/openlcb_node.h"
+#include "openlcb_c_lib/openlcb/openlcb_main_statemachine.h"
+#include "openlcb_c_lib/openlcb/openlcb_login_statemachine.h"
 
 #define NODE_ID 0x0501010107AA
 

@@ -335,6 +335,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				"EXCLUDED_SOURCE_FILE_NAMES[arch=*]" = (
+					"*.cxx",
+					dependency_injection.c,
+					dependency_injection_canbus.c,
+					function_injection_defines.h,
+				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../..";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -344,6 +350,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				"EXCLUDED_SOURCE_FILE_NAMES[arch=*]" = (
+					"*.cxx",
+					dependency_injection.c,
+					dependency_injection_canbus.c,
+					function_injection_defines.h,
+				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../..";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

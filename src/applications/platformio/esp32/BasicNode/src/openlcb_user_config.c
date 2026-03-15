@@ -33,8 +33,8 @@
  */
 
 #include "openlcb_user_config.h"
-#include "src/openlcb/openlcb_types.h"
-#include "src/openlcb/openlcb_defines.h"
+#include "openlcb_c_lib/openlcb/openlcb_types.h"
+#include "openlcb_c_lib/openlcb/openlcb_defines.h"
 
 const node_parameters_t OpenLcbUserConfig_node_parameters = {
 

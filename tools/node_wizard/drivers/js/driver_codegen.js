@@ -126,9 +126,10 @@ const DriverCodegen = {
 
     /* ----- .c file generation ----- */
 
-    generateC: function (group, checkedFunctions, platformState) {
+    generateC: function (group, checkedFunctions, platformState, isArduino) {
 
         var self = this;
+        var srcExt = isArduino ? '.cpp' : '.c';
         var groupKey = null;
 
         Object.keys(DRIVER_GROUPS).forEach(function (key) {
@@ -142,7 +143,7 @@ const DriverCodegen = {
         const lines = [];
 
         lines.push('/**');
-        lines.push(' * @file ' + group.filePrefix + '.c');
+        lines.push(' * @file ' + group.filePrefix + srcExt);
         lines.push(' * @brief Hardware driver implementations for ' + group.title + '.');
         lines.push(' *        Connect OpenLcbCLib to your CAN controller, timers, and');
         lines.push(' *        platform resources.');

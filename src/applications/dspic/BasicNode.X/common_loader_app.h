@@ -38,7 +38,7 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
-#include "../../../openlcb/openlcb_types.h"
+#include "openlcb_c_lib/openlcb/openlcb_types.h"
 
 #ifdef BOSS1
 

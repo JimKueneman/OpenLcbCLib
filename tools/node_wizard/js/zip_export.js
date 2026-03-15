@@ -1,37 +1,43 @@
 /* =========================================================================
  * zip_export.js  —  Generate a complete project ZIP with all files
  *
- * Arduino-compatible folder structure (all subfolders under src/):
+ * Two folder layouts depending on platform:
  *
- *   <project>/
- *   |-- main.c
- *   |-- openlcb_user_config.h
- *   |-- openlcb_user_config.c
- *   |-- src/
- *   |   |-- application_callbacks/
- *   |   |   |-- callbacks_*.h / .c     (only groups with checked functions)
- *   |   |-- application_drivers/
- *   |   |   |-- openlcb_can_drivers.h / .c
- *   |   |   |-- openlcb_drivers.h / .c
- *   |   |-- xml_files/
- *   |   |   |-- cdi.xml                (if CDI loaded)
- *   |   |   |-- fdi.xml                (if FDI loaded, train only)
- *   |   |-- src/                       <-- Copy OpenLcbCLib library here
- *   |       |-- openlcb/
- *   |       |-- drivers/canbus/
- *   |       |-- utilities/
+ * NON-ARDUINO (flat):                    ARDUINO (src/ wrapper):
+ *
+ *   <project>/                             <project>/
+ *   |-- main.c                             |-- main.ino
+ *   |-- openlcb_user_config.h              |-- openlcb_user_config.h
+ *   |-- openlcb_user_config.c              |-- openlcb_user_config.c
+ *   |-- application_callbacks/             |-- src/
+ *   |   |-- callbacks_*.h / .c             |   |-- application_callbacks/
+ *   |-- application_drivers/               |   |-- application_drivers/
+ *   |   |-- openlcb_can_drivers.h / .c     |   |-- xml_files/
+ *   |-- xml_files/                         |   |-- openlcb_c_lib/
+ *   |   |-- cdi.xml                        |-- GETTING_STARTED.txt
+ *   |   |-- fdi.xml                        |-- <type>_project.json
+ *   |-- openlcb_c_lib/
+ *   |   |-- openlcb/
+ *   |   |-- drivers/canbus/
+ *   |   |-- utilities/
  *   |-- GETTING_STARTED.txt
  *   |-- <type>_project.json
  *
  * Include path convention (all relative to file location):
- *   main.c (root):
- *     #include "src/src/openlcb/..."
+ *
+ *   NON-ARDUINO main.c / config (root):
+ *     #include "openlcb_c_lib/openlcb/..."
+ *     #include "application_drivers/..."
+ *     #include "application_callbacks/..."
+ *
+ *   ARDUINO main.ino / config (root):
+ *     #include "src/openlcb_c_lib/openlcb/..."
  *     #include "src/application_drivers/..."
  *     #include "src/application_callbacks/..."
  *
- *   src/application_drivers/* and src/application_callbacks/*:
- *     #include "../src/openlcb/..."
- *     #include "../src/drivers/canbus/..."
+ *   application_drivers/* and application_callbacks/* (both modes):
+ *     #include "../openlcb_c_lib/openlcb/..."
+ *     #include "../openlcb_c_lib/drivers/canbus/..."
  *
  * Depends on globals: CALLBACK_GROUPS, CallbackCodegen, DRIVER_GROUPS,
  *                     DriverCodegen, generateH, generateC, generateMain
@@ -46,34 +52,33 @@ var ZipExport = (function () {
     /* ----------------------------------------------------------------------- */
 
     /**
-     * Fix includes in main.c:
-     *   - Library: "src/openlcb/..." → "src/src/openlcb/..."
-     *             "src/drivers/..." → "src/src/drivers/..."
-     *   - Drivers: bare "openlcb_can_drivers.h" → "src/application_drivers/openlcb_can_drivers.h"
-     *   - Callbacks: bare "callbacks_*.h" → "src/application_callbacks/callbacks_*.h"
+     * Fix includes in main.c / main.ino.
+     * Arduino: prefix with "src/", non-Arduino: no prefix.
      */
-    function _fixMainIncludes(code) {
+    function _fixMainIncludes(code, isArduino) {
 
-        /* Library includes: "src/" → "src/src/" (library is nested one level deeper) */
+        var prefix = isArduino ? 'src/' : '';
+
+        /* Library includes: "src/openlcb/..." or "src/drivers/..." or "src/utilities/..." → "{prefix}openlcb_c_lib/..." */
         code = code.replace(
-            /#include "src\/(openlcb|drivers)\//g,
-            '#include "src/src/$1/'
+            /#include "src\/(openlcb|drivers|utilities)\//g,
+            '#include "' + prefix + 'openlcb_c_lib/$1/'
         );
 
-        /* Driver includes: bare name → src/application_drivers/ */
+        /* Driver includes: bare name → {prefix}application_drivers/ */
         code = code.replace(
             /#include "openlcb_can_drivers\.h"/g,
-            '#include "src/application_drivers/openlcb_can_drivers.h"'
+            '#include "' + prefix + 'application_drivers/openlcb_can_drivers.h"'
         );
         code = code.replace(
             /#include "openlcb_drivers\.h"/g,
-            '#include "src/application_drivers/openlcb_drivers.h"'
+            '#include "' + prefix + 'application_drivers/openlcb_drivers.h"'
         );
 
-        /* Callback includes: bare name → src/application_callbacks/ */
+        /* Callback includes: bare name → {prefix}application_callbacks/ */
         code = code.replace(
             /#include "(callbacks_\w+\.h)"/g,
-            '#include "src/application_callbacks/$1"'
+            '#include "' + prefix + 'application_callbacks/$1"'
         );
 
         return code;
@@ -82,15 +87,15 @@ var ZipExport = (function () {
 
     /**
      * Fix includes in driver/callback files.
-     * These live under src/application_drivers/ or src/application_callbacks/.
-     * Library headers use "src/openlcb/..." in defs — need "../src/openlcb/..."
-     * (up one level from application_drivers to src, then into src/openlcb).
+     * These live under application_drivers/ or application_callbacks/.
+     * Library headers use "src/openlcb/..." in defs — need "../openlcb_c_lib/..."
+     * (same for both Arduino and non-Arduino since the relative path is identical).
      */
     function _fixSubfolderIncludes(code) {
 
         code = code.replace(
-            /#include "src\//g,
-            '#include "../src/'
+            /#include "src\/(openlcb|drivers|utilities)\//g,
+            '#include "../openlcb_c_lib/$1/'
         );
 
         return code;
@@ -99,13 +104,15 @@ var ZipExport = (function () {
 
     /**
      * Fix includes in openlcb_user_config.h / .c.
-     * These are at root level. Library includes "src/" → "src/src/".
+     * These sit at project root. Arduino: "src/openlcb_c_lib/...", else: "openlcb_c_lib/..."
      */
-    function _fixConfigIncludes(code) {
+    function _fixConfigIncludes(code, isArduino) {
+
+        var prefix = isArduino ? 'src/' : '';
 
         code = code.replace(
-            /#include "src\/(openlcb|drivers)\//g,
-            '#include "src/src/$1/'
+            /#include "src\/(openlcb|drivers|utilities)\//g,
+            '#include "' + prefix + 'openlcb_c_lib/$1/'
         );
 
         return code;
@@ -211,7 +218,7 @@ var ZipExport = (function () {
     /* Getting Started document                                                 */
     /* ----------------------------------------------------------------------- */
 
-    function _buildGettingStarted(wizardState, codegenState, mainFilename) {
+    function _buildGettingStarted(wizardState, codegenState, mainFilename, isArduino) {
 
         var nodeLabel = wizardState.selectedNodeType === 'train-controller'
             ? 'Train Controller'
@@ -228,23 +235,25 @@ var ZipExport = (function () {
         L.push('GETTING STARTED');
         L.push('===============');
         L.push('');
-        L.push('1. Copy the OpenLcbCLib library source into the src/src/ folder:');
+        var p = isArduino ? 'src/' : '';   /* path prefix for folder references */
+
+        L.push('1. Copy the OpenLcbCLib library source into the ' + p + 'openlcb_c_lib/ folder:');
         L.push('');
-        L.push('     src/src/openlcb/         <-- core library (.c/.h files)');
-        L.push('     src/src/drivers/canbus/  <-- CAN bus transport layer');
-        L.push('     src/src/utilities/       <-- helper utilities');
+        L.push('     ' + p + 'openlcb_c_lib/openlcb/         <-- core library (.c/.h files)');
+        L.push('     ' + p + 'openlcb_c_lib/drivers/canbus/  <-- CAN bus transport layer');
+        L.push('     ' + p + 'openlcb_c_lib/utilities/       <-- helper utilities');
         L.push('');
         L.push('2. Open ' + mainFilename + ' -- this is your application entry point.');
         L.push('   It wires the driver and callback functions into the library');
         L.push('   configuration structs and runs the main loop.');
         L.push('');
-        L.push('3. Implement the driver stubs in src/application_drivers/.');
+        L.push('3. Implement the driver stubs in ' + p + 'application_drivers/.');
         L.push('   These connect the library to your hardware (CAN controller,');
         L.push('   EEPROM/flash for config memory, etc.).');
         L.push('   At minimum: CAN transmit/receive, lock/unlock shared resources,');
         L.push('   and the 100ms timer are critical for basic operation.');
         L.push('');
-        L.push('4. Implement the callback stubs in src/application_callbacks/.');
+        L.push('4. Implement the callback stubs in ' + p + 'application_callbacks/.');
         L.push('   These are where your application logic goes -- responding to');
         L.push('   events, handling configuration changes, etc.');
         L.push('');
@@ -261,31 +270,55 @@ var ZipExport = (function () {
         L.push('  |-- openlcb_user_config.h              Feature flags and node parameters');
         L.push('  |-- openlcb_user_config.c              Node parameters struct (const data)');
         L.push('  |');
-        L.push('  |-- src/');
-        L.push('  |   |-- application_drivers/');
-        L.push('  |   |   |-- openlcb_can_drivers.h      CAN bus hardware interface');
-        L.push('  |   |   |-- openlcb_can_drivers.c');
-        L.push('  |   |   |-- openlcb_drivers.h          Platform drivers (memory, reboot, etc.)');
-        L.push('  |   |   |-- openlcb_drivers.c');
-        L.push('  |   |');
-        L.push('  |   |-- application_callbacks/');
-        L.push('  |   |   |-- callbacks_*.h / .c         Application callback stubs');
-        L.push('  |   |');
-        L.push('  |   |-- xml_files/');
-        L.push('  |   |   |-- cdi.xml                    Configuration Description Information');
-        L.push('  |   |   |-- fdi.xml                    Function Description (train nodes)');
-        L.push('  |   |');
-        L.push('  |   |-- src/                           <-- Copy OpenLcbCLib library here');
-        L.push('  |       |-- openlcb/                   Core library');
-        L.push('  |       |-- drivers/canbus/            CAN transport layer');
-        L.push('  |       |-- utilities/                 Helper utilities');
-        L.push('  |');
+
+        if (isArduino) {
+
+            L.push('  |-- src/');
+            L.push('  |   |-- application_drivers/');
+            L.push('  |   |   |-- openlcb_can_drivers.h      CAN bus hardware interface');
+            L.push('  |   |   |-- openlcb_can_drivers.cpp');
+            L.push('  |   |   |-- openlcb_drivers.h          Platform drivers (memory, reboot, etc.)');
+            L.push('  |   |   |-- openlcb_drivers.cpp');
+            L.push('  |   |');
+            L.push('  |   |-- application_callbacks/');
+            L.push('  |   |   |-- callbacks_*.h / .cpp       Application callback stubs');
+            L.push('  |   |');
+            L.push('  |   |-- xml_files/');
+            L.push('  |   |   |-- cdi.xml                    Configuration Description Information');
+            L.push('  |   |   |-- fdi.xml                    Function Description (train nodes)');
+            L.push('  |   |');
+            L.push('  |   |-- openlcb_c_lib/                 <-- Copy OpenLcbCLib library here');
+            L.push('  |       |-- openlcb/                   Core library');
+            L.push('  |       |-- drivers/canbus/            CAN transport layer');
+            L.push('  |       |-- utilities/                 Helper utilities');
+            L.push('  |');
+            L.push('  NOTE: All subfolders are under src/ for Arduino IDE compatibility.');
+
+        } else {
+
+            L.push('  |-- application_drivers/');
+            L.push('  |   |-- openlcb_can_drivers.h          CAN bus hardware interface');
+            L.push('  |   |-- openlcb_can_drivers.c');
+            L.push('  |   |-- openlcb_drivers.h              Platform drivers (memory, reboot, etc.)');
+            L.push('  |   |-- openlcb_drivers.c');
+            L.push('  |');
+            L.push('  |-- application_callbacks/');
+            L.push('  |   |-- callbacks_*.h / .c             Application callback stubs');
+            L.push('  |');
+            L.push('  |-- xml_files/');
+            L.push('  |   |-- cdi.xml                        Configuration Description Information');
+            L.push('  |   |-- fdi.xml                        Function Description (train nodes)');
+            L.push('  |');
+            L.push('  |-- openlcb_c_lib/                     <-- Copy OpenLcbCLib library here');
+            L.push('  |   |-- openlcb/                       Core library');
+            L.push('  |   |-- drivers/canbus/                CAN transport layer');
+            L.push('  |   |-- utilities/                     Helper utilities');
+            L.push('  |');
+
+        }
+
         L.push('  |-- GETTING_STARTED.txt                This file');
         L.push('  |-- <type>_project.json                Node Wizard project (reload to edit)');
-        L.push('');
-        L.push('  NOTE: All subfolders are under src/ for Arduino IDE compatibility.');
-        L.push('  The library lives under src/src/ which preserves the original');
-        L.push('  OpenLcbCLib path structure for include consistency.');
         L.push('');
         L.push('');
         L.push('INCLUDE PATH CONVENTION');
@@ -294,14 +327,14 @@ var ZipExport = (function () {
         L.push('All #include paths are relative to the file that contains them.');
         L.push('No special compiler -I flags are required.');
         L.push('');
-        L.push('  From main.c (project root):');
-        L.push('    #include "src/src/openlcb/openlcb_config.h"');
-        L.push('    #include "src/application_drivers/openlcb_can_drivers.h"');
-        L.push('    #include "src/application_callbacks/callbacks_events.h"');
+        L.push('  From ' + mainFilename + ' (project root):');
+        L.push('    #include "' + p + 'openlcb_c_lib/openlcb/openlcb_config.h"');
+        L.push('    #include "' + p + 'application_drivers/openlcb_can_drivers.h"');
+        L.push('    #include "' + p + 'application_callbacks/callbacks_events.h"');
         L.push('');
-        L.push('  From src/application_drivers/ or src/application_callbacks/:');
-        L.push('    #include "../src/openlcb/openlcb_types.h"');
-        L.push('    #include "../src/drivers/canbus/can_types.h"');
+        L.push('  From ' + p + 'application_drivers/ or ' + p + 'application_callbacks/:');
+        L.push('    #include "../openlcb_c_lib/openlcb/openlcb_types.h"');
+        L.push('    #include "../openlcb_c_lib/drivers/canbus/can_types.h"');
         L.push('');
         L.push('');
         L.push('WHAT TO IMPLEMENT');
@@ -375,9 +408,9 @@ var ZipExport = (function () {
         var mainFilename = isArduino ? 'main.ino' : 'main.c';
 
         /* ---- Core config files ---- */
-        var configH    = _fixConfigIncludes(generateH(codegenState));
-        var configC    = _fixConfigIncludes(generateC(codegenState));
-        var mainC      = _fixMainIncludes(generateMain(codegenState));
+        var configH    = _fixConfigIncludes(generateH(codegenState), isArduino);
+        var configC    = _fixConfigIncludes(generateC(codegenState), isArduino);
+        var mainC      = _fixMainIncludes(generateMain(codegenState), isArduino);
 
         /* ---- Driver files ---- */
         var activeDrivers = _getActiveDriverGroups(codegenState);
@@ -392,47 +425,56 @@ var ZipExport = (function () {
 
         /* ---- Build ZIP ---- */
         var zip = new JSZip();
-        var srcFolder = zip.folder('src');
+
+        /*
+         * Arduino requires all .c/.h source files under a src/ folder.
+         * Non-Arduino: everything sits at the project root.
+         */
+        var baseFolder = isArduino ? zip.folder('src') : zip;
 
         /* Root files */
         zip.file(mainFilename, mainC);
         zip.file('openlcb_user_config.h', configH);
         zip.file('openlcb_user_config.c', configC);
 
-        /* Driver files under src/application_drivers/ */
-        var driversFolder = srcFolder.folder('application_drivers');
+        /* Arduino uses .cpp for driver/callback source files so users can
+         * call Serial and other C++ Arduino APIs in their implementations. */
+        var srcExt = isArduino ? '.cpp' : '.c';
+
+        /* Driver files under {base}/application_drivers/ */
+        var driversFolder = baseFolder.folder('application_drivers');
 
         activeDrivers.forEach(function (entry) {
 
             var hCode = DriverCodegen.generateH(entry.group, entry.functions, wizardState.platformState);
-            var cCode = DriverCodegen.generateC(entry.group, entry.functions, wizardState.platformState);
+            var cCode = DriverCodegen.generateC(entry.group, entry.functions, wizardState.platformState, isArduino);
 
             hCode = _fixSubfolderIncludes(hCode);
             cCode = _fixSubfolderIncludes(cCode);
 
             driversFolder.file(entry.group.filePrefix + '.h', hCode);
-            driversFolder.file(entry.group.filePrefix + '.c', cCode);
+            driversFolder.file(entry.group.filePrefix + srcExt, cCode);
 
         });
 
-        /* Callback files under src/application_callbacks/ */
-        var callbacksFolder = srcFolder.folder('application_callbacks');
+        /* Callback files under {base}/application_callbacks/ */
+        var callbacksFolder = baseFolder.folder('application_callbacks');
 
         activeCallbacks.forEach(function (entry) {
 
             var hCode = CallbackCodegen.generateH(entry.group, entry.functions);
-            var cCode = CallbackCodegen.generateC(entry.group, entry.functions);
+            var cCode = CallbackCodegen.generateC(entry.group, entry.functions, isArduino);
 
             hCode = _fixSubfolderIncludes(hCode);
             cCode = _fixSubfolderIncludes(cCode);
 
             callbacksFolder.file(entry.group.filePrefix + '.h', hCode);
-            callbacksFolder.file(entry.group.filePrefix + '.c', cCode);
+            callbacksFolder.file(entry.group.filePrefix + srcExt, cCode);
 
         });
 
-        /* XML files under src/xml_files/ */
-        var xmlFolder = srcFolder.folder('xml_files');
+        /* XML files under {base}/xml_files/ */
+        var xmlFolder = baseFolder.folder('xml_files');
 
         if (wizardState.cdiUserXml && wizardState.cdiUserXml.trim()) {
             xmlFolder.file('cdi.xml', wizardState.cdiUserXml);
@@ -442,14 +484,14 @@ var ZipExport = (function () {
             xmlFolder.file('fdi.xml', wizardState.fdiUserXml);
         }
 
-        /* Placeholder library folders under src/src/ */
-        var libFolder = srcFolder.folder('src');
+        /* Placeholder library folders under {base}/openlcb_c_lib/ */
+        var libFolder = baseFolder.folder('openlcb_c_lib');
         libFolder.folder('openlcb');
         libFolder.folder('drivers/canbus');
         libFolder.folder('utilities');
 
         /* Getting Started document */
-        zip.file('GETTING_STARTED.txt', _buildGettingStarted(wizardState, codegenState, mainFilename));
+        zip.file('GETTING_STARTED.txt', _buildGettingStarted(wizardState, codegenState, mainFilename, isArduino));
 
         /* Project file — allows reloading this configuration in Node Wizard */
         var projectJson = JSON.stringify(wizardState, null, 2);

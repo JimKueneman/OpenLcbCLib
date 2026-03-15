@@ -25,13 +25,15 @@
 
 #include "stdio.h"
 
-#include "callbacks.h"
+#include "application_callbacks/callbacks_can.h"
+#include "application_callbacks/callbacks_olcb.h"
+#include "application_callbacks/callbacks_config_mem.h"
 #include "openlcb_user_config.h"
 #include "application_drivers/stm32_driverlib_drivers.h"
 #include "application_drivers/stm32_driverlib_can_driver.h"
 
-#include "src/drivers/canbus/can_config.h"
-#include "src/openlcb/openlcb_config.h"
+#include "openlcb_c_lib/drivers/canbus/can_config.h"
+#include "openlcb_c_lib/openlcb/openlcb_config.h"
 
 #include "debug_tools.h"
 
@@ -122,9 +124,9 @@ static const can_config_t can_config = {
     .is_tx_buffer_clear      = &STM32_DriverLibCanDriver_is_can_tx_buffer_clear,
     .lock_shared_resources   = &STM32_DriverLibDrivers_lock_shared_resources,
     .unlock_shared_resources = &STM32_DriverLibDrivers_unlock_shared_resources,
-    .on_rx                   = &Callbacks_on_can_rx_callback,
-    .on_tx                   = &Callbacks_on_can_tx_callback,
-    .on_alias_change         = &Callbacks_alias_change_callback,
+    .on_rx                   = &CallbacksCan_on_rx,
+    .on_tx                   = &CallbacksCan_on_tx,
+    .on_alias_change         = &CallbacksCan_on_alias_change,
 };
 
 static const openlcb_config_t openlcb_config = {
@@ -134,10 +136,10 @@ static const openlcb_config_t openlcb_config = {
     .config_mem_write        = &STM32_DriverLibDrivers_config_mem_write,
     .reboot                  = &STM32_DriverLibDrivers_reboot,
     .factory_reset           = &STM32_DriverLibDrivers_config_mem_factory_reset,
-    .freeze                  = &Callbacks_freeze,
-    .unfreeze                = &Callbacks_unfreeze,
-    .firmware_write          = &Callbacks_write_firmware,
-    .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,
+    .freeze                  = &CallbacksOlcb_freeze,
+    .unfreeze                = &CallbacksOlcb_unfreeze,
+    .firmware_write          = &CallbacksOlcb_write_firmware,
+    .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
 };
 
 /* USER CODE END 0 */
@@ -185,7 +187,7 @@ int main(void)
   CanConfig_initialize(&can_config);
   OpenLcb_initialize(&openlcb_config);
 
-  Callbacks_initialize();
+  CallbacksOlcb_initialize();
 
   OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 

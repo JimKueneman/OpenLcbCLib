@@ -36,7 +36,7 @@
 #ifndef __PROTOCOL_MODES__
 #define __PROTOCOL_MODES__
 
-#include "src/openlcb/openlcb_types.h"
+#include "openlcb_c_lib/openlcb/openlcb_types.h"
 
 #ifdef __cplusplus
 extern "C"

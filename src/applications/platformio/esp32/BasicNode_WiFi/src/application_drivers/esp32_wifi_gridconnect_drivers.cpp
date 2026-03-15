@@ -75,10 +75,10 @@
 #include "wifi_tools.h"
 #include "wifi_tools_debug.h"
 
-#include "../src/drivers/canbus/can_rx_statemachine.h"
-#include "../src/drivers/canbus/can_types.h"
-#include "../src/openlcb/openlcb_gridconnect.h"
-#include "../src/utilities/mustangpeak_string_helper.h"
+#include "../openlcb_c_lib/drivers/canbus/can_rx_statemachine.h"
+#include "../openlcb_c_lib/drivers/canbus/can_types.h"
+#include "../openlcb_c_lib/openlcb/openlcb_gridconnect.h"
+#include "../openlcb_c_lib/utilities/mustangpeak_string_helper.h"
 
 #define INCLUDE_vTaskSuspend 1
 

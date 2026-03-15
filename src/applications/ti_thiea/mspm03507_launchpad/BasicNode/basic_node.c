@@ -38,38 +38,44 @@
 
 #include "debug_tools.h"
 
-#include "callbacks.h"
+#include "application_callbacks/callbacks_can.h"
+#include "application_callbacks/callbacks_olcb.h"
+#include "application_callbacks/callbacks_config_mem.h"
 #include "openlcb_user_config.h"
 #include "application_drivers/ti_driverlib_can_driver.h"
 #include "application_drivers/ti_driverlib_drivers.h"
 
-#include "src/drivers/canbus/can_config.h"
-#include "src/openlcb/openlcb_config.h"
+#include "openlcb_c_lib/drivers/canbus/can_config.h"
+#include "openlcb_c_lib/openlcb/openlcb_config.h"
 
 #define NODE_ID 0x0501010107EE
 #define DELAY_TIME (50000000)
 
 static const can_config_t can_config = {
+
     .transmit_raw_can_frame  = &TI_DriverLibCanDriver_transmit_can_frame,
     .is_tx_buffer_clear      = &TI_DriverLibCanDriver_is_can_tx_buffer_clear,
     .lock_shared_resources   = &TI_DriverLibDrivers_lock_shared_resources,
     .unlock_shared_resources = &TI_DriverLibDrivers_unlock_shared_resources,
-    .on_rx                   = &Callbacks_on_can_rx_callback,
-    .on_tx                   = &Callbacks_on_can_tx_callback,
-    .on_alias_change         = &Callbacks_alias_change_callback,
+    .on_rx                   = &CallbacksCan_on_rx,
+    .on_tx                   = &CallbacksCan_on_tx,
+    .on_alias_change         = &CallbacksCan_on_alias_change,
+
 };
 
 static const openlcb_config_t openlcb_config = {
+
     .lock_shared_resources   = &TI_DriverLibDrivers_lock_shared_resources,
     .unlock_shared_resources = &TI_DriverLibDrivers_unlock_shared_resources,
     .config_mem_read         = &TI_DriverLibDrivers_config_mem_read,
     .config_mem_write        = &TI_DriverLibDrivers_config_mem_write,
     .reboot                  = &TI_DriverLibDrivers_reboot,
-    .factory_reset           = &Callbacks_operations_request_factory_reset,
-    .freeze                  = &Callbacks_freeze,
-    .unfreeze                = &Callbacks_unfreeze,
-    .firmware_write          = &Callbacks_write_firmware,
-    .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,
+    .factory_reset           = &CallbacksConfigMem_factory_reset,
+    .freeze                  = &CallbacksConfigMem_freeze,
+    .unfreeze                = &CallbacksConfigMem_unfreeze,
+    .firmware_write          = &CallbacksConfigMem_write_firmware,
+    .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
+
 };
 
 int main(void)
@@ -83,7 +89,7 @@ int main(void)
   CanConfig_initialize(&can_config);
   OpenLcb_initialize(&openlcb_config);
 
-  Callbacks_initialize();
+  CallbacksOlcb_initialize();
 
   printf("Booted\n");
 

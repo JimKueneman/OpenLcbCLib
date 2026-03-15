@@ -33,11 +33,11 @@
  * @date 14 Mar 2026
  */
 
-#include "src/drivers/canbus/can_types.h"
-#include "src/openlcb/openlcb_gridconnect.h"
-#include "src/utilities/mustangpeak_string_helper.h"
-#include "src/drivers/canbus/can_rx_statemachine.h"
-#include "../threadsafe_stringlist.h"
+#include "../openlcb_c_lib/drivers/canbus/can_types.h"
+#include "../openlcb_c_lib/openlcb/openlcb_gridconnect.h"
+#include "../openlcb_c_lib/utilities/mustangpeak_string_helper.h"
+#include "../openlcb_c_lib/drivers/canbus/can_rx_statemachine.h"
+#include "../openlcb_c_lib/utilities/threadsafe_stringlist.h"
 
 #include <arpa/inet.h>
 #include <netdb.h>

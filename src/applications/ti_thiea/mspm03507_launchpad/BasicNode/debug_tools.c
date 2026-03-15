@@ -5,9 +5,9 @@
 
 #include "stdio.h"
 
-#include "./src/drivers/canbus/can_types.h"
-#include "./src/openlcb/openlcb_defines.h"
-#include "./src/openlcb/openlcb_types.h"
+#include "openlcb_c_lib/drivers/canbus/can_types.h"
+#include "openlcb_c_lib/openlcb/openlcb_defines.h"
+#include "openlcb_c_lib/openlcb/openlcb_types.h"
 
 void print_interrupt_flags(uint32_t interrupt_flags)
 {

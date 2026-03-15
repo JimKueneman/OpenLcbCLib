@@ -42,8 +42,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../src/openlcb/openlcb_types.h"
-#include "../src/drivers/canbus/can_types.h"
+#include "../openlcb_c_lib/openlcb/openlcb_types.h"
+#include "../openlcb_c_lib/drivers/canbus/can_types.h"
 
 #ifdef __cplusplus
 extern "C"

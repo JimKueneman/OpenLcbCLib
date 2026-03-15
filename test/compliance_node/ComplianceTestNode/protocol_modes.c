@@ -42,13 +42,13 @@
 #include <string.h>
 
 #include "openlcb_user_config.h"
-#include "callbacks_broadcast_time.h"
-#include "callbacks_trains.h"
-#include "src/openlcb/openlcb_defines.h"
-#include "src/openlcb/openlcb_application.h"
-#include "src/openlcb/openlcb_application_broadcast_time.h"
-#include "src/openlcb/openlcb_application_train.h"
-#include "src/openlcb/openlcb_config.h"
+#include "application_callbacks/callbacks_broadcast_time.h"
+#include "application_callbacks/callbacks_train.h"
+#include "openlcb_c_lib/openlcb/openlcb_defines.h"
+#include "openlcb_c_lib/openlcb/openlcb_application.h"
+#include "openlcb_c_lib/openlcb/openlcb_application_broadcast_time.h"
+#include "openlcb_c_lib/openlcb/openlcb_application_train.h"
+#include "openlcb_c_lib/openlcb/openlcb_config.h"
 
 #define VIRTUAL_TRAIN_COUNT 3
 
@@ -97,7 +97,7 @@ static void setup_train(openlcb_node_t *node) {
             // Leave dcc_address at 0 — assigned on search allocation
         }
     }
-    CallbacksTrains_set_virtual_pool(virtual_train_pool, VIRTUAL_TRAIN_COUNT);
+    CallbacksTrain_set_virtual_pool(virtual_train_pool, VIRTUAL_TRAIN_COUNT);
 }
 
 

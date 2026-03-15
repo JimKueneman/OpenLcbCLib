@@ -39,10 +39,10 @@
 
 #include "esp32_can_drivers.h"
 
-#include "../src/drivers/canbus/can_rx_statemachine.h"
-#include "../src/drivers/canbus/can_types.h"
-#include "../src/openlcb/openlcb_gridconnect.h"
-#include "../src/utilities/mustangpeak_string_helper.h"
+#include "../openlcb_c_lib/drivers/canbus/can_rx_statemachine.h"
+#include "../openlcb_c_lib/drivers/canbus/can_types.h"
+#include "../openlcb_c_lib/openlcb/openlcb_gridconnect.h"
+#include "../openlcb_c_lib/utilities/mustangpeak_string_helper.h"
 
 #ifdef ARDUINO_COMPATIBLE
 #include "Arduino.h"

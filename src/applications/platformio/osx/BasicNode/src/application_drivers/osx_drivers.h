@@ -37,7 +37,7 @@
 #ifndef __OSX_DRIVERS__
 #define __OSX_DRIVERS__
 
-#include "../src/openlcb/openlcb_types.h"
+#include "../openlcb_c_lib/openlcb/openlcb_types.h"
 
 #include "pthread.h"
 

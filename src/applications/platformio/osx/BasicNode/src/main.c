@@ -1,19 +1,22 @@
 
 
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "unistd.h"
 #include "strings.h"
 #include "pthread.h"
 
-#include "callbacks.h"
+#include "application_callbacks/callbacks_can.h"
+#include "application_callbacks/callbacks_olcb.h"
+#include "application_callbacks/callbacks_config_mem.h"
 #include "openlcb_user_config.h"
 #include "application_drivers/osx_drivers.h"
 #include "application_drivers/osx_can_drivers.h"
 
-#include "src/drivers/canbus/can_config.h"
-#include "src/openlcb/openlcb_config.h"
+#include "openlcb_c_lib/drivers/canbus/can_config.h"
+#include "openlcb_c_lib/openlcb/openlcb_config.h"
 
 uint64_t node_id_base = 0x0507010100BB;
 
@@ -22,9 +25,9 @@ static const can_config_t can_config = {
     .is_tx_buffer_clear      = &OSxCanDriver_is_can_tx_buffer_clear,
     .lock_shared_resources   = &OSxCanDriver_pause_can_rx,
     .unlock_shared_resources = &OSxCanDriver_resume_can_rx,
-    .on_rx                   = &Callbacks_on_can_rx_callback,
-    .on_tx                   = &Callbacks_on_can_tx_callback,
-    .on_alias_change         = &Callbacks_alias_change_callback,
+    .on_rx                   = &CallbacksCan_on_rx,
+    .on_tx                   = &CallbacksCan_on_tx,
+    .on_alias_change         = &CallbacksCan_on_alias_change,
 };
 
 static const openlcb_config_t openlcb_config = {
@@ -33,11 +36,11 @@ static const openlcb_config_t openlcb_config = {
     .config_mem_read         = &OSxDrivers_config_mem_read,
     .config_mem_write        = &OSxDrivers_config_mem_write,
     .reboot                  = &OSxDrivers_reboot,
-    .factory_reset           = &Callbacks_operations_request_factory_reset,
-    .freeze                  = &Callbacks_freeze,
-    .unfreeze                = &Callbacks_unfreeze,
-    .firmware_write          = &Callbacks_write_firmware,
-    .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,
+    .factory_reset           = &CallbacksConfigMem_factory_reset,
+    .freeze                  = &CallbacksConfigMem_freeze,
+    .unfreeze                = &CallbacksConfigMem_unfreeze,
+    .firmware_write          = &CallbacksConfigMem_firmware_write,
+    .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
 };
 
 int main(int argc, char *argv[])

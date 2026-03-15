@@ -24,11 +24,12 @@ OBJCOPY_BIN :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+Core/Src/application_callbacks \
 Core/Src/application_drivers \
 Core/Src \
-Core/Src/src/drivers/canbus \
-Core/Src/src/openlcb \
-Core/Src/src/utilities \
+Core/Src/openlcb_c_lib/drivers/canbus \
+Core/Src/openlcb_c_lib/openlcb \
+Core/Src/openlcb_c_lib/utilities \
 Core/Startup \
 Drivers/STM32F4xx_HAL_Driver/Src \
 Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src \

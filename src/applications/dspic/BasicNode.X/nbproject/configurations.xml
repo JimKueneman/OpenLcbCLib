@@ -26,18 +26,18 @@
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="canbus" displayName="canbus" projectFiles="true">
-          <itemPath>../../../drivers/canbus/can_rx_statemachine.h</itemPath>
-          <itemPath>../../../drivers/canbus/alias_mappings.h</itemPath>
-          <itemPath>../../../drivers/canbus/can_utilities.h</itemPath>
-          <itemPath>../../../drivers/canbus/can_login_statemachine.h</itemPath>
-          <itemPath>../../../drivers/canbus/can_types.h</itemPath>
-          <itemPath>../../../drivers/canbus/can_tx_statemachine.h</itemPath>
-          <itemPath>../../../drivers/canbus/can_buffer_store.h</itemPath>
-          <itemPath>../../../drivers/canbus/can_buffer_fifo.h</itemPath>
-          <itemPath>../../../drivers/canbus/can_tx_message_handler.h</itemPath>
-          <itemPath>../../../drivers/canbus/can_main_statemachine.h</itemPath>
-          <itemPath>../../../drivers/canbus/can_rx_message_handler.h</itemPath>
-          <itemPath>../../../drivers/canbus/can_login_message_handler.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_rx_statemachine.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/alias_mappings.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_utilities.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_login_statemachine.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_types.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_tx_statemachine.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_buffer_store.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_buffer_fifo.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_tx_message_handler.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_main_statemachine.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_rx_message_handler.h</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_login_message_handler.h</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="dsPIC_Common"
@@ -46,25 +46,25 @@
         <itemPath>../dsPIC_Common/ecan1_helper.h</itemPath>
       </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
-        <itemPath>../../../openlcb/protocol_snip.h</itemPath>
-        <itemPath>../../../openlcb/protocol_datagram_handler.h</itemPath>
-        <itemPath>../../../openlcb/protocol_event_transport.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_buffer_list.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_types.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_utilities.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_main_statemachine.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_gridconnect.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_application.h</itemPath>
-        <itemPath>../../../openlcb/protocol_message_network.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_buffer_fifo.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_node.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_defines.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_buffer_store.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_login_statemachine.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_login_statemachine_handler.h</itemPath>
-        <itemPath>../../../openlcb/protocol_config_mem_operations_handler.h</itemPath>
-        <itemPath>../../../openlcb/protocol_config_mem_read_handler.h</itemPath>
-        <itemPath>../../../openlcb/protocol_config_mem_write_handler.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_snip.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_datagram_handler.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_event_transport.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_list.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_types.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_utilities.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_main_statemachine.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_gridconnect.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_application.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_message_network.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_fifo.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_node.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_defines.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_store.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_login_statemachine.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_login_statemachine_handler.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_operations_handler.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_read_handler.h</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_write_handler.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -94,17 +94,17 @@
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="canbus" displayName="canbus" projectFiles="true">
-          <itemPath>../../../drivers/canbus/can_tx_message_handler.c</itemPath>
-          <itemPath>../../../drivers/canbus/can_buffer_fifo.c</itemPath>
-          <itemPath>../../../drivers/canbus/can_main_statemachine.c</itemPath>
-          <itemPath>../../../drivers/canbus/can_login_message_handler.c</itemPath>
-          <itemPath>../../../drivers/canbus/can_rx_message_handler.c</itemPath>
-          <itemPath>../../../drivers/canbus/can_utilities.c</itemPath>
-          <itemPath>../../../drivers/canbus/alias_mappings.c</itemPath>
-          <itemPath>../../../drivers/canbus/can_rx_statemachine.c</itemPath>
-          <itemPath>../../../drivers/canbus/can_login_statemachine.c</itemPath>
-          <itemPath>../../../drivers/canbus/can_tx_statemachine.c</itemPath>
-          <itemPath>../../../drivers/canbus/can_buffer_store.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_tx_message_handler.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_buffer_fifo.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_main_statemachine.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_login_message_handler.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_rx_message_handler.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_utilities.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/alias_mappings.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_rx_statemachine.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_login_statemachine.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_tx_statemachine.c</itemPath>
+          <itemPath>../openlcb_c_lib/drivers/canbus/can_buffer_store.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="dsPIC_Common"
@@ -113,28 +113,28 @@
         <itemPath>../dsPIC_Common/ecan1_helper.c</itemPath>
       </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
-        <itemPath>../../../openlcb/openlcb_buffer_fifo.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_node.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_buffer_store.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_utilities.c</itemPath>
-        <itemPath>../../../openlcb/protocol_event_transport.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_buffer_list.c</itemPath>
-        <itemPath>../../../openlcb/protocol_snip.c</itemPath>
-        <itemPath>../../../openlcb/protocol_datagram_handler.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_gridconnect.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_main_statemachine.c</itemPath>
-        <itemPath>../../../openlcb/protocol_message_network.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_application.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_login_statemachine.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_login_statemachine_handler.c</itemPath>
-        <itemPath>../../../openlcb/protocol_config_mem_operations_handler.c</itemPath>
-        <itemPath>../../../openlcb/protocol_config_mem_read_handler.c</itemPath>
-        <itemPath>../../../openlcb/protocol_config_mem_write_handler.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_fifo.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_node.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_store.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_utilities.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_event_transport.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_list.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_snip.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_datagram_handler.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_gridconnect.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_main_statemachine.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_message_network.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_application.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_login_statemachine.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/openlcb_login_statemachine_handler.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_operations_handler.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_read_handler.c</itemPath>
+        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../..</Elem>
+    <Elem>..</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

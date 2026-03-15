@@ -35,25 +35,31 @@
 
 #include "Arduino.h"
 
-#include "callbacks.h"
 #include "openlcb_user_config.h"
-#include "rpi_pico_drivers.h"
-#include "rpi_pico_can_drivers.h"
 
-#include "src/drivers/canbus/can_config.h"
-#include "src/openlcb/openlcb_config.h"
+#include "src/application_callbacks/callbacks_can.h"
+#include "src/application_callbacks/callbacks_olcb.h"
+#include "src/application_callbacks/callbacks_config_mem.h"
+#include "src/application_drivers/rpi_pico_drivers.h"
+#include "src/application_drivers/rpi_pico_can_drivers.h"
+
+#include "src/openlcb_c_lib/drivers/canbus/can_config.h"
+#include "src/openlcb_c_lib/openlcb/openlcb_config.h"
 
 
 #define NODE_ID 0x050101010777
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 
 static const can_config_t can_config = {
     .transmit_raw_can_frame  = &RPiPicoCanDriver_transmit_raw_can_frame,
     .is_tx_buffer_clear      = &RPiPicoCanDriver_is_can_tx_buffer_clear,
     .lock_shared_resources   = &RPiPicoDrivers_lock_shared_resources,
     .unlock_shared_resources = &RPiPicoDrivers_unlock_shared_resources,
-    .on_rx                   = &Callbacks_on_can_rx_callback,
-    .on_tx                   = &Callbacks_on_can_tx_callback,
-    .on_alias_change         = &Callbacks_alias_change_callback,
+    .on_rx                   = &CallbacksCan_on_rx,
+    .on_tx                   = &CallbacksCan_on_tx,
+    .on_alias_change         = &CallbacksCan_on_alias_change,
 };
 
 static const openlcb_config_t openlcb_config = {
@@ -62,9 +68,11 @@ static const openlcb_config_t openlcb_config = {
     .config_mem_read         = &RPiPicoDrivers_config_mem_read,
     .config_mem_write        = &RPiPicoDrivers_config_mem_write,
     .reboot                  = &RPiPicoDrivers_reboot,
-    .factory_reset           = &Callbacks_operations_request_factory_reset,
-    .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,
+    .factory_reset           = &CallbacksConfigMem_factory_reset,
+    .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
 };
+
+#pragma GCC diagnostic pop
 
 void setup()
 {
@@ -83,7 +91,7 @@ void setup()
   CanConfig_initialize(&can_config);
   OpenLcb_initialize(&openlcb_config);
 
-  Callbacks_initialize();
+  CallbacksOlcb_initialize();
 
   Serial.println("Creating Node.....");
 

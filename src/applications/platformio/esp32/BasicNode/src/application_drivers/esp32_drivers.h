@@ -37,7 +37,7 @@
 #ifndef __ESP32_DRIVERS__
 #define __ESP32_DRIVERS__
 
-#include "../src/openlcb/openlcb_types.h"
+#include "../openlcb_c_lib/openlcb/openlcb_types.h"
 
 #ifdef __cplusplus
 extern "C"

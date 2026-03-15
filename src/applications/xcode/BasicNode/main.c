@@ -6,14 +6,20 @@
 #include "strings.h"
 #include "pthread.h"
 
-#include "callbacks.h"
+#include "application_callbacks/callbacks_can.h"
+#include "application_callbacks/callbacks_olcb.h"
+#include "application_callbacks/callbacks_config_mem.h"
+#include "application_callbacks/callbacks_events.h"
+#include "application_callbacks/callbacks_broadcast_time.h"
+#include "application_callbacks/callbacks_train.h"
+
 #include "openlcb_user_config.h"
 #include "application_drivers/osx_drivers.h"
 #include "application_drivers/osx_can_drivers.h"
 
-#include "src/drivers/canbus/can_config.h"
-#include "src/openlcb/openlcb_config.h"
-#include "src/openlcb/openlcb_application_broadcast_time.h"
+#include "openlcb_c_lib/drivers/canbus/can_config.h"
+#include "openlcb_c_lib/openlcb/openlcb_config.h"
+#include "openlcb_c_lib/openlcb/openlcb_application_broadcast_time.h"
 
 #define NODE_ID 0x050701010033
 
@@ -24,9 +30,9 @@ static const can_config_t can_config = {
     .is_tx_buffer_clear      = &OSxCanDriver_is_can_tx_buffer_clear,
     .lock_shared_resources   = &OSxDrivers_lock_shared_resources,
     .unlock_shared_resources = &OSxDrivers_unlock_shared_resources,
-    .on_rx                   = &Callbacks_on_can_rx_callback,
-    .on_tx                   = &Callbacks_on_can_tx_callback,
-    .on_alias_change         = &Callbacks_alias_change_callback,
+    .on_rx                   = &CallbacksCan_on_rx,
+    .on_tx                   = &CallbacksCan_on_tx,
+    .on_alias_change         = &CallbacksCan_on_alias_change,
 };
 
 static const openlcb_config_t openlcb_config = {
@@ -38,26 +44,26 @@ static const openlcb_config_t openlcb_config = {
     .reboot                  = &OSxDrivers_reboot,
 
     // Optional hardware extensions
-    .factory_reset           = &Callbacks_operations_request_factory_reset,
+    .factory_reset           = &CallbacksConfigMem_factory_reset,
     .freeze                  = &OSxDrivers_freeze,
     .unfreeze                = &OSxDrivers_unfreeze,
     .firmware_write          = &OSxDrivers_write_firmware,
 
     // Core application callbacks
-    .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,
-    .on_login_complete       = &Callbacks_on_login_complete,
+    .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
+    .on_login_complete       = &CallbacksOlcb_on_login_complete,
 
     // Event transport callbacks
-    .on_consumed_event_identified = &Callbacks_on_consumed_event_identified,
-    .on_consumed_event_pcer       = &Callbacks_on_consumed_event_pcer,
-    .on_event_learn               = &Callbacks_on_event_learn,
+    .on_consumed_event_identified = &CallbacksEvents_on_consumed_event_identified,
+    .on_consumed_event_pcer       = &CallbacksEvents_on_consumed_event_pcer,
+    .on_event_learn               = &CallbacksEvents_on_event_learn,
     
     // Broadcast time callbacks
-    .on_broadcast_time_changed    = &Callbacks_on_broadcast_time_changed,
+    .on_broadcast_time_changed    = &CallbacksBroadcastTime_on_time_changed,
 
     // Train callbacks
-    .on_train_controller_assigned = &Callbacks_on_train_controller_assigned,
-    .on_train_controller_released = &Callbacks_on_train_controller_released,
+    .on_train_controller_assigned = &CallbacksTrain_on_controller_assigned,
+    .on_train_controller_released = &CallbacksTrain_on_controller_released,
 };
 
 
@@ -126,7 +132,7 @@ int main(int argc, char *argv[])
   CanConfig_initialize(&can_config);
   OpenLcb_initialize(&openlcb_config);
 
-  Callbacks_initialize();
+  CallbacksOlcb_initialize();
 
   OSxDrivers_setup();
   OSxCanDriver_setup();

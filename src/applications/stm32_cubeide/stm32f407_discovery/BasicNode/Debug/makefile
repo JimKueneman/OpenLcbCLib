@@ -15,10 +15,11 @@ RM := rm -rf
 -include Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src/subdir.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
--include Core/Src/src/utilities/subdir.mk
--include Core/Src/src/openlcb/subdir.mk
--include Core/Src/src/drivers/canbus/subdir.mk
+-include Core/Src/openlcb_c_lib/utilities/subdir.mk
+-include Core/Src/openlcb_c_lib/openlcb/subdir.mk
+-include Core/Src/openlcb_c_lib/drivers/canbus/subdir.mk
 -include Core/Src/application_drivers/subdir.mk
+-include Core/Src/application_callbacks/subdir.mk
 -include Core/Src/subdir.mk
 -include objects.mk
 

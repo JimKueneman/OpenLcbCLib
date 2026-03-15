@@ -278,6 +278,6 @@ var searchData=
   ['control_20protocol_20defines_275',['Train Control Protocol Defines',['../group__train__protocol.html',1,'']]],
   ['controller_5falias_276',['controller_alias',['../structtrain__state___t_a_g.html#a9abf2eb289a775366d403e091f62600e',1,'train_state_TAG']]],
   ['controller_5fnode_5fid_277',['controller_node_id',['../structtrain__state___t_a_g.html#ae9786efb1a6da1b353719b9b8e3d27b8',1,'train_state_TAG']]],
-  ['count_278',['count',['../structevent__id__consumer__list__t.html#af6a39bfc7e1dc3b6f9c997c1c43fa996',1,'event_id_consumer_list_t::count'],['../structevent__id__producer__list__t.html#af6a39bfc7e1dc3b6f9c997c1c43fa996',1,'event_id_producer_list_t::count'],['../structopenlcb__nodes__t.html#af6a39bfc7e1dc3b6f9c997c1c43fa996',1,'openlcb_nodes_t::count']]],
+  ['count_278',['count',['../structevent__id__consumer__list__t.html#af6a39bfc7e1dc3b6f9c997c1c43fa996',1,'event_id_consumer_list_t::count'],['../structevent__id__producer__list__t.html#af6a39bfc7e1dc3b6f9c997c1c43fa996',1,'event_id_producer_list_t::count'],['../structopenlcb__nodes__t.html#af6a39bfc7e1dc3b6f9c997c1c43fa996',1,'openlcb_nodes_t::count'],['../struct_string_list.html#ad43c3812e6d13e0518d9f8b8f463ffcf',1,'StringList::count']]],
   ['current_5ftick_279',['current_tick',['../structopenlcb__statemachine__info__t.html#a8e8ee58523345ded2daf9536ab5ec882',1,'openlcb_statemachine_info_t::current_tick'],['../structcan__statemachine__info__struct.html#a8e8ee58523345ded2daf9536ab5ec882',1,'can_statemachine_info_struct::current_tick']]]
 ];

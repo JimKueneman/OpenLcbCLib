@@ -1,0 +1,9 @@
+../Core/Src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.c:65:6:CanRxStatemachine_initialize	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.c:72:17:_extract_can_mti_from_can_identifier	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.c:92:13:_handle_openlcb_msg_can_frame_addressed	15
+../Core/Src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.c:188:13:_handle_openlcb_msg_can_frame_unaddressed	9
+../Core/Src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.c:259:13:_handle_can_type_frame	25
+../Core/Src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.c:404:13:_handle_can_control_frame_variable_field	20
+../Core/Src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.c:471:13:_handle_can_control_frame_sequence_number	14
+../Core/Src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.c:509:13:_handle_can_control_frame	2
+../Core/Src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.c:529:6:CanRxStatemachine_incoming_can_driver_callback	3

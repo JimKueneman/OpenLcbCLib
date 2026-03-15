@@ -1,0 +1,14 @@
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:83:6:OpenLcbBufferStore_initialize	5
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:126:13:_update_buffer_telemetry	9
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:205:16:OpenLcbBufferStore_allocate_buffer	7
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:277:6:OpenLcbBufferStore_free_buffer	7
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:328:10:OpenLcbBufferStore_basic_messages_allocated	1
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:335:10:OpenLcbBufferStore_basic_messages_max_allocated	1
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:342:10:OpenLcbBufferStore_datagram_messages_allocated	1
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:349:10:OpenLcbBufferStore_datagram_messages_max_allocated	1
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:356:10:OpenLcbBufferStore_snip_messages_allocated	1
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:363:10:OpenLcbBufferStore_snip_messages_max_allocated	1
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:370:10:OpenLcbBufferStore_stream_messages_allocated	1
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:377:10:OpenLcbBufferStore_stream_messages_max_allocated	1
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:384:6:OpenLcbBufferStore_inc_reference_count	1
+../Core/Src/openlcb_c_lib/openlcb/openlcb_buffer_store.c:391:6:OpenLcbBufferStore_clear_max_allocated	1

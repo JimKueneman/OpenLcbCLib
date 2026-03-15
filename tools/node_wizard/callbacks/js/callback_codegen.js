@@ -58,12 +58,13 @@ const CallbackCodegen = {
 
     },
 
-    generateC: function (group, checkedFunctions) {
+    generateC: function (group, checkedFunctions, isArduino) {
 
+        var srcExt = isArduino ? '.cpp' : '.c';
         const lines = [];
 
         lines.push('/**');
-        lines.push(' * @file ' + group.filePrefix + '.c');
+        lines.push(' * @file ' + group.filePrefix + srcExt);
         lines.push(' * @brief Application callback implementations for ' + group.title + '.');
         lines.push(' *        Customize these stubs to add your application logic.');
         lines.push(' *');

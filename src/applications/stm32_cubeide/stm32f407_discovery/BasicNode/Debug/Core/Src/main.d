@@ -34,25 +34,27 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
- ../USB_HOST/App/usb_host.h ../Core/Src/callbacks.h \
- ../Core/Src/src/openlcb/openlcb_types.h \
+ ../USB_HOST/App/usb_host.h \
+ ../Core/Src/application_callbacks/callbacks_can.h \
+ ../Core/Src/application_callbacks/../openlcb_c_lib/drivers/canbus/can_types.h \
+ ../Core/Src/application_callbacks/../openlcb_c_lib/drivers/canbus/../../openlcb/openlcb_defines.h \
+ ../Core/Src/application_callbacks/../openlcb_c_lib/drivers/canbus/../../openlcb/openlcb_types.h \
  ../Core/Inc/openlcb_user_config.h \
- ../Core/Src/src/drivers/canbus/can_types.h \
- ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_defines.h \
- ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_types.h \
- ../Core/Src/src/openlcb/openlcb_gridconnect.h \
- ../Core/Src/src/openlcb/../drivers/canbus/can_types.h \
- ../Core/Src/node_parameters.h ../Core/Src/./src/openlcb/openlcb_types.h \
+ ../Core/Src/application_callbacks/../openlcb_c_lib/openlcb/openlcb_types.h \
+ ../Core/Src/application_callbacks/callbacks_olcb.h \
+ ../Core/Src/application_callbacks/callbacks_config_mem.h \
  ../Core/Src/application_drivers/stm32_driverlib_drivers.h \
- ../Core/Src/application_drivers/../src/openlcb/openlcb_types.h \
+ ../Core/Src/application_drivers/../openlcb_c_lib/openlcb/openlcb_types.h \
  ../Core/Src/application_drivers/stm32_driverlib_can_driver.h \
- ../Core/Src/application_drivers/../src/drivers/canbus/can_types.h \
- ../Core/Src/src/drivers/canbus/can_config.h \
- ../Core/Src/src/drivers/canbus/can_types.h \
- ../Core/Src/src/openlcb/openlcb_config.h \
- ../Core/Src/src/openlcb/openlcb_types.h ../Core/Src/debug_tools.h \
- ../Core/Src/./src/drivers/canbus/can_types.h \
- ../Core/Src/./src/openlcb/openlcb_defines.h
+ ../Core/Src/application_drivers/../openlcb_c_lib/drivers/canbus/can_types.h \
+ ../Core/Src/openlcb_c_lib/drivers/canbus/can_config.h \
+ ../Core/Src/openlcb_c_lib/drivers/canbus/can_types.h \
+ ../Core/Src/openlcb_c_lib/openlcb/openlcb_config.h \
+ ../Core/Src/openlcb_c_lib/openlcb/openlcb_types.h \
+ ../Core/Src/debug_tools.h \
+ ../Core/Src/openlcb_c_lib/drivers/canbus/can_types.h \
+ ../Core/Src/openlcb_c_lib/openlcb/openlcb_defines.h \
+ ../Core/Src/openlcb_c_lib/openlcb/openlcb_types.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -90,24 +92,23 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 ../USB_HOST/App/usb_host.h:
-../Core/Src/callbacks.h:
-../Core/Src/src/openlcb/openlcb_types.h:
+../Core/Src/application_callbacks/callbacks_can.h:
+../Core/Src/application_callbacks/../openlcb_c_lib/drivers/canbus/can_types.h:
+../Core/Src/application_callbacks/../openlcb_c_lib/drivers/canbus/../../openlcb/openlcb_defines.h:
+../Core/Src/application_callbacks/../openlcb_c_lib/drivers/canbus/../../openlcb/openlcb_types.h:
 ../Core/Inc/openlcb_user_config.h:
-../Core/Src/src/drivers/canbus/can_types.h:
-../Core/Src/src/drivers/canbus/../../openlcb/openlcb_defines.h:
-../Core/Src/src/drivers/canbus/../../openlcb/openlcb_types.h:
-../Core/Src/src/openlcb/openlcb_gridconnect.h:
-../Core/Src/src/openlcb/../drivers/canbus/can_types.h:
-../Core/Src/node_parameters.h:
-../Core/Src/./src/openlcb/openlcb_types.h:
+../Core/Src/application_callbacks/../openlcb_c_lib/openlcb/openlcb_types.h:
+../Core/Src/application_callbacks/callbacks_olcb.h:
+../Core/Src/application_callbacks/callbacks_config_mem.h:
 ../Core/Src/application_drivers/stm32_driverlib_drivers.h:
-../Core/Src/application_drivers/../src/openlcb/openlcb_types.h:
+../Core/Src/application_drivers/../openlcb_c_lib/openlcb/openlcb_types.h:
 ../Core/Src/application_drivers/stm32_driverlib_can_driver.h:
-../Core/Src/application_drivers/../src/drivers/canbus/can_types.h:
-../Core/Src/src/drivers/canbus/can_config.h:
-../Core/Src/src/drivers/canbus/can_types.h:
-../Core/Src/src/openlcb/openlcb_config.h:
-../Core/Src/src/openlcb/openlcb_types.h:
+../Core/Src/application_drivers/../openlcb_c_lib/drivers/canbus/can_types.h:
+../Core/Src/openlcb_c_lib/drivers/canbus/can_config.h:
+../Core/Src/openlcb_c_lib/drivers/canbus/can_types.h:
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.h:
+../Core/Src/openlcb_c_lib/openlcb/openlcb_types.h:
 ../Core/Src/debug_tools.h:
-../Core/Src/./src/drivers/canbus/can_types.h:
-../Core/Src/./src/openlcb/openlcb_defines.h:
+../Core/Src/openlcb_c_lib/drivers/canbus/can_types.h:
+../Core/Src/openlcb_c_lib/openlcb/openlcb_defines.h:
+../Core/Src/openlcb_c_lib/openlcb/openlcb_types.h:

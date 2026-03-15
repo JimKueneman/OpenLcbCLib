@@ -1,9 +1,9 @@
 #ifndef __DELAY_TOGGLE__
 #define __DELAY_TOGGLE__
 
-#include "./src/drivers/canbus/can_types.h"
-#include "./src/openlcb/openlcb_defines.h"
-#include "./src/openlcb/openlcb_types.h"
+#include "openlcb_c_lib/drivers/canbus/can_types.h"
+#include "openlcb_c_lib/openlcb/openlcb_defines.h"
+#include "openlcb_c_lib/openlcb/openlcb_types.h"
 
 extern void delay_pin_toggle(void);
 

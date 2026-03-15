@@ -14,6 +14,7 @@
 #define OPENLCB_COMPILE_MEMORY_CONFIGURATION
 #define OPENLCB_COMPILE_FIRMWARE
 #define OPENLCB_COMPILE_BROADCAST_TIME
+#define OPENLCB_COMPILE_TRAIN
 
 // =============================================================================
 // Core Message Buffer Pool

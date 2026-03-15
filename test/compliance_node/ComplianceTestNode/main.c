@@ -42,38 +42,36 @@
 #include <unistd.h>
 
 #include "protocol_modes.h"
-#include "callbacks_core.h"
-#include "callbacks_broadcast_time.h"
-#include "callbacks_trains.h"
+#include "application_callbacks/callbacks_can.h"
+#include "application_callbacks/callbacks_olcb.h"
+#include "application_callbacks/callbacks_config_mem.h"
+#include "application_callbacks/callbacks_events.h"
+#include "application_callbacks/callbacks_broadcast_time.h"
+#include "application_callbacks/callbacks_train.h"
+
 #include "openlcb_user_config.h"
 #include "application_drivers/osx_drivers.h"
 #include "application_drivers/osx_can_drivers.h"
 
-#include "src/drivers/canbus/can_config.h"
-#include "src/openlcb/openlcb_config.h"
-#include "src/openlcb/openlcb_application_broadcast_time.h"
+#include "openlcb_c_lib/drivers/canbus/can_config.h"
+#include "openlcb_c_lib/openlcb/openlcb_config.h"
+#include "openlcb_c_lib/openlcb/openlcb_application_broadcast_time.h"
 
 #define DEFAULT_NODE_ID 0x050701010033
 
 // Parse "05.07.01.01.00.33" dotted hex or "0x050701010033" numeric node ID
 static uint64_t parse_node_id(const char *str) {
+
     unsigned int b[6];
     if (sscanf(str, "%x.%x.%x.%x.%x.%x", &b[0], &b[1], &b[2], &b[3], &b[4], &b[5]) == 6) {
+
         return ((uint64_t)b[0] << 40) | ((uint64_t)b[1] << 32) |
                ((uint64_t)b[2] << 24) | ((uint64_t)b[3] << 16) |
                ((uint64_t)b[4] << 8)  | (uint64_t)b[5];
+
     }
     return strtoull(str, NULL, 0);
-}
 
-// The active protocol mode — set once before node creation
-static const protocol_mode_t *active_mode = NULL;
-
-// Login complete dispatcher — routes to the active mode's handler
-static bool on_login_complete_dispatcher(openlcb_node_t *openlcb_node) {
-    if (active_mode && active_mode->on_login)
-        return active_mode->on_login(openlcb_node);
-    return true;
 }
 
 
@@ -86,9 +84,9 @@ static const can_config_t can_config = {
     .is_tx_buffer_clear      = &OSxCanDriver_is_can_tx_buffer_clear,
     .lock_shared_resources   = &OSxDrivers_lock_shared_resources,
     .unlock_shared_resources = &OSxDrivers_unlock_shared_resources,
-    .on_rx                   = &CallbacksCore_on_can_rx_callback,
-    .on_tx                   = &CallbacksCore_on_can_tx_callback,
-    .on_alias_change         = &CallbacksCore_alias_change_callback,
+    .on_rx                   = &CallbacksCan_on_rx,
+    .on_tx                   = &CallbacksCan_on_tx,
+    .on_alias_change         = &CallbacksCan_on_alias_change,
 };
 
 static const openlcb_config_t openlcb_config = {
@@ -100,36 +98,36 @@ static const openlcb_config_t openlcb_config = {
     .reboot                  = &OSxDrivers_reboot,
 
     // Optional hardware extensions
-    .factory_reset           = &CallbacksCore_operations_request_factory_reset,
+    .factory_reset           = &CallbacksConfigMem_factory_reset,
     .freeze                  = &OSxDrivers_freeze,
     .unfreeze                = &OSxDrivers_unfreeze,
     .firmware_write          = &OSxDrivers_write_firmware,
 
     // Core application callbacks
-    .on_100ms_timer          = &CallbacksCore_on_100ms_timer_callback,
-    .on_login_complete       = &on_login_complete_dispatcher,
+    .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
+    .on_login_complete       = &CallbacksOlcb_on_login_complete,
 
     // Event transport callbacks
-    .on_consumed_event_identified = &CallbacksCore_on_consumed_event_identified,
-    .on_consumed_event_pcer       = &CallbacksCore_on_consumed_event_pcer,
-    .on_event_learn               = &CallbacksCore_on_event_learn,
+    .on_consumed_event_identified = &CallbacksEvents_on_consumed_event_identified,
+    .on_consumed_event_pcer       = &CallbacksEvents_on_consumed_event_pcer,
+    .on_event_learn               = &CallbacksEvents_on_event_learn,
 
     // Broadcast time callbacks
     .on_broadcast_time_changed    = &CallbacksBroadcastTime_on_time_changed,
 
     // Train callbacks
-    .on_train_speed_changed              = &CallbacksTrains_on_speed_changed,
-    .on_train_function_changed           = &CallbacksTrains_on_function_changed,
-    .on_train_emergency_entered          = &CallbacksTrains_on_emergency_entered,
-    .on_train_emergency_exited           = &CallbacksTrains_on_emergency_exited,
-    .on_train_controller_assigned        = &CallbacksTrains_on_controller_assigned,
-    .on_train_controller_released        = &CallbacksTrains_on_controller_released,
-    .on_train_heartbeat_timeout          = &CallbacksTrains_on_heartbeat_timeout,
-    .on_train_controller_assign_request  = &CallbacksTrains_on_controller_assign_request,
-    .on_train_controller_changed_request = &CallbacksTrains_on_controller_changed_request,
+    .on_train_speed_changed              = &CallbacksTrain_on_speed_changed,
+    .on_train_function_changed           = &CallbacksTrain_on_function_changed,
+    .on_train_emergency_entered          = &CallbacksTrain_on_emergency_entered,
+    .on_train_emergency_exited           = &CallbacksTrain_on_emergency_exited,
+    .on_train_controller_assigned        = &CallbacksTrain_on_controller_assigned,
+    .on_train_controller_released        = &CallbacksTrain_on_controller_released,
+    .on_train_heartbeat_timeout          = &CallbacksTrain_on_heartbeat_timeout,
+    .on_train_controller_assign_request  = &CallbacksTrain_on_controller_assign_request,
+    .on_train_controller_changed_request = &CallbacksTrain_on_controller_changed_request,
 
     // Train search callbacks
-    .on_train_search_no_match            = &CallbacksTrains_on_search_no_match,
+    .on_train_search_no_match            = &CallbacksTrain_on_search_no_match,
 };
 
 
@@ -143,23 +141,34 @@ int main(int argc, char *argv[]) {
     setvbuf(stdout, NULL, _IONBF, 0);
 
     // 1. Find the requested protocol mode
-    active_mode = ProtocolModes_default();
+    const protocol_mode_t *active_mode = ProtocolModes_default();
     uint64_t nodeid = DEFAULT_NODE_ID;
 
     for (int i = 1; i < argc; i++) {
+
         if (strcmp(argv[i], "--node-id") == 0 && i + 1 < argc) {
+
             nodeid = parse_node_id(argv[++i]);
+
         } else if (strcmp(argv[i], "--help") == 0) {
+
             ProtocolModes_print_usage();
             return 0;
+
         } else {
+
             const protocol_mode_t *found = ProtocolModes_find(argv[i]);
             if (found)
                 active_mode = found;
+
         }
+
     }
 
     printf("ComplianceTestNode: mode=%s nodeid=0x%012llX\n", active_mode->name, nodeid);
+
+    // Set the active mode so the login dispatcher can route to it
+    CallbacksOlcb_set_active_mode(active_mode);
 
     // 2. Initialize drivers and library
     CanConfig_initialize(&can_config);
@@ -171,8 +180,10 @@ int main(int argc, char *argv[]) {
     // 3. Wait for threads to connect
     printf("Waiting for CAN and 100ms Timer Drivers to connect\n");
     while (!(OSxDrivers_100ms_is_connected() && OSxCanDriver_is_connected())) {
+
         printf("Waiting for Threads\n");
         sleep(2);
+
     }
 
     // 4. Create node with the selected mode's parameters
@@ -181,8 +192,10 @@ int main(int argc, char *argv[]) {
 
     // 5. Run protocol-specific setup (if any)
     if (active_mode->setup) {
+
         active_mode->setup(node);
         printf("Setup complete for mode: %s\n", active_mode->name);
+
     }
 
     printf("Entering main loop (node index=%d)\n", node->index);
@@ -201,5 +214,6 @@ int main(int argc, char *argv[]) {
 
         if (idle_count > 100)
             usleep(50);
+
     }
 }

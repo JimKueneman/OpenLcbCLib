@@ -38,9 +38,9 @@
 #include "esp32_drivers.h"
 #include "esp32_wifi_gridconnect_drivers.h"
 
-#include "../src/openlcb/openlcb_types.h"
-#include "../src/utilities/mustangpeak_string_helper.h"
-#include "../src/openlcb/openlcb_config.h"
+#include "../openlcb_c_lib/openlcb/openlcb_types.h"
+#include "../openlcb_c_lib/utilities/mustangpeak_string_helper.h"
+#include "../openlcb_c_lib/openlcb/openlcb_config.h"
 
 #ifdef ARDUINO_COMPATIBLE
 #include "Arduino.h"

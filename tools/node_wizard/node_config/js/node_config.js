@@ -333,7 +333,8 @@ function _getFilenameForTab(tab) {
             : null;
 
     if (group) {
-        return group.filePrefix + (ext === '-h' ? '.h' : '.c');
+        var srcExt = arduinoModeFromParent ? '.cpp' : '.c';
+        return group.filePrefix + (ext === '-h' ? '.h' : srcExt);
     }
 
     return tab;
@@ -427,6 +428,8 @@ function _rebuildFileBrowser() {
     ]);
 
     /* Drivers — single section, all active driver groups merged */
+    var srcExt = arduinoModeFromParent ? '.cpp' : '.c';
+
     if (typeof DRIVER_GROUPS !== 'undefined') {
 
         var driverItems = [];
@@ -438,7 +441,7 @@ function _rebuildFileBrowser() {
 
             var group = DRIVER_GROUPS[key];
             driverItems.push({ tab: key + '-h', filename: group.filePrefix + '.h' });
-            driverItems.push({ tab: key + '-c', filename: group.filePrefix + '.c' });
+            driverItems.push({ tab: key + '-c', filename: group.filePrefix + srcExt });
 
         });
 
@@ -460,7 +463,7 @@ function _rebuildFileBrowser() {
 
             var group = CALLBACK_GROUPS[key];
             callbackItems.push({ tab: key + '-h', filename: group.filePrefix + '.h' });
-            callbackItems.push({ tab: key + '-c', filename: group.filePrefix + '.c' });
+            callbackItems.push({ tab: key + '-c', filename: group.filePrefix + srcExt });
 
         });
 
@@ -547,7 +550,7 @@ function _generateForTab(tab, state) {
         if (ext === '-h') {
             return DriverCodegen.generateH(group, fns, platformStateFromParent);
         } else {
-            return DriverCodegen.generateC(group, fns, platformStateFromParent);
+            return DriverCodegen.generateC(group, fns, platformStateFromParent, arduinoModeFromParent);
         }
 
     }
@@ -561,7 +564,7 @@ function _generateForTab(tab, state) {
         if (ext === '-h') {
             return CallbackCodegen.generateH(group, fns);
         } else {
-            return CallbackCodegen.generateC(group, fns);
+            return CallbackCodegen.generateC(group, fns, arduinoModeFromParent);
         }
 
     }
@@ -615,7 +618,7 @@ function downloadFiles() {
     const state = getState();
     _download('openlcb_user_config.h', generateH(state));
     _download('openlcb_user_config.c', generateC(state));
-    _download('main.c', generateMain(state));
+    _download(_getMainFilename(), generateMain(state));
 
 }
 
