@@ -10,7 +10,7 @@ OpenLCB (Open Layout Control Bus) is an open standard for connecting model railr
 - No dynamic memory allocation — all buffers are statically defined at compile time
 - No OS or RTOS required
 - Dependency injection pattern — wire in your own hardware drivers
-- [Node Wizard](tools/node_wizard/node_wizard.html) — browser-based project generator, runs entirely offline
+- [Node Wizard](https://jimkueneman.github.io/OpenLcbCLib/tools/node_wizard/node_wizard.html) — browser-based project generator, runs entirely offline
 - Working example projects for multiple platforms and IDEs
 
 ## Platform-agnostic by design
@@ -55,7 +55,7 @@ test/                       unit and compliance tests
 
 ## Node Wizard
 
-The [Node Wizard](tools/node_wizard/node_wizard.html) is a browser-based project generator included in the repository. Open it in any modern browser — no internet connection needed. The Wizard walks you through node type, CDI/FDI configuration, platform selection, and callback options, then generates a complete project ZIP ready to open in your IDE.
+The [Node Wizard](https://jimkueneman.github.io/OpenLcbCLib/tools/node_wizard/node_wizard.html) is a browser-based project generator included in the repository. It can be opened directly from GitHub Pages using the link above, or locally from `tools/node_wizard/node_wizard.html` in a cloned copy — no internet connection needed either way. The Wizard walks you through node type, CDI/FDI configuration, platform selection, and callback options, then generates a complete project ZIP ready to open in your IDE.
 
 ## License
 
