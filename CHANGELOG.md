@@ -37,6 +37,18 @@ All notable changes to OpenLcbCLib will be documented in this file.
   tool for users who only need to author CDI or FDI XML without the full project
   generation workflow.
 
+### Fixed — Node Wizard / CDI & FDI Editors
+
+- **Stray text in container elements now flagged** — typing random characters (e.g.
+  `llllll`) inside structural XML elements like `<segment>` or `<group>` was silently
+  accepted because DOMParser treats it as valid text content. Both `cdi_validator.js`
+  and `fdi_validator.js` now detect non-whitespace text nodes in container elements
+  and report them as errors with correct line numbers.
+
+- **Squiggle placement for line-less errors** — when a validation error has no line
+  number, the CodeMirror linter now highlights the first line instead of a single
+  invisible character at position 0.
+
 ---
 
 ## [1.2.1] — 2026-03-16

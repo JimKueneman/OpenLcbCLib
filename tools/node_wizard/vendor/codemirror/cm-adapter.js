@@ -520,6 +520,16 @@ window.createCMEditor = function createCMEditor(container, options) {
                         from = 0;
                         to   = 1;
                     }
+                } else {
+                    /* No line number — mark the first line so the squiggle is visible */
+                    try {
+                        var firstLine = view.state.doc.line(1);
+                        from = firstLine.from;
+                        to   = firstLine.to > firstLine.from ? firstLine.to : firstLine.from + 1;
+                    } catch (e) {
+                        from = 0;
+                        to   = Math.min(view.state.doc.length, 1);
+                    }
                 }
 
                 results.push({

@@ -19,6 +19,18 @@
 
     const VALID_KINDS = new Set(['binary', 'momentary', 'analog']);
 
+    /* Find the 1-based line number where `needle` first appears in `text`.
+     * Returns null when not found.                                           */
+    function _findLine(text, needle) {
+        var idx = text.indexOf(needle);
+        if (idx === -1) { return null; }
+        var lineNum = 1;
+        for (var i = 0; i < idx; i++) {
+            if (text.charCodeAt(i) === 10) { lineNum++; }
+        }
+        return lineNum;
+    }
+
     /* ----------------------------------------------------------------------- */
     function validate(xmlString) {
 
@@ -193,6 +205,31 @@
                 message: 'Unknown element <' + tag + '> — not part of the FDI schema' });
 
         });
+
+        /* unexpected text content inside container elements ---
+         * Elements like <fdi>, <segment>, <group>, etc. should only contain
+         * child elements, not raw text.  Whitespace between tags is fine, but
+         * anything else (e.g. stray characters typed by accident) is flagged.
+         */
+        var FDI_CONTAINER_TAGS = new Set([
+            'fdi', 'segment', 'group', 'function'
+        ]);
+
+        for (var el2 of allTags) {
+            if (!FDI_CONTAINER_TAGS.has(el2.tagName)) { continue; }
+            for (var node of el2.childNodes) {
+                if (node.nodeType === 3) {                /* TEXT_NODE */
+                    var trimmed = node.textContent.trim();
+                    if (trimmed.length > 0) {
+                        issues.push({ severity: 'error',
+                            line: _findLine(xmlString, trimmed),
+                            col:  null,
+                            message: 'Unexpected text "' + trimmed.substring(0, 40) + '" inside <' + el2.tagName + '> — only child elements are allowed here' });
+                        break;   /* one report per container is enough */
+                    }
+                }
+            }
+        }
 
         /* ===== LAYER 3: semantic / best-practice hints ==================== */
 

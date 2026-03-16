@@ -22,6 +22,18 @@
         'checkbox', 'radiobutton', 'slider'
     ]);
 
+    /* Find the 1-based line number where `needle` first appears in `text`.
+     * Returns null when not found.                                           */
+    function _findLine(text, needle) {
+        var idx = text.indexOf(needle);
+        if (idx === -1) { return null; }
+        var lineNum = 1;
+        for (var i = 0; i < idx; i++) {
+            if (text.charCodeAt(i) === 10) { lineNum++; }
+        }
+        return lineNum;
+    }
+
     /* ----------------------------------------------------------------------- */
     function validate(xmlString) {
 
@@ -162,6 +174,31 @@
             issues.push({ severity: 'warning', line: null, col: null,
                 message: `Unknown element <${tag}> — not part of the CDI schema` });
         });
+
+        /* unexpected text content inside container elements ---
+         * Elements like <cdi>, <segment>, <group>, etc. should only contain
+         * child elements, not raw text.  Whitespace between tags is fine, but
+         * anything else (e.g. stray characters typed by accident) is flagged.
+         */
+        const CONTAINER_TAGS = new Set([
+            'cdi', 'segment', 'group', 'identification', 'map', 'relation', 'hints'
+        ]);
+
+        for (let el of allTags) {
+            if (!CONTAINER_TAGS.has(el.tagName)) { continue; }
+            for (let node of el.childNodes) {
+                if (node.nodeType === 3) {                /* TEXT_NODE */
+                    var trimmed = node.textContent.trim();
+                    if (trimmed.length > 0) {
+                        issues.push({ severity: 'error',
+                            line: _findLine(xmlString, trimmed),
+                            col:  null,
+                            message: `Unexpected text "${trimmed.substring(0, 40)}" inside <${el.tagName}> — only child elements are allowed here` });
+                        break;   /* one report per container is enough */
+                    }
+                }
+            }
+        }
 
         /* min/max consistency on int/float */
         [...xmlDoc.getElementsByTagName('int'),
