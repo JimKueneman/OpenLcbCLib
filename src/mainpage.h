@@ -41,9 +41,9 @@
  *
  * <hr>
  *
- * <h2 style="margin-left: 10px; margin-right: 10px;">CDI Editor</h2>
+ * <h2 style="margin-left: 10px; margin-right: 10px;">CDI / FDI Editor</h2>
  *   <p style="margin-left: 50px; margin-right: 50px;">
- *     <a href="../../../tools/node_wizard/cdi_editor/cdi_view.html">CDI Editor</a> — Standalone browser-based editor for creating and editing Configuration Description Information (CDI) XML descriptors. Useful for updating CDI on existing nodes without running the full Node Wizard.
+ *     <a href="../../../tools/node_wizard/cdi_fdi_wizard.html">CDI / FDI Editor</a> — Standalone browser-based editor for creating and editing CDI (Configuration Description Information) and FDI (Function Description Information) XML descriptors. Useful for authoring or updating CDI/FDI on existing nodes without running the full Node Wizard.
  *   </p>
  *
  * <hr>
