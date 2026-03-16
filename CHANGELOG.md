@@ -4,6 +4,21 @@ All notable changes to OpenLcbCLib will be documented in this file.
 
 ---
 
+## [1.1.0] — 2026-03-15
+
+### Fixed
+- **Consist forwarding silently dropped** — `ListenerAliasTable_initialize()` was not called
+  at startup and `listener_find_by_node_id` was not wired into the TX state machine in
+  `can_config.c`. Both DI pointer assignments are now guarded by `#ifdef OPENLCB_COMPILE_TRAIN`
+  and added to `CanConfig_initialize()` and `_build_tx_statemachine()` respectively.
+  Without this fix, all consist-forwarded Train Control messages were silently dropped because
+  the alias-resolution callback was always NULL after the `memset()` initialisation.
+
+### Changed
+- macOS platform transport corrected from "Virtual CAN" to GridConnect in all documentation.
+
+---
+
 ## [1.0.0] — 2026-03-15
 
 Initial production release.
@@ -32,7 +47,7 @@ Initial production release.
 - STM32F4xx + CAN (STM32CubeIDE)
 - TI MSPM0 + MCAN (Code Composer Theia)
 - dsPIC + CAN (MPLAB X)
-- macOS virtual CAN (Xcode)
+- macOS GridConnect (Xcode)
 
 ### Tools
 - Node Wizard: browser-based project generator for all supported platforms

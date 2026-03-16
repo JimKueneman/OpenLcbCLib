@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: REJECTED
+  No `protocol_stream_handler.h/c` files exist in the source tree. Stream MTI constants are defined in `openlcb_defines.h`, but the full handler module was never written.
+  ============================================================
+-->
+
 # Implementation Plan: Stream Transport Protocol Handler
 
 ## Context

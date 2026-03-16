@@ -1,3 +1,21 @@
+<!--
+  ============================================================
+  STATUS: REJECTED — SUPERSEDED BY INTENTIONAL DESIGN DECISION
+
+  The original plan proposed making DATAGRAM_OK_REPLY_PENDING conditional on
+  reply_pending_time_in_seconds > 0.  During implementation the design was deliberately
+  changed: the bit is now ALWAYS set, regardless of the timeout value.  The developer
+  documented this choice in a comment at line 1335 of protocol_datagram_handler.c:
+  "The Reply Pending bit (DATAGRAM_OK_REPLY_PENDING, 0x80) is always set."
+
+  Rationale (v1.0.0 decision): Setting the bit unconditionally is safe and simpler —
+  a remote node that receives an unexpected "reply pending" flag simply waits briefly
+  before timing out, which causes no protocol violation.  Removing the flag when there
+  is no pending reply adds conditional complexity for negligible benefit.  This plan is
+  therefore closed as superseded rather than as a defect.
+  ============================================================
+-->
+
 # Plan: Item 1 -- Datagram OK Reply Always Sets Reply Pending Flag
 
 ## 1. Summary

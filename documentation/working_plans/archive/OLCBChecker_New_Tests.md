@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  All three library bug fixes are confirmed in source (write-under-mask byte order, controller config node ID offset, reset/reboot datagram flow). The integration test runner in `test/olcbchecker_bridge/` wires up the new OlcbChecker test scripts.
+  ============================================================
+-->
+
 # OLCBChecker New Tests
 
 New check scripts and infrastructure changes added to the OlcbChecker test

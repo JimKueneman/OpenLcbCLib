@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  All eight per-space Write Under Mask dispatch functions are present in `protocol_config_mem_write_handler.c` with supporting read-modify-write helpers.
+  ============================================================
+-->
+
 # Implementation Plan -- Item 20: Write Under Mask
 
 **TODO Reference:** Item 20 in `documentation/todo.md`

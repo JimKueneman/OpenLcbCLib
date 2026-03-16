@@ -1,3 +1,23 @@
+<!--
+  ============================================================
+  STATUS: REJECTED — SUPERSEDED BY INTENTIONAL DESIGN DECISION
+
+  The original plan proposed populating non-zero destination fields when the triggering
+  Verify Node ID was addressed.  During implementation the design was deliberately changed:
+  destination fields are always zeroed (unaddressed) regardless of how the request arrived.
+  The developer documented this choice in the Doxygen comment at line 96-98 of
+  protocol_message_network.c:
+  "always unaddressed (dest fields zeroed) regardless of whether the triggering Verify
+  Node ID was global or addressed."  This cites MessageNetworkS §3.4.2.
+
+  Rationale (v1.0.0 decision): The OpenLCB Message Network Standard §3.4.2 specifies that
+  Verified Node ID is a broadcast message and must be unaddressed on all transports.
+  The earlier plan pre-dated a closer reading of the spec.  Zeroing the dest fields
+  unconditionally is correct per the standard.  This plan is closed as superseded by
+  the spec, not as a defect.
+  ============================================================
+-->
+
 # Plan: Item 14 -- Verified Node ID Response Has Non-Zero Dest Fields for Global Message
 
 ## 1. Summary

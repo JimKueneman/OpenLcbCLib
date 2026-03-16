@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  The `load_datagram_rejected` callback is wired in `openlcb_main_statemachine.c`; the MTI_DATAGRAM else-branch calls it with `ERROR_PERMANENT_NOT_IMPLEMENTED` when no datagram handler is registered.
+  ============================================================
+-->
+
 # Plan: Item 9 -- Unhandled Datagrams Silently Dropped (No OIR/Reject)
 
 ## 1. Summary

@@ -1,3 +1,38 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED (wiring gap fixed 2026-03-15)
+
+  The forwarding logic IS fully present in protocol_train_handler.c:
+  _forward_to_next_listener(), _load_forwarded_command(), TRAIN_INSTRUCTION_P_BIT (0x80),
+  P-bit masking in dispatch, and source-skip loop prevention (source_id check at
+  listener iteration).
+
+  The listener alias table module IS implemented in alias_mapping_listener.h/c
+  (not listener_alias_table.h/c as the plan named it), with all required functions:
+  ListenerAliasTable_initialize(), register(), unregister(), set_alias(),
+  find_by_node_id(), flush_aliases(), clear_alias_by_alias().
+
+  The alias resolution IS in can_tx_statemachine.c via the nullable DI pointer
+  listener_find_by_node_id (lines 149-165).
+
+  Two wiring steps that were previously missing in can_config.c have been fixed:
+
+  1. ListenerAliasTable_initialize() is now called from CanConfig_initialize()
+     after AliasMappings_initialize(), guarded by #ifdef OPENLCB_COMPILE_TRAIN.
+
+  2. _build_tx_statemachine() now wires _tx_sm.listener_find_by_node_id to
+     &ListenerAliasTable_find_by_node_id under #ifdef OPENLCB_COMPILE_TRAIN.
+     The TX alias resolution branch is now active; consist-forwarded messages
+     will resolve correctly at runtime.
+
+  Note: hold-until-AMD (plan_listener_alias_table_integration Step 2) remains
+  unimplemented — attach messages are forwarded to the protocol layer immediately
+  without waiting for AMD. This is an accepted limitation: the first consist
+  command to a newly-attached listener may be dropped if the alias is not yet
+  resolved, but retries will succeed once the AMD reply populates the table.
+  ============================================================
+-->
+
 # Plan: Item 3 -- Consist Forwarding (Train Control)
 
 ## 1. Summary

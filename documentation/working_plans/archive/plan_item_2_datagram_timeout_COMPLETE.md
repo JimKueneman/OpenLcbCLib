@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `ProtocolDatagramHandler_check_timeouts(uint8_t current_tick)` is declared and defined with `DATAGRAM_TIMEOUT_TICKS = 30` and bit-packed retry-count logic matching the plan exactly.
+  ============================================================
+-->
+
 # Plan: Item 2 -- Datagram Timeout and Retry Limit (also covers Item 6)
 
 ## 1. Summary

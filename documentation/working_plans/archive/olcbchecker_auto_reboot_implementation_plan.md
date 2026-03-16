@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `run_olcbchecker.sh` passes `--auto-reboot` to the test runner, and `OSxDrivers_reboot()` in `ComplianceTestNode` calls `OpenLcbNode_reset_state()`, enabling programmatic restart.
+  ============================================================
+-->
+
 # Implementation Plan: Add `auto_reboot` Flag to OlcbChecker
 
 ## Context

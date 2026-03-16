@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  The loopback bit, `OpenLcbBufferFifo_push_to_head()`, `_loopback_to_siblings()`, self-skip logic, and cascade-prevention flag check are all present and correct.
+  ============================================================
+-->
+
 # Virtual Node Sibling Dispatch — Implementation Plan
 
 **Date:** 6 Mar 2026

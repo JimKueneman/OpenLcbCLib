@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  The 64-test coverage analysis is reflected in the integration suite; `run_olcbchecker.sh` controls test sections via `RUN_SECTIONS`, and all referenced new test scripts are wired into the runner.
+  ============================================================
+-->
+
 # OlcbChecker Test Coverage Analysis
 
 **Date:** 9 March 2026 (updated)

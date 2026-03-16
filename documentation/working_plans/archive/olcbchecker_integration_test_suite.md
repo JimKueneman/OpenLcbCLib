@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `bridge_server.py`, `run_olcbchecker.sh`, and `run_tests.py` provide end-to-end automation: build, bridge, per-mode node restarts, and multi-section OlcbChecker execution.
+  ============================================================
+-->
+
 # OlcbChecker Integration Test Suite Plan
 
 ## Goal

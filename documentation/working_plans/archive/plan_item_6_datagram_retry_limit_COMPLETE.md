@@ -1,3 +1,24 @@
+<!--
+  ============================================================
+  STATUS: REJECTED — SUPERSEDED BY DESIGN DECISION
+
+  The plan proposed adding `datagram_retry_count` as a per-node field on
+  openlcb_node_t.  The plan itself was later annotated: "STATUS: SUPERSEDED —
+  Fully covered by Item 2 (plan_item_2_datagram_timeout.md)."
+
+  The GOAL of this plan (enforce a maximum retry limit) IS fully implemented:
+  - DATAGRAM_MAX_RETRIES = 3 is defined in protocol_datagram_handler.c (line 64).
+  - The retry counter is stored as a 3-bit field (retry_count : 3) in the
+    openlcb_msg_timer_t.datagram union on the message buffer itself, not as a
+    per-node field. This was a conscious design improvement — the counter travels
+    with the datagram rather than with the node.
+  - ProtocolDatagramHandler_datagram_rejected() reads, increments, and enforces
+    the limit correctly (lines ~1504-1513 of protocol_datagram_handler.c).
+
+  This plan is closed as superseded, not as a defect.
+  ============================================================
+-->
+
 # Plan: Item 6 -- No Datagram Retry Limit Enforcement
 
 **STATUS: SUPERSEDED — Fully covered by Item 2 (plan_item_2_datagram_timeout.md).**

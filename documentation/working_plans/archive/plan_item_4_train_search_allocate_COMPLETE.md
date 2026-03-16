@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `OpenLcbNode_is_last()` and `ProtocolTrainSearch_handle_search_no_match()` are both implemented, correctly invoking the `on_search_no_match` allocate callback when the ALLOCATE flag is set and no matching train is found.
+  ============================================================
+-->
+
 # Plan: Item 4 -- Train Search Allocate Callback Never Called
 
 ## Context

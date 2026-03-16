@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  Both `on_optional_interaction_rejected` and `on_terminate_due_to_error` callbacks are defined in `protocol_message_network.h` and wired with proper bounds-checking handlers in `protocol_message_network.c`.
+  ============================================================
+-->
+
 # Plan: Item 8 -- OIR and TDE Receipt Handlers Do Nothing
 
 ## 1. Summary

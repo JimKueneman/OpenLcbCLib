@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `_load_controller_assign_reply()` in `protocol_train_handler.c` accepts `current_controller` and appends the 6-byte Node ID to rejection replies when `result != 0x00`, matching the plan spec.
+  ============================================================
+-->
+
 # Plan: Item 5 -- Controller Assign Reject Reply Missing Current Controller Node ID
 
 ## 1. Summary

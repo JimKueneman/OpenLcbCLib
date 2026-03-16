@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  The else-branch in `protocol_snip.c` correctly appends a null terminator when string content exceeds requested bytes, using `(byte_count - 1)` for content and reserving one byte for `0x00`.
+  ============================================================
+-->
+
 # Plan: Fix TODO Item 15 -- SNIP _process_snip_string Can Omit Null Terminator
 
 **Standard:** SimpleNodeInformationS Section 5.3

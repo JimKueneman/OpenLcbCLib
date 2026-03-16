@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  Both `ProtocolSnip_load_user_name()` and `ProtocolSnip_load_user_description()` guard the `config_memory_read` callback with a NULL check, falling back to an empty string as planned.
+  ============================================================
+-->
+
 # Plan: Item 16 -- SNIP No NULL Guard on config_memory_read Callback
 
 ## 1. Summary

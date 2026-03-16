@@ -1,3 +1,27 @@
+<!--
+  ============================================================
+  STATUS: REJECTED — SUPERSEDED BY DESIGN DECISION
+
+  This plan proposed embedding a `uint16_t alias` field directly in
+  train_listener_entry_t (openlcb_types.h) and caching the alias at attach time.
+  The plan itself identified the core problem: the Listener Attach command arrives
+  FROM the throttle, not the listener, so source_alias is the throttle's alias,
+  not the listener's.  Option 3 at the bottom of the plan pointed toward using the
+  existing alias_mapping infrastructure instead.
+
+  The chosen design (implemented in alias_mapping_listener.h/c) keeps alias
+  resolution entirely in the CAN driver layer — a separate table of
+  listener_alias_entry_t records indexed by node_id, populated on-demand via AMD
+  replies, and queried transparently by the TX path via a nullable DI pointer.
+  This is cleaner: train_listener_entry_t remains transport-agnostic (no CAN alias
+  field that would be meaningless on non-CAN transports).
+
+  All functions specified in plan_item_3 (Part A) ARE implemented, just in
+  alias_mapping_listener.h/c instead of as a field on the listener struct.
+  This plan is closed as superseded by the better design, not as a defect.
+  ============================================================
+-->
+
 # Plan: Listener-to-Listener Alias Resolution on CAN
 
 ## 1. Summary

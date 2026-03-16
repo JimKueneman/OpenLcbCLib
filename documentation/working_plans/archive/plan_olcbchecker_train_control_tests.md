@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: REJECTED
+  TR090/100/110 are confirmed wired in the external OlcbChecker project. TR120/130 were explicitly deferred in the production release plan due to requiring a multi-node test harness not yet built; the plan is therefore only partially fulfilled.
+  ============================================================
+-->
+
 # Plan: OlcbChecker Train Control Test Completion
 
 ## 1. Summary

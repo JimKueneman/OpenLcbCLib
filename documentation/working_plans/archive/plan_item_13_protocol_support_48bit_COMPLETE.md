@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `protocol_message_network.c` encodes all six bytes of `support_flags` using shifts 40, 32, 24, 16, 8, and 0, matching Option B from the plan.
+  ============================================================
+-->
+
 # Plan: Item 13 -- Protocol Support Reply Only Encodes 24 of 48 Bits
 
 ## 1. Summary

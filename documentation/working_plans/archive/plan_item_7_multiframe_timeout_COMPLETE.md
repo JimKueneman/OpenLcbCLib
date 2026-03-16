@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `OpenLcbBufferList_check_timeouts()` is fully implemented with `BUFFER_LIST_INPROCESS_TIMEOUT_TICKS = 30`, iterating buffers, checking `assembly_ticks`, and freeing stale in-progress buffers.
+  ============================================================
+-->
+
 # Plan: Item 7 -- No Timeout on Partially Assembled Multi-Frame Datagrams
 
 ## 1. Summary

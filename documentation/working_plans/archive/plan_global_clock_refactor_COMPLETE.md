@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  The global `_global_100ms_tick` counter lives in `openlcb_config.c`, `OpenLcb_100ms_timer_tick()` is a single increment, and `_run_periodic_services()` passes the tick to all module timer functions with the correct `uint8_t current_tick` signature.
+  ============================================================
+-->
+
 # Plan: Global Clock Refactor — Move All Timer Work to the Main Loop
 
 ## 1. Summary

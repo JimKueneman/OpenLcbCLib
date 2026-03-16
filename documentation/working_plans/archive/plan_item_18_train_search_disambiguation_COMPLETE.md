@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `_does_train_match()` in `protocol_train_search_handler.c` uses the corrected nested `if/else if` structure that rejects short-address trains when the search address >= 128, with ALLOCATE flag bypass applied correctly.
+  ============================================================
+-->
+
 # Implementation Plan: Item 18 -- Train Search Short/Long Address Disambiguation
 
 ## 1. Summary

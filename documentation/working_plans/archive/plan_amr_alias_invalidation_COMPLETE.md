@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  The `invalid` flag exists in `openlcb_msg_state_t`, FIFO scrub function `OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias()` is wired, and both the pop-phase guard and TX guard are in place.
+  ============================================================
+-->
+
 # AMR Alias Invalidation — General CAN-Layer Defense
 
 ## Problem

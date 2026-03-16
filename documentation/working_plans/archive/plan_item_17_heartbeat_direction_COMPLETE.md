@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `openlcb_application_train.c` preserves direction via `OpenLcbFloat16_get_direction()` and emits either `FLOAT16_POSITIVE_ZERO` or `FLOAT16_NEGATIVE_ZERO` on heartbeat timeout, matching the plan.
+  ============================================================
+-->
+
 # Plan: Item 17 -- Heartbeat Timeout Zeroes set_speed Without Preserving Direction
 
 ## 1. Summary

@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  The `ComplianceTestNode` is fully built under `test/compliance_node/` with a protocol-mode registry, multi-mode callback infrastructure, and orchestration via `run_olcbchecker.sh`.
+  ============================================================
+-->
+
 # Implementation: ComplianceTestNode for OlcbChecker Testing
 
 ## Context

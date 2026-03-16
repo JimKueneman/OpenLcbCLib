@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: REJECTED
+  This early design sketch was superseded by `sibling_dispatch_plan.md`, which was fully implemented. No code was written directly from this document; the newer plan replaces it.
+  ============================================================
+-->
+
 # Plan: Virtual Node Sibling Dispatch
 
 ## 1. Summary

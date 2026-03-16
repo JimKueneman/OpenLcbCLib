@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `openlcb_main_statemachine.c` sends OIR for `MTI_STREAM_INIT_REQUEST`, `MTI_STREAM_SEND`, and `MTI_STREAM_COMPLETE` when handlers are NULL, leaving reply MTIs unchanged as planned.
+  ============================================================
+-->
+
 # Plan: Item 19 -- Stream Support Stubs Send OIR
 
 ## Summary

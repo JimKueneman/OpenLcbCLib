@@ -1,3 +1,10 @@
+<!--
+  ============================================================
+  STATUS: IMPLEMENTED
+  `verify_ticks` and `verify_pending` fields are in `listener_alias_entry_t`; `ListenerAliasTable_check_one_verification()` and `CanMainStatemachine_handle_listener_verification()` are wired into the CAN state machine loop.
+  ============================================================
+-->
+
 # Periodic Listener Alias Verification — Implementation Plan
 
 **Date:** 8 Mar 2026
