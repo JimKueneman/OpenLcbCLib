@@ -452,19 +452,10 @@ window.createCMEditor = function createCMEditor(container, options) {
             overflow: 'auto',
             fontFamily: "'Consolas', 'Menlo', 'Courier New', monospace"
         },
-        /* Lint underlines — coloured by severity */
-        '.cm-lintRange-error': {
-            backgroundImage: 'none',
-            borderBottom: '2px solid #f14c4c'
-        },
-        '.cm-lintRange-warning': {
-            backgroundImage: 'none',
-            borderBottom: '2px dashed #cca700'
-        },
-        '.cm-lintRange-info': {
-            backgroundImage: 'none',
-            borderBottom: '2px dotted #75beff'
-        }
+        /* Suppress lint squiggles — keep only the gutter dots */
+        '.cm-lintRange-error':   { backgroundImage: 'none', borderBottom: 'none' },
+        '.cm-lintRange-warning': { backgroundImage: 'none', borderBottom: 'none' },
+        '.cm-lintRange-info':    { backgroundImage: 'none', borderBottom: 'none' }
     }, { dark: true });
 
     /* Update listener — fires on every document change */
@@ -497,10 +488,9 @@ window.createCMEditor = function createCMEditor(container, options) {
      * --------------------------------------------------------------------- */
     if (options.validator && CM.linter) {
 
-        var lintSource = function (view) {
+        /* Build CM6 diagnostic objects from validator issues */
+        var _buildDiagnostics = function (issues, viewState) {
 
-            var xml     = view.state.doc.toString();
-            var issues  = options.validator.validate(xml);
             var results = [];
             var i;
 
@@ -513,7 +503,7 @@ window.createCMEditor = function createCMEditor(container, options) {
                 /* If the validator gave us a line number, mark that whole line */
                 if (issue.line && issue.line > 0) {
                     try {
-                        var lineInfo = view.state.doc.line(issue.line);
+                        var lineInfo = viewState.doc.line(issue.line);
                         from = lineInfo.from;
                         to   = lineInfo.to > lineInfo.from ? lineInfo.to : lineInfo.from + 1;
                     } catch (e) {
@@ -523,12 +513,12 @@ window.createCMEditor = function createCMEditor(container, options) {
                 } else {
                     /* No line number — mark the first line so the squiggle is visible */
                     try {
-                        var firstLine = view.state.doc.line(1);
+                        var firstLine = viewState.doc.line(1);
                         from = firstLine.from;
                         to   = firstLine.to > firstLine.from ? firstLine.to : firstLine.from + 1;
                     } catch (e) {
                         from = 0;
-                        to   = Math.min(view.state.doc.length, 1);
+                        to   = Math.min(viewState.doc.length, 1);
                     }
                 }
 
@@ -542,6 +532,19 @@ window.createCMEditor = function createCMEditor(container, options) {
             }
 
             return results;
+        };
+
+        /* The linter always runs — CM6 owns the inline markers (dots +
+           squiggles).  The "Auto Validate Schema" checkbox only controls
+           whether the validation *bar* auto-updates; the inline markers
+           always reflect the current document state. */
+        var lintSource = function (view) {
+
+            var xml = view.state.doc.toString();
+
+            return options.validator.validate(xml).then(function (issues) {
+                return _buildDiagnostics(issues, view.state);
+            });
         };
 
         extensions.push(CM.linter(lintSource, { delay: 600 }));
@@ -638,6 +641,13 @@ window.createCMEditor = function createCMEditor(container, options) {
         /* Byte count (UTF-8) */
         get byteCount() {
             return new TextEncoder().encode(view.state.doc.toString()).length;
+        },
+
+        /* Force the CM6 linter to re-run now (e.g. after loading new XML) */
+        forceLint: function () {
+            if (CM.forceLinting) {
+                CM.forceLinting(view);
+            }
         }
 
     };

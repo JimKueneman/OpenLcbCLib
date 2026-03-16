@@ -10,7 +10,7 @@
 -->
 <!-- TEST_CHECKS
 name: Segment Missing Space Attribute
-validate_has | severity:error | pattern:space.*attribute|attribute.*space | Error about missing space attribute
+validate_has | severity:error | pattern:attribute.*space.*required | Error about missing space attribute
 -->
 <cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">

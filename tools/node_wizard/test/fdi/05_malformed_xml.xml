@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 05_malformed_xml.xml
+    PURPOSE: Intentionally malformed XML — an unclosed tag and a missing
+             closing element.  The DOMParser (Layer 1) should catch this
+             immediately and return an XML parse error.  No Layer 2 or Layer 3
+             checks should run.
+
+    EXPECTED RESULTS:
+    - Validate: Single Layer 1 XML parse error
+-->
+<!-- TEST_CHECKS
+name: FDI Malformed XML (Layer 1)
+validate_has | severity:error | pattern:parser error | Layer 1 parse error present
+validate_min_count | severity:error | min:1 | At least 1 parser error-->
+<fdi>
+    <segment space="249">
+        <name>Functions</name>
+
+        <!-- unclosed tag — parser should fail here -->
+        <function kind="binary" size="1">
+            <name>Broken Function
+            <number>0</number>
+        </function>
+
+    </segment>
+</fdi>

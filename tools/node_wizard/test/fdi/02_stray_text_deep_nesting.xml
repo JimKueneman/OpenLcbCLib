@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 02_stray_text_deep_nesting.xml
+    PURPOSE: Stray text at multiple nesting levels in FDI.
+             FDI supports nested groups containing functions.
+             Tests 4 levels: segment > group > group > group > function
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 errors for stray text at each level
+-->
+<!-- TEST_CHECKS
+name: FDI Stray Text Deep Nesting
+validate_has | severity:error | pattern:Character content other than whitespace is not allowed | Stray text in containers
+validate_min_count | severity:error | min:4 | At least 4 stray-text errors-->
+<fdi>
+    <segment space="249">STRAY_SEG
+        <name>Functions</name>
+
+        <!-- Level 1 group -->
+        <group>STRAY_GRP1
+            <name>Sound Functions</name>
+
+            <!-- Level 2 group -->
+            <group>STRAY_GRP2
+                <name>Whistles</name>
+
+                <!-- Level 3 group -->
+                <group>
+                    <name>Long Whistles</name>
+
+                    <function kind="momentary" size="1">STRAY_FN
+                        <name>Long Whistle 1</name>
+                        <number>20</number>
+                    </function>
+
+                    <function kind="momentary" size="1">
+                        <name>Long Whistle 2</name>
+                        <number>21</number>
+                    </function>
+                </group>
+            </group>
+
+            <function kind="binary" size="1">
+                <name>Mute</name>
+                <number>8</number>
+            </function>
+        </group>
+
+        <function kind="binary" size="1">
+            <name>Headlight</name>
+            <number>0</number>
+        </function>
+    </segment>
+</fdi>

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 32_stray_text_in_hints.xml
+    PURPOSE: Stray characters inside <hints> elements (both groupHintsType
+             and integerHintsType are complexType with child-only content).
+             Also tests stray text inside <acdi> which is an empty element
+             (complexType with attributes only, no text or children allowed).
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 errors for stray text in <hints> and <acdi>
+-->
+<!-- TEST_CHECKS
+name: Stray Text in Hints and ACDI
+validate_has | severity:error | pattern:hints.*Character content | Stray text inside hints
+validate_has | severity:error | pattern:acdi.*Character content | Stray text inside acdi-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Stray Text Hints</model>
+    </identification>
+
+    <acdi>should be empty</acdi>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <int size="1">
+            <name>Enabled</name>
+            <map>
+                <relation><property>No</property><value>0</value></relation>
+                <relation><property>Yes</property><value>1</value></relation>
+            </map>
+            <hints>stray_in_hints
+                <checkbox/>
+            </hints>
+        </int>
+    </segment>
+</cdi>

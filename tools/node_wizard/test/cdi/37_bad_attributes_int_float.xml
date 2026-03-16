@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 37_bad_attributes_int_float.xml
+    PURPOSE: Invalid size attributes on <int> and <float> elements.
+             CDI 1.4 XSD says:
+               int size must be 1, 2, 4, or 8
+               float size must be 2, 4, or 8
+             Also tests missing required size on string.
+
+    EXPECTED RESULTS:
+    - Validate: Errors/warnings for each invalid size
+-->
+<!-- TEST_CHECKS
+name: Bad Int/Float/String Size Attributes
+validate_has | severity:error | pattern:int.*enumeration | Invalid int size
+validate_has | severity:error | pattern:float.*enumeration | Invalid float size
+validate_has | severity:error | pattern:string.*attribute.*size.*required | Missing string size
+validate_min_count | severity:error | min:2 | At least 2 int size errors-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Bad Size Attrs</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <!-- string missing required size -->
+        <string><name>No Size String</name></string>
+
+        <!-- int with invalid sizes -->
+        <int size="3"><name>Bad Int 3</name></int>
+        <int size="5"><name>Bad Int 5</name></int>
+        <int size="0"><name>Bad Int 0</name></int>
+
+        <!-- valid int for reference -->
+        <int size="1"><name>Good Int</name></int>
+
+        <!-- float with invalid size -->
+        <float size="3"><name>Bad Float 3</name></float>
+        <float size="1"><name>Bad Float 1</name></float>
+
+        <!-- valid float for reference -->
+        <float size="4"><name>Good Float</name></float>
+    </segment>
+</cdi>

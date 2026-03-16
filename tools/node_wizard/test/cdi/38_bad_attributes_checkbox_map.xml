@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 38_bad_attributes_checkbox_map.xml
+    PURPOSE: Comprehensive checkbox/map relationship errors.
+             CDI spec requires checkbox hints to have exactly 2 map relations.
+             Tests: 0 relations, 1 relation, 3 relations, and missing map.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 errors for each checkbox/map violation
+-->
+<!-- TEST_CHECKS
+name: Bad Checkbox Map Relations
+validate_min_count | severity:error | min:3 | At least 3 checkbox/map errors
+validate_has | severity:error | pattern:checkbox hint | Checkbox map error detected-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Bad Checkbox Maps</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- checkbox with NO map at all -->
+        <int size="1">
+            <name>Missing Map Checkbox</name>
+            <hints><checkbox/></hints>
+        </int>
+
+        <!-- checkbox with 1 relation (needs 2) -->
+        <int size="1">
+            <name>One Relation Checkbox</name>
+            <map>
+                <relation><property>Off</property><value>0</value></relation>
+            </map>
+            <hints><checkbox/></hints>
+        </int>
+
+        <!-- checkbox with 3 relations (needs 2) -->
+        <int size="1">
+            <name>Three Relation Checkbox</name>
+            <map>
+                <relation><property>Off</property><value>0</value></relation>
+                <relation><property>On</property><value>1</value></relation>
+                <relation><property>Maybe</property><value>2</value></relation>
+            </map>
+            <hints><checkbox/></hints>
+        </int>
+
+        <!-- VALID checkbox with 2 relations (should not error) -->
+        <int size="1">
+            <name>Good Checkbox</name>
+            <map>
+                <relation><property>Off</property><value>0</value></relation>
+                <relation><property>On</property><value>1</value></relation>
+            </map>
+            <hints><checkbox/></hints>
+        </int>
+    </segment>
+</cdi>

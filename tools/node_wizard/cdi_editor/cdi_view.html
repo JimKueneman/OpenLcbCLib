@@ -157,13 +157,23 @@
 
         .toolbar .loaded-filename:empty { display: none; }
 
-        /* ===== Validation footer (fixed at bottom of XML editor) ============ */
+        /* ===== Validation splitter (drag bar above validation panel) ======== */
+        .val-splitter {
+            flex-shrink: 0;
+            height: var(--splitter-size);
+            background: #2a5a8c;
+            cursor: ns-resize;
+            z-index: 10;
+        }
+
+        .val-splitter:hover,
+        .val-splitter.dragging { background: #0078d4; }
+
+        /* ===== Validation footer (resizable at bottom of XML editor) ======== */
         .validation-footer {
             height: 68px;
-            min-height: 68px;
-            max-height: 68px;
+            min-height: 28px;
             background: #1a3a5c;
-            border-top: 1px solid #2a5a8c;
             font-family: var(--font-mono);
             font-size: 10px;
             color: #c0c0c0;
@@ -824,7 +834,8 @@
                     <span id="status-cursor">Ln 1, Col 1</span>
                 </div>
 
-                <!-- Validation footer (always visible) -->
+                <!-- Validation splitter + footer -->
+                <div class="val-splitter" id="val-splitter"></div>
                 <div class="validation-footer" id="validation-footer">
                     <div class="val-ok" id="validation-ok">No issues detected</div>
                     <ul class="validation-list" id="validation-list"></ul>
@@ -851,7 +862,7 @@
                     <div class="map-header-desc" id="map-header-desc">Flat table of all CDI memory addresses, sizes, and types</div>
                 </div>
                 <div class="map-content" id="map-content">
-                    <div class="map-empty">Enter CDI XML to see memory map</div>
+                    <div class="map-empty">Enter CDI XML to see tools</div>
                 </div>
                 <!-- Preview content (shown when Preview tool is active) -->
                 <div class="preview-content" id="preview-content" style="display:none">
@@ -879,6 +890,8 @@
 </div>
 
 <script src="js/cdi_renderer.js"></script>
+<script src="../vendor/xmllint/xmllint_patched.js"></script>
+<script src="../vendor/xmllint/xmllint_api.js"></script>
 <script src="js/cdi_validator.js"></script>
 <script>
 
@@ -2080,7 +2093,7 @@ btnFormat.addEventListener('click', function () {
 });
 
 
-function validate() {
+async function validate() {
 
     const xml = elEditor.value.trim();
     if (!xml) {
@@ -2093,7 +2106,7 @@ function validate() {
         return;
     }
 
-    const issues = CdiValidator.validate(xml);
+    var issues = await CdiValidator.validate(xml);
 
     elValList.innerHTML = '';
 
@@ -2102,7 +2115,7 @@ function validate() {
         elValOk.style.display = '';
     } else {
         elValOk.style.display = 'none';
-        issues.forEach(issue => {
+        issues.forEach(function (issue) {
             elValList.appendChild(_buildIssueItem(issue));
         });
     }
@@ -2110,8 +2123,8 @@ function validate() {
     /* Report validation status to parent shell for badge display */
     if (_isEmbedded) {
 
-        var errorCount   = issues.filter(i => i.severity === 'error').length;
-        var warningCount = issues.filter(i => i.severity === 'warning').length;
+        var errorCount   = issues.filter(function (i) { return i.severity === 'error'; }).length;
+        var warningCount = issues.filter(function (i) { return i.severity === 'warning'; }).length;
 
         window.parent.postMessage({
             type:     'validationStatus',
@@ -2172,7 +2185,7 @@ btnClear.addEventListener('click', () => {
     elValOk.style.display = '';
     btnFormat.disabled    = true;
     btnExportXml.disabled = true;
-    elMapContent.innerHTML = '<div class="map-empty">Enter CDI XML to see memory map</div>';
+    elMapContent.innerHTML = '<div class="map-empty">Enter CDI XML to see tools</div>';
     document.getElementById('map-stats-bar').innerHTML = '';
     document.getElementById('map-overlap-report').innerHTML = '';
     document.getElementById('map-config-warning').innerHTML = '';
@@ -2260,12 +2273,29 @@ initSplitterDrag(elSplitter, {
     }
 });
 
+/* validation splitter — resizes validation footer height (drag up = taller) */
+initSplitterDrag(document.getElementById('val-splitter'), {
+    isVertical: () => false,
+    getSize:    () => elValFooter.getBoundingClientRect().height,
+    setSize:    px => { elValFooter.style.height = px + 'px'; },
+    min: 28,
+    invert: true,
+    onDragEnd: px => {
+        localStorage.setItem('cdi_sp_val', px);
+    }
+});
+
 function _restoreSplitterPositions() {
 
     const mainPx = parseFloat(localStorage.getItem('cdi_sp_main'));
     if (mainPx > 0) {
         elEditorPane.style.width     = mainPx + 'px';
         elEditorPane.style.flexBasis = mainPx + 'px';
+    }
+
+    const valPx = parseFloat(localStorage.getItem('cdi_sp_val'));
+    if (valPx > 0) {
+        elValFooter.style.height = valPx + 'px';
     }
 
 }
@@ -2369,10 +2399,10 @@ function _saveCdiEditorState() {
 function _saveCdiEditorStateNow() {
 
     const state = {
-        showAddr:    chkAddress.checked,
-        mapView:     _mapView,
-        xml:         elEditor.value,
-        filename:    _loadedFilename || ''
+        showAddr:      chkAddress.checked,
+        mapView:       _mapView,
+        xml:           elEditor.value,
+        filename:      _loadedFilename || ''
     };
     localStorage.setItem('cdi_editor_state', JSON.stringify(state));
 
@@ -2393,7 +2423,6 @@ function _restoreCdiEditorState() {
 
         const state = JSON.parse(raw);
         if (typeof state.showAddr === 'boolean') { chkAddress.checked = state.showAddr; }
-
         /* Validate mapView against known views; fall back to 'flat' */
         var validViews = ['flat', 'tree', 'defines', 'struct', 'array', 'preview'];
         var restoredView = (state.mapView && validViews.indexOf(state.mapView) !== -1)

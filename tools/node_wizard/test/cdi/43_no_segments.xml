@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 43_no_segments.xml
+    PURPOSE: CDI with identification and acdi but absolutely no <segment>
+             elements.  Layer 3 should flag the missing space 253 and also
+             produce an empty-segments info (or similar) since there are no
+             config items at all.
+
+    EXPECTED RESULTS:
+    - Validate: Info about no space 253 segment
+-->
+<!-- TEST_CHECKS
+name: CDI No Segments
+validate_has | severity:info | pattern:space 0xFD|space.*253|No segment | Missing space 253 info
+validate_min_count | severity:info | min:1 | At least 1 info message-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>No Segments Node</model>
+    </identification>
+
+    <acdi/>
+
+    <!-- intentionally no <segment> elements -->
+
+</cdi>

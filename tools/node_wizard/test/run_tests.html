@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Validator Test Runner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Menlo', 'Consolas', monospace;
+            background: #1e1e1e; color: #ccc;
+            padding: 20px; font-size: 13px;
+        }
+        h1 { color: #fff; margin-bottom: 4px; font-size: 18px; }
+        .subtitle { color: #888; font-size: 12px; margin-bottom: 16px; }
+        #output { white-space: pre; line-height: 1.6; }
+        .pass { color: #4ec949; }
+        .fail { color: #f44; }
+        .skip { color: #888; }
+        .section { color: #5af; font-weight: bold; margin-top: 12px; }
+        .detail { color: #f88; padding-left: 2ch; }
+        .summary { color: #fff; font-weight: bold; margin-top: 16px; font-size: 14px; }
+        .summary.ok { color: #4ec949; }
+        .summary.bad { color: #f44; }
+        #run-btn {
+            background: #3a3d41; color: #ccc; border: 1px solid #555;
+            padding: 6px 16px; cursor: pointer; font-size: 13px;
+            margin-bottom: 12px; border-radius: 4px;
+        }
+        #run-btn:hover { background: #505357; }
+        #run-btn:disabled { opacity: 0.5; cursor: default; }
+    </style>
+</head>
+<body>
+
+<h1>Validator Test Runner</h1>
+<p class="subtitle">CDI + FDI &mdash; runs in the browser using the same validators as the editors</p>
+<button id="run-btn" onclick="runAll()">Run Tests</button>
+<div id="output"></div>
+
+<!-- Load xmllint and both validators -->
+<script src="../vendor/xmllint/xmllint_patched.js"></script>
+<script src="../vendor/xmllint/xmllint_api.js"></script>
+<script src="../cdi_editor/js/cdi_validator.js"></script>
+<script src="../fdi_editor/js/fdi_validator.js"></script>
+
+<script>
+'use strict';
+
+var output = document.getElementById('output');
+var runBtn = document.getElementById('run-btn');
+
+function log(text, cls) {
+    var span = document.createElement('span');
+    span.textContent = text + '\n';
+    if (cls) { span.className = cls; }
+    output.appendChild(span);
+}
+
+/* ── TEST_CHECKS parser (same logic as run_tests.js) ─────────────────── */
+function parseChecks(xmlText) {
+    var match = xmlText.match(/<!--\s*TEST_CHECKS\s*\n([\s\S]*?)-->/);
+    if (!match) { return null; }
+    var lines = match[1].split('\n').map(function (l) { return l.trim(); })
+                        .filter(function (l) { return l.length > 0; });
+    var result = { name: '(unnamed)', checks: [] };
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        if (line.indexOf('name:') === 0) { result.name = line.slice(5).trim(); continue; }
+        var parts = line.split('|').map(function (p) { return p.trim(); });
+        if (parts.length < 2) { continue; }
+        var type  = parts[0];
+        var label = parts[parts.length - 1];
+        var check = { type: type, label: label };
+        for (var j = 1; j < parts.length - 1; j++) {
+            var param = parts[j];
+            var colon = param.indexOf(':');
+            if (colon === -1) { continue; }
+            var key = param.substring(0, colon).trim();
+            var val = param.substring(colon + 1).trim();
+            if (key === 'severity')  { check.severity = val; }
+            if (key === 'expected')  { check.expected = parseInt(val); }
+            if (key === 'min')       { check.min = parseInt(val); }
+            if (key === 'pattern')   { check.pattern = new RegExp(val, 'i'); }
+            if (key === 'line')      { check.expectedLine = parseInt(val); }
+        }
+        result.checks.push(check);
+    }
+    return result;
+}
+
+/* ── run one check against the issues array ──────────────────────────── */
+function runCheck(check, issues) {
+    var filtered = check.severity
+        ? issues.filter(function (i) { return i.severity === check.severity; })
+        : issues;
+
+    switch (check.type) {
+        case 'validate_count':
+            if (filtered.length !== check.expected) {
+                return 'expected ' + check.expected + ' ' + (check.severity || 'total') + ' issue(s), got ' + filtered.length;
+            }
+            return null;
+
+        case 'validate_min_count':
+            if (filtered.length < check.min) {
+                return 'expected >= ' + check.min + ' ' + (check.severity || 'total') + ' issue(s), got ' + filtered.length;
+            }
+            return null;
+
+        case 'validate_has':
+            if (!filtered.some(function (i) { return check.pattern && check.pattern.test(i.message); })) {
+                return 'no ' + (check.severity || '') + ' issue matched /' + (check.pattern ? check.pattern.source : '?') + '/';
+            }
+            return null;
+
+        case 'validate_has_line': {
+            var msgMatch  = filtered.filter(function (i) { return check.pattern && check.pattern.test(i.message); });
+            var lineMatch = msgMatch.filter(function (i) { return i.line === check.expectedLine; });
+            if (lineMatch.length > 0) { return null; }
+            if (msgMatch.length > 0) {
+                return 'expected line ' + check.expectedLine + ', got line ' + msgMatch[0].line;
+            }
+            return 'no ' + (check.severity || '') + ' issue matched /' + (check.pattern ? check.pattern.source : '?') + '/';
+        }
+
+        case 'map_not_null':
+        case 'map_is_null':
+        case 'map_has':
+        case 'map_count':
+            /* Map checks are not run here — they test the CDI renderer, not the validator */
+            return null;
+
+        default:
+            return null;
+    }
+}
+
+/* ── cache-busting suffix for fetch requests ─────────────────────────── */
+var _bustSuffix = '?_t=' + Date.now();
+
+/* ── discover XML files in a directory via dev server listing ─────────── */
+async function listXmlFiles(dirUrl) {
+    var resp = await fetch(dirUrl + _bustSuffix);
+    var html = await resp.text();
+    var matches = html.match(/href="([^"]+\.xml)"/gi) || [];
+    var files = matches.map(function (m) {
+        return m.replace(/^href="/i, '').replace(/"$/, '');
+    });
+    return files.sort();
+}
+
+/* ── run all tests in a directory ────────────────────────────────────── */
+async function runDir(dirUrl, validator, label) {
+    log('=== ' + label + ' tests ===', 'section');
+
+    var files = await listXmlFiles(dirUrl);
+    var pass = 0, fail = 0, skip = 0;
+
+    for (var fi = 0; fi < files.length; fi++) {
+        var file = files[fi];
+        var resp = await fetch(dirUrl + file + _bustSuffix);
+        var xmlText = await resp.text();
+        var testDef = parseChecks(xmlText);
+
+        if (!testDef) {
+            skip++;
+            log('  SKIP  ' + file + '  (no TEST_CHECKS block)', 'skip');
+            continue;
+        }
+
+        var issues = await validator.validate(xmlText);
+
+        var fileFail = false;
+        for (var ci = 0; ci < testDef.checks.length; ci++) {
+            var check = testDef.checks[ci];
+            var err = runCheck(check, issues);
+            if (err) {
+                if (!fileFail) {
+                    log('  FAIL  ' + file + '  [' + testDef.name + ']', 'fail');
+                    fileFail = true;
+                    fail++;
+                }
+                log('       x ' + check.label + ': ' + err, 'detail');
+            }
+        }
+        if (!fileFail) {
+            pass++;
+            log('  PASS  ' + file + '  [' + testDef.name + ']', 'pass');
+        }
+    }
+
+    log(label + ': ' + pass + ' passed, ' + fail + ' failed, ' + skip + ' skipped', '');
+    return { pass: pass, fail: fail, skip: skip };
+}
+
+/* ── main ────────────────────────────────────────────────────────────── */
+async function runAll() {
+    output.innerHTML = '';
+    runBtn.disabled = true;
+
+    try {
+        var cdi = await runDir('cdi/', CdiValidator, 'CDI');
+        log('', '');
+        var fdi = await runDir('fdi/', FdiValidator, 'FDI');
+        log('', '');
+
+        var totalPass = cdi.pass + fdi.pass;
+        var totalFail = cdi.fail + fdi.fail;
+
+        if (totalFail === 0) {
+            log('=== TOTAL: ' + totalPass + ' passed, 0 failed ===', 'summary ok');
+        } else {
+            log('=== TOTAL: ' + totalPass + ' passed, ' + totalFail + ' failed ===', 'summary bad');
+        }
+    } catch (e) {
+        log('ERROR: ' + e.message, 'fail');
+    }
+
+    runBtn.disabled = false;
+}
+
+/* Auto-run on load */
+runAll();
+</script>
+
+</body>
+</html>

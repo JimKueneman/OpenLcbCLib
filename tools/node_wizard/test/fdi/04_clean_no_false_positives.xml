@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 04_clean_no_false_positives.xml
+    PURPOSE: Valid FDI with nested groups and generous whitespace.
+             No stray text anywhere — should produce zero errors.
+
+    EXPECTED RESULTS:
+    - Validate: Zero errors, zero warnings
+-->
+<!-- TEST_CHECKS
+name: FDI Clean (No False Positives)
+validate_count | severity:error | expected:0 | No errors
+validate_count | severity:warning | expected:0 | No warnings-->
+<fdi>
+    <segment space="249">
+        <name>DCC Functions</name>
+        <description>Locomotive function assignments</description>
+
+        <group>
+            <name>Lights</name>
+
+            <function kind="binary" size="1">
+                <name>Headlight</name>
+                <number>0</number>
+            </function>
+
+            <function kind="binary" size="1">
+                <name>Rear Light</name>
+                <number>1</number>
+            </function>
+
+            <group>
+                <name>Cab Lights</name>
+
+                <function kind="binary" size="1">
+                    <name>Cab Light</name>
+                    <number>9</number>
+                </function>
+
+                <function kind="binary" size="1">
+                    <name>Ditch Left</name>
+                    <number>10</number>
+                </function>
+            </group>
+        </group>
+
+        <group>
+            <name>Sound</name>
+
+            <function kind="binary" size="1">
+                <name>Bell</name>
+                <number>2</number>
+            </function>
+
+            <function kind="momentary" size="1">
+                <name>Horn</name>
+                <number>3</number>
+            </function>
+
+            <function kind="analog" size="1">
+                <name>Volume</name>
+                <number>27</number>
+                <min>0</min>
+                <max>128</max>
+            </function>
+        </group>
+    </segment>
+</fdi>

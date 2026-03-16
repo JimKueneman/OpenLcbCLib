@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 40_identification_empty_fields.xml
+    PURPOSE: <identification> is present but <manufacturer> and <model> are
+             empty strings.  The Layer 3 semantic checks should flag both as
+             info-level messages.
+
+    EXPECTED RESULTS:
+    - Validate: Info messages for empty manufacturer and empty model
+-->
+<!-- TEST_CHECKS
+name: Empty Identification Fields
+validate_has | severity:info | pattern:empty.*manufacturer | Empty manufacturer info
+validate_has | severity:info | pattern:empty.*model | Empty model info
+validate_min_count | severity:info | min:2 | At least 2 info messages for empty fields-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <!-- identification present but sub-elements are empty -->
+    <identification>
+        <manufacturer></manufacturer>
+        <model></model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+    </segment>
+
+</cdi>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 25_stray_text_in_string.xml
+    PURPOSE: Stray characters typed inside a <string> variable element.
+             Text nodes in <string> are illegal — only child elements
+             like <name>, <description>, <map> are allowed.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 error — stray text detected inside <string>
+-->
+<!-- TEST_CHECKS
+name: Stray Text in String
+validate_has | severity:error | pattern:string.*Character content | Stray text inside string element
+map_not_null | Map still parses-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Stray Text String</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="62">3
+            <name>Node Name</name>3
+            <description>Short user-assigned name</description>3
+        </string>
+    </segment>
+</cdi>

@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 34_stray_text_all_variable_types.xml
+    PURPOSE: Stray text inside every CDI variable element type defined in
+             the CDI 1.4 XSD: string, int, float, eventid, action, blob.
+             All are complexType with child-element-only content.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 errors for stray text in each variable type
+-->
+<!-- TEST_CHECKS
+name: Stray Text in All Variable Types
+validate_has | severity:error | pattern:string.*Character content | Stray text in string
+validate_has | severity:error | pattern:int.*Character content | Stray text in int
+validate_has | severity:error | pattern:float.*Character content | Stray text in float
+validate_has | severity:error | pattern:eventid.*Character content | Stray text in eventid
+validate_has | severity:error | pattern:action.*Character content | Stray text in action
+validate_has | severity:error | pattern:blob.*Character content | Stray text in blob
+validate_min_count | severity:error | min:6 | At least 6 stray-text errors-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>All Variable Types Stray</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <!-- string with stray text -->
+        <string size="63">STRAY
+            <name>User Name</name>
+            <description>Name of the node</description>
+        </string>
+
+        <!-- int with stray text -->
+        <int size="1">STRAY
+            <name>Output Mode</name>
+            <min>0</min>
+            <max>3</max>
+            <default>0</default>
+            <map>
+                <relation><property>Off</property><value>0</value></relation>
+                <relation><property>On</property><value>1</value></relation>
+            </map>
+        </int>
+
+        <!-- float with stray text -->
+        <float size="4">STRAY
+            <name>Temperature Offset</name>
+            <min>-10</min>
+            <max>10</max>
+            <default>0</default>
+        </float>
+
+        <!-- eventid with stray text -->
+        <eventid>STRAY
+            <name>Activation Event</name>
+            <description>Produced when output activates</description>
+        </eventid>
+
+        <!-- action with stray text -->
+        <action size="1">STRAY
+            <name>Factory Reset</name>
+            <description>Reset all settings to factory defaults</description>
+            <buttonText>Reset</buttonText>
+            <dialogText>Are you sure?</dialogText>
+            <value>1</value>
+        </action>
+
+        <!-- blob with stray text -->
+        <blob size="10" mode="readwrite">STRAY
+            <name>Custom Data</name>
+            <description>Raw data block</description>
+        </blob>
+    </segment>
+</cdi>

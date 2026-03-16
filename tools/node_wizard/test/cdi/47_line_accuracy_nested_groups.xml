@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 47_line_accuracy_nested_groups.xml
+    PURPOSE: Stray text inside a nested group.  The group's <name> content
+             "Output" also appears in the outer group's <name>.  The error
+             must point to line 22 (the stray text), not line 17 (the first
+             "Output" name).
+
+    EXPECTED RESULTS:
+    - Error: stray text "Output" at line 22
+-->
+<!-- TEST_CHECKS
+name: Line Accuracy — Nested Groups Same Name
+validate_has_line | severity:error | pattern:group.*Character content | line:29 | Stray text detected in nested group
+validate_count | severity:error | expected:1 | Exactly 1 error-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Nested Groups</model>
+    </identification>
+    <acdi/>
+    <segment space="253" origin="0">
+        <group>
+            <name>Output</name>
+            <int size="1"><name>Mode</name></int>
+            <group>
+                <name>Sub Output</name>
+Output
+            </group>
+        </group>
+    </segment>
+</cdi>

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 28_stray_text_in_containers.xml
+    PURPOSE: Stray characters inside structural container elements:
+             <segment>, <group>, <identification>, <map>, <relation>.
+             All are complexType with child-element-only content.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 errors — stray text in multiple container types
+-->
+<!-- TEST_CHECKS
+name: Stray Text in Container Elements
+validate_has | severity:error | pattern:segment.*Character content | Stray text inside segment
+validate_has | severity:error | pattern:group.*Character content | Stray text inside group
+validate_has | severity:error | pattern:identification.*Character content | Stray text inside identification
+validate_has | severity:error | pattern:map.*Character content | Stray text inside map
+validate_has | severity:error | pattern:relation.*Character content | Stray text inside relation-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>stray_id
+        <manufacturer>Test</manufacturer>
+        <model>Stray Text Containers</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">stray_segment
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <group>stray_group
+            <name>Settings</name>
+            <int size="1">
+                <name>Mode</name>
+                <map>stray_map
+                    <relation>stray_relation
+                        <property>Off</property>
+                        <value>0</value>
+                    </relation>
+                    <relation>
+                        <property>On</property>
+                        <value>1</value>
+                    </relation>
+                </map>
+            </int>
+        </group>
+    </segment>
+</cdi>

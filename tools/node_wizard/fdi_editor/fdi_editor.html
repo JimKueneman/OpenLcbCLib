@@ -179,13 +179,23 @@
             flex-shrink: 0;
         }
 
-        /* ===== Validation footer =========================================== */
+        /* ===== Validation splitter (drag bar above validation panel) ======== */
+        .val-splitter {
+            flex-shrink: 0;
+            height: var(--splitter-size);
+            background: #2a5a8c;
+            cursor: ns-resize;
+            z-index: 10;
+        }
+
+        .val-splitter:hover,
+        .val-splitter.dragging { background: #0078d4; }
+
+        /* ===== Validation footer (resizable at bottom of XML editor) ======== */
         .validation-footer {
             height: 68px;
-            min-height: 68px;
-            max-height: 68px;
+            min-height: 28px;
             background: #1a3a5c;
-            border-top: 1px solid #2a5a8c;
             font-family: var(--font-mono);
             font-size: 10px;
             color: #c0c0c0;
@@ -247,7 +257,7 @@
             display: flex;
             flex-direction: column;
             min-width: 200px;
-            background: #1e1e1e;
+            background: var(--color-bg);
             overflow: hidden;
         }
 
@@ -268,11 +278,23 @@
             gap: 2px;
         }
 
+        .fdi-tools-empty {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-muted);
+            font-size: 11px;
+            background: #f8f9fa;
+        }
+
+        .fdi-tools-empty.hidden { display: none; }
+
         .fn-grid-scroll {
             flex: 1;
             overflow-y: auto;
             padding: 10px;
-            background: #1e1e1e;
+            background: var(--color-bg);
         }
 
         .fn-grid {
@@ -290,9 +312,9 @@
             justify-content: center;
             min-height: 56px;
             padding: 6px 4px;
-            border: 1px solid #444;
+            border: 1px solid var(--color-border);
             border-radius: 6px;
-            background: #2a2a2a;
+            background: #fff;
             cursor: pointer;
             transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
             text-align: center;
@@ -305,26 +327,26 @@
         }
 
         .fn-btn.fn-defined {
-            background: #1a3a5c;
-            border-color: #2a6aaa;
+            background: #dbeafe;
+            border-color: #93c5fd;
         }
 
         .fn-btn.fn-defined:hover {
-            background: #1e4a70;
+            background: #bfdbfe;
             border-color: #0078d4;
         }
 
         .fn-btn .fn-number {
             font-size: 10px;
             font-weight: 700;
-            color: #888;
+            color: var(--color-muted);
             margin-bottom: 2px;
         }
 
         .fn-btn .fn-name {
             font-size: 11px;
             font-weight: 600;
-            color: #ccc;
+            color: var(--color-text);
             line-height: 1.2;
             word-break: break-word;
             max-width: 100%;
@@ -341,17 +363,17 @@
         }
 
         .fn-kind-binary {
-            background: #1e3a5f;
-            color: #7db8e8;
+            background: #dbeafe;
+            color: #1d4ed8;
         }
 
         .fn-kind-momentary {
-            background: #4a3a1a;
-            color: #e8c870;
+            background: #fef3c7;
+            color: #92400e;
         }
 
         .fn-btn.fn-empty .fn-name {
-            color: #666;
+            color: #999;
             font-weight: 400;
             font-style: italic;
         }
@@ -368,10 +390,10 @@
         .fn-popover-overlay.visible { display: flex; align-items: center; justify-content: center; }
 
         .fn-popover {
-            background: #2d2d2d;
-            border: 1px solid #555;
+            background: #fff;
+            border: 1px solid var(--color-border);
             border-radius: 8px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
             padding: 16px 20px;
             width: 280px;
             max-width: 90vw;
@@ -380,14 +402,14 @@
         .fn-popover h3 {
             font-size: 14px;
             margin-bottom: 12px;
-            color: #ddd;
+            color: var(--color-text);
         }
 
         .fn-popover label {
             display: block;
             font-size: 11px;
             font-weight: 600;
-            color: #999;
+            color: var(--color-muted);
             margin-bottom: 4px;
             margin-top: 10px;
         }
@@ -399,11 +421,11 @@
             width: 100%;
             height: 30px;
             padding: 0 8px;
-            border: 1px solid #555;
+            border: 1px solid var(--color-border);
             border-radius: 4px;
             font-size: 13px;
-            background: #1e1e1e;
-            color: #ddd;
+            background: #fff;
+            color: var(--color-text);
         }
 
         .fn-popover input[type="text"]:focus,
@@ -422,7 +444,7 @@
         .fn-popover-actions button {
             flex: 1;
             height: 30px;
-            border: 1px solid #555;
+            border: 1px solid var(--color-border);
             border-radius: 4px;
             font-size: 12px;
             cursor: pointer;
@@ -438,21 +460,21 @@
         .fn-popover-actions .btn-save:hover { background: #005fa3; }
 
         .fn-popover-actions .btn-cancel {
-            background: #3c3c3c;
-            color: #ccc;
+            background: #e9ecef;
+            color: var(--color-text);
         }
 
-        .fn-popover-actions .btn-cancel:hover { background: #4c4c4c; }
+        .fn-popover-actions .btn-cancel:hover { background: #dee2e6; }
 
         .fn-popover-actions .btn-remove {
-            background: #3c3c3c;
-            color: #f87171;
-            border-color: #f87171;
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fca5a5;
             flex: 0 0 auto;
             padding: 0 10px;
         }
 
-        .fn-popover-actions .btn-remove:hover { background: #4a2020; }
+        .fn-popover-actions .btn-remove:hover { background: #fecaca; }
 
         /* ===== FDI Tools toggle buttons ====================================== */
         .fdi-view-toggle {
@@ -487,7 +509,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            background: #1e1e1e;
+            background: var(--color-bg);
         }
 
         .fdi-tools-content.hidden { display: none; }
@@ -581,7 +603,8 @@
                 <span id="status-cursor">Ln 1, Col 1</span>
             </div>
 
-            <!-- Validation footer -->
+            <!-- Validation splitter + footer -->
+            <div class="val-splitter" id="val-splitter"></div>
             <div class="validation-footer" id="validation-footer">
                 <div class="val-ok" id="validation-ok">No issues detected</div>
                 <ul class="validation-list" id="validation-list"></ul>
@@ -601,7 +624,8 @@
                     <button class="fdi-toggle-btn"        id="btn-fdi-array" title="C byte array for openlcb_user_config.c">[ ] Array</button>
                 </div>
             </div>
-            <div class="fn-grid-scroll" id="fn-grid-scroll">
+            <div class="fdi-tools-empty" id="fdi-tools-empty">Enter FDI XML to see tools</div>
+            <div class="fn-grid-scroll" id="fn-grid-scroll" style="display:none">
                 <div class="fn-grid" id="fn-grid"></div>
             </div>
             <div class="fdi-tools-content hidden" id="fdi-tools-content"></div>
@@ -633,6 +657,8 @@
     </div>
 </div>
 
+<script src="../vendor/xmllint/xmllint_patched.js"></script>
+<script src="../vendor/xmllint/xmllint_api.js"></script>
 <script src="js/fdi_validator.js"></script>
 <script src="js/fdi_function_grid.js"></script>
 <script>
@@ -650,6 +676,7 @@ var elEditor      = createCMEditor(document.getElementById('cm-host'), {
     validator:   FdiValidator
 });
 var elValList     = document.getElementById('validation-list');
+var elValFooter   = document.getElementById('validation-footer');
 var elValOk       = document.getElementById('validation-ok');
 var elStatusBytes = document.getElementById('status-bytes');
 var elStatusChars = document.getElementById('status-chars');
@@ -657,7 +684,7 @@ var elStatusLines = document.getElementById('status-lines');
 var elStatusCur   = document.getElementById('status-cursor');
 var btnFormat     = document.getElementById('btn-format');
 var btnClear      = document.getElementById('btn-clear');
-var btnExportXml  = document.getElementById('btn-export-xml');
+var btnExportXml     = document.getElementById('btn-export-xml');
 var fileInput     = document.getElementById('file-input');
 var elWorkspace   = document.getElementById('workspace');
 var elEditorPane  = document.getElementById('editor-pane');
@@ -735,6 +762,9 @@ function onEditorChange() {
 
     var hasContent = currentXml.trim().length > 0;
     btnFormat.disabled    = !hasContent;
+
+    /* Toggle empty-state placeholder vs grid/content in the RH pane */
+    _setFdiToolsView(_fdiToolsView);
     btnExportXml.disabled = !hasContent;
 
     /* Auto-validate after a short debounce */
@@ -793,7 +823,7 @@ function _updateHighlight() { }
 
 /* ---------- Validate ------------------------------------------------------ */
 
-function validate() {
+async function validate() {
 
     var xml = elEditor.value.trim();
 
@@ -810,7 +840,7 @@ function validate() {
 
     }
 
-    var issues = FdiValidator.validate(xml);
+    var issues = await FdiValidator.validate(xml);
 
     elValList.innerHTML = '';
 
@@ -898,6 +928,11 @@ btnClear.addEventListener('click', function () {
     btnFormat.disabled    = true;
     btnExportXml.disabled = true;
     _setFilename('');
+
+    /* Reset the FDI Tools right-hand pane */
+    FdiFunctionGrid.syncFromXml('');
+    elFdiToolsContent.innerHTML = '';
+
     onEditorChange();
 
 });
@@ -1108,6 +1143,46 @@ window.addEventListener('mouseup', function () {
 
 });
 
+/* ---------- Validation splitter drag -------------------------------------- */
+
+var _valDragging = false;
+var _valStartY   = 0;
+var _valStartH   = 0;
+var _valSplitter = document.getElementById('val-splitter');
+
+_valSplitter.addEventListener('mousedown', function (e) {
+
+    e.preventDefault();
+    _valDragging = true;
+    _valSplitter.classList.add('dragging');
+    document.body.style.cursor = 'ns-resize';
+    document.body.style.userSelect = 'none';
+    _valStartY = e.clientY;
+    _valStartH = elValFooter.getBoundingClientRect().height;
+
+});
+
+window.addEventListener('mousemove', function (e) {
+
+    if (!_valDragging) { return; }
+
+    var delta = _valStartY - e.clientY;
+    var newH  = Math.max(28, _valStartH + delta);
+    elValFooter.style.height = newH + 'px';
+
+});
+
+window.addEventListener('mouseup', function () {
+
+    if (!_valDragging) { return; }
+    _valDragging = false;
+    _valSplitter.classList.remove('dragging');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    _saveState();
+
+});
+
 /* ---------- Function grid → XML callback --------------------------------- */
 
 /**
@@ -1143,6 +1218,7 @@ var _fdiToolsView = 'fnmap';
 var _fdiArrayViewer = null;
 
 var elFdiToolsContent = document.getElementById('fdi-tools-content');
+var elFdiToolsEmpty   = document.getElementById('fdi-tools-empty');
 var elFnGridScroll    = document.getElementById('fn-grid-scroll');
 
 document.getElementById('btn-fdi-fnmap').addEventListener('click', function () {
@@ -1161,8 +1237,20 @@ function _setFdiToolsView(view) {
 
     _fdiToolsView = view;
 
+    var hasContent = elEditor.value.trim().length > 0;
+
     document.getElementById('btn-fdi-fnmap').classList.toggle('active', view === 'fnmap');
     document.getElementById('btn-fdi-array').classList.toggle('active', view === 'array');
+
+    /* When editor is empty, show the empty placeholder instead of grid/array */
+    if (!hasContent) {
+        elFnGridScroll.style.display = 'none';
+        elFdiToolsContent.classList.add('hidden');
+        elFdiToolsEmpty.classList.remove('hidden');
+        return;
+    }
+
+    elFdiToolsEmpty.classList.add('hidden');
 
     if (view === 'fnmap') {
 
@@ -1297,10 +1385,11 @@ function _saveState() {
     _saveTimer = setTimeout(function () {
 
         var state = {
-            xml:          elEditor.value,
-            filename:     _loadedFilename || '',
-            splitterPx:   elEditorPane.style.flexBasis || '',
-            fdiToolsView: _fdiToolsView
+            xml:           elEditor.value,
+            filename:      _loadedFilename || '',
+            splitterPx:    elEditorPane.style.flexBasis || '',
+            valHeight:     elValFooter.style.height || '',
+            fdiToolsView:  _fdiToolsView
         };
 
         try { localStorage.setItem(_STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* quota */ }
@@ -1318,10 +1407,14 @@ function _restoreState() {
     var state;
     try { state = JSON.parse(raw); } catch (e) { return; }
 
-    /* Splitter position */
+    /* Splitter positions */
     if (state.splitterPx) {
         elEditorPane.style.flexBasis = state.splitterPx;
         elEditorPane.style.flexGrow  = '0';
+    }
+
+    if (state.valHeight) {
+        elValFooter.style.height = state.valHeight;
     }
 
     /* XML content */

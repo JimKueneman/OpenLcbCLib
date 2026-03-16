@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 10_no_segment.xml
+    PURPOSE: Completely empty <fdi> with no <segment> element at all.
+             The Layer 3 semantic check should warn that FDI needs at
+             least one segment.
+
+    EXPECTED RESULTS:
+    - Validate: Warning for missing segment
+-->
+<!-- TEST_CHECKS
+name: FDI No Segment
+validate_has | severity:warning | pattern:[Nn]o.*<segment>|[Nn]o.*segment.*found|at least one segment | No segment warning
+validate_min_count | severity:warning | min:1 | At least 1 no-segment warning-->
+<fdi>
+    <!-- intentionally empty — no segment, no functions -->
+</fdi>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 12_line_accuracy_function_clash.xml
+    PURPOSE: Stray text "Headlight" inside the second <function>, while
+             "Headlight" is also the <name> content of the first function.
+             The error must report line 18 (the stray text), not line 11.
+
+    EXPECTED RESULTS:
+    - Error: stray text "Headlight" at line 18
+-->
+<!-- TEST_CHECKS
+name: FDI Line Accuracy — Function Name Clash
+validate_has_line | severity:error | pattern:Character content other than whitespace is not allowed | line:24 | Stray text in function at line 24
+validate_count | severity:error | expected:1 | Exactly 1 error-->
+<fdi>
+    <segment space="249">
+        <function kind="binary" size="1">
+            <name>Headlight</name>
+            <number>0</number>
+        </function>
+        <function kind="binary" size="1">
+            <name>Bell</name>
+            <number>1</number>
+Headlight
+        </function>
+    </segment>
+</fdi>

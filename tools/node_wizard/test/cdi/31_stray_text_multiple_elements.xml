@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 31_stray_text_multiple_elements.xml
+    PURPOSE: Stray text scattered across many different element types in the
+             same file.  Tests that the validator catches stray text in every
+             container/variable kind — not just the first one found.
+             Each element type gets one stray-text error (the validator reports
+             one per element then moves on).
+
+    EXPECTED RESULTS:
+    - Validate: Multiple Layer 2 errors across different element types
+-->
+<!-- TEST_CHECKS
+name: Stray Text in Multiple Element Types
+validate_has | severity:error | pattern:segment.*Character content | Stray text in segment
+validate_has | severity:error | pattern:string.*Character content | Stray text in string
+validate_has | severity:error | pattern:int.*Character content | Stray text in int
+validate_has | severity:error | pattern:eventid.*Character content | Stray text in eventid
+validate_has | severity:error | pattern:group.*Character content | Stray text in group
+validate_min_count | severity:error | min:5 | At least 5 stray-text errors-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Multi Stray</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">STRAY_SEG
+        <string size="63">STRAY_STR
+            <name>User Name</name>
+        </string>
+
+        <string size="64"><name>User Description</name></string>
+
+        <group>STRAY_GRP
+            <name>Settings</name>
+            <int size="1">STRAY_INT
+                <name>Mode</name>
+            </int>
+        </group>
+
+        <eventid>STRAY_EVT
+            <name>Event On</name>
+        </eventid>
+    </segment>
+</cdi>

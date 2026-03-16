@@ -1,0 +1,272 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 44_kitchen_sink_valid.xml
+    PURPOSE: Exercises every tag and every attribute defined in CDI 1.4 at
+             least once in a structurally valid document.
+             Expected: zero errors AND zero warnings.
+
+    TAG COVERAGE:
+      acdi          action        blob          buttonText    cdi
+      checkbox      default       description   dialogText    eventid
+      float         group         hardwareVersion hints        identification
+      int           link          manufacturer  map           max
+      min           model         name          property      radiobutton
+      readOnly      relation      repname       segment       slider
+      softwareVersion string       value         visibility
+
+    ATTRIBUTE COVERAGE:
+      fixed         formatting    hidden        hideable      immediate
+      mode          offset        origin        ref           replication
+      showValue     size          space         tickSpacing   var
+-->
+<!-- TEST_CHECKS
+name: Kitchen Sink Valid CDI
+validate_count | severity:error | expected:0 | No errors in full-coverage valid CDI
+validate_count | severity:warning | expected:0 | No warnings in full-coverage valid CDI-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <!-- ===================================================================
+         identification: manufacturer, model, hardwareVersion,
+         softwareVersion, link (with ref=), map (with name, description,
+         multiple relation/property/value entries)
+         =================================================================== -->
+    <identification>
+        <manufacturer>Kitchen Sink Maker</manufacturer>
+        <model>AllTags Node v1</model>
+        <hardwareVersion>1.0</hardwareVersion>
+        <softwareVersion>2.5</softwareVersion>
+        <!-- link: ref attribute (required for linkType) -->
+        <link ref="https://openlcb.org/help/cdi">Online Documentation</link>
+        <!-- map inside identification: name, description, relation, property, value -->
+        <map>
+            <name>Node Metadata</name>
+            <description>Arbitrary key-value pairs describing this node</description>
+            <relation>
+                <property>protocol</property>
+                <value>OpenLCB 1.4</value>
+            </relation>
+            <relation>
+                <property>board</property>
+                <value>Rev C</value>
+            </relation>
+        </map>
+    </identification>
+
+    <!-- acdi: fixed and var attributes both specified explicitly -->
+    <acdi fixed="4" var="2"/>
+
+    <!-- ===================================================================
+         segment space=253 (0xFD): user name / description
+         Covers: segment space= origin=, string size= offset=, map inside string
+         =================================================================== -->
+    <segment space="253" origin="0">
+        <name>User Settings</name>
+        <description>User-configurable node identity strings</description>
+        <!-- link inside segment -->
+        <link ref="https://openlcb.org/help/user-settings">User Settings Help</link>
+        <!-- string with size and offset; map child of string -->
+        <string size="63" offset="0">
+            <name>User Name</name>
+            <description>Short name shown in configuration tools</description>
+            <map>
+                <relation>
+                    <property>empty</property>
+                    <value>(unnamed)</value>
+                </relation>
+            </map>
+        </string>
+        <string size="64">
+            <name>User Description</name>
+            <description>Free-text description of this node</description>
+        </string>
+    </segment>
+
+    <!-- ===================================================================
+         segment space=251: main configuration
+         Covers everything remaining: group with ALL attributes and hints,
+         all variable types (int sizes 1/2/4/8, float sizes 2/4/8,
+         eventid, action, blob modes read/write/readwrite), nested group
+         =================================================================== -->
+    <segment space="251" origin="0">
+        <name>Configuration</name>
+        <description>Main configuration memory space</description>
+
+        <!-- =================================================================
+             group: offset=, replication=, name, description, link, repname,
+             hints with visibility (hideable=, hidden=) and readOnly
+             ================================================================= -->
+        <group offset="0" replication="4">
+            <name>Channel</name>
+            <description>Per-channel settings — replicated 4 times</description>
+            <!-- link inside group -->
+            <link ref="https://openlcb.org/help/channel">Channel Help</link>
+            <!-- repname: displayed label prefix for each replication -->
+            <repname>Channel </repname>
+            <!-- hints (groupHintsType): visibility and readOnly -->
+            <hints>
+                <!-- visibility: hideable and hidden attributes (booleanType) -->
+                <visibility hideable="yes" hidden="no"/>
+                <!-- readOnly: marks group as read-only in a UI -->
+                <readOnly/>
+            </hints>
+
+            <!-- =============================================================
+                 int size=1: min, max, default, map, hints with slider
+                 slider: tickSpacing=, immediate=, showValue= (all booleanType or int)
+                 ============================================================= -->
+            <int size="1" offset="0">
+                <name>Speed Step Mode</name>
+                <description>Motor speed-step resolution</description>
+                <min>0</min>
+                <max>2</max>
+                <default>0</default>
+                <map>
+                    <name>Speed Modes</name>
+                    <description>Available speed-step resolutions</description>
+                    <relation><property>0</property><value>14 Steps</value></relation>
+                    <relation><property>1</property><value>28 Steps</value></relation>
+                    <relation><property>2</property><value>128 Steps</value></relation>
+                </map>
+                <hints>
+                    <slider tickSpacing="1" immediate="no" showValue="yes"/>
+                </hints>
+            </int>
+
+            <!-- =============================================================
+                 int size=2: map, hints with radiobutton
+                 ============================================================= -->
+            <int size="2">
+                <name>Direction</name>
+                <description>Default direction of travel</description>
+                <map>
+                    <relation><property>0</property><value>Forward</value></relation>
+                    <relation><property>1</property><value>Reverse</value></relation>
+                </map>
+                <hints>
+                    <radiobutton/>
+                </hints>
+            </int>
+
+            <!-- =============================================================
+                 int size=4: map, hints with checkbox
+                 checkbox requires a map sibling with exactly 2 relations
+                 ============================================================= -->
+            <int size="4">
+                <name>Momentum Enabled</name>
+                <description>Enable acceleration/deceleration momentum</description>
+                <map>
+                    <relation><property>0</property><value>Disabled</value></relation>
+                    <relation><property>1</property><value>Enabled</value></relation>
+                </map>
+                <hints>
+                    <checkbox/>
+                </hints>
+            </int>
+
+            <!-- int size=8: 64-bit integer, no optional children -->
+            <int size="8">
+                <name>Node Serial</name>
+                <description>64-bit read-only serial number</description>
+            </int>
+
+            <!-- =============================================================
+                 float size=2: 16-bit float with min, max, default
+                 ============================================================= -->
+            <float size="2">
+                <name>Trim Percent</name>
+                <description>Fine speed trim as a percentage</description>
+                <min>-10.0</min>
+                <max>10.0</max>
+                <default>0.0</default>
+            </float>
+
+            <!-- =============================================================
+                 float size=4: formatting= attribute, min, max, default, map
+                 ============================================================= -->
+            <float size="4" offset="0" formatting="%3.1f">
+                <name>Target Speed</name>
+                <description>Desired operating speed in mph</description>
+                <min>0.0</min>
+                <max>150.0</max>
+                <default>0.0</default>
+                <map>
+                    <relation><property>0.0</property><value>Stopped</value></relation>
+                    <relation><property>50.0</property><value>Half Speed</value></relation>
+                </map>
+            </float>
+
+            <!-- float size=8: 64-bit double -->
+            <float size="8">
+                <name>Latitude</name>
+                <description>GPS latitude coordinate (64-bit precision)</description>
+            </float>
+
+            <!-- =============================================================
+                 eventid: offset= attribute, name, description, map
+                 ============================================================= -->
+            <eventid offset="0">
+                <name>Produced Event</name>
+                <description>Event produced when this channel becomes active</description>
+                <map>
+                    <name>Event Notes</name>
+                    <relation>
+                        <property>0</property>
+                        <value>Channel Active Signal</value>
+                    </relation>
+                </map>
+            </eventid>
+
+            <!-- =============================================================
+                 action: size=, offset=, name, description,
+                         buttonText, dialogText, value
+                 ============================================================= -->
+            <action size="1" offset="0">
+                <name>Reset Channel</name>
+                <description>Write factory-default values to this channel</description>
+                <buttonText>Reset to Defaults</buttonText>
+                <dialogText>This will overwrite all channel settings. Continue?</dialogText>
+                <value>255</value>
+            </action>
+
+            <!-- =============================================================
+                 blob mode=read: read-only binary blob
+                 blob mode=write: write-only binary blob
+                 blob mode=readwrite: full read/write binary blob
+                 All three mode values covered.  size must be "10" per XSD.
+                 ============================================================= -->
+            <blob size="10" offset="0" mode="read">
+                <name>Diagnostics</name>
+                <description>Factory diagnostic data (read-only)</description>
+            </blob>
+
+            <blob size="10" mode="write">
+                <name>Calibration Load</name>
+                <description>Load external calibration data to device</description>
+            </blob>
+
+            <blob size="10" mode="readwrite">
+                <name>Custom Data</name>
+                <description>User-defined binary data block</description>
+            </blob>
+
+            <!-- =============================================================
+                 nested group: exercises group-inside-group (no extra attributes)
+                 ============================================================= -->
+            <group offset="0">
+                <name>Advanced</name>
+                <description>Advanced options — rarely changed</description>
+                <int size="1">
+                    <name>Debug Level</name>
+                    <description>Verbosity of internal diagnostic output</description>
+                    <min>0</min>
+                    <max>5</max>
+                    <default>0</default>
+                </int>
+            </group>
+
+        </group><!-- end replication=4 group -->
+
+    </segment><!-- end space=251 -->
+
+</cdi>

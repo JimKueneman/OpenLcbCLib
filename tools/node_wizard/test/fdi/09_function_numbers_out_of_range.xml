@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 09_function_numbers_out_of_range.xml
+    PURPOSE: Function numbers beyond the standard DCC range of 0–28.
+             The Layer 3 check should produce info messages for F29, F50,
+             and F128.
+
+    Numbers in range (no info):   0, 10, 28
+    Numbers out of range (info):  29, 50, 128
+
+    EXPECTED RESULTS:
+    - Validate: Info messages for each out-of-range function number
+-->
+<!-- TEST_CHECKS
+name: FDI Function Numbers Out of Range
+validate_has | severity:info | pattern:number 29.*outside|outside.*29 | F29 out-of-range info
+validate_has | severity:info | pattern:number 50.*outside|outside.*50 | F50 out-of-range info
+validate_has | severity:info | pattern:number 128.*outside|outside.*128 | F128 out-of-range info
+validate_min_count | severity:info | min:3 | At least 3 out-of-range info messages-->
+<fdi>
+    <segment space="249">
+        <name>DCC Functions</name>
+
+        <!-- standard range functions — no warnings expected -->
+        <function kind="binary" size="1">
+            <name>Headlight</name>
+            <number>0</number>
+        </function>
+
+        <function kind="binary" size="1">
+            <name>Cab Light</name>
+            <number>10</number>
+        </function>
+
+        <function kind="binary" size="1">
+            <name>Last Standard</name>
+            <number>28</number>
+        </function>
+
+        <!-- extended range functions — info messages expected -->
+        <function kind="binary" size="1">
+            <name>Extended F29</name>
+            <number>29</number>
+        </function>
+
+        <function kind="binary" size="1">
+            <name>Extended F50</name>
+            <number>50</number>
+        </function>
+
+        <function kind="analog" size="1">
+            <name>Extended F128</name>
+            <number>128</number>
+            <min>0</min>
+            <max>255</max>
+        </function>
+
+    </segment>
+</fdi>

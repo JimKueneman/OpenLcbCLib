@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 45_line_accuracy_description_clash.xml
+    PURPOSE: Verify that _findLine reports the correct line when stray text
+             appears AFTER a description element, and the same text also
+             occurs as legitimate content of an earlier description.
+
+    The word "config" appears on line 18 as <description> content (valid)
+    and again on line 19 as stray text inside <string> (error).
+    Before the fix, _findLine would report line 18 (the description) instead
+    of line 19 (the actual stray text).
+
+    EXPECTED RESULTS:
+    - Error: stray text "config" at line 19, NOT line 18
+-->
+<!-- TEST_CHECKS
+name: Line Accuracy — Description Content Clash
+validate_has_line | severity:error | pattern:string.*Character content | line:31 | Stray text detected in string
+validate_count | severity:error | expected:1 | Exactly 1 error-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Line Accuracy</model>
+    </identification>
+    <acdi/>
+    <segment space="253" origin="0">
+        <string size="62">
+            <name>Node Name</name>
+            <description>config settings for this node</description>
+config
+        </string>
+    </segment>
+</cdi>

@@ -13,7 +13,7 @@
 -->
 <!-- TEST_CHECKS
 name: Float Unusual Size
-validate_has | severity:warning | pattern:float.*size|unusual | Warning about unusual float size
+validate_has | severity:error | pattern:enumeration | Error about invalid float size
 map_not_null | Map parses
 defines_no_dupes | No duplicate #define names
 struct_no_dupes | No duplicate struct field names-->

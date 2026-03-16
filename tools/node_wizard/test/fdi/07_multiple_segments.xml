@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 07_multiple_segments.xml
+    PURPOSE: FDI with two <segment> elements.  The FDI spec allows only one
+             segment.  The validator's singleton-segment check should produce
+             an error.
+
+    EXPECTED RESULTS:
+    - Validate: Error for more than one segment
+-->
+<!-- TEST_CHECKS
+name: FDI Multiple Segments
+validate_has | severity:error | pattern:This element is not expected | Multiple segment error
+validate_min_count | severity:error | min:1 | At least 1 unexpected-element error-->
+<fdi>
+    <segment space="249">
+        <name>Main Functions</name>
+
+        <function kind="binary" size="1">
+            <name>Headlight</name>
+            <number>0</number>
+        </function>
+
+    </segment>
+
+    <!-- second segment — not allowed in FDI -->
+    <segment space="249">
+        <name>Extra Segment</name>
+
+        <function kind="binary" size="1">
+            <name>Bell</name>
+            <number>2</number>
+        </function>
+
+    </segment>
+</fdi>

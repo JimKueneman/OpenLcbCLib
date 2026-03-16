@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 33_stray_text_deep_nesting.xml
+    PURPOSE: Stray text at every nesting level in a deeply nested structure
+             (5 levels of groups).  Tests that the validator catches stray
+             text at any depth, not just top-level containers.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 errors for stray text at each nesting level
+-->
+<!-- TEST_CHECKS
+name: Stray Text in Deep Nesting (5 Levels)
+validate_has | severity:error | pattern:group.*Character content | Stray text at level 1
+validate_has | severity:error | pattern:group.*Character content | Stray text at level 2
+validate_has | severity:error | pattern:group.*Character content | Stray text at level 3
+validate_has | severity:error | pattern:group.*Character content | Stray text at level 4
+validate_has | severity:error | pattern:group.*Character content | Stray text at level 5
+validate_has | severity:error | pattern:int.*Character content | Stray text in deepest leaf
+validate_min_count | severity:error | min:6 | At least 6 stray-text errors-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Deep Nesting Stray Text</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- Level 1 -->
+        <group replication="2">STRAY_L1
+            <name>Bank</name>
+            <repname>Bank</repname>
+
+            <!-- Level 2 -->
+            <group replication="4">STRAY_L2
+                <name>Channel</name>
+                <repname>Channel</repname>
+
+                <!-- Level 3 -->
+                <group>STRAY_L3
+                    <name>Input</name>
+
+                    <!-- Level 4 -->
+                    <group>STRAY_L4
+                        <name>Thresholds</name>
+
+                        <!-- Level 5 -->
+                        <group>STRAY_L5
+                            <name>Fine Tuning</name>
+
+                            <int size="1">STRAY_LEAF
+                                <name>Sensitivity</name>
+                                <min>0</min>
+                                <max>255</max>
+                            </int>
+
+                            <int size="2">
+                                <name>Debounce (ms)</name>
+                                <min>0</min>
+                                <max>5000</max>
+                            </int>
+                        </group>
+
+                    </group>
+
+                </group>
+
+                <eventid>
+                    <name>Event On</name>
+                </eventid>
+                <eventid>
+                    <name>Event Off</name>
+                </eventid>
+
+            </group>
+        </group>
+    </segment>
+</cdi>

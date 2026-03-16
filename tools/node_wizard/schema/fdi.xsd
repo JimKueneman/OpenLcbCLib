@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="schema2xhtml.xsl" type="text/xsl"?>
+<!-- XML Schema for OpenLCB Function Description Information (FDI)     -->
+<xs:schema version="FDI 1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <xs:simpleType name="FunctionNumberType">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="16777215"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="groupType">
+    <xs:sequence>
+      <xs:element name="name" minOccurs="0" maxOccurs="1" />
+      <xs:element name="description" minOccurs="0" maxOccurs="1" />
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Allows any sequence of the contained element types
+          </xs:documentation>
+        </xs:annotation>
+        <xs:element name="group" type="groupType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="function" type="functionType" minOccurs="0" maxOccurs="1" />
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="functionType">
+    <xs:sequence>
+      <xs:element name="name" minOccurs="0" maxOccurs="1" />
+      <xs:element name="number" type="FunctionNumberType" minOccurs="1" maxOccurs="1" />
+      <xs:element name="min" type="xs:int" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation>
+            Smallest valid value for this function.
+            Only used when type is "analog".
+            Default is 0.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="max" type="xs:int" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation>
+            Largest valid value for this function.
+            Only used when type is "analog".
+            Default is 255.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="kind" default="binary">
+      <xs:annotation>
+        <xs:documentation>
+          Type of function being described
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="binary"/>
+          <xs:enumeration value="momentary"/>
+          <xs:enumeration value="analog"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="size" default="1">
+      <xs:annotation>
+        <xs:documentation>
+          Storage size of this variable in bytes.
+          Reserved, ignore upon receipt.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="1"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="fdi">
+    <xs:annotation>
+      <xs:documentation>
+        This is the schema for Function
+        Description Information (fdi)
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="segment" minOccurs="1" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Define the contents of the function memory space
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="name" minOccurs="0" maxOccurs="1" />
+              <xs:element name="description" minOccurs="0" maxOccurs="1" />
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Allows any sequence of the contained element types
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:element name="group" type="groupType" minOccurs="0" maxOccurs="1">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Allows grouping of multiple functions.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="function" type="functionType" minOccurs="0" maxOccurs="1">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Describes one function.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+
+<!--
+                XML Schema 1.1 construct expressing extensibility promise
+                <xs:any minOccurs="0" maxOccurs="1" processContents="lax">
+                <xs:assert test="every $x in * satisfies
+                                    (exists($x/@size) and $x/@size castable to xs:integer)"/>
+                <xs:assert test="every $x in * satisfies
+                                    (exists($x/@offset) and $x/@offset castable to xs:integer)"/>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Extension point for future schema
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:any>
+ -->
+
+              </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="space" default="249">
+              <xs:annotation>
+                <xs:documentation>
+                  The decimal number of the address space where the information is found.
+                  Reserved, ignore upon receipt.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:token">
+                  <xs:enumeration value="249"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="origin" default="0">
+              <xs:annotation>
+                <xs:documentation>
+                  Starting address of the segment's contents
+                  within the memory space. 
+                  Reserved, ignore upon receipt.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:token">
+                  <xs:enumeration value="0"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

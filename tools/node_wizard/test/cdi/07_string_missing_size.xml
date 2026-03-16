@@ -11,7 +11,7 @@
 -->
 <!-- TEST_CHECKS
 name: String Missing Size
-validate_has | severity:warning | pattern:string.*size|size.*string | Warning about missing string size
+validate_has | severity:error | pattern:attribute.*size.*required | Error about missing string size
 map_not_null | Map still parses (with wrong addresses)
 defines_no_dupes | No duplicate #define names
 struct_no_dupes | No duplicate struct field names-->

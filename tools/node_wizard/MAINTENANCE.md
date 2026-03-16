@@ -1,164 +1,186 @@
 # Node Wizard — Maintenance Guide
 
 Central reference for everything in the Node Wizard that needs to be updated over
-time as the OpenLCB library evolves. Each section explains *why* the thing exists,
-*what triggers an update*, and *where to go* — with links to deeper guides where
-they exist.
+time as the OpenLCB library evolves. Sections are ordered from **most likely to need
+updating** to **least likely**.
 
 ---
 
 ## Table of Contents
 
-1. [CDI / FDI XML Schemas (autocomplete)](#1-cdi--fdi-xml-schemas-autocomplete) — OpenLCB releases a new CDI or FDI XSD version.
-2. [CDI / FDI Validators](#2-cdi--fdi-validators) — The spec adds or changes element rules, required attributes, or valid enum values.
-3. [CDI Test Cases](#3-cdi-test-cases) — A new validator rule is added, a bug is fixed, or an edge case is discovered.
-4. [Platform Drivers](#4-platform-drivers) — A new target board is added or existing driver templates drift from the demo source.
-5. [Hardware Interface Drivers](#5-hardware-interface-drivers) — The library adds, removes, or changes a CAN or OLCB driver function signature.
-6. [Callbacks](#6-callbacks) — The library adds, removes, or changes a callback function in `openlcb_config_t`.
-7. [Node Config — Well Known Events](#7-node-config--well-known-events) — The OpenLCB spec defines new Well Known Events or the library adds new `#define` constants.
-8. [CodeMirror Bundle](#8-codemirror-bundle) — A CodeMirror package has a needed bug fix or a new extension is required.
-9. [Feature Flags](#9-feature-flags) — A feature is being enabled or disabled for release.
-10. [Architecture Overview](#10-architecture-overview) — Reference only; no data to update.
+**Routine Updates (when the OpenLCB spec changes)**
+1. [Updating CDI / FDI Schemas](#1-updating-cdi--fdi-schemas) — A new CDI or FDI XSD is released.
+2. [Adding Semantic Validation Rules](#2-adding-semantic-validation-rules) — New domain-specific checks beyond what the XSD enforces.
+3. [Adding Test Cases](#3-adding-test-cases) — New validator rule, bug fix, or edge case to cover.
+
+**Editor Feature Work (adding or changing functionality)**
+4. [Feature Flags](#4-feature-flags) — Enabling or disabling features for release.
+5. [Callbacks](#5-callbacks) — New callback functions in `openlcb_config_t`.
+6. [Hardware Interface Drivers](#6-hardware-interface-drivers) — New or changed driver functions.
+7. [Platform Drivers](#7-platform-drivers) — New target board or updated driver templates.
+8. [Node Config — Well Known Events](#8-node-config--well-known-events) — New Well Known Events in the spec.
+
+**Vendor Package Rebuilds (rare — only for bugs or new features)**
+9. [Rebuilding the CodeMirror Bundle](#9-rebuilding-the-codemirror-bundle) — CM6 bug fix or new extension needed.
+10. [Rebuilding the xmllint Library](#10-rebuilding-the-xmllint-library) — libxml2 bug or validation issue.
+
+**Reference**
+11. [Architecture Overview](#11-architecture-overview) — How the wizard is structured.
 
 ---
 
-## 1. CDI / FDI XML Schemas (autocomplete)
+## 1. Updating CDI / FDI Schemas
 
-**Why it exists:** The CDI and FDI editors use CodeMirror 6's XML language with a
-schema object that describes valid elements and attributes. This powers context-aware
-autocomplete — pressing `<` or Ctrl+Space inside any element only offers children
-and attributes that are legal at that position according to the OpenLCB spec.
+**When:** OpenLCB releases a new version of the CDI or FDI XSD (`.xsd` files).
 
-**When to update:** Whenever OpenLCB releases a new version of the CDI or FDI XSD
-(the `.xsd` files that define the official schema). The current XSD files live in the
-OpenLcb Documents folder alongside this project.
+**What gets updated:** Two things need to stay in sync with the XSD:
+- The **autocomplete schema** (what the editor suggests when you type `<`)
+- The **embedded XSD** used by the validator (what xmllint validates against)
 
-**How to update:** Two Python 3 scripts automate the process. They read the XSD,
-derive element/attribute/enum rules from it, and patch the schema block directly into
-`cm-adapter.js` between its marker comments. No manual editing of `cm-adapter.js` is
-needed.
+### Step 1 — Update the autocomplete schema
+
+Two Python 3 scripts read the XSD and patch the schema block in `cm-adapter.js`:
 
 ```bash
-# Update CDI schema
-python3 tools/node_wizard/vendor/codemirror/generate_cdi_schema.py \
-    --xsd "/path/to/schema/cdi/1/4/cdi.xsd" \
-    --patch
+python3 vendor/codemirror/build_history/generate_cdi_schema.py \
+    --xsd "/path/to/cdi.xsd" --patch
 
-# Update FDI schema
-python3 tools/node_wizard/vendor/codemirror/generate_fdi_schema.py \
-    --xsd "/path/to/schema/fdi/1/1/fdi.xsd" \
-    --patch
+python3 vendor/codemirror/build_history/generate_fdi_schema.py \
+    --xsd "/path/to/fdi.xsd" --patch
 ```
 
-The scripts replace the blocks between these marker comments in `cm-adapter.js`:
-
+These replace the blocks between marker comments in `cm-adapter.js`:
 ```
 /* <<CDI_SCHEMA_START>> */ ... /* <<CDI_SCHEMA_END>> */
 /* <<FDI_SCHEMA_START>> */ ... /* <<FDI_SCHEMA_END>> */
 ```
 
-**Files involved:**
+### Step 2 — Update the embedded XSD for validation
+
+```bash
+python3 update_xsd.py --cdi-xsd /path/to/cdi.xsd --fdi-xsd /path/to/fdi.xsd
+```
+
+This patches the XSD strings in the validator JS files between `<<CDI_XSD_START>>`
+/ `<<CDI_XSD_END>>` (and FDI equivalents). It also copies the XSD files into
+`schema/` for the test runner.
+
+### Files involved
 
 | File | Role |
 |------|------|
-| `vendor/codemirror/generate_cdi_schema.py` | Reads CDI XSD, patches `cm-adapter.js` |
-| `vendor/codemirror/generate_fdi_schema.py` | Reads FDI XSD, patches `cm-adapter.js` |
+| `vendor/codemirror/build_history/generate_cdi_schema.py` | Patches autocomplete schema in `cm-adapter.js` |
+| `vendor/codemirror/build_history/generate_fdi_schema.py` | Patches autocomplete schema in `cm-adapter.js` |
 | `vendor/codemirror/cm-adapter.js` | Contains `CDI_SCHEMA` and `FDI_SCHEMA` blocks |
+| `update_xsd.py` | Patches embedded XSD in validator JS files |
+| `cdi_editor/js/cdi_validator.js` | CDI validator — embedded XSD + semantic checks |
+| `fdi_editor/js/fdi_validator.js` | FDI validator — embedded XSD + semantic checks |
 
 ---
 
-## 2. CDI / FDI Validators
+## 2. Adding Semantic Validation Rules
 
-**Why they exist:** Beyond what the schema can enforce in autocomplete, the validators
-catch structural and semantic problems — missing required elements, invalid attribute
-values, duplicate singletons, conflicting numbers — and display them as inline
-squiggles in the editor (via CodeMirror lint) and as a list in the footer panel.
+**When:** The library grows new conventions that should be enforced, or a user reports
+a common mistake the editor should catch.
 
-**When to update:** When the CDI or FDI spec adds new required elements or attributes,
-changes valid enum values (e.g. a new `kind` for `<function>`), or changes cardinality
-rules (e.g. a new singleton element). Also update when the library grows new
-conventions that should be enforced.
+**How validation works:** Each validator has two layers:
 
-**Files involved:**
+- **Layer 1+2** — Well-formedness and structural rules are handled by a custom
+  Emscripten/asm.js compilation of libxml2 2.16.0 validating against the official XSD.
+  This gives accurate line numbers. See `vendor/xmllint/build_history/BUILD_HISTORY.md`
+  for the full story.
+- **Layer 3** — Semantic hints use DOMParser to check domain-specific best practices
+  that the XSD cannot express (missing ACDI, space 253, min>max, etc.).
+
+Validation is async — `validate(xmlString)` returns a `Promise` that resolves to an
+array of `{ severity, line, col, message }` objects. Results are cached so the two
+callers (validation panel and CodeMirror linter) do not re-run xmllint for the same
+XML. The CodeMirror linter runs automatically on every edit (600 ms debounce) and
+shows red dots in the gutter for lines with errors.
+
+**To add a new semantic check:** Append to the `_runSemanticChecks()` function in
+`cdi_validator.js` or `fdi_validator.js`. Follow the existing pattern — use
+DOMParser to query the XML tree and push `{ severity, line, col, message }` objects.
+
+### Files involved
 
 | File | Role |
 |------|------|
-| `cdi_editor/js/cdi_validator.js` | CDI structural and semantic checks |
-| `fdi_editor/js/fdi_validator.js` | FDI structural and semantic checks |
-
-Each validator is self-contained and well-commented with three layers:
-
-- **Layer 1** — XML well-formedness (handled by DOMParser)
-- **Layer 2** — Structural rules (required attributes, singleton counts, known tags)
-- **Layer 3** — Semantic hints (duplicate numbers, missing names, out-of-range values)
-
-Adding a new check is a matter of appending to the appropriate layer inside the
-`validate()` function in the relevant file.
+| `cdi_editor/js/cdi_validator.js` | CDI validator — `_runSemanticChecks()` at the bottom |
+| `fdi_editor/js/fdi_validator.js` | FDI validator — `_runSemanticChecks()` at the bottom |
+| `vendor/xmllint/xmllint_patched.js` | Patched Emscripten/asm.js build of libxml2 (1.5 MB) |
+| `vendor/xmllint/xmllint_api.js` | Async browser API wrapper for xmllint |
 
 ---
 
-## 3. CDI Test Cases
+## 3. Adding Test Cases
 
-**Why they exist:** The test cases are a suite of XML files that each embed their
-own expected validator/renderer results. They protect against regressions when the
-validator or renderer is changed.
+**When:** A new validator rule is added, a bug is fixed, or an edge case is discovered.
 
-**When to update:** Add a new test case whenever a new validator rule is added, a
-bug is fixed, or an edge case is discovered. The test runner works entirely offline —
-no server needed.
+**How to run:**
 
-**How to run:** Open `test/test_runner.html` in a browser and drag all `.xml` files
-from `test/cdi/` onto the drop zone.
+```bash
+cd tools/node_wizard/test
+npm install jsdom    # first time only
+node run_tests.js
+```
 
-**How to add a test:** Copy an existing XML file from `test/cdi/`, modify it for the
-scenario being tested, and embed a `<!-- TEST_CHECKS -->` block describing the
-expected outcomes. See [`test/TEST_CASES.md`](test/TEST_CASES.md) for the format.
+The test runner uses the same xmllint engine as the browser validators, so results
+are identical.
 
-**Files involved:**
+**How to add a test:** Copy an existing XML file from `test/cdi/` (or `test/fdi/`),
+modify it for the scenario being tested, and embed a `<!-- TEST_CHECKS -->` block
+describing the expected outcomes. See `test/TEST_CASES.md` for the format.
+
+### Files involved
 
 | Location | Role |
 |----------|------|
 | `test/cdi/` | CDI XML test files, each self-describing expected results |
-| `test/test_runner.html` | In-browser test runner |
+| `test/fdi/` | FDI XML test files |
+| `test/run_tests.js` | Headless Node.js test runner |
 | `test/TEST_CASES.md` | Format reference and test case inventory |
 
 ---
 
-## 4. Platform Drivers
+## 4. Feature Flags
 
-**Why it exists:** The Platform panel lets users select a target board (ESP32, RP2040,
-STM32, etc.) and automatically fills in working CAN and OLCB driver code. The
-definitions are data-driven so adding a new platform requires no HTML or UI changes.
+**When:** A feature is being enabled or disabled for release.
 
-**When to update:** When a new supported board is added to the library, or when
-existing driver templates need to be updated to match the latest demo application
-code in `src/applications/`.
+**Current flags** — all in `js/app.js`:
 
-**Detailed guide:** [`platform/maintenance_guide.md`](platform/maintenance_guide.md)
-
-**Files involved:**
-
-| File | Role |
-|------|------|
-| `platform/js/platform_defs.js` | All platform definitions and code templates |
-| `platform/images/` | SVG icons (one per platform) |
+| Flag | Default | Effect |
+|------|---------|--------|
+| `ENABLE_PLATFORM` | `false` | Shows/hides the Platform selection panel in the sidebar |
 
 ---
 
-## 5. Hardware Interface Drivers
+## 5. Callbacks
 
-**Why it exists:** The Drivers panel generates the CAN driver and OLCB/LCC driver
-stub files. Driver groups and their function signatures are defined in a data file
-so the UI and code generation stay in sync automatically.
+**When:** The library adds new callback functions to `openlcb_config_t`, a function
+signature changes, or a new logical group of callbacks is needed.
 
-**When to update:** When the library adds a new driver function to a group, when a
-function signature changes, or when an entirely new driver group is needed.
+**Detailed guide:** `callbacks/maintenance_guide.md`
 
-The structure mirrors the Callbacks system — see the callbacks guide below and the
-comments in `driver_defs.js` for the data format. There is no separate maintenance
-guide for drivers; the data structure is equivalent to the callbacks one.
+### Files involved
 
-**Files involved:**
+| File | Role |
+|------|------|
+| `callbacks/js/callback_defs.js` | Callback group and function definitions |
+| `callbacks/js/callback_codegen.js` | Generates `.c` / `.h` stub files |
+| `callbacks/callbacks.html` | Node-type visibility rules |
+
+---
+
+## 6. Hardware Interface Drivers
+
+**When:** The library adds a new driver function to a group, a function signature
+changes, or a new driver group is needed.
+
+The structure mirrors the Callbacks system — see the callbacks guide and the comments
+in `driver_defs.js` for the data format.
+
+### Files involved
 
 | File | Role |
 |------|------|
@@ -167,40 +189,30 @@ guide for drivers; the data structure is equivalent to the callbacks one.
 
 ---
 
-## 6. Callbacks
+## 7. Platform Drivers
 
-**Why it exists:** The Callbacks panel generates stub `.c` / `.h` files for every
-OpenLCB callback the application wants to handle. Which callbacks are shown depends
-on node type (train, throttle, basic, typical) and which add-ons are enabled.
+**When:** A new supported board is added to the library, or existing driver templates
+need to be updated to match the latest demo application code in `src/applications/`.
 
-**When to update:** When the library adds new callback functions to `openlcb_config_t`,
-when a function signature changes, or when a new logical group of callbacks is needed.
+**Detailed guide:** `platform/maintenance_guide.md`
 
-**Detailed guide:** [`callbacks/maintenance_guide.md`](callbacks/maintenance_guide.md)
-
-**Files involved:**
+### Files involved
 
 | File | Role |
 |------|------|
-| `callbacks/js/callback_defs.js` | Callback group and function definitions |
-| `callbacks/js/callback_codegen.js` | Generates `.c` / `.h` stub files |
-| `callbacks/callbacks.html` | Node-type visibility rules (`_baseGroups`, `_addonGroupMap`) |
+| `platform/js/platform_defs.js` | All platform definitions and code templates |
+| `platform/images/` | SVG icons (one per platform) |
 
 ---
 
-## 7. Node Config — Well Known Events
+## 8. Node Config — Well Known Events
 
-**Why it exists:** The Node Config panel has a section for pre-defined OpenLCB Well
-Known Events (emergency stop, power off, etc.) that the user can opt into as
-producers or consumers. These appear as checkboxes and the selections drive code
-generation of the registration calls in `main.c`.
+**When:** The OpenLCB spec defines new Well Known Events or the library adds new
+`#define` constants.
 
-**When to update:** When the OpenLCB spec defines new Well Known Events, or when the
-library adds new `#define` constants for them in `openlcb_defines.h`.
+**Detailed guide:** `node_config/maintenance_guide.md`
 
-**Detailed guide:** [`node_config/maintenance_guide.md`](node_config/maintenance_guide.md)
-
-**Files involved:**
+### Files involved
 
 | File | Role |
 |------|------|
@@ -210,63 +222,67 @@ library adds new `#define` constants for them in `openlcb_defines.h`.
 
 ---
 
-## 8. CodeMirror Bundle
+## 9. Rebuilding the CodeMirror Bundle
 
-**Why it exists:** The CDI and FDI editors use CodeMirror 6 for syntax highlighting,
-autocomplete, and inline validation squiggles. Because the wizard runs as a local
-HTML file (no server, no module bundler at runtime), all CodeMirror packages are
-pre-bundled into a single IIFE file at `vendor/codemirror/dist/codemirror.min.js`.
-
-**When to update:** When a CodeMirror package has a bug fix or new feature worth
-adopting, or when a new CodeMirror package is needed (e.g. a new language or
-extension).
+**When:** A CodeMirror package has a bug fix or new feature worth adopting, or a new
+CM6 extension is needed (e.g. a new language or extension).
 
 **How to rebuild:**
 
 ```bash
-cd tools/node_wizard/vendor/codemirror
-npm install          # only needed first time, or after package.json changes
-node build.mjs       # produces dist/codemirror.min.js
+cd tools/node_wizard/vendor/codemirror/build_history
+npm install          # first time, or after package.json changes
+npm run build        # produces ../dist/codemirror.min.js
 ```
 
 The entry point `entry.mjs` controls which CodeMirror symbols are exported onto
 `window.CM`. If a new package is added, import it there and add it to the `window.CM`
 assignment before rebuilding.
 
-> **Note:** `npm install` must be run on the same OS/architecture as the machine that
-> will run the build. The `node_modules` folder contains native binaries for esbuild.
+> **Note:** `npm install` creates a `node_modules/` folder with platform-specific
+> esbuild binaries. This folder is NOT committed to the repo.
 
-**Files involved:**
+**Full documentation:** `vendor/codemirror/build_history/BUILD_HISTORY.md`
+
+### Files involved
 
 | File | Role |
 |------|------|
-| `vendor/codemirror/package.json` | npm dependencies (CodeMirror packages + esbuild) |
-| `vendor/codemirror/entry.mjs` | Bundle entry point — controls what goes into `window.CM` |
-| `vendor/codemirror/build.mjs` | esbuild script that produces the IIFE bundle |
-| `vendor/codemirror/dist/codemirror.min.js` | The built bundle (committed to the repo) |
-| `vendor/codemirror/cm-adapter.js` | Wrapper that uses `window.CM` to create editor instances |
+| `vendor/codemirror/build_history/package.json` | npm dependencies |
+| `vendor/codemirror/build_history/entry.mjs` | Bundle entry point |
+| `vendor/codemirror/build_history/build.mjs` | esbuild script |
+| `vendor/codemirror/dist/codemirror.min.js` | The built bundle (committed to repo) |
+| `vendor/codemirror/cm-adapter.js` | Wrapper that uses `window.CM` |
 
 ---
 
-## 9. Feature Flags
+## 10. Rebuilding the xmllint Library
 
-**Why they exist:** Some features are complete but not enabled by default while they
-are being evaluated. Flags let the feature code stay in the tree without appearing
-in the UI.
+**When:** A bug is found in libxml2's schema validation, or the Emscripten output
+format changes and the patches need updating. This should be very rare.
 
-**Current flags** — all in `js/app.js`:
+The xmllint library is a custom Emscripten/asm.js compilation of libxml2 2.16.0
+with 6 post-processing patches applied to the Emscripten output. It replaced the
+older kripken/xml.js library (4.1 MB, inaccurate line numbers) with a 1.5 MB build
+that gives accurate line numbers.
 
-| Flag | Default | Effect |
-|------|---------|--------|
-| `ENABLE_PLATFORM` | `false` | Shows/hides the Platform selection panel in the sidebar |
+**Full documentation:** `vendor/xmllint/build_history/BUILD_HISTORY.md`
+— includes the complete story of what was tried, what failed, how it was fixed,
+and step-by-step rebuild instructions.
 
-See [`documentation/maintenance_instructions.md`](documentation/maintenance_instructions.md)
-for the full architecture description, postMessage state flow, sidebar tile system,
-descriptor badge logic, and how to add a new sidebar section.
+### Files involved
+
+| File | Role |
+|------|------|
+| `vendor/xmllint/xmllint_patched.js` | The compiled+patched library (1.5 MB) |
+| `vendor/xmllint/xmllint_api.js` | Async browser API wrapper |
+| `vendor/xmllint/build_history/BUILD_HISTORY.md` | Complete build documentation |
+| `vendor/xmllint/build_history/build_asmjs.sh` | Emscripten compile/link script |
+| `vendor/xmllint/build_history/build_wrapper.js` | 6-patch post-processing script |
 
 ---
 
-## 10. Architecture Overview
+## 11. Architecture Overview
 
 The wizard is an **iframe-based single-page app**. The parent shell
 (`node_wizard.html` + `js/app.js`) manages the sidebar and state persistence.

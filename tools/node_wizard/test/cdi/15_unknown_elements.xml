@@ -12,7 +12,7 @@
 -->
 <!-- TEST_CHECKS
 name: Unknown Elements
-validate_has | severity:warning | pattern:unknown|unrecognized | Warning about unknown elements
+validate_has | severity:error | pattern:not expected | Error about unknown elements
 map_not_null | Map parses
 defines_no_dupes | No duplicate #define names
 struct_no_dupes | No duplicate struct field names-->

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 42_wrong_child_under_cdi.xml
+    PURPOSE: Known CDI elements placed directly under <cdi> instead of
+             inside a <segment>.  The validator checks that only
+             'identification', 'acdi', and 'segment' are valid direct
+             children of <cdi>.
+
+    Elements tested as wrong direct children:
+      <group>   — belongs inside a segment
+      <string>  — belongs inside a segment
+      <int>     — belongs inside a segment
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 warnings for each unexpected child of <cdi>
+-->
+<!-- TEST_CHECKS
+name: Wrong Children Under CDI Root
+validate_has | severity:error | pattern:not expected | Wrong child under cdi
+validate_min_count | severity:error | min:1 | At least 1 unexpected-child error-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Wrong CDI Children</model>
+    </identification>
+
+    <acdi/>
+
+    <!-- these belong inside a <segment>, not directly under <cdi> -->
+    <group>
+        <name>Misplaced Group</name>
+    </group>
+
+    <string size="10">
+        <name>Misplaced String</name>
+    </string>
+
+    <int size="1">
+        <name>Misplaced Int</name>
+    </int>
+
+    <!-- valid segment for reference -->
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+    </segment>
+
+</cdi>

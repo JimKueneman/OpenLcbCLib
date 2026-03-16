@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 08_duplicate_function_numbers.xml
+    PURPOSE: Multiple functions sharing the same DCC function number.
+             The Layer 3 duplicate-number check should warn on each repeated
+             number.
+
+    Numbers duplicated:
+      0  — appears 3 times (Bell, Horn, Mute all claim F0)
+      2  — appears 2 times (Cab Light and Ditch Light)
+
+    EXPECTED RESULTS:
+    - Validate: Warnings for each duplicate function number
+-->
+<!-- TEST_CHECKS
+name: FDI Duplicate Function Numbers
+validate_has | severity:warning | pattern:[Dd]uplicate function number 0 | Duplicate number 0 warning
+validate_has | severity:warning | pattern:[Dd]uplicate function number 2 | Duplicate number 2 warning
+validate_min_count | severity:warning | min:3 | At least 3 duplicate-number warnings-->
+<fdi>
+    <segment space="249">
+        <name>DCC Functions</name>
+
+        <!-- F0 — assigned to three functions (first use is fine, duplicates warned) -->
+        <function kind="binary" size="1">
+            <name>Headlight</name>
+            <number>0</number>
+        </function>
+
+        <function kind="binary" size="1">
+            <name>Bell</name>
+            <number>0</number>
+        </function>
+
+        <function kind="momentary" size="1">
+            <name>Horn</name>
+            <number>0</number>
+        </function>
+
+        <!-- F1 — unique, no warning -->
+        <function kind="binary" size="1">
+            <name>Rear Light</name>
+            <number>1</number>
+        </function>
+
+        <!-- F2 — assigned to two functions -->
+        <function kind="binary" size="1">
+            <name>Cab Light</name>
+            <number>2</number>
+        </function>
+
+        <function kind="binary" size="1">
+            <name>Ditch Light</name>
+            <number>2</number>
+        </function>
+
+    </segment>
+</fdi>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 27_stray_text_in_eventid.xml
+    PURPOSE: Stray characters inside <eventid> variable elements.
+             <eventid> is complexType with only name, description, map children.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 error — stray text in <eventid>
+-->
+<!-- TEST_CHECKS
+name: Stray Text in EventID
+validate_has | severity:error | pattern:eventid.*Character content | Stray text inside eventid element
+map_not_null | Map still parses-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Stray Text EventID</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <eventid>abc
+            <name>Event Produced On</name>
+        </eventid>
+    </segment>
+</cdi>

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 29_stray_text_short_chars.xml
+    PURPOSE: Single-character stray text that could false-match inside
+             attribute values or namespace URIs.  Specifically tests:
+             - "3" which appears in "w3.org" in the xmlns declaration
+             - "1" which appears in many attribute values and URIs
+             The _findLine function must skip matches inside tags/attributes
+             and only report the actual element-content occurrence.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 errors for stray text in <string> elements
+    - The line numbers must NOT point to the <cdi> xmlns line
+-->
+<!-- TEST_CHECKS
+name: Short Stray Characters (findLine Accuracy)
+validate_has | severity:error | pattern:string.*Character content | Stray short text in string
+validate_count | severity:error | expected:2 | Exactly 2 string errors-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Short Stray Chars</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63">3
+            <name>User Name</name>
+        </string>
+
+        <string size="64">1
+            <name>User Description</name>
+        </string>
+    </segment>
+</cdi>

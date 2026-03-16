@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 35_stray_text_deep_nesting_clean.xml
+    PURPOSE: Same deep nesting structure as test 33 but with NO stray text.
+             Verifies that 5-level nesting with generous whitespace between
+             elements does not produce false positive stray-text errors.
+
+    EXPECTED RESULTS:
+    - Validate: Zero errors (all whitespace between tags is fine)
+-->
+<!-- TEST_CHECKS
+name: Deep Nesting Clean (No False Positives)
+validate_count | severity:error | expected:0 | No errors in deeply nested clean XML
+map_not_null | Map parses successfully
+map_no_overlaps | No address overlaps
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Deep Nesting Clean</model>
+        <hardwareVersion>1.0</hardwareVersion>
+        <softwareVersion>2.0</softwareVersion>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <name>Config</name>
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <!-- Level 1 -->
+        <group replication="2">
+            <name>Bank</name>
+            <repname>Bank</repname>
+
+            <!-- Level 2 -->
+            <group replication="4">
+                <name>Channel</name>
+                <repname>Channel</repname>
+
+                <!-- Level 3 -->
+                <group>
+                    <name>Input</name>
+
+                    <!-- Level 4 -->
+                    <group>
+                        <name>Thresholds</name>
+
+                        <!-- Level 5 -->
+                        <group>
+                            <name>Fine Tuning</name>
+
+                            <int size="1">
+                                <name>Sensitivity</name>
+                                <min>0</min>
+                                <max>255</max>
+                            </int>
+
+                            <int size="2">
+                                <name>Debounce</name>
+                                <min>0</min>
+                                <max>5000</max>
+                            </int>
+                        </group>
+
+                    </group>
+
+                </group>
+
+                <eventid>
+                    <name>Event On</name>
+                </eventid>
+                <eventid>
+                    <name>Event Off</name>
+                </eventid>
+
+            </group>
+        </group>
+    </segment>
+</cdi>

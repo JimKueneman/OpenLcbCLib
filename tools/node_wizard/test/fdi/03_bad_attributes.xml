@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 03_bad_attributes.xml
+    PURPOSE: Invalid attributes on FDI elements.
+             - function missing required 'kind' attribute
+             - function with invalid kind value
+             - function with no name
+             - function with no number
+             - segment with non-249 space
+
+    EXPECTED RESULTS:
+    - Validate: Errors/warnings for each attribute violation
+-->
+<!-- TEST_CHECKS
+name: FDI Bad Attributes
+validate_has | severity:error | pattern:not an element of the set | Invalid enumeration value
+validate_has | severity:error | pattern:Missing child element | Missing required element
+validate_min_count | severity:error | min:3 | At least 3 attribute/element errors-->
+<fdi>
+    <segment space="250">
+
+        <!-- function missing 'kind' -->
+        <function size="1">
+            <name>No Kind</name>
+            <number>0</number>
+        </function>
+
+        <!-- function with invalid kind -->
+        <function kind="toggle" size="1">
+            <name>Bad Kind</name>
+            <number>1</number>
+        </function>
+
+        <!-- function with no name -->
+        <function kind="binary" size="1">
+            <number>2</number>
+        </function>
+
+        <!-- function with no number -->
+        <function kind="binary" size="1">
+            <name>No Number</name>
+        </function>
+
+        <!-- valid function for reference -->
+        <function kind="binary" size="1">
+            <name>Good Function</name>
+            <number>3</number>
+        </function>
+    </segment>
+</fdi>

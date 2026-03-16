@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 06_wrong_root.xml
+    PURPOSE: Root element is <functions> instead of the required <fdi>.
+             The Layer 2 root check should flag this with an error.
+             The <segment> will still parse but belongs to the wrong root,
+             so an "unexpected child" warning may also appear.
+
+    EXPECTED RESULTS:
+    - Validate: Error for wrong root element name
+-->
+<!-- TEST_CHECKS
+name: FDI Wrong Root Element
+validate_has | severity:error | pattern:No matching global declaration | Wrong root error
+validate_min_count | severity:error | min:1 | At least 1 root element error-->
+<functions>
+    <segment space="249">
+        <name>DCC Functions</name>
+
+        <function kind="binary" size="1">
+            <name>Headlight</name>
+            <number>0</number>
+        </function>
+
+        <function kind="binary" size="1">
+            <name>Bell</name>
+            <number>1</number>
+        </function>
+
+    </segment>
+</functions>

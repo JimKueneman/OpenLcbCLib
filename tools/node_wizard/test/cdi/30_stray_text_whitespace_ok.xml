@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 30_stray_text_whitespace_ok.xml
+    PURPOSE: Whitespace-only text nodes between child elements are LEGAL.
+             This file has generous whitespace and blank lines inside every
+             container and variable element type.  None of it should trigger
+             stray-text errors.
+
+    EXPECTED RESULTS:
+    - Validate: Zero errors, zero warnings (whitespace is fine)
+-->
+<!-- TEST_CHECKS
+name: Whitespace-Only Text Nodes (No False Positives)
+validate_count | severity:error | expected:0 | No errors from whitespace
+validate_count | severity:warning | expected:0 | No warnings
+map_not_null | Map parses
+defines_no_dupes | No duplicate #define names
+struct_no_dupes | No duplicate struct field names-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+
+        <manufacturer>Test</manufacturer>
+
+        <model>Whitespace OK</model>
+
+        <hardwareVersion>1.0</hardwareVersion>
+
+        <softwareVersion>2.0</softwareVersion>
+
+        <!-- link inside identification: ref= attribute, text content -->
+        <link ref="https://openlcb.org/help/node">
+
+            Whitespace OK Node Help
+
+        </link>
+
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+
+        <name>User Data</name>
+
+        <description>Config memory</description>
+
+        <string size="63">
+
+            <name>User Name</name>
+
+            <description>Name of the node</description>
+
+        </string>
+
+        <string size="64">
+
+            <name>User Description</name>
+
+        </string>
+
+        <group>
+
+            <name>Output</name>
+
+            <int size="1">
+
+                <name>Mode</name>
+
+                <min>0</min>
+
+                <max>3</max>
+
+                <map>
+
+                    <relation>
+
+                        <property>Off</property>
+
+                        <value>0</value>
+
+                    </relation>
+
+                    <relation>
+
+                        <property>On</property>
+
+                        <value>1</value>
+
+                    </relation>
+
+                </map>
+
+            </int>
+
+        </group>
+
+        <eventid>
+
+            <name>Event On</name>
+
+        </eventid>
+
+        <!-- =================================================================
+             Extended group: exercises the five tags that had zero coverage
+             (link, visibility, readOnly, slider, radiobutton) while staying
+             whitespace-heavy so this file still tests the no-false-positive
+             whitespace case for those element types too.
+             ================================================================= -->
+        <group>
+
+            <name>Extended Coverage</name>
+
+            <description>Group for remaining tag and attribute coverage</description>
+
+            <!-- link: ref= attribute; simpleContent (text + attribute) -->
+            <link ref="https://openlcb.org/help/extended">
+
+                More Information
+
+            </link>
+
+            <!-- hints with visibility (hideable=, hidden=) and readOnly -->
+            <hints>
+
+                <visibility hideable="yes" hidden="no"/>
+
+                <readOnly/>
+
+            </hints>
+
+            <!-- int with slider hint: tickSpacing=, immediate=, showValue= -->
+            <int size="1">
+
+                <name>Slider Int</name>
+
+                <min>0</min>
+
+                <max>10</max>
+
+                <hints>
+
+                    <slider tickSpacing="2" immediate="no" showValue="yes"/>
+
+                </hints>
+
+            </int>
+
+            <!-- int with radiobutton hint: map required but no relation count rule -->
+            <int size="1">
+
+                <name>Radio Int</name>
+
+                <map>
+
+                    <relation>
+
+                        <property>0</property>
+
+                        <value>North</value>
+
+                    </relation>
+
+                    <relation>
+
+                        <property>1</property>
+
+                        <value>South</value>
+
+                    </relation>
+
+                </map>
+
+                <hints>
+
+                    <radiobutton/>
+
+                </hints>
+
+            </int>
+
+        </group>
+
+    </segment>
+
+</cdi>

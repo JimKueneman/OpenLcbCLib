@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 36_bad_attributes_segment.xml
+    PURPOSE: Invalid attribute values on <segment> elements.
+             - space missing entirely
+             - space with non-numeric value
+             - space out of range (256)
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 errors for all three segments
+-->
+<!-- TEST_CHECKS
+name: Bad Segment Attributes
+validate_has | severity:error | pattern:attribute.*space.*required | Missing space attribute
+validate_has | severity:error | pattern:not a valid | Invalid space value
+validate_min_count | severity:error | min:2 | At least 2 segment attribute errors-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Bad Segment Attrs</model>
+    </identification>
+
+    <acdi/>
+
+    <!-- Missing space attribute -->
+    <segment>
+        <string size="63"><name>User Name</name></string>
+    </segment>
+
+    <!-- Non-numeric space -->
+    <segment space="abc">
+        <string size="63"><name>User Name</name></string>
+    </segment>
+
+    <!-- Space out of range -->
+    <segment space="256">
+        <string size="63"><name>User Name</name></string>
+    </segment>
+</cdi>

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 41_space_254_eventids.xml
+    PURPOSE: A segment in space 0xFE (254, "All Memory") that contains eventid
+             elements.  The Layer 3 semantic check should produce an info
+             message flagging this as unusual — event IDs are normally stored
+             in space 0xFD (253).
+
+    EXPECTED RESULTS:
+    - Validate: Info message about eventids in space 0xFE
+-->
+<!-- TEST_CHECKS
+name: Event IDs in Space 254
+validate_has | severity:info | pattern:space 0xFE|0xFE.*event|event.*0xFE | EventID in space 254 info
+validate_min_count | severity:info | min:1 | At least 1 info message-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Space 254 EventIDs</model>
+    </identification>
+
+    <acdi/>
+
+    <!-- standard user segment -->
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+    </segment>
+
+    <!-- unusual: eventids placed in space 254 (All Memory) -->
+    <segment space="254" origin="0">
+        <name>All Memory Events</name>
+        <eventid><name>Produced Event A</name></eventid>
+        <eventid><name>Consumed Event B</name></eventid>
+    </segment>
+
+</cdi>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 26_stray_text_in_int.xml
+    PURPOSE: Stray characters inside <int> and <float> variable elements.
+             Both are complexType with child-only content (name, description,
+             min, max, default, map, hints).
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 error — stray text in <int> and <float>
+-->
+<!-- TEST_CHECKS
+name: Stray Text in Int and Float
+validate_has | severity:error | pattern:int.*Character content | Stray text inside int element
+validate_has | severity:error | pattern:float.*Character content | Stray text inside float element
+map_not_null | Map still parses-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Stray Text Int Float</model>
+    </identification>
+
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+        <string size="64"><name>User Description</name></string>
+
+        <int size="1">JUNK
+            <name>Speed</name>
+            <min>0</min>
+            <max>100</max>
+        </int>
+
+        <float size="4">oops
+            <name>Temperature</name>
+            <min>-40</min>
+            <max>125</max>
+        </float>
+    </segment>
+</cdi>

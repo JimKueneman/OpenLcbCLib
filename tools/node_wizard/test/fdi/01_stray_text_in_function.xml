@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 01_stray_text_in_function.xml
+    PURPOSE: Stray characters inside FDI container elements: <segment>,
+             <group>, and <function>.  All are complexType with child-only
+             content.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 errors for stray text in each container type
+-->
+<!-- TEST_CHECKS
+name: FDI Stray Text in Containers
+validate_has | severity:error | pattern:Character content other than whitespace is not allowed | Stray text in containers
+validate_min_count | severity:error | min:3 | At least 3 stray-text errors-->
+<fdi>
+    <segment space="249">STRAY_SEG
+        <group>STRAY_GRP
+            <name>Headlight Functions</name>
+
+            <function kind="binary" size="1">STRAY_FN
+                <name>Headlight</name>
+                <number>0</number>
+            </function>
+
+            <function kind="binary" size="1">
+                <name>Bell</name>
+                <number>1</number>
+            </function>
+        </group>
+    </segment>
+</fdi>

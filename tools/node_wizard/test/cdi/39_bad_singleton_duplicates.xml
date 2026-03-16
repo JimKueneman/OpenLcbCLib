@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 39_bad_singleton_duplicates.xml
+    PURPOSE: Multiple <identification> and <acdi> elements directly under
+             <cdi>.  The CDI spec allows at most one of each.
+
+    EXPECTED RESULTS:
+    - Validate: Layer 2 errors for duplicate singletons
+-->
+<!-- TEST_CHECKS
+name: Duplicate Singleton Elements
+validate_has | severity:error | pattern:identification.*not expected | Duplicate identification error
+validate_min_count | severity:error | min:1 | At least 1 singleton error-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+
+    <identification>
+        <manufacturer>First</manufacturer>
+        <model>First Model</model>
+    </identification>
+
+    <identification>
+        <manufacturer>Second</manufacturer>
+        <model>Second Model</model>
+    </identification>
+
+    <acdi/>
+    <acdi/>
+
+    <segment space="253" origin="0">
+        <string size="63"><name>User Name</name></string>
+    </segment>
+</cdi>

@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 11_kitchen_sink_valid.xml
+    PURPOSE: Exercises every tag and every attribute defined in FDI 1.1 at
+             least once in a structurally valid document.
+             Expected: zero errors AND zero warnings.
+
+    TAG COVERAGE:
+      fdi      segment   group    function   name
+      description  number   min      max
+
+    ATTRIBUTE COVERAGE:
+      space=       origin=      kind= (binary, momentary, analog)
+      size=        (no number= attribute — number is a child element per FDI 1.1)
+
+    NOTES:
+      - FDI allows exactly one <segment> (space="249", origin="0")
+      - <function> kinds: binary, momentary, analog
+      - analog functions use <min> and <max> child elements
+      - <group> can nest other groups or functions
+      - Function numbers 0-28 are standard DCC range (no info message)
+-->
+<!-- TEST_CHECKS
+name: Kitchen Sink Valid FDI
+validate_count | severity:error | expected:0 | No errors in full-coverage valid FDI
+validate_count | severity:warning | expected:0 | No warnings in full-coverage valid FDI-->
+<fdi>
+    <!-- Single segment — only one allowed, space=249 for FDI -->
+    <segment space="249" origin="0">
+        <name>DCC Functions</name>
+        <description>All DCC function types and grouping structures</description>
+
+        <!-- =================================================================
+             Ungrouped binary function: kind=binary, size=1
+             ================================================================= -->
+        <function kind="binary" size="1">
+            <name>Headlight</name>
+            <number>0</number>
+        </function>
+
+        <!-- =================================================================
+             Ungrouped momentary function: kind=momentary, size=1
+             ================================================================= -->
+        <function kind="momentary" size="1">
+            <name>Horn</name>
+            <number>2</number>
+        </function>
+
+        <!-- =================================================================
+             Ungrouped analog function: kind=analog with min and max children
+             ================================================================= -->
+        <function kind="analog" size="1">
+            <name>Volume</name>
+            <number>5</number>
+            <min>0</min>
+            <max>255</max>
+        </function>
+
+        <!-- =================================================================
+             group: name, description, nested group, nested functions
+             Exercises all three function kinds inside a group context.
+             ================================================================= -->
+        <group>
+            <name>Lighting Functions</name>
+            <description>Forward and reverse lighting controls</description>
+
+            <function kind="binary" size="1">
+                <name>Ditch Light Left</name>
+                <number>11</number>
+            </function>
+
+            <function kind="binary" size="1">
+                <name>Ditch Light Right</name>
+                <number>12</number>
+            </function>
+
+            <function kind="momentary" size="1">
+                <name>Strobe</name>
+                <number>15</number>
+            </function>
+
+            <!-- nested group: group-inside-group -->
+            <group>
+                <name>Cab Lighting</name>
+                <description>Interior cab light controls</description>
+
+                <function kind="binary" size="1">
+                    <name>Cab Dome</name>
+                    <number>20</number>
+                </function>
+
+                <!-- analog inside nested group: covers analog + min + max
+                     in a nested context -->
+                <function kind="analog" size="1">
+                    <name>Cab Dimmer</name>
+                    <number>22</number>
+                    <min>0</min>
+                    <max>31</max>
+                </function>
+
+            </group><!-- end nested group -->
+
+        </group><!-- end Lighting Functions group -->
+
+        <!-- =================================================================
+             One more top-level binary to cover F28 (last standard DCC number)
+             ================================================================= -->
+        <function kind="binary" size="1">
+            <name>Last Standard Function</name>
+            <number>28</number>
+        </function>
+
+    </segment>
+
+</fdi>

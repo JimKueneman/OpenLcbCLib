@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+    TEST: 46_line_accuracy_multi_same_tag.xml
+    PURPOSE: Multiple <string> elements in the same segment.  Stray text
+             appears in the SECOND string.  The word "test" also appears as
+             legitimate <name> content in the first string.
+
+    "test" in <name> at line 17 (valid content of leaf element)
+    "test" as stray text inside second <string> at line 22
+
+    EXPECTED RESULTS:
+    - Error: stray text "test" at line 22
+-->
+<!-- TEST_CHECKS
+name: Line Accuracy — Multiple Same-Tag Elements
+validate_has_line | severity:error | pattern:string.*Character content | line:31 | Stray text detected in second string
+validate_count | severity:error | expected:1 | Exactly 1 error-->
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
+    <identification>
+        <manufacturer>Test</manufacturer>
+        <model>Multi String</model>
+    </identification>
+    <acdi/>
+    <segment space="253" origin="0">
+        <string size="62">
+            <name>test</name>
+        </string>
+        <string size="63">
+            <name>Description</name>
+test
+        </string>
+    </segment>
+</cdi>

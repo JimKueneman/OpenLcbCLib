@@ -9,7 +9,7 @@
 -->
 <!-- TEST_CHECKS
 name: Wrong Root Element
-validate_has | severity:error | pattern:root.*must.*cdi | Root element error detected
+validate_has | severity:error | pattern:No matching global declaration | Root element error detected
 -->
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">

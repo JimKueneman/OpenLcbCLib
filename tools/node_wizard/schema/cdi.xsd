@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="schema2xhtml.xsl" type="text/xsl"?>
+<!-- XML Schema for OpenLCB Configuration Description Information (CDI)     -->
+<xs:schema version="CDI 1.4" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <xs:complexType name="mapType">
+    <xs:annotation>
+      <xs:documentation>
+        A map relates one or more property elements (keys)
+        to specific values.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="name" minOccurs="0" maxOccurs="1" />
+      <xs:element name="description" minOccurs="0" maxOccurs="1" />
+      <xs:element name="relation" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="property" minOccurs="1" maxOccurs="1" />
+            <xs:element name="value" minOccurs="1" maxOccurs="1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="booleanType">
+    <xs:annotation>
+        <xs:documentation>
+          General definition for a string that represents a boolean
+          via yes/true/1 and no/false/0 values
+        </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="yes"/>
+      <xs:enumeration value="no"/>
+      <xs:enumeration value="true"/>
+      <xs:enumeration value="false"/>
+      <xs:enumeration value="1"/>
+      <xs:enumeration value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="groupHintsType">
+    <xs:annotation>
+      <xs:documentation>
+        Presents optional hints to a GUI program
+        for how to render the contents of this group.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="visibility" minOccurs="0" maxOccurs="1" >
+        <xs:complexType>
+          <xs:attribute name="hideable" type="booleanType" default="no">
+            <xs:annotation>
+              <xs:documentation>
+                Recommends that the group be 
+                presented in a form that can be made visible
+                or hidden at the user's request.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="hidden" type="booleanType" default="no">
+            <xs:annotation>
+              <xs:documentation>
+                If yes, recommends a hideable=true group 
+                be hidden when first displayed
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+       </xs:complexType>
+      </xs:element> 
+      <xs:element name="readOnly" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="groupType">
+    <xs:sequence>
+      <xs:element name="name" minOccurs="0" maxOccurs="1" />
+      <xs:element name="description" minOccurs="0" maxOccurs="1" />
+      <xs:element name="link" type="linkType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="repname" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="hints" type="groupHintsType" minOccurs="0" maxOccurs="1" />     
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Allows any sequence of the contained element types
+          </xs:documentation>
+        </xs:annotation>
+        <xs:element name="group" type="groupType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="string" type="stringType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="int" type="intType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="eventid" type="eventidType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="float" type="floatType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="action" type="actionButtonType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="blob" type="blobType" minOccurs="0" maxOccurs="1" />
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="offset" type="xs:int" default="0">
+      <xs:annotation>
+        <xs:documentation>
+          Positive or negative offset between the address of
+          the end of previous element and the start of
+          this group's contents.
+          Offset of zero means that this element starts
+          immediately after the previous one.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="replication" type="xs:int" default="1" />
+  </xs:complexType>
+
+  <xs:complexType name="eventidType">
+    <xs:sequence>
+      <xs:element name="name" minOccurs="0" maxOccurs="1" />
+      <xs:element name="description" minOccurs="0" maxOccurs="1" />
+      <xs:element name="map" type="mapType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="offset" type="xs:int" default="0">
+      <xs:annotation>
+        <xs:documentation>
+          Positive or negative offset between the address of
+          the end of previous element and the start of
+          this elements's contents.
+          Offset of zero means that this element starts
+          immediately after the previous one.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="integerHintsType">
+    <xs:annotation>
+      <xs:documentation>
+        Presents optional hints to a GUI program
+        for how to render this integer variable.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="slider" minOccurs="0" maxOccurs="1" >
+        <xs:complexType>
+          <xs:attribute name="tickSpacing" type="xs:integer" default="0">
+            <xs:annotation>
+              <xs:documentation>
+                Recommends a value for the spacing between 
+                tick marks on the slider.  For example, "10" with a 
+                minimum value of 0 would recommend ticks at 0, 10, 20 etc
+                along the slider axis. Values of zero or less
+                recommend that no tick marks be displayed.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="immediate" type="booleanType" default="no">
+            <xs:annotation>
+              <xs:documentation>
+                If yes, recommends that the slider should write to the 
+                configuration memory immediately when changed
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="showValue" type="booleanType" default="no">
+            <xs:annotation>
+              <xs:documentation>
+                If yes, recommends that a slider should also 
+                show the exact value, perhaps in a near-by numeric field
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element> 
+      <xs:element name="radiobutton" minOccurs="0" maxOccurs="1" />
+      <xs:element name="checkbox" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="intType">
+    <xs:sequence>
+      <xs:element name="name" minOccurs="0" maxOccurs="1" />
+      <xs:element name="description" minOccurs="0" maxOccurs="1" />
+      <xs:element name="min" minOccurs="0" maxOccurs="1" />
+      <xs:element name="max" minOccurs="0" maxOccurs="1" />
+      <xs:element name="default" minOccurs="0" maxOccurs="1" />
+      <xs:element name="map" type="mapType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The 'value' of each entry is displayed, and
+            the 'property' content (number) is sent
+            to/from the node
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="hints" type="integerHintsType" minOccurs="0" maxOccurs="1" />     
+    </xs:sequence>
+    <xs:attribute name="size" default="1">
+      <xs:annotation>
+        <xs:documentation>
+          Storage size of this variable in bytes.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="1"/>
+          <xs:enumeration value="2"/>
+          <xs:enumeration value="4"/>
+          <xs:enumeration value="8"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="offset" type="xs:int" default="0">
+      <xs:annotation>
+        <xs:documentation>
+          Positive or negative offset between the
+          address of the end of previous element and the
+          start of this elements's contents.
+          Offset of zero means that this element starts
+          immediately after the previous one.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:simpleType name="floatFormat">
+	<xs:restriction base="xs:string">
+	  <!-- This is a somewhat limiting regex, as it does not allow all possible -->
+	  <!-- printf formats.   It will allow the most common formats that I have -->
+	  <!-- seen and used before, howerver -->
+	  <xs:pattern value="%[0-9]*(\.([0-9]*))?f"/>
+	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="floatType">
+	 <xs:sequence>
+      <xs:element name="name" minOccurs="0" maxOccurs="1" />
+      <xs:element name="description" minOccurs="0" maxOccurs="1" />
+      <xs:element name="min" minOccurs="0" maxOccurs="1" />
+      <xs:element name="max" minOccurs="0" maxOccurs="1" />
+      <xs:element name="default" minOccurs="0" maxOccurs="1" />
+      <xs:element name="map" type="mapType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The 'value' of each entry is displayed, and
+            the 'property' content (number) is sent
+            to/from the node
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="size" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Storage size of this variable in bytes. 2, 4 and 8 are valid.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="2"/>
+          <xs:enumeration value="4"/>
+          <xs:enumeration value="8"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="offset" type="xs:int" default="0">
+      <xs:annotation>
+        <xs:documentation>
+          Positive or negative offset between the
+          address of the end of previous element and the
+          start of this elements's contents.
+          Offset of zero means that this element starts
+          immediately after the previous one.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+	<xs:attribute name="formatting" type="floatFormat" >
+	      <xs:annotation>
+        <xs:documentation>
+          printf-style format string for displaying data to the user, like %3.1f
+        </xs:documentation>
+      </xs:annotation>
+	</xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="stringType">
+    <xs:sequence>
+      <xs:element name="name" minOccurs="0" maxOccurs="1" />
+      <xs:element name="description" minOccurs="0" maxOccurs="1" />
+      <xs:element name="map" type="mapType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="size" type="xs:int" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Storage size of this variable in bytes.
+          This includes the trailing null byte that
+          terminates the string content.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="offset" type="xs:int" default="0">
+      <xs:annotation>
+        <xs:documentation>
+          Positive or negative offset between the
+          address of the end of previous element and the
+          start of this elements's contents.
+          Offset of zero means that this element starts
+          immediately after the previous one.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="actionButtonType">
+    <xs:sequence>
+      <xs:element name="name" minOccurs="0" maxOccurs="1" />
+      <xs:element name="description" minOccurs="0" maxOccurs="1" />
+      <xs:element name="buttonText" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Text to be displayed on the button. 
+            This is required.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="dialogText" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Text to be displayed on the confirmation dialog. 
+            If empty or not present, no confirmation dialog is displayed.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="value" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Value to be written when the button is triggered. 
+            This is required.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="size" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Storage size of this variable in bytes. 
+          This is required for backwards compatibility.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="1"/>
+          <xs:enumeration value="2"/>
+          <xs:enumeration value="4"/>
+          <xs:enumeration value="8"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="offset" type="xs:int" default="0">
+      <xs:annotation>
+        <xs:documentation>
+          Positive or negative offset between the address of
+          the end of previous element and the start of
+          this elements's contents.
+          Offset of zero means that this element starts
+          immediately after the previous one.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="blobType">
+    <xs:sequence>
+      <xs:element name="name" minOccurs="0" maxOccurs="1" />
+      <xs:element name="description" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="size" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Storage size of this variable in bytes.
+          This is fixed at 10 bytes.
+          An explicit value is required for backwards compatibility.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="10"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="offset" type="xs:int" default="0">
+      <xs:annotation>
+        <xs:documentation>
+          Positive or negative offset between the address of
+          the end of previous element and the start of
+          this elements's contents.
+          Offset of zero means that this element starts
+          immediately after the previous one.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="mode" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Whether the underlying blob can be read ("read"), can be written ("write"),
+          or both ("readwrite").
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="read"/>
+          <xs:enumeration value="write"/>
+          <xs:enumeration value="readwrite"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="linkType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="ref" type="xs:string" use="required">
+                  <xs:annotation>
+                    <xs:documentation>
+                      URL for this link.  When the link is triggered
+                      in a configuration tool, it's recommended that this
+                      link be retrieved and displayed.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Definition of the primary "cdi" element -->
+  <xs:element name="cdi">
+    <xs:annotation>
+      <xs:documentation>
+        This is the schema for Configuration
+        Description Information (cdi)
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="identification" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Common first element to identify the decoder
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="manufacturer" minOccurs="0" maxOccurs="1" />
+              <xs:element name="model" minOccurs="0" maxOccurs="1" />
+              <xs:element name="hardwareVersion" minOccurs="0" maxOccurs="1" />
+              <xs:element name="softwareVersion" minOccurs="0" maxOccurs="1" />
+              <xs:element name="link" type="linkType" minOccurs="0" maxOccurs="1" />
+              <xs:element name="map" type="mapType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    This map can be used to add arbitrary key/value
+                    descriptions of the node.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="acdi" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Element that identifies that memory information is available
+              as defined by the Abbreviated Common Description Information
+              (ACDI) standard.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:attribute name="fixed" type="xs:int" default="4">
+              <xs:annotation>
+                <xs:documentation>
+                  The decimal version number of the format for the fixed
+                  information block.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="var" type="xs:int" default="2">
+              <xs:annotation>
+                <xs:documentation>
+                  The decimal version number of the format for
+                  the variable information block.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="segment" minOccurs="0" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation>
+              Define the contents of a memory space
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="name" minOccurs="0" maxOccurs="1" />
+              <xs:element name="description" minOccurs="0" maxOccurs="1" />
+              <xs:element name="link" type="linkType" minOccurs="0" maxOccurs="1" />
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Allows any sequence of the contained element types
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:element name="group" type="groupType" minOccurs="0" maxOccurs="1">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Allows grouping and replication of multiple locations.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="string" type="stringType" minOccurs="0" maxOccurs="1">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Describes a human-readable UTF-8 string in the data.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="int" type="intType" minOccurs="0" maxOccurs="1">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Describes an integer value in the data.
+                      The field can be considered either a number,
+                      or a set of specific coded values via a map.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="eventid" type="eventidType" minOccurs="0" maxOccurs="1">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Describes an 8-byte Event ID in the data.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+				<xs:element name="float" type="floatType" minOccurs="0" maxOccurs="1">
+				  <xs:annotation>
+                    <xs:documentation>
+                      Describes a float type in the data
+                    </xs:documentation>
+                  </xs:annotation>
+				</xs:element>
+				<xs:element name="action" type="actionButtonType" minOccurs="0" maxOccurs="1">
+				  <xs:annotation>
+                    <xs:documentation>
+                      Describes how to create an action button to write into the data.
+                    </xs:documentation>
+                  </xs:annotation>
+				</xs:element>
+				<xs:element name="blob" type="blobType" minOccurs="0" maxOccurs="1">
+				  <xs:annotation>
+                    <xs:documentation>
+                      Describes a blob of data that can be read/written/both.
+                    </xs:documentation>
+                  </xs:annotation>
+				</xs:element>
+
+<!--
+                XML Schema 1.1 construct expressing extensibility promise
+                <xs:any minOccurs="0" maxOccurs="1" processContents="lax">
+                <xs:assert test="every $x in * satisfies
+                                    (exists($x/@size) and $x/@size castable to xs:integer)"/>
+                <xs:assert test="every $x in * satisfies
+                                    (exists($x/@offset) and $x/@offset castable to xs:integer)"/>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Extension point for future schema
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:any>
+ -->
+
+              </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="space" type="xs:int" use="required">
+              <xs:annotation>
+                <xs:documentation>
+                  The decimal number of the address space where the information is found.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="origin" type="xs:int" default="0">
+              <xs:annotation>
+                <xs:documentation>
+                  Starting address of the segment's contents
+                  within the memory space.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
