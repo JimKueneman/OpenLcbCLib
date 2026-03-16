@@ -118,6 +118,24 @@
 
     }
 
+    function _showGroupDetail(group) {
+
+        _elDetailPlaceholder.style.display   = 'none';
+        _elDetailContent.style.display       = 'block';
+        _elDetailPrototype.textContent       = '';
+        _elDetailDesc.textContent            = group.groupDetail || group.description;
+        _elDetailDetailSection.style.display = 'none';
+        _elDetailMeta.innerHTML              = '';
+
+    }
+
+    function _clearDetail() {
+
+        _elDetailContent.style.display     = 'none';
+        _elDetailPlaceholder.style.display = 'block';
+
+    }
+
     /* Base groups for each node type (before add-on filtering) */
     var _baseGroups = {
         'basic':            ['cb-can', 'cb-olcb', 'cb-events'],
@@ -209,12 +227,18 @@
 
         }
 
-        /* Hover shows detail in the right panel */
+        /* Hover shows detail in the right panel; leaving falls back to group info */
         (function (g, f) {
 
             item.addEventListener('mouseenter', function () {
 
                 _showDetail(g, f);
+
+            });
+
+            item.addEventListener('mouseleave', function () {
+
+                _showGroupDetail(g);
 
             });
 
@@ -277,6 +301,23 @@
             details.className = 'group-section';
             details.dataset.groupKey = groupKey;
             details.open = true;
+
+            /* Tile-level hover: show group info when inside the tile but not on a specific item */
+            (function (g) {
+
+                details.addEventListener('mouseenter', function () {
+
+                    _showGroupDetail(g);
+
+                });
+
+                details.addEventListener('mouseleave', function () {
+
+                    _clearDetail();
+
+                });
+
+            })(group);
 
             var summary = document.createElement('summary');
             summary.className = 'group-header';

@@ -12,6 +12,7 @@ const CALLBACK_GROUPS = {
 
         title: 'CAN Callbacks',
         description: 'Notifications for CAN bus activity',
+        groupDetail: 'Raw CAN bus frame notifications that fire before the protocol stack processes each frame. on_rx and on_tx are useful for activity LEDs, GridConnect frame logging, and bus traffic monitoring. on_alias_change fires during the alias allocation sequence (CID/RID/AMD frames) when the library assigns a 12-bit alias to a node — helpful for correlating raw CAN traffic with Node IDs during debugging. Most applications only need these callbacks for diagnostics.',
         filePrefix: 'callbacks_can',
         headerGuard: '__CALLBACKS_CAN__',
         includes: [
@@ -60,6 +61,7 @@ const CALLBACK_GROUPS = {
 
         title: 'OLCB/LCC Callbacks',
         description: 'Core application notifications',
+        groupDetail: 'Core protocol lifecycle callbacks. on_100ms_timer is the periodic heartbeat tick that drives application tasks (LED blink, sensor reads, state machines) and all internal protocol timing — heartbeat countdowns, broadcast time accumulation, and alias allocation delays. on_login_complete gates node startup so you can defer initialization until hardware is ready. The error callbacks (on_optional_interaction_rejected, on_terminate_due_to_error) fire when a remote node rejects a message your node sent, useful for logging and graceful error handling.',
         filePrefix: 'callbacks_olcb',
         headerGuard: '__CALLBACKS_OLCB__',
         includes: [
@@ -116,6 +118,7 @@ const CALLBACK_GROUPS = {
 
         title: 'Event Callbacks',
         description: 'Notifications for event activity on the bus',
+        groupDetail: 'OpenLCB events are the primary way nodes communicate state changes across the layout. on_consumed_event_pcer is the main callback — it fires when an event this node registered as a consumer arrives on the bus, letting you toggle a relay, change a signal aspect, or drive any output. on_consumed_event_identified fires during network enumeration so you can synchronize your node\'s state at startup based on what producers are reporting. on_event_learn handles the teach/learn protocol for storing new Event IDs into configuration memory. The Advanced section adds unfiltered bus-wide callbacks and individual producer/consumer identification callbacks for network discovery applications.',
         filePrefix: 'callbacks_events',
         headerGuard: '__CALLBACKS_EVENTS__',
         includes: [
@@ -283,6 +286,7 @@ const CALLBACK_GROUPS = {
 
         title: 'Config Memory Callbacks',
         description: 'Notifications for configuration memory operations',
+        groupDetail: 'Called when a configuration tool reads or writes your node\'s persistent storage over the bus (Memory Space 0xFD). factory_reset and reboot are the most commonly needed — factory_reset erases EEPROM/Flash and restores defaults, reboot triggers a hardware reset. The delayed-reply callbacks (config_mem_read_delayed_reply_time, config_mem_write_delayed_reply_time) let you tell the requesting tool how long a slow storage operation will take, so it sends a Reply Pending acknowledgment and waits rather than timing out. Reads and writes arrive as datagram commands of up to 64 bytes per transaction.',
         filePrefix: 'callbacks_config_mem',
         headerGuard: '__CALLBACKS_CONFIG_MEM__',
         includes: [
@@ -339,6 +343,7 @@ const CALLBACK_GROUPS = {
 
         title: 'Firmware Callbacks',
         description: 'Notifications for over-the-network firmware upgrades',
+        groupDetail: 'Called during the OpenLCB Firmware Upgrade protocol sequence (Memory Space 0xEF). A configuration tool first sends a Freeze command (your node stops normal operation and prepares Flash for writing), then streams the firmware image in 64-byte blocks via datagram Write commands, then sends Unfreeze to trigger a reboot into the new image. freeze and unfreeze manage the state transitions; firmware_write handles each incoming data block and must handle Flash page erase and alignment for your specific platform. Requires Config Memory and Datagram support to be active.',
         filePrefix: 'callbacks_firmware',
         headerGuard: '__CALLBACKS_FIRMWARE__',
         includes: [
@@ -385,6 +390,7 @@ const CALLBACK_GROUPS = {
 
         title: 'Train Callbacks',
         description: 'Notifications for train control activity',
+        groupDetail: 'Divided into four sub-sections. Train Node \u2014 Notifications fire on a locomotive node when a throttle sends speed, function, or emergency commands, and also cover controller assignment, consist (listener) changes, and heartbeat timeout (the safety mechanism that stops the train if the throttle goes silent). Train Node \u2014 Decisions let your application approve or reject controller takeover requests. Throttle \u2014 Replies fire on a controller node when a locomotive responds to speed queries, function queries, reserve, and listener commands \u2014 use these to update your throttle display. Train Search handles address-based locomotive discovery, including dynamic creation of new train nodes on demand.',
         filePrefix: 'callbacks_train',
         headerGuard: '__CALLBACKS_TRAIN__',
         includes: [
@@ -651,6 +657,7 @@ const CALLBACK_GROUPS = {
 
         title: 'Broadcast Time Callbacks',
         description: 'Notifications for fast-clock time changes',
+        groupDetail: 'The OpenLCB Broadcast Time protocol distributes a shared simulated fast-clock across the layout using Well-Known Event IDs. on_time_changed is the primary callback \u2014 it fires every simulated minute and is the right place for time-triggered automation such as turning on building lights at a specific fast-clock hour. The clock producer broadcasts Report Time, Date, Year, and Rate events during startup and after any clock set command; the library decodes them and calls the appropriate on_*_received callbacks so your node stays synchronized. The clock advances each 100ms tick scaled by the current rate (e.g. rate 4.0 means the clock runs 4x faster than real time). on_clock_started and on_clock_stopped let you pause and resume time-dependent operations.',
         filePrefix: 'callbacks_broadcast_time',
         headerGuard: '__CALLBACKS_BROADCAST_TIME__',
         includes: [

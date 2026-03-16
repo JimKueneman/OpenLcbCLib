@@ -14,10 +14,10 @@
 
     const KNOWN_FDI_TAGS = new Set([
         'fdi', 'segment', 'group', 'function',
-        'name', 'description', 'number'
+        'name', 'description', 'number', 'min', 'max'
     ]);
 
-    const VALID_KINDS = new Set(['binary', 'momentary']);
+    const VALID_KINDS = new Set(['binary', 'momentary', 'analog']);
 
     /* ----------------------------------------------------------------------- */
     function validate(xmlString) {
@@ -70,6 +70,13 @@
 
         });
 
+        /* singleton segment check */
+        var segmentCount = Array.from(root.children).filter(function (c) { return c.tagName === 'segment'; }).length;
+        if (segmentCount > 1) {
+            issues.push({ severity: 'error', line: null, col: null,
+                message: 'FDI allows only one <segment> element, found ' + segmentCount });
+        }
+
         /* segments */
         var segments = Array.from(root.getElementsByTagName('segment'));
 
@@ -119,7 +126,7 @@
             } else if (!VALID_KINDS.has(fn.getAttribute('kind'))) {
 
                 issues.push({ severity: 'error', line: null, col: null,
-                    message: '<function> "' + label + '" has invalid kind="' + fn.getAttribute('kind') + '" — must be "binary" or "momentary"' });
+                    message: '<function> "' + label + '" has invalid kind="' + fn.getAttribute('kind') + '" — must be "binary", "momentary", or "analog"' });
 
             }
 

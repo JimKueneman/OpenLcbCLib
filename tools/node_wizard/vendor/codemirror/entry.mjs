@@ -8,6 +8,7 @@ import { cpp } from '@codemirror/lang-cpp';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { keymap } from '@codemirror/view';
 import { indentWithTab } from '@codemirror/commands';
+import { linter, lintGutter } from '@codemirror/lint';
 
 window.CM = {
     EditorView,
@@ -17,5 +18,7 @@ window.CM = {
     cpp,
     oneDark,
     keymap,
-    indentWithTab
+    indentWithTab,
+    linter,
+    lintGutter
 };

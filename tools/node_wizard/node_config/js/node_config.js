@@ -1793,6 +1793,32 @@ var HELP_DATA = {
         title: 'DCC Extended Accessory Command (Range)',
         description: 'Send a command to an extended DCC accessory decoder address. Registered as a range.',
         detail: 'Event ID range: 01.01.02.00.01.{addr}.{cmd}. The 11-bit extended accessory address is in bytes 6\u20137; byte 8 is the 8-bit command corresponding to the 3rd byte of a DCC extended accessory packet per NMRA S-9.2.1. Valid addresses are 0\u20132047. Not automatically routed.'
+    },
+
+    /* ---- Section-level help for collapsible panels ---- */
+
+    'project-options': {
+        title: 'Project Options',
+        description: 'Name, author, and Node ID for this project. Used in generated file headers, ZIP archive names, and saved project files.',
+        detail: 'Project Name becomes the base filename when downloading a ZIP or saving a project. Author is inserted into the copyright comment at the top of every generated source file. Node ID is the globally unique 48-bit identifier for this node on the OpenLCB network \u2014 enter it in xx.xx.xx.xx.xx.xx hexadecimal notation. Every device must have a unique Node ID; register your own range at https://registry.openlcb.org/uniqueidranges.'
+    },
+
+    'wellknown-events': {
+        title: 'Well Known Events',
+        description: 'Standard OpenLCB event IDs with globally defined meanings. Register them as producers (your node sends them) or consumers (your node acts on them).',
+        detail: 'Well-Known Automatically-Routed events (Emergency, Power Supply, most Diagnostics) carry the prefix 01.00 and must be forwarded by gateways to every segment on the network. Well-Known events (Train, Firmware, CBUS, DCC) have globally defined meanings but are not auto-routed. Registrations are generated as openlcb_register_producer() / openlcb_register_consumer() calls in the main application file. If Broadcast Time is enabled, its range registrations are handled automatically by the protocol handler and do not appear here. See OpenLCB Event Identifiers Standard \u00a75.2\u20135.3.'
+    },
+
+    'add-ons': {
+        title: 'Add-Ons',
+        description: 'Optional protocol extensions: Broadcast Time (fast-clock) and Firmware Update (over-the-network firmware upgrade).',
+        detail: 'Broadcast Time uses a structured set of event IDs to distribute model-railroad fast-clock time across the layout. Choose Producer if this node is the clock generator (one per layout), or Consumer if it tracks the time. Enabling either role reserves 2 producer ranges and 2 consumer ranges in your event buffer counts. Firmware Update relies on Memory Configuration (Memory Space 0xEF) and is not available for Basic nodes. When enabled, a configuration tool can freeze the node, write a new firmware image via datagrams or streaming, and unfreeze to restart. See OpenLCB Broadcast Time Standard and OpenLCB Firmware Upgrade Standard.'
+    },
+
+    'advanced': {
+        title: 'Advanced',
+        description: 'Memory buffer pool sizes, virtual node count, CAN message queue depth, and train protocol parameters. The defaults are suitable for most applications.',
+        detail: 'Message Buffer Pool: each category allocates fixed-size blocks from RAM. Basic buffers (16 bytes) carry most protocol traffic. Datagram buffers (72 bytes) carry config-memory reads/writes. SNIP buffers (256 bytes) cache node identification strings. Stream buffers (512 bytes) are needed for streaming firmware upgrades. The combined total across all pools must not exceed 65534. Virtual Node Allocation sets how many logical nodes this hardware hosts; most simple devices use 1. CAN Message Buffers set the raw-frame queue depth \u2014 increase if the node is on a busy bus. Train Protocol and Listener Alias Verification settings only appear for Train and Train Controller node types.'
     }
 
 };
@@ -1828,12 +1854,27 @@ function _showHelp(key) {
 
 }
 
+function _clearHelp() {
+
+    if (!_elDetailContent) { return; }
+
+    _elDetailContent.style.display     = 'none';
+    _elDetailPlaceholder.style.display = 'block';
+
+}
+
 /* Attach hover listeners to all elements with data-help */
 document.querySelectorAll('[data-help]').forEach(function (el) {
 
     el.addEventListener('mouseenter', function () {
 
         _showHelp(el.dataset.help);
+
+    });
+
+    el.addEventListener('mouseleave', function () {
+
+        _clearHelp();
 
     });
 

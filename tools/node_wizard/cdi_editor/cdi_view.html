@@ -799,7 +799,7 @@
 
         <div class="toolbar-sep"></div>
 
-        <button id="btn-validate" disabled>✓ Validate</button>
+        <button id="btn-format"  disabled>⇌ Format</button>
         <button id="btn-clear">✕ Clear</button>
 
     </div>
@@ -890,7 +890,8 @@
 
 /* ---------- Element refs -------------------------------------------------- */
 const elEditor      = createCMEditor(document.getElementById('cm-host'), {
-    placeholder: 'Paste or open a CDI XML file to begin...'
+    placeholder: 'Paste or open a CDI XML file to begin...',
+    validator:   CdiValidator
 });
 const elOutput         = document.getElementById('cdi-output');
 const elEmpty          = document.getElementById('preview-empty');
@@ -908,7 +909,7 @@ const elStatusChars    = document.getElementById('status-chars');
 const elStatusLines    = document.getElementById('status-lines');
 const elStatusCur      = document.getElementById('status-cursor');
 const chkAddress       = document.getElementById('chk-address');
-const btnValidate      = document.getElementById('btn-validate');
+const btnFormat        = document.getElementById('btn-format');
 const btnClear         = document.getElementById('btn-clear');
 const btnExportXml     = document.getElementById('btn-export-xml');
 const fileInput        = document.getElementById('file-input');
@@ -980,7 +981,7 @@ function onEditorChange() {
     _updateHighlight();
 
     const hasContent = currentXml.trim().length > 0;
-    btnValidate.disabled  = !hasContent;
+    btnFormat.disabled    = !hasContent;
     btnExportXml.disabled = !hasContent;
 
     /* Auto-validate after a short debounce */
@@ -1076,7 +1077,7 @@ const MAP_VIEW_DESCRIPTIONS = {
     tree:    'Collapsible tree view grouped by CDI segment and group hierarchy',
     defines: 'C #define constants mapping symbolic names to memory addresses',
     struct:  'C struct layout mirroring the CDI memory organization',
-    array:   'C byte array initializer for default CDI values in openlcb_user_config.c',
+    array:   '',
     preview: 'Rendered CDI preview as an end-user configuration dialog'
 };
 
@@ -1781,6 +1782,8 @@ function _renderMapArray() {
     resultLines.push('// CDI (Configuration Description Information) byte array.');
     resultLines.push('// Paste this into the .cdi field of the node_parameters_t struct');
     resultLines.push('// in openlcb_user_config.c to define the node\'s configuration layout.');
+    resultLines.push('//');
+    resultLines.push('// NOTE: THIS IS FOR CONVENIENCE OF THOSE MANUALLY BUILDING THEIR OPENLCB_USER_CONFIG.C FILE.');
     resultLines.push('');
     resultLines.push('.cdi = {');
 
@@ -2071,8 +2074,11 @@ function _renderConfigMemWarning(mapData, warnEl) {
 
 }
 
-/* ---------- Validate ------------------------------------------------------ */
-btnValidate.addEventListener('click', validate);
+/* ---------- Format -------------------------------------------------------- */
+btnFormat.addEventListener('click', function () {
+    elEditor.format();
+});
+
 
 function validate() {
 
@@ -2164,7 +2170,7 @@ btnClear.addEventListener('click', () => {
     elValList.innerHTML = '';
     elValOk.textContent = 'No issues detected';
     elValOk.style.display = '';
-    btnValidate.disabled  = true;
+    btnFormat.disabled    = true;
     btnExportXml.disabled = true;
     elMapContent.innerHTML = '<div class="map-empty">Enter CDI XML to see memory map</div>';
     document.getElementById('map-stats-bar').innerHTML = '';

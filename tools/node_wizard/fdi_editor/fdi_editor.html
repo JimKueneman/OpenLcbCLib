@@ -252,19 +252,20 @@
         }
 
         .fn-grid-header {
-            height: 38px;
-            background: #3c3c3c;
-            color: #aaa;
+            background: #e9ecef;
+            color: var(--color-muted);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.8px;
             text-transform: uppercase;
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            padding: 0 12px;
+            padding: 4px 12px;
             flex-shrink: 0;
-            border-bottom: 1px solid #555;
+            border-bottom: 1px solid var(--color-border);
+            gap: 2px;
         }
 
         .fn-grid-scroll {
@@ -462,22 +463,22 @@
         .fdi-toggle-btn {
             padding: 4px 10px;
             font-size: 11px;
-            border: 1px solid #666;
+            border: 1px solid var(--color-border);
             border-radius: 4px;
-            background: #2a2a2a;
-            color: #aaa;
+            background: var(--color-surface);
+            color: var(--color-muted);
             cursor: pointer;
+            font-family: var(--font-mono);
             font-weight: 600;
             line-height: 18px;
-            transition: background 0.12s;
         }
 
-        .fdi-toggle-btn:hover { background: #444; color: #eee; border-color: #888; }
+        .fdi-toggle-btn:hover { background: #dee2e6; color: var(--color-text); border-color: #bbb; }
 
         .fdi-toggle-btn.active {
-            background: #0078d4;
+            background: var(--color-primary);
             color: #fff;
-            border-color: #005a9e;
+            border-color: var(--color-primary-dark);
         }
 
         /* ===== FDI Tools content (Array view) ================================ */
@@ -496,14 +497,14 @@
             justify-content: flex-end;
             align-items: center;
             padding: 3px 6px;
-            background: #2d2d2d;
-            border-bottom: 1px solid #444;
+            background: #e9ecef;
+            border-bottom: 1px solid var(--color-border);
             flex-shrink: 0;
         }
 
         .fdi-tools-copybar .fdi-byte-count {
             font-size: 11px;
-            color: #aaa;
+            color: var(--color-muted);
             font-family: var(--font-mono);
             margin-right: auto;
         }
@@ -511,15 +512,15 @@
         .fdi-tools-copybar button {
             padding: 1px 10px;
             font-size: 10px;
-            border: 1px solid #555;
+            border: 1px solid #bbb;
             border-radius: 3px;
-            background: #3c3c3c;
-            color: #ccc;
+            background: var(--color-surface);
+            color: var(--color-text);
             cursor: pointer;
             font-family: var(--font-mono);
         }
 
-        .fdi-tools-copybar button:hover { background: #4c4c4c; }
+        .fdi-tools-copybar button:hover { background: #dee2e6; }
 
         .fdi-tools-cm {
             flex: 1;
@@ -551,13 +552,13 @@
 
         <div class="toolbar-sep"></div>
 
-        <button id="btn-basic-xml">&#x2726; Basic XML</button>
+        <button id="btn-export-xml" disabled>&#x1F4BE; Export XML</button>
+        <button id="btn-basic-xml">&#x2726; Generate Basic XML</button>
 
         <div class="toolbar-sep"></div>
 
-        <button id="btn-validate" disabled>&#x2713; Validate</button>
+        <button id="btn-format"  disabled>&#x21CC; Format</button>
         <button id="btn-clear">&#x2715; Clear</button>
-        <button id="btn-export-xml" disabled>&#x1F4BE; Export XML</button>
 
     </div>
 
@@ -644,7 +645,9 @@
 
 /* ---------- Element refs -------------------------------------------------- */
 var elEditor      = createCMEditor(document.getElementById('cm-host'), {
-    placeholder: 'Paste or open an FDI XML file to begin...'
+    placeholder: 'Paste or open an FDI XML file to begin...',
+    schema:      FDI_SCHEMA,
+    validator:   FdiValidator
 });
 var elValList     = document.getElementById('validation-list');
 var elValOk       = document.getElementById('validation-ok');
@@ -652,7 +655,7 @@ var elStatusBytes = document.getElementById('status-bytes');
 var elStatusChars = document.getElementById('status-chars');
 var elStatusLines = document.getElementById('status-lines');
 var elStatusCur   = document.getElementById('status-cursor');
-var btnValidate   = document.getElementById('btn-validate');
+var btnFormat     = document.getElementById('btn-format');
 var btnClear      = document.getElementById('btn-clear');
 var btnExportXml  = document.getElementById('btn-export-xml');
 var fileInput     = document.getElementById('file-input');
@@ -731,7 +734,7 @@ function onEditorChange() {
     _updateHighlight();
 
     var hasContent = currentXml.trim().length > 0;
-    btnValidate.disabled  = !hasContent;
+    btnFormat.disabled    = !hasContent;
     btnExportXml.disabled = !hasContent;
 
     /* Auto-validate after a short debounce */
@@ -789,7 +792,6 @@ function _updateLineNumbers() { }
 function _updateHighlight() { }
 
 /* ---------- Validate ------------------------------------------------------ */
-btnValidate.addEventListener('click', validate);
 
 function validate() {
 
@@ -883,6 +885,9 @@ function _jumpToLine(lineNum) {
 
 }
 
+/* ---------- Format -------------------------------------------------------- */
+btnFormat.addEventListener('click', function () { elEditor.format(); });
+
 /* ---------- Clear --------------------------------------------------------- */
 btnClear.addEventListener('click', function () {
 
@@ -890,7 +895,7 @@ btnClear.addEventListener('click', function () {
     elValList.innerHTML = '';
     elValOk.textContent = 'No issues detected';
     elValOk.style.display = '';
-    btnValidate.disabled  = true;
+    btnFormat.disabled    = true;
     btnExportXml.disabled = true;
     _setFilename('');
     onEditorChange();
@@ -1199,6 +1204,8 @@ function _renderFdiArray() {
     resultLines.push('// FDI (Function Description Information) byte array.');
     resultLines.push('// Paste this into the .fdi field of the node_parameters_t struct');
     resultLines.push('// in openlcb_user_config.c to define the train function descriptions.');
+    resultLines.push('//');
+    resultLines.push('// NOTE: THIS IS FOR CONVENIENCE OF THOSE MANUALLY BUILDING THEIR OPENLCB_USER_CONFIG.C FILE.');
     resultLines.push('');
     resultLines.push('.fdi = {');
 

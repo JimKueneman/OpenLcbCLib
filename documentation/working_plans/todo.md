@@ -89,6 +89,16 @@ Outstanding items in `OlcbChecker/ChecksToAdd.md` not yet implemented:
 
 ---
 
+### 7. Virtual Node CAN Login — Duplicate Alias Detection Gap
+
+**Issue:** During CAN node login, virtual nodes do not get passed through the login sequence, so they cannot reply to a duplicate alias detection challenge. In practice this should never happen (virtual nodes share the physical node's alias space and the physical node handles alias negotiation), but there is no defensive check to catch it if it ever does.
+
+**Proposed approach:** Rather than relying on the login message flow, directly scan the alias field in all node structs to detect a collision. This avoids the need to route CAN login frames through virtual nodes at all.
+
+**Date noted:** 2026-03-16
+
+---
+
 ## Design Notes
 
 These are settled decisions. Do not revisit without good reason.

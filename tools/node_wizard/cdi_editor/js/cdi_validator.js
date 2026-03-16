@@ -66,6 +66,20 @@
             }
         });
 
+        /* singleton elements — only one of each is allowed directly under <cdi> */
+        const idCount   = Array.from(root.children).filter(c => c.tagName === 'identification').length;
+        const acdiCount = Array.from(root.children).filter(c => c.tagName === 'acdi').length;
+
+        if (idCount > 1) {
+            issues.push({ severity: 'error', line: null, col: null,
+                message: `Found ${idCount} <identification> elements — only 1 is permitted` });
+        }
+
+        if (acdiCount > 1) {
+            issues.push({ severity: 'error', line: null, col: null,
+                message: `Found ${acdiCount} <acdi> elements — only 1 is permitted` });
+        }
+
         /* segments */
         const segments = Array.from(root.getElementsByTagName('segment'));
         segments.forEach((seg, i) => {

@@ -65,6 +65,8 @@ test/                       compliance and integration tests
 
 The [Node Wizard](https://jimkueneman.github.io/OpenLcbCLib/tools/node_wizard/node_wizard.html) is a browser-based project generator included in the repository. It can be opened directly from GitHub Pages using the link above, or locally from `tools/node_wizard/node_wizard.html` in a cloned copy — no internet connection needed either way. The Wizard walks you through node type, CDI/FDI configuration, platform selection, and callback options, then generates a complete project ZIP ready to open in your IDE.
 
+If you are building your own custom library and only need to author CDI or FDI XML, the [CDI / FDI Editor](https://jimkueneman.github.io/OpenLcbCLib/tools/node_wizard/cdi_fdi_wizard.html) is a lighter standalone tool (also available locally at `tools/node_wizard/cdi_fdi_wizard.html`) that exposes just the two XML editors without the full project-generation workflow.
+
 ## License
 
 BSD 2-Clause. See individual source file headers for the full license text.

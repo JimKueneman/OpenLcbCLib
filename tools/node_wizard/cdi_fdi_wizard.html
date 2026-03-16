@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDI / FDI Editor — OpenLcbCLib</title>
+    <link rel="stylesheet" href="node_wizard.css">
+</head>
+<body>
+
+    <header>
+        <h1>CDI / FDI Editor</h1>
+        <p class="subtitle">Create Configuration and Function Description XML for any OpenLCB node</p>
+    </header>
+
+    <div class="layout">
+
+        <!-- ===== LEFT: Navigation sidebar ===== -->
+        <nav class="sidebar" id="sidebar">
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">Descriptors</span>
+
+                <div class="sidebar-tile" id="tile-cdi" onclick="selectView('cdi')">
+                    <span class="tile-icon">📄</span>
+                    <div class="tile-content">
+                        <span class="tile-name">CDI</span>
+                        <span class="tile-desc" id="tile-cdi-desc">Configuration Description</span>
+                    </div>
+                    <span class="tile-badge" id="badge-cdi"></span>
+                </div>
+
+                <div class="sidebar-tile" id="tile-fdi" onclick="selectView('fdi')">
+                    <span class="tile-icon">📋</span>
+                    <div class="tile-content">
+                        <span class="tile-name">FDI</span>
+                        <span class="tile-desc" id="tile-fdi-desc">Function Description</span>
+                    </div>
+                    <span class="tile-badge" id="badge-fdi"></span>
+                </div>
+            </div>
+
+            <div class="sidebar-footer"></div>
+
+        </nav>
+
+        <!-- ===== RIGHT: Workspace (iframe) ===== -->
+        <main class="workspace" id="workspace">
+
+            <div class="workspace-empty" id="workspace-empty" style="display:none"></div>
+
+            <iframe id="workspace-iframe" style="width:100%;height:100%;border:none;flex:1"></iframe>
+
+        </main>
+
+    </div>
+
+    <script>
+
+/* =========================================================================
+ * cdi_fdi_wizard.html — standalone CDI / FDI editor shell
+ *
+ * Provides the same CDI and FDI editor views as the full Node Wizard but
+ * without any node-type selection, code generation, or ZIP export. Intended
+ * for users who only need to create CDI / FDI XML for use with their own
+ * custom library project.
+ * ========================================================================= */
+
+'use strict';
+
+var STORAGE_KEY = 'cdi_fdi_wizard_state';
+
+/* ---------- State --------------------------------------------------------- */
+
+var currentView   = null;   /* 'cdi' | 'fdi' */
+var cdiUserXml    = null;
+var fdiUserXml    = null;
+var cdiFilename   = null;
+var fdiFilename   = null;
+var cdiValidation = null;   /* { errors: N, warnings: N } */
+var fdiValidation = null;
+
+/* ---------- DOM refs ------------------------------------------------------ */
+
+var elIframe   = document.getElementById('workspace-iframe');
+var elTileCdi  = document.getElementById('tile-cdi');
+var elTileFdi  = document.getElementById('tile-fdi');
+var elBadgeCdi = document.getElementById('badge-cdi');
+var elBadgeFdi = document.getElementById('badge-fdi');
+
+var VIEW_URLS = {
+    'cdi': 'cdi_editor/cdi_view.html',
+    'fdi': 'fdi_editor/fdi_editor.html'
+};
+
+var _loadedView  = null;
+var _iframeReady = false;
+var _pendingMsgs = [];
+
+/* ---------- Persistence --------------------------------------------------- */
+
+var _saveTimer = null;
+
+function _saveState() {
+
+    clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(function () {
+
+        var state = {
+            currentView:  currentView,
+            cdiUserXml:   cdiUserXml,
+            fdiUserXml:   fdiUserXml,
+            cdiFilename:  cdiFilename,
+            fdiFilename:  fdiFilename
+        };
+
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* quota */ }
+
+    }, 300);
+
+}
+
+function _restoreState() {
+
+    try {
+
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) { return; }
+
+        var state = JSON.parse(raw);
+
+        if (state.currentView)  { currentView  = state.currentView;  }
+        if (state.cdiUserXml)   { cdiUserXml   = state.cdiUserXml;   }
+        if (state.fdiUserXml)   { fdiUserXml   = state.fdiUserXml;   }
+        if (state.cdiFilename)  { cdiFilename  = state.cdiFilename;  }
+        if (state.fdiFilename)  { fdiFilename  = state.fdiFilename;  }
+
+    } catch (e) { /* corrupt data */ }
+
+}
+
+/* ---------- Tile highlight + filename display ----------------------------- */
+
+function _updateTiles() {
+
+    elTileCdi.classList.toggle('selected', currentView === 'cdi');
+    elTileFdi.classList.toggle('selected', currentView === 'fdi');
+
+    _updateTileDesc(document.getElementById('tile-cdi-desc'), cdiFilename, 'Configuration Description');
+    _updateTileDesc(document.getElementById('tile-fdi-desc'), fdiFilename, 'Function Description');
+
+}
+
+function _updateTileDesc(descEl, filename, defaultText) {
+
+    if (!descEl) { return; }
+
+    if (filename) {
+        descEl.textContent = filename;
+        descEl.title       = filename;
+        descEl.classList.add('has-file');
+    } else {
+        descEl.textContent = defaultText;
+        descEl.title       = '';
+        descEl.classList.remove('has-file');
+    }
+
+}
+
+/* ---------- Warning badges ------------------------------------------------ */
+
+function _updateBadges() {
+
+    /* CDI badge — amber if XML has warnings, red if errors */
+    if (cdiValidation && cdiValidation.errors > 0) {
+        elBadgeCdi.classList.add('visible', 'badge-error');
+        elBadgeCdi.classList.remove('badge-error'); /* reset then re-add for correct state */
+        elBadgeCdi.className = 'tile-badge visible badge-error';
+        elBadgeCdi.title = cdiValidation.errors + ' validation error' + (cdiValidation.errors > 1 ? 's' : '');
+    } else if (cdiValidation && cdiValidation.warnings > 0) {
+        elBadgeCdi.className = 'tile-badge visible';
+        elBadgeCdi.title = cdiValidation.warnings + ' validation warning' + (cdiValidation.warnings > 1 ? 's' : '');
+    } else {
+        elBadgeCdi.className = 'tile-badge';
+        elBadgeCdi.title = '';
+    }
+
+    /* FDI badge */
+    if (fdiValidation && fdiValidation.errors > 0) {
+        elBadgeFdi.className = 'tile-badge visible badge-error';
+        elBadgeFdi.title = fdiValidation.errors + ' validation error' + (fdiValidation.errors > 1 ? 's' : '');
+    } else if (fdiValidation && fdiValidation.warnings > 0) {
+        elBadgeFdi.className = 'tile-badge visible';
+        elBadgeFdi.title = fdiValidation.warnings + ' validation warning' + (fdiValidation.warnings > 1 ? 's' : '');
+    } else {
+        elBadgeFdi.className = 'tile-badge';
+        elBadgeFdi.title = '';
+    }
+
+}
+
+/* ---------- View loading -------------------------------------------------- */
+
+function selectView(view) {
+
+    currentView = view;
+    _updateTiles();
+
+    /* If same page is already loaded, just re-send init messages */
+    if (_loadedView && VIEW_URLS[_loadedView] === VIEW_URLS[view] && _iframeReady) {
+        _loadedView = view;
+        _sendInitMessages(view);
+        _saveState();
+        return;
+    }
+
+    _iframeReady = false;
+    _loadedView  = view;
+    _pendingMsgs = _buildInitMessages(view);
+
+    elIframe.src = VIEW_URLS[view];
+    _saveState();
+
+}
+
+function _buildInitMessages(view) {
+
+    var msgs = [];
+
+    if (view === 'cdi') {
+
+        /* Send a default config memory size so the map view has a baseline */
+        msgs.push({ type: 'setConfigMemSize', value: 0x200 });
+
+        if (cdiUserXml) {
+            msgs.push({ type: 'loadXml', xml: cdiUserXml, filename: cdiFilename });
+        }
+
+    } else if (view === 'fdi') {
+
+        if (fdiUserXml) {
+            msgs.push({ type: 'loadXml', xml: fdiUserXml, filename: fdiFilename });
+        }
+
+    }
+
+    return msgs;
+
+}
+
+function _sendInitMessages(view) {
+
+    if (!_iframeReady) { return; }
+
+    _buildInitMessages(view).forEach(function (msg) {
+        elIframe.contentWindow.postMessage(msg, '*');
+    });
+
+}
+
+/* ---------- postMessage listener ------------------------------------------ */
+
+window.addEventListener('message', function (e) {
+
+    if (!e.data || !e.data.type) { return; }
+
+    switch (e.data.type) {
+
+        case 'ready':
+
+            _iframeReady = true;
+
+            _pendingMsgs.forEach(function (msg) {
+                elIframe.contentWindow.postMessage(msg, '*');
+            });
+            _pendingMsgs = [];
+
+            break;
+
+        case 'xmlChanged':
+
+            if (_loadedView === 'cdi') {
+                cdiUserXml  = e.data.xml      || null;
+                cdiFilename = e.data.filename || null;
+                if (!cdiUserXml) { cdiValidation = null; }
+            } else if (_loadedView === 'fdi') {
+                fdiUserXml  = e.data.xml      || null;
+                fdiFilename = e.data.filename || null;
+                if (!fdiUserXml) { fdiValidation = null; }
+            }
+
+            _updateTiles();
+            _updateBadges();
+            _saveState();
+            break;
+
+        case 'validationStatus':
+
+            if (e.data.view === 'cdi') {
+                cdiValidation = { errors: e.data.errors || 0, warnings: e.data.warnings || 0 };
+            } else if (e.data.view === 'fdi') {
+                fdiValidation = { errors: e.data.errors || 0, warnings: e.data.warnings || 0 };
+            }
+            _updateBadges();
+            break;
+
+        case 'updateConfigMemSize':
+            /* Acknowledged but not forwarded — no config pane in this shell */
+            break;
+
+    }
+
+});
+
+/* ---------- Init ---------------------------------------------------------- */
+
+_restoreState();
+_updateTiles();
+_updateBadges();
+
+/* Load last active view, defaulting to CDI */
+var _startView = currentView || 'cdi';
+currentView = null;   /* force selectView to actually load */
+selectView(_startView);
+
+    </script>
+
+</body>
+</html>
