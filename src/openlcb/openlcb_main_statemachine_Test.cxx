@@ -1394,6 +1394,9 @@ TEST(OpenLcbMainStatemachine, handle_outgoing_message_send_succeeds)
 {
     _global_initialize();
 
+    // Single node — no sibling dispatch, valid clears immediately
+    mock_node_count = 1;
+
     // Get access to internal state
     openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
 
@@ -4315,66 +4318,8 @@ TEST(OpenLcbMainStatemachine, run_all_handlers_return_false)
 // Covers: line 161 FALSE branch, line 165 TRUE branch, line 194 TRUE branch
 // ============================================================================
 
-TEST(OpenLcbMainStatemachine, loopback_datagram_payload_size)
-{
-    _global_initialize();
-
-    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
-
-    // Set outgoing payload_count > BASIC (16) and <= DATAGRAM (72)
-    state->outgoing_msg_info.valid = true;
-    state->outgoing_msg_info.msg_ptr->payload_count = 17;
-    allow_successful_transmit = true;
-
-    bool result = OpenLcbMainStatemachine_handle_outgoing_openlcb_message();
-
-    EXPECT_TRUE(result);
-    EXPECT_FALSE(state->outgoing_msg_info.valid);
-}
-
-// ============================================================================
-// TEST: Sibling dispatch — loopback with SNIP-sized payload
-// Covers: line 165 FALSE branch, line 169 TRUE branch
-// ============================================================================
-
-TEST(OpenLcbMainStatemachine, loopback_snip_payload_size)
-{
-    _global_initialize();
-
-    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
-
-    // Set outgoing payload_count > DATAGRAM (72) and <= SNIP (256)
-    state->outgoing_msg_info.valid = true;
-    state->outgoing_msg_info.msg_ptr->payload_count = 73;
-    allow_successful_transmit = true;
-
-    bool result = OpenLcbMainStatemachine_handle_outgoing_openlcb_message();
-
-    EXPECT_TRUE(result);
-    EXPECT_FALSE(state->outgoing_msg_info.valid);
-}
-
-// ============================================================================
-// TEST: Sibling dispatch — loopback with STREAM-sized payload
-// Covers: line 169 FALSE branch (else → STREAM)
-// ============================================================================
-
-TEST(OpenLcbMainStatemachine, loopback_stream_payload_size)
-{
-    _global_initialize();
-
-    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
-
-    // Set outgoing payload_count > SNIP (256)
-    state->outgoing_msg_info.valid = true;
-    state->outgoing_msg_info.msg_ptr->payload_count = 257;
-    allow_successful_transmit = true;
-
-    bool result = OpenLcbMainStatemachine_handle_outgoing_openlcb_message();
-
-    EXPECT_TRUE(result);
-    EXPECT_FALSE(state->outgoing_msg_info.valid);
-}
+// Old loopback payload-size tests removed — _loopback_to_siblings() deleted.
+// Sibling dispatch uses zero-copy (points at outgoing slot), no buffer allocation.
 
 // ============================================================================
 // TEST: does_node_process_msg — loopback self-skip
@@ -4403,56 +4348,905 @@ TEST(OpenLcbMainStatemachine, does_node_process_msg_loopback_self_skip)
     EXPECT_FALSE(result);  // Should skip its own loopback message
 }
 
+// Old cascade prevention tests removed — loopback is now handled by
+// sequential sibling dispatch, not FIFO-based copy with boolean guard.
+
 // ============================================================================
-// TEST: Loopback cascade prevention — non-loopback incoming triggers loopback
-// Covers: line 901 branch 0 (msg_ptr present), branch 2/3 (!false = true)
+// Sibling Dispatch Integration Tests
+//
+// These tests use REAL node enumeration (OpenLcbNode_get_first/get_next) and
+// REAL internal handler functions to exercise the full sibling dispatch
+// mechanism end-to-end.  Mock protocol handlers produce controlled responses
+// to force specific dispatch paths.
 // ============================================================================
 
-TEST(OpenLcbMainStatemachine, loopback_cascade_non_loopback_incoming)
-{
-    _global_initialize();
+// ---- Tracking infrastructure ----
 
-    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+#define SIBLING_TEST_LOG_DEPTH 1024
 
-    // Set up incoming msg that is NOT a loopback
-    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
-    incoming->state.loopback = false;
-    state->incoming_msg_info.msg_ptr = incoming;
+static struct {
 
-    // Set up outgoing message to send
-    state->outgoing_msg_info.valid = true;
-    allow_successful_transmit = true;
+    node_id_t node_id;
+    uint16_t mti;
 
-    bool result = OpenLcbMainStatemachine_handle_outgoing_openlcb_message();
+} _st_dispatch_log[SIBLING_TEST_LOG_DEPTH];
 
-    // Should succeed and loopback IS triggered (non-loopback incoming)
-    EXPECT_TRUE(result);
-    EXPECT_FALSE(state->outgoing_msg_info.valid);
+static int _st_dispatch_count;
+
+static struct {
+
+    uint16_t mti;
+    node_id_t source_id;
+    node_id_t dest_id;
+
+} _st_wire_log[SIBLING_TEST_LOG_DEPTH];
+
+static int _st_wire_count;
+
+// ---- Enumerate response control ----
+
+static int _st_enumerate_remaining;
+static uint16_t _st_enumerate_response_mti;
+static int _st_enumerate_per_node;
+static node_id_t _st_last_enumerate_node;
+
+// ---- Conditional response control ----
+
+static node_id_t _st_respond_if_node;
+static uint16_t _st_response_mti;
+static bool _st_has_responded;
+
+// ---- Transport busy control ----
+
+static bool _st_wire_busy;
+
+// ---- Reset all sibling test state ----
+
+static void _st_reset(void) {
+
+    _st_dispatch_count = 0;
+    _st_wire_count = 0;
+    _st_enumerate_remaining = 0;
+    _st_enumerate_response_mti = MTI_PRODUCER_IDENTIFIED_SET;
+    _st_enumerate_per_node = 0;
+    _st_last_enumerate_node = 0;
+    _st_respond_if_node = 0;
+    _st_response_mti = 0;
+    _st_has_responded = false;
+    _st_wire_busy = false;
+
+}
+
+// ---- Wire-capturing send function ----
+
+static bool _st_wire_send(openlcb_msg_t *msg) {
+
+    if (_st_wire_busy) {
+
+        return false;
+
+    }
+
+    if (_st_wire_count < SIBLING_TEST_LOG_DEPTH) {
+
+        _st_wire_log[_st_wire_count].mti = msg->mti;
+        _st_wire_log[_st_wire_count].source_id = msg->source_id;
+        _st_wire_log[_st_wire_count].dest_id = msg->dest_id;
+        _st_wire_count++;
+
+    }
+
+    return true;
+
+}
+
+// ---- Logging handler: tracks which node saw which MTI ----
+
+static void _st_log_handler(openlcb_statemachine_info_t *si) {
+
+    if (_st_dispatch_count < SIBLING_TEST_LOG_DEPTH) {
+
+        _st_dispatch_log[_st_dispatch_count].node_id = si->openlcb_node->id;
+        _st_dispatch_log[_st_dispatch_count].mti =
+                si->incoming_msg_info.msg_ptr->mti;
+        _st_dispatch_count++;
+
+    }
+
+}
+
+// ---- Handler that produces a Verified Node ID response ----
+
+static void _st_verified_reply_handler(openlcb_statemachine_info_t *si) {
+
+    _st_log_handler(si);
+
+    OpenLcbUtilities_load_openlcb_message(
+            si->outgoing_msg_info.msg_ptr,
+            si->openlcb_node->alias,
+            si->openlcb_node->id,
+            0, 0,
+            MTI_VERIFIED_NODE_ID);
+    si->outgoing_msg_info.valid = true;
+
+}
+
+// ---- Enumerate handler: produces N outgoing messages per node ----
+
+static void _st_enumerate_handler(openlcb_statemachine_info_t *si) {
+
+    // Reset counter when dispatched to a new node
+    if (si->openlcb_node->id != _st_last_enumerate_node) {
+
+        _st_enumerate_remaining = _st_enumerate_per_node;
+        _st_last_enumerate_node = si->openlcb_node->id;
+
+    }
+
+    _st_log_handler(si);
+
+    if (_st_enumerate_remaining > 0) {
+
+        OpenLcbUtilities_load_openlcb_message(
+                si->outgoing_msg_info.msg_ptr,
+                si->openlcb_node->alias,
+                si->openlcb_node->id,
+                0, 0,
+                _st_enumerate_response_mti);
+        si->outgoing_msg_info.valid = true;
+        _st_enumerate_remaining--;
+
+        if (_st_enumerate_remaining > 0) {
+
+            si->incoming_msg_info.enumerate = true;
+
+        } else {
+
+            si->incoming_msg_info.enumerate = false;
+
+        }
+
+    }
+
+}
+
+// ---- Conditional response handler: responds only for a specific node ----
+
+static void _st_conditional_respond_handler(openlcb_statemachine_info_t *si) {
+
+    _st_log_handler(si);
+
+    if (si->openlcb_node->id == _st_respond_if_node && !_st_has_responded) {
+
+        OpenLcbUtilities_load_openlcb_message(
+                si->outgoing_msg_info.msg_ptr,
+                si->openlcb_node->alias,
+                si->openlcb_node->id,
+                0, 0,
+                _st_response_mti);
+        si->outgoing_msg_info.valid = true;
+        _st_has_responded = true;
+
+    }
+
+}
+
+// ---- Integration test interface: real node functions, real handlers ----
+
+static const interface_openlcb_main_statemachine_t _st_interface = {
+
+    .lock_shared_resources = &_ExampleDrivers_lock_shared_resources,
+    .unlock_shared_resources = &_ExampleDrivers_unlock_shared_resources,
+    .send_openlcb_msg = &_st_wire_send,
+    .get_current_tick = &_mock_get_current_tick,
+
+    // Real node enumeration
+    .openlcb_node_get_first = &OpenLcbNode_get_first,
+    .openlcb_node_get_next = &OpenLcbNode_get_next,
+    .openlcb_node_is_last = &OpenLcbNode_is_last,
+    .openlcb_node_get_count = &OpenLcbNode_get_count,
+
+    .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
+
+    // Controllable protocol handlers
+    .message_network_initialization_complete = &_st_log_handler,
+    .message_network_initialization_complete_simple = &_st_log_handler,
+    .message_network_verify_node_id_addressed = &_st_log_handler,
+    .message_network_verify_node_id_global = &_st_verified_reply_handler,
+    .message_network_verified_node_id = &_st_conditional_respond_handler,
+    .message_network_optional_interaction_rejected = &_st_log_handler,
+    .message_network_terminate_due_to_error = &_st_log_handler,
+    .message_network_protocol_support_inquiry = &_st_log_handler,
+    .message_network_protocol_support_reply = &_st_log_handler,
+
+    .snip_simple_node_info_request = &_st_log_handler,
+    .snip_simple_node_info_reply = &_st_log_handler,
+
+    .event_transport_consumer_identify = &_st_log_handler,
+    .event_transport_consumer_range_identified = &_st_log_handler,
+    .event_transport_consumer_identified_unknown = &_st_log_handler,
+    .event_transport_consumer_identified_set = &_st_log_handler,
+    .event_transport_consumer_identified_clear = &_st_log_handler,
+    .event_transport_consumer_identified_reserved = &_st_log_handler,
+    .event_transport_producer_identify = &_st_log_handler,
+    .event_transport_producer_range_identified = &_st_log_handler,
+    .event_transport_producer_identified_unknown = &_st_log_handler,
+    .event_transport_producer_identified_set = &_st_log_handler,
+    .event_transport_producer_identified_clear = &_st_log_handler,
+    .event_transport_producer_identified_reserved = &_st_log_handler,
+    .event_transport_identify_dest = &_st_log_handler,
+    .event_transport_identify = &_st_enumerate_handler,
+    .event_transport_learn = &_st_log_handler,
+    .event_transport_pc_report = &_st_log_handler,
+    .event_transport_pc_report_with_payload = &_st_log_handler,
+
+    .train_control_command = &_st_log_handler,
+    .train_control_reply = &_st_log_handler,
+    .simple_train_node_ident_info_request = &_st_log_handler,
+    .simple_train_node_ident_info_reply = &_st_log_handler,
+
+    .datagram = &_st_log_handler,
+    .datagram_ok_reply = &_st_log_handler,
+    .datagram_rejected_reply = &_st_log_handler,
+
+    .stream_initiate_request = &_st_log_handler,
+    .stream_initiate_reply = &_st_log_handler,
+    .stream_send_data = &_st_log_handler,
+    .stream_data_proceed = &_st_log_handler,
+    .stream_data_complete = &_st_log_handler,
+
+    // Real internal handlers
+    .process_main_statemachine = &OpenLcbMainStatemachine_process_main_statemachine,
+    .does_node_process_msg = &OpenLcbMainStatemachine_does_node_process_msg,
+    .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
+    .handle_try_reenumerate = &OpenLcbMainStatemachine_handle_try_reenumerate,
+    .handle_try_pop_next_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
+    .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
+
+};
+
+    /** @brief Initialize for sibling dispatch integration tests. */
+static void _st_init(void) {
+
+    _st_reset();
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferFifo_initialize();
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbMainStatemachine_initialize(&_st_interface);
+
+}
+
+    /** @brief Count dispatch log entries for a given node_id. */
+static int _st_count_dispatches_for_node(node_id_t node_id) {
+
+    int count = 0;
+
+    for (int i = 0; i < _st_dispatch_count; i++) {
+
+        if (_st_dispatch_log[i].node_id == node_id) {
+
+            count++;
+
+        }
+
+    }
+
+    return count;
+
+}
+
+    /** @brief Count dispatch log entries for a given node_id and mti. */
+static int _st_count_dispatches_for_node_mti(node_id_t node_id, uint16_t mti) {
+
+    int count = 0;
+
+    for (int i = 0; i < _st_dispatch_count; i++) {
+
+        if (_st_dispatch_log[i].node_id == node_id &&
+                _st_dispatch_log[i].mti == mti) {
+
+            count++;
+
+        }
+
+    }
+
+    return count;
+
+}
+
+    /** @brief Count wire log entries for a given mti. */
+static int _st_count_wire_mti(uint16_t mti) {
+
+    int count = 0;
+
+    for (int i = 0; i < _st_wire_count; i++) {
+
+        if (_st_wire_log[i].mti == mti) {
+
+            count++;
+
+        }
+
+    }
+
+    return count;
+
 }
 
 // ============================================================================
-// TEST: Loopback cascade prevention — loopback incoming suppresses re-loopback
-// Covers: line 901 compound FALSE (msg_ptr present AND loopback=true → skip)
+// TEST: Single node — no sibling dispatch, valid clears immediately
 // ============================================================================
 
-TEST(OpenLcbMainStatemachine, loopback_cascade_prevention_loopback_incoming)
+TEST(OpenLcbMainStatemachine, sibling_single_node_no_dispatch)
 {
-    _global_initialize();
+    _st_init();
 
-    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
 
-    // Set up incoming msg that IS a loopback
+    // Push incoming Verify Node ID Global (triggers Verified Node ID response)
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
-    incoming->state.loopback = true;
-    state->incoming_msg_info.msg_ptr = incoming;
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    OpenLcbBufferFifo_push(incoming);
 
-    // Set up outgoing message to send
-    state->outgoing_msg_info.valid = true;
-    allow_successful_transmit = true;
+    // Run until idle
+    for (int i = 0; i < 20; i++) {
 
-    bool result = OpenLcbMainStatemachine_handle_outgoing_openlcb_message();
+        OpenLcbMainStatemachine_run();
 
-    // Should succeed but loopback is SUPPRESSED (cascade prevention)
-    EXPECT_TRUE(result);
-    EXPECT_FALSE(state->outgoing_msg_info.valid);
+    }
+
+    // Node A should have been dispatched the message
+    EXPECT_EQ(_st_count_dispatches_for_node(0x010203040501), 1);
+
+    // Verified Node ID should have gone to wire
+    EXPECT_EQ(_st_count_wire_mti(MTI_VERIFIED_NODE_ID), 1);
+
+    // No sibling dispatch overhead
+    EXPECT_EQ(OpenLcbMainStatemachine_get_sibling_response_queue_high_water(), 0);
+}
+
+// ============================================================================
+// TEST: 3 nodes — outgoing message dispatched to all siblings
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_3_nodes_global_visibility)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    // Push incoming Verify Node ID Global from external node
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 100; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // All 3 nodes process the incoming Verify Node ID Global
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_VERIFY_NODE_ID_GLOBAL), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_VERIFY_NODE_ID_GLOBAL), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_VERIFY_NODE_ID_GLOBAL), 1);
+
+    // Each node produces a Verified Node ID → 3 on wire
+    EXPECT_EQ(_st_count_wire_mti(MTI_VERIFIED_NODE_ID), 3);
+
+    // Each Verified Node ID goes to 2 siblings via sibling dispatch
+    // Node A's Verified → B and C see it (MTI_VERIFIED_NODE_ID)
+    // Node B's Verified → A and C see it
+    // Node C's Verified → A and B see it
+    // Total: each node sees 2 sibling Verified messages + 1 original dispatch = 3 Verified dispatches
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_VERIFIED_NODE_ID), 2);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_VERIFIED_NODE_ID), 2);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_VERIFIED_NODE_ID), 2);
+
+    // Zero extra buffer allocations (all static slots)
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: Self-skip — originating node does NOT process its own loopback
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_self_skip_during_dispatch)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    // Push incoming that triggers Node A to respond
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Node A produces Verified Node ID with source_id = A
+    // During sibling dispatch, A must NOT process its own Verified (self-skip)
+    // Only B should see A's Verified as a sibling dispatch
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_VERIFIED_NODE_ID), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_VERIFIED_NODE_ID), 1);
+}
+
+// ============================================================================
+// TEST: Sibling response chain — depth 2
+// Node A sends Verified Node ID.  During sibling dispatch, Node B responds
+// with its own message.  B's response goes to wire AND reaches Node A via
+// the sibling response queue.
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_response_chain_depth_2)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    // Configure: when Node B sees Verified Node ID, it responds with Init Complete
+    _st_respond_if_node = 0x010203040502;
+    _st_response_mti = MTI_INITIALIZATION_COMPLETE;
+
+    // Push incoming Verify Global → Node A responds with Verified
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 200; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Node A's Verified went to wire
+    // Node B's Init Complete response went to wire (depth 2)
+    EXPECT_GE(_st_count_wire_mti(MTI_VERIFIED_NODE_ID), 3);
+    EXPECT_GE(_st_count_wire_mti(MTI_INITIALIZATION_COMPLETE), 1);
+
+    // Node B's Init Complete should reach siblings via response queue
+    // Node A and C should see it
+    EXPECT_GE(_st_count_dispatches_for_node_mti(0x010203040501, MTI_INITIALIZATION_COMPLETE), 1);
+    EXPECT_GE(_st_count_dispatches_for_node_mti(0x010203040503, MTI_INITIALIZATION_COMPLETE), 1);
+
+    // High-water mark should be at least 1
+    EXPECT_GE(OpenLcbMainStatemachine_get_sibling_response_queue_high_water(), 1);
+
+    // All buffers freed
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: Enumerate + sibling dispatch interleaving — 4 nodes × 10 events
+// Each node produces 10 P.Id Set responses via enumerate.  Every response
+// is dispatched to all 3 siblings before the next is produced.
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_enumerate_interleaving_4_nodes_10_events)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeD = OpenLcbNode_allocate(0x010203040504, &_node_parameters_main_node);
+    nodeD->state.initialized = true;
+    nodeD->alias = 0xDDD;
+    nodeD->state.run_state = RUNSTATE_RUN;
+
+    _st_enumerate_per_node = 10;
+    _st_enumerate_response_mti = MTI_PRODUCER_IDENTIFIED_SET;
+
+    OpenLcbBufferStore_clear_max_allocated();
+
+    // Push Identify Events Global
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_EVENTS_IDENTIFY;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    OpenLcbBufferFifo_push(incoming);
+
+    // Run enough iterations: 4 nodes × 10 events × (1 send + 3 siblings) + overhead
+    for (int i = 0; i < 2000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // 4 nodes × 10 events = 40 P.Id Set on wire
+    EXPECT_EQ(_st_count_wire_mti(MTI_PRODUCER_IDENTIFIED_SET), 40);
+
+    // Each P.Id Set dispatched to 3 siblings = 40 × 3 = 120 sibling dispatches
+    // (The 40 direct enumerate calls log as MTI_EVENTS_IDENTIFY, not P.Id Set)
+    int total_pid = _st_count_dispatches_for_node_mti(0x010203040501, MTI_PRODUCER_IDENTIFIED_SET)
+                  + _st_count_dispatches_for_node_mti(0x010203040502, MTI_PRODUCER_IDENTIFIED_SET)
+                  + _st_count_dispatches_for_node_mti(0x010203040503, MTI_PRODUCER_IDENTIFIED_SET)
+                  + _st_count_dispatches_for_node_mti(0x010203040504, MTI_PRODUCER_IDENTIFIED_SET);
+
+    // Each node sees 30 sibling P.Id messages (10 from each of 3 other nodes)
+    EXPECT_EQ(total_pid, 120);
+
+    // Maximum 1 buffer allocated at a time (the incoming message)
+    // After processing, all buffers freed
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+
+    // Peak allocation: only the 1 incoming message from FIFO
+    EXPECT_LE(OpenLcbBufferStore_basic_messages_max_allocated(), 1);
+}
+
+// ============================================================================
+// TEST: Stress — 4 nodes × 100 events via enumerate
+// Verifies bounded buffer usage and correct dispatch count at scale.
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_stress_4_nodes_100_events)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeD = OpenLcbNode_allocate(0x010203040504, &_node_parameters_main_node);
+    nodeD->state.initialized = true;
+    nodeD->alias = 0xDDD;
+    nodeD->state.run_state = RUNSTATE_RUN;
+
+    _st_enumerate_per_node = 100;
+    _st_enumerate_response_mti = MTI_PRODUCER_IDENTIFIED_SET;
+
+    OpenLcbBufferStore_clear_max_allocated();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_EVENTS_IDENTIFY;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    OpenLcbBufferFifo_push(incoming);
+
+    // 4 nodes × 100 events × ~5 iterations each + overhead
+    for (int i = 0; i < 10000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // 4 × 100 = 400 messages on wire
+    EXPECT_EQ(_st_count_wire_mti(MTI_PRODUCER_IDENTIFIED_SET), 400);
+
+    // All buffers freed — ZERO leak
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+
+    // Peak allocation: only the 1 incoming message (no loopback copies!)
+    EXPECT_LE(OpenLcbBufferStore_basic_messages_max_allocated(), 1);
+}
+
+// ============================================================================
+// TEST: Path B wrapper — application send gets sibling dispatch
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_path_b_wrapper)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    // Simulate an application-layer send (Path B)
+    openlcb_msg_t app_msg;
+    payload_basic_t app_payload;
+    app_msg.payload = (openlcb_payload_t *) &app_payload;
+    app_msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(
+            &app_msg,
+            nodeA->alias,
+            nodeA->id,
+            0, 0,
+            MTI_PC_EVENT_REPORT);
+    app_msg.payload_count = 8;
+
+    bool sent = OpenLcbMainStatemachine_send_with_sibling_dispatch(&app_msg);
+    EXPECT_TRUE(sent);
+
+    // Message went to wire immediately
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), 1);
+
+    // Run loop picks up the pending slot and dispatches to siblings
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Siblings B and C should have seen the PCER
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_PC_EVENT_REPORT), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_PC_EVENT_REPORT), 1);
+
+    // Node A should NOT see its own message (self-skip)
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_PC_EVENT_REPORT), 0);
+}
+
+// ============================================================================
+// TEST: Transport busy during sibling outgoing — retries correctly
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_transport_busy_retry)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    // Configure Node B to respond during sibling dispatch
+    _st_respond_if_node = 0x010203040502;
+    _st_response_mti = MTI_INITIALIZATION_COMPLETE;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    OpenLcbBufferFifo_push(incoming);
+
+    // Run a few iterations to pop and start enumeration
+    for (int i = 0; i < 5; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Now make wire busy — sibling outgoing should stall
+    _st_wire_busy = true;
+
+    for (int i = 0; i < 10; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    int wire_count_while_busy = _st_wire_count;
+
+    // Unblock wire
+    _st_wire_busy = false;
+
+    for (int i = 0; i < 100; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // After unblocking, more messages should have been sent
+    EXPECT_GT(_st_wire_count, wire_count_while_busy);
+
+    // All buffers freed
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: 4 nodes — addressed message only reaches destination during dispatch
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_addressed_message_filtering)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeD = OpenLcbNode_allocate(0x010203040504, &_node_parameters_main_node);
+    nodeD->state.initialized = true;
+    nodeD->alias = 0xDDD;
+    nodeD->state.run_state = RUNSTATE_RUN;
+
+    // Push addressed SNIP request: external → Node B only
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_SIMPLE_NODE_INFO_REQUEST;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    incoming->dest_alias = 0xBBB;
+    incoming->dest_id = 0x010203040502;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Only Node B should process the SNIP request
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_SIMPLE_NODE_INFO_REQUEST), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_SIMPLE_NODE_INFO_REQUEST), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_SIMPLE_NODE_INFO_REQUEST), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040504, MTI_SIMPLE_NODE_INFO_REQUEST), 0);
+}
+
+// ============================================================================
+// TEST: High-water mark tracking
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_response_queue_high_water_tracking)
+{
+    _st_init();
+
+    // Verify initial state
+    EXPECT_EQ(OpenLcbMainStatemachine_get_sibling_response_queue_high_water(), 0);
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    // Node B responds during sibling dispatch → pushes to response queue
+    _st_respond_if_node = 0x010203040502;
+    _st_response_mti = MTI_INITIALIZATION_COMPLETE;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 100; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // High-water should reflect the response queue usage
+    EXPECT_GE(OpenLcbMainStatemachine_get_sibling_response_queue_high_water(), 1);
+
+    // All buffers freed
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: Path B with single node — wrapper sends to wire, no pending
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_path_b_single_node_no_pending)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_msg_t app_msg;
+    payload_basic_t app_payload;
+    app_msg.payload = (openlcb_payload_t *) &app_payload;
+    app_msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(
+            &app_msg,
+            nodeA->alias,
+            nodeA->id,
+            0, 0,
+            MTI_PC_EVENT_REPORT);
+    app_msg.payload_count = 8;
+
+    bool sent = OpenLcbMainStatemachine_send_with_sibling_dispatch(&app_msg);
+    EXPECT_TRUE(sent);
+
+    // Message on wire
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), 1);
+
+    // Run loop — nothing pending for sibling dispatch (single node)
+    for (int i = 0; i < 20; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // No sibling dispatches
+    EXPECT_EQ(_st_dispatch_count, 0);
 }

@@ -32,7 +32,7 @@
  * Module_initialize() functions in the correct order.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 17 Mar 2026
  */
 
 #include "openlcb_config.h"
@@ -266,7 +266,7 @@ static void _build_app_train(void) {
 
     memset(&_app_train, 0, sizeof(_app_train));
 
-    _app_train.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
+    _app_train.send_openlcb_msg = &OpenLcbMainStatemachine_send_with_sibling_dispatch;
     _app_train.on_heartbeat_timeout = _config->on_train_heartbeat_timeout;
 
 }
@@ -314,8 +314,8 @@ static void _build_login_statemachine(void) {
 
     memset(&_login_sm, 0, sizeof(_login_sm));
 
-    // Hardware binding -- send via CAN
-    _login_sm.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
+    // Phase 1 temporary bridge — login messages get sibling dispatch via Path B wrapper
+    _login_sm.send_openlcb_msg = &OpenLcbMainStatemachine_send_with_sibling_dispatch;
 
     // Library-internal wiring
     _login_sm.openlcb_node_get_first          = &OpenLcbNode_get_first;
@@ -610,7 +610,7 @@ static void _build_application(void) {
 
     memset(&_app, 0, sizeof(_app));
 
-    _app.send_openlcb_msg    = &CanTxStatemachine_send_openlcb_message;
+    _app.send_openlcb_msg    = &OpenLcbMainStatemachine_send_with_sibling_dispatch;
 
 #ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
     _app.config_memory_read  = _config->config_mem_read;
