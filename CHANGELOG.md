@@ -6,6 +6,20 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
 
 ---
 
+## [Unreleased]
+
+### Memory
+- `USER_DEFINED_STREAM_BUFFER_LEN` added to all `openlcb_user_config.h` files (default 256).
+  Controls the stream buffer pool payload size and the sibling dispatch queue slot size.
+- `LEN_MESSAGE_BYTES_STREAM` in `openlcb_types.h` now derives from `USER_DEFINED_STREAM_BUFFER_LEN`
+  rather than being hardcoded to 512, saving 1,280 bytes of static RAM at the default setting.
+- `LEN_MESSAGE_BYTES_SIBLING_DISPATCH` secondary define clamps the dispatch buffer to a minimum
+  of 256 bytes regardless of what `USER_DEFINED_STREAM_BUFFER_LEN` is set to.
+- `payload_dispatcher_t` and `openlcb_dispatcher_message_t` types added to `openlcb_types.h`.
+- Sibling response queue and Path B pending buffer now use `openlcb_dispatcher_message_t`.
+
+---
+
 ## [1.0.0] — 2026-03-17
 
 Initial production release.
