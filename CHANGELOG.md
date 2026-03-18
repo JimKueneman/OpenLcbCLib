@@ -44,6 +44,13 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   `USER_DEFINED_PRODUCER_RANGE_COUNT`, `USER_DEFINED_CONSUMER_COUNT`,
   `USER_DEFINED_CONSUMER_RANGE_COUNT`, `USER_DEFINED_MAX_LISTENERS_PER_TRAIN`,
   `USER_DEFINED_MAX_TRAIN_FUNCTIONS`.
+- **`can_user_config.h` required.** `can_types.h` now searches for `can_user_config.h`
+  using the same `__has_include` pattern as `openlcb_types.h`. CAN buffer depth is
+  user-configurable via `USER_DEFINED_CAN_MSG_BUFFER_DEPTH` (default 20). Template
+  added at `templates/canbus/can_user_config.h`.
+- **`node_parameters_t` struct reordered.** `configuration_options` moved after
+  `consumer/producer_count_autocreate`; `cdi[]` and `fdi[]` moved to the end of the
+  struct. All templates, demos, and compliance node initializers updated to match.
 
 ### Removed
 - Dead code: `openlcb_statemachine_worker_t` (from `openlcb_types.h`) and

@@ -371,6 +371,7 @@ function generateC(s) {
     L.push('');
 
     /* ---- auto-create counts ---- */
+    L.push('    // For internal testing only do not set to anything but 0');
     L.push('    .consumer_count_autocreate = 0,');
     L.push('    .producer_count_autocreate = 0,');
     L.push('');
@@ -474,7 +475,8 @@ function generateC(s) {
     if (s.cdiBytes && s.cdiBytes.length > 1) {
         L.push('    .cdi = ' + _byteArrayStr(s.cdiBytes, 4) + ',');
     } else {
-        L.push('    .cdi = { 0x00 },   /* load CDI XML to populate */');
+        L.push('    // If the CDI and/or FDI are not used they always contain one byte, it is recommended it be set to NULL');
+        L.push('    .cdi = { 0x00 },');
     }
 
     L.push('');
@@ -483,7 +485,10 @@ function generateC(s) {
     if (isTrain && s.fdiBytes && s.fdiBytes.length > 1) {
         L.push('    .fdi = ' + _byteArrayStr(s.fdiBytes, 4));
     } else {
-        L.push('    .fdi = { 0x00 }' + (isTrain ? '    /* load FDI XML to populate */' : ''));
+        if (s.cdiBytes && s.cdiBytes.length > 1) {
+            L.push('    // If the CDI and/or FDI are not used they always contain one byte, it is recommended it be set to NULL');
+        }
+        L.push('    .fdi = { 0x00 },');
     }
 
     L.push('');

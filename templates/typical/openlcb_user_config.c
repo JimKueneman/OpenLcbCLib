@@ -38,9 +38,7 @@
 
 const node_parameters_t OpenLcbUserConfig_node_parameters = {
 
-    .consumer_count_autocreate = 2,
-    .producer_count_autocreate = 2,
-
+    // 1. snip
     .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
     .snip.name = "Basic OpenLcb Node",
     .snip.model = "Test Application",
@@ -48,6 +46,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .snip.software_version = "0.0.1",
     .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
 
+    // 2. protocol_support
     .protocol_support = (PSI_DATAGRAM |
                          PSI_MEMORY_CONFIGURATION |
                          PSI_EVENT_EXCHANGE |
@@ -56,6 +55,12 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
                          PSI_CONFIGURATION_DESCRIPTION_INFO |
                          PSI_FIRMWARE_UPGRADE),
 
+    // 3-4. consumer_count_autocreate / producer_count_autocreate
+    // For internal testing only do not set to anything but 0
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
+
+    // 5. configuration_options
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .configuration_options.read_from_manufacturer_space_0xfc_supported = true,
@@ -67,7 +72,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .configuration_options.write_under_mask_supported = true,
     .configuration_options.description = "",
 
-    // Space 0xFF
+    // 6. Space 0xFF
     // WARNING: The ACDI write always maps to the first 128 bytes (64 Name + 64 Description) of the Config Memory System so
     //    make sure the CDI maps these 2 items to the first 128 bytes as well
     .address_space_configuration_definition.read_only = true,
@@ -78,7 +83,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "",
 
-    // Space 0xFE
+    // 7. Space 0xFE
     .address_space_all.read_only = true,
     .address_space_all.present = true,
     .address_space_all.low_address_valid = true,
@@ -87,7 +92,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
     .address_space_all.description = "",
 
-    // Space 0xFD
+    // 8. Space 0xFD
     .address_space_config_memory.read_only = false,
     .address_space_config_memory.present = true,
     .address_space_config_memory.low_address_valid = false,
@@ -96,7 +101,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "",
 
-    // Space 0xFC
+    // 9. Space 0xFC
     .address_space_acdi_manufacturer.read_only = true,
     .address_space_acdi_manufacturer.present = true,
     .address_space_acdi_manufacturer.low_address_valid = false,
@@ -105,7 +110,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_acdi_manufacturer.address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
     .address_space_acdi_manufacturer.description = "",
 
-    // Space 0xFB
+    // 10. Space 0xFB
     .address_space_acdi_user.read_only = false,
     .address_space_acdi_user.present = true,
     .address_space_acdi_user.low_address_valid = false,
@@ -114,7 +119,25 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_acdi_user.address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "",
 
-    // Space 0xEF
+    // 11. Space 0xFA - Train Function Definition Information (not used in typical node)
+    .address_space_train_function_definition_info.read_only = true,
+    .address_space_train_function_definition_info.present = false,
+    .address_space_train_function_definition_info.low_address_valid = false,
+    .address_space_train_function_definition_info.low_address = 0,
+    .address_space_train_function_definition_info.highest_address = 0,
+    .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
+    .address_space_train_function_definition_info.description = "",
+
+    // 12. Space 0xF9 - Train Function Configuration Memory (not used in typical node)
+    .address_space_train_function_config_memory.read_only = false,
+    .address_space_train_function_config_memory.present = false,
+    .address_space_train_function_config_memory.low_address_valid = false,
+    .address_space_train_function_config_memory.low_address = 0,
+    .address_space_train_function_config_memory.highest_address = 0,
+    .address_space_train_function_config_memory.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIG_MEMORY,
+    .address_space_train_function_config_memory.description = "",
+
+    // 13. Space 0xEF
     .address_space_firmware.read_only = false,
     .address_space_firmware.present = true,
     .address_space_firmware.low_address_valid = false,
@@ -123,6 +146,12 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "",
 
+    // 14. cdi
+    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
     .cdi = { 0x00 },
+
+    // 15. fdi
+    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
+    .fdi = { 0x00 },
 
 };

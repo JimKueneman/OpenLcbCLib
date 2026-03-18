@@ -222,6 +222,9 @@ function _buildFileMap(ws) {
     if (typeof generateC === 'function') {
         map['openlcb_user_config.c'] = _fixConfigIncludes(generateC(codegenState), isArduino);
     }
+    if (typeof generateCanH === 'function') {
+        map['can_user_config.h'] = generateCanH(codegenState);
+    }
 
     /* Driver files */
     var activeDrivers = _getActiveDriverGroups(codegenState);
@@ -363,8 +366,10 @@ function _renderTree(container, nodes) {
             var headerEl = document.createElement('div');
             headerEl.className = 'tree-folder';
 
+            var startCollapsed = (node.name === 'openlcb_c_lib');
+
             var iconEl = document.createElement('span');
-            iconEl.className = 'tree-folder-icon open';
+            iconEl.className = 'tree-folder-icon' + (startCollapsed ? '' : ' open');
             iconEl.textContent = '\u25B6';
 
             var nameEl = document.createElement('span');
@@ -375,7 +380,7 @@ function _renderTree(container, nodes) {
             headerEl.appendChild(nameEl);
 
             var childrenEl = document.createElement('div');
-            childrenEl.className = 'tree-children';
+            childrenEl.className = 'tree-children' + (startCollapsed ? ' collapsed' : '');
 
             if (node.emptyFolder) {
 

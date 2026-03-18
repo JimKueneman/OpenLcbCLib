@@ -157,9 +157,7 @@
 
 const node_parameters_t compliance_basic_params = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
+    // 1. snip
     .snip.mfg_version = 4,
     .snip.name = "Compliance Test Node",
     .snip.model = "Basic Mode",
@@ -167,6 +165,7 @@ const node_parameters_t compliance_basic_params = {
     .snip.software_version = "0.0.1",
     .snip.user_version = 2,
 
+    // 2. protocol_support
     .protocol_support = (
         PSI_DATAGRAM |
         PSI_MEMORY_CONFIGURATION |
@@ -177,10 +176,22 @@ const node_parameters_t compliance_basic_params = {
         PSI_FIRMWARE_UPGRADE
     ),
 
+    // 3-4. consumer_count_autocreate / producer_count_autocreate
+    // For internal testing only do not set to anything but 0
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
+
+    // 5. configuration_options
     COMMON_CONFIG_OPTIONS,
+    // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
+    // 14. cdi
+    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
     .cdi = { BASIC_CDI },
+
+    // 15. fdi
+    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
 };
 
 
@@ -190,9 +201,7 @@ const node_parameters_t compliance_basic_params = {
 
 const node_parameters_t compliance_broadcast_time_consumer_params = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
+    // 1. snip
     .snip.mfg_version = 4,
     .snip.name = "Compliance Test Node",
     .snip.model = "BroadcastTime Consumer",
@@ -200,6 +209,7 @@ const node_parameters_t compliance_broadcast_time_consumer_params = {
     .snip.software_version = "0.0.1",
     .snip.user_version = 2,
 
+    // 2. protocol_support
     .protocol_support = (
         PSI_DATAGRAM |
         PSI_MEMORY_CONFIGURATION |
@@ -210,10 +220,22 @@ const node_parameters_t compliance_broadcast_time_consumer_params = {
         PSI_FIRMWARE_UPGRADE
     ),
 
+    // 3-4. consumer_count_autocreate / producer_count_autocreate
+    // For internal testing only do not set to anything but 0
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
+
+    // 5. configuration_options
     COMMON_CONFIG_OPTIONS,
+    // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
+    // 14. cdi
+    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
     .cdi = { BASIC_CDI },
+
+    // 15. fdi
+    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
 };
 
 
@@ -223,9 +245,7 @@ const node_parameters_t compliance_broadcast_time_consumer_params = {
 
 const node_parameters_t compliance_broadcast_time_producer_params = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
+    // 1. snip
     .snip.mfg_version = 4,
     .snip.name = "Compliance Test Node",
     .snip.model = "BroadcastTime Producer",
@@ -233,6 +253,7 @@ const node_parameters_t compliance_broadcast_time_producer_params = {
     .snip.software_version = "0.0.1",
     .snip.user_version = 2,
 
+    // 2. protocol_support
     .protocol_support = (
         PSI_DATAGRAM |
         PSI_MEMORY_CONFIGURATION |
@@ -243,10 +264,22 @@ const node_parameters_t compliance_broadcast_time_producer_params = {
         PSI_FIRMWARE_UPGRADE
     ),
 
+    // 3-4. consumer_count_autocreate / producer_count_autocreate
+    // For internal testing only do not set to anything but 0
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
+
+    // 5. configuration_options
     COMMON_CONFIG_OPTIONS,
+    // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
+    // 14. cdi
+    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
     .cdi = { BASIC_CDI },
+
+    // 15. fdi
+    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
 };
 
 
@@ -256,9 +289,7 @@ const node_parameters_t compliance_broadcast_time_producer_params = {
 
 const node_parameters_t compliance_train_params = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
+    // 1. snip
     .snip.mfg_version = 4,
     .snip.name = "Compliance Test Node",
     .snip.model = "Train Mode",
@@ -266,6 +297,7 @@ const node_parameters_t compliance_train_params = {
     .snip.software_version = "0.0.1",
     .snip.user_version = 2,
 
+    // 2. protocol_support
     .protocol_support = (
         PSI_DATAGRAM |
         PSI_MEMORY_CONFIGURATION |
@@ -279,10 +311,17 @@ const node_parameters_t compliance_train_params = {
         PSI_FUNCTION_CONFIGURATION
     ),
 
+    // 3-4. consumer_count_autocreate / producer_count_autocreate
+    // For internal testing only do not set to anything but 0
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
+
+    // 5. configuration_options
     COMMON_CONFIG_OPTIONS,
+    // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
-    // Space 0xFA - Train Function Definition Information (FDI)
+    // 11. address_space_train_function_definition_info - Space 0xFA
     .address_space_train_function_definition_info.read_only = true,
     .address_space_train_function_definition_info.present = true,
     .address_space_train_function_definition_info.low_address_valid = false,
@@ -291,8 +330,12 @@ const node_parameters_t compliance_train_params = {
     .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
     .address_space_train_function_definition_info.description = "Train Function Definition Information",
 
+    // 14. cdi
+    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
     .cdi = { BASIC_CDI },
 
+    // 15. fdi
+    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
     .fdi = "<?xml version=\"1.0\"?>"
            "<?xml-stylesheet type='text/xsl' href='xslt/fdi.xsl'?>"
            "<fdi xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
@@ -314,9 +357,7 @@ const node_parameters_t compliance_train_params = {
 
 const node_parameters_t OpenLcbUserConfig_node_parameters = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
+    // 1. snip
     .snip.mfg_version = 4,
     .snip.name = "Compliance Test Node",
     .snip.model = "Default",
@@ -324,6 +365,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .snip.software_version = "0.0.1",
     .snip.user_version = 2,
 
+    // 2. protocol_support
     .protocol_support = (
         PSI_DATAGRAM |
         PSI_MEMORY_CONFIGURATION |
@@ -334,8 +376,20 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
         PSI_FIRMWARE_UPGRADE
     ),
 
+    // 3-4. consumer_count_autocreate / producer_count_autocreate
+    // For internal testing only do not set to anything but 0
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
+
+    // 5. configuration_options
     COMMON_CONFIG_OPTIONS,
+    // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
+    // 14. cdi
+    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
     .cdi = { BASIC_CDI },
+
+    // 15. fdi
+    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
 };

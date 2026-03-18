@@ -629,8 +629,7 @@
         uint64_t protocol_support;              /**< Protocol Support Indicator bits */
         uint8_t consumer_count_autocreate;
         uint8_t producer_count_autocreate;
-        uint8_t cdi[USER_DEFINED_CDI_LENGTH];
-        uint8_t fdi[USER_DEFINED_FDI_LENGTH];
+        user_configuration_options configuration_options;
         user_address_space_info_t address_space_configuration_definition; /**< Space 0xFF */
         user_address_space_info_t address_space_all;                     /**< Space 0xFE */
         user_address_space_info_t address_space_config_memory;           /**< Space 0xFD */
@@ -638,8 +637,9 @@
         user_address_space_info_t address_space_acdi_user;               /**< Space 0xFB */
         user_address_space_info_t address_space_train_function_definition_info; /**< Space 0xFA */
         user_address_space_info_t address_space_train_function_config_memory;   /**< Space 0xF9 */
-        user_configuration_options configuration_options;
         user_address_space_info_t address_space_firmware;                 /**< Space 0xEF */
+        uint8_t cdi[USER_DEFINED_CDI_LENGTH];   /**< CDI XML byte array; if unused set to { 0x00 } */
+        uint8_t fdi[USER_DEFINED_FDI_LENGTH];   /**< FDI XML byte array; if unused set to { 0x00 } */
 
     } node_parameters_t;
 
