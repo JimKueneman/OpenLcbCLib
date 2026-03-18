@@ -1,6 +1,6 @@
 # Working Plans — Implementation Index
 
-Updated: 2026-03-17
+Updated: 2026-03-18
 Source folder: `documentation/working_plans/`
 
 This index lists all working plans — both active and archived. Each archive file
@@ -81,6 +81,7 @@ Their content has been folded into active plans. Retained for historical referen
 | File | Title / Topic | Status |
 |------|---------------|--------|
 | [plan_virtual_node_verification_protocol.md](plan_virtual_node_verification_protocol.md) | Virtual Node Verification Protocol (DRAFT) | Draft protocol spec — not yet proposed to OpenLCB standards group |
+| [bootloader_config_plan.md](bootloader_config_plan.md) | Bootloader Build Configuration — Minimal Firmware Upgrade Image | Planning — open questions identified, no code changes yet |
 
 ---
 

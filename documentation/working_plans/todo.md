@@ -67,6 +67,32 @@ Outstanding items in `OlcbChecker/ChecksToAdd.md` not yet implemented:
 
 ---
 
+### 6. Bootloader openlcb_user_config.h — Minimum Array Count Guards
+
+**Issue:** The structs `event_id_consumer_list_t`, `event_id_producer_list_t`,
+`train_state_t`, and `node_parameters_t` in `openlcb_types.h` use user-defined
+counts as fixed array dimensions with no `#ifdef` guards. Setting any of the
+following to 0 produces a zero-length array in a struct, which is a GCC extension
+not valid in C99 and will warn or error on IAR, KEIL, XC8, XC16, and MSVC:
+
+`USER_DEFINED_PRODUCER_COUNT`, `USER_DEFINED_PRODUCER_RANGE_COUNT`,
+`USER_DEFINED_CONSUMER_COUNT`, `USER_DEFINED_CONSUMER_RANGE_COUNT`,
+`USER_DEFINED_MAX_LISTENERS_PER_TRAIN`, `USER_DEFINED_MAX_TRAIN_FUNCTIONS`,
+`USER_DEFINED_CDI_LENGTH`, `USER_DEFINED_FDI_LENGTH`,
+`USER_DEFINED_STREAM_BUFFER_DEPTH`
+
+Existing application files all use non-zero values so no current breakage. The
+issue surfaces when writing a bootloader `openlcb_user_config.h` that tries to
+minimize these counts.
+
+**Options:**
+- Add `#if ... < 1 #error` guards in `openlcb_types.h` for each affected define
+- Or simply document in the bootloader template that minimum value is 1, not 0
+
+**Note:** `openlcb_user_config.h` line 55 already has the comment
+`// Range counts must be at least 1 for valid array sizing.` but it only covers
+range counts and has no enforcement.
+
 ---
 
 ## Design Notes
