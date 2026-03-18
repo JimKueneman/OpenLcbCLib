@@ -33,9 +33,9 @@ add_compile_options(
 # around the one type dependency needed for this test build.
 add_compile_options(-D_SYS_COMMON_H -DSYS_TASKS_PRIORITY=int)
 
-# GTest and GMock includes
+# GTest and GMock includes + typical user config for non-bootloader tests
 include_directories(
-    ${CMAKE_SOURCE_DIR}/ ${gtest_SOURCE_DIR}/include ${gmock_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/user_config/typical ${CMAKE_SOURCE_DIR}/ ${gtest_SOURCE_DIR}/include ${gmock_SOURCE_DIR}/include
 )
 
 # Add libraries that have tests disabled.
@@ -53,6 +53,82 @@ set(LINK_LIBS ${LINK_LIBS}
     utilities_pc
     canbus
     openlcb
+)
+
+# =============================================================================
+# Bootloader test — separate library compiled with bootloader openlcb_user_config.h
+# =============================================================================
+
+set(BOOTLOADER_CONFIG_DIR ${CMAKE_SOURCE_DIR}/user_config/bootloader)
+
+set(BOOTLOADER_LIB_SOURCES
+    ${ROOT_DIR}/src/openlcb/openlcb_application.c
+    ${ROOT_DIR}/src/openlcb/openlcb_buffer_fifo.c
+    ${ROOT_DIR}/src/openlcb/openlcb_buffer_list.c
+    ${ROOT_DIR}/src/openlcb/openlcb_buffer_store.c
+    ${ROOT_DIR}/src/openlcb/openlcb_gridconnect.c
+    ${ROOT_DIR}/src/openlcb/openlcb_login_statemachine_handler.c
+    ${ROOT_DIR}/src/openlcb/openlcb_login_statemachine.c
+    ${ROOT_DIR}/src/openlcb/openlcb_main_statemachine.c
+    ${ROOT_DIR}/src/openlcb/openlcb_node.c
+    ${ROOT_DIR}/src/openlcb/openlcb_utilities.c
+    ${ROOT_DIR}/src/openlcb/openlcb_float16.c
+    ${ROOT_DIR}/src/openlcb/protocol_datagram_handler.c
+    ${ROOT_DIR}/src/openlcb/protocol_event_transport.c
+    ${ROOT_DIR}/src/openlcb/protocol_message_network.c
+    ${ROOT_DIR}/src/openlcb/protocol_snip.c
+    ${ROOT_DIR}/src/openlcb/protocol_config_mem_read_handler.c
+    ${ROOT_DIR}/src/openlcb/protocol_config_mem_write_handler.c
+    ${ROOT_DIR}/src/openlcb/protocol_config_mem_operations_handler.c
+    ${ROOT_DIR}/src/openlcb/protocol_broadcast_time_handler.c
+    ${ROOT_DIR}/src/openlcb/openlcb_application_broadcast_time.c
+    ${ROOT_DIR}/src/openlcb/protocol_train_handler.c
+    ${ROOT_DIR}/src/openlcb/openlcb_application_train.c
+    ${ROOT_DIR}/src/openlcb/protocol_train_search_handler.c
+    ${ROOT_DIR}/src/openlcb/openlcb_config.c
+    ${ROOT_DIR}/src/drivers/canbus/alias_mapping_listener.c
+    ${ROOT_DIR}/src/drivers/canbus/alias_mappings.c
+    ${ROOT_DIR}/src/drivers/canbus/can_buffer_fifo.c
+    ${ROOT_DIR}/src/drivers/canbus/can_buffer_store.c
+    ${ROOT_DIR}/src/drivers/canbus/can_login_message_handler.c
+    ${ROOT_DIR}/src/drivers/canbus/can_login_statemachine.c
+    ${ROOT_DIR}/src/drivers/canbus/can_main_statemachine.c
+    ${ROOT_DIR}/src/drivers/canbus/can_rx_message_handler.c
+    ${ROOT_DIR}/src/drivers/canbus/can_rx_statemachine.c
+    ${ROOT_DIR}/src/drivers/canbus/can_tx_message_handler.c
+    ${ROOT_DIR}/src/drivers/canbus/can_tx_statemachine.c
+    ${ROOT_DIR}/src/drivers/canbus/can_utilities.c
+    ${ROOT_DIR}/src/utilities/mustangpeak_endian_helper.c
+    ${ROOT_DIR}/src/utilities/mustangpeak_string_helper.c
+    ${ROOT_DIR}/src/utilities_pc/threadsafe_stringlist.c
+)
+
+add_library(openlcb_bootloader STATIC ${BOOTLOADER_LIB_SOURCES})
+target_include_directories(openlcb_bootloader
+    BEFORE PUBLIC
+        ${BOOTLOADER_CONFIG_DIR}
+        ${ROOT_DIR}/src
+)
+
+add_executable(openlcb_bootloader_Test
+    ${ROOT_DIR}/src/openlcb/openlcb_bootloader_Test.cxx
+)
+target_include_directories(openlcb_bootloader_Test
+    BEFORE PUBLIC
+        ${BOOTLOADER_CONFIG_DIR}
+        ${ROOT_DIR}/src
+)
+target_link_libraries(openlcb_bootloader_Test
+    GTest::gtest_main
+    GTest::gmock_main
+    -fPIC
+    --coverage
+    openlcb_bootloader
+)
+add_custom_command(TARGET openlcb_bootloader_Test
+    POST_BUILD
+    COMMAND ./openlcb_bootloader_Test
+    COMMAND rm -rf gcovr
 )
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
@@ -104,6 +180,9 @@ foreach(testsourcefile ${TESTS})
     )
     add_dependencies(TARGET_GCOV ${testname})
 endforeach(testsourcefile ${TESTS})
+
+# Add bootloader test to gcov dependency chain
+add_dependencies(TARGET_GCOV openlcb_bootloader_Test)
 
 # Generate the HTML coverage report
 add_custom_command(OUTPUT gcovr/coverage.html
