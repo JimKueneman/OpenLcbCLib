@@ -28,6 +28,10 @@
 #define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4
 #define USER_DEFINED_SNIP_BUFFER_DEPTH               4
 #define USER_DEFINED_STREAM_BUFFER_DEPTH             1
+// Tunes the maximum number of bytes in a single stream data frame.  Five static
+// buffers of this size are allocated for the message dispatcher sibling response
+// queue.  Must be >= 256 (the SNIP payload size).
+#define USER_DEFINED_STREAM_BUFFER_LEN               256
 
 // =============================================================================
 // Virtual Node Allocation
