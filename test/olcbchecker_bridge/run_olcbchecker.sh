@@ -27,7 +27,7 @@ BRIDGE_PORT=12021
 NODE_ID="05.07.01.01.00.33"
 
 # ComplianceTestNode paths
-COMPLIANCE_BUILD_DIR="$REPO_ROOT/build/compliance"
+COMPLIANCE_BUILD_DIR="/tmp/compliance_build"
 COMPLIANCE_XCODE_PROJECT="$REPO_ROOT/test/compliance_node/ComplianceTestNode.xcodeproj"
 
 # ============================================================================

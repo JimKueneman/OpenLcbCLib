@@ -31,7 +31,7 @@
  * sizes.  Reference counting supports shared buffers across multiple queues.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 18 Mar 2026
  */
 
 #include "openlcb_buffer_store.h"
@@ -313,6 +313,10 @@ void OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg) {
         case STREAM:
 
             _buffer_store_stream_messages_allocated = _buffer_store_stream_messages_allocated - 1;
+
+            break;
+
+        default:
 
             break;
 

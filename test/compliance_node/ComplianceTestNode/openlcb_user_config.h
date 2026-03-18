@@ -24,44 +24,42 @@
 // Core Message Buffer Pool
 // =============================================================================
 
-#define USER_DEFINED_BASIC_BUFFER_DEPTH              117
-#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4
-#define USER_DEFINED_SNIP_BUFFER_DEPTH               4
-#define USER_DEFINED_STREAM_BUFFER_DEPTH             1
-// Tunes the maximum number of bytes in a single stream data frame.  Five static
-// buffers of this size are allocated for the message dispatcher sibling response
-// queue.  Must be >= 256 (the SNIP payload size).
+#define USER_DEFINED_BASIC_BUFFER_DEPTH              117 // must be >= 1; enforced by compiler
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4   // must be >= 1; enforced by compiler
+#define USER_DEFINED_SNIP_BUFFER_DEPTH               4   // must be >= 1; enforced by compiler
+#define USER_DEFINED_STREAM_BUFFER_DEPTH             1   // must be >= 1; enforced by compiler
+// Maximum bytes in a single stream data frame (future use).
 #define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 
 // =============================================================================
 // Virtual Node Allocation
 // =============================================================================
 
-#define USER_DEFINED_NODE_BUFFER_DEPTH               4
+#define USER_DEFINED_NODE_BUFFER_DEPTH               4   // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Events (requires OPENLCB_COMPILE_EVENTS)
 // =============================================================================
 
-#define USER_DEFINED_PRODUCER_COUNT                  64
-#define USER_DEFINED_PRODUCER_RANGE_COUNT            5
-#define USER_DEFINED_CONSUMER_COUNT                  32
-#define USER_DEFINED_CONSUMER_RANGE_COUNT            5
+#define USER_DEFINED_PRODUCER_COUNT                  64  // must be >= 1; enforced by compiler
+#define USER_DEFINED_PRODUCER_RANGE_COUNT            5   // must be >= 1; enforced by compiler
+#define USER_DEFINED_CONSUMER_COUNT                  32  // must be >= 1; enforced by compiler
+#define USER_DEFINED_CONSUMER_RANGE_COUNT            5   // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Memory Configuration (requires OPENLCB_COMPILE_MEMORY_CONFIGURATION)
 // =============================================================================
 
-#define USER_DEFINED_CDI_LENGTH                      20000
-#define USER_DEFINED_FDI_LENGTH                      1000
+#define USER_DEFINED_CDI_LENGTH                      20000 // must be >= 1; enforced by compiler
+#define USER_DEFINED_FDI_LENGTH                      1000 // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Train Protocol (requires OPENLCB_COMPILE_TRAIN)
 // =============================================================================
 
-#define USER_DEFINED_TRAIN_NODE_COUNT                4
-#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         6
-#define USER_DEFINED_MAX_TRAIN_FUNCTIONS             29
+#define USER_DEFINED_TRAIN_NODE_COUNT                4   // must be >= 1; enforced by compiler
+#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         6   // must be >= 1; enforced by compiler
+#define USER_DEFINED_MAX_TRAIN_FUNCTIONS             29  // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Listener Alias Verification (requires OPENLCB_COMPILE_TRAIN)

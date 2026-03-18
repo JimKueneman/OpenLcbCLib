@@ -201,16 +201,10 @@ Functions</h2></td></tr>
 <p>Stores the callback interface. Call once at startup before any datagram processing. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_protocol_datagram_handler</td><td>Pointer to <a class="el" href="structinterface__protocol__datagram__handler__t.html">interface_protocol_datagram_handler_t</a> (must remain valid for application lifetime).</td></tr>
+    <tr><td class="paramname">interface_protocol_datagram_handler</td><td>Pointer to <a class="el" href="structinterface__protocol__datagram__handler__t.html">interface_protocol_datagram_handler_t</a> (must remain valid for application lifetime). </td></tr>
   </table>
   </dd>
 </dl>
-<p>Stores the callback interface. Call once at startup before any datagram processing.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Cast away const and store the pointer in module-level static</li>
-</ol>
-<pre class="fragment">* @param interface_protocol_datagram_handler  Populated callback table.
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Structure must remain valid for application lifetime. </dd></dl>
 
 </div>
 </div>
@@ -246,22 +240,11 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">reply_pending_time_in_seconds</td><td>Seconds until reply (rounded up to 2^N); 0 for no specific timeout.</td></tr>
+    <tr><td class="paramname">reply_pending_time_in_seconds</td><td>Seconds until reply (rounded up to 2^N); 0 for no specific timeout. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Builds a Datagram Received OK message (MTI 0x0A28).</p>
-<p>Algorithm:</p><ol type="1">
-<li>Convert reply_pending_time_in_seconds to a 4-bit power-of-2 exponent (1 = 2 s, 2 = 4 s, … 15 = 32768 s)</li>
-<li>Build MTI_DATAGRAM_OK_REPLY addressed back to the sender</li>
-<li>If reply_pending, store DATAGRAM_OK_REPLY_PENDING | exponent in payload[0]</li>
-<li>Mark outgoing message valid</li>
-</ol>
-<pre class="fragment">* @param statemachine_info               Current context.
-* @param reply_pending                   true if a reply datagram will follow.
-* @param reply_pending_time_in_seconds   Seconds until reply (rounded up to 2^N).
-*                                        Ignored when reply_pending is false.
-* </pre> 
+
 </div>
 </div>
 <a id="a74c7ab99bff8408f9a00f77ed79da9f4" name="a74c7ab99bff8408f9a00f77ed79da9f4"></a>
@@ -295,19 +278,11 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">return_code</td><td>OpenLCB error code (0x1xxx permanent, 0x2xxx temporary).</td></tr>
+    <tr><td class="paramname">return_code</td><td>OpenLCB error code (0x1xxx permanent, 0x2xxx temporary). </td></tr>
   </table>
   </dd>
 </dl>
-<p>Builds a Datagram Rejected message (MTI 0x0A48).</p>
-<p>Algorithm:</p><ol type="1">
-<li>Build MTI_DATAGRAM_REJECTED_REPLY addressed back to the sender</li>
-<li>Copy 16-bit return_code into payload[0..1]</li>
-<li>Mark outgoing message valid</li>
-</ol>
-<pre class="fragment">* @param statemachine_info  Current context.
-* @param return_code        OpenLCB error code (0x1xxx permanent, 0x2xxx temporary).
-* </pre> 
+
 </div>
 </div>
 <a id="a4d034624deb9c413c4977afa8987a6df" name="a4d034624deb9c413c4977afa8987a6df"></a>
@@ -336,17 +311,11 @@ Functions</h2></td></tr>
 <p>Processes an incoming datagram. Dispatches to the appropriate handler based on the command byte (payload[0]). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context with the received datagram.</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context with the received datagram. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Processes an incoming datagram. Dispatches to the appropriate handler based on the command byte (payload[0]).</p>
-<p>Algorithm:</p><ol type="1">
-<li>If payload[0] == CONFIG_MEM_CONFIGURATION (0x20), delegate to _handle_datagram_memory_configuration_command()</li>
-<li>Otherwise reject with COMMAND_UNKNOWN</li>
-</ol>
-<pre class="fragment">* @param statemachine_info  Context with the received datagram.
-* </pre> 
+
 </div>
 </div>
 <a id="ad4d3a37a821acbbf357b6fd09281e851" name="ad4d3a37a821acbbf357b6fd09281e851"></a>
@@ -375,17 +344,11 @@ Functions</h2></td></tr>
 <p>Handles an incoming Datagram Received OK reply. Clears the resend flag and frees the stored datagram awaiting acknowledgement. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context with the received reply.</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context with the received reply. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Handles an incoming Datagram Received OK reply. Clears the resend flag and frees the stored datagram awaiting acknowledgement.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Clear resend flag and free the stored datagram buffer</li>
-<li>Set outgoing_msg_info.valid = false (nothing to send)</li>
-</ol>
-<pre class="fragment">* @param statemachine_info  Context with the received OK reply.
-* </pre> 
+
 </div>
 </div>
 <a id="a15cc3c7547fd0963f2ce553de92911bd" name="a15cc3c7547fd0963f2ce553de92911bd"></a>
@@ -414,19 +377,11 @@ Functions</h2></td></tr>
 <p>Handles an incoming Datagram Rejected reply. Sets the resend flag for temporary errors; clears retry state for permanent errors. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context with the received rejection.</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context with the received rejection. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Handles an incoming Datagram Rejected reply. Sets the resend flag for temporary errors; clears retry state for permanent errors.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Extract error code from payload word 0</li>
-<li>If ERROR_TEMPORARY bit set and a stored datagram exists: a. Read retry count from timer.datagram.retry_count b. Increment retry count c. If retries &lt; DATAGRAM_MAX_RETRIES, store new retry count and fresh tick snapshot, set resend_datagram flag d. If retries &gt;= DATAGRAM_MAX_RETRIES, abandon (clear and free)</li>
-<li>If permanent error, clear resend flag and free stored buffer</li>
-<li>Set outgoing_msg_info.valid = false</li>
-</ol>
-<pre class="fragment">* @param statemachine_info  Context with the received rejection.
-* </pre> 
+
 </div>
 </div>
 <a id="af7b23593b33a3a3c66f3afcd6886ebce" name="af7b23593b33a3a3c66f3afcd6886ebce"></a>
@@ -455,17 +410,10 @@ Functions</h2></td></tr>
 <p>Frees any stored datagram and clears the resend flag for the node. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> target node.</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> target node. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Frees any stored datagram and clears the resend flag for the node.</p>
-<p>Algorithm:</p><ol type="1">
-<li>If last_received_datagram exists, lock/free/unlock it and NULL the pointer</li>
-<li>Clear resend_datagram flag</li>
-</ol>
-<pre class="fragment">* @param openlcb_node  Target node.
-* </pre><dl class="section note"><dt>Note</dt><dd>Safe to call when no datagram is stored. </dd></dl>
 
 </div>
 </div>
@@ -496,13 +444,11 @@ Functions</h2></td></tr>
 <p>Called from the main loop with the current global tick. Currently a placeholder — Item 2 will add timeout handling.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter.</td></tr>
+    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Called from the main loop with the current global tick. Currently a placeholder — timeout scanning is done by <a class="el" href="protocol__datagram__handler_8c.html#a82d0fe791b04fb2636b023ec52ee7aad" title="Scans for timed-out or max-retried pending datagrams and frees them.">ProtocolDatagramHandler_check_timeouts()</a>.</p>
-<pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.
-* </pre> 
+
 </div>
 </div>
 <a id="a82d0fe791b04fb2636b023ec52ee7aad" name="a82d0fe791b04fb2636b023ec52ee7aad"></a>
@@ -532,13 +478,11 @@ Functions</h2></td></tr>
 <p>Must be called from the main processing loop, not from an interrupt. Acquires the shared resource lock internally.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick, passed from the main loop.</td></tr>
+    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick, passed from the main loop. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Must be called from the main processing loop, not from an interrupt. Acquires the shared resource lock internally.</p>
-<pre class="fragment">* @param current_tick  Current value of the global 100ms tick, passed from the main loop.
-* </pre> 
+
 </div>
 </div>
 </div><!-- contents -->

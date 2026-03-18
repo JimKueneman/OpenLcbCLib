@@ -44,6 +44,22 @@
 #include "openlcb_types.h"
 
 // =============================================================================
+// Bootloader preset — auto-defines DATAGRAMS + MEMORY_CONFIGURATION + FIRMWARE
+// =============================================================================
+
+#ifdef OPENLCB_COMPILE_BOOTLOADER
+#ifndef OPENLCB_COMPILE_DATAGRAMS
+#define OPENLCB_COMPILE_DATAGRAMS
+#endif
+#ifndef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#define OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#endif
+#ifndef OPENLCB_COMPILE_FIRMWARE
+#define OPENLCB_COMPILE_FIRMWARE
+#endif
+#endif /* OPENLCB_COMPILE_BOOTLOADER */
+
+// =============================================================================
 // Compile-time feature dependency validation
 // =============================================================================
 

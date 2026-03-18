@@ -9,6 +9,7 @@
  *   |-- main.c                             |-- main.ino
  *   |-- openlcb_user_config.h              |-- openlcb_user_config.h
  *   |-- openlcb_user_config.c              |-- openlcb_user_config.c
+ *   |-- can_user_config.h                  |-- can_user_config.h
  *   |-- application_callbacks/             |-- src/
  *   |   |-- callbacks_*.h / .c             |   |-- application_callbacks/
  *   |-- application_drivers/               |   |-- application_drivers/
@@ -186,6 +187,7 @@ var ZipExport = (function () {
 
         var active = [];
         var groupKeys = Object.keys(DRIVER_GROUPS);
+        var isBootloader = state.nodeType === 'bootloader';
 
         for (var i = 0; i < groupKeys.length; i++) {
 
@@ -198,6 +200,7 @@ var ZipExport = (function () {
             for (var j = 0; j < group.functions.length; j++) {
 
                 var fn = group.functions[j];
+                if (isBootloader && (fn.name === 'config_mem_read' || fn.name === 'config_mem_write')) { continue; }
                 if (fn.required || checkedNames.indexOf(fn.name) >= 0) {
                     activeFns.push(fn);
                 }
@@ -269,6 +272,7 @@ var ZipExport = (function () {
         L.push('  |-- ' + mainFilename + pad + 'Application entry point');
         L.push('  |-- openlcb_user_config.h              Feature flags and node parameters');
         L.push('  |-- openlcb_user_config.c              Node parameters struct (const data)');
+        L.push('  |-- can_user_config.h                  CAN bus driver configuration');
         L.push('  |');
 
         if (isArduino) {
@@ -439,6 +443,7 @@ var ZipExport = (function () {
         zip.file(mainFilename, mainC);
         zip.file('openlcb_user_config.h', configH);
         zip.file('openlcb_user_config.c', configC);
+        zip.file('can_user_config.h', generateCanH(codegenState));
 
         /* Arduino uses .cpp for driver/callback source files so users can
          * call Serial and other C++ Arduino APIs in their implementations. */
@@ -476,15 +481,19 @@ var ZipExport = (function () {
 
         });
 
-        /* XML files under {base}/xml_files/ */
-        var xmlFolder = baseFolder.folder('xml_files');
+        /* XML files under {base}/xml_files/ — bootloader has no CDI or FDI */
+        if (wizardState.selectedNodeType !== 'bootloader') {
 
-        if (wizardState.cdiUserXml && wizardState.cdiUserXml.trim()) {
-            xmlFolder.file('cdi.xml', wizardState.cdiUserXml);
-        }
+            var xmlFolder = baseFolder.folder('xml_files');
 
-        if (wizardState.fdiUserXml && wizardState.fdiUserXml.trim()) {
-            xmlFolder.file('fdi.xml', wizardState.fdiUserXml);
+            if (wizardState.cdiUserXml && wizardState.cdiUserXml.trim()) {
+                xmlFolder.file('cdi.xml', wizardState.cdiUserXml);
+            }
+
+            if (wizardState.fdiUserXml && wizardState.fdiUserXml.trim()) {
+                xmlFolder.file('fdi.xml', wizardState.fdiUserXml);
+            }
+
         }
 
         /* Placeholder library folders under {base}/openlcb_c_lib/ */

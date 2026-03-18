@@ -223,7 +223,7 @@ function _updatePlatformTile() {
 
 function _computeCdiBadge() {
 
-    var needsCdi = selectedNodeType && selectedNodeType !== 'basic';
+    var needsCdi = selectedNodeType && selectedNodeType !== 'basic' && selectedNodeType !== 'bootloader';
     if (needsCdi && !cdiUserXml) {
         return { visible: true, error: false, title: 'CDI not loaded — required for this node type' };
     } else if (needsCdi && cdiValidation && cdiValidation.errors > 0) {
@@ -277,6 +277,7 @@ const NODE_TYPE_INFO = {
     'typical':          { icon: '\u2699\uFE0F',  name: 'Typical',          desc: 'Events + CDI + Config' },
     'train':            { icon: '\uD83D\uDE82',  name: 'Train',            desc: 'Locomotive' },
     'train-controller': { icon: '\uD83C\uDFAE',  name: 'Train Controller', desc: 'Throttle' },
+    'bootloader':       { icon: '\u26A1',        name: 'Bootloader',       desc: 'Firmware upgrade only' },
     'custom':           { icon: '\uD83D\uDD27',  name: 'Custom',           desc: 'Advanced \u2014 coming soon' }
 };
 
@@ -302,9 +303,10 @@ function _updateTileStates(type) {
 
     var hasCfgMem    = type !== 'basic';
     var isTrainNode  = type === 'train';
+    var isBootloader = type === 'bootloader';
 
-    /* CDI — enabled for anything with config memory */
-    elTileCdi.classList.toggle('disabled', !hasCfgMem);
+    /* CDI — enabled for anything with config memory, but not bootloader */
+    elTileCdi.classList.toggle('disabled', !hasCfgMem || isBootloader);
 
     /* FDI — only for train (locomotive) */
     elTileFdi.classList.toggle('disabled', !isTrainNode);

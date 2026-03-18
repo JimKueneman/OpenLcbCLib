@@ -169,13 +169,11 @@ Functions</h2></td></tr>
 <p>Initializes the Train Control Protocol handler. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface</td><td>Pointer to <a class="el" href="structinterface__protocol__train__handler__t.html">interface_protocol_train_handler_t</a> callbacks (may be NULL).</td></tr>
+    <tr><td class="paramname">interface</td><td>Pointer to <a class="el" href="structinterface__protocol__train__handler__t.html">interface_protocol_train_handler_t</a> callbacks (may be NULL). </td></tr>
   </table>
   </dd>
 </dl>
-<p>Initializes the Train Control Protocol handler.</p>
-<pre class="fragment">* @param interface  Populated callback table (may be NULL).
-* </pre> 
+
 </div>
 </div>
 <a id="acf84497d74966cc915ade105271e13dd" name="acf84497d74966cc915ade105271e13dd"></a>
@@ -205,14 +203,11 @@ Functions</h2></td></tr>
 <p>Decodes the sub-command byte, updates train_state, builds the appropriate reply, and fires notifier or decision callbacks.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Handles an incoming Train Control Protocol command (MTI_TRAIN_PROTOCOL).</p>
-<p>Masks the P bit (bit 7) from the instruction byte before dispatch so that forwarded commands (P=1) are processed identically to direct commands (P=0). After local processing of speed, function, or emergency stop commands, initiates listener forwarding enumeration if listeners are attached and the command is not itself a forwarded command (P=0).</p>
-<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
-* </pre> 
+
 </div>
 </div>
 <a id="a0cf810c64a3181ec44f8c75a24a88c9a" name="a0cf810c64a3181ec44f8c75a24a88c9a"></a>
@@ -242,13 +237,11 @@ Functions</h2></td></tr>
 <p>Decodes the reply sub-command and fires the matching throttle-side notifier callback.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Handles an incoming Train Control Protocol reply (MTI_TRAIN_REPLY).</p>
-<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
-* </pre> 
+
 </div>
 </div>
 <a id="ac4a34f4e0ee27e144f7057ef13cbf4c7" name="ac4a34f4e0ee27e144f7057ef13cbf4c7"></a>
@@ -283,14 +276,11 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">event_id</td><td>Well-known <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the emergency condition.</td></tr>
+    <tr><td class="paramname">event_id</td><td>Well-known <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the emergency condition. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Sets or clears emergency flags based on the well-known Event ID and fires the appropriate notifier callback.</p>
-<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
-* @param event_id           Well-known event_id_t for the emergency condition.
-* </pre> 
+
 </div>
 </div>
 </div><!-- contents -->

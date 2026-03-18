@@ -46,6 +46,10 @@
 
 #include "protocol_datagram_handler.h"
 
+#include "openlcb_config.h"
+
+#ifdef OPENLCB_COMPILE_DATAGRAMS
+
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -1615,4 +1619,6 @@ void ProtocolDatagramHandler_check_timeouts(uint8_t current_tick) {
     _interface->unlock_shared_resources();
 
 }
+
+#endif /* OPENLCB_COMPILE_DATAGRAMS */
 

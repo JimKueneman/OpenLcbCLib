@@ -9,50 +9,37 @@
 // Bootloader preset
 // =============================================================================
 
-#define OPENLCB_COMPILE_BOOTLOADER
-
-#ifdef OPENLCB_COMPILE_BOOTLOADER
-
-    #define OPENLCB_COMPILE_DATAGRAMS
-    #define OPENLCB_COMPILE_MEMORY_CONFIGURATION
-    #define OPENLCB_COMPILE_FIRMWARE
-
-    #undef OPENLCB_COMPILE_EVENTS
-    #undef OPENLCB_COMPILE_BROADCAST_TIME
-    #undef OPENLCB_COMPILE_TRAIN
-    #undef OPENLCB_COMPILE_TRAIN_SEARCH
-
-#endif
+#define OPENLCB_COMPILE_BOOTLOADER     // auto-defines DATAGRAMS + MEMORY_CONFIGURATION + FIRMWARE
 
 // =============================================================================
 // Core Message Buffer Pool — minimized
 // =============================================================================
 
-#define USER_DEFINED_BASIC_BUFFER_DEPTH              8
-#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           2
-#define USER_DEFINED_SNIP_BUFFER_DEPTH               1
-#define USER_DEFINED_STREAM_BUFFER_DEPTH             1
+#define USER_DEFINED_BASIC_BUFFER_DEPTH              8      // must be >= 1; enforced by compiler
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           2      // must be >= 1; enforced by compiler
+#define USER_DEFINED_SNIP_BUFFER_DEPTH               1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_STREAM_BUFFER_DEPTH             1      // must be >= 1; enforced by compiler
 #define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 
 // =============================================================================
 // Virtual Node Allocation
 // =============================================================================
 
-#define USER_DEFINED_NODE_BUFFER_DEPTH               1
+#define USER_DEFINED_NODE_BUFFER_DEPTH               1      // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Minimums to avoid zero-length arrays
 // =============================================================================
 
-#define USER_DEFINED_PRODUCER_COUNT                  1
-#define USER_DEFINED_PRODUCER_RANGE_COUNT            1
-#define USER_DEFINED_CONSUMER_COUNT                  1
-#define USER_DEFINED_CONSUMER_RANGE_COUNT            1
-#define USER_DEFINED_CDI_LENGTH                      1
-#define USER_DEFINED_FDI_LENGTH                      1
-#define USER_DEFINED_TRAIN_NODE_COUNT                1
-#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         1
-#define USER_DEFINED_MAX_TRAIN_FUNCTIONS             1
+#define USER_DEFINED_PRODUCER_COUNT                  1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_PRODUCER_RANGE_COUNT            1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_CONSUMER_COUNT                  1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_CONSUMER_RANGE_COUNT            1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_CDI_LENGTH                      1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_FDI_LENGTH                      1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_TRAIN_NODE_COUNT                1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_MAX_TRAIN_FUNCTIONS             1      // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Listener Alias Verification — must be defined

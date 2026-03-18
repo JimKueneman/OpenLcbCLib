@@ -41,6 +41,10 @@
 
 #include "protocol_config_mem_write_handler.h"
 
+#include "openlcb_config.h"
+
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -219,6 +223,26 @@ static void _dispatch_write_request(openlcb_statemachine_info_t *statemachine_in
 
 }
 
+    /** @brief Dispatch Firmware (0xEF) write to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.write_space_func = _interface->write_request_firmware;
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_firmware;
+
+    _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
+// =============================================================================
+// Non-bootloader code — excluded when OPENLCB_COMPILE_BOOTLOADER is defined.
+// Contains: non-firmware write space dispatchers, write-under-mask subsystem,
+// message stubs, _write_data helper, and implemented write request handlers.
+// =============================================================================
+
+#ifndef OPENLCB_COMPILE_BOOTLOADER
+
     /** @brief Dispatch CDI (0xFF) write to two-phase handler. */
 void ProtocolConfigMemWriteHandler_write_space_config_description_info(openlcb_statemachine_info_t *statemachine_info) {
 
@@ -298,18 +322,6 @@ void ProtocolConfigMemWriteHandler_write_space_train_function_config_memory(open
 
     config_mem_write_request_info.write_space_func = _interface->write_request_train_function_config_memory;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_config_memory;
-
-    _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
-
-}
-
-    /** @brief Dispatch Firmware (0xEF) write to two-phase handler. */
-void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_info_t *statemachine_info) {
-
-    config_mem_write_request_info_t config_mem_write_request_info;
-
-    config_mem_write_request_info.write_space_func = _interface->write_request_firmware;
-    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_firmware;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
 
@@ -1046,3 +1058,6 @@ void ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(op
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
+
+#endif /* OPENLCB_COMPILE_BOOTLOADER */
+#endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */

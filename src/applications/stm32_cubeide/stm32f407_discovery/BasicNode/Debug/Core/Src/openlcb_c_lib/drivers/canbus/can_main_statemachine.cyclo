@@ -8,4 +8,5 @@
 ../Core/Src/openlcb_c_lib/drivers/canbus/can_main_statemachine.c:289:6:CanMainStatemachine_handle_try_enumerate_first_node	4
 ../Core/Src/openlcb_c_lib/drivers/canbus/can_main_statemachine.c:326:6:CanMainStatemachine_handle_try_enumerate_next_node	3
 ../Core/Src/openlcb_c_lib/drivers/canbus/can_main_statemachine.c:361:6:CanMainStatemachine_handle_listener_verification	5
-../Core/Src/openlcb_c_lib/drivers/canbus/can_main_statemachine.c:406:6:CanMainStateMachine_run	6
+../Core/Src/openlcb_c_lib/drivers/canbus/can_main_statemachine.c:414:6:CanMainStatemachine_send_global_alias_enquiry	8
+../Core/Src/openlcb_c_lib/drivers/canbus/can_main_statemachine.c:486:6:CanMainStateMachine_run	6

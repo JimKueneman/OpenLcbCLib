@@ -90,24 +90,12 @@ $(function(){ initResizable(false); });
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">protocol_broadcast_time_handler.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Broadcast Time Protocol message handler implementation.  
 <a href="#details">More...</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:ae10dd7b8798b7f1d7805c8e5863b3e2a" id="r_ae10dd7b8798b7f1d7805c8e5863b3e2a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae10dd7b8798b7f1d7805c8e5863b3e2a">ProtocolBroadcastTime_initialize</a> (const <a class="el" href="structinterface__openlcb__protocol__broadcast__time__handler__t.html">interface_openlcb_protocol_broadcast_time_handler_t</a> *interface_openlcb_protocol_broadcast_time_handler)</td></tr>
-<tr class="memdesc:ae10dd7b8798b7f1d7805c8e5863b3e2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface. Call once at startup.  <br /></td></tr>
-<tr class="separator:ae10dd7b8798b7f1d7805c8e5863b3e2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56545d916bd644bc5b3e8c8a6f86ef53" id="r_a56545d916bd644bc5b3e8c8a6f86ef53"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56545d916bd644bc5b3e8c8a6f86ef53">ProtocolBroadcastTime_handle_time_event</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
-<tr class="memdesc:a56545d916bd644bc5b3e8c8a6f86ef53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming broadcast time events.  <br /></td></tr>
-<tr class="separator:a56545d916bd644bc5b3e8c8a6f86ef53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Broadcast Time Protocol message handler implementation. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
@@ -120,55 +108,7 @@ Functions</h2></td></tr>
 <p>Decodes incoming broadcast time Event IDs and updates the singleton clock state in the application broadcast time module. Fires application callbacks when state changes.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="ae10dd7b8798b7f1d7805c8e5863b3e2a" name="ae10dd7b8798b7f1d7805c8e5863b3e2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae10dd7b8798b7f1d7805c8e5863b3e2a">&#9670;&#160;</a></span>ProtocolBroadcastTime_initialize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ProtocolBroadcastTime_initialize </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structinterface__openlcb__protocol__broadcast__time__handler__t.html">interface_openlcb_protocol_broadcast_time_handler_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface_openlcb_protocol_broadcast_time_handler</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Stores the callback interface. Call once at startup. </p>
-<p>Initializes the Broadcast Time Protocol handler.</p>
-<pre class="fragment">* @param interface_openlcb_protocol_broadcast_time_handler  Populated callback table.
-* </pre> 
-</div>
-</div>
-<a id="a56545d916bd644bc5b3e8c8a6f86ef53" name="a56545d916bd644bc5b3e8c8a6f86ef53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56545d916bd644bc5b3e8c8a6f86ef53">&#9670;&#160;</a></span>ProtocolBroadcastTime_handle_time_event()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ProtocolBroadcastTime_handle_time_event </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Handles incoming broadcast time events. </p>
-<p>Decodes the event type, looks up the matching clock, and dispatches to the appropriate sub-handler.</p>
-<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
-* @param event_id           Full 64-bit event_id_t containing encoded time data.
-* </pre> 
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 <!doctype html>
 <html>
     <body>

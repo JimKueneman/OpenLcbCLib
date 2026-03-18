@@ -37,6 +37,10 @@ var NODE_TYPE_DESCRIPTIONS = {
     'train-controller': {
         title: 'Train Controller (Throttle) Node',
         text: 'A throttle or cab that sends speed/direction/function commands to Train nodes. Includes Train Search for finding locomotives and the controller side of the Train Protocol.'
+    },
+    'bootloader': {
+        title: 'Bootloader Node',
+        text: 'Minimal firmware-upgrade-only build. Datagrams, Memory Configuration, and Firmware Upgrade are enabled. Events, Train Protocol, and Broadcast Time are compiled out to minimize image size.'
     }
 
 };
@@ -176,7 +180,10 @@ function applyNodeType(type) {
     selectedNodeType = type;
     _highlightNodeTypeBtn(type);
 
-    /* Firmware: Basic node has no Config Memory, so firmware is unavailable */
+    const isBootloader = type === 'bootloader';
+
+    /* Firmware: Basic node has no Config Memory, so firmware is unavailable;
+     * Bootloader has firmware forced on */
     const firmwareCheckbox = document.getElementById('addon-firmware');
     const firmwareGroup    = document.getElementById('addon-firmware-label');
     const firmwareNote     = document.getElementById('firmware-note');
@@ -188,6 +195,13 @@ function applyNodeType(type) {
         firmwareGroup.classList.add('disabled');
         firmwareNote.classList.remove('hidden');
 
+    } else if (isBootloader) {
+
+        firmwareCheckbox.checked  = true;
+        firmwareCheckbox.disabled = true;
+        firmwareGroup.classList.remove('disabled');
+        firmwareNote.classList.add('hidden');
+
     } else {
 
         firmwareCheckbox.disabled = false;
@@ -196,28 +210,47 @@ function applyNodeType(type) {
 
     }
 
-    /* SNIP: Basic-only add-on (Typical/Train populate SNIP from CDI) */
+    /* SNIP: Basic-only add-on (Typical/Train populate from CDI);
+     * Bootloader: always shown, always checked, required */
     const snipGroup    = document.getElementById('addon-snip-group');
     const snipCheckbox = document.getElementById('addon-snip');
     const snipFields   = document.getElementById('snip-fields');
 
-    if (type === 'basic') {
+    if (type === 'basic' || isBootloader) {
 
         snipGroup.classList.remove('hidden');
-        snipCheckbox.checked = true;
+        snipCheckbox.checked  = true;
+        snipCheckbox.disabled = isBootloader;  /* bootloader: can't uncheck */
         snipFields.classList.remove('hidden');
 
     } else {
 
         snipGroup.classList.add('hidden');
-        snipCheckbox.checked = false;
+        snipCheckbox.checked  = false;
+        snipCheckbox.disabled = false;
         snipFields.classList.add('hidden');
 
     }
 
-    /* Config Memory options: Typical and Train only */
+    /* Config Memory options: Typical and Train only (hidden for Basic and Bootloader) */
     const configGroup = document.getElementById('addon-config-group');
-    configGroup.classList.toggle('hidden', type === 'basic');
+    configGroup.classList.toggle('hidden', type === 'basic' || isBootloader);
+
+    /* Event Buffers section: hidden for Bootloader (no events) */
+    const eventsGroup = document.getElementById('addon-events-group');
+    if (eventsGroup) { eventsGroup.classList.toggle('hidden', isBootloader); }
+
+    /* Well Known Events section: hidden for Bootloader (no events) */
+    const wkeSection = document.getElementById('wellknown-events-section');
+    if (wkeSection) { wkeSection.classList.toggle('hidden', isBootloader); }
+
+    /* Add-Ons section: hidden for Bootloader (broadcast forced off, firmware forced on) */
+    const addonsSection = document.getElementById('addon-extras-section');
+    if (addonsSection) { addonsSection.classList.toggle('hidden', isBootloader); }
+
+    /* Advanced section: hidden for Bootloader (all values are fixed minimums) */
+    const advancedSection = document.getElementById('addon-advanced-section');
+    if (advancedSection) { advancedSection.classList.toggle('hidden', isBootloader); }
 
     /* Advanced: Train Protocol and Listener groups — train/train-controller only */
     const isTrain = type === 'train' || type === 'train-controller';
@@ -228,6 +261,8 @@ function applyNodeType(type) {
     const dgBuf = document.getElementById('adv-datagram-buf');
     if (type === 'basic' && dgBuf.value === '8') {
         dgBuf.value = '0';
+    } else if (isBootloader) {
+        dgBuf.value = '2';
     } else if (type !== 'basic' && dgBuf.value === '0') {
         dgBuf.value = '8';
     }
@@ -469,14 +504,16 @@ function _restoreOpenSections(map) {
 
 function getState() {
 
-    const broadcastEl = document.querySelector('input[name="addon-broadcast"]:checked');
-    const isTrainRole = selectedNodeType === 'train' || selectedNodeType === 'train-controller';
-    const isTrainNode = selectedNodeType === 'train';   /* locomotive only — has FDI */
-    const isBasic     = selectedNodeType === 'basic';
+    const broadcastEl  = document.querySelector('input[name="addon-broadcast"]:checked');
+    const isTrainRole  = selectedNodeType === 'train' || selectedNodeType === 'train-controller';
+    const isTrainNode  = selectedNodeType === 'train';   /* locomotive only — has FDI */
+    const isBasic      = selectedNodeType === 'basic';
+    const isBootloader = selectedNodeType === 'bootloader';
 
-    /* For Typical/Train/TrainController, fall back to the embedded default CDI when no user file */
-    const activeCdi    = (!isBasic && !cdiUserBytes) ? DEFAULT_CDI_BYTES : cdiUserBytes;
-    const activeCdiXml = (!isBasic && !cdiUserText)  ? DEFAULT_CDI_XML  : cdiUserText;
+    /* Bootloader: no CDI or FDI — minimal null bytes only.
+     * For Typical/Train/TrainController, fall back to the embedded default CDI when no user file. */
+    const activeCdi    = (isBasic || isBootloader) ? null : (!cdiUserBytes ? DEFAULT_CDI_BYTES : cdiUserBytes);
+    const activeCdiXml = (isBasic || isBootloader) ? null : (!cdiUserText  ? DEFAULT_CDI_XML  : cdiUserText);
     /* For Train (locomotive) only, fall back to the embedded default FDI when no user file.
      * Non-train node types never use FDI, so force null even if the user loaded one earlier. */
     const activeFdi    = isTrainNode ? (fdiUserBytes  || DEFAULT_FDI_BYTES) : null;
@@ -540,7 +577,8 @@ function _getMainFilename() {
 
 const TAB_LABELS_STATIC = {
     h: 'openlcb_user_config.h',
-    c: 'openlcb_user_config.c'
+    c: 'openlcb_user_config.c',
+    can: 'can_user_config.h'
 };
 
 function switchTab(tab) {
@@ -616,8 +654,13 @@ function _getActiveFunctions(groupKey) {
     var gs = stateMap[groupKey];
     var checked = (gs && gs.checked) ? gs.checked : [];
     var active = [];
+    var isBootloader = selectedNodeType === 'bootloader';
 
     group.functions.forEach(function (fn) {
+
+        /* Bootloader: exclude config storage stubs — the bootloader uses
+         * .firmware_write for flash and has no user config storage to read/write. */
+        if (isBootloader && (fn.name === 'config_mem_read' || fn.name === 'config_mem_write')) { return; }
 
         if (fn.required || checked.indexOf(fn.name) >= 0) {
             active.push(fn);
@@ -679,6 +722,7 @@ function _rebuildFileBrowser() {
     _addSection('Node Configuration', [
         { tab: 'h',    filename: 'openlcb_user_config.h' },
         { tab: 'c',    filename: 'openlcb_user_config.c' },
+        { tab: 'can',  filename: 'can_user_config.h' },
         { tab: 'main', filename: _getMainFilename() }
     ]);
 
@@ -804,6 +848,7 @@ function _generateForTab(tab, state) {
     /* Core config files */
     if (tab === 'h')    { return generateH(state); }
     if (tab === 'c')    { return generateC(state); }
+    if (tab === 'can')  { return generateCanH(state); }
     if (tab === 'main') { return generateMain(state); }
 
     /* Composite tab: '{groupKey}-h' or '{groupKey}-c' */
@@ -1172,6 +1217,7 @@ function downloadFiles() {
     const state = getState();
     _download('openlcb_user_config.h', generateH(state));
     _download('openlcb_user_config.c', generateC(state));
+    _download('can_user_config.h', generateCanH(state));
     _download(_getMainFilename(), generateMain(state));
 
 }

@@ -32,7 +32,7 @@
  * do not modify it.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 18 Mar 2026
  */
 
 #include "openlcb_utilities.h"
@@ -72,6 +72,10 @@ uint16_t OpenLcbUtilities_payload_type_to_len(payload_type_enum payload_type) {
         case STREAM:
 
             return LEN_MESSAGE_BYTES_STREAM;
+
+        case WORKER:
+
+            return LEN_MESSAGE_BYTES_WORKER;
 
         default:
 

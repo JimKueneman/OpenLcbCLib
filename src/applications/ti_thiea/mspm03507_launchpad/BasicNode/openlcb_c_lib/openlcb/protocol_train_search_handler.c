@@ -37,6 +37,10 @@
 
 #include "protocol_train_search_handler.h"
 
+#include "openlcb_config.h"
+
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
+
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -518,3 +522,5 @@ void ProtocolTrainSearch_handle_search_no_match(
     }
 
 }
+
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */

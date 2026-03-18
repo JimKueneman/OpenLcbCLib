@@ -37,6 +37,10 @@
 
 #include "protocol_broadcast_time_handler.h"
 
+#include "openlcb_config.h"
+
+#ifdef OPENLCB_COMPILE_BROADCAST_TIME
+
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -340,3 +344,5 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
     }
 
 }
+
+#endif /* OPENLCB_COMPILE_BROADCAST_TIME */

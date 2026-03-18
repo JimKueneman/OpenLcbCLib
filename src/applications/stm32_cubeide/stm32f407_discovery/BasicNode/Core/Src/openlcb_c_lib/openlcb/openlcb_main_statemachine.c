@@ -60,7 +60,7 @@
 * Resource locking callbacks protect access to shared buffer pools and FIFOs.
 *
 * @author Jim Kueneman
-* @date 17 Mar 2026
+* @date 18 Mar 2026
 *
 * @see openlcb_main_statemachine.h - Public interface
 * @see openlcb_types.h - Core data structures
@@ -104,7 +104,7 @@ static bool _sibling_dispatch_active;
 #define SIBLING_RESPONSE_QUEUE_DEPTH 5
 
     /** @brief Circular queue of sibling responses awaiting dispatch. */
-static openlcb_dispatcher_message_t _sibling_response_queue[SIBLING_RESPONSE_QUEUE_DEPTH];
+static openlcb_worker_message_t _sibling_response_queue[SIBLING_RESPONSE_QUEUE_DEPTH];
 
 static uint8_t _sibling_response_queue_head;
 static uint8_t _sibling_response_queue_tail;
@@ -117,7 +117,7 @@ static uint8_t _sibling_response_queue_high_water;
     /** @brief Single-slot pending message for Path B sibling dispatch.
      *  Holds a copy of the last application-layer send so the run loop
      *  can dispatch it to siblings. */
-static openlcb_dispatcher_message_t _path_b_pending_msg;
+static openlcb_worker_message_t _path_b_pending_msg;
 static openlcb_msg_t *_path_b_pending_ptr;
 static bool _path_b_pending;
 
@@ -143,7 +143,7 @@ void OpenLcbMainStatemachine_initialize(
     _statemachine_info.outgoing_msg_info.msg_ptr = &_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
     _statemachine_info.outgoing_msg_info.msg_ptr->payload =
             (openlcb_payload_t *) _statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
-    _statemachine_info.outgoing_msg_info.msg_ptr->payload_type = STREAM;
+    _statemachine_info.outgoing_msg_info.msg_ptr->payload_type = WORKER;
     OpenLcbUtilities_clear_openlcb_message(_statemachine_info.outgoing_msg_info.msg_ptr);
     OpenLcbUtilities_clear_openlcb_message_payload(_statemachine_info.outgoing_msg_info.msg_ptr);
     _statemachine_info.outgoing_msg_info.msg_ptr->state.allocated = true;
@@ -156,7 +156,7 @@ void OpenLcbMainStatemachine_initialize(
     _sibling_statemachine_info.outgoing_msg_info.msg_ptr = &_sibling_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
     _sibling_statemachine_info.outgoing_msg_info.msg_ptr->payload =
             (openlcb_payload_t *) _sibling_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
-    _sibling_statemachine_info.outgoing_msg_info.msg_ptr->payload_type = STREAM;
+    _sibling_statemachine_info.outgoing_msg_info.msg_ptr->payload_type = WORKER;
     OpenLcbUtilities_clear_openlcb_message(_sibling_statemachine_info.outgoing_msg_info.msg_ptr);
     OpenLcbUtilities_clear_openlcb_message_payload(_sibling_statemachine_info.outgoing_msg_info.msg_ptr);
     _sibling_statemachine_info.outgoing_msg_info.msg_ptr->state.allocated = true;
@@ -170,7 +170,7 @@ void OpenLcbMainStatemachine_initialize(
     // Path B pending slot
     _path_b_pending_ptr = &_path_b_pending_msg.openlcb_msg;
     _path_b_pending_ptr->payload = (openlcb_payload_t *) _path_b_pending_msg.openlcb_payload;
-    _path_b_pending_ptr->payload_type = STREAM;
+    _path_b_pending_ptr->payload_type = WORKER;
     _path_b_pending = false;
 
     // Sibling response queue
@@ -178,7 +178,7 @@ void OpenLcbMainStatemachine_initialize(
 
         _sibling_response_queue[i].openlcb_msg.payload =
                 (openlcb_payload_t *) _sibling_response_queue[i].openlcb_payload;
-        _sibling_response_queue[i].openlcb_msg.payload_type = STREAM;
+        _sibling_response_queue[i].openlcb_msg.payload_type = WORKER;
 
     }
 

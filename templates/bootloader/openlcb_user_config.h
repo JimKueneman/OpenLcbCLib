@@ -1,5 +1,5 @@
 /** @file openlcb_user_config.h
- *  @brief User-editable project configuration for OpenLcbCLib
+ *  @brief Bootloader project configuration for OpenLcbCLib
  *
  *  REQUIRED: Copy this file to your project's include path and edit.
  *    Arduino:     place next to your .ino file (sketch dir is on include path)
@@ -10,71 +10,24 @@
  *  ALL values in this file are MANDATORY. The library will not compile if
  *  any are missing. Edit the values to match your project's requirements.
  *
- *  --- Quick Recipes for Feature Flags ---
+ *  This is a minimal firmware-upgrade-only build.  Only DATAGRAMS +
+ *  MEMORY_CONFIGURATION + FIRMWARE are enabled.  All buffer counts are set
+ *  to the minimum safe values (1 where zero would create a zero-length array).
  *
- *  Simple sensor/button node (events only):
- *    #define OPENLCB_COMPILE_EVENTS
- *
- *  Standard configurable node (events + config memory):
- *    #define OPENLCB_COMPILE_EVENTS
- *    #define OPENLCB_COMPILE_DATAGRAMS
- *    #define OPENLCB_COMPILE_CONFIG_MEMORY
- *
- *  Train command station:
- *    #define OPENLCB_COMPILE_EVENTS
- *    #define OPENLCB_COMPILE_DATAGRAMS
- *    #define OPENLCB_COMPILE_CONFIG_MEMORY
- *    #define OPENLCB_COMPILE_TRAIN
- *    #define OPENLCB_COMPILE_TRAIN_SEARCH
- *
- *  Full-featured node (everything):
- *    #define OPENLCB_COMPILE_EVENTS
- *    #define OPENLCB_COMPILE_DATAGRAMS
- *    #define OPENLCB_COMPILE_CONFIG_MEMORY
- *    #define OPENLCB_COMPILE_BROADCAST_TIME
- *    #define OPENLCB_COMPILE_TRAIN
- *    #define OPENLCB_COMPILE_TRAIN_SEARCH
- *
- *  Minimal bootloader (firmware upgrade only):
- *    #define OPENLCB_COMPILE_BOOTLOADER
+ *  See documentation/working_plans/bootloader_config_plan.md for details.
  */
 
 #ifndef __OPENLCB_USER_CONFIG__
 #define __OPENLCB_USER_CONFIG__
 
 // =============================================================================
-// Bootloader preset -- uncomment for a minimal firmware-upgrade-only build.
-// Automatically sets DATAGRAMS + MEMORY_CONFIGURATION + FIRMWARE.
-// All other features are disabled.  See documentation/working_plans/
-// bootloader_config_plan.md for details.
+// Feature Flags — bootloader preset
 // =============================================================================
+// Enables DATAGRAMS + MEMORY_CONFIGURATION + FIRMWARE, disables everything
+// else.  OPENLCB_COMPILE_BOOTLOADER strips non-essential protocol handlers
+// from the build to minimize image size.
 
-// #define OPENLCB_COMPILE_BOOTLOADER
-
-#ifdef OPENLCB_COMPILE_BOOTLOADER
-
-    #define OPENLCB_COMPILE_DATAGRAMS
-    #define OPENLCB_COMPILE_MEMORY_CONFIGURATION
-    #define OPENLCB_COMPILE_FIRMWARE
-
-    #undef OPENLCB_COMPILE_EVENTS
-    #undef OPENLCB_COMPILE_BROADCAST_TIME
-    #undef OPENLCB_COMPILE_TRAIN
-    #undef OPENLCB_COMPILE_TRAIN_SEARCH
-
-#endif
-
-// =============================================================================
-// Feature Flags -- uncomment to enable optional protocols
-// (ignored when OPENLCB_COMPILE_BOOTLOADER is defined)
-// =============================================================================
-
-// #define OPENLCB_COMPILE_EVENTS
-// #define OPENLCB_COMPILE_DATAGRAMS
-// #define OPENLCB_COMPILE_CONFIG_MEMORY
-// #define OPENLCB_COMPILE_BROADCAST_TIME
-// #define OPENLCB_COMPILE_TRAIN
-// #define OPENLCB_COMPILE_TRAIN_SEARCH
+#define OPENLCB_COMPILE_BOOTLOADER     // auto-defines DATAGRAMS + MEMORY_CONFIGURATION + FIRMWARE
 
 // =============================================================================
 // Debug -- uncomment to print feature summary during compilation
@@ -83,7 +36,7 @@
 // #define OPENLCB_COMPILE_VERBOSE
 
 // =============================================================================
-// Core Message Buffer Pool
+// Core Message Buffer Pool — minimized for bootloader
 // =============================================================================
 // The library uses a pool of message buffers of different sizes.  Tune these
 // for your platform's available RAM.  The total number of buffers is the sum
@@ -92,69 +45,60 @@
 //   BASIC    (16 bytes each)  -- most OpenLCB messages fit in this size
 //   DATAGRAM (72 bytes each)  -- datagram protocol messages
 //   SNIP     (256 bytes each) -- SNIP replies and Events with Payload
-//   STREAM   (512 bytes each) -- stream data transfer (future use)
+//   STREAM   (USER_DEFINED_STREAM_BUFFER_LEN bytes each) -- stream data transfer (future use)
 
-#define USER_DEFINED_BASIC_BUFFER_DEPTH              32
-#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4
-#define USER_DEFINED_SNIP_BUFFER_DEPTH               4
-#define USER_DEFINED_STREAM_BUFFER_DEPTH             1
-// Tunes the maximum number of bytes in a single stream data frame.  Five static
-// buffers of this size are allocated for the message dispatcher sibling response
-// queue.  Must be >= 256 (the SNIP payload size).
+#define USER_DEFINED_BASIC_BUFFER_DEPTH              8      // must be >= 1; enforced by compiler
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           2      // must be >= 1; enforced by compiler
+#define USER_DEFINED_SNIP_BUFFER_DEPTH               1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_STREAM_BUFFER_DEPTH             1      // must be >= 1; enforced by compiler
+// Maximum bytes in a single stream data frame (future use).
 #define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 
 // =============================================================================
-// Virtual Node Allocation
+// Virtual Node Allocation — bootloader is a single-node device
 // =============================================================================
 // How many virtual nodes this device can host.  Most simple devices use 1.
 // Train command stations may need more (one per locomotive being controlled).
 
-#define USER_DEFINED_NODE_BUFFER_DEPTH               4
+#define USER_DEFINED_NODE_BUFFER_DEPTH               1      // must be >= 1; enforced by compiler
 
 // =============================================================================
-// Events (requires OPENLCB_COMPILE_EVENTS)
+// Events (requires OPENLCB_COMPILE_EVENTS) — set to 1 (minimum)
 // =============================================================================
 // Maximum number of produced/consumed events per node, and how many event ID
 // ranges each node can handle.  Ranges are used by protocols like Train Search
 // that work with contiguous blocks of event IDs.
-// Range counts must be at least 1 for valid array sizing.
 
-#define USER_DEFINED_PRODUCER_COUNT                  64
-#define USER_DEFINED_PRODUCER_RANGE_COUNT            5
-#define USER_DEFINED_CONSUMER_COUNT                  32
-#define USER_DEFINED_CONSUMER_RANGE_COUNT            5
+#define USER_DEFINED_PRODUCER_COUNT                  1     // must be >= 1; enforced by compiler
+#define USER_DEFINED_PRODUCER_RANGE_COUNT            1     // must be >= 1; enforced by compiler
+#define USER_DEFINED_CONSUMER_COUNT                  1     // must be >= 1; enforced by compiler
+#define USER_DEFINED_CONSUMER_RANGE_COUNT            1     // must be >= 1; enforced by compiler
 
 // =============================================================================
-// Configuration Memory (requires OPENLCB_COMPILE_CONFIG_MEMORY)
+// Configuration Memory (requires OPENLCB_COMPILE_MEMORY_CONFIGURATION) — not used, set to 1 (minimum)
 // =============================================================================
 // CDI_LENGTH -- size in bytes of the CDI (Configuration Description Information)
 //   XML buffer.  Must be large enough to hold your node's complete CDI XML.
 // FDI_LENGTH -- size in bytes of the FDI (Function Description Information)
 //   buffer.  Only used by train nodes; set small (e.g. 100) if not a train.
-//
-// The two address values tell the SNIP protocol where in your node's
-// configuration memory space the user-editable name and description strings
-// begin.  The standard layout puts the user name at address 0 and the user
-// description immediately after at byte 62:
-//   63 = LEN_SNIP_USER_NAME_BUFFER (63)
 
-#define USER_DEFINED_CDI_LENGTH                      20000
-#define USER_DEFINED_FDI_LENGTH                      1000
+#define USER_DEFINED_CDI_LENGTH                      1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_FDI_LENGTH                      1      // must be >= 1; enforced by compiler; overridden to 1 if OPENLCB_COMPILE_TRAIN is not defined
 
 // =============================================================================
-// Train Protocol (requires OPENLCB_COMPILE_TRAIN)
+// Train Protocol (requires OPENLCB_COMPILE_TRAIN) — not used, set to 1 (minimum)
 // =============================================================================
 // TRAIN_NODE_COUNT        -- max simultaneous train nodes (often equals
 //                            NODE_BUFFER_DEPTH for a dedicated command station)
 // MAX_LISTENERS_PER_TRAIN -- max consist members (listener slots) per train
 // MAX_TRAIN_FUNCTIONS     -- number of DCC function outputs: 29 = F0 through F28
 
-#define USER_DEFINED_TRAIN_NODE_COUNT                4
-#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         6
-#define USER_DEFINED_MAX_TRAIN_FUNCTIONS             29
+#define USER_DEFINED_TRAIN_NODE_COUNT                1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_MAX_TRAIN_FUNCTIONS             1      // must be >= 1; enforced by compiler
 
 // =============================================================================
-// Listener Alias Verification (requires OPENLCB_COMPILE_TRAIN)
+// Listener Alias Verification (requires OPENLCB_COMPILE_TRAIN) — not used, but must be defined
 // =============================================================================
 // LISTENER_PROBE_TICK_INTERVAL  -- how many 100ms ticks between prober calls
 //                                  (1 = every 100ms, 2 = every 200ms, etc.)

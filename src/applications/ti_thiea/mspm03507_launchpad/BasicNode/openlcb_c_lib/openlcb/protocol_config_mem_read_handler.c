@@ -41,6 +41,11 @@
 
 #include "protocol_config_mem_read_handler.h"
 
+#include "openlcb_config.h"
+
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#ifndef OPENLCB_COMPILE_BOOTLOADER
+
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -644,3 +649,6 @@ void ProtocolConfigMemReadHandler_read_reply_reject_message(openlcb_statemachine
     // Intentional stub - reserved for future implementation
 
 }
+
+#endif /* OPENLCB_COMPILE_BOOTLOADER */
+#endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */

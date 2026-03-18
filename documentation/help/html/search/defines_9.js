@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sibling_5fresponse_5fqueue_5fdepth_0',['SIBLING_RESPONSE_QUEUE_DEPTH',['../openlcb__main__statemachine_8c.html#a41e7c577564f63f398e36288481ac02e',1,'openlcb_main_statemachine.c']]]
+  ['user_5fdefined_5fcan_5fmsg_5fbuffer_5fdepth_0',['USER_DEFINED_CAN_MSG_BUFFER_DEPTH',['../can__types_8h.html#a66e224442df976c1bb15398aa0a681ab',1,'can_types.h']]]
 ];

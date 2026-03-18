@@ -43,7 +43,6 @@ var searchData=
   ['stream_5finitiate_5frequest_40',['stream_initiate_request',['../structinterface__openlcb__main__statemachine__t.html#a344d21148e7e4aea207e7f2499de359e',1,'interface_openlcb_main_statemachine_t']]],
   ['stream_5fread_5fwrite_5fsupported_41',['stream_read_write_supported',['../structuser__configuration__options.html#ab2b7e8d91f3d7ee3e9186f21cea2c192',1,'user_configuration_options']]],
   ['stream_5fsend_5fdata_42',['stream_send_data',['../structinterface__openlcb__main__statemachine__t.html#a317047b3f7f1050dd011108a4a3322eb',1,'interface_openlcb_main_statemachine_t']]],
-  ['strings_43',['strings',['../struct_string_list.html#a58cde68c8e9c831d0c8c03000a553ff5',1,'StringList']]],
-  ['sync_5fdelay_5fticks_44',['sync_delay_ticks',['../structbroadcast__clock__t.html#a941dc519e9181ae3a95e805c3ba4964a',1,'broadcast_clock_t']]],
-  ['sync_5fpending_45',['sync_pending',['../structbroadcast__clock__t.html#ad0a652fa7b44b382c8d995523b74325e',1,'broadcast_clock_t']]]
+  ['sync_5fdelay_5fticks_43',['sync_delay_ticks',['../structbroadcast__clock__t.html#a941dc519e9181ae3a95e805c3ba4964a',1,'broadcast_clock_t']]],
+  ['sync_5fpending_44',['sync_pending',['../structbroadcast__clock__t.html#ad0a652fa7b44b382c8d995523b74325e',1,'broadcast_clock_t']]]
 ];

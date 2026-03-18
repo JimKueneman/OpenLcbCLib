@@ -12,8 +12,8 @@ var searchData=
   ['openlcb_5fnode_5ftag_9',['openlcb_node_TAG',['../structopenlcb__node___t_a_g.html',1,'']]],
   ['openlcb_5fnodes_5ft_10',['openlcb_nodes_t',['../structopenlcb__nodes__t.html',1,'']]],
   ['openlcb_5foutgoing_5fbasic_5fmsg_5finfo_5ft_11',['openlcb_outgoing_basic_msg_info_t',['../structopenlcb__outgoing__basic__msg__info__t.html',1,'']]],
-  ['openlcb_5foutgoing_5fstream_5fmsg_5finfo_5ft_12',['openlcb_outgoing_stream_msg_info_t',['../structopenlcb__outgoing__stream__msg__info__t.html',1,'']]],
+  ['openlcb_5foutgoing_5fmsg_5finfo_5ft_12',['openlcb_outgoing_msg_info_t',['../structopenlcb__outgoing__msg__info__t.html',1,'']]],
   ['openlcb_5fstatemachine_5finfo_5ft_13',['openlcb_statemachine_info_t',['../structopenlcb__statemachine__info__t.html',1,'']]],
-  ['openlcb_5fstatemachine_5fworker_5ft_14',['openlcb_statemachine_worker_t',['../structopenlcb__statemachine__worker__t.html',1,'']]],
-  ['openlcb_5fstream_5fmessage_5ft_15',['openlcb_stream_message_t',['../structopenlcb__stream__message__t.html',1,'']]]
+  ['openlcb_5fstream_5fmessage_5ft_14',['openlcb_stream_message_t',['../structopenlcb__stream__message__t.html',1,'']]],
+  ['openlcb_5fworker_5fmessage_5ft_15',['openlcb_worker_message_t',['../structopenlcb__worker__message__t.html',1,'']]]
 ];

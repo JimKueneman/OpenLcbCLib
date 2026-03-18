@@ -40,6 +40,10 @@
 
 #include "protocol_config_mem_operations_handler.h"
 
+#include "openlcb_config.h"
+
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -447,59 +451,6 @@ void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_s
 
 }
 
-    /**
-     * @brief Handle Lock/Reserve command: grant, release, or report current holder.
-     *
-     * @details Algorithm:
-     * -# Extract requester Node ID from payload
-     * -# If unlocked: grant to requester
-     * -# If locked and ID == 0: release (standard release)
-     * -# If locked and ID == current owner: release (owner self-release per MemoryConfigurationS §4.11)
-     * -# Otherwise: deny — reply with current owner Node ID
-     *
-     * @verbatim
-     * @param statemachine_info                   Context.
-     * @param config_mem_operations_request_info   Request info.
-     * @endverbatim
-     */
-void ProtocolConfigMemOperationsHandler_request_reserve_lock(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    node_id_t new_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(
-            statemachine_info->incoming_msg_info.msg_ptr,
-            2);
-
-    if (statemachine_info->openlcb_node->owner_node == 0) {
-
-        statemachine_info->openlcb_node->owner_node = new_node_id;
-
-    } else {
-
-        if (new_node_id == 0 || new_node_id == statemachine_info->openlcb_node->owner_node) {
-
-            statemachine_info->openlcb_node->owner_node = 0;
-
-        }
-
-    }
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            CONFIG_MEM_RESERVE_LOCK_REPLY,
-            1);
-
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->owner_node,
-            2);
-
-    statemachine_info->outgoing_msg_info.valid = true;
-
-}
-
     /** @brief Dispatch Get Configuration Options command to two-phase handler. */
 void ProtocolConfigMemOperationsHandler_options_cmd(openlcb_statemachine_info_t *statemachine_info) {
 
@@ -560,6 +511,126 @@ void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present(ope
 
 }
 
+    /** @brief Dispatch Unfreeze command to two-phase handler. */
+void ProtocolConfigMemOperationsHandler_unfreeze(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_operations_request_info_t config_mem_operations_request_info;
+
+    config_mem_operations_request_info.operations_func = _interface->operations_request_unfreeze;
+    config_mem_operations_request_info.space_info = _decode_to_space_definition(statemachine_info, 2);
+
+    _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
+
+}
+
+    /** @brief Dispatch Freeze command to two-phase handler. */
+void ProtocolConfigMemOperationsHandler_freeze(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_operations_request_info_t config_mem_operations_request_info;
+
+    config_mem_operations_request_info.operations_func = _interface->operations_request_freeze;
+    config_mem_operations_request_info.space_info = _decode_to_space_definition(statemachine_info, 2);
+
+    _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
+
+}
+
+    /** @brief Dispatch Reset/Reboot command.
+     *
+     * Per MemoryConfigurationS Section 4.24, the Reset/Reboot command is only
+     * [0x20, 0xA9] with no Node ID in the payload.  Unlike Factory Reset (0xAA,
+     * Section 4.25) which requires a Node ID as a safety guard, Reset/Reboot
+     * applies unconditionally to the addressed node.
+     *
+     * Per Section 4.24: "The receiving node may acknowledge this command with a
+     * Node Initialization Complete instead of a Datagram Received OK response."
+     * We skip the datagram ACK — the Initialization Complete from the reboot
+     * serves as acknowledgment. */
+void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t *statemachine_info) {
+
+    if (!_interface->operations_request_reset_reboot) {
+
+        _load_datagram_reject_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+        return;
+
+    }
+
+    config_mem_operations_request_info_t config_mem_operations_request_info;
+
+    config_mem_operations_request_info.operations_func = _interface->operations_request_reset_reboot;
+    config_mem_operations_request_info.space_info = NULL;
+
+    // No datagram ACK — Initialization Complete is the acknowledgment
+    statemachine_info->outgoing_msg_info.valid = false;
+
+    config_mem_operations_request_info.operations_func(statemachine_info, &config_mem_operations_request_info);
+
+    statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false;
+    statemachine_info->incoming_msg_info.enumerate = false;
+
+}
+
+
+// =============================================================================
+// Non-bootloader code — excluded when OPENLCB_COMPILE_BOOTLOADER is defined.
+// Contains: lock/reserve, get unique ID, update complete, factory reset.
+// =============================================================================
+
+#ifndef OPENLCB_COMPILE_BOOTLOADER
+
+    /**
+     * @brief Handle Lock/Reserve command: grant, release, or report current holder.
+     *
+     * @details Algorithm:
+     * -# Extract requester Node ID from payload
+     * -# If unlocked: grant to requester
+     * -# If locked and ID == 0: release (standard release)
+     * -# If locked and ID == current owner: release (owner self-release per MemoryConfigurationS §4.11)
+     * -# Otherwise: deny — reply with current owner Node ID
+     *
+     * @verbatim
+     * @param statemachine_info                   Context.
+     * @param config_mem_operations_request_info   Request info.
+     * @endverbatim
+     */
+void ProtocolConfigMemOperationsHandler_request_reserve_lock(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    node_id_t new_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(
+            statemachine_info->incoming_msg_info.msg_ptr,
+            2);
+
+    if (statemachine_info->openlcb_node->owner_node == 0) {
+
+        statemachine_info->openlcb_node->owner_node = new_node_id;
+
+    } else {
+
+        if (new_node_id == 0 || new_node_id == statemachine_info->openlcb_node->owner_node) {
+
+            statemachine_info->openlcb_node->owner_node = 0;
+
+        }
+
+    }
+
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            CONFIG_MEM_RESERVE_LOCK_REPLY,
+            1);
+
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->owner_node,
+            2);
+
+    statemachine_info->outgoing_msg_info.valid = true;
+
+}
+
     /** @brief Dispatch Lock/Reserve command to two-phase handler. */
 void ProtocolConfigMemOperationsHandler_reserve_lock(openlcb_statemachine_info_t *statemachine_info) {
 
@@ -609,30 +680,6 @@ void ProtocolConfigMemOperationsHandler_get_unique_id_reply(openlcb_statemachine
 
 }
 
-    /** @brief Dispatch Unfreeze command to two-phase handler. */
-void ProtocolConfigMemOperationsHandler_unfreeze(openlcb_statemachine_info_t *statemachine_info) {
-
-    config_mem_operations_request_info_t config_mem_operations_request_info;
-
-    config_mem_operations_request_info.operations_func = _interface->operations_request_unfreeze;
-    config_mem_operations_request_info.space_info = _decode_to_space_definition(statemachine_info, 2);
-
-    _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
-
-}
-
-    /** @brief Dispatch Freeze command to two-phase handler. */
-void ProtocolConfigMemOperationsHandler_freeze(openlcb_statemachine_info_t *statemachine_info) {
-
-    config_mem_operations_request_info_t config_mem_operations_request_info;
-
-    config_mem_operations_request_info.operations_func = _interface->operations_request_freeze;
-    config_mem_operations_request_info.space_info = _decode_to_space_definition(statemachine_info, 2);
-
-    _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
-
-}
-
     /** @brief Dispatch Update Complete command to two-phase handler. */
 void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_info_t *statemachine_info) {
 
@@ -642,41 +689,6 @@ void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_inf
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
-
-}
-
-    /** @brief Dispatch Reset/Reboot command.
-     *
-     * Per MemoryConfigurationS Section 4.24, the Reset/Reboot command is only
-     * [0x20, 0xA9] with no Node ID in the payload.  Unlike Factory Reset (0xAA,
-     * Section 4.25) which requires a Node ID as a safety guard, Reset/Reboot
-     * applies unconditionally to the addressed node.
-     *
-     * Per Section 4.24: "The receiving node may acknowledge this command with a
-     * Node Initialization Complete instead of a Datagram Received OK response."
-     * We skip the datagram ACK — the Initialization Complete from the reboot
-     * serves as acknowledgment. */
-void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t *statemachine_info) {
-
-    if (!_interface->operations_request_reset_reboot) {
-
-        _load_datagram_reject_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
-        return;
-
-    }
-
-    config_mem_operations_request_info_t config_mem_operations_request_info;
-
-    config_mem_operations_request_info.operations_func = _interface->operations_request_reset_reboot;
-    config_mem_operations_request_info.space_info = NULL;
-
-    // No datagram ACK — Initialization Complete is the acknowledgment
-    statemachine_info->outgoing_msg_info.valid = false;
-
-    config_mem_operations_request_info.operations_func(statemachine_info, &config_mem_operations_request_info);
-
-    statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false;
-    statemachine_info->incoming_msg_info.enumerate = false;
 
 }
 
@@ -706,5 +718,6 @@ void ProtocolConfigMemOperationsHandler_factory_reset(openlcb_statemachine_info_
 
 }
 
-
+#endif /* OPENLCB_COMPILE_BOOTLOADER */
+#endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
 

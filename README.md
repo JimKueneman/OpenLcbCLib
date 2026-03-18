@@ -51,7 +51,9 @@ src/                        library source and platform examples
     arduino/esp32/BasicNode/    ESP32 starting point
   utilities/                endian and string helpers
   test/                     unit tests
-templates/                  CDI/FDI XML templates and user config template
+templates/                  CDI/FDI XML templates and user config templates
+  typical/                  standard node openlcb_user_config.h/.c template
+  bootloader/               bootloader-only openlcb_user_config.h/.c template
 tools/
   node_wizard/              browser-based project generator
   cdi_to_array/             Python script — convert CDI XML to a C byte array

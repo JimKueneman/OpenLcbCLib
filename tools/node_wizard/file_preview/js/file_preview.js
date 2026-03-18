@@ -109,6 +109,7 @@ function _getActiveDriverGroups(state) {
     if (typeof DRIVER_GROUPS === 'undefined') { return active; }
 
     var groupKeys = Object.keys(DRIVER_GROUPS);
+    var isBootloader = state.nodeType === 'bootloader';
 
     for (var i = 0; i < groupKeys.length; i++) {
 
@@ -121,6 +122,7 @@ function _getActiveDriverGroups(state) {
         for (var j = 0; j < group.functions.length; j++) {
 
             var fn = group.functions[j];
+            if (isBootloader && (fn.name === 'config_mem_read' || fn.name === 'config_mem_write')) { continue; }
             if (fn.required || checkedNames.indexOf(fn.name) >= 0) {
                 activeFns.push(fn);
             }
@@ -261,12 +263,14 @@ function _buildFileMap(ws) {
 
     }
 
-    /* XML files */
-    if (ws.cdiUserXml && ws.cdiUserXml.trim()) {
-        map[sub + 'xml_files/cdi.xml'] = ws.cdiUserXml;
-    }
-    if (ws.fdiUserXml && ws.fdiUserXml.trim()) {
-        map[sub + 'xml_files/fdi.xml'] = ws.fdiUserXml;
+    /* XML files — bootloader has no CDI or FDI */
+    if (ws.selectedNodeType !== 'bootloader') {
+        if (ws.cdiUserXml && ws.cdiUserXml.trim()) {
+            map[sub + 'xml_files/cdi.xml'] = ws.cdiUserXml;
+        }
+        if (ws.fdiUserXml && ws.fdiUserXml.trim()) {
+            map[sub + 'xml_files/fdi.xml'] = ws.fdiUserXml;
+        }
     }
 
     /* Placeholder library folders (shown as empty folders in tree) */

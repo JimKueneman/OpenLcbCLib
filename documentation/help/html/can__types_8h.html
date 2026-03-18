@@ -109,8 +109,6 @@ Data Structures</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcan__msg__struct.html">can_msg_struct</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcan__main__statemachine__struct.html">can_main_statemachine_struct</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcan__statemachine__info__struct.html">can_statemachine_info_struct</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structalias__mapping__struct.html">alias_mapping_struct</a></td></tr>
@@ -122,7 +120,7 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a66e224442df976c1bb15398aa0a681ab" id="r_a66e224442df976c1bb15398aa0a681ab"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a>&#160;&#160;&#160;10</td></tr>
+<tr class="memitem:a66e224442df976c1bb15398aa0a681ab" id="r_a66e224442df976c1bb15398aa0a681ab"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a>&#160;&#160;&#160;20</td></tr>
 <tr class="memdesc:a66e224442df976c1bb15398aa0a681ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffers in the pool (<a class="el" href="can__buffer__store_8h.html" title="Pre-allocated pool of can_msg_t buffers (8-byte payload each).">can_buffer_store.h</a>).  <br /></td></tr>
 <tr class="separator:a66e224442df976c1bb15398aa0a681ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63b1d35b3f9523dc6d9ba2a5f9260af3" id="r_a63b1d35b3f9523dc6d9ba2a5f9260af3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63b1d35b3f9523dc6d9ba2a5f9260af3">ALIAS_MAPPING_BUFFER_DEPTH</a>&#160;&#160;&#160;USER_DEFINED_NODE_BUFFER_DEPTH</td></tr>
@@ -167,9 +165,6 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a90d0f10815864241524a1c20801e8e19" id="r_a90d0f10815864241524a1c20801e8e19"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90d0f10815864241524a1c20801e8e19">can_msg_array_t</a>[<a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a>]</td></tr>
 <tr class="memdesc:a90d0f10815864241524a1c20801e8e19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre-allocated array of <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffers, sized USER_DEFINED_CAN_MSG_BUFFER_DEPTH.  <br /></td></tr>
 <tr class="separator:a90d0f10815864241524a1c20801e8e19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fbf90b47d77d9ee616bb099f3d9ce3e" id="r_a6fbf90b47d77d9ee616bb099f3d9ce3e"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structcan__main__statemachine__struct.html">can_main_statemachine_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fbf90b47d77d9ee616bb099f3d9ce3e">can_main_statemachine_t</a></td></tr>
-<tr class="memdesc:a6fbf90b47d77d9ee616bb099f3d9ce3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Working context for the CAN main state machine.  <br /></td></tr>
-<tr class="separator:a6fbf90b47d77d9ee616bb099f3d9ce3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad52cca2be7565c8d23f3cc4d83cbc19e" id="r_ad52cca2be7565c8d23f3cc4d83cbc19e"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structcan__statemachine__info__struct.html">can_statemachine_info_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a></td></tr>
 <tr class="memdesc:ad52cca2be7565c8d23f3cc4d83cbc19e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Context block passed through the CAN state machine on every iteration.  <br /></td></tr>
 <tr class="separator:ad52cca2be7565c8d23f3cc4d83cbc19e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -192,7 +187,7 @@ Typedefs</h2></td></tr>
 </dd></dl>
 <p>Defines <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>, <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a>, <a class="el" href="#a6f5fe2a96f016592936919dc52552b60">alias_mapping_info_t</a>, <a class="el" href="#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a>, <a class="el" href="#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a>, and all compile-time constants shared across the CAN driver modules. No executable code — types and macros only.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>8 Mar 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>18 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a66e224442df976c1bb15398aa0a681ab" name="a66e224442df976c1bb15398aa0a681ab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a66e224442df976c1bb15398aa0a681ab">&#9670;&#160;</a></span>USER_DEFINED_CAN_MSG_BUFFER_DEPTH</h2>
@@ -201,7 +196,7 @@ Typedefs</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH&#160;&#160;&#160;10</td>
+          <td class="memname">#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH&#160;&#160;&#160;20</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -429,22 +424,6 @@ Typedefs</h2></td></tr>
 
 <p>Pre-allocated array of <a class="el" href="#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> buffers, sized USER_DEFINED_CAN_MSG_BUFFER_DEPTH. </p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8c.html" title="Implementation of the pre-allocated CAN message buffer pool.">can_buffer_store.c</a> </dd></dl>
-
-</div>
-</div>
-<a id="a6fbf90b47d77d9ee616bb099f3d9ce3e" name="a6fbf90b47d77d9ee616bb099f3d9ce3e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6fbf90b47d77d9ee616bb099f3d9ce3e">&#9670;&#160;</a></span>can_main_statemachine_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef struct <a class="el" href="structcan__main__statemachine__struct.html">can_main_statemachine_struct</a> <a class="el" href="#a6fbf90b47d77d9ee616bb099f3d9ce3e">can_main_statemachine_t</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Working context for the CAN main state machine. </p>
 
 </div>
 </div>

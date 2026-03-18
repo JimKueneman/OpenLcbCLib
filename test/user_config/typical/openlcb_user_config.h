@@ -27,15 +27,13 @@
 //   BASIC    (16 bytes each)  -- most OpenLCB messages fit in this size
 //   DATAGRAM (72 bytes each)  -- datagram protocol messages
 //   SNIP     (256 bytes each) -- SNIP replies and Events with Payload
-//   STREAM   (512 bytes each) -- stream data transfer (future use)
+//   STREAM   (USER_DEFINED_STREAM_BUFFER_LEN bytes each) -- stream data transfer (future use)
 
-#define USER_DEFINED_BASIC_BUFFER_DEPTH              32
-#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4
-#define USER_DEFINED_SNIP_BUFFER_DEPTH               4
-#define USER_DEFINED_STREAM_BUFFER_DEPTH             1
-// Tunes the maximum number of bytes in a single stream data frame.  Five static
-// buffers of this size are allocated for the message dispatcher sibling response
-// queue.  Must be >= 256 (the SNIP payload size).
+#define USER_DEFINED_BASIC_BUFFER_DEPTH              32  // must be >= 1; enforced by compiler
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4   // must be >= 1; enforced by compiler
+#define USER_DEFINED_SNIP_BUFFER_DEPTH               4   // must be >= 1; enforced by compiler
+#define USER_DEFINED_STREAM_BUFFER_DEPTH             1   // must be >= 1; enforced by compiler
+// Maximum bytes in a single stream data frame (future use).
 #define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 
 // =============================================================================
@@ -44,7 +42,7 @@
 // How many virtual nodes this device can host.  Most simple devices use 1.
 // Train command stations may need more (one per locomotive being controlled).
 
-#define USER_DEFINED_NODE_BUFFER_DEPTH               50
+#define USER_DEFINED_NODE_BUFFER_DEPTH               50  // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Events (requires OPENLCB_COMPILE_EVENTS)
@@ -54,10 +52,10 @@
 // that work with contiguous blocks of event IDs.
 // Range counts must be at least 1 for valid array sizing.
 
-#define USER_DEFINED_PRODUCER_COUNT                  64
-#define USER_DEFINED_PRODUCER_RANGE_COUNT            5
-#define USER_DEFINED_CONSUMER_COUNT                  32
-#define USER_DEFINED_CONSUMER_RANGE_COUNT            5
+#define USER_DEFINED_PRODUCER_COUNT                  64  // must be >= 1; enforced by compiler
+#define USER_DEFINED_PRODUCER_RANGE_COUNT            5   // must be >= 1; enforced by compiler
+#define USER_DEFINED_CONSUMER_COUNT                  32  // must be >= 1; enforced by compiler
+#define USER_DEFINED_CONSUMER_RANGE_COUNT            5   // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Memory Configuration (requires OPENLCB_COMPILE_MEMORY_CONFIGURATION)
@@ -73,8 +71,8 @@
 // description immediately after at byte 62:
 //   63 = LEN_SNIP_USER_NAME_BUFFER (63)
 
-#define USER_DEFINED_CDI_LENGTH                      20000
-#define USER_DEFINED_FDI_LENGTH                      1000
+#define USER_DEFINED_CDI_LENGTH                      20000 // must be >= 1; enforced by compiler
+#define USER_DEFINED_FDI_LENGTH                      1000 // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Train Protocol (requires OPENLCB_COMPILE_TRAIN)
@@ -84,9 +82,9 @@
 // MAX_LISTENERS_PER_TRAIN -- max consist members (listener slots) per train
 // MAX_TRAIN_FUNCTIONS     -- number of DCC function outputs: 29 = F0 through F28
 
-#define USER_DEFINED_TRAIN_NODE_COUNT                4
-#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         6
-#define USER_DEFINED_MAX_TRAIN_FUNCTIONS             29
+#define USER_DEFINED_TRAIN_NODE_COUNT                4   // must be >= 1; enforced by compiler
+#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         6   // must be >= 1; enforced by compiler
+#define USER_DEFINED_MAX_TRAIN_FUNCTIONS             29  // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Listener Alias Verification (requires OPENLCB_COMPILE_TRAIN)

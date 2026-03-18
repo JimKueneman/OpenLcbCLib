@@ -4,5 +4,5 @@
 ../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:149:13:_build_rx_statemachine	8	static
 ../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:176:13:_build_tx_message_handler	8	static
 ../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:189:13:_build_tx_statemachine	8	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:206:13:_build_main_statemachine	8	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:260:6:CanConfig_initialize	16	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:211:13:_build_main_statemachine	8	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:272:6:CanConfig_initialize	16	static

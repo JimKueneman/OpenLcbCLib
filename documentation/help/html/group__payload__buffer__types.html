@@ -107,8 +107,11 @@ Typedefs</h2></td></tr>
 <tr class="memdesc:ga5b8d853ede60e54b34961cda0d85b39f"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP message payload buffer (256 bytes)  <br /></td></tr>
 <tr class="separator:ga5b8d853ede60e54b34961cda0d85b39f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga701be94703c1d4fceb9c32cdef0048f0" id="r_ga701be94703c1d4fceb9c32cdef0048f0"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>[<a class="el" href="group__buffer__size__constants.html#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>]</td></tr>
-<tr class="memdesc:ga701be94703c1d4fceb9c32cdef0048f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload buffer (512 bytes)  <br /></td></tr>
+<tr class="memdesc:ga701be94703c1d4fceb9c32cdef0048f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload buffer (USER_DEFINED_STREAM_BUFFER_LEN bytes)  <br /></td></tr>
 <tr class="separator:ga701be94703c1d4fceb9c32cdef0048f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga60cbdcda0daebaf34e2062d082ae7ea6" id="r_ga60cbdcda0daebaf34e2062d082ae7ea6"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga60cbdcda0daebaf34e2062d082ae7ea6">payload_worker_t</a>[<a class="el" href="group__buffer__size__constants.html#ga240ec53ac7dfd1edd992d84723fdf555">LEN_MESSAGE_BYTES_WORKER</a>]</td></tr>
+<tr class="memdesc:ga60cbdcda0daebaf34e2062d082ae7ea6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Worker payload buffer — largest of all payload sizes (clamped to &gt;= 256 bytes)  <br /></td></tr>
+<tr class="separator:ga60cbdcda0daebaf34e2062d082ae7ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Array typedefs for each message payload size. </p>
@@ -173,7 +176,23 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>STREAM message payload buffer (512 bytes) </p>
+<p>STREAM message payload buffer (USER_DEFINED_STREAM_BUFFER_LEN bytes) </p>
+
+</div>
+</div>
+<a id="ga60cbdcda0daebaf34e2062d082ae7ea6" name="ga60cbdcda0daebaf34e2062d082ae7ea6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga60cbdcda0daebaf34e2062d082ae7ea6">&#9670;&#160;</a></span>payload_worker_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef uint8_t payload_worker_t[<a class="el" href="group__buffer__size__constants.html#ga240ec53ac7dfd1edd992d84723fdf555">LEN_MESSAGE_BYTES_WORKER</a>]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Worker payload buffer — largest of all payload sizes (clamped to &gt;= 256 bytes) </p>
 
 </div>
 </div>

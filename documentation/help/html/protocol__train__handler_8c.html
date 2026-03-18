@@ -90,30 +90,12 @@ $(function(){ initResizable(false); });
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">protocol_train_handler.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Train Control Protocol message handler implementation (Layer 1)  
 <a href="#details">More...</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a8910429fd811c07e7ff663cedfabc411" id="r_a8910429fd811c07e7ff663cedfabc411"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8910429fd811c07e7ff663cedfabc411">ProtocolTrainHandler_initialize</a> (const <a class="el" href="structinterface__protocol__train__handler__t.html">interface_protocol_train_handler_t</a> *interface)</td></tr>
-<tr class="memdesc:a8910429fd811c07e7ff663cedfabc411"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface. Call once at startup.  <br /></td></tr>
-<tr class="separator:a8910429fd811c07e7ff663cedfabc411"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf84497d74966cc915ade105271e13dd" id="r_acf84497d74966cc915ade105271e13dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf84497d74966cc915ade105271e13dd">ProtocolTrainHandler_handle_train_command</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:acf84497d74966cc915ade105271e13dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatches an incoming Train Control command by sub-command byte.  <br /></td></tr>
-<tr class="separator:acf84497d74966cc915ade105271e13dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0cf810c64a3181ec44f8c75a24a88c9a" id="r_a0cf810c64a3181ec44f8c75a24a88c9a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cf810c64a3181ec44f8c75a24a88c9a">ProtocolTrainHandler_handle_train_reply</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a0cf810c64a3181ec44f8c75a24a88c9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatches an incoming Train Control reply by sub-command byte.  <br /></td></tr>
-<tr class="separator:a0cf810c64a3181ec44f8c75a24a88c9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4a34f4e0ee27e144f7057ef13cbf4c7" id="r_ac4a34f4e0ee27e144f7057ef13cbf4c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4a34f4e0ee27e144f7057ef13cbf4c7">ProtocolTrainHandler_handle_emergency_event</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
-<tr class="memdesc:ac4a34f4e0ee27e144f7057ef13cbf4c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a global or addressed emergency event for a train node.  <br /></td></tr>
-<tr class="separator:ac4a34f4e0ee27e144f7057ef13cbf4c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Train Control Protocol message handler implementation (Layer 1) </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2026, Jim Kueneman All rights reserved.</dd></dl>
@@ -126,98 +108,7 @@ Functions</h2></td></tr>
 <p>Handles incoming MTI_TRAIN_PROTOCOL commands and MTI_TRAIN_REPLY replies. Automatically updates train_state, builds protocol replies, forwards consist commands to listeners, and fires optional notifier callbacks.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>9 Mar 2026 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a8910429fd811c07e7ff663cedfabc411" name="a8910429fd811c07e7ff663cedfabc411"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8910429fd811c07e7ff663cedfabc411">&#9670;&#160;</a></span>ProtocolTrainHandler_initialize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ProtocolTrainHandler_initialize </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structinterface__protocol__train__handler__t.html">interface_protocol_train_handler_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Stores the callback interface. Call once at startup. </p>
-<p>Initializes the Train Control Protocol handler.</p>
-<pre class="fragment">* @param interface  Populated callback table (may be NULL).
-* </pre> 
-</div>
-</div>
-<a id="acf84497d74966cc915ade105271e13dd" name="acf84497d74966cc915ade105271e13dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf84497d74966cc915ade105271e13dd">&#9670;&#160;</a></span>ProtocolTrainHandler_handle_train_command()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ProtocolTrainHandler_handle_train_command </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Dispatches an incoming Train Control command by sub-command byte. </p>
-<p>Handles an incoming Train Control Protocol command (MTI_TRAIN_PROTOCOL).</p>
-<p>Masks the P bit (bit 7) from the instruction byte before dispatch so that forwarded commands (P=1) are processed identically to direct commands (P=0). After local processing of speed, function, or emergency stop commands, initiates listener forwarding enumeration if listeners are attached and the command is not itself a forwarded command (P=0).</p>
-<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
-* </pre> 
-</div>
-</div>
-<a id="a0cf810c64a3181ec44f8c75a24a88c9a" name="a0cf810c64a3181ec44f8c75a24a88c9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0cf810c64a3181ec44f8c75a24a88c9a">&#9670;&#160;</a></span>ProtocolTrainHandler_handle_train_reply()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ProtocolTrainHandler_handle_train_reply </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Dispatches an incoming Train Control reply by sub-command byte. </p>
-<p>Handles an incoming Train Control Protocol reply (MTI_TRAIN_REPLY).</p>
-<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
-* </pre> 
-</div>
-</div>
-<a id="ac4a34f4e0ee27e144f7057ef13cbf4c7" name="ac4a34f4e0ee27e144f7057ef13cbf4c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac4a34f4e0ee27e144f7057ef13cbf4c7">&#9670;&#160;</a></span>ProtocolTrainHandler_handle_emergency_event()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ProtocolTrainHandler_handle_emergency_event </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Handles a global or addressed emergency event for a train node. </p>
-<p>Sets or clears emergency flags based on the well-known Event ID and fires the appropriate notifier callback.</p>
-<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
-* @param event_id           Well-known event_id_t for the emergency condition.
-* </pre> 
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 <!doctype html>
 <html>
     <body>

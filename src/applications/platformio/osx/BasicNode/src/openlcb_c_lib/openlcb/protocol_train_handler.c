@@ -38,6 +38,10 @@
 
 #include "protocol_train_handler.h"
 
+#include "openlcb_config.h"
+
+#ifdef OPENLCB_COMPILE_TRAIN
+
 #include <stddef.h>
 
 #include "openlcb_defines.h"
@@ -1474,3 +1478,5 @@ void ProtocolTrainHandler_handle_emergency_event(
     }
 
 }
+
+#endif /* OPENLCB_COMPILE_TRAIN */

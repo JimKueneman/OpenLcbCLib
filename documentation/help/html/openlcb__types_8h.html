@@ -178,14 +178,14 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__nodes__t.html">openlcb_nodes_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collection of all virtual nodes.  <a href="structopenlcb__nodes__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__statemachine__worker__t.html">openlcb_statemachine_worker_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">State machine temporary working buffers.  <a href="structopenlcb__statemachine__worker__t.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__stream__message__t.html">openlcb_stream_message_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message with inline STREAM-sized payload.  <a href="structopenlcb__stream__message__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__outgoing__stream__msg__info__t.html">openlcb_outgoing_stream_msg_info_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outgoing message context for the main state machine.  <a href="structopenlcb__outgoing__stream__msg__info__t.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__worker__message__t.html">openlcb_worker_message_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message with worker-sized payload (largest of all payload sizes).  <a href="structopenlcb__worker__message__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__outgoing__msg__info__t.html">openlcb_outgoing_msg_info_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outgoing message context for the main state machine.  <a href="structopenlcb__outgoing__msg__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__incoming__msg__info__t.html">openlcb_incoming_msg_info_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Incoming message context.  <a href="structopenlcb__incoming__msg__info__t.html#details">More...</a><br /></td></tr>
@@ -214,6 +214,9 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:ga0d663b83bcdf006041e64b5a981dc597" id="r_ga0d663b83bcdf006041e64b5a981dc597"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga0d663b83bcdf006041e64b5a981dc597">USER_DEFINED_FDI_LENGTH</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:ga0d663b83bcdf006041e64b5a981dc597"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of BASIC message buffers (16 bytes each) in the pool.  <br /></td></tr>
+<tr class="separator:ga0d663b83bcdf006041e64b5a981dc597"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga37cd38742a23b040e5cd7f3483bef546" id="r_ga37cd38742a23b040e5cd7f3483bef546"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga37cd38742a23b040e5cd7f3483bef546">LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</a>&#160;&#160;&#160;(64 - 1)</td></tr>
 <tr class="memdesc:ga37cd38742a23b040e5cd7f3483bef546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum description length for Configuration Options reply.  <br /></td></tr>
 <tr class="separator:ga37cd38742a23b040e5cd7f3483bef546"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -265,9 +268,12 @@ Macros</h2></td></tr>
 <tr class="memitem:gac622153763bbbd4970a00d7ec2f7f737" id="r_gac622153763bbbd4970a00d7ec2f7f737"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a>&#160;&#160;&#160;256</td></tr>
 <tr class="memdesc:gac622153763bbbd4970a00d7ec2f7f737"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP message payload size (also covers Events with Payload)  <br /></td></tr>
 <tr class="separator:gac622153763bbbd4970a00d7ec2f7f737"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad7e3d2c90a3bbfd68b51f5068f5692ff" id="r_gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>&#160;&#160;&#160;512</td></tr>
-<tr class="memdesc:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload size.  <br /></td></tr>
+<tr class="memitem:gad7e3d2c90a3bbfd68b51f5068f5692ff" id="r_gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>&#160;&#160;&#160;1  /* stream not compiled in — payload collapsed to 1 byte; define OPENLCB_COMPILE_STREAM to restore */</td></tr>
+<tr class="memdesc:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload size. Equals USER_DEFINED_STREAM_BUFFER_LEN when OPENLCB_COMPILE_STREAM is defined; collapses to 1 byte otherwise to save RAM.  <br /></td></tr>
 <tr class="separator:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga240ec53ac7dfd1edd992d84723fdf555" id="r_ga240ec53ac7dfd1edd992d84723fdf555"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga240ec53ac7dfd1edd992d84723fdf555">LEN_MESSAGE_BYTES_WORKER</a>&#160;&#160;&#160;<a class="el" href="group__buffer__size__constants.html#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td></tr>
+<tr class="memdesc:ga240ec53ac7dfd1edd992d84723fdf555"><td class="mdescLeft">&#160;</td><td class="mdescRight">Worker buffer payload size — largest of all payload sizes. Clamped to at least SNIP size (256 bytes).  <br /></td></tr>
+<tr class="separator:ga240ec53ac7dfd1edd992d84723fdf555"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga12eb42fe9afe213aa8690aff0c9e4ee6" id="r_ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga12eb42fe9afe213aa8690aff0c9e4ee6">LEN_EVENT_ID</a>&#160;&#160;&#160;8</td></tr>
 <tr class="memdesc:ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID size in bytes.  <br /></td></tr>
 <tr class="separator:ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -293,8 +299,11 @@ Typedefs</h2></td></tr>
 <tr class="memdesc:ga5b8d853ede60e54b34961cda0d85b39f"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP message payload buffer (256 bytes)  <br /></td></tr>
 <tr class="separator:ga5b8d853ede60e54b34961cda0d85b39f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga701be94703c1d4fceb9c32cdef0048f0" id="r_ga701be94703c1d4fceb9c32cdef0048f0"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>[<a class="el" href="group__buffer__size__constants.html#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>]</td></tr>
-<tr class="memdesc:ga701be94703c1d4fceb9c32cdef0048f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload buffer (512 bytes)  <br /></td></tr>
+<tr class="memdesc:ga701be94703c1d4fceb9c32cdef0048f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload buffer (USER_DEFINED_STREAM_BUFFER_LEN bytes)  <br /></td></tr>
 <tr class="separator:ga701be94703c1d4fceb9c32cdef0048f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga60cbdcda0daebaf34e2062d082ae7ea6" id="r_ga60cbdcda0daebaf34e2062d082ae7ea6"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__buffer__types.html#ga60cbdcda0daebaf34e2062d082ae7ea6">payload_worker_t</a>[<a class="el" href="group__buffer__size__constants.html#ga240ec53ac7dfd1edd992d84723fdf555">LEN_MESSAGE_BYTES_WORKER</a>]</td></tr>
+<tr class="memdesc:ga60cbdcda0daebaf34e2062d082ae7ea6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Worker payload buffer — largest of all payload sizes (clamped to &gt;= 256 bytes)  <br /></td></tr>
+<tr class="separator:ga60cbdcda0daebaf34e2062d082ae7ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab60ba075676efb9e9f7c7014a46573f9" id="r_gab60ba075676efb9e9f7c7014a46573f9"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#gab60ba075676efb9e9f7c7014a46573f9">openlcb_basic_data_buffer_t</a>[USER_DEFINED_BASIC_BUFFER_DEPTH]</td></tr>
 <tr class="memdesc:gab60ba075676efb9e9f7c7014a46573f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of BASIC payload buffers.  <br /></td></tr>
 <tr class="separator:gab60ba075676efb9e9f7c7014a46573f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -358,10 +367,14 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:aececf1be5c268eb2c680b4a0cc778467" id="r_aececf1be5c268eb2c680b4a0cc778467"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> { <a class="el" href="#aececf1be5c268eb2c680b4a0cc778467a13c45196813cb44e6e81e9c48a5ec1b4">BASIC</a>
+<tr class="memitem:aececf1be5c268eb2c680b4a0cc778467" id="r_aececf1be5c268eb2c680b4a0cc778467"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> { <br />
+&#160;&#160;<a class="el" href="#aececf1be5c268eb2c680b4a0cc778467a13c45196813cb44e6e81e9c48a5ec1b4">BASIC</a>
 , <a class="el" href="#aececf1be5c268eb2c680b4a0cc778467a802640598d6a1d0135cb7f5510ae9015">DATAGRAM</a>
 , <a class="el" href="#aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c">SNIP</a>
 , <a class="el" href="#aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5">STREAM</a>
+, <br />
+&#160;&#160;<a class="el" href="#aececf1be5c268eb2c680b4a0cc778467a987e0a4f16e43eba0a3e7ace64cc237f">WORKER</a>
+<br />
  }</td></tr>
 <tr class="memdesc:aececf1be5c268eb2c680b4a0cc778467"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message buffer payload type identifier.  <a href="#aececf1be5c268eb2c680b4a0cc778467">More...</a><br /></td></tr>
 <tr class="separator:aececf1be5c268eb2c680b4a0cc778467"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -439,7 +452,7 @@ Enumerations</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Defines all fundamental data types used across the library: message buffers (BASIC/DATAGRAM/SNIP/STREAM pools), node structures with event producer/consumer lists, configuration memory request types, broadcast time clock state, and train state. All memory is statically allocated at compile time — there is no dynamic allocation at runtime.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>8 Mar 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>18 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Typedef Documentation</h2>
 <a id="a4925a4e7a5380d3c40cfceadbbed1c78" name="a4925a4e7a5380d3c40cfceadbbed1c78"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4925a4e7a5380d3c40cfceadbbed1c78">&#9670;&#160;</a></span>openlcb_payload_t</h2>
@@ -721,7 +734,9 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c" name="aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c"></a>SNIP&#160;</td><td class="fielddoc"><p>256-byte payload buffer </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5" name="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5"></a>STREAM&#160;</td><td class="fielddoc"><p>512-byte payload buffer </p>
+<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5" name="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5"></a>STREAM&#160;</td><td class="fielddoc"><p>USER_DEFINED_STREAM_BUFFER_LEN payload buffer </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a987e0a4f16e43eba0a3e7ace64cc237f" name="aececf1be5c268eb2c680b4a0cc778467a987e0a4f16e43eba0a3e7ace64cc237f"></a>WORKER&#160;</td><td class="fielddoc"><p>max(SNIP, STREAM) payload buffer — used by statemachine workers </p>
 </td></tr>
 </table>
 

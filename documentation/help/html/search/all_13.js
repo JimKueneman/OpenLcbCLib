@@ -9,10 +9,11 @@ var searchData=
   ['user_5faddress_5fspace_5finfo_5ft_6',['user_address_space_info_t',['../structuser__address__space__info__t.html',1,'']]],
   ['user_5fconfiguration_5foptions_7',['user_configuration_options',['../structuser__configuration__options.html',1,'']]],
   ['user_5fdefined_5fcan_5fmsg_5fbuffer_5fdepth_8',['USER_DEFINED_CAN_MSG_BUFFER_DEPTH',['../can__types_8h.html#a66e224442df976c1bb15398aa0a681ab',1,'can_types.h']]],
-  ['user_5fenum_5fkeys_5fvalues_5f1_9',['USER_ENUM_KEYS_VALUES_1',['../group__node__enum__keys.html#ga1fb318496fd88293457e4b6f39cbb381',1,'openlcb_defines.h']]],
-  ['user_5fenum_5fkeys_5fvalues_5f2_10',['USER_ENUM_KEYS_VALUES_2',['../group__node__enum__keys.html#gad59cab51314182eb0942aeeb2452bed6',1,'openlcb_defines.h']]],
-  ['user_5fenum_5fkeys_5fvalues_5f3_11',['USER_ENUM_KEYS_VALUES_3',['../group__node__enum__keys.html#ga7f632835e06cf81f365acb76b4784679',1,'openlcb_defines.h']]],
-  ['user_5fenum_5fkeys_5fvalues_5f4_12',['USER_ENUM_KEYS_VALUES_4',['../group__node__enum__keys.html#gac3a7f96aaa25cfe69f0d7f0389349494',1,'openlcb_defines.h']]],
-  ['user_5fsnip_5fstruct_5ft_13',['user_snip_struct_t',['../structuser__snip__struct__t.html',1,'']]],
-  ['user_5fversion_14',['user_version',['../structuser__snip__struct__t.html#ad47425ec0aea2baf692b7b4de8d9e0d7',1,'user_snip_struct_t']]]
+  ['user_5fdefined_5ffdi_5flength_9',['USER_DEFINED_FDI_LENGTH',['../group__user__config__constants.html#ga0d663b83bcdf006041e64b5a981dc597',1,'openlcb_types.h']]],
+  ['user_5fenum_5fkeys_5fvalues_5f1_10',['USER_ENUM_KEYS_VALUES_1',['../group__node__enum__keys.html#ga1fb318496fd88293457e4b6f39cbb381',1,'openlcb_defines.h']]],
+  ['user_5fenum_5fkeys_5fvalues_5f2_11',['USER_ENUM_KEYS_VALUES_2',['../group__node__enum__keys.html#gad59cab51314182eb0942aeeb2452bed6',1,'openlcb_defines.h']]],
+  ['user_5fenum_5fkeys_5fvalues_5f3_12',['USER_ENUM_KEYS_VALUES_3',['../group__node__enum__keys.html#ga7f632835e06cf81f365acb76b4784679',1,'openlcb_defines.h']]],
+  ['user_5fenum_5fkeys_5fvalues_5f4_13',['USER_ENUM_KEYS_VALUES_4',['../group__node__enum__keys.html#gac3a7f96aaa25cfe69f0d7f0389349494',1,'openlcb_defines.h']]],
+  ['user_5fsnip_5fstruct_5ft_14',['user_snip_struct_t',['../structuser__snip__struct__t.html',1,'']]],
+  ['user_5fversion_15',['user_version',['../structuser__snip__struct__t.html#ad47425ec0aea2baf692b7b4de8d9e0d7',1,'user_snip_struct_t']]]
 ];

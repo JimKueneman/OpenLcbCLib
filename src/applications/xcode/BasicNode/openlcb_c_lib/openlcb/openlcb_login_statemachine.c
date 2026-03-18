@@ -67,7 +67,7 @@
 * - Outgoing message buffer (pre-allocated, reused for all messages)
 *
 * @author Jim Kueneman
-* @date 4 Mar 2026
+* @date 18 Mar 2026
 *
 * @see openlcb_login_statemachine_handler.c - Message construction handlers
 * @see OpenLCB Message Network Standard S-9.7.3.1 - Initialization Complete
@@ -132,7 +132,7 @@ void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_mac
     _sibling_statemachine_info.outgoing_msg_info.msg_ptr = &_sibling_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
     _sibling_statemachine_info.outgoing_msg_info.msg_ptr->payload =
             (openlcb_payload_t *) _sibling_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
-    _sibling_statemachine_info.outgoing_msg_info.msg_ptr->payload_type = STREAM;
+    _sibling_statemachine_info.outgoing_msg_info.msg_ptr->payload_type = WORKER;
     OpenLcbUtilities_clear_openlcb_message(_sibling_statemachine_info.outgoing_msg_info.msg_ptr);
     OpenLcbUtilities_clear_openlcb_message_payload(_sibling_statemachine_info.outgoing_msg_info.msg_ptr);
     _sibling_statemachine_info.outgoing_msg_info.msg_ptr->state.allocated = true;

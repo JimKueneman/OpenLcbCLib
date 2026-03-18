@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Number of BASIC message buffers (16 bytes each) in the pool.  
+<p>Maximum number of events a node can produce.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -148,9 +148,12 @@ Macros</h2></td></tr>
 <tr class="memitem:gac622153763bbbd4970a00d7ec2f7f737" id="r_gac622153763bbbd4970a00d7ec2f7f737"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a>&#160;&#160;&#160;256</td></tr>
 <tr class="memdesc:gac622153763bbbd4970a00d7ec2f7f737"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP message payload size (also covers Events with Payload)  <br /></td></tr>
 <tr class="separator:gac622153763bbbd4970a00d7ec2f7f737"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad7e3d2c90a3bbfd68b51f5068f5692ff" id="r_gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>&#160;&#160;&#160;512</td></tr>
-<tr class="memdesc:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload size.  <br /></td></tr>
+<tr class="memitem:gad7e3d2c90a3bbfd68b51f5068f5692ff" id="r_gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>&#160;&#160;&#160;1  /* stream not compiled in — payload collapsed to 1 byte; define OPENLCB_COMPILE_STREAM to restore */</td></tr>
+<tr class="memdesc:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload size. Equals USER_DEFINED_STREAM_BUFFER_LEN when OPENLCB_COMPILE_STREAM is defined; collapses to 1 byte otherwise to save RAM.  <br /></td></tr>
 <tr class="separator:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga240ec53ac7dfd1edd992d84723fdf555" id="r_ga240ec53ac7dfd1edd992d84723fdf555"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga240ec53ac7dfd1edd992d84723fdf555">LEN_MESSAGE_BYTES_WORKER</a>&#160;&#160;&#160;<a class="el" href="#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td></tr>
+<tr class="memdesc:ga240ec53ac7dfd1edd992d84723fdf555"><td class="mdescLeft">&#160;</td><td class="mdescRight">Worker buffer payload size — largest of all payload sizes. Clamped to at least SNIP size (256 bytes).  <br /></td></tr>
+<tr class="separator:ga240ec53ac7dfd1edd992d84723fdf555"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga12eb42fe9afe213aa8690aff0c9e4ee6" id="r_ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga12eb42fe9afe213aa8690aff0c9e4ee6">LEN_EVENT_ID</a>&#160;&#160;&#160;8</td></tr>
 <tr class="memdesc:ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID size in bytes.  <br /></td></tr>
 <tr class="separator:ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -165,14 +168,7 @@ Macros</h2></td></tr>
 <tr class="separator:ga7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Number of BASIC message buffers (16 bytes each) in the pool. </p>
-<p>Number of DATAGRAM message buffers (72 bytes each) in the pool</p>
-<p>Number of SNIP message buffers (256 bytes each) in the pool</p>
-<p>Number of STREAM message buffers (512 bytes each) in the pool</p>
-<p>Maximum number of virtual nodes that can be allocated</p>
-<p>Size of CDI buffer in bytes</p>
-<p>Size of FDI buffer in bytes (train nodes)</p>
-<p>Maximum number of events a node can produce</p>
+<p>Maximum number of events a node can produce. </p>
 <p>Maximum number of producer event ranges (must be &gt;= 1)</p>
 <p>Maximum number of events a node can consume</p>
 <p>Maximum number of consumer event ranges (must be &gt;= 1)</p>
@@ -460,12 +456,28 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define LEN_MESSAGE_BYTES_STREAM&#160;&#160;&#160;512</td>
+          <td class="memname">#define LEN_MESSAGE_BYTES_STREAM&#160;&#160;&#160;1  /* stream not compiled in — payload collapsed to 1 byte; define OPENLCB_COMPILE_STREAM to restore */</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>STREAM message payload size. </p>
+<p>STREAM message payload size. Equals USER_DEFINED_STREAM_BUFFER_LEN when OPENLCB_COMPILE_STREAM is defined; collapses to 1 byte otherwise to save RAM. </p>
+
+</div>
+</div>
+<a id="ga240ec53ac7dfd1edd992d84723fdf555" name="ga240ec53ac7dfd1edd992d84723fdf555"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga240ec53ac7dfd1edd992d84723fdf555">&#9670;&#160;</a></span>LEN_MESSAGE_BYTES_WORKER</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LEN_MESSAGE_BYTES_WORKER&#160;&#160;&#160;<a class="el" href="#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Worker buffer payload size — largest of all payload sizes. Clamped to at least SNIP size (256 bytes). </p>
 
 </div>
 </div>

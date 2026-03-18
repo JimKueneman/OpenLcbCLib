@@ -35,7 +35,7 @@
  * time — there is no dynamic allocation at runtime.
  *
  * @author Jim Kueneman
- * @date 8 Mar 2026
+ * @date 18 Mar 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -53,7 +53,7 @@
 #elif __has_include("../../../openlcb_user_config.h")
 #include "../../../openlcb_user_config.h"
 #else
-#error "openlcb_user_config.h not found. Copy templates/openlcb_user_config.h to your project include path."
+#error "openlcb_user_config.h not found. Copy templates/typical/openlcb_user_config.h (or templates/bootloader/openlcb_user_config.h) to your project include path."
 #endif
 
 #ifdef	__cplusplus
@@ -73,15 +73,24 @@
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
 #error "USER_DEFINED_BASIC_BUFFER_DEPTH must be defined in openlcb_user_config.h"
 #endif
+#if USER_DEFINED_BASIC_BUFFER_DEPTH < 1
+#error "USER_DEFINED_BASIC_BUFFER_DEPTH must be >= 1 to avoid a zero-length array"
+#endif
 
     /** @brief Number of DATAGRAM message buffers (72 bytes each) in the pool */
 #ifndef USER_DEFINED_DATAGRAM_BUFFER_DEPTH
 #error "USER_DEFINED_DATAGRAM_BUFFER_DEPTH must be defined in openlcb_user_config.h"
 #endif
+#if USER_DEFINED_DATAGRAM_BUFFER_DEPTH < 1
+#error "USER_DEFINED_DATAGRAM_BUFFER_DEPTH must be >= 1 to avoid a zero-length array"
+#endif
 
     /** @brief Number of SNIP message buffers (256 bytes each) in the pool */
 #ifndef USER_DEFINED_SNIP_BUFFER_DEPTH
 #error "USER_DEFINED_SNIP_BUFFER_DEPTH must be defined in openlcb_user_config.h"
+#endif
+#if USER_DEFINED_SNIP_BUFFER_DEPTH < 1
+#error "USER_DEFINED_SNIP_BUFFER_DEPTH must be >= 1 to avoid a zero-length array"
 #endif
 
     /** @brief Number of STREAM message buffers (512 bytes each) in the pool */
@@ -96,6 +105,9 @@
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
 #error "USER_DEFINED_NODE_BUFFER_DEPTH must be defined in openlcb_user_config.h"
 #endif
+#if USER_DEFINED_NODE_BUFFER_DEPTH < 1
+#error "USER_DEFINED_NODE_BUFFER_DEPTH must be >= 1 to avoid a zero-length array"
+#endif
 
     /** @brief Size of CDI buffer in bytes */
 #ifndef USER_DEFINED_CDI_LENGTH
@@ -105,9 +117,14 @@
 #error "USER_DEFINED_CDI_LENGTH must be >= 1 to avoid a zero-length array"
 #endif
 
-    /** @brief Size of FDI buffer in bytes (train nodes) */
+    /** @brief Size of FDI buffer in bytes.  Equals USER_DEFINED_FDI_LENGTH when
+     *         OPENLCB_COMPILE_TRAIN is defined; collapses to 1 byte otherwise to save RAM. */
 #ifndef USER_DEFINED_FDI_LENGTH
 #error "USER_DEFINED_FDI_LENGTH must be defined in openlcb_user_config.h"
+#endif
+#ifndef OPENLCB_COMPILE_TRAIN
+#undef  USER_DEFINED_FDI_LENGTH
+#define USER_DEFINED_FDI_LENGTH 1
 #endif
 #if USER_DEFINED_FDI_LENGTH < 1
 #error "USER_DEFINED_FDI_LENGTH must be >= 1 to avoid a zero-length array"
@@ -149,6 +166,9 @@
     /** @brief Maximum number of train nodes that can be allocated */
 #ifndef USER_DEFINED_TRAIN_NODE_COUNT
 #error "USER_DEFINED_TRAIN_NODE_COUNT must be defined in openlcb_user_config.h"
+#endif
+#if USER_DEFINED_TRAIN_NODE_COUNT < 1
+#error "USER_DEFINED_TRAIN_NODE_COUNT must be >= 1 to avoid a zero-length array"
 #endif
 
     /** @brief Maximum number of listeners (consist members) per train node */
@@ -234,12 +254,12 @@
 #define LEN_MESSAGE_BYTES_STREAM  1  /* stream not compiled in — payload collapsed to 1 byte; define OPENLCB_COMPILE_STREAM to restore */
 #endif
 
-    /** @brief Sibling dispatch buffer payload size.  Clamped to SNIP size if
-     *         USER_DEFINED_STREAM_BUFFER_LEN is set below 256. */
+    /** @brief Worker buffer payload size — largest of all payload sizes.
+     *         Clamped to at least SNIP size (256 bytes). */
 #if LEN_MESSAGE_BYTES_STREAM < LEN_MESSAGE_BYTES_SNIP
-#define LEN_MESSAGE_BYTES_SIBLING_DISPATCH LEN_MESSAGE_BYTES_SNIP
+#define LEN_MESSAGE_BYTES_WORKER LEN_MESSAGE_BYTES_SNIP
 #else
-#define LEN_MESSAGE_BYTES_SIBLING_DISPATCH LEN_MESSAGE_BYTES_STREAM
+#define LEN_MESSAGE_BYTES_WORKER LEN_MESSAGE_BYTES_STREAM
 #endif
 
     /** @brief Event ID size in bytes */
@@ -262,7 +282,8 @@
         BASIC,      /**< 16-byte payload buffer */
         DATAGRAM,   /**< 72-byte payload buffer */
         SNIP,       /**< 256-byte payload buffer */
-        STREAM      /**< 512-byte payload buffer */
+        STREAM,     /**< USER_DEFINED_STREAM_BUFFER_LEN payload buffer */
+        WORKER      /**< max(SNIP, STREAM) payload buffer — used by statemachine workers */
 
     } payload_type_enum;
 
@@ -351,8 +372,8 @@
         /** @brief STREAM message payload buffer (USER_DEFINED_STREAM_BUFFER_LEN bytes) */
     typedef uint8_t payload_stream_t[LEN_MESSAGE_BYTES_STREAM];
 
-        /** @brief Sibling dispatch payload buffer (clamped to >= 256 bytes) */
-    typedef uint8_t payload_dispatcher_t[LEN_MESSAGE_BYTES_SIBLING_DISPATCH];
+        /** @brief Worker payload buffer — largest of all payload sizes (clamped to >= 256 bytes) */
+    typedef uint8_t payload_worker_t[LEN_MESSAGE_BYTES_WORKER];
 
     /** @} */ // end of payload_buffer_types
 
@@ -744,15 +765,6 @@
 
     } openlcb_nodes_t;
 
-        /** @brief State machine temporary working buffers. */
-    typedef struct {
-
-        openlcb_msg_t worker;
-        payload_stream_t worker_buffer;
-        openlcb_msg_t *active_msg;
-
-    } openlcb_statemachine_worker_t;
-
         /** @brief Callback function type with no parameters. */
     typedef void (*parameterless_callback_t)(void);
 
@@ -764,13 +776,13 @@
 
     } openlcb_stream_message_t;
 
-        /** @brief Message with sibling-dispatch-sized payload (clamped to >= 256 bytes). */
+        /** @brief Message with worker-sized payload (largest of all payload sizes). */
     typedef struct {
 
         openlcb_msg_t openlcb_msg;
-        payload_dispatcher_t openlcb_payload;
+        payload_worker_t openlcb_payload;
 
-    } openlcb_dispatcher_message_t;
+    } openlcb_worker_message_t;
 
         /** @brief Outgoing message context for the main state machine. */
     typedef struct {
@@ -778,9 +790,9 @@
         openlcb_msg_t *msg_ptr;
         uint8_t valid : 1;
         uint8_t enumerate : 1;
-        openlcb_stream_message_t openlcb_msg;
+        openlcb_worker_message_t openlcb_msg;
 
-    } openlcb_outgoing_stream_msg_info_t;
+    } openlcb_outgoing_msg_info_t;
 
         /** @brief Incoming message context. */
     typedef struct {
@@ -795,7 +807,7 @@
 
         openlcb_node_t *openlcb_node;
         openlcb_incoming_msg_info_t incoming_msg_info;
-        openlcb_outgoing_stream_msg_info_t outgoing_msg_info;
+        openlcb_outgoing_msg_info_t outgoing_msg_info;
         uint8_t current_tick;
 
     } openlcb_statemachine_info_t;

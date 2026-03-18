@@ -33,6 +33,10 @@
                 <span class="btn-icon">&#x1F3AE;</span>
                 <span class="btn-label">Train Controller</span>
             </button>
+            <button class="node-type-btn" data-type="bootloader" title="Firmware upgrade only">
+                <span class="btn-icon">&#x26A1;</span>
+                <span class="btn-label">Bootloader</span>
+            </button>
             <!-- Custom node type hidden — complexity not needed yet -->
         </div>
         <div class="node-type-desc-box hidden" id="node-type-desc-box"></div>
@@ -138,12 +142,12 @@
 
                                 <div class="event-count-field" data-help="evt-producer-ranges">
                                     <label for="event-producer-range-count">Producer Ranges</label>
-                                    <input type="number" id="event-producer-range-count" value="4" min="0" max="255">
+                                    <input type="number" id="event-producer-range-count" value="5" min="1" max="255">
                                 </div>
 
                                 <div class="event-count-field" data-help="evt-consumer-ranges">
                                     <label for="event-consumer-range-count">Consumer Ranges</label>
-                                    <input type="number" id="event-consumer-range-count" value="4" min="0" max="255">
+                                    <input type="number" id="event-consumer-range-count" value="5" min="1" max="255">
                                 </div>
 
                             </div>
@@ -302,15 +306,15 @@
                                     </div>
                                     <div class="event-count-field" data-help="buf-datagram">
                                         <label for="adv-datagram-buf">Datagram (72 bytes each)</label>
-                                        <input type="number" id="adv-datagram-buf" value="8" min="0" max="65534">
+                                        <input type="number" id="adv-datagram-buf" value="8" min="1" max="65534">
                                     </div>
                                     <div class="event-count-field" data-help="buf-snip">
                                         <label for="adv-snip-buf">SNIP (256 bytes each)</label>
                                         <input type="number" id="adv-snip-buf" value="4" min="1" max="65534">
                                     </div>
                                     <div class="event-count-field" data-help="buf-stream">
-                                        <label for="adv-stream-buf">Stream (512 bytes each)</label>
-                                        <input type="number" id="adv-stream-buf" value="0" min="0" max="65534">
+                                        <label for="adv-stream-buf">Stream (user definable below)</label>
+                                        <input type="number" id="adv-stream-buf" value="1" min="1" max="65534">
                                     </div>
                                 </div>
 
@@ -358,15 +362,15 @@
                                 <div class="event-count-grid">
                                     <div class="event-count-field" data-help="train-node-count">
                                         <label for="adv-train-node-count">Train Node Count</label>
-                                        <input type="number" id="adv-train-node-count" value="1" min="0" max="255">
+                                        <input type="number" id="adv-train-node-count" value="4" min="1" max="255">
                                     </div>
                                     <div class="event-count-field" data-help="train-listeners">
                                         <label for="adv-train-listeners">Max Listeners/Train</label>
-                                        <input type="number" id="adv-train-listeners" value="6" min="0" max="255">
+                                        <input type="number" id="adv-train-listeners" value="6" min="1" max="255">
                                     </div>
                                     <div class="event-count-field" data-help="train-functions">
                                         <label for="adv-train-functions">Max Train Functions</label>
-                                        <input type="number" id="adv-train-functions" value="29" min="0" max="65535">
+                                        <input type="number" id="adv-train-functions" value="29" min="1" max="65535">
                                     </div>
                                 </div>
                                 <p class="buffer-tally">

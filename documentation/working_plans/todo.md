@@ -67,6 +67,14 @@ Outstanding items in `OlcbChecker/ChecksToAdd.md` not yet implemented:
 
 ---
 
+### 7. Dead Code / Dead Type Audit
+
+**Issue:** At least two dead structs found during bootloader work: `openlcb_statemachine_worker_t` (in `openlcb_types.h`) and `can_main_statemachine_t` (in `can_types.h`) — both removed. Likely more exist.
+
+**Scope:** Systematically search the codebase for typedef'd structs, enums, and typedefs that are never instantiated or referenced in any `.c` file. Remove confirmed dead code.
+
+---
+
 ### 6. ~~Bootloader openlcb_user_config.h — Minimum Array Count Guards~~ DONE
 
 **Resolved:** Added `#if DEFINE < 1 #error` guards in `openlcb_types.h` for all 9
@@ -74,6 +82,14 @@ affected defines. Added `#ifdef OPENLCB_COMPILE_STREAM` guard so `LEN_MESSAGE_BY
 collapses to 1 when stream is not compiled in (avoids 256-byte waste; comment explains
 why). Added trailing comment to `USER_DEFINED_STREAM_BUFFER_LEN` in all 13
 `openlcb_user_config.h` files (template + 10 app demos + 2 test configs + compliance node).
+
+---
+
+### 8. Debug Broadcast Time OlcbChecker Failure
+
+**Issue:** The OlcbChecker Broadcast Time tests are failing. Root cause not yet investigated.
+
+**Scope:** Run the broadcast-time-consumer and broadcast-time-producer test suites, identify the failing checks, diagnose, and fix.
 
 ---
 

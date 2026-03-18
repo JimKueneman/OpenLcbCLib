@@ -8,15 +8,51 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
 
 ## [Unreleased]
 
+### Fixed
+- **CDI/FDI read failure when stream not compiled in.** The main statemachine outgoing
+  message payload was backed by `payload_stream_t`, which collapsed to 1 byte when
+  `OPENLCB_COMPILE_STREAM` was not defined. All datagram-based reads (CDI, FDI, config
+  memory) returned zero data. Introduced `payload_worker_t` / `openlcb_worker_message_t`
+  sized to `LEN_MESSAGE_BYTES_WORKER` (max of SNIP and STREAM), guaranteeing at least
+  256 bytes regardless of stream compilation state.
+- Added `default: break;` to `free_buffer()` switch in `openlcb_buffer_store.c` to
+  suppress compiler warnings from the new `WORKER` enum value.
+
+### Changed
+- **Replaced dispatcher types with worker types.** `LEN_MESSAGE_BYTES_SIBLING_DISPATCH`,
+  `payload_dispatcher_t`, and `openlcb_dispatcher_message_t` replaced by
+  `LEN_MESSAGE_BYTES_WORKER`, `payload_worker_t`, and `openlcb_worker_message_t`.
+- Renamed `openlcb_outgoing_stream_msg_info_t` → `openlcb_outgoing_msg_info_t`.
+- Added `WORKER` value to `payload_type_enum` with corresponding case in
+  `OpenLcbUtilities_payload_type_to_len()`.
+- Main and login statemachine outgoing messages now set `payload_type = WORKER`.
+- Sibling response queue and Path B pending buffer now use `openlcb_worker_message_t`.
+- **Bootloader single-define setup.** `openlcb_config.h` now auto-defines
+  `OPENLCB_COMPILE_DATAGRAMS`, `OPENLCB_COMPILE_MEMORY_CONFIGURATION`, and
+  `OPENLCB_COMPILE_FIRMWARE` (and undefines EVENTS, BROADCAST_TIME, TRAIN,
+  TRAIN_SEARCH) when `OPENLCB_COMPILE_BOOTLOADER` is defined. Bootloader user configs
+  only need `#define OPENLCB_COMPILE_BOOTLOADER`.
+- **FDI length auto-collapse.** `USER_DEFINED_FDI_LENGTH` is overridden to 1 in
+  `openlcb_types.h` when `OPENLCB_COMPILE_TRAIN` is not defined, saving RAM in
+  non-train nodes without requiring users to set it manually.
+### Added
+- **Compile-time zero-length array guards.** `#if DEFINE < 1 #error` checks in
+  `openlcb_types.h` for all buffer depth and count defines: `USER_DEFINED_BASIC_BUFFER_DEPTH`,
+  `USER_DEFINED_DATAGRAM_BUFFER_DEPTH`, `USER_DEFINED_SNIP_BUFFER_DEPTH`,
+  `USER_DEFINED_STREAM_BUFFER_DEPTH`, `USER_DEFINED_NODE_BUFFER_DEPTH`,
+  `USER_DEFINED_CDI_LENGTH`, `USER_DEFINED_FDI_LENGTH`, `USER_DEFINED_PRODUCER_COUNT`,
+  `USER_DEFINED_PRODUCER_RANGE_COUNT`, `USER_DEFINED_CONSUMER_COUNT`,
+  `USER_DEFINED_CONSUMER_RANGE_COUNT`, `USER_DEFINED_MAX_LISTENERS_PER_TRAIN`,
+  `USER_DEFINED_MAX_TRAIN_FUNCTIONS`.
+
+### Removed
+- Dead code: `openlcb_statemachine_worker_t` (from `openlcb_types.h`) and
+  `can_main_statemachine_t` (from `can_types.h`) — both were defined but never
+  instantiated in any `.c` file.
+
 ### Memory
-- `USER_DEFINED_STREAM_BUFFER_LEN` added to all `openlcb_user_config.h` files (default 256).
-  Controls the stream buffer pool payload size and the sibling dispatch queue slot size.
 - `LEN_MESSAGE_BYTES_STREAM` in `openlcb_types.h` now derives from `USER_DEFINED_STREAM_BUFFER_LEN`
   rather than being hardcoded to 512, saving 1,280 bytes of static RAM at the default setting.
-- `LEN_MESSAGE_BYTES_SIBLING_DISPATCH` secondary define clamps the dispatch buffer to a minimum
-  of 256 bytes regardless of what `USER_DEFINED_STREAM_BUFFER_LEN` is set to.
-- `payload_dispatcher_t` and `openlcb_dispatcher_message_t` types added to `openlcb_types.h`.
-- Sibling response queue and Path B pending buffer now use `openlcb_dispatcher_message_t`.
 
 ---
 

@@ -38,6 +38,10 @@
 
 #include "protocol_event_transport.h"
 
+#include "openlcb_config.h"
+
+#ifdef OPENLCB_COMPILE_EVENTS
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -1230,3 +1234,5 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statemac
     statemachine_info->outgoing_msg_info.valid = false;
 
 }
+
+#endif /* OPENLCB_COMPILE_EVENTS */

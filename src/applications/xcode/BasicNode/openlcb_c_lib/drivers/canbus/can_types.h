@@ -29,7 +29,7 @@
  * and macros only.
  *
  * @author Jim Kueneman
- * @date 8 Mar 2026
+ * @date 18 Mar 2026
  */
 
 #ifndef __DRIVERS_CANBUS_CAN_TYPES__
@@ -40,6 +40,16 @@
 
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_types.h"
+
+#if __has_include("can_user_config.h")
+#include "can_user_config.h"
+#elif __has_include("../../can_user_config.h")
+#include "../../can_user_config.h"
+#elif __has_include("../../../can_user_config.h")
+#include "../../../can_user_config.h"
+#else
+#error "can_user_config.h not found. Copy templates/canbus/can_user_config.h to your project include path."
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,7 +65,11 @@ extern "C" {
      * @warning Maximum value is 254 (0xFE).
      */
 #ifndef USER_DEFINED_CAN_MSG_BUFFER_DEPTH
-#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH 10
+#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH 20
+#endif
+
+#if USER_DEFINED_CAN_MSG_BUFFER_DEPTH < 1
+#error "USER_DEFINED_CAN_MSG_BUFFER_DEPTH must be >= 1 to avoid a zero-length array"
 #endif
 
     // *********************END USER DEFINED VARIABLES *****************************
@@ -129,14 +143,6 @@ extern "C" {
      * @see can_buffer_store.c
      */
     typedef can_msg_t can_msg_array_t[USER_DEFINED_CAN_MSG_BUFFER_DEPTH];
-
-    /**
-     * @typedef can_main_statemachine_t
-     * @brief Working context for the CAN main state machine.
-     */
-    typedef struct can_main_statemachine_struct {
-        openlcb_statemachine_worker_t *openlcb_worker; /**< @brief OpenLCB layer worker thread context. */
-    } can_main_statemachine_t;
 
     /**
      * @typedef can_statemachine_info_t
