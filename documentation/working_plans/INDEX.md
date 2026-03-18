@@ -87,3 +87,4 @@ Their content has been folded into active plans. Retained for historical referen
 ## Also in this folder
 
 - [todo.md](todo.md) — Current active task list (not an archive plan)
+- [archive/OpenLcbCLib_OpenMRN_virtual_node_comparison_v3.md](archive/OpenLcbCLib_OpenMRN_virtual_node_comparison_v3.md) — Current-state comparison of OpenLcbCLib vs OpenMRN virtual node implementation (v3, 2026-03-17)
