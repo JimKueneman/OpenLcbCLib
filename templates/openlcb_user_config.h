@@ -34,13 +34,39 @@
  *    #define OPENLCB_COMPILE_BROADCAST_TIME
  *    #define OPENLCB_COMPILE_TRAIN
  *    #define OPENLCB_COMPILE_TRAIN_SEARCH
+ *
+ *  Minimal bootloader (firmware upgrade only):
+ *    #define OPENLCB_COMPILE_BOOTLOADER
  */
 
 #ifndef __OPENLCB_USER_CONFIG__
 #define __OPENLCB_USER_CONFIG__
 
 // =============================================================================
+// Bootloader preset -- uncomment for a minimal firmware-upgrade-only build.
+// Automatically sets DATAGRAMS + MEMORY_CONFIGURATION + FIRMWARE.
+// All other features are disabled.  See documentation/working_plans/
+// bootloader_config_plan.md for details.
+// =============================================================================
+
+// #define OPENLCB_COMPILE_BOOTLOADER
+
+#ifdef OPENLCB_COMPILE_BOOTLOADER
+
+    #define OPENLCB_COMPILE_DATAGRAMS
+    #define OPENLCB_COMPILE_MEMORY_CONFIGURATION
+    #define OPENLCB_COMPILE_FIRMWARE
+
+    #undef OPENLCB_COMPILE_EVENTS
+    #undef OPENLCB_COMPILE_BROADCAST_TIME
+    #undef OPENLCB_COMPILE_TRAIN
+    #undef OPENLCB_COMPILE_TRAIN_SEARCH
+
+#endif
+
+// =============================================================================
 // Feature Flags -- uncomment to enable optional protocols
+// (ignored when OPENLCB_COMPILE_BOOTLOADER is defined)
 // =============================================================================
 
 // #define OPENLCB_COMPILE_EVENTS
