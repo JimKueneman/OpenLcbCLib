@@ -36,7 +36,7 @@
 // buffers of this size are allocated for the message dispatcher sibling response
 // queue.  Values below 256 are accepted; the sibling dispatch buffers will be
 // clamped to 256 (the SNIP payload size) automatically.
-#define USER_DEFINED_STREAM_BUFFER_LEN               256
+#define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 
 // =============================================================================
 // Virtual Node Allocation

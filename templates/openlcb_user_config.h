@@ -101,7 +101,7 @@
 // Tunes the maximum number of bytes in a single stream data frame.  Five static
 // buffers of this size are allocated for the message dispatcher sibling response
 // queue.  Must be >= 256 (the SNIP payload size).
-#define USER_DEFINED_STREAM_BUFFER_LEN               256
+#define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 
 // =============================================================================
 // Virtual Node Allocation

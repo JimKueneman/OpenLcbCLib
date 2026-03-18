@@ -88,6 +88,9 @@
 #ifndef USER_DEFINED_STREAM_BUFFER_DEPTH
 #error "USER_DEFINED_STREAM_BUFFER_DEPTH must be defined in openlcb_user_config.h"
 #endif
+#if USER_DEFINED_STREAM_BUFFER_DEPTH < 1
+#error "USER_DEFINED_STREAM_BUFFER_DEPTH must be >= 1 to avoid a zero-length array"
+#endif
 
     /** @brief Maximum number of virtual nodes that can be allocated */
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
@@ -98,30 +101,48 @@
 #ifndef USER_DEFINED_CDI_LENGTH
 #error "USER_DEFINED_CDI_LENGTH must be defined in openlcb_user_config.h"
 #endif
+#if USER_DEFINED_CDI_LENGTH < 1
+#error "USER_DEFINED_CDI_LENGTH must be >= 1 to avoid a zero-length array"
+#endif
 
     /** @brief Size of FDI buffer in bytes (train nodes) */
 #ifndef USER_DEFINED_FDI_LENGTH
 #error "USER_DEFINED_FDI_LENGTH must be defined in openlcb_user_config.h"
+#endif
+#if USER_DEFINED_FDI_LENGTH < 1
+#error "USER_DEFINED_FDI_LENGTH must be >= 1 to avoid a zero-length array"
 #endif
 
     /** @brief Maximum number of events a node can produce */
 #ifndef USER_DEFINED_PRODUCER_COUNT
 #error "USER_DEFINED_PRODUCER_COUNT must be defined in openlcb_user_config.h"
 #endif
+#if USER_DEFINED_PRODUCER_COUNT < 1
+#error "USER_DEFINED_PRODUCER_COUNT must be >= 1 to avoid a zero-length array"
+#endif
 
     /** @brief Maximum number of producer event ranges (must be >= 1) */
 #ifndef USER_DEFINED_PRODUCER_RANGE_COUNT
 #error "USER_DEFINED_PRODUCER_RANGE_COUNT must be defined in openlcb_user_config.h"
+#endif
+#if USER_DEFINED_PRODUCER_RANGE_COUNT < 1
+#error "USER_DEFINED_PRODUCER_RANGE_COUNT must be >= 1 to avoid a zero-length array"
 #endif
 
     /** @brief Maximum number of events a node can consume */
 #ifndef USER_DEFINED_CONSUMER_COUNT
 #error "USER_DEFINED_CONSUMER_COUNT must be defined in openlcb_user_config.h"
 #endif
+#if USER_DEFINED_CONSUMER_COUNT < 1
+#error "USER_DEFINED_CONSUMER_COUNT must be >= 1 to avoid a zero-length array"
+#endif
 
     /** @brief Maximum number of consumer event ranges (must be >= 1) */
 #ifndef USER_DEFINED_CONSUMER_RANGE_COUNT
 #error "USER_DEFINED_CONSUMER_RANGE_COUNT must be defined in openlcb_user_config.h"
+#endif
+#if USER_DEFINED_CONSUMER_RANGE_COUNT < 1
+#error "USER_DEFINED_CONSUMER_RANGE_COUNT must be >= 1 to avoid a zero-length array"
 #endif
 
 
@@ -134,10 +155,16 @@
 #ifndef USER_DEFINED_MAX_LISTENERS_PER_TRAIN
 #error "USER_DEFINED_MAX_LISTENERS_PER_TRAIN must be defined in openlcb_user_config.h"
 #endif
+#if USER_DEFINED_MAX_LISTENERS_PER_TRAIN < 1
+#error "USER_DEFINED_MAX_LISTENERS_PER_TRAIN must be >= 1 to avoid a zero-length array"
+#endif
 
     /** @brief Number of DCC functions supported per train (29 = F0-F28) */
 #ifndef USER_DEFINED_MAX_TRAIN_FUNCTIONS
 #error "USER_DEFINED_MAX_TRAIN_FUNCTIONS must be defined in openlcb_user_config.h"
+#endif
+#if USER_DEFINED_MAX_TRAIN_FUNCTIONS < 1
+#error "USER_DEFINED_MAX_TRAIN_FUNCTIONS must be >= 1 to avoid a zero-length array"
 #endif
 
     /** @} */ // end of user_config_constants
@@ -199,8 +226,13 @@
     /** @brief SNIP message payload size (also covers Events with Payload) */
 #define LEN_MESSAGE_BYTES_SNIP 256
 
-    /** @brief STREAM message payload size (user-tunable via USER_DEFINED_STREAM_BUFFER_LEN) */
-#define LEN_MESSAGE_BYTES_STREAM USER_DEFINED_STREAM_BUFFER_LEN
+    /** @brief STREAM message payload size.  Equals USER_DEFINED_STREAM_BUFFER_LEN when
+     *         OPENLCB_COMPILE_STREAM is defined; collapses to 1 byte otherwise to save RAM. */
+#ifdef OPENLCB_COMPILE_STREAM
+#define LEN_MESSAGE_BYTES_STREAM  USER_DEFINED_STREAM_BUFFER_LEN
+#else
+#define LEN_MESSAGE_BYTES_STREAM  1  /* stream not compiled in — payload collapsed to 1 byte; define OPENLCB_COMPILE_STREAM to restore */
+#endif
 
     /** @brief Sibling dispatch buffer payload size.  Clamped to SNIP size if
      *         USER_DEFINED_STREAM_BUFFER_LEN is set below 256. */

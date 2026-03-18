@@ -39,7 +39,7 @@
 #define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           2
 #define USER_DEFINED_SNIP_BUFFER_DEPTH               1
 #define USER_DEFINED_STREAM_BUFFER_DEPTH             1
-#define USER_DEFINED_STREAM_BUFFER_LEN               256
+#define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 
 // =============================================================================
 // Virtual Node Allocation — bootloader is a single-node device
