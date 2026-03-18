@@ -1,6 +1,6 @@
 # Working Plans — Implementation Index
 
-Updated: 2026-03-18
+Updated: 2026-03-19
 Source folder: `documentation/working_plans/`
 
 This index lists all working plans — both active and archived. Each archive file
@@ -10,7 +10,7 @@ evidence (or reason for rejection) found in the canonical source tree
 
 ---
 
-## Implemented Plans (27)
+## Implemented Plans (28)
 
 These plans have been verified against the codebase and their described changes are
 present in the canonical source.
@@ -44,6 +44,7 @@ present in the canonical source.
 | 25 | [plan_item_3_consist_forwarding.md](archive/plan_item_3_consist_forwarding.md) | Consist Forwarding (Train Control) — wiring gap fixed 2026-03-15 |
 | 26 | [plan_unified_sibling_dispatch.md](archive/plan_unified_sibling_dispatch.md) | Unified Sibling Dispatch (Zero-FIFO, Sequential) — all 3 phases implemented + 46 tests |
 | 27 | [plan_listener_alias_table_integration.md](archive/plan_listener_alias_table_integration.md) | Listener Alias Table — CAN Layer Integration (v5) — core wiring complete; hold-until-AMD deferred (v1.0.0 known limitation) |
+| 28 | [bootloader_config_plan.md](archive/bootloader_config_plan.md) | Bootloader Build Configuration — whole-module #ifdef guards, internal #ifndef BOOTLOADER guards, 30 tests, buffer-count fix |
 
 ---
 
@@ -81,7 +82,6 @@ Their content has been folded into active plans. Retained for historical referen
 | File | Title / Topic | Status |
 |------|---------------|--------|
 | [plan_virtual_node_verification_protocol.md](plan_virtual_node_verification_protocol.md) | Virtual Node Verification Protocol (DRAFT) | Draft protocol spec — not yet proposed to OpenLCB standards group |
-| [bootloader_config_plan.md](bootloader_config_plan.md) | Bootloader Build Configuration — Minimal Firmware Upgrade Image | Planning — open questions identified, no code changes yet |
 
 ---
 
