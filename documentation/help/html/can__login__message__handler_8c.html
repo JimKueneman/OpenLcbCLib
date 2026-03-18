@@ -227,8 +227,10 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>State 3: Derives a 12-bit alias from the seed, registers it, and transitions to LOAD_CID07. </p>
-<p>State 3: Derives a 12-bit alias from the seed, registers it, then transitions to LOAD_CID07. </p>
-
+<p>State 3: Derives a 12-bit alias from the seed, registers it, then transitions to LOAD_CID07.</p>
+<p>Rejects alias 0x000 (invalid per spec) AND any alias already held by a sibling virtual node in the shared alias mapping table. Uses the existing LFSR to advance past collisions. Safe on re-login: the old alias is unregistered by _process_duplicate_aliases() before this function runs.</p>
+<pre class="fragment">* @param can_statemachine_info  State machine context with node and outgoing buffer.
+* </pre> 
 </div>
 </div>
 <a id="ad417a47b53614faa89382dd1f724c311" name="ad417a47b53614faa89382dd1f724c311"></a>

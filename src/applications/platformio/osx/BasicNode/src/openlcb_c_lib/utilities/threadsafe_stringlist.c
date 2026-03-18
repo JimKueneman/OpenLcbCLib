@@ -32,7 +32,6 @@
  * @date 12 Dec 2024
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
@@ -42,7 +41,6 @@
 void ThreadSafeStringList_init(StringList *list)
 {
 
-    list->count = 0;
     list->head = 0;
     list->tail = 0;
     pthread_mutex_init(&list->mutex, NULL);
@@ -97,66 +95,3 @@ char *ThreadSafeStringList_pop(StringList *list)
     return result;
 };
 
-void ThreadSafeStringList_add(StringList *list, const char *str)
-{
-
-    pthread_mutex_lock(&list->mutex);
-
-    if (list->count < MAX_STRINGS)
-    {
-        list->strings[list->count] = strdup(str);
-        list->count++;
-    }
-
-    pthread_mutex_unlock(&list->mutex);
-}
-
-void ThreadSafeStringList_remove(StringList *list, const char *str)
-{
-
-    pthread_mutex_lock(&list->mutex);
-
-    for (int i = 0; i < list->count; i++)
-    {
-        if (strcmp(list->strings[i], str) == 0)
-        {
-            free(list->strings[i]);
-            for (int j = i; j < list->count - 1; j++)
-            {
-                list->strings[j] = list->strings[j + 1];
-            }
-            list->count--;
-            break;
-        }
-    }
-
-    pthread_mutex_unlock(&list->mutex);
-}
-
-void ThreadSafeStringList_print(StringList *list)
-{
-
-    pthread_mutex_lock(&list->mutex);
-
-    for (int i = 0; i < list->count; i++)
-    {
-        printf("%s\n", list->strings[i]);
-    }
-
-    pthread_mutex_unlock(&list->mutex);
-}
-
-void ThreadSafeStringList_destroy(StringList *list)
-{
-    // TODO: Needs work to deal with a fifo.....
-
-    pthread_mutex_lock(&list->mutex);
-
-    for (int i = 0; i < list->count; i++)
-    {
-        free(list->strings[i]);
-    }
-
-    pthread_mutex_unlock(&list->mutex);
-    pthread_mutex_destroy(&list->mutex);
-}

@@ -115,6 +115,12 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a580f2ad00e2adbd8091236f015cd1f3c" id="r_a580f2ad00e2adbd8091236f015cd1f3c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a580f2ad00e2adbd8091236f015cd1f3c">load_consumer_events</a> )(<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td></tr>
 <tr class="memdesc:a580f2ad00e2adbd8091236f015cd1f3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the next Consumer Identified message; set enumerate flag if more remain. REQUIRED.  <br /></td></tr>
 <tr class="separator:a580f2ad00e2adbd8091236f015cd1f3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a1564a5e0fded2d1c325cd111eb7759" id="r_a6a1564a5e0fded2d1c325cd111eb7759"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a1564a5e0fded2d1c325cd111eb7759">process_main_statemachine</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a6a1564a5e0fded2d1c325cd111eb7759"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatches a message through the main protocol handler table. Used by sibling dispatch to deliver login outgoing messages to siblings already in RUNSTATE_RUN. REQUIRED when virtual nodes exist.  <br /></td></tr>
+<tr class="separator:a6a1564a5e0fded2d1c325cd111eb7759"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab28344dcc06781f315f127e455dbe37a" id="r_ab28344dcc06781f315f127e455dbe37a"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab28344dcc06781f315f127e455dbe37a">openlcb_node_get_count</a> )(void)</td></tr>
+<tr class="memdesc:ab28344dcc06781f315f127e455dbe37a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of allocated nodes. REQUIRED.  <br /></td></tr>
+<tr class="separator:ab28344dcc06781f315f127e455dbe37a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13334393662839a3c993f198ad5bce8e" id="r_a13334393662839a3c993f198ad5bce8e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13334393662839a3c993f198ad5bce8e">process_login_statemachine</a> )(<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:a13334393662839a3c993f198ad5bce8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatches to the handler matching node-&gt;run_state.  <br /></td></tr>
 <tr class="separator:a13334393662839a3c993f198ad5bce8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -230,6 +236,38 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Build the next Consumer Identified message; set enumerate flag if more remain. REQUIRED. </p>
+
+</div>
+</div>
+<a id="a6a1564a5e0fded2d1c325cd111eb7759" name="a6a1564a5e0fded2d1c325cd111eb7759"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a1564a5e0fded2d1c325cd111eb7759">&#9670;&#160;</a></span>process_main_statemachine</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* process_main_statemachine) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Dispatches a message through the main protocol handler table. Used by sibling dispatch to deliver login outgoing messages to siblings already in RUNSTATE_RUN. REQUIRED when virtual nodes exist. </p>
+
+</div>
+</div>
+<a id="ab28344dcc06781f315f127e455dbe37a" name="ab28344dcc06781f315f127e455dbe37a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab28344dcc06781f315f127e455dbe37a">&#9670;&#160;</a></span>openlcb_node_get_count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t(* openlcb_node_get_count) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the number of allocated nodes. REQUIRED. </p>
 
 </div>
 </div>

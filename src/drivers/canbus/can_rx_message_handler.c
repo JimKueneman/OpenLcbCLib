@@ -148,7 +148,7 @@ static void _load_reject_message(uint16_t source_alias, uint16_t dest_alias, uin
      *
      * @warning Silently drops the AMR response if buffer allocation fails.
      */
-static bool _check_for_duplicate_alias(can_msg_t* can_msg) {
+static bool _check_for_duplicate_alias(can_msg_t *can_msg) {
 
     // Check for duplicate Alias
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
@@ -181,14 +181,14 @@ static bool _check_for_duplicate_alias(can_msg_t* can_msg) {
 
 }
 
-void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type) {
+void CanRxMessageHandler_first_frame(can_msg_t *can_msg, uint8_t offset, payload_type_enum data_type) {
 
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
     // See if there is a message already started for this.
-    openlcb_msg_t* target_openlcb_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t *target_openlcb_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (target_openlcb_msg) {
 
@@ -227,13 +227,13 @@ void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t offset, payload
 
 }
 
-void CanRxMessageHandler_middle_frame(can_msg_t* can_msg, uint8_t offset) {
+void CanRxMessageHandler_middle_frame(can_msg_t *can_msg, uint8_t offset) {
 
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
-    openlcb_msg_t* target_openlcb_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t *target_openlcb_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!target_openlcb_msg) {
 
@@ -261,7 +261,7 @@ void CanRxMessageHandler_middle_frame(can_msg_t* can_msg, uint8_t offset) {
 
 }
 
-void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t offset) {
+void CanRxMessageHandler_last_frame(can_msg_t *can_msg, uint8_t offset) {
 
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
@@ -286,9 +286,9 @@ void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t offset) {
 
 }
 
-void CanRxMessageHandler_single_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type) {
+void CanRxMessageHandler_single_frame(can_msg_t *can_msg, uint8_t offset, payload_type_enum data_type) {
 
-    openlcb_msg_t* target_openlcb_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
+    openlcb_msg_t *target_openlcb_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
 
     if (!target_openlcb_msg) {
 
@@ -333,7 +333,7 @@ void CanRxMessageHandler_single_frame(can_msg_t* can_msg, uint8_t offset, payloa
      *
      * @warning Only correct for MTI_SIMPLE_NODE_INFO_REPLY without framing bits.
      */
-void CanRxMessageHandler_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type) {
+void CanRxMessageHandler_can_legacy_snip(can_msg_t *can_msg, uint8_t offset, payload_type_enum data_type) {
 
     // Early implementations did not have the multi-frame bits to use... special case
 
@@ -341,7 +341,7 @@ void CanRxMessageHandler_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, pay
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
-    openlcb_msg_t* openlcb_msg_inprocess = OpenLcbBufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t *openlcb_msg_inprocess = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!openlcb_msg_inprocess) { // Do we have one in process?
 
@@ -364,7 +364,7 @@ void CanRxMessageHandler_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, pay
 }
 
     /** @brief Stream frame handler — reserved for future use, not yet implemented. */
-void CanRxMessageHandler_stream_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type) {
+void CanRxMessageHandler_stream_frame(can_msg_t *can_msg, uint8_t offset, payload_type_enum data_type) {
 
 
 }
@@ -384,7 +384,7 @@ void CanRxMessageHandler_stream_frame(can_msg_t* can_msg, uint8_t offset, payloa
      * @param can_msg  Received CID frame.
      * @endverbatim
      */
-void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_cid_frame(can_msg_t *can_msg) {
 
     if (!can_msg) {
 
@@ -413,7 +413,7 @@ void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
 }
 
     /** @brief Handles RID frames: checks for a duplicate alias and flags it if found. */
-void CanRxMessageHandler_rid_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_rid_frame(can_msg_t *can_msg) {
 
     _check_for_duplicate_alias(can_msg);
 
@@ -506,7 +506,7 @@ static void _release_held_messages_for_listener(node_id_t listener_id) {
      *
      * @warning NOT thread-safe.
      */
-void CanRxMessageHandler_amd_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_amd_frame(can_msg_t *can_msg) {
 
     _check_for_duplicate_alias(can_msg);
 
@@ -530,7 +530,11 @@ void CanRxMessageHandler_amd_frame(can_msg_t* can_msg) {
      * @details Algorithm:
      * -# Check for duplicate alias; return early if detected.
      * -# If payload is non-empty: look up by Node ID, respond with one AMD if found.
-     * -# If payload is empty (global query): respond with AMD for every registered alias.
+     * -# If payload is empty (global query):
+     *    - Flush the listener alias cache (CanFrameTransferS §6.2.3).
+     *    - For each permitted alias: repopulate the listener table entry
+     *      immediately (local virtual nodes' aliases are already known),
+     *      then send AMD.
      *
      * @verbatim
      * @param can_msg Received AME frame.
@@ -538,7 +542,7 @@ void CanRxMessageHandler_amd_frame(can_msg_t* can_msg) {
      *
      * @warning Silently drops responses if buffer allocation fails.
      */
-void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_ame_frame(can_msg_t *can_msg) {
 
     if (_check_for_duplicate_alias(can_msg)) {
 
@@ -584,6 +588,16 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         if (alias_mapping_info->list[i].alias != 0x00 && alias_mapping_info->list[i].is_permitted) {
+
+            // Repopulate listener table for local virtual nodes immediately.
+            // Their aliases are already known — no need to wait for AMD off the wire.
+            if (_interface->listener_set_alias) {
+
+                _interface->listener_set_alias(
+                        alias_mapping_info->list[i].node_id,
+                        alias_mapping_info->list[i].alias);
+
+            }
 
             outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
 
@@ -659,7 +673,7 @@ static void _check_and_release_messages_by_source_alias(uint16_t alias) {
      *
      * @warning NOT thread-safe.
      */
-void CanRxMessageHandler_amr_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_amr_frame(can_msg_t *can_msg) {
 
     _check_for_duplicate_alias(can_msg);
 
@@ -679,7 +693,7 @@ void CanRxMessageHandler_amr_frame(can_msg_t* can_msg) {
 }
 
     /** @brief Handles Error Information Report frames: checks for a duplicate alias and flags it if found. */
-void CanRxMessageHandler_error_info_report_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_error_info_report_frame(can_msg_t *can_msg) {
 
     _check_for_duplicate_alias(can_msg);
 

@@ -55,6 +55,7 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/openlcb/openlcb_application_train_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_train_search_handler_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_float16_Test.cxx
+    ${ROOT_DIR}/src/openlcb/openlcb_multinode_e2e_Test.cxx
 
     PARENT_SCOPE
 )

@@ -57,7 +57,7 @@
             <div class="sidebar-section-title">Part V: CAN Driver</div>
             <a href="ch19.html">Ch 19 — Alias Mapping</a>
             <a href="ch20.html">Ch 20 — Listener Aliases</a>
-            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch21.html" class="active">Ch 21 — Multi-Node Routing</a>
             <a href="ch22.html">Ch 22 — CAN Login</a>
         </div>
         <div class="sidebar-section">
@@ -85,15 +85,22 @@
     </nav>
 
     <main class="main-content">
-        <h1>Chapter 21 — Multi-Node Message Routing (In Development)</h1>
+        <h1>Chapter 21 — Multi-Node Message Routing</h1>
 
-        <div class="callout callout-warning">
-            <div class="callout-title">Feature Status: In Development</div>
-            <p>Multi-node local message routing is a known gap in the current implementation. This chapter documents the problem, the current behavior, and the approaches under consideration.</p>
+        <p>A single physical device can host multiple virtual OpenLCB nodes — for example, a
+        command station might host one configuration node plus several train nodes. Each virtual
+        node has its own unique 48-bit Node ID and its own 12-bit CAN alias. From the perspective
+        of other devices on the CAN bus, each virtual node is an independent node.</p>
+
+        <div class="callout callout-info">
+            <strong>Implementation status:</strong> Sibling dispatch is fully implemented in
+            <code>openlcb_main_statemachine.c</code> and <code>openlcb_login_statemachine.c</code>,
+            covering all three phases: incoming message fan-out, outgoing sibling dispatch, and
+            login-time sibling notification. See also Ch 8 §8.6 for the dispatch mechanism details.
         </div>
 
+        <!-- ================================================================ -->
         <h2>21.1 The Multi-Node Architecture</h2>
-        <p>A single physical device can host multiple virtual OpenLCB nodes. For example, a command station might host one configuration node plus several train nodes. Each virtual node has its own unique 48-bit Node ID and its own 12-bit CAN alias. From the perspective of other devices on the CAN bus, each virtual node appears as an independent node.</p>
 
         <div class="mermaid">
 flowchart TB
@@ -115,77 +122,182 @@ flowchart TB
     style BUS fill:#e3f2fd,stroke:#1565c0
         </div>
 
-        <h2>21.2 Per-Node Alias Allocation</h2>
-        <p>Each virtual node goes through the full CAN login sequence independently, via round-robin processing in the CAN main state machine. The login state machine iterates through all nodes that are not yet in <code>RUNSTATE_RUN</code>, running one state transition per node per main loop iteration. This means all nodes log in concurrently, each generating its own alias from its own Node ID seed.</p>
+        <!-- ================================================================ -->
+        <h2>21.2 The Loopback Problem</h2>
 
-        <h2>21.3 The Loopback Problem</h2>
-        <p>When virtual Node A sends a message that virtual Node B (on the same device) should receive, the CAN driver transmits the frame onto the bus, but the hardware does <em>not</em> deliver that frame back to the local receive path. Remote nodes see it, but local sibling nodes do not.</p>
+        <p>When virtual Node A transmits a message, the CAN hardware does <em>not</em> deliver
+        that frame back to the local receive path. Remote nodes on the bus see it, but
+        co-hosted sibling nodes do not.</p>
+
+        <p>Without a fix, this affects every protocol:</p>
+
+        <table>
+            <thead>
+                <tr><th>Protocol</th><th>Impact without sibling dispatch</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Event Transport</td><td>Node A produces an event; co-hosted Node B that consumes it never sees the PCER.</td></tr>
+                <tr><td>Datagrams</td><td>Node A sends a datagram addressed to Node B; Node B never receives it.</td></tr>
+                <tr><td>Train Control</td><td>A local throttle node sends speed commands to a co-hosted train node; the train never responds.</td></tr>
+                <tr><td>Verify Node ID</td><td>Global Verify from Node A should elicit a response from Node B; without loopback it does not.</td></tr>
+                <tr><td>Init Complete</td><td>Node A's Init Complete must be seen by Node B to update its listener alias table; without loopback it is missed.</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>21.3 Zero-Copy Sequential Sibling Dispatch</h2>
+
+        <p>The library solves the loopback problem with a <strong>zero-copy, zero-FIFO</strong>
+        sequential dispatch mechanism built into the main dispatcher run loop.</p>
+
+        <h3>Core idea</h3>
+        <p>After a message is sent to the wire, the dispatcher <em>reuses the outgoing message
+        buffer as the incoming message</em> for a second pass through all sibling nodes. No
+        buffer is allocated and no FIFO push occurs. One sibling is visited per
+        <code>_run()</code> call.</p>
 
         <div class="mermaid">
 sequenceDiagram
     participant A as Virtual Node A
-    participant TX as CAN TX
-    participant BUS as CAN Bus
-    participant RX as CAN RX
+    participant SM as Main Dispatcher
+    participant Wire as CAN Wire
     participant B as Virtual Node B
+    participant C as Virtual Node C
 
-    A->>TX: Send event PCER
-    TX->>BUS: CAN frame transmitted
-    BUS->>RX: Frame NOT looped back
-    Note over B: Node B never sees<br/>Node A's event
-
-    BUS-->>BUS: Remote nodes receive it
+    Note over A,SM: Node A builds Init Complete
+    SM->>Wire: Send Init Complete (Node A)
+    Note over SM: _sibling_dispatch_begin()
+    SM->>SM: incoming_ptr → outgoing_msg (no copy)
+    SM->>B: does_node_process_msg? (loopback=true, B≠A → yes)
+    SM->>B: process_main_statemachine(Init Complete)
+    Note over B: Updates listener table
+    SM->>C: does_node_process_msg? (C≠A → yes)
+    SM->>C: process_main_statemachine(Init Complete)
+    Note over C: Updates listener table
         </div>
 
-        <p>This affects several protocol areas:</p>
+        <h3>Static state added to the main dispatcher</h3>
 
         <table>
             <thead>
-                <tr><th>Protocol</th><th>Impact</th></tr>
-            </thead>
-            <tbody>
-                <tr><td><strong>Event Transport</strong></td><td>If Node A produces an event that Node B consumes, Node B will not see the PCER.</td></tr>
-                <tr><td><strong>Datagrams</strong></td><td>If Node A sends a datagram addressed to Node B, Node B will not receive it.</td></tr>
-                <tr><td><strong>Train Control</strong></td><td>If a local throttle node sends a speed command to a local train node, the train will not respond.</td></tr>
-                <tr><td><strong>Verify Node ID</strong></td><td>Global Verify Node ID from Node A should elicit a response from Node B, but it will not.</td></tr>
-            </tbody>
-        </table>
-
-        <h2>21.4 Current Behavior</h2>
-        <p>In the current implementation, the <code>openlcb_msg_t</code> structure includes a <code>state.loopback</code> flag that is used to mark messages as sibling dispatch copies. When a global message is sent by a local node, the main state machine can set the loopback flag on a copy and push it to the incoming FIFO so that other local nodes can process it. However, this mechanism is not yet fully implemented for all message types.</p>
-
-        <h2>21.5 Approaches Under Consideration</h2>
-
-        <table>
-            <thead>
-                <tr><th>Approach</th><th>Description</th><th>Pros</th><th>Cons</th></tr>
+                <tr><th>Variable</th><th>Type</th><th>Purpose</th></tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>TX-side loopback</strong></td>
-                    <td>When the TX path sends a message, also push a copy (with loopback flag) into the RX FIFO for local delivery.</td>
-                    <td>Simple, transparent to protocol handlers</td>
-                    <td>Consumes extra buffer slots, must handle reference counting correctly</td>
+                    <td><code>_sibling_statemachine_info</code></td>
+                    <td><code>openlcb_statemachine_info_t</code></td>
+                    <td>Second context for sibling iteration. Its <code>incoming_msg_info.msg_ptr</code>
+                        points directly at the main outgoing message.</td>
                 </tr>
                 <tr>
-                    <td><strong>Application-level routing</strong></td>
-                    <td>The application explicitly routes messages between local nodes by calling the appropriate API functions directly.</td>
-                    <td>No library changes needed</td>
-                    <td>Burden on application developer, easy to miss edge cases</td>
+                    <td><code>_sibling_dispatch_active</code></td>
+                    <td><code>bool</code></td>
+                    <td>True while the dispatcher is iterating siblings for the most recently sent message.</td>
                 </tr>
                 <tr>
-                    <td><strong>Dispatcher-level sibling fan-out</strong></td>
-                    <td>The main state machine dispatcher detects that the destination is a local node and delivers the message directly, bypassing the CAN bus entirely.</td>
-                    <td>Most efficient, no bus traffic for local messages</td>
-                    <td>Requires dispatcher to know about all local nodes' aliases, adds complexity to the dispatch path</td>
+                    <td><code>_sibling_response_queue[5]</code></td>
+                    <td><code>openlcb_stream_message_t[]</code></td>
+                    <td>Circular queue holding sibling responses that must themselves be dispatched
+                        to siblings (depth &gt; 1 chains).</td>
+                </tr>
+                <tr>
+                    <td><code>_sibling_response_queue_high_water</code></td>
+                    <td><code>uint8_t</code></td>
+                    <td>Maximum queue depth reached — use for queue sizing diagnostics.</td>
+                </tr>
+                <tr>
+                    <td><code>_path_b_pending_msg</code> / <code>_path_b_pending</code></td>
+                    <td><code>openlcb_stream_message_t</code> / <code>bool</code></td>
+                    <td>Single-slot buffer for messages queued by application code while a sibling
+                        dispatch cycle is already active.</td>
                 </tr>
             </tbody>
         </table>
 
-        <h2>21.6 Impact on Protocol Correctness</h2>
-        <p>For single-node devices (the most common case), this limitation has no effect. Multi-node devices where nodes do not need to communicate with each other are also unaffected. The issue only arises when co-hosted virtual nodes need to exchange messages -- for example, a command station node sending speed commands to a co-hosted train node.</p>
+        <!-- ================================================================ -->
+        <h2>21.4 Dispatch Phases</h2>
 
-        <p>Applications that require local inter-node communication today can work around this by using the application layer API directly (e.g., calling the train state modification functions directly rather than going through the message path).</p>
+        <h3>Phase 1 — Incoming message fan-out (main state machine)</h3>
+        <p>Every incoming message from the FIFO is already dispatched to all nodes via the
+        enumerate-first / enumerate-next loop (Ch 8 §8.5). This handles messages arriving
+        <em>from the wire</em>. Global messages reach every node; addressed messages are
+        filtered by <code>does_node_process_msg()</code>.</p>
+
+        <h3>Phase 2 — Outgoing sibling dispatch (main state machine)</h3>
+        <p>After a node sends an outgoing message to the wire, the dispatcher automatically
+        shows it to every other local node. The run loop priority 2 sub-steps handle this
+        (see Ch 8 §8.2). Self-skip is enforced: the originating node never processes its own
+        outgoing message because <code>state.loopback = true</code> is set and
+        <code>does_node_process_msg()</code> rejects it.</p>
+
+        <h3>Phase 3 — Login sibling notification (login state machine)</h3>
+        <p>The login state machine calls
+        <code>OpenLcbMainStatemachine_send_with_sibling_dispatch()</code> instead of the raw
+        transport send when transmitting Init Complete and event announcement messages. This
+        wrapper sends the message to the wire and queues it for sibling dispatch via the
+        Path B pending slot, ensuring that login-time messages also reach co-hosted nodes.</p>
+
+        <!-- ================================================================ -->
+        <h2>21.5 Chain Dispatch (depth &gt; 1)</h2>
+
+        <p>Sibling dispatch can be recursive: Node A's Init Complete triggers Node B's listener
+        table update, which may itself cause Node B to send an Init Complete. Node B's Init
+        Complete must then be shown to Node A and Node C. The sibling response queue handles
+        this cleanly:</p>
+
+        <ol>
+            <li>When a sibling sends a response during dispatch, the response is pushed to
+                <code>_sibling_response_queue</code>.</li>
+            <li>After the current sibling dispatch cycle completes, Priority 2.5 pops the
+                queued response and starts a new sibling dispatch cycle for it.</li>
+            <li>This continues until the queue is empty.</li>
+        </ol>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant A as Node A
+    participant SM as Dispatcher
+    participant B as Node B
+    participant Q as Response Queue
+
+    SM->>A: Node A sends Init Complete to wire
+    Note over SM: begin sibling dispatch
+    SM->>B: show Init Complete
+    B->>B: sends Init Complete (B)
+    SM->>Q: push Init Complete (B)
+    Note over SM: sibling dispatch done (A visited)
+    SM->>Q: pop Init Complete (B)
+    Note over SM: begin sibling dispatch for B's message
+    SM->>A: show Init Complete (B)
+    Note over Q: queue empty — done
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>21.6 Per-Node Alias Allocation</h2>
+
+        <p>Each virtual node goes through the full CAN login sequence independently via
+        round-robin processing in the CAN main state machine. The login state machine
+        iterates through all nodes not yet in <code>RUNSTATE_RUN</code>, running one state
+        transition per node per main loop iteration. All nodes log in concurrently, each
+        generating its own alias from its own Node ID seed.</p>
+
+        <!-- ================================================================ -->
+        <h2>21.7 Single-Node Fast Path</h2>
+
+        <p>On single-node configurations, <code>_sibling_dispatch_begin()</code> checks
+        <code>openlcb_node_get_count() &lt;= 1</code> and returns immediately. There is no
+        overhead from sibling dispatch when only one node is configured.</p>
+
+        <!-- ================================================================ -->
+        <h2>21.8 Timing and Buffer Pressure</h2>
+
+        <p>Each sibling is visited in one <code>_run()</code> call. The work per call is
+        approximately 10 µs of CPU, so 50 siblings ≈ 500 µs — less than one CAN frame time
+        at 125 kbps (~1 ms). The CAN RX ISR continues filling its software FIFO independently,
+        so no frames are lost during sibling dispatch.</p>
+
+        <p>No dynamic allocation occurs during sibling dispatch. All buffers are statically
+        allocated at startup.</p>
 
         <div class="chapter-nav">
             <a href="ch20.html">&larr; Prev: Ch 20 — Listener Aliases</a>

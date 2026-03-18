@@ -143,6 +143,15 @@ Functions</h2></td></tr>
 <tr class="memitem:adf7b6cc6f65e6982f71cc9d9ae145775" id="r_adf7b6cc6f65e6982f71cc9d9ae145775"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf7b6cc6f65e6982f71cc9d9ae145775">OpenLcbMainStatemachine_get_statemachine_info</a> (void)</td></tr>
 <tr class="memdesc:adf7b6cc6f65e6982f71cc9d9ae145775"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns pointer to internal static state machine info. For unit testing only — do not modify.  <br /></td></tr>
 <tr class="separator:adf7b6cc6f65e6982f71cc9d9ae145775"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3885a6f35a0b1753f502e185aff6f1c0" id="r_a3885a6f35a0b1753f502e185aff6f1c0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3885a6f35a0b1753f502e185aff6f1c0">OpenLcbMainStatemachine_send_with_sibling_dispatch</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *msg)</td></tr>
+<tr class="memdesc:a3885a6f35a0b1753f502e185aff6f1c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transport wrapper — sends to wire and queues for sibling dispatch.  <br /></td></tr>
+<tr class="separator:a3885a6f35a0b1753f502e185aff6f1c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c685f3c5159be72fe5dc20a207ac371" id="r_a9c685f3c5159be72fe5dc20a207ac371"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c685f3c5159be72fe5dc20a207ac371">OpenLcbMainStatemachine_get_sibling_statemachine_info</a> (void)</td></tr>
+<tr class="memdesc:a9c685f3c5159be72fe5dc20a207ac371"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns pointer to sibling dispatch state machine info. For unit testing only.  <br /></td></tr>
+<tr class="separator:a9c685f3c5159be72fe5dc20a207ac371"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad61b1de9bb9bce92e6e4bc2ba5908769" id="r_ad61b1de9bb9bce92e6e4bc2ba5908769"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad61b1de9bb9bce92e6e4bc2ba5908769">OpenLcbMainStatemachine_get_sibling_response_queue_high_water</a> (void)</td></tr>
+<tr class="memdesc:ad61b1de9bb9bce92e6e4bc2ba5908769"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the high-water mark of the sibling response queue. For diagnostics.  <br /></td></tr>
+<tr class="separator:ad61b1de9bb9bce92e6e4bc2ba5908769"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Central MTI-based message dispatcher. </p>
@@ -155,7 +164,7 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Pops messages from the FIFO, enumerates all nodes, and routes to the correct protocol handler via function pointers. NULL optional handlers trigger Interaction Rejected automatically. Required handlers include message network, protocol support, and resource locking; optional handlers cover SNIP, events, trains, datagrams, and streams.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="ab698af75d6fd66d8f68cc5a1b122eadc" name="ab698af75d6fd66d8f68cc5a1b122eadc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab698af75d6fd66d8f68cc5a1b122eadc">&#9670;&#160;</a></span>OpenLcbMainStatemachine_initialize()</h2>
@@ -225,12 +234,14 @@ Functions</h2></td></tr>
 <p>Runs one non-blocking step of protocol processing. </p>
 <p>Priority order: send pending → re-enumerate → pop FIFO → enumerate nodes. Call as fast as possible from your main loop.</p>
 <p>Runs one non-blocking step of protocol processing.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Send pending outgoing message (highest priority), return if busy</li>
-<li>Handle multi-message re-enumeration, return if active</li>
-<li>Pop next incoming message from FIFO, return if attempted</li>
-<li>Enumerate first node for the message, return if acted</li>
-<li>Enumerate next node, return if acted </li>
+<p>Priority order:</p><ol type="1">
+<li>Send pending main outgoing (skip if held for sibling dispatch)</li>
+<li>Sibling dispatch: send sibling response, reenumerate, dispatch current, advance</li>
+<li>Check sibling response queue or Path B pending for next dispatch cycle</li>
+<li>Re-enumerate main handler for multi-message responses</li>
+<li>Pop next incoming message from FIFO</li>
+<li>Enumerate first node for the message</li>
+<li>Enumerate next node </li>
 </ol>
 
 </div>
@@ -555,6 +566,107 @@ Functions</h2></td></tr>
 
 <p>Returns pointer to internal static state machine info. For unit testing only — do not modify. </p>
 <p>Returns pointer to internal static state machine info. For unit testing only — do not modify. </p>
+
+</div>
+</div>
+<a id="a3885a6f35a0b1753f502e185aff6f1c0" name="a3885a6f35a0b1753f502e185aff6f1c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3885a6f35a0b1753f502e185aff6f1c0">&#9670;&#160;</a></span>OpenLcbMainStatemachine_send_with_sibling_dispatch()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbMainStatemachine_send_with_sibling_dispatch </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Transport wrapper — sends to wire and queues for sibling dispatch. </p>
+<p>Called by application helpers and login statemachine via send_openlcb_msg DI. Sends the message to the wire via the real transport callback, then copies it into a pending slot so the run loop dispatches it to sibling virtual nodes.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>Pointer to the outgoing <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if wire send succeeded, false if transport busy.</dd></dl>
+<p>Transport wrapper — sends to wire and queues for sibling dispatch.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Send the message to the wire via the real transport callback</li>
+<li>If only one node, return immediately (no siblings)</li>
+<li>Copy message header and payload into the Path B pending slot</li>
+<li>Set loopback flag so self-skip works during sibling dispatch</li>
+<li>The run loop will dispatch it to siblings on subsequent _run() calls</li>
+</ol>
+<pre class="fragment">* @param msg  Pointer to the outgoing openlcb_msg_t (often stack-allocated)
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if wire send succeeded, false if transport busy </dd></dl>
+
+</div>
+</div>
+<a id="a9c685f3c5159be72fe5dc20a207ac371" name="a9c685f3c5159be72fe5dc20a207ac371"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c685f3c5159be72fe5dc20a207ac371">&#9670;&#160;</a></span>OpenLcbMainStatemachine_get_sibling_statemachine_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> * OpenLcbMainStatemachine_get_sibling_statemachine_info </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns pointer to sibling dispatch state machine info. For unit testing only. </p>
+<p>Returns pointer to sibling dispatch state machine info. For unit testing only. </p>
+
+</div>
+</div>
+<a id="ad61b1de9bb9bce92e6e4bc2ba5908769" name="ad61b1de9bb9bce92e6e4bc2ba5908769"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad61b1de9bb9bce92e6e4bc2ba5908769">&#9670;&#160;</a></span>OpenLcbMainStatemachine_get_sibling_response_queue_high_water()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t OpenLcbMainStatemachine_get_sibling_response_queue_high_water </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the high-water mark of the sibling response queue. For diagnostics. </p>
+<p>Returns the high-water mark of the sibling response queue. For diagnostics. </p>
 
 </div>
 </div>

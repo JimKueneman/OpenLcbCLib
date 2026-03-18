@@ -39,6 +39,8 @@ cp ../../src/drivers/canbus/*.c ../../src/applications/platformio/osx/BasicNode/
 cp ../../src/drivers/canbus/*.h ../../src/applications/platformio/osx/BasicNode/src/openlcb_c_lib/drivers/canbus/
 cp ../../src/utilities/*.c ../../src/applications/platformio/osx/BasicNode/src/openlcb_c_lib/utilities/
 cp ../../src/utilities/*.h ../../src/applications/platformio/osx/BasicNode/src/openlcb_c_lib/utilities/
+cp ../../src/utilities_pc/*.c ../../src/applications/platformio/osx/BasicNode/src/openlcb_c_lib/utilities/
+cp ../../src/utilities_pc/*.h ../../src/applications/platformio/osx/BasicNode/src/openlcb_c_lib/utilities/
 
 echo "Updating: xcode/BasicNode"
 cp ../../src/openlcb/*.c ../../src/applications/xcode/BasicNode/openlcb_c_lib/openlcb/
@@ -47,6 +49,8 @@ cp ../../src/drivers/canbus/*.c ../../src/applications/xcode/BasicNode/openlcb_c
 cp ../../src/drivers/canbus/*.h ../../src/applications/xcode/BasicNode/openlcb_c_lib/drivers/canbus/
 cp ../../src/utilities/*.c ../../src/applications/xcode/BasicNode/openlcb_c_lib/utilities/
 cp ../../src/utilities/*.h ../../src/applications/xcode/BasicNode/openlcb_c_lib/utilities/
+cp ../../src/utilities_pc/*.c ../../src/applications/xcode/BasicNode/openlcb_c_lib/utilities/
+cp ../../src/utilities_pc/*.h ../../src/applications/xcode/BasicNode/openlcb_c_lib/utilities/
 
 echo "Updating: ti_thiea/mspm03507_launchpad/BasicNode"
 cp ../../src/openlcb/*.c ../../src/applications/ti_thiea/mspm03507_launchpad/BasicNode/openlcb_c_lib/openlcb/

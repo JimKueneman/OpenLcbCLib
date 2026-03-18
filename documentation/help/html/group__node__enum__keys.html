@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ga52ee1977cf86c2fb34f066f1d15ea171" id="r_ga52ee1977cf86c2fb34f066f1d15ea171"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga52ee1977cf86c2fb34f066f1d15ea171">MAX_INTERNAL_ENUM_KEYS_VALUES</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memitem:ga52ee1977cf86c2fb34f066f1d15ea171" id="r_ga52ee1977cf86c2fb34f066f1d15ea171"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga52ee1977cf86c2fb34f066f1d15ea171">MAX_INTERNAL_ENUM_KEYS_VALUES</a>&#160;&#160;&#160;6</td></tr>
 <tr class="memdesc:ga52ee1977cf86c2fb34f066f1d15ea171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of enumeration keys available for user/application.  <br /></td></tr>
 <tr class="separator:ga52ee1977cf86c2fb34f066f1d15ea171"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga1fe7bb4d4f1c2796865f4247918e2ff1" id="r_ga1fe7bb4d4f1c2796865f4247918e2ff1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga1fe7bb4d4f1c2796865f4247918e2ff1">MAX_USER_ENUM_KEYS_VALUES</a>&#160;&#160;&#160;4</td></tr>
@@ -130,6 +130,12 @@ Macros</h2></td></tr>
 <tr class="memitem:ga2241487403ef575ce4e6f12991e1b285" id="r_ga2241487403ef575ce4e6f12991e1b285"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga2241487403ef575ce4e6f12991e1b285">DATAGRAM_TIMEOUT_ENUM_KEY</a>&#160;&#160;&#160;(<a class="el" href="#ga1fe7bb4d4f1c2796865f4247918e2ff1">MAX_USER_ENUM_KEYS_VALUES</a> + 3)</td></tr>
 <tr class="memdesc:ga2241487403ef575ce4e6f12991e1b285"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration key used by datagram timeout scanner.  <br /></td></tr>
 <tr class="separator:ga2241487403ef575ce4e6f12991e1b285"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4c79209bc4e841b980f85e6d70521b56" id="r_ga4c79209bc4e841b980f85e6d70521b56"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga4c79209bc4e841b980f85e6d70521b56">OPENLCB_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX</a>&#160;&#160;&#160;(<a class="el" href="#ga1fe7bb4d4f1c2796865f4247918e2ff1">MAX_USER_ENUM_KEYS_VALUES</a> + 4)</td></tr>
+<tr class="memdesc:ga4c79209bc4e841b980f85e6d70521b56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration key used by sibling dispatch in main state machine.  <br /></td></tr>
+<tr class="separator:ga4c79209bc4e841b980f85e6d70521b56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4454f61c7979bbafdfa953084a849c27" id="r_ga4454f61c7979bbafdfa953084a849c27"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga4454f61c7979bbafdfa953084a849c27">OPENLCB_LOGIN_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX</a>&#160;&#160;&#160;(<a class="el" href="#ga1fe7bb4d4f1c2796865f4247918e2ff1">MAX_USER_ENUM_KEYS_VALUES</a> + 5)</td></tr>
+<tr class="memdesc:ga4454f61c7979bbafdfa953084a849c27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration key used by sibling dispatch in login state machine.  <br /></td></tr>
+<tr class="separator:ga4454f61c7979bbafdfa953084a849c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>User keys (0-3) and internal keys (4-6) for independent node enumeration. </p>
@@ -141,7 +147,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define MAX_INTERNAL_ENUM_KEYS_VALUES&#160;&#160;&#160;4</td>
+          <td class="memname">#define MAX_INTERNAL_ENUM_KEYS_VALUES&#160;&#160;&#160;6</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -307,6 +313,38 @@ Macros</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Enumeration key used by datagram timeout scanner. </p>
+
+</div>
+</div>
+<a id="ga4c79209bc4e841b980f85e6d70521b56" name="ga4c79209bc4e841b980f85e6d70521b56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4c79209bc4e841b980f85e6d70521b56">&#9670;&#160;</a></span>OPENLCB_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OPENLCB_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX&#160;&#160;&#160;(<a class="el" href="#ga1fe7bb4d4f1c2796865f4247918e2ff1">MAX_USER_ENUM_KEYS_VALUES</a> + 4)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enumeration key used by sibling dispatch in main state machine. </p>
+
+</div>
+</div>
+<a id="ga4454f61c7979bbafdfa953084a849c27" name="ga4454f61c7979bbafdfa953084a849c27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4454f61c7979bbafdfa953084a849c27">&#9670;&#160;</a></span>OPENLCB_LOGIN_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OPENLCB_LOGIN_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX&#160;&#160;&#160;(<a class="el" href="#ga1fe7bb4d4f1c2796865f4247918e2ff1">MAX_USER_ENUM_KEYS_VALUES</a> + 5)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enumeration key used by sibling dispatch in login state machine. </p>
 
 </div>
 </div>

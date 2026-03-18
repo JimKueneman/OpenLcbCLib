@@ -4400,6 +4400,11 @@ static bool _st_has_responded;
 
 static bool _st_wire_busy;
 
+// ---- Stream addressed reply control ----
+
+static bool _st_stream_reply_active;
+static node_id_t _st_stream_reply_from_node;
+
 // ---- Reset all sibling test state ----
 
 static void _st_reset(void) {
@@ -4414,6 +4419,8 @@ static void _st_reset(void) {
     _st_response_mti = 0;
     _st_has_responded = false;
     _st_wire_busy = false;
+    _st_stream_reply_active = false;
+    _st_stream_reply_from_node = 0;
 
 }
 
@@ -4528,6 +4535,32 @@ static void _st_conditional_respond_handler(openlcb_statemachine_info_t *si) {
         _st_has_responded = true;
 
     }
+
+}
+
+// ---- Handler: produces MTI_STREAM_INIT_REPLY addressed back to the request source ----
+//
+// Used only by sibling_stream_reply_routes_back_to_originating_sibling.
+// Reads source_alias/source_id from the incoming message and builds a reply
+// addressed to that node, then clears _st_stream_reply_active so it fires once.
+
+static void _st_stream_initiate_request_with_reply(openlcb_statemachine_info_t *si) {
+
+    _st_log_handler(si);
+
+    if (!_st_stream_reply_active) { return; }
+
+    if (si->openlcb_node->id != _st_stream_reply_from_node) { return; }
+
+    OpenLcbUtilities_load_openlcb_message(
+            si->outgoing_msg_info.msg_ptr,
+            si->openlcb_node->alias,
+            si->openlcb_node->id,
+            si->incoming_msg_info.msg_ptr->source_alias,
+            si->incoming_msg_info.msg_ptr->source_id,
+            MTI_STREAM_INIT_REPLY);
+    si->outgoing_msg_info.valid = true;
+    _st_stream_reply_active = false;
 
 }
 
@@ -5249,4 +5282,386 @@ TEST(OpenLcbMainStatemachine, sibling_path_b_single_node_no_pending)
 
     // No sibling dispatches
     EXPECT_EQ(_st_dispatch_count, 0);
+}
+
+// ============================================================================
+// Stream Sibling Dispatch Tests
+//
+// All five stream MTIs carry MASK_DEST_ADDRESS_PRESENT (0x0008), so they are
+// addressed messages.  The sibling dispatch path must route each one only to
+// the matching virtual node; bystander siblings must receive nothing.
+// ============================================================================
+
+// ============================================================================
+// TEST: STREAM_INIT_REQUEST routes only to addressed sibling
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_stream_init_request_routes_to_destination_only)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    // External node initiates a stream to Node B only
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_STREAM_INIT_REQUEST;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    incoming->dest_alias = 0xBBB;
+    incoming->dest_id = 0x010203040502;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Only Node B is addressed — it receives the request
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_STREAM_INIT_REQUEST), 1);
+
+    // Node A and C are bystanders — they must not receive it
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_STREAM_INIT_REQUEST), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_STREAM_INIT_REQUEST), 0);
+
+    // No buffer leak
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: STREAM_INIT_REPLY routes only to addressed sibling
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_stream_init_reply_routes_to_destination_only)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    // External node replies to Node A's earlier request
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_STREAM_INIT_REPLY;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    incoming->dest_alias = 0xAAA;
+    incoming->dest_id = 0x010203040501;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Only Node A is addressed
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_STREAM_INIT_REPLY), 1);
+
+    // B and C are bystanders
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_STREAM_INIT_REPLY), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_STREAM_INIT_REPLY), 0);
+
+    // No buffer leak
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: STREAM_SEND and STREAM_PROCEED route only to their addressed siblings
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_stream_send_and_proceed_route_to_destination_only)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    // Data payload sent to Node B
+    openlcb_msg_t *send_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    send_msg->mti = MTI_STREAM_SEND;
+    send_msg->source_alias = 0xFFF;
+    send_msg->source_id = 0x0A0B0C0D0E0F;
+    send_msg->dest_alias = 0xBBB;
+    send_msg->dest_id = 0x010203040502;
+    OpenLcbBufferFifo_push(send_msg);
+
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Flow-control ack sent to Node A
+    openlcb_msg_t *proceed_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    proceed_msg->mti = MTI_STREAM_PROCEED;
+    proceed_msg->source_alias = 0xFFF;
+    proceed_msg->source_id = 0x0A0B0C0D0E0F;
+    proceed_msg->dest_alias = 0xAAA;
+    proceed_msg->dest_id = 0x010203040501;
+    OpenLcbBufferFifo_push(proceed_msg);
+
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // STREAM_SEND: only B receives it
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_STREAM_SEND), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_STREAM_SEND), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_STREAM_SEND), 0);
+
+    // STREAM_PROCEED: only A receives it
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_STREAM_PROCEED), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_STREAM_PROCEED), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_STREAM_PROCEED), 0);
+
+    // No buffer leak
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: STREAM_INIT_REPLY from sibling B routes back to originating sibling A
+//       via the sibling response queue; bystander C receives nothing
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_stream_reply_routes_back_to_originating_sibling)
+{
+    // Use a local interface copy that rewires stream_initiate_request to the
+    // reply-generating handler.  All other slots remain identical to _st_interface.
+    _st_reset();
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferFifo_initialize();
+    OpenLcbNode_initialize(&interface_openlcb_node);
+
+    interface_openlcb_main_statemachine_t local_iface = _st_interface;
+    local_iface.stream_initiate_request = &_st_stream_initiate_request_with_reply;
+    OpenLcbMainStatemachine_initialize(&local_iface);
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    // Node B will produce a STREAM_INIT_REPLY addressed back to the request source
+    _st_stream_reply_active = true;
+    _st_stream_reply_from_node = 0x010203040502;
+
+    // Node A sends STREAM_INIT_REQUEST to Node B via application-layer path
+    openlcb_msg_t app_msg;
+    payload_basic_t app_payload;
+    app_msg.payload = (openlcb_payload_t *) &app_payload;
+    app_msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(
+            &app_msg,
+            nodeA->alias,
+            nodeA->id,
+            nodeB->alias,
+            nodeB->id,
+            MTI_STREAM_INIT_REQUEST);
+
+    bool sent = OpenLcbMainStatemachine_send_with_sibling_dispatch(&app_msg);
+    EXPECT_TRUE(sent);
+
+    // Request on wire immediately
+    EXPECT_EQ(_st_count_wire_mti(MTI_STREAM_INIT_REQUEST), 1);
+
+    for (int i = 0; i < 100; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // STREAM_INIT_REQUEST routing: only B is addressed, A self-skips, C is bystander
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_STREAM_INIT_REQUEST), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_STREAM_INIT_REQUEST), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_STREAM_INIT_REQUEST), 0);
+
+    // B's STREAM_INIT_REPLY went to wire addressed to A
+    EXPECT_EQ(_st_count_wire_mti(MTI_STREAM_INIT_REPLY), 1);
+
+    // STREAM_INIT_REPLY routing via sibling response queue:
+    //   A receives it (addressed to A), B self-skips, C is bystander
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_STREAM_INIT_REPLY), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_STREAM_INIT_REPLY), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_STREAM_INIT_REPLY), 0);
+
+    // No buffer leak
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: STREAM_COMPLETE routes only to addressed sibling
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_stream_complete_routes_to_destination_only)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    // Stream initiator closes the stream to Node B
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_STREAM_COMPLETE;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    incoming->dest_alias = 0xBBB;
+    incoming->dest_id = 0x010203040502;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Only Node B is addressed
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_STREAM_COMPLETE), 1);
+
+    // A and C are bystanders
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_STREAM_COMPLETE), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_STREAM_COMPLETE), 0);
+
+    // No buffer leak
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: Under load, third and fourth siblings never receive stream messages
+//       and no buffers are exhausted
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_stream_third_sibling_isolation_under_load)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeD = OpenLcbNode_allocate(0x010203040504, &_node_parameters_main_node);
+    nodeD->state.initialized = true;
+    nodeD->alias = 0xDDD;
+    nodeD->state.run_state = RUNSTATE_RUN;
+
+    OpenLcbBufferStore_clear_max_allocated();
+
+    // 10 STREAM_SEND frames addressed to Node B (bulk data transfer)
+    for (int i = 0; i < 10; i++) {
+
+        openlcb_msg_t *send_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+        send_msg->mti = MTI_STREAM_SEND;
+        send_msg->source_alias = 0xFFF;
+        send_msg->source_id = 0x0A0B0C0D0E0F;
+        send_msg->dest_alias = 0xBBB;
+        send_msg->dest_id = 0x010203040502;
+        OpenLcbBufferFifo_push(send_msg);
+
+    }
+
+    // 10 STREAM_PROCEED flow-control acks addressed to Node A
+    for (int i = 0; i < 10; i++) {
+
+        openlcb_msg_t *proceed_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+        proceed_msg->mti = MTI_STREAM_PROCEED;
+        proceed_msg->source_alias = 0xFFF;
+        proceed_msg->source_id = 0x0A0B0C0D0E0F;
+        proceed_msg->dest_alias = 0xAAA;
+        proceed_msg->dest_id = 0x010203040501;
+        OpenLcbBufferFifo_push(proceed_msg);
+
+    }
+
+    for (int i = 0; i < 500; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // B received every STREAM_SEND
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_STREAM_SEND), 10);
+
+    // A received every STREAM_PROCEED
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_STREAM_PROCEED), 10);
+
+    // C and D received no stream messages of any kind
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_STREAM_SEND), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_STREAM_PROCEED), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040504, MTI_STREAM_SEND), 0);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040504, MTI_STREAM_PROCEED), 0);
+
+    // No buffer leak
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
 }

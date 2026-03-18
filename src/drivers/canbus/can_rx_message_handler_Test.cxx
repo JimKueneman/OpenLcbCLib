@@ -12,6 +12,8 @@
 
 #include "test/main_Test.hxx"
 
+#include <cstring>
+
 #include "can_types.h"
 #include "can_utilities.h"
 #include "can_rx_message_handler.h"
@@ -94,17 +96,38 @@ static bool listener_set_alias_called = false;
 static node_id_t listener_set_alias_node_id = 0;
 static uint16_t listener_set_alias_alias = 0;
 
+    /** @brief Count of listener_set_alias calls for multi-node tests */
+static int listener_set_alias_call_count = 0;
+
+#define MAX_LISTENER_SET_ALIAS_CALLS 8
+
+    /** @brief Tracks node_ids passed to each listener_set_alias call */
+static node_id_t listener_set_alias_node_ids[MAX_LISTENER_SET_ALIAS_CALLS];
+
+    /** @brief Tracks aliases passed to each listener_set_alias call */
+static uint16_t listener_set_alias_aliases[MAX_LISTENER_SET_ALIAS_CALLS];
+
 static bool listener_clear_alias_called = false;
 static uint16_t listener_clear_alias_alias = 0;
 
 static bool listener_flush_aliases_called = false;
 
+    /** @brief Mock listener_set_alias that records every call for multi-node verification */
 void _mock_listener_set_alias(node_id_t node_id, uint16_t alias)
 {
 
     listener_set_alias_called = true;
     listener_set_alias_node_id = node_id;
     listener_set_alias_alias = alias;
+
+    if (listener_set_alias_call_count < MAX_LISTENER_SET_ALIAS_CALLS) {
+
+        listener_set_alias_node_ids[listener_set_alias_call_count] = node_id;
+        listener_set_alias_aliases[listener_set_alias_call_count] = alias;
+
+    }
+
+    listener_set_alias_call_count++;
 
 }
 
@@ -184,6 +207,9 @@ void _global_reset_variables(void)
     listener_set_alias_called = false;
     listener_set_alias_node_id = 0;
     listener_set_alias_alias = 0;
+    listener_set_alias_call_count = 0;
+    memset(listener_set_alias_node_ids, 0, sizeof(listener_set_alias_node_ids));
+    memset(listener_set_alias_aliases, 0, sizeof(listener_set_alias_aliases));
     listener_clear_alias_called = false;
     listener_clear_alias_alias = 0;
     listener_flush_aliases_called = false;
@@ -2277,6 +2303,204 @@ TEST(CanRxMessageHandler, ame_global_no_listener_interface_no_crash)
 
     // Should still generate AMD responses
     EXPECT_GE(CanBufferFifo_get_allocated_count(), 1);
+
+    // Clean up
+    while (CanBufferFifo_get_allocated_count() > 0) {
+
+        can_msg_t *response = CanBufferFifo_pop();
+
+        if (response) {
+
+            CanBufferStore_free_buffer(response);
+
+        }
+
+    }
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+/*******************************************************************************
+ * Phase 3B: Global AME Repopulates Local Listener Entries
+ ******************************************************************************/
+
+// ============================================================================
+// TEST: Global AME calls listener_set_alias for each permitted local alias
+// ============================================================================
+
+TEST(CanRxMessageHandler, ame_global_repopulates_listener_entries)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    // Register 2 permitted aliases in the real mapping table
+    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping1->is_permitted = true;
+
+    alias_mapping_t *mapping2 = AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    mapping2->is_permitted = true;
+
+    can_msg_t can_msg;
+
+    // Global AME (no payload)
+    CanUtilities_load_can_message(&can_msg, 0x17020AAA, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0);
+
+    CanRxMessageHandler_ame_frame(&can_msg);
+
+    // Flush should have been called
+    EXPECT_TRUE(listener_flush_aliases_called);
+
+    // listener_set_alias should have been called for both permitted aliases
+    EXPECT_EQ(listener_set_alias_call_count, 2);
+
+    // AMD responses should also have been sent (2 permitted aliases)
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 2);
+
+    // Clean up
+    while (CanBufferFifo_get_allocated_count() > 0) {
+
+        can_msg_t *response = CanBufferFifo_pop();
+
+        if (response) {
+
+            CanBufferStore_free_buffer(response);
+
+        }
+
+    }
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+// ============================================================================
+// TEST: Global AME without listener support — AMDs still sent, no crash
+// ============================================================================
+
+TEST(CanRxMessageHandler, ame_global_no_listener_support_still_sends_amds)
+{
+
+    _global_initialize();  // Uses interface WITHOUT listener callbacks
+    _global_reset_variables();
+
+    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping1->is_permitted = true;
+
+    alias_mapping_t *mapping2 = AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    mapping2->is_permitted = true;
+
+    can_msg_t can_msg;
+
+    // Global AME (no payload)
+    CanUtilities_load_can_message(&can_msg, 0x17020AAA, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0);
+
+    CanRxMessageHandler_ame_frame(&can_msg);
+
+    // listener callbacks are NULL — should NOT crash, NOT be called
+    EXPECT_FALSE(listener_flush_aliases_called);
+    EXPECT_EQ(listener_set_alias_call_count, 0);
+
+    // AMD responses should still be sent
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 2);
+
+    // Clean up
+    while (CanBufferFifo_get_allocated_count() > 0) {
+
+        can_msg_t *response = CanBufferFifo_pop();
+
+        if (response) {
+
+            CanBufferStore_free_buffer(response);
+
+        }
+
+    }
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+// ============================================================================
+// TEST: Targeted AME does NOT call listener_set_alias (only global does)
+// ============================================================================
+
+TEST(CanRxMessageHandler, ame_targeted_does_not_repopulate_listeners)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping1->is_permitted = true;
+
+    can_msg_t can_msg;
+
+    // Targeted AME — payload contains 6-byte Node ID
+    CanUtilities_load_can_message(&can_msg, 0x17020AAA, 8,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0, 0);
+
+    CanRxMessageHandler_ame_frame(&can_msg);
+
+    // Targeted AME should NOT call listener_flush_aliases or listener_set_alias
+    EXPECT_FALSE(listener_flush_aliases_called);
+    EXPECT_EQ(listener_set_alias_call_count, 0);
+
+    // Clean up any AMD responses
+    while (CanBufferFifo_get_allocated_count() > 0) {
+
+        can_msg_t *response = CanBufferFifo_pop();
+
+        if (response) {
+
+            CanBufferStore_free_buffer(response);
+
+        }
+
+    }
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+// ============================================================================
+// TEST: Global AME skips non-permitted aliases for listener repopulation
+// ============================================================================
+
+TEST(CanRxMessageHandler, ame_global_skips_non_permitted_for_listener)
+{
+
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    // One permitted, one not
+    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping1->is_permitted = true;
+
+    alias_mapping_t *mapping2 = AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    mapping2->is_permitted = false;  // NOT permitted (still in CID/RID phase)
+
+    can_msg_t can_msg;
+
+    // Global AME
+    CanUtilities_load_can_message(&can_msg, 0x17020AAA, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0);
+
+    CanRxMessageHandler_ame_frame(&can_msg);
+
+    // Only the permitted alias should trigger listener_set_alias
+    EXPECT_EQ(listener_set_alias_call_count, 1);
+    EXPECT_EQ(listener_set_alias_node_ids[0], NODE_ID_1);
+
+    // Only 1 AMD response (for the permitted alias)
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 1);
 
     // Clean up
     while (CanBufferFifo_get_allocated_count() > 0) {

@@ -396,6 +396,86 @@ bool CanMainStatemachine_handle_listener_verification(void) {
 }
 
     /**
+     * @brief Sends a global AME and repopulates listener entries for local virtual nodes.
+     *
+     * @details Performs a three-step sequence for self-originated global Alias
+     * Mapping Enquiry:
+     * -# Flush the listener alias cache (if train support compiled).
+     * -# Repopulate entries for all local virtual nodes from the alias mapping
+     *    table and queue AMD responses for each (external nodes need them).
+     * -# Queue the global AME frame (triggers AMD responses from external nodes).
+     *
+     * This ensures local virtual node listener entries survive the flush without
+     * waiting for AMD frames off the wire (which CAN hardware does not echo).
+     *
+     * @warning Locks shared resources during CAN buffer allocation and FIFO push.
+     * @warning NOT thread-safe.
+     */
+void CanMainStatemachine_send_global_alias_enquiry(void) {
+
+    // Step 1: flush cached listener aliases
+    if (_interface->listener_flush_aliases) {
+
+        _interface->listener_flush_aliases();
+
+    }
+
+    // Step 2: repopulate local virtual node entries + queue AMDs
+    alias_mapping_info_t *alias_mapping_info =
+            _interface->alias_mapping_get_alias_mapping_info();
+
+    _interface->lock_shared_resources();
+
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+
+        if (alias_mapping_info->list[i].alias != 0x00 &&
+                alias_mapping_info->list[i].is_permitted) {
+
+            // Repopulate listener table for local virtual nodes immediately.
+            // Their aliases are already known — no need to wait for AMD off the wire.
+            if (_interface->listener_set_alias) {
+
+                _interface->listener_set_alias(
+                        alias_mapping_info->list[i].node_id,
+                        alias_mapping_info->list[i].alias);
+
+            }
+
+            // Send AMD for this local alias (external nodes need it)
+            can_msg_t *outgoing_can_msg = CanBufferStore_allocate_buffer();
+
+            if (outgoing_can_msg) {
+
+                outgoing_can_msg->identifier = RESERVED_TOP_BIT |
+                        CAN_CONTROL_FRAME_AMD |
+                        alias_mapping_info->list[i].alias;
+                CanUtilities_copy_node_id_to_payload(
+                        outgoing_can_msg,
+                        alias_mapping_info->list[i].node_id, 0);
+                CanBufferFifo_push(outgoing_can_msg);
+
+            }
+
+        }
+
+    }
+
+    // Step 3: queue the global AME (triggers AMD responses from external nodes)
+    can_msg_t *ame_msg = CanBufferStore_allocate_buffer();
+
+    if (ame_msg) {
+
+        ame_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME;
+        ame_msg->payload_count = 0;
+        CanBufferFifo_push(ame_msg);
+
+    }
+
+    _interface->unlock_shared_resources();
+
+}
+
+    /**
      * @brief Executes one cooperative iteration of the main CAN state machine.
      *
      * @details Calls each handler in priority order, returning after the first one

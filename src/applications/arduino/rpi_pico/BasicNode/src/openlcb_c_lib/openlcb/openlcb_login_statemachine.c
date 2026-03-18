@@ -91,6 +91,14 @@ static const interface_openlcb_login_state_machine_t *_interface;
     /** @brief Static state machine info structure maintaining current state and message buffer */
 static openlcb_login_statemachine_info_t _statemachine_info;
 
+    /** @brief Second context for sibling dispatch of login outgoing messages.
+     *  Uses main statemachine type because receiving siblings process login
+     *  messages through the main protocol handlers, not login handlers. */
+static openlcb_statemachine_info_t _sibling_statemachine_info;
+
+    /** @brief TRUE while we are iterating siblings for a login outgoing message. */
+static bool _sibling_dispatch_active;
+
 
     /**
     * @brief Stores the callback interface and wires up the outgoing message buffer.
@@ -109,6 +117,7 @@ void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_mac
 
     _interface = interface_openlcb_login_state_machine;
 
+    // Main login context
     _statemachine_info.outgoing_msg_info.msg_ptr = &_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
     _statemachine_info.outgoing_msg_info.msg_ptr->payload = (openlcb_payload_t *) _statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
     _statemachine_info.outgoing_msg_info.msg_ptr->payload_type = BASIC;
@@ -117,6 +126,22 @@ void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_mac
     _statemachine_info.outgoing_msg_info.msg_ptr->state.allocated = true;
 
     _statemachine_info.openlcb_node = NULL;
+
+    // Sibling context — uses main statemachine type so receiving siblings
+    // can process login messages through the main protocol handlers.
+    _sibling_statemachine_info.outgoing_msg_info.msg_ptr = &_sibling_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
+    _sibling_statemachine_info.outgoing_msg_info.msg_ptr->payload =
+            (openlcb_payload_t *) _sibling_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
+    _sibling_statemachine_info.outgoing_msg_info.msg_ptr->payload_type = STREAM;
+    OpenLcbUtilities_clear_openlcb_message(_sibling_statemachine_info.outgoing_msg_info.msg_ptr);
+    OpenLcbUtilities_clear_openlcb_message_payload(_sibling_statemachine_info.outgoing_msg_info.msg_ptr);
+    _sibling_statemachine_info.outgoing_msg_info.msg_ptr->state.allocated = true;
+
+    _sibling_statemachine_info.incoming_msg_info.msg_ptr = NULL;
+    _sibling_statemachine_info.incoming_msg_info.enumerate = false;
+    _sibling_statemachine_info.openlcb_node = NULL;
+
+    _sibling_dispatch_active = false;
 
 }
 
@@ -181,12 +206,173 @@ void OpenLcbLoginStateMachine_process(openlcb_login_statemachine_info_t *openlcb
 
 }
 
+// ============================================================================
+// Sibling Dispatch Functions
+// ============================================================================
+
+    /**
+    * @brief Begins sibling dispatch of the login outgoing message.
+    *
+    * @details Called after handle_outgoing sends the message to the wire.
+    * Points the sibling context's incoming_msg_info at the login outgoing
+    * message, sets the loopback flag for self-skip, and fetches the first
+    * node for sibling iteration.
+    *
+    * @return true if sibling dispatch started, false if only 1 node (no siblings)
+    */
+static bool _sibling_dispatch_begin(void) {
+
+    if (_interface->openlcb_node_get_count() <= 1) {
+
+        return false;
+
+    }
+
+    // Point sibling's incoming at the login outgoing message we just sent
+    _sibling_statemachine_info.incoming_msg_info.msg_ptr =
+            _statemachine_info.outgoing_msg_info.msg_ptr;
+    _sibling_statemachine_info.incoming_msg_info.enumerate = false;
+
+    // Mark as loopback so self-skip works in does_node_process_msg
+    _sibling_statemachine_info.incoming_msg_info.msg_ptr->state.loopback = true;
+
+    // Get first sibling node
+    _sibling_statemachine_info.openlcb_node =
+            _interface->openlcb_node_get_first(OPENLCB_LOGIN_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX);
+
+    _sibling_dispatch_active = true;
+
+    return true;
+
+}
+
+    /**
+    * @brief Sends the sibling's pending outgoing response to the wire.
+    *
+    * @details If a sibling handler produced a response during dispatch,
+    * this function sends it to the wire.  No response queue is used —
+    * login messages are informational and do not generate multi-level
+    * sibling response chains.
+    *
+    * @return true if a message was pending (caller should retry), false if idle
+    */
+static bool _sibling_handle_outgoing(void) {
+
+    if (_sibling_statemachine_info.outgoing_msg_info.valid) {
+
+        if (_interface->send_openlcb_msg(_sibling_statemachine_info.outgoing_msg_info.msg_ptr)) {
+
+            _sibling_statemachine_info.outgoing_msg_info.valid = false;
+
+        }
+
+        return true;
+
+    }
+
+    return false;
+
+}
+
+    /**
+    * @brief Re-enters the sibling handler for multi-message enumerate responses.
+    *
+    * @details If a sibling handler set the enumerate flag (e.g. to send
+    * multiple P/C Identified messages in response to Init Complete),
+    * this function re-enters the main protocol handler to produce the
+    * next message.
+    *
+    * @return true if re-enumeration active, false if complete
+    */
+static bool _sibling_handle_reenumerate(void) {
+
+    if (_sibling_statemachine_info.incoming_msg_info.enumerate) {
+
+        _interface->process_main_statemachine(&_sibling_statemachine_info);
+
+        return true;
+
+    }
+
+    return false;
+
+}
+
+    /**
+    * @brief Dispatches the login outgoing message to the current sibling node.
+    *
+    * @details Skips the originating node (self-skip handled by
+    * does_node_process_msg via source_id comparison and loopback flag).
+    * Dispatches only to nodes in RUNSTATE_RUN — nodes still logging in
+    * are not ready to process protocol messages.
+    *
+    * @return true if dispatch occurred or node skipped, false if no node
+    */
+static bool _sibling_dispatch_current(void) {
+
+    if (!_sibling_statemachine_info.openlcb_node) {
+
+        _sibling_dispatch_active = false;
+
+        return false;
+
+    }
+
+    if (_sibling_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+
+        _interface->process_main_statemachine(&_sibling_statemachine_info);
+
+    }
+
+    return true;
+
+}
+
+    /**
+    * @brief Advances to the next sibling node.
+    *
+    * @details Moves the sibling enumerator to the next node.  When no
+    * more nodes remain, clears _sibling_dispatch_active and NULLs the
+    * incoming message pointer.
+    *
+    * @return true if advanced (more siblings or reached end), false if not active
+    */
+static bool _sibling_dispatch_advance(void) {
+
+    if (!_sibling_statemachine_info.openlcb_node) {
+
+        return false;
+
+    }
+
+    _sibling_statemachine_info.openlcb_node =
+            _interface->openlcb_node_get_next(OPENLCB_LOGIN_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX);
+
+    if (!_sibling_statemachine_info.openlcb_node) {
+
+        // All siblings processed — sibling dispatch complete
+        _sibling_dispatch_active = false;
+        _sibling_statemachine_info.incoming_msg_info.msg_ptr = NULL;
+
+        return true;
+
+    }
+
+    return true;
+
+}
+
+// ============================================================================
+// Outgoing and Enumeration Functions
+// ============================================================================
+
     /**
     * @brief Tries to send the pending outgoing message.
     *
     * @details Algorithm:
     * -# If valid flag not set, return false
-    * -# Call send_openlcb_msg(); clear valid on success
+    * -# Call send_openlcb_msg(); on success start sibling dispatch
+    * -# If no siblings, clear valid immediately
     * -# Return true (caller should keep retrying until sent)
     *
     * @return true if a message was pending, false if idle
@@ -197,7 +383,14 @@ bool OpenLcbLoginStatemachine_handle_outgoing_openlcb_message(void) {
 
         if (_interface->send_openlcb_msg(_statemachine_info.outgoing_msg_info.msg_ptr)) {
 
-            _statemachine_info.outgoing_msg_info.valid = false; // done
+            // Start sibling dispatch if multiple nodes exist.
+            // The outgoing slot stays valid until sibling dispatch completes.
+            if (!_sibling_dispatch_begin()) {
+
+                // Single node — no siblings, clear immediately
+                _statemachine_info.outgoing_msg_info.valid = false;
+
+            }
 
         }
 
@@ -310,37 +503,83 @@ bool OpenLcbLoginStatemachine_handle_try_enumerate_next_node(void) {
     /**
     * @brief Runs one non-blocking step of login processing.  Call from main loop.
     *
-    * @details Algorithm:
-    * -# Try to send pending outgoing message (highest priority)
-    * -# Re-enumerate if multi-message sequence in progress
+    * @details Priority order:
+    * -# Send pending outgoing (skip if held for sibling dispatch)
+    * -# Sibling dispatch: send sibling response, reenumerate, dispatch current, advance
+    * -# Re-enumerate login handler for multi-message sequences
     * -# Get first node if none active
     * -# Advance to next node
     * Each step returns immediately after one operation.
     */
 void OpenLcbLoginMainStatemachine_run(void) {
 
-    // Get any pending message out first
-    if (_interface->handle_outgoing_openlcb_message()) {
+    // ── Priority 1: Send pending login outgoing message ─────────────
+    // If valid and NOT in sibling dispatch, try to send to wire.
+    // If valid and IN sibling dispatch, skip (held for siblings to read).
+    if (!_sibling_dispatch_active) {
 
-        return;
+        if (_interface->handle_outgoing_openlcb_message()) {
+
+            return;
+
+        }
 
     }
 
-    // If message handler needs multiple messages, re-enumerate the same message
+    // ── Priority 2: Sibling dispatch of the login outgoing message ──
+    // After sending to wire, show the outgoing msg to each sibling.
+    // One step per _run() call — same cadence as node enumeration.
+    if (_sibling_dispatch_active) {
+
+        // 2a: Send any pending sibling response to wire first
+        if (_sibling_handle_outgoing()) {
+
+            return;
+
+        }
+
+        // 2b: If sibling handler is mid-enumerate, continue it
+        if (_sibling_handle_reenumerate()) {
+
+            return;
+
+        }
+
+        // 2c: Dispatch to current sibling node
+        if (_sibling_dispatch_current()) {
+
+            // After dispatch, advance to next sibling for next _run()
+            _sibling_dispatch_advance();
+
+            // If dispatch just completed (no more siblings), clear login slot
+            if (!_sibling_dispatch_active) {
+
+                _statemachine_info.outgoing_msg_info.msg_ptr->state.loopback = false;
+                _statemachine_info.outgoing_msg_info.valid = false;
+
+            }
+
+            return;
+
+        }
+
+    }
+
+    // ── Priority 3: Re-enumerate login handler for multi-message ────
     if (_interface->handle_try_reenumerate()) {
 
         return;
 
     }
 
-    // Grab the first OpenLcb Node
+    // ── Priority 4: Get first node if none active ───────────────────
     if (_interface->handle_try_enumerate_first_node()) {
 
         return;
 
     }
 
-    // Enumerate all the OpenLcb Nodes
+    // ── Priority 5: Advance to next node ────────────────────────────
     if (_interface->handle_try_enumerate_next_node()) {
 
         return;

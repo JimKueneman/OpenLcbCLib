@@ -8,7 +8,7 @@ var searchData=
   ['present_5',['present',['../structuser__address__space__info__t.html#aa84cc4dc60e16481b79b15b815aaea31',1,'user_address_space_info_t']]],
   ['previous_5frun_5fstate_6',['previous_run_state',['../structbroadcast__clock__t.html#ab7ee8798a64e772d7bd97a5d129fa3d5',1,'broadcast_clock_t']]],
   ['process_5flogin_5fstatemachine_7',['process_login_statemachine',['../structinterface__openlcb__login__state__machine__t.html#a13334393662839a3c993f198ad5bce8e',1,'interface_openlcb_login_state_machine_t']]],
-  ['process_5fmain_5fstatemachine_8',['process_main_statemachine',['../structinterface__openlcb__main__statemachine__t.html#a6a1564a5e0fded2d1c325cd111eb7759',1,'interface_openlcb_main_statemachine_t']]],
+  ['process_5fmain_5fstatemachine_8',['process_main_statemachine',['../structinterface__openlcb__login__state__machine__t.html#a6a1564a5e0fded2d1c325cd111eb7759',1,'interface_openlcb_login_state_machine_t::process_main_statemachine'],['../structinterface__openlcb__main__statemachine__t.html#a6a1564a5e0fded2d1c325cd111eb7759',1,'interface_openlcb_main_statemachine_t::process_main_statemachine']]],
   ['producer_5fcount_5fautocreate_9',['producer_count_autocreate',['../structnode__parameters___t_a_g.html#ae666a97d0e5aa057c15ab4f9e7845697',1,'node_parameters_TAG']]],
   ['producer_5fnode_10',['producer_node',['../structbroadcast__clock__t.html#ac4efb7331b302d698984c0654a25c31e',1,'broadcast_clock_t']]],
   ['producers_11',['producers',['../structopenlcb__node___t_a_g.html#aaa8c52156614772fd8ba2098b1ef81ee',1,'openlcb_node_TAG']]],

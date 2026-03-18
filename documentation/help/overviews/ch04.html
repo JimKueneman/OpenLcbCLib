@@ -205,14 +205,12 @@ openlcb_msg_t *OpenLcbBufferFifo_push(openlcb_msg_t *new_msg);
 openlcb_msg_t *OpenLcbBufferFifo_pop(void);
 bool OpenLcbBufferFifo_is_empty(void);
 uint16_t OpenLcbBufferFifo_get_allocated_count(void);
-void OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(uint16_t alias);
-openlcb_msg_t *OpenLcbBufferFifo_push_to_head(openlcb_msg_t *new_msg);</code></pre>
+void OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias(uint16_t alias);</code></pre>
 
         <ul>
             <li><code>push()</code>: Adds a message to the tail (back) of the FIFO. Returns the message pointer on success, <code>NULL</code> if full.</li>
             <li><code>pop()</code>: Removes and returns the oldest message from the head (front). Returns <code>NULL</code> if empty.</li>
-            <li><code>push_to_head()</code>: Inserts at the head so the message becomes the next one popped. Used by sibling dispatch to ensure loopback copies are processed immediately.</li>
-            <li><code>check_and_invalidate_messages_by_source_alias()</code>: Walks the FIFO and sets <code>state.invalid</code> on any message whose <code>source_alias</code> matches the given alias. Used when an AMR (Alias Map Reset) frame arrives -- stale messages from the departed node must not be processed.</li>
+            <li><code>check_and_invalidate_messages_by_source_alias()</code>: Walks the FIFO and sets <code>state.invalid</code> on any message whose <code>source_alias</code> matches the given alias. Used when an AMR (Alias Map Reset) frame arrives — stale messages from the departed node must not be processed.</li>
         </ul>
 
         <h2>4.5 Buffer List</h2>

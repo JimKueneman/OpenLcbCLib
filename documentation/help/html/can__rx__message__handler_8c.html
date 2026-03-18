@@ -504,7 +504,11 @@ Functions</h2></td></tr>
 <p>Algorithm:</p><ol type="1">
 <li>Check for duplicate alias; return early if detected.</li>
 <li>If payload is non-empty: look up by Node ID, respond with one AMD if found.</li>
-<li>If payload is empty (global query): respond with AMD for every registered alias.</li>
+<li>If payload is empty (global query):<ul>
+<li>Flush the listener alias cache (CanFrameTransferS §6.2.3).</li>
+<li>For each permitted alias: repopulate the listener table entry immediately (local virtual nodes' aliases are already known), then send AMD.</li>
+</ul>
+</li>
 </ol>
 <pre class="fragment">* @param can_msg Received AME frame.
 * </pre><dl class="section warning"><dt>Warning</dt><dd>Silently drops responses if buffer allocation fails. </dd></dl>

@@ -104,6 +104,12 @@ extern "C" {
         /** @brief OPTIONAL. Probe one listener alias for staleness. NULL if unused. Typical: CanMainStatemachine_handle_listener_verification. */
         bool (*handle_listener_verification)(void);
 
+        /** @brief OPTIONAL. Flush all cached listener aliases. NULL if train support not compiled. Typical: ListenerAliasTable_flush_aliases. */
+        void (*listener_flush_aliases)(void);
+
+        /** @brief OPTIONAL. Set alias for a node_id in the listener table. NULL if train support not compiled. Typical: ListenerAliasTable_set_alias. */
+        void (*listener_set_alias)(node_id_t node_id, uint16_t alias);
+
     } interface_can_main_statemachine_t;
 
 
@@ -226,6 +232,26 @@ extern "C" {
      * @warning NOT thread-safe.
      */
     extern bool CanMainStatemachine_handle_listener_verification(void);
+
+    /**
+     * @brief Sends a global AME and repopulates listener entries for local virtual nodes.
+     *
+     * @details Performs a three-step sequence for self-originated global Alias
+     * Mapping Enquiry:
+     * -# Flush the listener alias cache (if train support compiled).
+     * -# Repopulate entries for all local virtual nodes from the alias mapping
+     *    table and queue AMD responses for each (external nodes need them).
+     * -# Queue the global AME frame (triggers AMD responses from external nodes).
+     *
+     * This ensures local virtual node listener entries survive the flush without
+     * waiting for AMD frames off the wire (which CAN hardware does not echo).
+     *
+     * @warning Locks shared resources during CAN buffer allocation and FIFO push.
+     * @warning NOT thread-safe.
+     *
+     * @see CanRxMessageHandler_ame_frame — incoming global AME uses the same pattern.
+     */
+    extern void CanMainStatemachine_send_global_alias_enquiry(void);
 
 #ifdef __cplusplus
 }

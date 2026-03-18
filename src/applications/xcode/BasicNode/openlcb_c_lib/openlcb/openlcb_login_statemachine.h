@@ -65,6 +65,16 @@ typedef struct {
         /** @brief Build the next Consumer Identified message; set enumerate flag if more remain.  REQUIRED. */
     void (*load_consumer_events)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
 
+    // ---- Sibling dispatch (REQUIRED when virtual nodes exist) ----
+
+        /** @brief Dispatches a message through the main protocol handler table.
+         *  Used by sibling dispatch to deliver login outgoing messages to
+         *  siblings already in RUNSTATE_RUN.  REQUIRED when virtual nodes exist. */
+    void (*process_main_statemachine)(openlcb_statemachine_info_t *statemachine_info);
+
+        /** @brief Return the number of allocated nodes.  REQUIRED. */
+    uint16_t (*openlcb_node_get_count)(void);
+
     // ---- Internal function pointers (exposed for unit testing) ----
 
         /** @brief Dispatches to the handler matching node->run_state. */

@@ -46,10 +46,10 @@
 
 #include <stdio.h>
 #include <pthread.h>
-#include <unistd.h>
+#include <mach/mach_time.h>
 
-uint8_t _is_clock_running = false;
-uint8_t _timer_pause = false;
+volatile uint8_t _is_clock_running = false;
+volatile uint8_t _timer_pause = false;
 char *user_data;
 
 void *thread_function_timer(void *arg) {
@@ -60,15 +60,32 @@ void *thread_function_timer(void *arg) {
 
     _is_clock_running = true;
 
+    // Compute 100 ms expressed in mach absolute time units.
+    // mach_timebase_info() returns the numer/denom ratio needed to convert
+    // mach units to nanoseconds: mach_units * numer / denom = nanoseconds.
+    // Inverted: nanoseconds * denom / numer = mach_units.
+    mach_timebase_info_data_t timebase;
+    mach_timebase_info(&timebase);
+    const uint64_t interval_mach = (100000000ULL * timebase.denom) / timebase.numer;
+
+    // Absolute deadline: fire at start + N * 100ms.  Each iteration advances
+    // the deadline by a fixed mach-time interval so drift never accumulates —
+    // a late tick causes the next one to fire early to compensate.
+    uint64_t deadline = mach_absolute_time() + interval_mach;
+
     while (1) {
+
+        mach_wait_until(deadline);
+        deadline += interval_mach;
 
         if (_timer_pause == 0) {
 
             OpenLcb_100ms_timer_tick();
+
         }
 
-        usleep(100000);
     }
+
 }
 
 uint8_t OSxDrivers_100ms_is_connected(void) {

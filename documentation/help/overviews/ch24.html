@@ -119,11 +119,13 @@ flowchart TD
     end
 
     subgraph OLCB_SM["OpenLCB Main SM Priority"]
-        C1["1. Send outgoing OpenLCB message"]
-        C2["2. Re-enumerate (multi-response)"]
-        C3["3. Pop incoming from FIFO"]
-        C4["4. Enumerate first node"]
-        C5["5. Enumerate next node"]
+        C1["1. Send outgoing message (skip if sibling dispatch active)"]
+        C2["2. Sibling dispatch sub-steps (2a outgoing, 2b re-enumerate, 2c advance)"]
+        C25["2.5. Sibling response queue / Path B pending"]
+        C3["3. Re-enumerate (multi-response)"]
+        C4["4. Pop incoming from FIFO"]
+        C5["5. Enumerate first node"]
+        C6["6. Enumerate next node"]
     end
 
     A --> CAN_SM

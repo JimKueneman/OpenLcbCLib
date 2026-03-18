@@ -23,19 +23,19 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		2FA00002BBBB00020007CC6B /* Exceptions for "openlcb" folder in "ComplianceTestNode" target */ = {
+		2FA00002BBBB00020007CC6B /* Exceptions for "../../src/openlcb" folder in "ComplianceTestNode" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				openlcb_application_Test.cxx,
 				openlcb_application_broadcast_time_Test.cxx,
+				openlcb_application_Test.cxx,
 				openlcb_application_train_Test.cxx,
 				openlcb_buffer_fifo_Test.cxx,
 				openlcb_buffer_list_Test.cxx,
 				openlcb_buffer_store_Test.cxx,
 				openlcb_float16_Test.cxx,
 				openlcb_gridconnect_Test.cxx,
-				openlcb_login_statemachine_Test.cxx,
 				openlcb_login_statemachine_handler_Test.cxx,
+				openlcb_login_statemachine_Test.cxx,
 				openlcb_main_statemachine_Test.cxx,
 				openlcb_node_Test.cxx,
 				openlcb_utilities_Test.cxx,
@@ -52,7 +52,7 @@
 			);
 			target = 2F9496E12F5E3EEC0007CC6B /* ComplianceTestNode */;
 		};
-		2FA00003CCCC00020007CC6B /* Exceptions for "canbus" folder in "ComplianceTestNode" target */ = {
+		2FA00003CCCC00020007CC6B /* Exceptions for "../../src/drivers/canbus" folder in "ComplianceTestNode" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				alias_mapping_listener_Test.cxx,
@@ -70,7 +70,7 @@
 			);
 			target = 2F9496E12F5E3EEC0007CC6B /* ComplianceTestNode */;
 		};
-		2FA00004DDDD00020007CC6B /* Exceptions for "utilities" folder in "ComplianceTestNode" target */ = {
+		2FA00004DDDD00020007CC6B /* Exceptions for "../../src/utilities" folder in "ComplianceTestNode" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				mustangpeak_endian_helper_Test.cxx,
@@ -86,28 +86,33 @@
 			path = ComplianceTestNode;
 			sourceTree = "<group>";
 		};
-		2FA00002BBBB00010007CC6B /* openlcb */ = {
+		2FA00002BBBB00010007CC6B /* ../../src/openlcb */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				2FA00002BBBB00020007CC6B /* Exceptions for "openlcb" folder in "ComplianceTestNode" target */,
+				2FA00002BBBB00020007CC6B /* Exceptions for "../../src/openlcb" folder in "ComplianceTestNode" target */,
 			);
 			path = ../../src/openlcb;
 			sourceTree = "<group>";
 		};
-		2FA00003CCCC00010007CC6B /* canbus */ = {
+		2FA00003CCCC00010007CC6B /* ../../src/drivers/canbus */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				2FA00003CCCC00020007CC6B /* Exceptions for "canbus" folder in "ComplianceTestNode" target */,
+				2FA00003CCCC00020007CC6B /* Exceptions for "../../src/drivers/canbus" folder in "ComplianceTestNode" target */,
 			);
 			path = ../../src/drivers/canbus;
 			sourceTree = "<group>";
 		};
-		2FA00004DDDD00010007CC6B /* utilities */ = {
+		2FA00004DDDD00010007CC6B /* ../../src/utilities */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				2FA00004DDDD00020007CC6B /* Exceptions for "utilities" folder in "ComplianceTestNode" target */,
+				2FA00004DDDD00020007CC6B /* Exceptions for "../../src/utilities" folder in "ComplianceTestNode" target */,
 			);
 			path = ../../src/utilities;
+			sourceTree = "<group>";
+		};
+		2FA00005EEEE00010007CC6B /* ../../src/utilities_pc */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ../../src/utilities_pc;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -127,9 +132,10 @@
 			isa = PBXGroup;
 			children = (
 				2F9496E42F5E3EEC0007CC6B /* ComplianceTestNode */,
-				2FA00002BBBB00010007CC6B /* openlcb */,
-				2FA00003CCCC00010007CC6B /* canbus */,
-				2FA00004DDDD00010007CC6B /* utilities */,
+				2FA00002BBBB00010007CC6B /* ../../src/openlcb */,
+				2FA00003CCCC00010007CC6B /* ../../src/drivers/canbus */,
+				2FA00004DDDD00010007CC6B /* ../../src/utilities */,
+				2FA00005EEEE00010007CC6B /* ../../src/utilities_pc */,
 				2F9496E32F5E3EEC0007CC6B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -159,9 +165,10 @@
 			);
 			fileSystemSynchronizedGroups = (
 				2F9496E42F5E3EEC0007CC6B /* ComplianceTestNode */,
-				2FA00002BBBB00010007CC6B /* openlcb */,
-				2FA00003CCCC00010007CC6B /* canbus */,
-				2FA00004DDDD00010007CC6B /* utilities */,
+				2FA00002BBBB00010007CC6B /* ../../src/openlcb */,
+				2FA00003CCCC00010007CC6B /* ../../src/drivers/canbus */,
+				2FA00004DDDD00010007CC6B /* ../../src/utilities */,
+				2FA00005EEEE00010007CC6B /* ../../src/utilities_pc */,
 			);
 			name = ComplianceTestNode;
 			packageProductDependencies = (

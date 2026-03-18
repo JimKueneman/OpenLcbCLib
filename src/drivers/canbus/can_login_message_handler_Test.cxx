@@ -51,6 +51,9 @@
 #include "can_buffer_fifo.h"
 #include "alias_mappings.h"
 
+#include <cstring>
+#include <set>
+
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_buffer_store.h"
 #include "../../openlcb/openlcb_buffer_fifo.h"
@@ -128,63 +131,45 @@ node_parameters_t _node_parameters_main_node = {
     .cdi = {},
 };
 
-// Mock alias mapping for testing
+    /** @brief Legacy single-entry alias used by existing tests that read it directly */
 alias_mapping_t alias_mapping = {
-    .alias = 0, 
-    .node_id = 0, 
-    .is_duplicate = false, 
+
+    .alias = 0,
+    .node_id = 0,
+    .is_duplicate = false,
     .is_permitted = false
+
 };
 
-/**
- * Mock: Alias mapping register
- * Stores alias/node_id mapping for testing
- */
-alias_mapping_t *_alias_mapping_register(uint16_t alias, node_id_t node_id)
-{
-    alias_mapping.alias = alias;
-    alias_mapping.node_id = node_id;
-    alias_mapping.is_duplicate = false;
-    alias_mapping.is_permitted = false;
-    return &alias_mapping;
-}
-
-/**
- * Mock: Alias mapping find by alias
- * Returns stored mapping if alias matches
- */
-alias_mapping_t *_alias_mapping_find_mapping_by_alias(uint16_t alias)
-{
-    if (alias == alias_mapping.alias)
-    {
-        return &alias_mapping;
-    }
-    return nullptr;
-}
-
-/**
- * Mock: Alias change callback
- * Sets flag when called to verify callback invocation
- */
+    /**
+     * @brief Mock: Alias change callback.
+     * @details Sets flag when called to verify callback invocation.
+     */
 void _on_alias_change(uint16_t alias, node_id_t node_id)
 {
+
     on_alias_change_called = true;
+
 }
 
-// Interface without callback
+// Interface without callback — uses REAL AliasMappings module
 const interface_openlcb_node_t interface_openlcb_node = {};
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
-    .alias_mapping_find_mapping_by_alias = &_alias_mapping_find_mapping_by_alias,
-    .alias_mapping_register = &_alias_mapping_register,
+
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_register = &AliasMappings_register,
     .on_alias_change = nullptr
+
 };
 
-// Interface with callback
+// Interface with callback — uses REAL AliasMappings module
 const interface_can_login_message_handler_t interface_can_login_message_handler_on_alias_callback = {
-    .alias_mapping_find_mapping_by_alias = &_alias_mapping_find_mapping_by_alias,
-    .alias_mapping_register = &_alias_mapping_register,
+
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_register = &AliasMappings_register,
     .on_alias_change = &_on_alias_change
+
 };
 
 /*******************************************************************************
@@ -196,14 +181,17 @@ const interface_can_login_message_handler_t interface_can_login_message_handler_
  */
 void setup_test(const interface_can_login_message_handler_t *interface)
 {
+
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();
     OpenLcbNode_initialize(&interface_openlcb_node);
-    
+    AliasMappings_initialize();
+
     CanLoginMessageHandler_initialize(interface);
+
 }
 
 /**
@@ -610,16 +598,16 @@ TEST(CanLoginMessageHandler, load_rid)
  */
 TEST(CanLoginMessageHandler, load_amd)
 {
+
     can_statemachine_info_t info;
-    
+
     setup_test(&interface_can_login_message_handler);
     reset_test_variables();
     initialize_statemachine_info(&info);
-    
-    // Setup alias mapping for lookup
-    alias_mapping.alias = info.openlcb_node->alias;
-    alias_mapping.node_id = info.openlcb_node->id;
-    
+
+    // Register the alias in the real mapping table (load_amd does a lookup)
+    AliasMappings_register(info.openlcb_node->alias, info.openlcb_node->id);
+
     CanLoginMessageHandler_state_load_amd(&info);
     
     // AMD carries full 6-byte Node ID in payload
@@ -769,26 +757,170 @@ TEST(CanLoginMessageHandler, timer_reset_on_cid04)
  */
 TEST(CanLoginMessageHandler, alias_registration)
 {
+
     can_statemachine_info_t info;
-    
+
     setup_test(&interface_can_login_message_handler);
     reset_test_variables();
     initialize_statemachine_info(&info);
-    
+
     CanLoginMessageHandler_state_init(&info);
-    info.openlcb_node->alias = 0x00;
-    
-    // Clear mapping
-    alias_mapping.alias = 0;
-    alias_mapping.node_id = 0;
-    
+
     CanLoginMessageHandler_state_generate_alias(&info);
-    
-    // Mapping should be registered
-    EXPECT_EQ(alias_mapping.alias, info.openlcb_node->alias);
-    EXPECT_EQ(alias_mapping.node_id, info.openlcb_node->id);
-    EXPECT_FALSE(alias_mapping.is_duplicate);
-    EXPECT_FALSE(alias_mapping.is_permitted);
+
+    // Mapping should be registered in the real alias mapping table
+    alias_mapping_t *mapping = AliasMappings_find_mapping_by_alias(info.openlcb_node->alias);
+
+    EXPECT_NE(mapping, nullptr);
+    EXPECT_EQ(mapping->alias, info.openlcb_node->alias);
+    EXPECT_EQ(mapping->node_id, info.openlcb_node->id);
+    EXPECT_FALSE(mapping->is_duplicate);
+    EXPECT_FALSE(mapping->is_permitted);
+
+}
+
+/*******************************************************************************
+ * Phase 3A: Sibling Alias Collision Prevention Tests
+ ******************************************************************************/
+
+// ============================================================================
+// TEST: Sibling collision — node B rejects alias already held by node A
+// ============================================================================
+
+TEST(CanLoginMessageHandler, sibling_alias_collision_rejected)
+{
+
+    setup_test(&interface_can_login_message_handler);
+    reset_test_variables();
+
+    // Node A logs in first — alias registered in real mapping table
+    can_statemachine_info_t info_a;
+    info_a.openlcb_node = OpenLcbNode_allocate(0x050101010100ULL, &_node_parameters_main_node);
+    info_a.current_tick = 0;
+    info_a.enumerating = false;
+    info_a.login_outgoing_can_msg_valid = false;
+    info_a.login_outgoing_can_msg = &login_can_msg;
+    info_a.outgoing_can_msg = &outgoing_can_msg;
+
+    CanLoginMessageHandler_state_init(&info_a);
+    CanLoginMessageHandler_state_generate_alias(&info_a);
+
+    uint16_t alias_a = info_a.openlcb_node->alias;
+
+    EXPECT_NE(alias_a, (uint16_t) 0);
+
+    // Node B has a seed that would produce the SAME alias as node A.
+    // Force this by giving node B the same seed as node A had.
+    can_statemachine_info_t info_b;
+    info_b.openlcb_node = OpenLcbNode_allocate(0x050101010101ULL, &_node_parameters_main_node);
+    info_b.openlcb_node->seed = info_a.openlcb_node->id;  // Same seed node A started with
+    info_b.current_tick = 0;
+    info_b.enumerating = false;
+    info_b.login_outgoing_can_msg_valid = false;
+    info_b.login_outgoing_can_msg = &login_can_msg;
+    info_b.outgoing_can_msg = &outgoing_can_msg;
+
+    // Generate alias — should detect collision with node A and advance LFSR
+    CanLoginMessageHandler_state_generate_alias(&info_b);
+
+    uint16_t alias_b = info_b.openlcb_node->alias;
+
+    // Node B must have a different alias than node A
+    EXPECT_NE(alias_b, alias_a);
+    EXPECT_NE(alias_b, (uint16_t) 0);
+
+}
+
+// ============================================================================
+// TEST: Multiple siblings — 4 nodes each get unique aliases
+// ============================================================================
+
+TEST(CanLoginMessageHandler, multiple_siblings_unique_aliases)
+{
+
+    setup_test(&interface_can_login_message_handler);
+    reset_test_variables();
+
+    uint16_t aliases[4];
+    can_statemachine_info_t infos[4];
+    openlcb_node_t *nodes[4];
+
+    for (int i = 0; i < 4; i++) {
+
+        nodes[i] = OpenLcbNode_allocate(0x050101010100ULL + i, &_node_parameters_main_node);
+        ASSERT_NE(nodes[i], nullptr) << "Failed to allocate node " << i;
+
+        infos[i].openlcb_node = nodes[i];
+        infos[i].current_tick = 0;
+        infos[i].enumerating = false;
+        infos[i].login_outgoing_can_msg_valid = false;
+        infos[i].login_outgoing_can_msg = &login_can_msg;
+        infos[i].outgoing_can_msg = &outgoing_can_msg;
+
+        CanLoginMessageHandler_state_init(&infos[i]);
+        CanLoginMessageHandler_state_generate_alias(&infos[i]);
+
+        aliases[i] = infos[i].openlcb_node->alias;
+        EXPECT_NE(aliases[i], (uint16_t) 0);
+
+    }
+
+    // All 4 aliases must be unique
+    for (int i = 0; i < 4; i++) {
+
+        for (int j = i + 1; j < 4; j++) {
+
+            EXPECT_NE(aliases[i], aliases[j])
+                << "Alias collision between node " << i << " and node " << j;
+
+        }
+
+    }
+
+}
+
+// ============================================================================
+// TEST: Re-login after conflict — old alias unregistered, no self-match
+// ============================================================================
+
+TEST(CanLoginMessageHandler, relogin_no_self_match)
+{
+
+    setup_test(&interface_can_login_message_handler);
+    reset_test_variables();
+
+    can_statemachine_info_t info;
+    info.openlcb_node = OpenLcbNode_allocate(0x050101010100ULL, &_node_parameters_main_node);
+    info.current_tick = 0;
+    info.enumerating = false;
+    info.login_outgoing_can_msg_valid = false;
+    info.login_outgoing_can_msg = &login_can_msg;
+    info.outgoing_can_msg = &outgoing_can_msg;
+
+    // First login
+    CanLoginMessageHandler_state_init(&info);
+    CanLoginMessageHandler_state_generate_alias(&info);
+
+    uint16_t first_alias = info.openlcb_node->alias;
+
+    EXPECT_NE(first_alias, (uint16_t) 0);
+
+    // Simulate conflict: unregister the old alias (as _process_duplicate_aliases does)
+    AliasMappings_unregister(first_alias);
+
+    // Advance seed (as state_generate_seed does on retry)
+    CanLoginMessageHandler_state_generate_seed(&info);
+
+    // Re-login — old alias removed from table, should NOT self-match
+    CanLoginMessageHandler_state_generate_alias(&info);
+
+    uint16_t second_alias = info.openlcb_node->alias;
+
+    EXPECT_NE(second_alias, (uint16_t) 0);
+
+    // Second alias should be different (different seed after advance)
+    EXPECT_NE(second_alias, first_alias);
+
 }
 
 /*******************************************************************************

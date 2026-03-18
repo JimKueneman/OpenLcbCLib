@@ -140,12 +140,25 @@ void CanLoginMessageHandler_state_generate_seed(can_statemachine_info_t *can_sta
 
 }
 
-    /** @brief State 3: Derives a 12-bit alias from the seed, registers it, and transitions to LOAD_CID07. */
+    /**
+     * @brief State 3: Derives a 12-bit alias from the seed, registers it, and transitions to LOAD_CID07.
+     *
+     * @details Rejects alias 0x000 (invalid per spec) AND any alias already held
+     * by a sibling virtual node in the shared alias mapping table.  Uses the
+     * existing LFSR to advance past collisions.  Safe on re-login: the old alias
+     * is unregistered by _process_duplicate_aliases() before this function runs.
+     *
+     * @verbatim
+     * @param can_statemachine_info  State machine context with node and outgoing buffer.
+     * @endverbatim
+     */
 void CanLoginMessageHandler_state_generate_alias(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->openlcb_node->alias = _generate_alias(can_statemachine_info->openlcb_node->seed);
 
-    while (can_statemachine_info->openlcb_node->alias == 0) {
+    while ((can_statemachine_info->openlcb_node->alias == 0) ||
+            (_interface->alias_mapping_find_mapping_by_alias(
+                can_statemachine_info->openlcb_node->alias) != (void*) 0)) {
 
         can_statemachine_info->openlcb_node->seed = _generate_seed(can_statemachine_info->openlcb_node->seed);
         can_statemachine_info->openlcb_node->alias = _generate_alias(can_statemachine_info->openlcb_node->seed);

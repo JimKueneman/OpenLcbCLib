@@ -32,7 +32,7 @@
  * Module_initialize() functions in the correct order.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 17 Mar 2026
  */
 
 #include "openlcb_config.h"
@@ -266,7 +266,7 @@ static void _build_app_train(void) {
 
     memset(&_app_train, 0, sizeof(_app_train));
 
-    _app_train.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
+    _app_train.send_openlcb_msg = &OpenLcbMainStatemachine_send_with_sibling_dispatch;
     _app_train.on_heartbeat_timeout = _config->on_train_heartbeat_timeout;
 
 }
@@ -314,12 +314,14 @@ static void _build_login_statemachine(void) {
 
     memset(&_login_sm, 0, sizeof(_login_sm));
 
-    // Hardware binding -- send via CAN
+    // Direct transport send — login has its own inline sibling dispatch (Phase 2)
     _login_sm.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
 
     // Library-internal wiring
     _login_sm.openlcb_node_get_first          = &OpenLcbNode_get_first;
     _login_sm.openlcb_node_get_next           = &OpenLcbNode_get_next;
+    _login_sm.openlcb_node_get_count          = &OpenLcbNode_get_count;
+    _login_sm.process_main_statemachine       = &OpenLcbMainStatemachine_process_main_statemachine;
     _login_sm.load_initialization_complete    = &OpenLcbLoginMessageHandler_load_initialization_complete;
     _login_sm.load_producer_events            = &OpenLcbLoginMessageHandler_load_producer_event;
     _login_sm.load_consumer_events            = &OpenLcbLoginMessageHandler_load_consumer_event;
@@ -610,7 +612,7 @@ static void _build_application(void) {
 
     memset(&_app, 0, sizeof(_app));
 
-    _app.send_openlcb_msg    = &CanTxStatemachine_send_openlcb_message;
+    _app.send_openlcb_msg    = &OpenLcbMainStatemachine_send_with_sibling_dispatch;
 
 #ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
     _app.config_memory_read  = _config->config_mem_read;

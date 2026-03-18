@@ -145,6 +145,12 @@ Data Fields</h2></td></tr>
 <tr class="memitem:aa88737a3369ad39fe19f646b5ecc031f" id="r_aa88737a3369ad39fe19f646b5ecc031f"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa88737a3369ad39fe19f646b5ecc031f">handle_listener_verification</a> )(void)</td></tr>
 <tr class="memdesc:aa88737a3369ad39fe19f646b5ecc031f"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Probe one listener alias for staleness. NULL if unused. Typical: CanMainStatemachine_handle_listener_verification.  <br /></td></tr>
 <tr class="separator:aa88737a3369ad39fe19f646b5ecc031f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a564ee86223e7b5b37868ce0a85350b59" id="r_a564ee86223e7b5b37868ce0a85350b59"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a564ee86223e7b5b37868ce0a85350b59">listener_flush_aliases</a> )(void)</td></tr>
+<tr class="memdesc:a564ee86223e7b5b37868ce0a85350b59"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Flush all cached listener aliases. NULL if train support not compiled. Typical: ListenerAliasTable_flush_aliases.  <br /></td></tr>
+<tr class="separator:a564ee86223e7b5b37868ce0a85350b59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57d3a21c4367026faff1ff794b53e0ec" id="r_a57d3a21c4367026faff1ff794b53e0ec"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57d3a21c4367026faff1ff794b53e0ec">listener_set_alias</a> )(<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint16_t alias)</td></tr>
+<tr class="memdesc:a57d3a21c4367026faff1ff794b53e0ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Set alias for a node_id in the listener table. NULL if train support not compiled. Typical: ListenerAliasTable_set_alias.  <br /></td></tr>
+<tr class="separator:a57d3a21c4367026faff1ff794b53e0ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dependency-injection interface for the CAN main state machine. </p>
@@ -404,6 +410,38 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>OPTIONAL. Probe one listener alias for staleness. NULL if unused. Typical: CanMainStatemachine_handle_listener_verification. </p>
+
+</div>
+</div>
+<a id="a564ee86223e7b5b37868ce0a85350b59" name="a564ee86223e7b5b37868ce0a85350b59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a564ee86223e7b5b37868ce0a85350b59">&#9670;&#160;</a></span>listener_flush_aliases</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* listener_flush_aliases) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Flush all cached listener aliases. NULL if train support not compiled. Typical: ListenerAliasTable_flush_aliases. </p>
+
+</div>
+</div>
+<a id="a57d3a21c4367026faff1ff794b53e0ec" name="a57d3a21c4367026faff1ff794b53e0ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57d3a21c4367026faff1ff794b53e0ec">&#9670;&#160;</a></span>listener_set_alias</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* listener_set_alias) (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint16_t alias)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Set alias for a node_id in the listener table. NULL if train support not compiled. Typical: ListenerAliasTable_set_alias. </p>
 
 </div>
 </div>

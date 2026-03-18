@@ -1,16 +1,16 @@
 # Working Plans — Implementation Index
 
-Generated: 2026-03-15
-Source folder: `documentation/working_plans/archive/`
+Updated: 2026-03-17
+Source folder: `documentation/working_plans/`
 
-This index lists every archived working plan and its verified implementation status.
-Each archive file now carries a `STATUS` banner at the top that records the verdict and
-the specific evidence (or reason for rejection) found in the canonical source tree
+This index lists all working plans — both active and archived. Each archive file
+carries a `STATUS` banner at the top that records the verdict and the specific
+evidence (or reason for rejection) found in the canonical source tree
 (`src/openlcb/`, `src/drivers/canbus/`, `test/`).
 
 ---
 
-## Implemented Plans (25)
+## Implemented Plans (27)
 
 These plans have been verified against the codebase and their described changes are
 present in the canonical source.
@@ -42,10 +42,12 @@ present in the canonical source.
 | 23 | [olcbchecker_integration_test_suite.md](archive/olcbchecker_integration_test_suite.md) | OlcbChecker Integration Test Suite |
 | 24 | [production_release_1_0_0.md](archive/production_release_1_0_0.md) | v1.0.0 Production Release Preparation |
 | 25 | [plan_item_3_consist_forwarding.md](archive/plan_item_3_consist_forwarding.md) | Consist Forwarding (Train Control) — wiring gap fixed 2026-03-15 |
+| 26 | [plan_unified_sibling_dispatch.md](archive/plan_unified_sibling_dispatch.md) | Unified Sibling Dispatch (Zero-FIFO, Sequential) — all 3 phases implemented + 46 tests |
+| 27 | [plan_listener_alias_table_integration.md](archive/plan_listener_alias_table_integration.md) | Listener Alias Table — CAN Layer Integration (v5) — core wiring complete; hold-until-AMD deferred (v1.0.0 known limitation) |
 
 ---
 
-## Rejected / Not Implemented Plans (8)
+## Rejected / Not Implemented Plans (7)
 
 These plans were not implemented as written, or were superseded.  Each file's STATUS
 banner gives the specific reason.
@@ -56,10 +58,29 @@ banner gives the specific reason.
 | 2 | [plan_item_6_datagram_retry_limit_COMPLETE.md](archive/plan_item_6_datagram_retry_limit_COMPLETE.md) | Datagram Retry Limit Enforcement | Intentional design decision: retry goal IS implemented but via a 3-bit packed field in `openlcb_msg_timer_t` (per-message) rather than a per-node field as this plan proposed; the plan itself notes "SUPERSEDED — Fully covered by Item 2" |
 | 3 | [plan_item_14_verified_node_id_dest_COMPLETE.md](archive/plan_item_14_verified_node_id_dest_COMPLETE.md) | Verified Node ID — Non-Zero Dest for Addressed Requests | Intentional design decision: MessageNetworkS §3.4.2 requires Verified Node ID to always be unaddressed; plan pre-dated closer spec reading |
 | 4 | [plan_listener_alias_resolution_COMPLETE.md](archive/plan_listener_alias_resolution_COMPLETE.md) | Listener-to-Listener Alias Resolution on CAN | Intentional design decision: alias embedded-in-struct approach superseded by separate `alias_mapping_listener.h/c` module, which is transport-agnostic and correct |
-| 5 | [plan_listener_alias_table_integration.md](archive/plan_listener_alias_table_integration.md) | Listener Alias Table — CAN Layer Integration (v5) | DI callbacks and TX resolution code exist but two blocking wiring steps missing: `ListenerAliasTable_initialize()` not called at startup, `listener_find_by_node_id` not wired into TX statemachine in `can_config.c` |
-| 6 | [plan_virtual_node_sibling_dispatch.md](archive/plan_virtual_node_sibling_dispatch.md) | Virtual Node Sibling Dispatch (early sketch) | Superseded by `sibling_dispatch_plan.md`, which was fully implemented instead |
-| 7 | [plan_stream_transport.md](archive/plan_stream_transport.md) | Stream Transport Protocol Handler | No `protocol_stream_handler.h/c` files exist; handler module was never written |
-| 8 | [plan_olcbchecker_train_control_tests.md](archive/plan_olcbchecker_train_control_tests.md) | OlcbChecker Train Control Test Completion | TR090/100/110 done externally; TR120/130 explicitly deferred (requires multi-node harness) |
+| 5 | [plan_virtual_node_sibling_dispatch.md](archive/plan_virtual_node_sibling_dispatch.md) | Virtual Node Sibling Dispatch (early sketch) | Superseded by `sibling_dispatch_plan.md`, which was fully implemented instead |
+| 6 | [plan_stream_transport.md](archive/plan_stream_transport.md) | Stream Transport Protocol Handler | No `protocol_stream_handler.h/c` files exist; handler module was never written |
+| 7 | [plan_olcbchecker_train_control_tests.md](archive/plan_olcbchecker_train_control_tests.md) | OlcbChecker Train Control Test Completion | TR090/100/110 done externally; TR120/130 explicitly deferred (requires multi-node harness) |
+
+---
+
+## Superseded / Historical Plans (2)
+
+These documents were exploratory brainstorming that led to implementation plans.
+Their content has been folded into active plans. Retained for historical reference.
+
+| # | File | Title / Topic | Superseded By |
+|---|------|---------------|---------------|
+| 1 | [proposed_virtual_train_implementation.md](archive/proposed_virtual_train_implementation.md) | Proposed Virtual Train Implementation (Categories 1-5) | Categories 1-2 → Phase 3 of `plan_unified_sibling_dispatch.md`; Categories 3-5 → Phases 1-2 |
+| 2 | [virtual_node_outgoing_failure_scenarios.md](archive/virtual_node_outgoing_failure_scenarios.md) | Virtual Node Outgoing Path — 7 Failure Scenarios | All resolved by `plan_unified_sibling_dispatch.md` Phase 1 |
+
+---
+
+## Active Plans
+
+| File | Title / Topic | Status |
+|------|---------------|--------|
+| [plan_virtual_node_verification_protocol.md](plan_virtual_node_verification_protocol.md) | Virtual Node Verification Protocol (DRAFT) | Draft protocol spec — not yet proposed to OpenLCB standards group |
 
 ---
 

@@ -319,6 +319,39 @@ bool _handle_listener_verification(void)
     return CanMainStatemachine_handle_listener_verification();
 }
 
+// Listener mock tracking
+bool listener_flush_called = false;
+int listener_set_alias_call_count = 0;
+node_id_t listener_set_alias_node_ids[20];
+uint16_t listener_set_alias_aliases[20];
+
+/**
+ * Mock: Flush listener aliases
+ */
+void _mock_listener_flush_aliases(void)
+{
+
+    listener_flush_called = true;
+
+}
+
+/**
+ * Mock: Set listener alias — tracks each call
+ */
+void _mock_listener_set_alias(node_id_t node_id, uint16_t alias)
+{
+
+    if (listener_set_alias_call_count < 20) {
+
+        listener_set_alias_node_ids[listener_set_alias_call_count] = node_id;
+        listener_set_alias_aliases[listener_set_alias_call_count] = alias;
+
+    }
+
+    listener_set_alias_call_count++;
+
+}
+
 // Interface struct with all mocks
 const interface_openlcb_node_t interface_openlcb_node = {};
 
@@ -338,7 +371,9 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .handle_login_outgoing_can_message = &_handle_login_outgoing_can_message,
     .handle_try_enumerate_first_node = &_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &_handle_try_enumerate_next_node,
-    .handle_listener_verification = &_handle_listener_verification
+    .handle_listener_verification = &_handle_listener_verification,
+    .listener_flush_aliases = &_mock_listener_flush_aliases,
+    .listener_set_alias = &_mock_listener_set_alias
 };
 
 /*******************************************************************************
@@ -366,6 +401,10 @@ void reset_test_variables(void)
     handle_listener_verification_called = false;
     send_can_message_enabled = true;
     node_find_node_by_alias_fail = false;
+    listener_flush_called = false;
+    listener_set_alias_call_count = 0;
+    memset(listener_set_alias_node_ids, 0, sizeof(listener_set_alias_node_ids));
+    memset(listener_set_alias_aliases, 0, sizeof(listener_set_alias_aliases));
 }
 
 /**
@@ -1270,6 +1309,279 @@ TEST(CanMainStatemachine, run_calls_listener_verification)
     CanMainStateMachine_run();
 
     EXPECT_TRUE(handle_listener_verification_called);
+}
+
+// ============================================================================
+// TEST: send_global_alias_enquiry — flushes listeners
+// ============================================================================
+
+TEST(CanMainStatemachine, global_ame_flushes_listener_table)
+{
+
+    setup_test();
+    reset_test_variables();
+
+    CanMainStatemachine_send_global_alias_enquiry();
+
+    EXPECT_TRUE(listener_flush_called);
+
+}
+
+// ============================================================================
+// TEST: send_global_alias_enquiry — queues AME frame
+// ============================================================================
+
+TEST(CanMainStatemachine, global_ame_queues_ame_frame)
+{
+
+    setup_test();
+    reset_test_variables();
+
+    CanMainStatemachine_send_global_alias_enquiry();
+
+    // Should have queued at least the global AME frame
+    can_msg_t *fifo_msg = CanBufferFifo_pop();
+    ASSERT_NE(fifo_msg, nullptr);
+
+    // AME control frame: RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME | 0 (no source alias)
+    EXPECT_EQ(fifo_msg->identifier & 0x1FFFF000, (uint32_t) (RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME));
+    EXPECT_EQ(fifo_msg->payload_count, (uint8_t) 0);
+
+    CanBufferStore_free_buffer(fifo_msg);
+
+}
+
+// ============================================================================
+// TEST: send_global_alias_enquiry — repopulates local aliases + queues AMDs
+// ============================================================================
+
+TEST(CanMainStatemachine, global_ame_repopulates_and_sends_amds_for_local_nodes)
+{
+
+    setup_test();
+    reset_test_variables();
+
+    // Register 3 permitted local virtual nodes
+    AliasMappings_register(0x0AAA, 0x010203040501);
+    AliasMappings_register(0x0BBB, 0x010203040502);
+    AliasMappings_register(0x0CCC, 0x010203040503);
+
+    // Mark all as permitted
+    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+
+        if (info->list[i].alias != 0x00) {
+
+            info->list[i].is_permitted = true;
+
+        }
+
+    }
+
+    CanMainStatemachine_send_global_alias_enquiry();
+
+    // Listener flush should have been called
+    EXPECT_TRUE(listener_flush_called);
+
+    // Listener set_alias called once per permitted node
+    EXPECT_EQ(listener_set_alias_call_count, 3);
+
+    // Should have queued 3 AMDs + 1 global AME = 4 CAN frames
+    int frame_count = 0;
+    can_msg_t *msg;
+
+    while ((msg = CanBufferFifo_pop()) != nullptr) {
+
+        frame_count++;
+        CanBufferStore_free_buffer(msg);
+
+    }
+
+    EXPECT_EQ(frame_count, 4);
+
+}
+
+// ============================================================================
+// TEST: send_global_alias_enquiry — AMD frames contain correct node IDs
+// ============================================================================
+
+TEST(CanMainStatemachine, global_ame_amd_frames_have_correct_content)
+{
+
+    setup_test();
+    reset_test_variables();
+
+    // Register one permitted local node
+    AliasMappings_register(0x0AAA, 0x050101010100);
+    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+
+        if (info->list[i].alias == 0x0AAA) {
+
+            info->list[i].is_permitted = true;
+
+        }
+
+    }
+
+    CanMainStatemachine_send_global_alias_enquiry();
+
+    // First frame should be AMD for 0x0AAA
+    can_msg_t *amd = CanBufferFifo_pop();
+    ASSERT_NE(amd, nullptr);
+
+    EXPECT_EQ(amd->identifier, (uint32_t) (RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | 0x0AAA));
+    EXPECT_EQ(amd->payload_count, (uint8_t) 6);
+
+    // Verify node ID in payload
+    node_id_t extracted_id = CanUtilities_extract_can_payload_as_node_id(amd);
+    EXPECT_EQ(extracted_id, (node_id_t) 0x050101010100);
+
+    CanBufferStore_free_buffer(amd);
+
+    // Second frame should be the global AME
+    can_msg_t *ame = CanBufferFifo_pop();
+    ASSERT_NE(ame, nullptr);
+
+    EXPECT_EQ(ame->identifier & 0x1FFFF000, (uint32_t) (RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME));
+    EXPECT_EQ(ame->payload_count, (uint8_t) 0);
+
+    CanBufferStore_free_buffer(ame);
+
+}
+
+// ============================================================================
+// TEST: send_global_alias_enquiry — skips non-permitted entries
+// ============================================================================
+
+TEST(CanMainStatemachine, global_ame_skips_non_permitted_entries)
+{
+
+    setup_test();
+    reset_test_variables();
+
+    // Register 2 nodes but only permit 1
+    AliasMappings_register(0x0AAA, 0x010203040501);
+    AliasMappings_register(0x0BBB, 0x010203040502);
+
+    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+
+        if (info->list[i].alias == 0x0AAA) {
+
+            info->list[i].is_permitted = true;
+
+        }
+        // 0x0BBB stays non-permitted
+
+    }
+
+    CanMainStatemachine_send_global_alias_enquiry();
+
+    // Only 1 listener set call (the permitted one)
+    EXPECT_EQ(listener_set_alias_call_count, 1);
+
+    // 1 AMD + 1 AME = 2 frames
+    int frame_count = 0;
+    can_msg_t *msg;
+
+    while ((msg = CanBufferFifo_pop()) != nullptr) {
+
+        frame_count++;
+        CanBufferStore_free_buffer(msg);
+
+    }
+
+    EXPECT_EQ(frame_count, 2);
+
+}
+
+// ============================================================================
+// TEST: send_global_alias_enquiry — no nodes registered, only AME queued
+// ============================================================================
+
+TEST(CanMainStatemachine, global_ame_no_nodes_only_ame_queued)
+{
+
+    setup_test();
+    reset_test_variables();
+
+    CanMainStatemachine_send_global_alias_enquiry();
+
+    EXPECT_TRUE(listener_flush_called);
+    EXPECT_EQ(listener_set_alias_call_count, 0);
+
+    // Only the global AME frame
+    can_msg_t *msg = CanBufferFifo_pop();
+    ASSERT_NE(msg, nullptr);
+    EXPECT_EQ(msg->payload_count, (uint8_t) 0);
+
+    CanBufferStore_free_buffer(msg);
+
+    // No more frames
+    EXPECT_EQ(CanBufferFifo_pop(), nullptr);
+
+}
+
+// ============================================================================
+// TEST: send_global_alias_enquiry — stress test with many virtual nodes
+// ============================================================================
+
+TEST(CanMainStatemachine, global_ame_stress_max_virtual_nodes)
+{
+
+    setup_test();
+    reset_test_variables();
+
+    // Register as many permitted local nodes as the alias mapping table holds.
+    // CAN buffer pool is USER_DEFINED_CAN_MSG_BUFFER_DEPTH (default 10), so
+    // some AMD allocations may fail when the pool is exhausted — that is the
+    // expected graceful-degradation behaviour we want to verify.
+    int registered = 0;
+
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+
+        AliasMappings_register(0x100 + i, 0x050101010100 + i);
+        registered++;
+
+    }
+
+    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+
+        if (info->list[i].alias != 0x00) {
+
+            info->list[i].is_permitted = true;
+
+        }
+
+    }
+
+    CanMainStatemachine_send_global_alias_enquiry();
+
+    // Listener flush called exactly once
+    EXPECT_TRUE(listener_flush_called);
+
+    // Every permitted node gets a listener repopulation regardless of CAN pool
+    EXPECT_EQ(listener_set_alias_call_count, registered);
+
+    // Drain all queued frames — count should not exceed pool capacity + 1
+    int frame_count = 0;
+    can_msg_t *msg;
+
+    while ((msg = CanBufferFifo_pop()) != nullptr) {
+
+        frame_count++;
+        CanBufferStore_free_buffer(msg);
+
+    }
+
+    // At least 1 frame (the global AME) should always be queued
+    EXPECT_GE(frame_count, 1);
+
+    // Should not exceed registered AMDs + 1 AME
+    EXPECT_LE(frame_count, registered + 1);
+
 }
 
 /*******************************************************************************

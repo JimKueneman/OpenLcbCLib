@@ -364,7 +364,12 @@ static bool _sibling_dispatch_current(void) {
 
     if (!_sibling_statemachine_info.openlcb_node) {
 
+        // Deferred cleanup path: last sibling's response was drained by 2a.
+        // Clear the main outgoing slot now that dispatch is truly complete.
         _sibling_dispatch_active = false;
+        _sibling_statemachine_info.incoming_msg_info.msg_ptr = NULL;
+        _statemachine_info.outgoing_msg_info.msg_ptr->state.loopback = false;
+        _statemachine_info.outgoing_msg_info.valid = false;
 
         return false;
 
@@ -398,9 +403,17 @@ static bool _sibling_dispatch_advance(void) {
 
     if (!_sibling_statemachine_info.openlcb_node) {
 
-        // All siblings processed — sibling dispatch complete
-        _sibling_dispatch_active = false;
-        _sibling_statemachine_info.incoming_msg_info.msg_ptr = NULL;
+        if (!_sibling_statemachine_info.outgoing_msg_info.valid) {
+
+            // Last sibling has no pending response — deactivate immediately.
+            _sibling_dispatch_active = false;
+            _sibling_statemachine_info.incoming_msg_info.msg_ptr = NULL;
+
+        }
+
+        // If last sibling HAS a pending response, keep _sibling_dispatch_active = true
+        // so Priority 2a fires next cycle to send it.  _sibling_dispatch_current()
+        // will deactivate and clear the main slot once 2a has drained the response.
 
         return true;
 

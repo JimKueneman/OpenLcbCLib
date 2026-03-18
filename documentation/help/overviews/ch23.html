@@ -118,8 +118,6 @@
             <tbody>
                 <tr><td><code>lock_shared_resources</code></td><td>Disable interrupts / acquire mutex. Same function as CAN config.</td></tr>
                 <tr><td><code>unlock_shared_resources</code></td><td>Re-enable interrupts / release mutex.</td></tr>
-                <tr><td><code>config_mem_read</code></td><td>Read from configuration memory (EEPROM/Flash/file).</td></tr>
-                <tr><td><code>config_mem_write</code></td><td>Write to configuration memory.</td></tr>
                 <tr><td><code>reboot</code></td><td>Reboot the processor.</td></tr>
             </tbody>
         </table>
@@ -132,7 +130,7 @@
             <tbody>
                 <tr><td>(always)</td><td><code>on_optional_interaction_rejected</code>, <code>on_terminate_due_to_error</code>, <code>on_100ms_timer</code>, <code>on_login_complete</code></td></tr>
                 <tr><td><code>OPENLCB_COMPILE_EVENTS</code></td><td><code>on_consumed_event_pcer</code>, <code>on_consumed_event_identified</code>, <code>on_event_learn</code>, <code>on_pc_event_report</code>, consumer/producer identified callbacks</td></tr>
-                <tr><td><code>OPENLCB_COMPILE_MEMORY_CONFIGURATION</code></td><td><code>factory_reset</code>, <code>config_mem_read_delayed_reply_time</code>, <code>config_mem_write_delayed_reply_time</code></td></tr>
+                <tr><td><code>OPENLCB_COMPILE_MEMORY_CONFIGURATION</code></td><td><code>config_mem_read</code>, <code>config_mem_write</code>, <code>factory_reset</code>, <code>config_mem_read_delayed_reply_time</code>, <code>config_mem_write_delayed_reply_time</code></td></tr>
                 <tr><td><code>OPENLCB_COMPILE_FIRMWARE</code></td><td><code>freeze</code>, <code>unfreeze</code>, <code>firmware_write</code></td></tr>
                 <tr><td><code>OPENLCB_COMPILE_BROADCAST_TIME</code></td><td><code>on_broadcast_time_changed</code>, <code>on_broadcast_time_received</code>, <code>on_broadcast_date_received</code>, <code>on_broadcast_year_received</code>, <code>on_broadcast_rate_received</code>, <code>on_broadcast_clock_started</code>, <code>on_broadcast_clock_stopped</code>, <code>on_broadcast_date_rollover</code></td></tr>
                 <tr><td><code>OPENLCB_COMPILE_TRAIN</code></td><td>Speed/function/emergency notifiers, controller assign/release, listener changed, heartbeat, decision callbacks, throttle-side reply notifiers</td></tr>

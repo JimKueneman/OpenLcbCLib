@@ -32,7 +32,7 @@
  * Time event IDs, Train Control instruction bytes, and well-known events.
  *
  * @author Jim Kueneman
- * @date 9 Mar 2026
+ * @date 17 Mar 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -1173,7 +1173,7 @@
  */
 
     /** @brief Maximum number of enumeration keys available for user/application */
-#define MAX_INTERNAL_ENUM_KEYS_VALUES 4
+#define MAX_INTERNAL_ENUM_KEYS_VALUES 6
 
     /** @brief Maximum number of internal system enumeration keys */
 #define MAX_USER_ENUM_KEYS_VALUES 4
@@ -1204,6 +1204,12 @@
 
     /** @brief Enumeration key used by datagram timeout scanner */
 #define DATAGRAM_TIMEOUT_ENUM_KEY (MAX_USER_ENUM_KEYS_VALUES + 3)
+
+    /** @brief Enumeration key used by sibling dispatch in main state machine */
+#define OPENLCB_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX (MAX_USER_ENUM_KEYS_VALUES + 4)
+
+    /** @brief Enumeration key used by sibling dispatch in login state machine */
+#define OPENLCB_LOGIN_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX (MAX_USER_ENUM_KEYS_VALUES + 5)
 
     /** @} */ // end of node_enum_keys
 

@@ -1,34 +1,31 @@
 <!--
   ============================================================
-  STATUS: REJECTED — PARTIALLY IMPLEMENTED (two blocking wiring steps missing)
+  STATUS: IMPLEMENTED (core wiring complete; hold-until-AMD deferred — v1.0.0 known limitation)
 
-  This plan's own status table correctly records what is done and what is not.
-  Verified against the code:
+  Verified against codebase 2026-03-17:
 
   IMPLEMENTED:
   - DI pointers on interface_can_rx_message_handler_t: listener_set_alias,
     listener_clear_alias_by_alias, listener_flush_aliases (wired in
-    _build_rx_message_handler() in can_config.c lines 141-143 under
-    #ifdef OPENLCB_COMPILE_TRAIN).
+    _build_rx_message_handler() in can_config.c under #ifdef OPENLCB_COMPILE_TRAIN).
   - AMD handler: ListenerAliasTable_set_alias() called and
     _release_held_messages_for_listener() helper present (can_rx_message_handler.c).
   - AMR handler: listener_clear_alias_by_alias DI call present.
   - TX alias resolution: nullable listener_find_by_node_id DI call present in
     can_tx_statemachine.c lines 149-165.
+  - ListenerAliasTable_initialize() called from CanConfig_initialize() in
+    can_config.c (line 303) under #ifdef OPENLCB_COMPILE_TRAIN. [Fixed 2026-03-15]
+  - _build_tx_statemachine() in can_config.c wires
+    _tx_sm.listener_find_by_node_id = &ListenerAliasTable_find_by_node_id
+    under #ifdef OPENLCB_COMPILE_TRAIN (line 205). [Fixed 2026-03-15]
+    Consist forwarding is now functional.
 
-  FIXED 2026-03-15:
-  1. ListenerAliasTable_initialize() is now called from CanConfig_initialize()
-     in can_config.c after AliasMappings_initialize(), under #ifdef OPENLCB_COMPILE_TRAIN.
-  2. _build_tx_statemachine() in can_config.c now wires
-     _tx_sm.listener_find_by_node_id = &ListenerAliasTable_find_by_node_id
-     under #ifdef OPENLCB_COMPILE_TRAIN. Consist forwarding is now functional.
-
-  STILL OPEN (accepted for v1.0.0):
-  3. Hold-until-AMD (Step 2): last_frame() in can_rx_message_handler.c does NOT
-     call _check_hold_for_alias_resolution(). Attach messages go to the FIFO
-     immediately. The first consist command to a brand-new listener may be dropped
-     if the alias is not yet in the table; subsequent commands succeed once the
-     AMD reply arrives. Accepted as a known limitation for v1.0.0.
+  KNOWN LIMITATION (accepted for v1.0.0):
+  - Hold-until-AMD (Step 2): last_frame() in can_rx_message_handler.c does NOT
+    call _check_hold_for_alias_resolution(). Attach messages go to the FIFO
+    immediately. The first consist command to a brand-new listener may be dropped
+    if the alias is not yet in the table; subsequent commands succeed once the
+    AMD reply arrives.
   ============================================================
 -->
 

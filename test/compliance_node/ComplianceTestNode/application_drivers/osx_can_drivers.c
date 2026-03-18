@@ -37,7 +37,7 @@
 #include "../openlcb_c_lib/openlcb/openlcb_gridconnect.h"
 #include "../openlcb_c_lib/utilities/mustangpeak_string_helper.h"
 #include "../openlcb_c_lib/drivers/canbus/can_rx_statemachine.h"
-#include "../openlcb_c_lib/utilities/threadsafe_stringlist.h"
+#include "../openlcb_c_lib/utilities_pc/threadsafe_stringlist.h"
 
 #include <arpa/inet.h>
 #include <netdb.h>

@@ -238,6 +238,13 @@ static void _build_main_statemachine(void) {
     // Listener verification (always wired — prober returns 0 if no listeners registered)
     _main_sm.handle_listener_verification = &CanMainStatemachine_handle_listener_verification;
 
+    // Listener alias management for self-originated global AME
+    // (OPTIONAL — NULL if OPENLCB_COMPILE_TRAIN not defined)
+#ifdef OPENLCB_COMPILE_TRAIN
+    _main_sm.listener_flush_aliases = &ListenerAliasTable_flush_aliases;
+    _main_sm.listener_set_alias = &ListenerAliasTable_set_alias;
+#endif
+
 }
 
 // ---- Public API ----

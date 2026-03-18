@@ -214,9 +214,10 @@ Functions</h2></td></tr>
 
 <p>Runs one non-blocking step of login processing. Call from main loop. </p>
 <p>Tries to send a pending message, re-enumerate if flagged, or advance to the next node needing login. Nodes already in RUNSTATE_RUN are skipped.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Try to send pending outgoing message (highest priority)</li>
-<li>Re-enumerate if multi-message sequence in progress</li>
+<p>Priority order:</p><ol type="1">
+<li>Send pending outgoing (skip if held for sibling dispatch)</li>
+<li>Sibling dispatch: send sibling response, reenumerate, dispatch current, advance</li>
+<li>Re-enumerate login handler for multi-message sequences</li>
 <li>Get first node if none active</li>
 <li>Advance to next node Each step returns immediately after one operation. </li>
 </ol>
@@ -293,7 +294,8 @@ Functions</h2></td></tr>
 <p>Tries to send the pending message; returns true if one was pending. Exposed for unit testing.</p>
 <p>Algorithm:</p><ol type="1">
 <li>If valid flag not set, return false</li>
-<li>Call send_openlcb_msg(); clear valid on success</li>
+<li>Call send_openlcb_msg(); on success start sibling dispatch</li>
+<li>If no siblings, clear valid immediately</li>
 <li>Return true (caller should keep retrying until sent)</li>
 </ol>
 <dl class="section return"><dt>Returns</dt><dd>true if a message was pending, false if idle </dd></dl>

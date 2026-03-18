@@ -162,6 +162,15 @@ static interface_openlcb_application_train_t _interface_nulls = {
 
 };
 
+    /** @brief Interface with send wired but no heartbeat callback — exercises
+     *  the on_heartbeat_timeout == NULL branch at line 354 */
+static interface_openlcb_application_train_t _interface_send_no_callback = {
+
+    .send_openlcb_msg = &_mock_send_openlcb_msg,
+    .on_heartbeat_timeout = NULL,
+
+};
+
 static interface_protocol_train_handler_t _handler_interface_with_heartbeat = {
 
     .on_speed_changed = NULL,
@@ -1192,5 +1201,200 @@ TEST(ApplicationTrain, heartbeat_timeout_preserves_reverse_direction)
     // Forwarded message should also have negative zero
     uint16_t forwarded_speed = ((uint16_t) sent_payloads[0][1] << 8) | sent_payloads[0][2];
     EXPECT_EQ(forwarded_speed, (uint16_t) FLOAT16_NEGATIVE_ZERO);
+
+}
+
+
+// ============================================================================
+// Section 12: Branch Coverage — Missing Branches
+// ============================================================================
+
+// ============================================================================
+// TEST: Heartbeat timeout with NULL on_heartbeat_timeout callback — exercises
+//       the false branch of (_interface->on_heartbeat_timeout) at line 354.
+//       Send is wired so estop and listener forwarding still happen.
+// ============================================================================
+
+TEST(ApplicationTrain, heartbeat_timeout_null_callback_no_crash)
+{
+
+    _reset_tracking();
+
+    ProtocolTrainHandler_initialize(&_handler_interface_with_heartbeat);
+    OpenLcbApplicationTrain_initialize(&_interface_send_no_callback);
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 1;
+    state->set_speed = 0x3C00;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+    state->listener_count = 0;
+
+    // Tick past expiry — on_heartbeat_timeout is NULL, should not crash
+    OpenLcbApplicationTrain_100ms_timer_tick(1);
+
+    // Estop still fires even though callback is NULL
+    EXPECT_TRUE(state->estop_active);
+    EXPECT_EQ(state->set_speed, FLOAT16_POSITIVE_ZERO);
+
+    // Callback was NOT called (it's NULL)
+    EXPECT_FALSE(mock_heartbeat_timeout_called);
+
+}
+
+// ============================================================================
+// TEST: Large tick jump saturates counter to zero — exercises the else branch
+//       at line 328 where heartbeat_counter_100ms <= ticks_elapsed.
+// ============================================================================
+
+TEST(ApplicationTrain, heartbeat_large_tick_jump_saturates_counter)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 5;  // Only 5 ticks remaining
+    state->set_speed = 0x3C00;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+    state->listener_count = 0;
+
+    // Jump by 20 ticks at once — counter (5) < ticks_elapsed (20)
+    // Should saturate to 0 and trigger timeout
+    OpenLcbApplicationTrain_100ms_timer_tick(20);
+
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
+    EXPECT_TRUE(state->estop_active);
+    EXPECT_TRUE(mock_heartbeat_timeout_called);
+
+}
+
+// ============================================================================
+// TEST: Heartbeat full timeout with NULL send — exercises _forward_estop_to_listeners
+//       and _send_heartbeat_request returning early due to NULL send_openlcb_msg
+//       at the actual timeout point (not just halfway).
+// ============================================================================
+
+TEST(ApplicationTrain, heartbeat_full_timeout_null_send)
+{
+
+    _reset_tracking();
+
+    ProtocolTrainHandler_initialize(&_handler_interface_with_heartbeat);
+    OpenLcbApplicationTrain_initialize(&_interface_nulls);
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 1;
+    state->set_speed = 0x3C00;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    // Add a listener so _forward_estop_to_listeners enters the loop guard
+    state->listeners[0].node_id = TEST_LISTENER_NODE_ID;
+    state->listeners[0].flags = 0x00;
+    state->listener_count = 1;
+
+    // Tick to timeout — send is NULL, should not crash
+    OpenLcbApplicationTrain_100ms_timer_tick(1);
+
+    // Estop fires, but no messages sent (send is NULL)
+    EXPECT_TRUE(state->estop_active);
+    EXPECT_FALSE(mock_send_called);
+    EXPECT_EQ(send_call_count, 0);
+
+}
+
+// ============================================================================
+// TEST: Heartbeat halfway + timeout in the same tick jump — exercises both
+//       the halfway send and timeout in a single timer call.
+// ============================================================================
+
+TEST(ApplicationTrain, heartbeat_halfway_and_timeout_same_tick)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    // 10 second timeout, halfway = 50 ticks
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 60;  // above halfway
+    state->set_speed = 0x3C00;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+    state->listener_count = 0;
+
+    // Jump by 100 ticks — passes halfway AND hits zero in one call
+    OpenLcbApplicationTrain_100ms_timer_tick(100);
+
+    // Both halfway request AND timeout should have fired
+    EXPECT_TRUE(state->estop_active);
+    EXPECT_TRUE(mock_heartbeat_timeout_called);
+
+    // Heartbeat request sent at halfway crossing + no listener forwards
+    EXPECT_GE(send_call_count, 1);
+
+}
+
+// ============================================================================
+// TEST: Counter exactly equals ticks_elapsed — exercises the boundary
+//       condition where counter == ticks_elapsed (takes else branch, sets 0).
+// ============================================================================
+
+TEST(ApplicationTrain, heartbeat_counter_equals_ticks_elapsed)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 10;  // exactly 10 ticks remaining
+    state->set_speed = 0x3C00;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+    state->listener_count = 0;
+
+    // Jump by exactly 10 ticks — counter == ticks_elapsed, takes else branch
+    OpenLcbApplicationTrain_100ms_timer_tick(10);
+
+    EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
+    EXPECT_TRUE(state->estop_active);
+    EXPECT_TRUE(mock_heartbeat_timeout_called);
 
 }

@@ -52,7 +52,6 @@ extern "C"
     typedef struct
     {
         char *strings[MAX_STRINGS];
-        int count;
         int head, tail;
         pthread_mutex_t mutex;
     } StringList;
@@ -60,23 +59,11 @@ extern "C"
     // Initialize the string list
     extern void ThreadSafeStringList_init(StringList *list);
 
-    // Add a string to the list
-    extern void ThreadSafeStringList_add(StringList *list, const char *string);
-
-    // Remove string from list
-    extern void ThreadSafeStringList_remove(StringList *list, const char *str);
-
-    // Add a string to the list
+    // Push a string onto the tail of the FIFO; returns true on success, false if full
     extern uint8_t ThreadSafeStringList_push(StringList *list, const char *string);
 
-    // Remove string from list; dont for get to free() the popped string
+    // Pop the next string from the head of the FIFO; caller must free() the result; returns NULL if empty
     extern char *ThreadSafeStringList_pop(StringList *list);
-
-    // Print the list
-    extern void ThreadSafeStringList_print(StringList *list);
-
-    // Cleanup the list
-    extern void ThreadSafeStringList_destroy(StringList *list);
 
 #ifdef __cplusplus
 }

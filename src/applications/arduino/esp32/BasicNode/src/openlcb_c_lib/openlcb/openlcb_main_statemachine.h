@@ -34,7 +34,7 @@
 * cover SNIP, events, trains, datagrams, and streams.
 *
 * @author Jim Kueneman
-* @date 4 Mar 2026
+* @date 17 Mar 2026
 */
 
 #ifndef __OPENLCB_OPENLCB_MAIN_STATEMACHINE__
@@ -365,6 +365,26 @@ extern "C" {
 
         /** @brief Returns pointer to internal static state machine info.  For unit testing only — do not modify. */
     extern openlcb_statemachine_info_t *OpenLcbMainStatemachine_get_statemachine_info(void);
+
+        /**
+         * @brief Transport wrapper — sends to wire and queues for sibling dispatch.
+         *
+         * @details Called by application helpers and login statemachine via
+         *          send_openlcb_msg DI.  Sends the message to the wire via the real
+         *          transport callback, then copies it into a pending slot so the run
+         *          loop dispatches it to sibling virtual nodes.
+         *
+         * @param msg  Pointer to the outgoing @ref openlcb_msg_t.
+         *
+         * @return true if wire send succeeded, false if transport busy.
+         */
+    extern bool OpenLcbMainStatemachine_send_with_sibling_dispatch(openlcb_msg_t *msg);
+
+        /** @brief Returns pointer to sibling dispatch state machine info.  For unit testing only. */
+    extern openlcb_statemachine_info_t *OpenLcbMainStatemachine_get_sibling_statemachine_info(void);
+
+        /** @brief Returns the high-water mark of the sibling response queue.  For diagnostics. */
+    extern uint8_t OpenLcbMainStatemachine_get_sibling_response_queue_high_water(void);
 
 #ifdef __cplusplus
 }

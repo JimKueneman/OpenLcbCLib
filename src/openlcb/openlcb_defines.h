@@ -1173,7 +1173,7 @@
  */
 
     /** @brief Maximum number of enumeration keys available for user/application */
-#define MAX_INTERNAL_ENUM_KEYS_VALUES 5
+#define MAX_INTERNAL_ENUM_KEYS_VALUES 6
 
     /** @brief Maximum number of internal system enumeration keys */
 #define MAX_USER_ENUM_KEYS_VALUES 4
@@ -1207,6 +1207,9 @@
 
     /** @brief Enumeration key used by sibling dispatch in main state machine */
 #define OPENLCB_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX (MAX_USER_ENUM_KEYS_VALUES + 4)
+
+    /** @brief Enumeration key used by sibling dispatch in login state machine */
+#define OPENLCB_LOGIN_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX (MAX_USER_ENUM_KEYS_VALUES + 5)
 
     /** @} */ // end of node_enum_keys
 

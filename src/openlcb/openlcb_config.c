@@ -314,12 +314,14 @@ static void _build_login_statemachine(void) {
 
     memset(&_login_sm, 0, sizeof(_login_sm));
 
-    // Phase 1 temporary bridge — login messages get sibling dispatch via Path B wrapper
-    _login_sm.send_openlcb_msg = &OpenLcbMainStatemachine_send_with_sibling_dispatch;
+    // Direct transport send — login has its own inline sibling dispatch (Phase 2)
+    _login_sm.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
 
     // Library-internal wiring
     _login_sm.openlcb_node_get_first          = &OpenLcbNode_get_first;
     _login_sm.openlcb_node_get_next           = &OpenLcbNode_get_next;
+    _login_sm.openlcb_node_get_count          = &OpenLcbNode_get_count;
+    _login_sm.process_main_statemachine       = &OpenLcbMainStatemachine_process_main_statemachine;
     _login_sm.load_initialization_complete    = &OpenLcbLoginMessageHandler_load_initialization_complete;
     _login_sm.load_producer_events            = &OpenLcbLoginMessageHandler_load_producer_event;
     _login_sm.load_consumer_events            = &OpenLcbLoginMessageHandler_load_consumer_event;

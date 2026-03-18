@@ -8,29 +8,7 @@ Single source of truth. Everything completed is in `archive/`.
 
 ---
 
-### 1. Review Archive Plans Against Current Reality
-
-**Issue:** The archive folder contains ~30 plan documents written during development. Some may describe designs that were later changed, abandoned, or superseded. Before relying on them as reference material, each should be checked against the current codebase.
-
-**Scope:** For each file in `documentation/working_plans/archive/`:
-- Read the plan and identify the key design decisions or implementation details it describes
-- Check those details against the current source code
-- If the implementation matches the plan: add a note at the top confirming it (e.g. `<!-- Verified against codebase 15 Mar 2026 — matches -->`)
-- If the implementation diverged: document what actually exists and why the plan was changed or abandoned
-- If the plan was never implemented: mark it clearly as abandoned with a reason
-
-**Priority files to check first (known areas of change):**
-- `plan_item_3_consist_forwarding.md` — no COMPLETE suffix, unclear status
-- `plan_item_5_controller_assign_reject.md` — no COMPLETE suffix, unclear status
-- `plan_listener_alias_table_integration.md` — no COMPLETE suffix, unclear status
-- `plan_olcbchecker_train_control_tests.md` — TR090-110 done, TR120-130 deferred
-- `plan_stream_transport.md` — stream spec not released, deferred
-- `OLCBChecker_New_Tests.md` — check against ChecksToAdd.md for current status
-- `compliance_test_node_implementation.md` — check if compliance node is in the repo
-
----
-
-### 2. Stream Transport Protocol Handler
+### 1. Stream Transport Protocol Handler
 
 **Issue:** All dispatch infrastructure exists (5 MTI cases in main statemachine, 5 function pointers, CAN frame type 7 routing, STREAM buffer type). The actual handler module is missing.
 
@@ -42,7 +20,7 @@ Single source of truth. Everything completed is in `archive/`.
 
 ---
 
-### 3. TCP/IP Transport Protocol Handler
+### 2. TCP/IP Transport Protocol Handler
 
 **Issue:** The OpenLCB specification defines a TCP/IP transport layer alongside CAN but it remains in draft status.
 
@@ -52,7 +30,7 @@ Single source of truth. Everything completed is in `archive/`.
 
 ---
 
-### 4. Broadcast Time Helpers
+### 3. Broadcast Time Helpers
 
 **Issue:** App users should not have to hunt down what Event IDs they need to register for producers and consumers for common clocks.
 
@@ -60,7 +38,7 @@ Single source of truth. Everything completed is in `archive/`.
 
 ---
 
-### 5. OlcbChecker Consist Forwarding Tests (TR120, TR130)
+### 4. OlcbChecker Consist Forwarding Tests (TR120, TR130)
 
 **Issue:** TR120 (Consist Speed Forwarding source-skip) and TR130 (Consist Function/EStop Forwarding source-skip) require a second alias identity on the bus — a multi-node test harness not currently available.
 
@@ -70,7 +48,7 @@ Single source of truth. Everything completed is in `archive/`.
 
 ---
 
-### 6. OlcbChecker — Additional Checks from ChecksToAdd.md
+### 5. OlcbChecker — Additional Checks from ChecksToAdd.md
 
 Outstanding items in `OlcbChecker/ChecksToAdd.md` not yet implemented:
 - Multi-PIP and multi-SNIP message capacity cases
@@ -89,14 +67,6 @@ Outstanding items in `OlcbChecker/ChecksToAdd.md` not yet implemented:
 
 ---
 
-### 7. Virtual Node CAN Login — Duplicate Alias Detection Gap
-
-**Issue:** During CAN node login, virtual nodes do not get passed through the login sequence, so they cannot reply to a duplicate alias detection challenge. In practice this should never happen (virtual nodes share the physical node's alias space and the physical node handles alias negotiation), but there is no defensive check to catch it if it ever does.
-
-**Proposed approach:** Rather than relying on the login message flow, directly scan the alias field in all node structs to detect a collision. This avoids the need to route CAN login frames through virtual nodes at all.
-
-**Date noted:** 2026-03-16
-
 ---
 
 ## Design Notes
@@ -111,6 +81,7 @@ These are settled decisions. Do not revisit without good reason.
 - **DI pattern:** Optional modules use nullable function pointers. NULL = not linked in, call skipped.
 - **Fire-and-forget forwarding:** Train commands to listeners have no acknowledgment. Periodic verification detects stale aliases and clears them so commands are dropped rather than sent to a dead node.
 - **Periodic verification:** Distributed round-robin prober, one AME per configurable tick interval. Runs unconditionally at top of `CanMainStateMachine_run()`. User-configurable timing via 3 constants in `openlcb_user_config.h`.
-- **Sibling dispatch:** Unconditional, no feature flag. Push-to-head caps concurrent loopback at 1-2 buffers. `assert()` on pool exhaustion. See `archive/sibling_dispatch_plan.md`.
+- **Sibling dispatch:** Zero-FIFO sequential dispatch. After sending an outgoing message to the wire, the run loop shows it to each sibling one at a time — zero buffer allocation, zero FIFO copies. All 3 phases implemented: Phase 1 (main SM), Phase 2 (login SM), Phase 3 (CAN alias collision prevention + AME listener repopulate). See `plan_unified_sibling_dispatch.md`.
+- **Sibling dispatch and CAN Rx buffer pressure:** Sequential dispatch occupies the `_run()` loop for N steps (one per sibling). This is pure CPU work (~10μs per step), so 50 siblings ≈ 500μs — less than one CAN frame time at 125kbps (~1ms). The CAN Rx ISR continues draining the hardware buffer into the software FIFO independently, so frames are not lost. Login messages (Init Complete, P/C Identified) are infrequent one-time events. The only stress case is a burst of external messages during a large sibling dispatch, absorbed by the software FIFO. Accepted as-is — no mitigation needed.
 - **Arduino mode:** Set automatically by platform selection in the Node Wizard. There is no Arduino checkbox. ESP32 (TWAI and WiFi GridConnect) and RP2040 are Arduino; STM32, MSPM0, and None/Custom are non-Arduino.
 - **Stream and TCP/IP:** Both deferred pending official spec release. Infrastructure stubs exist but handler modules are intentionally absent.

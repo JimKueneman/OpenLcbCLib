@@ -40,7 +40,7 @@
 // How many virtual nodes this device can host.  Most simple devices use 1.
 // Train command stations may need more (one per locomotive being controlled).
 
-#define USER_DEFINED_NODE_BUFFER_DEPTH               4
+#define USER_DEFINED_NODE_BUFFER_DEPTH               50
 
 // =============================================================================
 // Events (requires OPENLCB_COMPILE_EVENTS)
