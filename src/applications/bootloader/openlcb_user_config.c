@@ -1,0 +1,127 @@
+/** \copyright
+ * Copyright (c) 2024, Jim Kueneman
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \file openlcb_user_config.c
+ *
+ * Bootloader node parameter definition.  Minimal PSI bits and only space 0xEF.
+ *
+ * @author Jim Kueneman
+ * @date 18 Mar 2026
+ */
+
+#include "openlcb_user_config.h"
+#include "openlcb_c_lib/openlcb/openlcb_types.h"
+#include "openlcb_c_lib/openlcb/openlcb_defines.h"
+
+
+const node_parameters_t OpenLcbUserConfig_node_parameters = {
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
+
+    .snip.mfg_version = 4,
+    .snip.name = "OpenLCB Bootloader",
+    .snip.model = "Firmware Upgrade",
+    .snip.hardware_version = "1.0.0",
+    .snip.software_version = "1.0.0",
+    .snip.user_version = 2,
+
+    .protocol_support = (
+    PSI_SIMPLE_NODE_INFORMATION |
+    PSI_IDENTIFICATION |
+    PSI_DATAGRAM |
+    PSI_MEMORY_CONFIGURATION |
+    PSI_FIRMWARE_UPGRADE
+    ),
+
+    .configuration_options.high_address_space = CONFIG_MEM_SPACE_FIRMWARE,
+    .configuration_options.low_address_space = CONFIG_MEM_SPACE_FIRMWARE,
+    .configuration_options.read_from_manufacturer_space_0xfc_supported = false,
+    .configuration_options.read_from_user_space_0xfb_supported = false,
+    .configuration_options.stream_read_write_supported = false,
+    .configuration_options.unaligned_reads_supported = false,
+    .configuration_options.unaligned_writes_supported = false,
+    .configuration_options.write_to_user_space_0xfb_supported = false,
+    .configuration_options.write_under_mask_supported = false,
+    .configuration_options.description = "",
+
+    // Space 0xFF — not present in bootloader
+    .address_space_configuration_definition.read_only = true,
+    .address_space_configuration_definition.present = false,
+    .address_space_configuration_definition.low_address_valid = false,
+    .address_space_configuration_definition.low_address = 0,
+    .address_space_configuration_definition.highest_address = 0,
+    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .address_space_configuration_definition.description = "",
+
+    // Space 0xFE — not present in bootloader
+    .address_space_all.read_only = true,
+    .address_space_all.present = false,
+    .address_space_all.low_address_valid = false,
+    .address_space_all.low_address = 0,
+    .address_space_all.highest_address = 0,
+    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
+    .address_space_all.description = "",
+
+    // Space 0xFD — not present in bootloader
+    .address_space_config_memory.read_only = true,
+    .address_space_config_memory.present = false,
+    .address_space_config_memory.low_address_valid = false,
+    .address_space_config_memory.low_address = 0,
+    .address_space_config_memory.highest_address = 0,
+    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+    .address_space_config_memory.description = "",
+
+    // Space 0xFC — not present in bootloader
+    .address_space_acdi_manufacturer.read_only = true,
+    .address_space_acdi_manufacturer.present = false,
+    .address_space_acdi_manufacturer.low_address_valid = false,
+    .address_space_acdi_manufacturer.low_address = 0,
+    .address_space_acdi_manufacturer.highest_address = 0,
+    .address_space_acdi_manufacturer.address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
+    .address_space_acdi_manufacturer.description = "",
+
+    // Space 0xFB — not present in bootloader
+    .address_space_acdi_user.read_only = true,
+    .address_space_acdi_user.present = false,
+    .address_space_acdi_user.low_address_valid = false,
+    .address_space_acdi_user.low_address = 0,
+    .address_space_acdi_user.highest_address = 0,
+    .address_space_acdi_user.address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
+    .address_space_acdi_user.description = "",
+
+    // Space 0xEF — Firmware Upgrade: writable, unbounded
+    .address_space_firmware.read_only = false,
+    .address_space_firmware.present = true,
+    .address_space_firmware.low_address_valid = false,
+    .address_space_firmware.low_address = 0,
+    .address_space_firmware.highest_address = 0xFFFFFFFF,
+    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
+    .address_space_firmware.description = "Firmware update address space",
+
+    .cdi = { 0x00 },
+
+};

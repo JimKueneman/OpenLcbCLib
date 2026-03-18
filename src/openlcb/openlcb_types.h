@@ -65,7 +65,7 @@
      * @brief Compile-time buffer depths, node limits, and event counts.
      *
      * @details All values must be defined in openlcb_user_config.h.  Total buffer
-     * count must not exceed 126 on 8-bit processors.
+     * count must not exceed 65535 (buffer indices are uint16_t).
      * @{
      */
 

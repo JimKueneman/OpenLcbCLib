@@ -72,7 +72,7 @@
 // =============================================================================
 
 #if !defined(OPENLCB_COMPILE_EVENTS) && !defined(OPENLCB_COMPILE_DATAGRAMS) && \
-    !defined(OPENLCB_COMPILE_TRAIN)
+    !defined(OPENLCB_COMPILE_TRAIN) && !defined(OPENLCB_COMPILE_FIRMWARE)
 #warning "No optional features enabled. This node will only support SNIP identification."
 #endif
 
@@ -81,8 +81,8 @@
 // =============================================================================
 
 #if (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + \
-     USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH) > 126
-#error "Total buffer count exceeds 126 — reduce buffer depths for 8-bit targets"
+     USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH) > 65535
+#error "Total buffer count exceeds 65535 — buffer indices are uint16_t"
 #endif
 
 // =============================================================================
