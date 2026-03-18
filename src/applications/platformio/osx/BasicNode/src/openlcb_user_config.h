@@ -32,7 +32,8 @@
 #define USER_DEFINED_STREAM_BUFFER_DEPTH             1
 // Tunes the maximum number of bytes in a single stream data frame.  Five static
 // buffers of this size are allocated for the message dispatcher sibling response
-// queue.  Must be >= 256 (the SNIP payload size).
+// queue.  Values below 256 are accepted; the sibling dispatch buffers will be
+// clamped to 256 (the SNIP payload size) automatically.
 #define USER_DEFINED_STREAM_BUFFER_LEN               256
 
 // =============================================================================

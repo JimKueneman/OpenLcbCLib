@@ -104,7 +104,7 @@ static bool _sibling_dispatch_active;
 #define SIBLING_RESPONSE_QUEUE_DEPTH 5
 
     /** @brief Circular queue of sibling responses awaiting dispatch. */
-static openlcb_stream_message_t _sibling_response_queue[SIBLING_RESPONSE_QUEUE_DEPTH];
+static openlcb_dispatcher_message_t _sibling_response_queue[SIBLING_RESPONSE_QUEUE_DEPTH];
 
 static uint8_t _sibling_response_queue_head;
 static uint8_t _sibling_response_queue_tail;
@@ -117,7 +117,7 @@ static uint8_t _sibling_response_queue_high_water;
     /** @brief Single-slot pending message for Path B sibling dispatch.
      *  Holds a copy of the last application-layer send so the run loop
      *  can dispatch it to siblings. */
-static openlcb_stream_message_t _path_b_pending_msg;
+static openlcb_dispatcher_message_t _path_b_pending_msg;
 static openlcb_msg_t *_path_b_pending_ptr;
 static bool _path_b_pending;
 
