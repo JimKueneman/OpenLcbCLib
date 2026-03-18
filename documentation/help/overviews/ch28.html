@@ -388,7 +388,7 @@ bool my_can_is_tx_clear(void) {
                 <tr><th>Item</th><th>Status</th><th>Notes</th></tr>
             </thead>
             <tbody>
-                <tr><td>Create <code>openlcb_user_config.h</code></td><td></td><td>Copy from <code>templates/openlcb_user_config.h</code>, adjust buffer depths and feature flags</td></tr>
+                <tr><td>Create <code>openlcb_user_config.h</code> and <code>openlcb_user_config.c</code></td><td></td><td>Copy both from <code>templates/typical/</code>, adjust buffer depths, feature flags, and node parameters</td></tr>
                 <tr><td>Implement <code>lock_shared_resources()</code></td><td></td><td>Disable interrupts (bare-metal) or mutex lock (RTOS)</td></tr>
                 <tr><td>Implement <code>unlock_shared_resources()</code></td><td></td><td>Enable interrupts (bare-metal) or mutex unlock (RTOS)</td></tr>
                 <tr><td>Implement 100ms timer</td><td></td><td>Hardware timer ISR calling <code>OpenLcb_100ms_timer_tick()</code></td></tr>
