@@ -123,7 +123,7 @@ void MCAN0_INST_IRQHandler(void)
     DL_MCAN_RxBufElement rxMsg;
     can_msg_t can_msg;
 
-    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B6_PIN);
+    // DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B6_PIN);
 
     // Pull out the interrupt "group" that is triggered from the CAN0 instance
     DL_MCAN_IIDX pending_interrupt_index = DL_MCAN_getPendingInterrupt(MCAN0_INST);
@@ -238,5 +238,5 @@ void MCAN0_INST_IRQHandler(void)
         break;
     }
 
-    DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B6_PIN);
+    // DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B6_PIN);
 }

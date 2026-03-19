@@ -50,7 +50,6 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .protocol_support = (PSI_DATAGRAM |
     PSI_MEMORY_CONFIGURATION |
     PSI_EVENT_EXCHANGE |
-    PSI_EVENT_EXCHANGE |
     PSI_ABBREVIATED_DEFAULT_CDI |
     PSI_SIMPLE_NODE_INFORMATION |
     PSI_CONFIGURATION_DESCRIPTION_INFO |

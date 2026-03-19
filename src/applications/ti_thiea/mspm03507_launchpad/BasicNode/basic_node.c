@@ -98,9 +98,9 @@ int main(void)
   while (1)
   {
 
-    DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B7_PIN);
+  //  DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B7_PIN);
 
-    // delay_cycles(DELAY_TIME);
+  //   delay_cycles(DELAY_TIME);
 
     OpenLcb_run();
   }

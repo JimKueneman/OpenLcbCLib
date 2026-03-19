@@ -1,8 +1,0 @@
-../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:93:13:_build_login_message_handler	1
-../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:107:13:_build_login_statemachine	1
-../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:126:13:_build_rx_message_handler	1
-../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:149:13:_build_rx_statemachine	1
-../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:176:13:_build_tx_message_handler	1
-../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:189:13:_build_tx_statemachine	1
-../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:211:13:_build_main_statemachine	1
-../Core/Src/openlcb_c_lib/drivers/canbus/can_config.c:272:6:CanConfig_initialize	1

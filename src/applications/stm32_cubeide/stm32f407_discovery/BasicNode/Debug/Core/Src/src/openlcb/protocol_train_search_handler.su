@@ -1,6 +1,0 @@
-../Core/Src/src/openlcb/protocol_train_search_handler.c:62:6:ProtocolTrainSearch_initialize	16	static
-../Core/Src/src/openlcb/protocol_train_search_handler.c:69:13:_does_address_match	72	static
-../Core/Src/src/openlcb/protocol_train_search_handler.c:148:13:_does_name_match	64	static
-../Core/Src/src/openlcb/protocol_train_search_handler.c:245:13:_does_train_match	32	static
-../Core/Src/src/openlcb/protocol_train_search_handler.c:306:6:ProtocolTrainSearch_handle_search_event	88	static
-../Core/Src/src/openlcb/protocol_train_search_handler.c:382:6:ProtocolTrainSearch_handle_search_no_match	80	static

@@ -76,6 +76,14 @@ cp ../../src/drivers/canbus/*.h ../../src/applications/stm32_cubeide/stm32f407_d
 cp ../../src/utilities/*.c ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/Core/Src/openlcb_c_lib/utilities/
 cp ../../src/utilities/*.h ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/Core/Src/openlcb_c_lib/utilities/
 
+echo "Updating: stm32_cubeide/stm32f407_discovery/BasicNodeBootloader"
+cp ../../src/openlcb/*.c ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNodeBootloader/Core/Src/openlcb_c_lib/openlcb/
+cp ../../src/openlcb/*.h ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNodeBootloader/Core/Src/openlcb_c_lib/openlcb/
+cp ../../src/drivers/canbus/*.c ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNodeBootloader/Core/Src/openlcb_c_lib/drivers/canbus/
+cp ../../src/drivers/canbus/*.h ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNodeBootloader/Core/Src/openlcb_c_lib/drivers/canbus/
+cp ../../src/utilities/*.c ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNodeBootloader/Core/Src/openlcb_c_lib/utilities/
+cp ../../src/utilities/*.h ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNodeBootloader/Core/Src/openlcb_c_lib/utilities/
+
 echo "Updating: NmraLccProjects/RPiPico"
 cp ../../src/openlcb/*.c ../../../NmraLccProjects/RPiPico/src/openlcb/
 cp ../../src/openlcb/*.h ../../../NmraLccProjects/RPiPico/src/openlcb/

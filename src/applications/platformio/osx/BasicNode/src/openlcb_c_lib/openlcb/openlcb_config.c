@@ -380,10 +380,12 @@ static void _build_config_mem_read(void) {
     _config_read.snip_load_user_description        = &ProtocolSnip_load_user_description;
 
     // Address space read handlers
+#ifndef OPENLCB_COMPILE_BOOTLOADER
     _config_read.read_request_config_definition_info = &ProtocolConfigMemReadHandler_read_request_config_definition_info;
     _config_read.read_request_config_mem = &ProtocolConfigMemReadHandler_read_request_config_mem;
     _config_read.read_request_acdi_manufacturer = &ProtocolConfigMemReadHandler_read_request_acdi_manufacturer;
     _config_read.read_request_acdi_user = &ProtocolConfigMemReadHandler_read_request_acdi_user;
+#endif
 
     // Train profile: FDI + Function Config Memory read request handlers
 #ifdef OPENLCB_COMPILE_TRAIN
@@ -405,8 +407,10 @@ static void _build_config_mem_write(void) {
     _config_write.load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message;
     _config_write.config_memory_write                     = _config->config_mem_write;
     _config_write.config_memory_read                      = _config->config_mem_read;
+#ifndef OPENLCB_COMPILE_BOOTLOADER
     _config_write.write_request_config_mem                = &ProtocolConfigMemWriteHandler_write_request_config_mem;
     _config_write.write_request_acdi_user                 =  &ProtocolConfigMemWriteHandler_write_request_acdi_user;
+#endif
 
     // Train profile: Function Config Memory write request handler
     // Note: FDI (0xFA) write is intentionally NOT wired -- it is read-only.
@@ -433,14 +437,18 @@ static void _build_config_mem_operations(void) {
 
     _config_ops.operations_request_options_cmd            = &ProtocolConfigMemOperationsHandler_request_options_cmd;
     _config_ops.operations_request_get_address_space_info = &ProtocolConfigMemOperationsHandler_request_get_address_space_info;
+#ifndef OPENLCB_COMPILE_BOOTLOADER
     _config_ops.operations_request_reserve_lock           = &ProtocolConfigMemOperationsHandler_request_reserve_lock;
+#endif
 
 #ifdef OPENLCB_COMPILE_FIRMWARE
     _config_ops.operations_request_freeze                 = _config->freeze;
     _config_ops.operations_request_unfreeze               = _config->unfreeze;
 #endif
     _config_ops.operations_request_reset_reboot           = _config->reboot;
+#ifndef OPENLCB_COMPILE_BOOTLOADER
     _config_ops.operations_request_factory_reset          = _config->factory_reset;
+#endif
 
 }
 
@@ -458,6 +466,7 @@ static void _build_datagram_handler(void) {
 
 #ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
 
+#ifndef OPENLCB_COMPILE_BOOTLOADER
     // Read address spaces -- standard library implementations
     _datagram.memory_read_space_config_description_info = &ProtocolConfigMemReadHandler_read_space_config_description_info;
     _datagram.memory_read_space_all                     = &ProtocolConfigMemReadHandler_read_space_all;
@@ -474,29 +483,35 @@ static void _build_datagram_handler(void) {
     // Write address spaces
     _datagram.memory_write_space_configuration_memory = &ProtocolConfigMemWriteHandler_write_space_config_memory;
     _datagram.memory_write_space_acdi_user            = &ProtocolConfigMemWriteHandler_write_space_acdi_user;
+#endif /* OPENLCB_COMPILE_BOOTLOADER */
+
 #ifdef OPENLCB_COMPILE_FIRMWARE
     _datagram.memory_write_space_firmware_upgrade     = &ProtocolConfigMemWriteHandler_write_space_firmware;
 #endif
 
+#ifndef OPENLCB_COMPILE_BOOTLOADER
     // Train profile: Function Config Memory write space
 #ifdef OPENLCB_COMPILE_TRAIN
     _datagram.memory_write_space_train_function_config_memory = &ProtocolConfigMemWriteHandler_write_space_train_function_config_memory;
 #endif
+#endif /* OPENLCB_COMPILE_BOOTLOADER */
 
-    // Operations commands
+    // Operations commands -- bootloader needs options, address space info, freeze/unfreeze, reset/reboot
     _datagram.memory_options_cmd                                = &ProtocolConfigMemOperationsHandler_options_cmd;
     _datagram.memory_options_reply                              = &ProtocolConfigMemOperationsHandler_options_reply;
     _datagram.memory_get_address_space_info                     = &ProtocolConfigMemOperationsHandler_get_address_space_info;
     _datagram.memory_get_address_space_info_reply_not_present   = &ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present;
     _datagram.memory_get_address_space_info_reply_present       = &ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present;
+    _datagram.memory_unfreeze                                   = &ProtocolConfigMemOperationsHandler_unfreeze;
+    _datagram.memory_freeze                                     = &ProtocolConfigMemOperationsHandler_freeze;
+    _datagram.memory_reset_reboot                               = &ProtocolConfigMemOperationsHandler_reset_reboot;
+
+#ifndef OPENLCB_COMPILE_BOOTLOADER
     _datagram.memory_reserve_lock                               = &ProtocolConfigMemOperationsHandler_reserve_lock;
     _datagram.memory_reserve_lock_reply                         = &ProtocolConfigMemOperationsHandler_reserve_lock_reply;
     _datagram.memory_get_unique_id                              = &ProtocolConfigMemOperationsHandler_get_unique_id;
     _datagram.memory_get_unique_id_reply                        = &ProtocolConfigMemOperationsHandler_get_unique_id_reply;
-    _datagram.memory_unfreeze                                   = &ProtocolConfigMemOperationsHandler_unfreeze;
-    _datagram.memory_freeze                                     = &ProtocolConfigMemOperationsHandler_freeze;
     _datagram.memory_update_complete                            = &ProtocolConfigMemOperationsHandler_update_complete;
-    _datagram.memory_reset_reboot                               = &ProtocolConfigMemOperationsHandler_reset_reboot;
     _datagram.memory_factory_reset                              = &ProtocolConfigMemOperationsHandler_factory_reset;
 
     // Write-under-mask address spaces
@@ -508,6 +523,7 @@ static void _build_datagram_handler(void) {
     _datagram.memory_write_under_mask_space_train_function_definition_info = &ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info;
     _datagram.memory_write_under_mask_space_train_function_config_memory = &ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory;
     _datagram.memory_write_under_mask_space_firmware_upgrade             = &ProtocolConfigMemWriteHandler_write_under_mask_space_firmware;
+#endif /* OPENLCB_COMPILE_BOOTLOADER */
 
 #endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
 
@@ -691,7 +707,9 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
 #endif
 
 #ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#ifndef OPENLCB_COMPILE_BOOTLOADER
     ProtocolConfigMemReadHandler_initialize(&_config_read);
+#endif
     ProtocolConfigMemWriteHandler_initialize(&_config_write);
     ProtocolConfigMemOperationsHandler_initialize(&_config_ops);
 #endif

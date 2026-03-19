@@ -61,6 +61,11 @@ set(LINK_LIBS ${LINK_LIBS}
 
 set(BOOTLOADER_CONFIG_DIR ${CMAKE_SOURCE_DIR}/user_config/bootloader)
 
+    # Bootloader library sources — mirrors what a real bootloader application
+    # would compile.  protocol_config_mem_read_handler.c is deliberately
+    # excluded: the bootloader never reads config memory spaces, and omitting
+    # it here catches any unguarded references at link time (the same failure
+    # mode a real CubeIDE / PlatformIO bootloader build would hit).
 set(BOOTLOADER_LIB_SOURCES
     ${ROOT_DIR}/src/openlcb/openlcb_application.c
     ${ROOT_DIR}/src/openlcb/openlcb_buffer_fifo.c
@@ -77,7 +82,7 @@ set(BOOTLOADER_LIB_SOURCES
     ${ROOT_DIR}/src/openlcb/protocol_event_transport.c
     ${ROOT_DIR}/src/openlcb/protocol_message_network.c
     ${ROOT_DIR}/src/openlcb/protocol_snip.c
-    ${ROOT_DIR}/src/openlcb/protocol_config_mem_read_handler.c
+    # protocol_config_mem_read_handler.c excluded — not used by bootloader
     ${ROOT_DIR}/src/openlcb/protocol_config_mem_write_handler.c
     ${ROOT_DIR}/src/openlcb/protocol_config_mem_operations_handler.c
     ${ROOT_DIR}/src/openlcb/protocol_broadcast_time_handler.c

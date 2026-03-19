@@ -1,9 +1,0 @@
-../Core/Src/src/drivers/canbus/can_rx_statemachine.c:58:6:CanRxStatemachine_initialize	16	static
-../Core/Src/src/drivers/canbus/can_rx_statemachine.c:65:17:_extract_can_mti_from_can_identifier	16	static
-../Core/Src/src/drivers/canbus/can_rx_statemachine.c:85:13:_handle_openlcb_msg_can_frame_addressed	16	static
-../Core/Src/src/drivers/canbus/can_rx_statemachine.c:181:13:_handle_openlcb_msg_can_frame_unaddressed	16	static
-../Core/Src/src/drivers/canbus/can_rx_statemachine.c:252:13:_handle_can_type_frame	24	static
-../Core/Src/src/drivers/canbus/can_rx_statemachine.c:397:13:_handle_can_control_frame_variable_field	16	static
-../Core/Src/src/drivers/canbus/can_rx_statemachine.c:464:13:_handle_can_control_frame_sequence_number	16	static
-../Core/Src/src/drivers/canbus/can_rx_statemachine.c:502:13:_handle_can_control_frame	16	static
-../Core/Src/src/drivers/canbus/can_rx_statemachine.c:522:6:CanRxStatemachine_incoming_can_driver_callback	16	static

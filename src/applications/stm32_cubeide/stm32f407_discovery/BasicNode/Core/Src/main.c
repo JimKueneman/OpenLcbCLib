@@ -142,6 +142,14 @@ static const openlcb_config_t openlcb_config = {
     .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
 };
 
+
+
+void ITM_Print(const char *str) {
+    while (*str) {
+        ITM_SendChar(*str++);
+    }
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -188,6 +196,8 @@ int main(void)
   OpenLcb_initialize(&openlcb_config);
 
   CallbacksOlcb_initialize();
+
+  ITM_Print("Creating Node\n");
 
   OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
