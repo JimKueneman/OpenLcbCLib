@@ -100,4 +100,12 @@ cp ../../src/drivers/canbus/*.h ../../../NmraLccProjects/RPiPico_Train/src/drive
 cp ../../src/utilities/*.c ../../../NmraLccProjects/RPiPico_Train/src/utilities/
 cp ../../src/utilities/*.h ../../../NmraLccProjects/RPiPico_Train/src/utilities/
 
+echo "Updating: LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon"
+cp ../../src/openlcb/*.c "../../../LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon/openlcb/"
+cp ../../src/openlcb/*.h "../../../LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon/openlcb/"
+cp ../../src/drivers/canbus/*.c "../../../LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon/drivers/canbus/"
+cp ../../src/drivers/canbus/*.h "../../../LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon/drivers/canbus/"
+cp ../../src/utilities/*.c "../../../LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon/utilities/"
+cp ../../src/utilities/*.h "../../../LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon/utilities/"
+
 echo "Done."

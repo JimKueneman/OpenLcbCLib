@@ -99,6 +99,9 @@ typedef struct {
         /** @brief Override reply delay (return N means 2^N seconds).  Optional (default 0). */
     uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
 
+        /** @brief Optional — Returns train state for the given node (DI for train module). */
+    train_state_t* (*get_train_state)(openlcb_node_t *openlcb_node);
+
 } interface_protocol_config_mem_read_handler_t;
 
 

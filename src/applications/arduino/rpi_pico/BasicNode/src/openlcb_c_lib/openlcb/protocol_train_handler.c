@@ -33,7 +33,7 @@
  * callbacks.
  *
  * @author Jim Kueneman
- * @date 9 Mar 2026
+ * @date 20 Mar 2026
  */
 
 #include "protocol_train_handler.h"
@@ -1476,6 +1476,23 @@ void ProtocolTrainHandler_handle_emergency_event(
             break;
 
     }
+
+}
+
+// =============================================================================
+// Emergency Event Classification
+//
+// Moved from openlcb_utilities.c so the linker only pulls in train code
+// when OPENLCB_COMPILE_TRAIN is defined.
+// =============================================================================
+
+    /** @brief Returns true if the event ID is one of the 4 well-known emergency events. */
+bool ProtocolTrainHandler_is_emergency_event(event_id_t event_id) {
+
+    return (event_id == EVENT_ID_EMERGENCY_OFF) ||
+           (event_id == EVENT_ID_CLEAR_EMERGENCY_OFF) ||
+           (event_id == EVENT_ID_EMERGENCY_STOP) ||
+           (event_id == EVENT_ID_CLEAR_EMERGENCY_STOP);
 
 }
 

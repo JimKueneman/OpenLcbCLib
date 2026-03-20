@@ -32,7 +32,7 @@
  * Identified event when a match is found.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 20 Mar 2026
  */
 
 #include "protocol_train_search_handler.h"
@@ -411,8 +411,8 @@ void ProtocolTrainSearch_handle_search_event(
 
     // Decode the search query
     uint8_t digits[6];
-    OpenLcbUtilities_extract_train_search_digits(event_id, digits);
-    uint8_t flags = OpenLcbUtilities_extract_train_search_flags(event_id);
+    ProtocolTrainSearch_extract_digits(event_id, digits);
+    uint8_t flags = ProtocolTrainSearch_extract_flags(event_id);
 
     // Reject searches with reserved nibbles or flag bits
     if (_has_reserved_values(digits, flags)) {
@@ -421,7 +421,7 @@ void ProtocolTrainSearch_handle_search_event(
 
     }
 
-    uint16_t search_address = OpenLcbUtilities_train_search_digits_to_address(digits);
+    uint16_t search_address = ProtocolTrainSearch_digits_to_address(digits);
 
     // Check if this train matches
     if (!_does_train_match(train_state, digits, search_address, flags)) {
@@ -477,8 +477,8 @@ void ProtocolTrainSearch_handle_search_no_match(
     }
 
     uint8_t digits[6];
-    OpenLcbUtilities_extract_train_search_digits(event_id, digits);
-    uint8_t flags = OpenLcbUtilities_extract_train_search_flags(event_id);
+    ProtocolTrainSearch_extract_digits(event_id, digits);
+    uint8_t flags = ProtocolTrainSearch_extract_flags(event_id);
 
     // Reject searches with reserved nibbles or flag bits
     if (_has_reserved_values(digits, flags)) {
@@ -499,7 +499,7 @@ void ProtocolTrainSearch_handle_search_no_match(
 
     }
 
-    uint16_t search_address = OpenLcbUtilities_train_search_digits_to_address(digits);
+    uint16_t search_address = ProtocolTrainSearch_digits_to_address(digits);
 
     openlcb_node_t *new_node = _interface->on_search_no_match(search_address, flags);
 
@@ -520,6 +520,122 @@ void ProtocolTrainSearch_handle_search_no_match(
         statemachine_info->outgoing_msg_info.valid = true;
 
     }
+
+}
+
+// =============================================================================
+// Train Search Event ID Utilities
+//
+// Moved from openlcb_utilities.c so the linker only pulls in train-search
+// code when OPENLCB_COMPILE_TRAIN and OPENLCB_COMPILE_TRAIN_SEARCH are defined.
+// =============================================================================
+
+    /** @brief Returns true if the event ID belongs to the train search space. */
+bool ProtocolTrainSearch_is_search_event(event_id_t event_id) {
+
+    return (event_id & TRAIN_SEARCH_MASK) == EVENT_TRAIN_SEARCH_SPACE;
+
+}
+
+    /** @brief Extracts 6 search-query nibbles from a train search event ID into digits[]. */
+void ProtocolTrainSearch_extract_digits(event_id_t event_id, uint8_t *digits) {
+
+    if (!digits) {
+
+        return;
+
+    }
+
+    // Bytes 4-6 contain 6 nibbles (bits 31-8)
+    // Byte 4 = bits 31-24: nibbles 0 and 1
+    // Byte 5 = bits 23-16: nibbles 2 and 3
+    // Byte 6 = bits 15-8:  nibbles 4 and 5
+
+    uint32_t lower = (uint32_t)(event_id & 0xFFFFFFFF);
+
+    digits[0] = (uint8_t)((lower >> 28) & 0x0F);
+    digits[1] = (uint8_t)((lower >> 24) & 0x0F);
+    digits[2] = (uint8_t)((lower >> 20) & 0x0F);
+    digits[3] = (uint8_t)((lower >> 16) & 0x0F);
+    digits[4] = (uint8_t)((lower >> 12) & 0x0F);
+    digits[5] = (uint8_t)((lower >> 8) & 0x0F);
+
+}
+
+    /** @brief Extracts the flags byte (byte 7) from a train search event ID. */
+uint8_t ProtocolTrainSearch_extract_flags(event_id_t event_id) {
+
+    return (uint8_t)(event_id & 0xFF);
+
+}
+
+    /** @brief Converts a 6-nibble digit array to a numeric DCC address, skipping leading 0xF nibbles. */
+uint16_t ProtocolTrainSearch_digits_to_address(const uint8_t *digits) {
+
+    if (!digits) {
+
+        return 0;
+
+    }
+
+    uint16_t address = 0;
+
+    for (int i = 0; i < 6; i++) {
+
+        if (digits[i] <= 9) {
+
+            address = address * 10 + digits[i];
+
+        }
+
+    }
+
+    return address;
+
+}
+
+    /** @brief Creates a train search event ID from a DCC address and flags byte. */
+event_id_t ProtocolTrainSearch_create_event_id(uint16_t address, uint8_t flags) {
+
+    // Encode address as decimal digits into 6 nibbles, right-justified, padded with 0xF
+    uint8_t digits[6];
+    int i;
+
+    for (i = 0; i < 6; i++) {
+
+        digits[i] = 0x0F;
+
+    }
+
+    // Fill from right to left with decimal digits
+    i = 5;
+    if (address == 0) {
+
+        digits[i] = 0;
+
+    } else {
+
+        while (address > 0 && i >= 0) {
+
+            digits[i] = (uint8_t)(address % 10);
+            address /= 10;
+            i--;
+
+        }
+
+    }
+
+    // Build the lower 4 bytes: 6 nibbles + flags byte
+    uint32_t lower = 0;
+    lower |= ((uint32_t)digits[0] << 28);
+    lower |= ((uint32_t)digits[1] << 24);
+    lower |= ((uint32_t)digits[2] << 20);
+    lower |= ((uint32_t)digits[3] << 16);
+    lower |= ((uint32_t)digits[4] << 12);
+    lower |= ((uint32_t)digits[5] << 8);
+    lower |= (uint32_t)flags;
+
+    return EVENT_TRAIN_SEARCH_SPACE | (event_id_t)lower;
 
 }
 

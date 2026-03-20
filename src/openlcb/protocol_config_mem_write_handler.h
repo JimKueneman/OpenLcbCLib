@@ -96,6 +96,9 @@ typedef struct {
         /** @brief Optional — Notifier fired when a train function changes via 0xF9 write. */
     void (*on_function_changed)(openlcb_node_t *openlcb_node, uint32_t fn_address, uint16_t fn_value);
 
+        /** @brief Optional — Returns train state for the given node (DI for train module). */
+    train_state_t* (*get_train_state)(openlcb_node_t *openlcb_node);
+
 } interface_protocol_config_mem_write_handler_t;
 
 #ifdef    __cplusplus

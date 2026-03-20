@@ -104,6 +104,9 @@ extern "C" {
         /** @brief OPTIONAL. Probe one listener alias for staleness. NULL if unused. Typical: CanMainStatemachine_handle_listener_verification. */
         bool (*handle_listener_verification)(void);
 
+        /** @brief OPTIONAL. Check one listener entry for alias staleness (round-robin). NULL if train support not compiled. Typical: ListenerAliasTable_check_one_verification. */
+        node_id_t (*listener_check_one_verification)(uint8_t current_tick);
+
         /** @brief OPTIONAL. Flush all cached listener aliases. NULL if train support not compiled. Typical: ListenerAliasTable_flush_aliases. */
         void (*listener_flush_aliases)(void);
 
@@ -225,6 +228,7 @@ extern "C" {
      * @brief Probes one listener alias for staleness and queues an AME if due.
      *
      * @details Exposed for unit testing. Normally called via the interface pointer.
+     * No-ops if listener_check_one_verification is NULL (train support not wired).
      *
      * @return true if a probe AME was queued, false if nothing to do.
      *

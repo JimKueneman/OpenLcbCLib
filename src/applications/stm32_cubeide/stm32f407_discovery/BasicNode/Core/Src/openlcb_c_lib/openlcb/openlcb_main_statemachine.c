@@ -751,7 +751,8 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
             event_id_t producer_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
 
             bool is_train_search = _interface->train_search_event_handler &&
-                                   OpenLcbUtilities_is_train_search_event(producer_event_id);
+                                   _interface->is_train_search_event &&
+                                   _interface->is_train_search_event(producer_event_id);
 
             if (is_train_search) {
 
@@ -813,10 +814,10 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
         case MTI_PRODUCER_IDENTIFIED_SET:
 
-            if (_interface->broadcast_time_event_handler && statemachine_info->openlcb_node->index == 0) {
+            if (_interface->broadcast_time_event_handler && _interface->is_broadcast_time_event && statemachine_info->openlcb_node->index == 0) {
 
                 event_id_t event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
-                if (OpenLcbUtilities_is_broadcast_time_event(event_id)) {
+                if (_interface->is_broadcast_time_event(event_id)) {
 
                     _interface->broadcast_time_event_handler(statemachine_info, event_id);
                     break;
@@ -887,9 +888,9 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
             event_id_t event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
 
-            if (_interface->broadcast_time_event_handler && statemachine_info->openlcb_node->index == 0) {
+            if (_interface->broadcast_time_event_handler && _interface->is_broadcast_time_event && statemachine_info->openlcb_node->index == 0) {
 
-                if (OpenLcbUtilities_is_broadcast_time_event(event_id)) {
+                if (_interface->is_broadcast_time_event(event_id)) {
 
                     _interface->broadcast_time_event_handler(statemachine_info, event_id);
 
@@ -900,9 +901,9 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
             }
 
             // Global Emergency event intercept -- check ALL train nodes
-            if (_interface->train_emergency_event_handler && statemachine_info->openlcb_node->train_state) {
+            if (_interface->train_emergency_event_handler && _interface->is_emergency_event && statemachine_info->openlcb_node->train_state) {
 
-                if (OpenLcbUtilities_is_emergency_event(event_id)) {
+                if (_interface->is_emergency_event(event_id)) {
 
                     _interface->train_emergency_event_handler(statemachine_info, event_id);
 

@@ -373,7 +373,8 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .handle_try_enumerate_next_node = &_handle_try_enumerate_next_node,
     .handle_listener_verification = &_handle_listener_verification,
     .listener_flush_aliases = &_mock_listener_flush_aliases,
-    .listener_set_alias = &_mock_listener_set_alias
+    .listener_set_alias = &_mock_listener_set_alias,
+    .listener_check_one_verification = &ListenerAliasTable_check_one_verification
 };
 
 /*******************************************************************************

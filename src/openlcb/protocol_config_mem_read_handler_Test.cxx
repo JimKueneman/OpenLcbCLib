@@ -582,7 +582,8 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .read_request_train_function_config_memory = &_read_request_train_config_memory,
 
     .config_memory_read = nullptr,
-    .delayed_reply_time = nullptr
+    .delayed_reply_time = nullptr,
+    .get_train_state = &OpenLcbApplicationTrain_get_state
 
 };
 
@@ -609,7 +610,8 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .read_request_train_function_config_memory = &_read_request_train_config_memory,
 
     .config_memory_read = &_config_memory_read,
-    .delayed_reply_time = nullptr
+    .delayed_reply_time = nullptr,
+    .get_train_state = &OpenLcbApplicationTrain_get_state
 
 };
 
@@ -636,7 +638,8 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .read_request_train_function_config_memory = &_read_request_train_config_memory,
 
     .config_memory_read = &_config_memory_read,
-    .delayed_reply_time = &_delayed_reply_time
+    .delayed_reply_time = &_delayed_reply_time,
+    .get_train_state = &OpenLcbApplicationTrain_get_state
 
 };
 

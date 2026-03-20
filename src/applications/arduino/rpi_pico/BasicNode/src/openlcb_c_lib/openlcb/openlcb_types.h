@@ -56,13 +56,26 @@
   #elif __has_include("../../../../openlcb_user_config.h")
   #include "../../../../openlcb_user_config.h"
   #else
-  #error "openlcb_user_config.h not found. Copy templates/typical/openlcb_user_config.h (or templates/bootloader/openlcb_user_config.h) to your project include path."
+  #error "openlcb_user_config.h not found. Copy openlcb_user_config.h/.c from templates/ to your project root, then add '.' to your compiler include dirs (MPLab: Project Properties -> xc16-gcc -> Preprocessing and messages -> C include dirs -> add '.')"
   #endif
 #else
-  // Compiler does not support __has_include (e.g. XC16).  Relies on the -I
-  // include path to find openlcb_user_config.h.  Add the directory containing
-  // the file to the compiler's include search path, for example:
-  //   -I"path/to/project_root"
+  // Compiler does not support __has_include (e.g. XC16).
+  //
+  // =========================================================================
+  // If the next line fails with "openlcb_user_config.h: No such file or directory":
+  //
+  //   1. Copy openlcb_user_config.h and openlcb_user_config.c from the
+  //      OpenLcbCLib templates/ folder into your project root directory
+  //      (the folder containing your .X project).
+  //
+  //   2. Add "." to your compiler include search path:
+  //      MPLab: Project Properties -> xc16-gcc -> Option categories:
+  //             Preprocessing and messages -> C include dirs -> add "."
+  //      Command line: add -I. to your CFLAGS
+  //
+  //   Note: -I does NOT search subdirectories. The "." must point to the
+  //   directory where openlcb_user_config.h is located.
+  // =========================================================================
   #include "openlcb_user_config.h"
 #endif
 

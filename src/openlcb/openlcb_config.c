@@ -32,7 +32,7 @@
  * Module_initialize() functions in the correct order.
  *
  * @author Jim Kueneman
- * @date 17 Mar 2026
+ * @date 20 Mar 2026
  */
 
 #include "openlcb_config.h"
@@ -391,6 +391,7 @@ static void _build_config_mem_read(void) {
 #ifdef OPENLCB_COMPILE_TRAIN
     _config_read.read_request_train_function_config_definition_info = &ProtocolConfigMemReadHandler_read_request_train_function_definition_info;
     _config_read.read_request_train_function_config_memory = &ProtocolConfigMemReadHandler_read_request_train_function_config_memory;
+    _config_read.get_train_state = &OpenLcbApplicationTrain_get_state;
 #endif
 
     // User extension
@@ -417,6 +418,7 @@ static void _build_config_mem_write(void) {
 #ifdef OPENLCB_COMPILE_TRAIN
     _config_write.write_request_train_function_config_memory = &ProtocolConfigMemWriteHandler_write_request_train_function_config_memory;
     _config_write.on_function_changed = _config->on_train_function_changed;
+    _config_write.get_train_state = &OpenLcbApplicationTrain_get_state;
 #endif
 
     // Firmware write (optional user callback)
@@ -601,6 +603,7 @@ static void _build_main_statemachine(void) {
 
 #ifdef OPENLCB_COMPILE_BROADCAST_TIME
     _main_sm.broadcast_time_event_handler = &ProtocolBroadcastTime_handle_time_event;
+    _main_sm.is_broadcast_time_event      = &ProtocolBroadcastTime_is_time_event;
 #endif
 
 #ifdef OPENLCB_COMPILE_DATAGRAMS
@@ -614,11 +617,13 @@ static void _build_main_statemachine(void) {
     _main_sm.train_control_command         = &ProtocolTrainHandler_handle_train_command;
     _main_sm.train_control_reply           = &ProtocolTrainHandler_handle_train_reply;
     _main_sm.train_emergency_event_handler = &ProtocolTrainHandler_handle_emergency_event;
+    _main_sm.is_emergency_event            = &ProtocolTrainHandler_is_emergency_event;
 #endif
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
     _main_sm.train_search_event_handler    = &ProtocolTrainSearch_handle_search_event;
     _main_sm.train_search_no_match_handler = &ProtocolTrainSearch_handle_search_no_match;
+    _main_sm.is_train_search_event         = &ProtocolTrainSearch_is_search_event;
 #endif
 
 }

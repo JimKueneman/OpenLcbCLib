@@ -47,7 +47,6 @@
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 #include "can_utilities.h"
-#include "alias_mapping_listener.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_utilities.h"
@@ -350,18 +349,26 @@ bool CanMainStatemachine_handle_try_enumerate_next_node(void) {
      * @brief Probes one listener alias for staleness and queues an AME if due.
      *
      * @details Algorithm:
-     * -# Call ListenerAliasTable_check_one_verification() with current tick
+     * -# Call _interface->listener_check_one_verification() with current tick
      * -# If non-zero node_id returned: get first node's alias, allocate a CAN
      *    buffer (with lock/unlock), build targeted AME, push to CAN FIFO
      *    (with lock/unlock)
      * -# Return true if an AME was queued, false otherwise
      *
+     * No-ops if listener_check_one_verification is NULL (train support not wired).
+     *
      * @return true if a probe AME was queued, false if nothing to do.
      */
 bool CanMainStatemachine_handle_listener_verification(void) {
 
+    if (!_interface->listener_check_one_verification) {
+
+        return false;
+
+    }
+
     node_id_t probe_id =
-            ListenerAliasTable_check_one_verification(_interface->get_current_tick());
+            _interface->listener_check_one_verification(_interface->get_current_tick());
 
     if (probe_id != 0) {
 

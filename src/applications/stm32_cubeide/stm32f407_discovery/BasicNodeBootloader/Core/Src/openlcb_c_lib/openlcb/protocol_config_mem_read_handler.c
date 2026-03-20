@@ -54,7 +54,6 @@
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
-#include "openlcb_application_train.h"
 
     /** @brief Stored callback interface pointer; set by _initialize(). */
 static interface_protocol_config_mem_read_handler_t *_interface;
@@ -260,7 +259,7 @@ void ProtocolConfigMemReadHandler_read_request_train_function_config_memory(open
 
     OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(statemachine_info, config_mem_read_request_info);
 
-    train_state_t *state = OpenLcbApplicationTrain_get_state(statemachine_info->openlcb_node);
+    train_state_t *state = (_interface->get_train_state) ? _interface->get_train_state(statemachine_info->openlcb_node) : (train_state_t*) 0;
 
     if (state) {
 

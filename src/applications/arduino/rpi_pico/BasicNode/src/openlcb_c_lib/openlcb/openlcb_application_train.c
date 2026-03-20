@@ -36,6 +36,8 @@
 
 #include "openlcb_application_train.h"
 
+#ifdef OPENLCB_COMPILE_TRAIN
+
 #include <stddef.h>
 #include <string.h>
 
@@ -807,3 +809,5 @@ uint8_t OpenLcbApplicationTrain_get_speed_steps(openlcb_node_t *openlcb_node) {
     return openlcb_node->train_state->speed_steps;
 
 }
+
+#endif /* OPENLCB_COMPILE_TRAIN */

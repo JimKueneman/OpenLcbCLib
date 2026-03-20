@@ -297,6 +297,58 @@ typedef struct {
         /** @brief Called for well-known emergency events; dispatched to every train node.  Optional. */
     void (*train_emergency_event_handler)(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
+    // =========================================================================
+    // Optional Event Classification Filters (NULL = skip filtering)
+    //
+    // These filters decouple the main state machine from protocol-specific
+    // event-ID knowledge (broadcast time, train search, emergency stop).
+    // Previously the state machine called OpenLcbUtilities_is_*() directly,
+    // which forced the linker to pull in those symbols — and their transitive
+    // dependencies — even for minimal builds such as the bootloader.  Routing
+    // the classification through DI lets the bootloader leave these NULL and
+    // link only what it needs, while full application builds wire in the real
+    // implementations via openlcb_config.c.
+    // =========================================================================
+
+        /**
+         * @brief Test whether an event ID falls in the broadcast time range.
+         *
+         * @details When non-NULL the main state machine calls this filter in the
+         *          MTI_PRODUCER_IDENTIFIED_SET and MTI_PC_EVENT_REPORT paths to
+         *          decide whether to route the event to @ref broadcast_time_event_handler.
+         *          When NULL the broadcast-time intercept is skipped entirely.
+         *
+         * @param event_id  The 64-bit event identifier to classify.
+         * @return true if @p event_id is a broadcast time event.
+         */
+    bool (*is_broadcast_time_event)(event_id_t event_id);
+
+        /**
+         * @brief Test whether an event ID is a train search request.
+         *
+         * @details When non-NULL the main state machine calls this filter in the
+         *          MTI_PRODUCER_IDENTIFY path to decide whether to route the event
+         *          to @ref train_search_event_handler.  When NULL the train-search
+         *          intercept is skipped entirely.
+         *
+         * @param event_id  The 64-bit event identifier to classify.
+         * @return true if @p event_id is a train search event.
+         */
+    bool (*is_train_search_event)(event_id_t event_id);
+
+        /**
+         * @brief Test whether an event ID is a well-known emergency event.
+         *
+         * @details When non-NULL the main state machine calls this filter in the
+         *          MTI_PC_EVENT_REPORT path to decide whether to route the event
+         *          to @ref train_emergency_event_handler.  When NULL the emergency
+         *          intercept is skipped entirely.
+         *
+         * @param event_id  The 64-bit event identifier to classify.
+         * @return true if @p event_id is an emergency event.
+         */
+    bool (*is_emergency_event)(event_id_t event_id);
+
 } interface_openlcb_main_statemachine_t;
 
 #ifdef __cplusplus

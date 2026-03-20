@@ -69,6 +69,9 @@
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
 #include "openlcb_buffer_fifo.h"
+#include "protocol_broadcast_time_handler.h"
+#include "protocol_train_search_handler.h"
+#include "protocol_train_handler.h"
 
 // ============================================================================
 // Test Control Variables
@@ -779,6 +782,11 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .train_search_event_handler = &_mock_train_search_event_handler,
     .train_search_no_match_handler = &_mock_train_search_no_match_handler,
     .train_emergency_event_handler = &_mock_train_emergency_event_handler,
+
+    // Event Classification Filters (DI — decouples statemachine from protocol-specific code)
+    .is_broadcast_time_event = &ProtocolBroadcastTime_is_time_event,
+    .is_train_search_event = &ProtocolTrainSearch_is_search_event,
+    .is_emergency_event = &ProtocolTrainHandler_is_emergency_event,
 
     // Optional Protocol Handlers - Datagram Rejected
     .load_datagram_rejected = &_mock_load_datagram_rejected,

@@ -42,7 +42,7 @@
  * Called from the main statemachine when a train protocol message is received.
  *
  * @author Jim Kueneman
- * @date 9 Mar 2026
+ * @date 20 Mar 2026
  *
  * @see openlcb_application_train.h - Layer 2 state and API
  */
@@ -186,6 +186,21 @@ extern "C" {
     extern void ProtocolTrainHandler_handle_emergency_event(
             openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
+    // =========================================================================
+    // Emergency Event Classification
+    //
+    // Moved from openlcb_utilities to this module so the linker only pulls in
+    // train code when OPENLCB_COMPILE_TRAIN is defined.
+    // =========================================================================
+
+        /**
+         * @brief Returns true if the event ID is one of the 4 well-known emergency events.
+         *
+         * @param event_id 64-bit @ref event_id_t to test.
+         *
+         * @return true if the event ID matches a well-known emergency event.
+         */
+    extern bool ProtocolTrainHandler_is_emergency_event(event_id_t event_id);
 
 #ifdef __cplusplus
 }
