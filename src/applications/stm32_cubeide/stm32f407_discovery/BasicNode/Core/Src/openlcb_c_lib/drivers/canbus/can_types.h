@@ -29,7 +29,7 @@
  * and macros only.
  *
  * @author Jim Kueneman
- * @date 18 Mar 2026
+ * @date 19 Mar 2026
  */
 
 #ifndef __DRIVERS_CANBUS_CAN_TYPES__
@@ -41,14 +41,24 @@
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_types.h"
 
-#if __has_include("can_user_config.h")
-#include "can_user_config.h"
-#elif __has_include("../../can_user_config.h")
-#include "../../can_user_config.h"
-#elif __has_include("../../../can_user_config.h")
-#include "../../../can_user_config.h"
+#ifdef __has_include
+  #if __has_include("can_user_config.h")
+  #include "can_user_config.h"
+  #elif __has_include("../../can_user_config.h")
+  #include "../../can_user_config.h"
+  #elif __has_include("../../../can_user_config.h")
+  #include "../../../can_user_config.h"
+  #elif __has_include("../../../../can_user_config.h")
+  #include "../../../../can_user_config.h"
+  #else
+  #error "can_user_config.h not found. Copy templates/canbus/can_user_config.h to your project include path."
+  #endif
 #else
-#error "can_user_config.h not found. Copy templates/canbus/can_user_config.h to your project include path."
+  // Compiler does not support __has_include (e.g. XC16).  Relies on the -I
+  // include path to find can_user_config.h.  Add the directory containing
+  // the file to the compiler's include search path, for example:
+  //   -I"path/to/project_root"
+  #include "can_user_config.h"
 #endif
 
 #ifdef __cplusplus

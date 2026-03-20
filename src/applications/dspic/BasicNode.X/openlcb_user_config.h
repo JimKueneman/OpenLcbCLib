@@ -75,12 +75,12 @@
 //   SNIP     (256 bytes each) -- SNIP replies and Events with Payload
 //   STREAM   (USER_DEFINED_STREAM_BUFFER_LEN bytes each) -- stream data transfer (future use)
 
-#define USER_DEFINED_BASIC_BUFFER_DEPTH              32     // must be >= 1; enforced by compiler
+#define USER_DEFINED_BASIC_BUFFER_DEPTH              16     // must be >= 1; enforced by compiler
 #define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4      // must be >= 1; enforced by compiler
 #define USER_DEFINED_SNIP_BUFFER_DEPTH               4      // must be >= 1; enforced by compiler
 #define USER_DEFINED_STREAM_BUFFER_DEPTH             1      // must be >= 1; enforced by compiler
 // Maximum bytes in a single stream data frame (future use).
-#define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
+#define USER_DEFINED_STREAM_BUFFER_LEN               1    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 
 // =============================================================================
 // Virtual Node Allocation
@@ -96,10 +96,10 @@
 // Maximum number of produced/consumed events per node, and how many event ID
 // ranges each node can handle.  Ranges are used by protocols like Train Search
 // that work with contiguous blocks of event IDs.
-#define USER_DEFINED_PRODUCER_COUNT                  64     // must be >= 1; enforced by compiler
-#define USER_DEFINED_PRODUCER_RANGE_COUNT            5      // must be >= 1; enforced by compiler
-#define USER_DEFINED_CONSUMER_COUNT                  64     // must be >= 1; enforced by compiler
-#define USER_DEFINED_CONSUMER_RANGE_COUNT            5      // must be >= 1; enforced by compiler
+#define USER_DEFINED_PRODUCER_COUNT                  8     // must be >= 1; enforced by compiler
+#define USER_DEFINED_PRODUCER_RANGE_COUNT            1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_CONSUMER_COUNT                  8     // must be >= 1; enforced by compiler
+#define USER_DEFINED_CONSUMER_RANGE_COUNT            1      // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Configuration Memory (requires OPENLCB_COMPILE_MEMORY_CONFIGURATION)
@@ -115,8 +115,8 @@
 // description immediately after at byte 62:
 //   63 = LEN_SNIP_USER_NAME_BUFFER (63)
 
-#define USER_DEFINED_CDI_LENGTH                      20000  // must be >= 1; enforced by compiler
-#define USER_DEFINED_FDI_LENGTH                      1000   // must be >= 1; enforced by compiler; overridden to 1 if OPENLCB_COMPILE_TRAIN is not defined
+#define USER_DEFINED_CDI_LENGTH                      2000  // must be >= 1; enforced by compiler
+#define USER_DEFINED_FDI_LENGTH                      1     // must be >= 1; enforced by compiler; overridden to 1 if OPENLCB_COMPILE_TRAIN is not defined
 
 // =============================================================================
 // Train Protocol (requires OPENLCB_COMPILE_TRAIN)
@@ -126,9 +126,9 @@
 // MAX_LISTENERS_PER_TRAIN -- max consist members (listener slots) per train
 // MAX_TRAIN_FUNCTIONS     -- number of DCC function outputs: 29 = F0 through F28
 
-#define USER_DEFINED_TRAIN_NODE_COUNT                4      // must be >= 1; enforced by compiler
-#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         6      // must be >= 1; enforced by compiler
-#define USER_DEFINED_MAX_TRAIN_FUNCTIONS             29     // must be >= 1; enforced by compiler
+#define USER_DEFINED_TRAIN_NODE_COUNT                1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         1      // must be >= 1; enforced by compiler
+#define USER_DEFINED_MAX_TRAIN_FUNCTIONS             1     // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Listener Alias Verification (requires OPENLCB_COMPILE_TRAIN)

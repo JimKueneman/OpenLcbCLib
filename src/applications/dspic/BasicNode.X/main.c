@@ -29,7 +29,7 @@
  *  main
  *
  * @author Jim Kueneman
- * @date 4 April 2025
+ * @date 19 Mar 2026
  */
 
 // DSPIC33EP512GP504 Configuration Bit Settings
@@ -67,10 +67,6 @@
 #pragma config GWRP = OFF // General Segment Write-Protect bit (General Segment may be written)
 #pragma config GCP = OFF  // General Segment Code-Protect bit (General Segment Code protect is Disabled)
 
-// Output so write to the latch
-#define _25AAxxx_CS _LATB4
-#define _25AAxxx_CS_TRIS _TRISB4
-
 #define TEST_PIN_1401_TRIS _TRISA11
 #define TEST_PIN_1401 _RA11
 
@@ -93,25 +89,46 @@
 #include "string.h"
 #include "stdlib.h"
 
-#include "application_drivers/drivers.h"
-#include "../dsPIC_Common/ecan1_helper.h"
-#include "node_parameters.h"
-#include "application_drivers/dependency_injection.h"
-#include "application_drivers/dependency_injection_canbus.h"
+#include "src/application_drivers/dspic33_drivers.h"
+#include "src/application_drivers/dspic33_can_drivers.h"
+#include "openlcb_user_config.h"
+#include "src/application_callbacks/callbacks_can.h"
+#include "src/application_callbacks/callbacks_olcb.h"
+#include "src/application_callbacks/callbacks_config_mem.h"
 
-#include "application_drivers/dependency_injectors.h"
-
-#include "openlcb_c_lib/drivers/canbus/can_main_statemachine.h"
-
-#include "openlcb_c_lib/openlcb/openlcb_node.h"
-#include "openlcb_c_lib/openlcb/openlcb_main_statemachine.h"
-#include "openlcb_c_lib/openlcb/openlcb_login_statemachine.h"
+#include "src/openlcb_c_lib/drivers/canbus/can_config.h"
+#include "src/openlcb_c_lib/openlcb/openlcb_config.h"
 
 #define NODE_ID 0x0501010107AA
 
-static uint16_t count = 0;
+static const can_config_t can_config = {
 
-void _initialize_io_early_for_test(void)
+    .transmit_raw_can_frame  = &Dspic33CanDriver_transmit_can_frame,
+    .is_tx_buffer_clear      = &Dspic33CanDriver_is_can_tx_buffer_clear,
+    .lock_shared_resources   = &BasicNodeDrivers_lock_shared_resources,
+    .unlock_shared_resources = &BasicNodeDrivers_unlock_shared_resources,
+    .on_rx                   = &CallbacksCan_on_rx,
+    .on_tx                   = &CallbacksCan_on_tx,
+    .on_alias_change         = &CallbacksCan_on_alias_change,
+
+};
+
+static const openlcb_config_t openlcb_config = {
+
+    .lock_shared_resources   = &BasicNodeDrivers_lock_shared_resources,
+    .unlock_shared_resources = &BasicNodeDrivers_unlock_shared_resources,
+    .config_mem_read         = &BasicNodeDrivers_config_mem_read,
+    .config_mem_write        = &BasicNodeDrivers_config_mem_write,
+    .reboot                  = &BasicNodeDrivers_reboot,
+    .factory_reset           = &CallbacksConfigMem_factory_reset,
+    .freeze                  = &CallbacksConfigMem_freeze,
+    .unfreeze                = &CallbacksConfigMem_unfreeze,
+    .firmware_write          = &CallbacksConfigMem_write_firmware,
+    .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
+
+};
+
+static void _initialize_io_early_for_test(void)
 {
 
     ANSELA = 0x00; // Convert all I/O pins to digital
@@ -125,23 +142,7 @@ void _initialize_io_early_for_test(void)
     TEST_PIN_1402_TRIS = 0;
     TEST_PIN_1403_TRIS = 0;
     TEST_PIN_1404_TRIS = 0;
-}
 
-void _on_100ms_timer_callback(void)
-{
-
-    // Calls back every 100ms... don't do anything crazy here as it is in the context of the interrupt
-
-    count++;
-
-    if (count > 10)
-    {
-
-        count = 0;
-
-        LED_BLUE = 0;
-        LED_YELLOW = 0;
-    }
 }
 
 int main(void)
@@ -149,25 +150,25 @@ int main(void)
 
     _initialize_io_early_for_test();
 
-    Ecan1Helper_initialize();
+    CallbacksOlcb_initialize();
+
+    Dspic33CanDriver_initialize();
     BasicNodeDrivers_initialize();
 
-    DependencyInjectionCanBus_initialize();
-    DependencyInjection_initialize();
-    DependencyInjectors_initialize();
+    CanConfig_initialize(&can_config);
+    OpenLcb_initialize(&openlcb_config);
 
     printf("MCU Initialized\n");
 
-    OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+    OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
     printf("Node Allocated\n");
 
     while (1)
     {
 
-        // Run the main Openlcb/LCC engine
-        CanMainStateMachine_run();
-        OpenLcbLoginMainStatemachine_run();
-        OpenLcbMainStatemachine_run();
+        OpenLcb_run();
+
     }
+
 }

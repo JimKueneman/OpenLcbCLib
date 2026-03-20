@@ -1,4 +1,3 @@
-
 /** \copyright
  * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
@@ -25,59 +24,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file dependency_injectors.h
+ * @file dspic33_can_drivers.h
  *
+ * CAN hardware interface for dsPIC33 ECAN module.  Provides the platform-
+ * specific transmit, receive, and initialization functions that the
+ * OpenLcbCLib CAN state machine calls through function pointers.
  *
  * @author Jim Kueneman
- * @date 16 Nov 2025
+ * @date 19 Mar 2026
  */
 
-// This is a guard condition so that contents of this file are not included
-// more than once.
-#ifndef __DEPENDENCY_INJECTORS__
-#define __DEPENDENCY_INJECTORS__
+#ifndef __DSPIC33_CAN_DRIVERS__
+#define __DSPIC33_CAN_DRIVERS__
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
-
-#include "xc.h"
 
 #include "../openlcb_c_lib/openlcb/openlcb_types.h"
 #include "../openlcb_c_lib/drivers/canbus/can_types.h"
-#include "../openlcb_c_lib/openlcb/openlcb_gridconnect.h"
-
-#define LED_BLUE_TRIS _TRISA7
-#define LED_BLUE _LATA7
-
-#define LED_YELLOW_TRIS _TRISC5
-#define LED_YELLOW _LATC5
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
-    extern void DependencyInjectors_initialize(void);
+    extern void Dspic33CanDriver_initialize(void);
 
-    extern void DependencyInjectors_on_100ms_timer_callback(void);
+    extern bool Dspic33CanDriver_is_can_tx_buffer_clear(void);
 
-    extern void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg);
+    extern void Dspic33CanDriver_pause_can_rx(void);
 
-    extern void DependencyInjectors_on_can_tx_callback(can_msg_t *can_msg);
+    extern void Dspic33CanDriver_resume_can_rx(void);
 
-    extern void DependencyInjectors_alias_change_callback(uint16_t new_alias, node_id_t node_id);
+    extern bool Dspic33CanDriver_transmit_can_frame(can_msg_t *msg);
 
-    extern void DependencyInjectors_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    extern void Dspic33CanDriver_c1_interrupt_handler(void);
 
-    extern void DependencyInjectors_write_firmware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
-    
-    extern void DependencyInjectors_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-    
-    extern void DependencyInjectors_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-    
+    extern uint8_t Dspic33CanDriver_get_max_can_fifo_depth(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __DEPENDENCY_INJECTORS__ */
+#endif /* __DSPIC33_CAN_DRIVERS__ */

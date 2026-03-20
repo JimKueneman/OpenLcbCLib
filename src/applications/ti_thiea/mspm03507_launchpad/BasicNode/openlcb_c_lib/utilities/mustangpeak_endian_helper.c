@@ -69,7 +69,7 @@ uint8_t swap_endian8(uint8_t x) {
      */
 uint16_t swap_endian16(uint16_t x) {
 
-#if defined(__GNUC__) || defined(__clang__)
+#if (defined(__GNUC__) || defined(__clang__)) && !defined(__XC16__)
 #if defined(__has_builtin)
 #if __has_builtin(__builtin_bswap16)
     return __builtin_bswap16(x);
@@ -98,7 +98,7 @@ uint16_t swap_endian16(uint16_t x) {
      */
 uint32_t swap_endian32(uint32_t x) {
 
-#if defined(__GNUC__) || defined(__clang__)
+#if (defined(__GNUC__) || defined(__clang__)) && !defined(__XC16__)
     return __builtin_bswap32(x);
 #else
     return ((x & 0x000000FFU) << 24) |
@@ -124,7 +124,7 @@ uint32_t swap_endian32(uint32_t x) {
      */
 uint64_t swap_endian64(uint64_t x) {
 
-#if defined(__GNUC__) || defined(__clang__)
+#if (defined(__GNUC__) || defined(__clang__)) && !defined(__XC16__)
     return __builtin_bswap64(x);
 #else
     return ((x & 0x00000000000000FFULL) << 56) |

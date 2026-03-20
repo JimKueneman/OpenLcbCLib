@@ -4,67 +4,85 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <logicalFolder name="OpenLcb_Basic_Node.X"
-                     displayName="BasicNode.X"
-                     projectFiles="true">
+      <logicalFolder name="BasicNode.X" displayName="BasicNode.X" projectFiles="true">
         <logicalFolder name="debug" displayName="debug" projectFiles="true">
           <logicalFolder name="default" displayName="default" projectFiles="true">
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="dist" displayName="dist" projectFiles="true">
         </logicalFolder>
-        <itemPath>node_parameters.h</itemPath>
-        <itemPath>drivers.h</itemPath>
-        <itemPath>uart_handler.h</itemPath>
-        <itemPath>traps.h</itemPath>
-        <itemPath>common_debug_helper.h</itemPath>
-        <itemPath>dependency_injection.h</itemPath>
-        <itemPath>dependency_injectors.h</itemPath>
-        <itemPath>common_loader_app.h</itemPath>
-        <itemPath>dependency_injection_canbus.h</itemPath>
-        <itemPath>dependency_injection_defines.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
-        <logicalFolder name="canbus" displayName="canbus" projectFiles="true">
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_rx_statemachine.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/alias_mappings.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_utilities.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_login_statemachine.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_types.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_tx_statemachine.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_buffer_store.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_buffer_fifo.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_tx_message_handler.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_main_statemachine.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_rx_message_handler.h</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_login_message_handler.h</itemPath>
+        <logicalFolder name="src" displayName="src" projectFiles="true">
+          <logicalFolder name="application_callbacks"
+                         displayName="application_callbacks"
+                         projectFiles="true">
+            <itemPath>src/application_callbacks/callbacks_config_mem.h</itemPath>
+            <itemPath>src/application_callbacks/callbacks_can.h</itemPath>
+            <itemPath>src/application_callbacks/callbacks_olcb.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="application_drivers"
+                         displayName="application_drivers"
+                         projectFiles="true">
+            <itemPath>src/application_drivers/dspic33_can_drivers.h</itemPath>
+            <itemPath>src/application_drivers/dspic33_drivers.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="openlcb_c_lib"
+                         displayName="openlcb_c_lib"
+                         projectFiles="true">
+            <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+              <logicalFolder name="canbus" displayName="canbus" projectFiles="true">
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/alias_mappings.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_utilities.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_login_statemachine.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_types.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_tx_statemachine.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_buffer_store.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/alias_mapping_listener.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_buffer_fifo.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_tx_message_handler.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_main_statemachine.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_config.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_rx_message_handler.h</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_login_message_handler.h</itemPath>
+              </logicalFolder>
+            </logicalFolder>
+            <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_snip.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_datagram_handler.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_event_transport.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_buffer_list.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_config_mem_read_handler.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_types.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_utilities.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_float16.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_login_statemachine.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_main_statemachine.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_gridconnect.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_application.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_application_broadcast_time.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_login_statemachine_handler.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_config.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_message_network.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_train_handler.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_application_train.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_buffer_fifo.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_train_search_handler.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_config_mem_operations_handler.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_node.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_defines.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_buffer_store.h</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_broadcast_time_handler.h</itemPath>
+            </logicalFolder>
+            <logicalFolder name="utilities" displayName="utilities" projectFiles="true">
+              <itemPath>src/openlcb_c_lib/utilities/mustangpeak_string_helper.h</itemPath>
+              <itemPath>src/openlcb_c_lib/utilities/mustangpeak_endian_helper.h</itemPath>
+            </logicalFolder>
+          </logicalFolder>
         </logicalFolder>
-      </logicalFolder>
-      <logicalFolder name="dsPIC_Common"
-                     displayName="dsPIC_Common"
-                     projectFiles="true">
-        <itemPath>../dsPIC_Common/ecan1_helper.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
-        <itemPath>../openlcb_c_lib/openlcb/protocol_snip.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_datagram_handler.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_event_transport.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_list.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_types.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_utilities.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_main_statemachine.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_gridconnect.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_application.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_message_network.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_fifo.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_node.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_defines.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_store.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_login_statemachine.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_login_statemachine_handler.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_operations_handler.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_read_handler.h</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_write_handler.h</itemPath>
+        <itemPath>openlcb_user_config.h</itemPath>
+        <itemPath>can_user_config.h</itemPath>
+        <itemPath>traps.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -79,62 +97,87 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <logicalFolder name="OpenLcb_Basic_Node.X"
-                     displayName="BasicNode.X"
-                     projectFiles="true">
-        <itemPath>main.c</itemPath>
-        <itemPath>drivers.c</itemPath>
-        <itemPath>node_parameters.c</itemPath>
-        <itemPath>uart_handler.c</itemPath>
-        <itemPath>traps.c</itemPath>
-        <itemPath>common_debug_helper.c</itemPath>
-        <itemPath>dependency_injection.c</itemPath>
-        <itemPath>dependency_injectors.c</itemPath>
-        <itemPath>dependency_injection_canbus.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
-        <logicalFolder name="canbus" displayName="canbus" projectFiles="true">
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_tx_message_handler.c</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_buffer_fifo.c</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_main_statemachine.c</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_login_message_handler.c</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_rx_message_handler.c</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_utilities.c</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/alias_mappings.c</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_rx_statemachine.c</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_login_statemachine.c</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_tx_statemachine.c</itemPath>
-          <itemPath>../openlcb_c_lib/drivers/canbus/can_buffer_store.c</itemPath>
+      <logicalFolder name="BasicNode.X" displayName="BasicNode.X" projectFiles="true">
+        <logicalFolder name="debug" displayName="debug" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
+          </logicalFolder>
         </logicalFolder>
-      </logicalFolder>
-      <logicalFolder name="dsPIC_Common"
-                     displayName="dsPIC_Common"
-                     projectFiles="true">
-        <itemPath>../dsPIC_Common/ecan1_helper.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_fifo.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_node.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_store.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_utilities.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_event_transport.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_buffer_list.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_snip.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_datagram_handler.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_gridconnect.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_main_statemachine.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_message_network.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_application.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_login_statemachine.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/openlcb_login_statemachine_handler.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_operations_handler.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_read_handler.c</itemPath>
-        <itemPath>../openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c</itemPath>
+        <logicalFolder name="dist" displayName="dist" projectFiles="true">
+        </logicalFolder>
+        <logicalFolder name="src" displayName="src" projectFiles="true">
+          <logicalFolder name="application_callbacks"
+                         displayName="application_callbacks"
+                         projectFiles="true">
+            <itemPath>src/application_callbacks/callbacks_config_mem.c</itemPath>
+            <itemPath>src/application_callbacks/callbacks_olcb.c</itemPath>
+            <itemPath>src/application_callbacks/callbacks_can.c</itemPath>
+          </logicalFolder>
+          <logicalFolder name="application_drivers"
+                         displayName="application_drivers"
+                         projectFiles="true">
+            <itemPath>src/application_drivers/dspic33_can_drivers.c</itemPath>
+            <itemPath>src/application_drivers/dspic33_drivers.c</itemPath>
+          </logicalFolder>
+          <logicalFolder name="openlcb_c_lib"
+                         displayName="openlcb_c_lib"
+                         projectFiles="true">
+            <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+              <logicalFolder name="canbus" displayName="canbus" projectFiles="true">
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_tx_message_handler.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_buffer_fifo.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/alias_mapping_listener.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_main_statemachine.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_config.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_rx_message_handler.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_utilities.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/alias_mappings.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_rx_statemachine.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_login_statemachine.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_tx_statemachine.c</itemPath>
+                <itemPath>src/openlcb_c_lib/drivers/canbus/can_buffer_store.c</itemPath>
+              </logicalFolder>
+            </logicalFolder>
+            <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_buffer_fifo.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_application_train.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_train_handler.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_config_mem_operations_handler.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_train_search_handler.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_node.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_broadcast_time_handler.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_buffer_store.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_login_statemachine.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_utilities.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_float16.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_event_transport.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_config_mem_read_handler.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_buffer_list.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_snip.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_datagram_handler.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_gridconnect.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_main_statemachine.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_config.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/protocol_message_network.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_application_broadcast_time.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_application.c</itemPath>
+              <itemPath>src/openlcb_c_lib/openlcb/openlcb_login_statemachine_handler.c</itemPath>
+            </logicalFolder>
+            <logicalFolder name="utilities" displayName="utilities" projectFiles="true">
+              <itemPath>src/openlcb_c_lib/utilities/mustangpeak_endian_helper.c</itemPath>
+              <itemPath>src/openlcb_c_lib/utilities/mustangpeak_string_helper.c</itemPath>
+            </logicalFolder>
+          </logicalFolder>
+        </logicalFolder>
+        <itemPath>openlcb_user_config.c</itemPath>
+        <itemPath>traps.c</itemPath>
+        <itemPath>main.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>..</Elem>
+    <Elem>.</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -181,7 +224,7 @@
       </makeCustomizationType>
       <C30>
         <property key="cast-align" value="false"/>
-        <property key="code-model" value="default"/>
+        <property key="code-model" value="large-code"/>
         <property key="const-model" value="default"/>
         <property key="data-model" value="default"/>
         <property key="disable-instruction-scheduling" value="false"/>
@@ -196,7 +239,7 @@
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="false"/>
         <property key="expand-pragma-config" value="false"/>
-        <property key="extra-include-directories" value=""/>
+        <property key="extra-include-directories" value="."/>
         <property key="isolate-each-function" value="false"/>
         <property key="keep-inline" value="false"/>
         <property key="oXC16gcc-align-arr" value="false"/>
@@ -282,7 +325,7 @@
         <property key="oXC16ld-nostdlib" value="false"/>
         <property key="oXC16ld-stackguard" value="16"/>
         <property key="preprocessor-macros" value=""/>
-        <property key="remove-unused-sections" value="false"/>
+        <property key="remove-unused-sections" value="true"/>
         <property key="report-memory-usage" value="true"/>
         <property key="secure-eeprom" value="no_eeprom"/>
         <property key="secure-flash" value="no_flash"/>
@@ -301,8 +344,7 @@
         <property key="generic-16-bit" value="false"/>
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
-        <property key="oXC16glb-macros"
-                  value="FCY=40000000;EXCLUDE_FIRMWARE_ADDRESS_SPACE;USER_DEFINED_CDI_LENGTH=1200;USER_DEFINED_FDI_LENGTH=0;USER_DEFINED_PRODUCER_COUNT=10;USER_DEFINED_CONSUMER_COUNT=10;USER_DEFINED_NODE_BUFFER_DEPTH=10;USER_DEFINED_SNIP_BUFFER_DEPTH=20;USER_DEFINED_DATAGRAM_BUFFER_DEPTH=20;USER_DEFINED_BASIC_BUFFER_DEPTH=50;USER_DEFINED_STREAM_BUFFER_DEPTH=2"/>
+        <property key="oXC16glb-macros" value="FCY=40000000"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>
@@ -665,6 +707,8 @@
         <property key="warningmessagebreakoptions.W10102_UNSUPPORTED_CLK_SOURCE"
                   value="report"/>
         <property key="warningmessagebreakoptions.W10103_UNSUPPORTED_RECEIVER_FILTER"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W10200_SERCOM_USART_ENABLE_PROTECTED"
                   value="report"/>
         <property key="warningmessagebreakoptions.W10301_NO_PORT_PINS_FOUND"
                   value="report"/>
@@ -1143,6 +1187,8 @@
         <property key="warningmessagebreakoptions.W10102_UNSUPPORTED_CLK_SOURCE"
                   value="report"/>
         <property key="warningmessagebreakoptions.W10103_UNSUPPORTED_RECEIVER_FILTER"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W10200_SERCOM_USART_ENABLE_PROTECTED"
                   value="report"/>
         <property key="warningmessagebreakoptions.W10301_NO_PORT_PINS_FOUND"
                   value="report"/>

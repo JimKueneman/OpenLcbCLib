@@ -61,12 +61,12 @@ cp ../../src/utilities/*.c ../../src/applications/ti_thiea/mspm03507_launchpad/B
 cp ../../src/utilities/*.h ../../src/applications/ti_thiea/mspm03507_launchpad/BasicNode/openlcb_c_lib/utilities/
 
 echo "Updating: dspic/BasicNode.X"
-cp ../../src/openlcb/*.c ../../src/applications/dspic/BasicNode.X/openlcb_c_lib/openlcb/
-cp ../../src/openlcb/*.h ../../src/applications/dspic/BasicNode.X/openlcb_c_lib/openlcb/
-cp ../../src/drivers/canbus/*.c ../../src/applications/dspic/BasicNode.X/openlcb_c_lib/drivers/canbus/
-cp ../../src/drivers/canbus/*.h ../../src/applications/dspic/BasicNode.X/openlcb_c_lib/drivers/canbus/
-cp ../../src/utilities/*.c ../../src/applications/dspic/BasicNode.X/openlcb_c_lib/utilities/
-cp ../../src/utilities/*.h ../../src/applications/dspic/BasicNode.X/openlcb_c_lib/utilities/
+cp ../../src/openlcb/*.c ../../src/applications/dspic/BasicNode.X/src/openlcb_c_lib/openlcb/
+cp ../../src/openlcb/*.h ../../src/applications/dspic/BasicNode.X/src/openlcb_c_lib/openlcb/
+cp ../../src/drivers/canbus/*.c ../../src/applications/dspic/BasicNode.X/src/openlcb_c_lib/drivers/canbus/
+cp ../../src/drivers/canbus/*.h ../../src/applications/dspic/BasicNode.X/src/openlcb_c_lib/drivers/canbus/
+cp ../../src/utilities/*.c ../../src/applications/dspic/BasicNode.X/src/openlcb_c_lib/utilities/
+cp ../../src/utilities/*.h ../../src/applications/dspic/BasicNode.X/src/openlcb_c_lib/utilities/
 
 echo "Updating: stm32_cubeide/stm32f407_discovery/BasicNode"
 cp ../../src/openlcb/*.c ../../src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/Core/Src/openlcb_c_lib/openlcb/

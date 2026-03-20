@@ -24,23 +24,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file node_parameters.c
+ * \file openlcb_user_config.c
  *
- * Definition of the node at the application level.  
+ * Definition of the node at the application level.
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 19 Mar 2026
  */
 
-#include "node_parameters.h"
+#include "openlcb_user_config.h"
 
-#include "openlcb_c_lib/openlcb/openlcb_defines.h"
-#include "openlcb_c_lib/openlcb/openlcb_types.h"
-
-
+#include "src/openlcb_c_lib/openlcb/openlcb_defines.h"
+#include "src/openlcb_c_lib/openlcb/openlcb_types.h"
 
 
-const node_parameters_t NodeParameters_main_node = {
+
+
+const node_parameters_t OpenLcbUserConfig_node_parameters = {
 
     // 1. snip
     .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
@@ -54,7 +54,6 @@ const node_parameters_t NodeParameters_main_node = {
     .protocol_support = (
     PSI_DATAGRAM |
     PSI_MEMORY_CONFIGURATION |
-    PSI_EVENT_EXCHANGE |
     PSI_EVENT_EXCHANGE |
     PSI_ABBREVIATED_DEFAULT_CDI |
     PSI_SIMPLE_NODE_INFORMATION |
@@ -131,7 +130,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_firmware.present = true,
     .address_space_firmware.low_address_valid = false, // assume the low address starts at 0
     .address_space_firmware.low_address = 0, // Firmware ALWAYS assumes it starts at 0
-    .address_space_firmware.highest_address = (0x0100 - 1), // Predefined in the Configuration Description Definition Spec
+    .address_space_firmware.highest_address = 0xFFFFFFFF, // Predefined in the Configuration Description Definition Spec
     .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware update address space",
 
@@ -181,5 +180,6 @@ const node_parameters_t NodeParameters_main_node = {
 
     // 15. fdi
     // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
+    .fdi = { 0x00 },
 
 };

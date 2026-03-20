@@ -46,14 +46,24 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#if __has_include("openlcb_user_config.h")
-#include "openlcb_user_config.h"
-#elif __has_include("../../openlcb_user_config.h")
-#include "../../openlcb_user_config.h"
-#elif __has_include("../../../openlcb_user_config.h")
-#include "../../../openlcb_user_config.h"
+#ifdef __has_include
+  #if __has_include("openlcb_user_config.h")
+  #include "openlcb_user_config.h"
+  #elif __has_include("../../openlcb_user_config.h")
+  #include "../../openlcb_user_config.h"
+  #elif __has_include("../../../openlcb_user_config.h")
+  #include "../../../openlcb_user_config.h"
+  #elif __has_include("../../../../openlcb_user_config.h")
+  #include "../../../../openlcb_user_config.h"
+  #else
+  #error "openlcb_user_config.h not found. Copy templates/typical/openlcb_user_config.h (or templates/bootloader/openlcb_user_config.h) to your project include path."
+  #endif
 #else
-#error "openlcb_user_config.h not found. Copy templates/typical/openlcb_user_config.h (or templates/bootloader/openlcb_user_config.h) to your project include path."
+  // Compiler does not support __has_include (e.g. XC16).  Relies on the -I
+  // include path to find openlcb_user_config.h.  Add the directory containing
+  // the file to the compiler's include search path, for example:
+  //   -I"path/to/project_root"
+  #include "openlcb_user_config.h"
 #endif
 
 #ifdef	__cplusplus

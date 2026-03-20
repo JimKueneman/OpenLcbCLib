@@ -85,6 +85,18 @@ Their content has been folded into active plans. Retained for historical referen
 
 ---
 
+## Hardware Regression Investigation (2026-03-19)
+
+ESP32/STM32/TI platforms stopped working after week of 2026-03-18 changes. Three separate fault case documents — to be consolidated once common root cause is identified.
+
+| File | Case | Symptom |
+|------|------|---------|
+| [fault_case_1_can_login_hang.md](fault_case_1_can_login_hang.md) | Case 1 | `OpenLcb_run()` blocks during CAN login (CID/RID frames) |
+| [fault_case_2_snip_hang_no_concurrent.md](fault_case_2_snip_hang_no_concurrent.md) | Case 2 | `OpenLcb_run()` blocks mid-SNIP TX (no concurrent incoming msg) |
+| [fault_case_3_snip_hang_psi_concurrent.md](fault_case_3_snip_hang_psi_concurrent.md) | Case 3 | `OpenLcb_run()` blocks mid-SNIP TX while PSI arrives concurrently |
+
+---
+
 ## Also in this folder
 
 - [todo.md](todo.md) — Current active task list (not an archive plan)

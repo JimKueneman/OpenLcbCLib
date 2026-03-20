@@ -75,7 +75,15 @@ Outstanding items in `OlcbChecker/ChecksToAdd.md` not yet implemented:
 
 ---
 
-### 8. Debug Broadcast Time OlcbChecker Failure
+### 8. CDI/FDI highest_address Should Use USER_DEFINED_CDI_LENGTH / USER_DEFINED_FDI_LENGTH
+
+**Issue:** In all demo and template `openlcb_user_config.c` files, the `address_space_configuration_definition.highest_address` and `address_space_train_function_definition_info.highest_address` are hardcoded byte counts (e.g. `(1098 - 1)`) instead of referencing `USER_DEFINED_CDI_LENGTH` or `USER_DEFINED_FDI_LENGTH` from the `.h` file. This means the CDI/FDI length must be maintained in two places — the `#define` and the struct initializer — which drift apart.
+
+**Scope:** Update all demo and template `openlcb_user_config.c` files to use `(USER_DEFINED_CDI_LENGTH - 1)` and `(USER_DEFINED_FDI_LENGTH - 1)` for the highest_address fields, or derive the value from the actual CDI byte array size.
+
+---
+
+### 9. Debug Broadcast Time OlcbChecker Failure
 
 **Issue:** The OlcbChecker Broadcast Time tests are failing. Root cause not yet investigated.
 

@@ -24,24 +24,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \turnoutboss_drivers.c
+ * @file dspic33_drivers.c
  *
- *  
+ * General platform drivers for the dsPIC33EP512MC506 BasicNode demo.
  *
  * @author Jim Kueneman
- * @date 4 Jan 2025
+ * @date 19 Mar 2026
  */
 
-#include "drivers.h"
+#include "dspic33_drivers.h"
+#include "dspic33_can_drivers.h"
 
 #include "xc.h"
 #include "stdio.h"  // printf
 #include <libpic30.h> // delay
 
-
-#include "../../dsPIC_Common/ecan1_helper.h"
-#include "../uart_handler.h"
-#include "../common_loader_app.h"
 #include "../openlcb_c_lib/openlcb/openlcb_config.h"
 
 void BasicNodeDrivers_initialize(void) {
@@ -79,60 +76,6 @@ void BasicNodeDrivers_initialize(void) {
     // UART Pin Mapping
     RPINR18bits.U1RXR = 119; // RPI119 UART RX (schematic naming is with respect to the FTDI cable so this is the uart_tx line)
     RPOR9bits.RP120R = _RPOUT_U1TX; // RP120  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
-
-    //UART_TX/RX auto-set by the PPS 
-    UART_CTS_TRIS = 0; // Output
-    UART_RTS_TRIS = 1; // Input
-    UART_CTS = 0; // Set to Clear to Send (low)
-
-    // Using default SPI 1 pins
-    SPI_CLK_TRIS = 0; // Output
-    SPI_CLK = 0;
-    SPI_SDO_TRIS = 0; // Output
-    SPI_SDO = 0;
-    SPI_SDI_TRIS = 1; // Input
-
-    // Setup the SPI 1 SFRs
-
-    IFS0bits.SPI1IF = 0; // Clear the Interrupt flag
-    IEC0bits.SPI1IE = 0; // Disable the interrupt
-
-
-    SPI1CON1bits.SPRE = 0b011; // ~8Mhz
-    SPI1CON1bits.PPRE = 0b11;
-
-    // 156k
-    //   SPI1CON1bits.SPRE = 0b100; // divide by 4
-    //   SPI1CON1bits.PPRE = 0b00; // divide by 64       Fcy/(PrimaryPrescale * SecondaryPrescale)
-
-    SPI1CON1bits.DISSCK = 0; // Internal serial clock is enabled
-    SPI1CON1bits.DISSDO = 0; // SDOx pin is controlled by the module
-    SPI1CON1bits.MODE16 = 0; // Communication is byte-wide (8 bits)
-    SPI1CON1bits.MSTEN = 1; // Master mode enabled
-    SPI1CON1bits.SMP = 0; // Input data is sampled at the middle of data output time
-    SPI1CON1bits.CKE = 1; // Serial output data changes on transition from Idle clock state to active clock state
-    SPI1CON1bits.CKP = 0; // Idle state for clock is a low level; active state is a high level
-    SPI1STATbits.SPIEN = 1; // Enable SPI module
-
-    // Setup UART 1 SFRs to 333,333 baud
-
-    U1MODEbits.STSEL = 0; // 1-Stop bit
-    U1MODEbits.PDSEL = 0; // No Parity, 8-Data bits
-    U1MODEbits.ABAUD = 0; // Auto-Baud disabled
-    U1MODEbits.BRGH = 1; //Speed mode 1 = High
-    U1BRG = BRGVAL_BRGH_H + BRG_OFFSET; // Baud Rate setting
-
-    U1STAbits.UTXISEL0 = 0; // Interrupt after one TX character is transmitted
-    U1STAbits.UTXISEL1 = 0;
-    IEC0bits.U1TXIE = 1; // Enable UART TX interrupt
-
-
-    IEC0bits.U1RXIE = 1; // Enable UART RX interrupt
-    U1STAbits.URXISEL0 = 0; // Interrupt after one RX character is received;
-    U1STAbits.URXISEL1 = 0;
-
-    U1MODEbits.UARTEN = 1; // Enable UART
-    U1STAbits.UTXEN = 1; // Enable UART TX .. must be after the overall UART Enable
 
     // Setup the 100 ms timer on Timer 2
 
@@ -200,7 +143,7 @@ void BasicNodeDrivers_lock_shared_resources(void) {
 
     T2CONbits.TON = 0; // Turn off 100ms Timer
     
-    Ecan1Helper_pause_can_rx();
+    Dspic33CanDriver_pause_can_rx();
 
 }
 
@@ -208,29 +151,7 @@ void BasicNodeDrivers_unlock_shared_resources(void) {
 
     T2CONbits.TON = 1; // Turn 0n 100ms Timer
     
-    Ecan1Helper_resume_can_rx();
-
-}
-
-void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
-
-    IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag
-
-}
-
-void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
-
-    IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
-
-    uint16_t value;
-
-    if (U1STAbits.URXDA == 1) {
-
-        value = U1RXREG; // read it so it does not fill and overflow
-
-        UartHandler_handle_rx(value);
-
-    }
+    Dspic33CanDriver_resume_can_rx();
 
 }
 
