@@ -96,7 +96,7 @@ void OpenLcbApplication_initialize(const interface_openlcb_application_t *interf
      */
 bool OpenLcbApplication_send_event_with_mti(openlcb_node_t *openlcb_node, event_id_t event_id, uint16_t mti) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     msg.payload = (openlcb_payload_t *)&payload;
@@ -362,7 +362,7 @@ bool OpenLcbApplication_register_producer_range(openlcb_node_t *openlcb_node, ev
      */
 bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *openlcb_node, event_id_t event_id) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     msg.payload = (openlcb_payload_t *) &payload;
@@ -414,7 +414,7 @@ bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *openlcb_node, event
      */
 bool OpenLcbApplication_send_teach_event(openlcb_node_t *openlcb_node, event_id_t event_id) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     msg.payload = (openlcb_payload_t *) &payload;
@@ -468,7 +468,7 @@ bool OpenLcbApplication_send_teach_event(openlcb_node_t *openlcb_node, event_id_
      */
 bool OpenLcbApplication_send_initialization_event(openlcb_node_t *openlcb_node) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     msg.payload = (openlcb_payload_t *) &payload;

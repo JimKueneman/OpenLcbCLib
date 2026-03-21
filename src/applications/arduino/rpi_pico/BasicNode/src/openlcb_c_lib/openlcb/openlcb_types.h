@@ -912,6 +912,20 @@
 
     } config_mem_write_request_info_t;
 
+        /** @brief Completion callback for firmware write operations.
+         *
+         * @details Passed to the user's firmware_write callback so application
+         * code can signal success or failure without knowing the reply datagram
+         * internals.  The library implementation loads the appropriate Write
+         * Reply OK or Write Reply Fail datagram and marks the outgoing message
+         * valid.
+         *
+         * @param statemachine_info            Context.
+         * @param config_mem_write_request_info Write request context.
+         * @param success                       true = write OK, false = write failed.
+         */
+    typedef void (*write_result_t)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, bool success);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

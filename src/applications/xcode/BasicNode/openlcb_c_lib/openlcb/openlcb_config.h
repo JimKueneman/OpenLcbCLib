@@ -278,10 +278,14 @@ typedef struct {
         /**
          * @brief Write firmware data during upgrade. REQUIRED when FIRMWARE enabled.
          *
+         * @details Call write_result when the write is complete to signal success
+         * or failure.  The library loads the correct Write Reply datagram.
+         *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_write_request_info @ref config_mem_write_request_info_t context
+         * @param write_result Completion callback — call with true (OK) or false (fail)
          */
-    void (*firmware_write)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
+    void (*firmware_write)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result);
 
 #endif /* OPENLCB_COMPILE_FIRMWARE */
 

@@ -222,12 +222,48 @@ static void _dispatch_write_request(openlcb_statemachine_info_t *statemachine_in
 
 }
 
+    /**
+     * @brief Completion callback passed to the user's firmware_write.
+     *
+     * @details Loads the appropriate Write Reply OK or Write Reply Fail
+     * datagram and marks the outgoing message valid.
+     */
+static void _write_result(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, bool success) {
+
+    if (success) {
+
+        OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
+
+    } else {
+
+        OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_TEMPORARY_TRANSFER_ERROR);
+
+    }
+
+    statemachine_info->outgoing_msg_info.valid = true;
+
+}
+
+    /**
+     * @brief Adapter that conforms to write_config_mem_space_func_t and
+     * forwards to the user's firmware_write with the _write_result callback.
+     */
+static void _firmware_write_wrapper(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+
+    if (_interface->write_request_firmware) {
+
+        _interface->write_request_firmware(statemachine_info, config_mem_write_request_info, _write_result);
+
+    }
+
+}
+
     /** @brief Dispatch Firmware (0xEF) write to two-phase handler. */
 void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = _interface->write_request_firmware;
+    config_mem_write_request_info.write_space_func = &_firmware_write_wrapper;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_firmware;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);

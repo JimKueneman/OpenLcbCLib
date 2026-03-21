@@ -271,22 +271,13 @@ static void _mock_write_datagram_rejected(openlcb_statemachine_info_t *statemach
 }
 
 static void _mock_firmware_write(openlcb_statemachine_info_t *statemachine_info,
-                                 config_mem_write_request_info_t *info) {
+                                 config_mem_write_request_info_t *info,
+                                 write_result_t write_result) {
 
     local_write_request_info = *info;
 
-    if (firmware_write_should_fail) {
+    write_result(statemachine_info, info, !firmware_write_should_fail);
 
-        OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(
-                statemachine_info, info, ERROR_TEMPORARY_TRANSFER_ERROR);
-
-    } else {
-
-        OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, info);
-
-    }
-
-    statemachine_info->outgoing_msg_info.valid = true;
     _update_called((void *) &_mock_firmware_write);
 
 }

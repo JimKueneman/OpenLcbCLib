@@ -271,7 +271,20 @@ switch (openlcb_msg->mti) {
 
 ~~~
 
-### Functions and Variable Formats and Naming 
+### Stack-Allocated OpenLCB Message Initialization
+
+Any `openlcb_msg_t` declared on the stack must be zero-initialized at the point of declaration using `= {0}`.  C does not zero local variables automatically; uninitialized state flag fields (e.g. `state.invalid`) will contain stack garbage and can cause messages to be silently dropped.
+
+~~~
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+~~~
+
+During style review, verify that no stack-allocated `openlcb_msg_t` is declared without `= {0}`.
+
+### Functions and Variable Formats and Naming
 
 ~~~
 

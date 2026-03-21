@@ -192,7 +192,7 @@ static void _send_heartbeat_request(train_state_t *state) {
 
     }
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     msg.payload = (openlcb_payload_t *) &payload;
@@ -250,7 +250,7 @@ static void _forward_estop_to_listeners(train_state_t *state) {
 
         train_listener_entry_t *entry = &state->listeners[i];
 
-        openlcb_msg_t msg;
+        openlcb_msg_t msg = {0};
         payload_basic_t payload;
 
         msg.payload = (openlcb_payload_t *) &payload;
@@ -426,7 +426,7 @@ static bool _prepare_train_command(openlcb_msg_t *msg, payload_basic_t *payload,
      */
 void OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint16_t speed) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
@@ -465,7 +465,7 @@ void OpenLcbApplicationTrain_send_set_function(
         node_id_t train_node_id,
         uint32_t fn_address, uint16_t fn_value) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
@@ -501,7 +501,7 @@ void OpenLcbApplicationTrain_send_set_function(
 void OpenLcbApplicationTrain_send_emergency_stop(
         openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
@@ -533,7 +533,7 @@ void OpenLcbApplicationTrain_send_emergency_stop(
 void OpenLcbApplicationTrain_send_query_speeds(
         openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
@@ -566,7 +566,7 @@ void OpenLcbApplicationTrain_send_query_speeds(
      */
 void OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
@@ -601,7 +601,7 @@ void OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, u
      */
 void OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
@@ -635,7 +635,7 @@ void OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node
      */
 void OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
@@ -668,7 +668,7 @@ void OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_nod
      */
 void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
-    openlcb_msg_t msg;
+    openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
