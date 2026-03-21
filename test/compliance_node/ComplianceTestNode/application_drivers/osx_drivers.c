@@ -180,13 +180,11 @@ void OSxDrivers_unlock_shared_resources(void) {
     _timer_pause = false;
 }
 
-void OSxDrivers_write_firmware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+void OSxDrivers_write_firmware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result) {
 
     printf("Firmware Write, buffer is in config_mem_write_request_info->writebuffer ");
 
-    OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
-
-    statemachine_info->outgoing_msg_info.valid = true;
+    write_result(statemachine_info, config_mem_write_request_info, true);
 }
 
 void OSxDrivers_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {

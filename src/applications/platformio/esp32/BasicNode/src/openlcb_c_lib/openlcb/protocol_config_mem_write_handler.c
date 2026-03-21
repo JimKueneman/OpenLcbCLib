@@ -263,7 +263,7 @@ void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_inf
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = &_firmware_write_wrapper;
+    config_mem_write_request_info.write_space_func = _interface->write_request_firmware ? &_firmware_write_wrapper : (void *) 0;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_firmware;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
