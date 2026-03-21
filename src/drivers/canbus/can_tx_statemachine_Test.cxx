@@ -284,10 +284,10 @@ bool compare_can_msg(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_si
 const interface_can_tx_statemachine_t interface_can_tx_statemachine = {
     .is_tx_buffer_empty = &_is_can_tx_buffer_empty,
     .handle_addressed_msg_frame = &_handle_addressed_msg_frame,
-    .handle_can_frame = &_handle_can_frame,
+    .handle_unaddressed_msg_frame = &_handle_unaddressed_msg_frame,
     .handle_datagram_frame = &_handle_datagram_frame,
     .handle_stream_frame = &_handle_stream_frame,
-    .handle_unaddressed_msg_frame = &_handle_unaddressed_msg_frame
+    .handle_can_frame = &_handle_can_frame
 };
 
 /*******************************************************************************
@@ -325,10 +325,10 @@ listener_alias_entry_t *_mock_listener_find_by_node_id(node_id_t node_id)
 const interface_can_tx_statemachine_t interface_can_tx_statemachine_with_listener = {
     .is_tx_buffer_empty = &_is_can_tx_buffer_empty,
     .handle_addressed_msg_frame = &_handle_addressed_msg_frame,
-    .handle_can_frame = &_handle_can_frame,
+    .handle_unaddressed_msg_frame = &_handle_unaddressed_msg_frame,
     .handle_datagram_frame = &_handle_datagram_frame,
     .handle_stream_frame = &_handle_stream_frame,
-    .handle_unaddressed_msg_frame = &_handle_unaddressed_msg_frame,
+    .handle_can_frame = &_handle_can_frame,
     .listener_find_by_node_id = &_mock_listener_find_by_node_id
 };
 

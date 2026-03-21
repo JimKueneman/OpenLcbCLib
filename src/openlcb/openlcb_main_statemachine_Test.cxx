@@ -751,11 +751,22 @@ bool _OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t 
  */
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
 
-    // Optional Protocol Handlers - SNIP
-    .snip_simple_node_info_request = &_ProtocolSnip_handle_simple_node_info_request,
-    .snip_simple_node_info_reply = &_ProtocolSnip_handle_simple_node_info_reply,
+    // Resource Management (REQUIRED)
+    .lock_shared_resources = &_ExampleDrivers_lock_shared_resources,
+    .unlock_shared_resources = &_ExampleDrivers_unlock_shared_resources,
+    .send_openlcb_msg = &_CanTxStatemachine_send_openlcb_message,
+    .get_current_tick = &_mock_get_current_tick,
 
-    // Optional Protocol Handlers - Message Network
+    // Node Enumeration (REQUIRED)
+    .openlcb_node_get_first = &_OpenLcbNode_get_first,
+    .openlcb_node_get_next = &_OpenLcbNode_get_next,
+    .openlcb_node_is_last = &_OpenLcbNode_is_last,
+    .openlcb_node_get_count = &_OpenLcbNode_get_count,
+
+    // Core Handlers (REQUIRED)
+    .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
+
+    // Message Network Protocol Handlers
     .message_network_initialization_complete = &_ProtocolMessageNetwork_initialization_complete,
     .message_network_initialization_complete_simple = &_ProtocolMessageNetwork_initialization_complete_simple,
     .message_network_verify_node_id_addressed = &_ProtocolMessageNetwork_handle_verify_node_id_addressed,
@@ -766,7 +777,20 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .message_network_protocol_support_inquiry = &_ProtocolMessageNetwork_handle_protocol_support_inquiry,
     .message_network_protocol_support_reply = &_ProtocolMessageNetwork_handle_protocol_support_reply,
 
-    // Optional Protocol Handlers - Event Transport
+    // Internal functions (exposed for unit testing)
+    .process_main_statemachine = _OpenLcbMainStatemachine_process_main_statemachine,
+    .does_node_process_msg = _OpenLcbMainStatemachine_does_node_process_msg,
+    .handle_outgoing_openlcb_message = &_OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
+    .handle_try_reenumerate = &_OpenLcbMainStatemachine_handle_try_reenumerate,
+    .handle_try_pop_next_incoming_openlcb_message = &_OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
+    .handle_try_enumerate_first_node = &_OpenLcbMainStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &_OpenLcbMainStatemachine_handle_try_enumerate_next_node,
+
+    // Optional - SNIP
+    .snip_simple_node_info_request = &_ProtocolSnip_handle_simple_node_info_request,
+    .snip_simple_node_info_reply = &_ProtocolSnip_handle_simple_node_info_reply,
+
+    // Optional - Event Transport
     .event_transport_consumer_identify = &_ProtocolEventTransport_handle_consumer_identify,
     .event_transport_consumer_range_identified = &_ProtocolEventTransport_handle_consumer_range_identified,
     .event_transport_consumer_identified_unknown = &_ProtocolEventTransport_handle_consumer_identified_unknown,
@@ -785,62 +809,39 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .event_transport_pc_report = &_ProtocolEventTransport_handle_pc_event_report,
     .event_transport_pc_report_with_payload = &_ProtocolEventTransport_handle_pc_event_report_with_payload,
 
-    // Optional Protocol Handlers - Broadcast Time
-    .broadcast_time_event_handler = &_ProtocolBroadcastTime_handle_time_event,
-
-    // Optional Protocol Handlers - Train Search & Emergency
-    .train_search_event_handler = &_mock_train_search_event_handler,
-    .train_search_no_match_handler = &_mock_train_search_no_match_handler,
-    .train_emergency_event_handler = &_mock_train_emergency_event_handler,
-
-    // Event Classification Filters (DI — decouples statemachine from protocol-specific code)
-    .is_broadcast_time_event = &ProtocolBroadcastTime_is_time_event,
-    .is_train_search_event = &ProtocolTrainSearch_is_search_event,
-    .is_emergency_event = &ProtocolTrainHandler_is_emergency_event,
-
-    // Optional Protocol Handlers - Datagram Rejected
-    .load_datagram_rejected = &_mock_load_datagram_rejected,
-
-    // Optional Protocol Handlers - Train
+    // Optional - Train
     .train_control_command = &_ProtocolTrainControl_command,
     .train_control_reply = &_ProtocolTrainControl_reply,
 
-    // Optional Protocol Handlers - Simple Train Node
+    // Optional - Simple Train Node
     .simple_train_node_ident_info_request = &_ProtocolSimpleTrainNodeIdentInfo_request,
     .simple_train_node_ident_info_reply = &_ProtocolSimpleTrainNodeIdentInfo_reply,
 
-    // Optional Protocol Handlers - Datagram
+    // Optional - Datagram
     .datagram = &_ProtocolDatagram_handle_datagram,
     .datagram_ok_reply = &_ProtocolDatagram_handle_datagram_ok_reply,
+    .load_datagram_rejected = &_mock_load_datagram_rejected,
     .datagram_rejected_reply = &_ProtocolDatagram_handle_datagram_rejected_reply,
 
-    // Optional Protocol Handlers - Stream
+    // Optional - Stream
     .stream_initiate_request = &_ProtocolStream_initiate_request,
     .stream_initiate_reply = &_ProtocolStream_initiate_reply,
     .stream_send_data = &_ProtocolStream_send_data,
     .stream_data_proceed = &_ProtocolStream_data_proceed,
     .stream_data_complete = &_ProtocolStream_data_complete,
 
-    // Required Functions
-    .lock_shared_resources = &_ExampleDrivers_lock_shared_resources,
-    .unlock_shared_resources = &_ExampleDrivers_unlock_shared_resources,
-    .send_openlcb_msg = &_CanTxStatemachine_send_openlcb_message,
-    .get_current_tick = &_mock_get_current_tick,
-    .openlcb_node_get_first = &_OpenLcbNode_get_first,
-    .openlcb_node_get_next = &_OpenLcbNode_get_next,
-    .openlcb_node_is_last = &_OpenLcbNode_is_last,
-    .openlcb_node_get_count = &_OpenLcbNode_get_count,
-    .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
+    // Optional - Broadcast Time
+    .broadcast_time_event_handler = &_ProtocolBroadcastTime_handle_time_event,
 
-    .handle_outgoing_openlcb_message = &_OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
-    .handle_try_reenumerate = &_OpenLcbMainStatemachine_handle_try_reenumerate,
-    .handle_try_enumerate_first_node = &_OpenLcbMainStatemachine_handle_try_enumerate_first_node,
-    .handle_try_enumerate_next_node = &_OpenLcbMainStatemachine_handle_try_enumerate_next_node,
-    .handle_try_pop_next_incoming_openlcb_message = &_OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
+    // Optional - Train Search & Emergency
+    .train_search_event_handler = &_mock_train_search_event_handler,
+    .train_search_no_match_handler = &_mock_train_search_no_match_handler,
+    .train_emergency_event_handler = &_mock_train_emergency_event_handler,
 
-    // Use internal default functions
-    .process_main_statemachine = _OpenLcbMainStatemachine_process_main_statemachine,
-    .does_node_process_msg = _OpenLcbMainStatemachine_does_node_process_msg
+    // Event Classification Filters
+    .is_broadcast_time_event = &ProtocolBroadcastTime_is_time_event,
+    .is_train_search_event = &ProtocolTrainSearch_is_search_event,
+    .is_emergency_event = &ProtocolTrainHandler_is_emergency_event
 };
 
 /**
@@ -849,10 +850,22 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
  */
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_null_handlers = {
 
-    // All Optional handlers set to NULL
-    .snip_simple_node_info_request = nullptr,
-    .snip_simple_node_info_reply = nullptr,
+    // Resource Management (REQUIRED)
+    .lock_shared_resources = &_ExampleDrivers_lock_shared_resources,
+    .unlock_shared_resources = &_ExampleDrivers_unlock_shared_resources,
+    .send_openlcb_msg = &_CanTxStatemachine_send_openlcb_message,
+    .get_current_tick = &_mock_get_current_tick,
 
+    // Node Enumeration (REQUIRED)
+    .openlcb_node_get_first = &_OpenLcbNode_get_first,
+    .openlcb_node_get_next = &_OpenLcbNode_get_next,
+    .openlcb_node_is_last = &_OpenLcbNode_is_last,
+    .openlcb_node_get_count = &_OpenLcbNode_get_count,
+
+    // Core Handlers (REQUIRED)
+    .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
+
+    // Message Network - all NULL
     .message_network_initialization_complete = nullptr,
     .message_network_initialization_complete_simple = nullptr,
     .message_network_verify_node_id_addressed = nullptr,
@@ -863,6 +876,20 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .message_network_protocol_support_inquiry = nullptr,
     .message_network_protocol_support_reply = nullptr,
 
+    // Internal functions
+    .process_main_statemachine = _OpenLcbMainStatemachine_process_main_statemachine,
+    .does_node_process_msg = _OpenLcbMainStatemachine_does_node_process_msg,
+    .handle_outgoing_openlcb_message = &_OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
+    .handle_try_reenumerate = &_OpenLcbMainStatemachine_handle_try_reenumerate,
+    .handle_try_pop_next_incoming_openlcb_message = &_OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
+    .handle_try_enumerate_first_node = &_OpenLcbMainStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &_OpenLcbMainStatemachine_handle_try_enumerate_next_node,
+
+    // SNIP - NULL
+    .snip_simple_node_info_request = nullptr,
+    .snip_simple_node_info_reply = nullptr,
+
+    // Event Transport - all NULL
     .event_transport_consumer_identify = nullptr,
     .event_transport_consumer_range_identified = nullptr,
     .event_transport_consumer_identified_unknown = nullptr,
@@ -881,42 +908,25 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .event_transport_pc_report = nullptr,
     .event_transport_pc_report_with_payload = nullptr,
 
+    // Train - NULL
     .train_control_command = nullptr,
     .train_control_reply = nullptr,
 
+    // Simple Train Node - NULL
     .simple_train_node_ident_info_request = nullptr,
     .simple_train_node_ident_info_reply = nullptr,
 
+    // Datagram - NULL
     .datagram = nullptr,
     .datagram_ok_reply = nullptr,
     .datagram_rejected_reply = nullptr,
 
+    // Stream - NULL
     .stream_initiate_request = nullptr,
     .stream_initiate_reply = nullptr,
     .stream_send_data = nullptr,
     .stream_data_proceed = nullptr,
-    .stream_data_complete = nullptr,
-
-    // Required functions (same as full interface)
-    .lock_shared_resources = &_ExampleDrivers_lock_shared_resources,
-    .unlock_shared_resources = &_ExampleDrivers_unlock_shared_resources,
-    .send_openlcb_msg = &_CanTxStatemachine_send_openlcb_message,
-    .get_current_tick = &_mock_get_current_tick,
-    .openlcb_node_get_first = &_OpenLcbNode_get_first,
-    .openlcb_node_get_next = &_OpenLcbNode_get_next,
-    .openlcb_node_is_last = &_OpenLcbNode_is_last,
-    .openlcb_node_get_count = &_OpenLcbNode_get_count,
-    .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
-
-    .handle_outgoing_openlcb_message = &_OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
-    .handle_try_reenumerate = &_OpenLcbMainStatemachine_handle_try_reenumerate,
-    .handle_try_enumerate_first_node = &_OpenLcbMainStatemachine_handle_try_enumerate_first_node,
-    .handle_try_enumerate_next_node = &_OpenLcbMainStatemachine_handle_try_enumerate_next_node,
-    .handle_try_pop_next_incoming_openlcb_message = &_OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
-
-    // Use internal default functions
-    .process_main_statemachine = _OpenLcbMainStatemachine_process_main_statemachine,
-    .does_node_process_msg = _OpenLcbMainStatemachine_does_node_process_msg
+    .stream_data_complete = nullptr
 };
 
 interface_openlcb_node_t interface_openlcb_node = {};

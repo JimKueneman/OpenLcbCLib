@@ -630,6 +630,7 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
+    .config_memory_write = &_config_memory_write,
 
     .write_request_config_definition_info = &_write_request_config_decscription_info,
     .write_request_all = &_write_request_all,
@@ -639,7 +640,6 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_train_function_config_definition_info = &_write_request_train_config_decscription_info,
     .write_request_train_function_config_memory = &_write_request_train_config_memory,
 
-    .config_memory_write = &_config_memory_write,
     .delayed_reply_time = nullptr,
     .get_train_state = &OpenLcbApplicationTrain_get_state
 
@@ -669,6 +669,7 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
+    .config_memory_write = &_config_memory_write,
 
     .write_request_config_definition_info = &_write_request_config_decscription_info,
     .write_request_all = &_write_request_all,
@@ -678,7 +679,6 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_train_function_config_definition_info = &_write_request_train_config_decscription_info,
     .write_request_train_function_config_memory = &_write_request_train_config_memory,
 
-    .config_memory_write = &_config_memory_write,
     .delayed_reply_time = &_delayed_reply_time,
     .get_train_state = &OpenLcbApplicationTrain_get_state
 
@@ -688,6 +688,7 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
+    .config_memory_write = nullptr,
 
     .write_request_config_definition_info = nullptr,
     .write_request_all = nullptr,
@@ -697,7 +698,6 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_train_function_config_definition_info = nullptr,
     .write_request_train_function_config_memory = nullptr,
 
-    .config_memory_write = nullptr,
     .delayed_reply_time = nullptr
 
 };

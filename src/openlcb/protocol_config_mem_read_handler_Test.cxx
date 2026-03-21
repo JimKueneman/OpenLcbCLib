@@ -601,15 +601,16 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
 
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
+    .config_memory_read = nullptr,
 
-    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
     .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
-    .snip_load_model = &ProtocolSnip_load_model,
     .snip_load_name = &ProtocolSnip_load_name,
+    .snip_load_model = &ProtocolSnip_load_model,
+    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
     .snip_load_software_version = &ProtocolSnip_load_software_version,
-    .snip_load_user_description = &ProtocolSnip_load_user_description,
-    .snip_load_user_name = &ProtocolSnip_load_user_name,
     .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
+    .snip_load_user_name = &ProtocolSnip_load_user_name,
+    .snip_load_user_description = &ProtocolSnip_load_user_description,
 
     .read_request_config_definition_info = &_read_request_config_decscription_info,
     .read_request_all = &_read_request_all,
@@ -619,7 +620,6 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .read_request_train_function_config_definition_info = &_read_request_train_config_decscription_info,
     .read_request_train_function_config_memory = &_read_request_train_config_memory,
 
-    .config_memory_read = nullptr,
     .delayed_reply_time = nullptr,
     .get_train_state = &OpenLcbApplicationTrain_get_state
 
@@ -629,15 +629,16 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
 
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
+    .config_memory_read = &_config_memory_read,
 
-    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
     .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
-    .snip_load_model = &ProtocolSnip_load_model,
     .snip_load_name = &ProtocolSnip_load_name,
+    .snip_load_model = &ProtocolSnip_load_model,
+    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
     .snip_load_software_version = &ProtocolSnip_load_software_version,
-    .snip_load_user_description = &ProtocolSnip_load_user_description,
-    .snip_load_user_name = &ProtocolSnip_load_user_name,
     .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
+    .snip_load_user_name = &ProtocolSnip_load_user_name,
+    .snip_load_user_description = &ProtocolSnip_load_user_description,
 
     .read_request_config_definition_info = &_read_request_config_decscription_info,
     .read_request_all = &_read_request_all,
@@ -647,7 +648,6 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .read_request_train_function_config_definition_info = &_read_request_train_config_decscription_info,
     .read_request_train_function_config_memory = &_read_request_train_config_memory,
 
-    .config_memory_read = &_config_memory_read,
     .delayed_reply_time = nullptr,
     .get_train_state = &OpenLcbApplicationTrain_get_state
 
@@ -657,15 +657,16 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
 
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
+    .config_memory_read = &_config_memory_read,
 
-    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
     .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
-    .snip_load_model = &ProtocolSnip_load_model,
     .snip_load_name = &ProtocolSnip_load_name,
+    .snip_load_model = &ProtocolSnip_load_model,
+    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
     .snip_load_software_version = &ProtocolSnip_load_software_version,
-    .snip_load_user_description = &ProtocolSnip_load_user_description,
-    .snip_load_user_name = &ProtocolSnip_load_user_name,
     .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
+    .snip_load_user_name = &ProtocolSnip_load_user_name,
+    .snip_load_user_description = &ProtocolSnip_load_user_description,
 
     .read_request_config_definition_info = &_read_request_config_decscription_info,
     .read_request_all = &_read_request_all,
@@ -675,7 +676,6 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .read_request_train_function_config_definition_info = &_read_request_train_config_decscription_info,
     .read_request_train_function_config_memory = &_read_request_train_config_memory,
 
-    .config_memory_read = &_config_memory_read,
     .delayed_reply_time = &_delayed_reply_time,
     .get_train_state = &OpenLcbApplicationTrain_get_state
 
@@ -685,15 +685,16 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
 
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
+    .config_memory_read = nullptr,
 
-    .snip_load_hardware_version = nullptr,
     .snip_load_manufacturer_version_id = nullptr,
-    .snip_load_model = nullptr,
     .snip_load_name = nullptr,
+    .snip_load_model = nullptr,
+    .snip_load_hardware_version = nullptr,
     .snip_load_software_version = nullptr,
-    .snip_load_user_description = nullptr,
-    .snip_load_user_name = nullptr,
     .snip_load_user_version_id = nullptr,
+    .snip_load_user_name = nullptr,
+    .snip_load_user_description = nullptr,
 
     .read_request_config_definition_info = nullptr,
     .read_request_all = nullptr,
@@ -703,7 +704,6 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .read_request_train_function_config_definition_info = nullptr,
     .read_request_train_function_config_memory = nullptr,
 
-    .config_memory_read = nullptr,
     .delayed_reply_time = nullptr
 
 };

@@ -388,16 +388,14 @@ bool _on_login_complete(openlcb_node_t *openlcb_node)
 
 const interface_openlcb_login_state_machine_t interface_openlcb_login_state_machine = {
 
+    .send_openlcb_msg = &_send_openlcb_msg,
+    .openlcb_node_get_first = &_openlcb_node_get_first,
+    .openlcb_node_get_next = &_openlcb_node_get_next,
     .load_initialization_complete = &_load_initialization_complete,
     .load_producer_events = &_load_producer_events,
     .load_consumer_events = &_load_consumer_events,
-
-    .send_openlcb_msg = &_send_openlcb_msg,
-
-    .openlcb_node_get_first = &_openlcb_node_get_first,
-    .openlcb_node_get_next = &_openlcb_node_get_next,
-    .openlcb_node_get_count = &_openlcb_node_get_count,
     .process_main_statemachine = &_process_main_statemachine,
+    .openlcb_node_get_count = &_openlcb_node_get_count,
     .process_login_statemachine = &_process_login_statemachine,
 
     // For test injection of run loop handlers
@@ -411,16 +409,14 @@ const interface_openlcb_login_state_machine_t interface_openlcb_login_state_mach
 
 const interface_openlcb_login_state_machine_t interface_with_login_complete = {
 
+    .send_openlcb_msg = &_send_openlcb_msg,
+    .openlcb_node_get_first = &_openlcb_node_get_first,
+    .openlcb_node_get_next = &_openlcb_node_get_next,
     .load_initialization_complete = &_load_initialization_complete,
     .load_producer_events = &_load_producer_events,
     .load_consumer_events = &_load_consumer_events,
-
-    .send_openlcb_msg = &_send_openlcb_msg,
-
-    .openlcb_node_get_first = &_openlcb_node_get_first,
-    .openlcb_node_get_next = &_openlcb_node_get_next,
-    .openlcb_node_get_count = &_openlcb_node_get_count,
     .process_main_statemachine = &_process_main_statemachine,
+    .openlcb_node_get_count = &_openlcb_node_get_count,
     .process_login_statemachine = &_process_login_statemachine,
 
     .handle_outgoing_openlcb_message = &_handle_outgoing_openlcb_message,
@@ -1653,16 +1649,14 @@ void _sibling_load_consumer_events(openlcb_login_statemachine_info_t *info)
      *  functions and real handle_outgoing (which triggers sibling dispatch). */
 const interface_openlcb_login_state_machine_t interface_sibling_dispatch = {
 
+    .send_openlcb_msg = &_counting_send_openlcb_msg,
+    .openlcb_node_get_first = &OpenLcbNode_get_first,
+    .openlcb_node_get_next = &OpenLcbNode_get_next,
     .load_initialization_complete = &_sibling_load_initialization_complete,
     .load_producer_events = &_sibling_load_producer_events,
     .load_consumer_events = &_sibling_load_consumer_events,
-
-    .send_openlcb_msg = &_counting_send_openlcb_msg,
-
-    .openlcb_node_get_first = &OpenLcbNode_get_first,
-    .openlcb_node_get_next = &OpenLcbNode_get_next,
-    .openlcb_node_get_count = &OpenLcbNode_get_count,
     .process_main_statemachine = &_tracking_process_main_statemachine,
+    .openlcb_node_get_count = &OpenLcbNode_get_count,
     .process_login_statemachine = &OpenLcbLoginStateMachine_process,
 
     .handle_outgoing_openlcb_message = &OpenLcbLoginStatemachine_handle_outgoing_openlcb_message,
