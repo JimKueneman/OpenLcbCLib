@@ -1,0 +1,12 @@
+../Core/Src/src/openlcb/protocol_message_network.c:58:6:ProtocolMessageNetwork_initialize	1
+../Core/Src/src/openlcb/protocol_message_network.c:65:13:_load_duplicate_node_id	2
+../Core/Src/src/openlcb/protocol_message_network.c:102:13:_load_verified_node_id	3
+../Core/Src/src/openlcb/protocol_message_network.c:141:6:ProtocolMessageNetwork_handle_initialization_complete	2
+../Core/Src/src/openlcb/protocol_message_network.c:156:6:ProtocolMessageNetwork_handle_initialization_complete_simple	2
+../Core/Src/src/openlcb/protocol_message_network.c:176:6:ProtocolMessageNetwork_handle_protocol_support_inquiry	2
+../Core/Src/src/openlcb/protocol_message_network.c:205:6:ProtocolMessageNetwork_handle_protocol_support_reply	1
+../Core/Src/src/openlcb/protocol_message_network.c:212:6:ProtocolMessageNetwork_handle_verify_node_id_global	3
+../Core/Src/src/openlcb/protocol_message_network.c:235:6:ProtocolMessageNetwork_handle_verify_node_id_addressed	1
+../Core/Src/src/openlcb/protocol_message_network.c:242:6:ProtocolMessageNetwork_handle_verified_node_id	2
+../Core/Src/src/openlcb/protocol_message_network.c:257:6:ProtocolMessageNetwork_handle_optional_interaction_rejected	1
+../Core/Src/src/openlcb/protocol_message_network.c:264:6:ProtocolMessageNetwork_handle_terminate_due_to_error	1

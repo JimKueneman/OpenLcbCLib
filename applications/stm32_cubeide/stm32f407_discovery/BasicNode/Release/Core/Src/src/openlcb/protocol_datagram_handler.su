@@ -1,0 +1,9 @@
+../Core/Src/src/openlcb/protocol_datagram_handler.c:52:6:ProtocolDatagramHandler_initialize	0	static
+../Core/Src/src/openlcb/protocol_datagram_handler.c:1231:6:ProtocolDatagramHandler_load_datagram_received_ok_message	48	static
+../Core/Src/src/openlcb/protocol_datagram_handler.c:1331:6:ProtocolDatagramHandler_load_datagram_rejected_message	48	static
+../Core/Src/src/openlcb/protocol_datagram_handler.c:58:13:_handle_subcommand	0	static
+../Core/Src/src/openlcb/protocol_datagram_handler.c:1210:6:ProtocolDatagramHandler_datagram	0	static
+../Core/Src/src/openlcb/protocol_datagram_handler.c:1378:6:ProtocolDatagramHandler_clear_resend_datagram_message	16	static
+../Core/Src/src/openlcb/protocol_datagram_handler.c:1350:6:ProtocolDatagramHandler_datagram_received_ok	8	static
+../Core/Src/src/openlcb/protocol_datagram_handler.c:1358:6:ProtocolDatagramHandler_datagram_rejected	8	static
+../Core/Src/src/openlcb/protocol_datagram_handler.c:1394:6:ProtocolDatagramHandler_100ms_timer_tick	0	static

@@ -1,0 +1,13 @@
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:59:6:CanLoginMessageHandler_initialize	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:78:17:_generate_seed	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:108:17:_generate_alias	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:128:6:CanLoginMessageHandler_state_init	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:136:6:CanLoginMessageHandler_state_generate_seed	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:155:6:CanLoginMessageHandler_state_generate_alias	4
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:181:6:CanLoginMessageHandler_state_load_cid07	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:192:6:CanLoginMessageHandler_state_load_cid06	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:203:6:CanLoginMessageHandler_state_load_cid05	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:214:6:CanLoginMessageHandler_state_load_cid04	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:226:6:CanLoginMessageHandler_state_wait_200ms	2
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:240:6:CanLoginMessageHandler_state_load_rid	1
+../Core/Src/openlcb_c_lib/drivers/canbus/can_login_message_handler.c:251:6:CanLoginMessageHandler_state_load_amd	1

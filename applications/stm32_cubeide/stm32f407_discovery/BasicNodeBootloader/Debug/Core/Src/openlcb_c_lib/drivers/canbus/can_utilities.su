@@ -1,0 +1,14 @@
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:51:6:CanUtilities_clear_can_message	24	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:74:6:CanUtilities_load_can_message	24	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:119:9:CanUtilities_copy_node_id_to_payload	32	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:161:9:CanUtilities_copy_openlcb_payload_to_can_payload	32	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:215:9:CanUtilities_append_can_payload_to_openlcb_payload	40	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:250:9:CanUtilities_copy_64_bit_to_can_message	32	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:277:9:CanUtilities_copy_can_message	24	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:304:11:CanUtilities_extract_can_payload_as_node_id	112	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:327:10:CanUtilities_extract_source_alias_from_can_identifier	16	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:349:10:CanUtilities_extract_dest_alias_from_can_message	16	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:396:10:CanUtilities_convert_can_mti_to_openlcb_mti	24	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:437:16:_count_nulls_in_can_payload	24	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:466:9:CanUtilities_count_nulls_in_payloads	24	static
+../Core/Src/openlcb_c_lib/drivers/canbus/can_utilities.c:473:6:CanUtilities_is_openlcb_message	16	static

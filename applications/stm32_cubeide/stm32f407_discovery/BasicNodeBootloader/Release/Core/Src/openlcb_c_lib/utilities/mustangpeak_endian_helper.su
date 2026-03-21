@@ -1,0 +1,4 @@
+../Core/Src/openlcb_c_lib/utilities/mustangpeak_endian_helper.c:51:9:swap_endian8	0	static
+../Core/Src/openlcb_c_lib/utilities/mustangpeak_endian_helper.c:70:10:swap_endian16	0	static
+../Core/Src/openlcb_c_lib/utilities/mustangpeak_endian_helper.c:99:10:swap_endian32	0	static
+../Core/Src/openlcb_c_lib/utilities/mustangpeak_endian_helper.c:125:10:swap_endian64	0	static

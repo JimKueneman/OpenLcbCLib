@@ -1,0 +1,1717 @@
+******************************************************************************
+            TI ARM Clang Linker Unix v4.0.3                    
+******************************************************************************
+>> Linked Thu Mar 19 11:43:35 2026
+
+OUTPUT FILE NAME:   <BasicNode.out>
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 0000ac71
+
+
+MEMORY CONFIGURATION
+
+         name            origin    length      used     unused   attr    fill
+----------------------  --------  ---------  --------  --------  ----  --------
+  FLASH                 00000000   00020000  00010c90  0000f370  R  X
+  SRAM                  20200000   00008000  000056c2  0000293e  RW X
+  BCR_CONFIG            41c00000   000000ff  00000000  000000ff  R   
+  BSL_CONFIG            41c00100   00000080  00000000  00000080  R   
+
+
+SEGMENT ALLOCATION MAP
+
+run origin  load origin   length   init length attrs members
+----------  ----------- ---------- ----------- ----- -------
+00000000    00000000    00010c90   00010c90    r-x
+  00000000    00000000    000000c0   000000c0    r-- .intvecs
+  000000c0    000000c0    0000b4c0   0000b4c0    r-x .text
+  0000b580    0000b580    00005680   00005680    r-- .rodata
+  00010c00    00010c00    00000090   00000090    r-- .cinit
+20200000    20200000    000054c5   00000000    rw-
+  20200000    20200000    00004ad5   00000000    rw- .bss
+  20204ad8    20204ad8    00000800   00000000    rw- .sysmem
+  202052d8    202052d8    000001ed   00000000    rw- .data
+20207e00    20207e00    00000200   00000000    rw-
+  20207e00    20207e00    00000200   00000000    rw- .stack
+
+
+SECTION ALLOCATION MAP
+
+ output                                  attributes/
+section   page    origin      length       input sections
+--------  ----  ----------  ----------   ----------------
+.intvecs   0    00000000    000000c0     
+                  00000000    000000c0     startup_mspm0g350x_ticlang.o (.intvecs)
+
+.text      0    000000c0    0000b4c0     
+                  000000c0    00000868     libc.a : _printfi.c.obj (.text:__TI_printfi_nofloat)
+                  00000928    0000057c     openlcb_config.o (.text.OpenLcb_initialize)
+                  00000ea4    000004f0     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_process_main_statemachine)
+                  00001394    00000410     protocol_datagram_handler.o (.text.ProtocolDatagramHandler_datagram)
+                  000017a4    000003f8     openlcb_node.o (.text._clear_node)
+                  00001b9c    000002ec     openlcb_node.o (.text.OpenLcbNode_allocate)
+                  00001e88    000002d4     protocol_snip.o (.text.ProtocolSnip_handle_simple_node_info_request)
+                  0000215c    00000264     ti_driverlib_can_driver.o (.text.CANFD0_IRQHandler)
+                  000023c0    00000240     protocol_event_transport.o (.text.ProtocolEventTransport_handle_events_identify)
+                  00002600    00000238     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_run)
+                  00002838    00000224     can_config.o (.text.CanConfig_initialize)
+                  00002a5c    00000214     dl_mcan.o (.text.DL_MCAN_msgRAMConfig)
+                  00002c70    0000020c     protocol_config_mem_write_handler.o (.text._dispatch_write_under_mask_request)
+                  00002e7c    00000204     can_rx_statemachine.o (.text.CanRxStatemachine_incoming_can_driver_callback)
+                  00003080    000001dc     openlcb_application_broadcast_time.o (.text.OpenLcbApplicationBroadcastTime_get_clock)
+                  0000325c    000001ac     can_rx_message_handler.o (.text.CanRxMessageHandler_amd_frame)
+                  00003408    000001a4     can_rx_message_handler.o (.text.CanRxMessageHandler_ame_frame)
+                  000035ac    0000019c     can_main_statemachine.o (.text.CanMainStatemachine_handle_duplicate_aliases)
+                  00003748    0000018c     can_buffer_store.o (.text.CanBufferStore_initialize)
+                  000038d4    00000180     can_tx_statemachine.o (.text.CanTxStatemachine_send_openlcb_message)
+                  00003a54    00000174     openlcb_buffer_store.o (.text.OpenLcbBufferStore_initialize)
+                  00003bc8    00000148     openlcb_gridconnect.o (.text.OpenLcbGridConnect_from_can_msg)
+                  00003d10    00000140     openlcb_login_statemachine_handler.o (.text.OpenLcbLoginMessageHandler_load_producer_event)
+                  00003e50    00000138     openlcb_login_statemachine_handler.o (.text.OpenLcbLoginMessageHandler_load_consumer_event)
+                  00003f88    00000124     openlcb_utilities.o (.text.OpenLcbUtilities_load_config_mem_reply_write_fail_message_header)
+                  000040ac    00000120     can_rx_message_handler.o (.text.CanRxMessageHandler_first_frame)
+                  000041cc    0000011c     ti_msp_dl_config.o (.text.SYSCFG_DL_MCAN0_init)
+                  000042e8    00000118     can_buffer_store.o (.text.CanBufferStore_allocate_buffer)
+                  00004400    00000118     protocol_config_mem_write_handler.o (.text._dispatch_write_request)
+                  00004518    00000114     openlcb_utilities.o (.text.OpenLcbUtilities_load_config_mem_reply_read_fail_message_header)
+                  0000462c    00000114     libc.a : memory.c.obj (.text.aligned_alloc)
+                  00004740    0000010c     dl_mcan.o (.text.DL_MCAN_readMsgRam)
+                  0000484c    00000108     openlcb_buffer_store.o (.text.OpenLcbBufferStore_allocate_buffer)
+                  00004954    00000104     openlcb_utilities.o (.text.OpenLcbUtilities_load_config_mem_reply_read_ok_message_header)
+                  00004a58    00000104     openlcb_utilities.o (.text.OpenLcbUtilities_load_config_mem_reply_write_ok_message_header)
+                  00004b5c    000000fe     can_utilities.o (.text.CanUtilities_copy_openlcb_payload_to_can_payload)
+                  00004c5a    00000002     callbacks_olcb.o (.text.CallbacksOlcb_initialize)
+                  00004c5c    000000fc     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_initialize)
+                  00004d58    000000fc     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_request_options_cmd)
+                  00004e54    000000f8     libc.a : fputs.c.obj (.text.fputs)
+                  00004f4c    000000f4     dl_mcan.o (.text.DL_MCAN_writeMsgRam)
+                  00005040    000000ec     protocol_config_mem_read_handler.o (.text._handle_read_request)
+                  0000512c    000000e8     protocol_datagram_handler.o (.text.ProtocolDatagramHandler_load_datagram_received_ok_message)
+                  00005214    000000e8     protocol_datagram_handler.o (.text._handle_write_reply_fail_address_space_at_offset_6)
+                  000052fc    000000e8     libc.a : memory.c.obj (.text.free)
+                  000053e4    000000e4     dl_mcan.o (.text.DL_MCAN_config)
+                  000054c8    000000e4     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_request_reserve_lock)
+                  000055ac    000000e0     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_freeze)
+                  0000568c    000000e0     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_get_address_space_info)
+                  0000576c    000000e0     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present)
+                  0000584c    000000e0     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present)
+                  0000592c    000000e0     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_unfreeze)
+                  00005a0c    000000e0     libc.a : setvbuf.c.obj (.text.setvbuf)
+                  00005aec    000000dc     can_rx_message_handler.o (.text.CanRxMessageHandler_amr_frame)
+                  00005bc8    000000dc     dl_mcan.o (.text.DL_MCAN_init)
+                  00005ca4    000000dc     dl_sysctl_mspm0g1x0x_g3x0x.o (.text.DL_SYSCTL_configSYSPLL)
+                  00005d80    000000dc     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_request_get_address_space_info)
+                  00005e5c    000000dc     protocol_event_transport.o (.text.ProtocolEventTransport_handle_producer_identify)
+                  00005f38    000000d8     alias_mappings.o (.text.AliasMappings_register)
+                  00006010    000000d8     dl_mcan.o (.text.DL_MCAN_setBitTime)
+                  000060e8    000000d8     openlcb_login_statemachine.o (.text.OpenLcbLoginMainStatemachine_run)
+                  000061c0    000000d4     protocol_event_transport.o (.text.ProtocolEventTransport_handle_consumer_identify)
+                  00006294    000000c0     can_rx_message_handler.o (.text.CanRxMessageHandler_middle_frame)
+                  00006354    000000c0     alias_mapping_listener.o (.text.ListenerAliasTable_check_one_verification)
+                  00006414    000000bc     protocol_datagram_handler.o (.text._handle_read_address_space_at_offset_6)
+                  000064d0    000000bc     protocol_datagram_handler.o (.text._handle_read_reply_fail_address_space_at_offset_6)
+                  0000658c    000000bc     protocol_datagram_handler.o (.text._handle_read_reply_ok_address_space_at_offset_6)
+                  00006648    000000bc     protocol_datagram_handler.o (.text._handle_read_stream_address_space_at_offset_6)
+                  00006704    000000b8     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_request_acdi_user)
+                  000067bc    000000b8     protocol_datagram_handler.o (.text._handle_write_address_space_at_offset_6)
+                  00006874    000000b4     can_login_message_handler.o (.text.CanLoginMessageHandler_state_generate_alias)
+                  00006928    000000b0     can_rx_message_handler.o (.text.CanRxMessageHandler_last_frame)
+                  000069d8    000000b0     protocol_datagram_handler.o (.text._handle_write_stream_address_space_at_offset_6)
+                  00006a88    000000b0     protocol_datagram_handler.o (.text._handle_write_stream_reply_ok_address_space_at_offset_6)
+                  00006b38    000000b0     protocol_datagram_handler.o (.text._handle_write_under_mask_address_space_at_offset_6)
+                  00006be8    000000ac     protocol_datagram_handler.o (.text._handle_read_stream_reply_ok_address_space_at_offset_6)
+                  00006c94    000000ac     protocol_datagram_handler.o (.text._handle_write_stream_reply_fail_address_space_at_offset_6)
+                  00006d40    000000a8     protocol_snip.o (.text.ProtocolSnip_load_user_description)
+                  00006de8    000000a8     protocol_datagram_handler.o (.text._handle_read_stream_reply_fail_address_space_at_offset_6)
+                  00006e90    000000a8     protocol_datagram_handler.o (.text._handle_write_reply_ok_address_space_at_offset_6)
+                  00006f38    000000a6     protocol_message_network.o (.text.ProtocolMessageNetwork_handle_verify_node_id_global)
+                  00006fde    00000002     can_rx_message_handler.o (.text.CanRxMessageHandler_stream_frame)
+                  00006fe0    000000a4     protocol_snip.o (.text.ProtocolSnip_load_user_name)
+                  00007084    000000a2     libclang_rt.builtins.a : udivmoddi4.S.obj (.text)
+                  00007126    00000002     startup_mspm0g350x_ticlang.o (.text.Default_Handler)
+                  00007128    000000a0     openlcb_login_statemachine_handler.o (.text.OpenLcbLoginMessageHandler_load_initialization_complete)
+                  000071c8    000000a0     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_send_with_sibling_dispatch)
+                  00007268    000000a0     protocol_message_network.o (.text.ProtocolMessageNetwork_handle_protocol_support_inquiry)
+                  00007308    0000009c     protocol_config_mem_read_handler.o (.text.ProtocolConfigMemReadHandler_read_request_acdi_manufacturer)
+                  000073a4    0000009c     libc.a : fputc.c.obj (.text.fputc)
+                  00007440    0000009a            : memcpy16.S.obj (.text:memcpy)
+                  000074da    00000002     protocol_datagram_handler.o (.text.ProtocolDatagramHandler_100ms_timer_tick)
+                  000074dc    00000098     can_tx_message_handler.o (.text.CanTxMessageHandler_addressed_msg_frame)
+                  00007574    00000094     protocol_datagram_handler.o (.text.ProtocolDatagramHandler_datagram_rejected)
+                  00007608    00000092     can_utilities.o (.text.CanUtilities_count_nulls_in_payloads)
+                  0000769a    00000002     ti_driverlib_drivers.o (.text.TI_DriverLibDrivers_initialize)
+                  0000769c    00000090     can_tx_message_handler.o (.text.CanTxMessageHandler_datagram_frame)
+                  0000772c    00000088     can_main_statemachine.o (.text.CanMainStatemachine_handle_listener_verification)
+                  000077b4    00000088     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_factory_reset)
+                  0000783c    00000088     ti_driverlib_can_driver.o (.text.TI_DriverLibCanDriver_transmit_can_frame)
+                  000078c4    0000000c     can_login_message_handler.o (.text.CanLoginMessageHandler_initialize)
+                  000078d0    00000088     libc.a : strcmp-armv6m.S.obj (.text:strcmp)
+                  00007958    00000084     openlcb_utilities.o (.text.OpenLcbUtilities_load_openlcb_message)
+                  000079dc    00000084     protocol_message_network.o (.text.ProtocolMessageNetwork_handle_initialization_complete)
+                  00007a60    00000084     protocol_message_network.o (.text.ProtocolMessageNetwork_handle_initialization_complete_simple)
+                  00007ae4    00000084     protocol_message_network.o (.text.ProtocolMessageNetwork_handle_verified_node_id)
+                  00007b68    00000080     can_tx_message_handler.o (.text.CanTxMessageHandler_unaddressed_msg_frame)
+                  00007be8    00000080     openlcb_buffer_list.o (.text.OpenLcbBufferList_check_timeouts)
+                  00007c68    0000007e     openlcb_utilities.o (.text.OpenLcbUtilities_count_nulls_in_openlcb_payload)
+                  00007ce6    00000002     libclang_rt.builtins.a : aeabi_div0.c.obj (.text.__aeabi_idiv0)
+                  00007ce8    0000007c     libc.a : fclose.c.obj (.text.__TI_closefile)
+                  00007d64    0000007c            : copy_decompress_lzss.c.obj (.text:decompress:lzss)
+                  00007de0    00000078     can_login_statemachine.o (.text.CanLoginStateMachine_run)
+                  00007e58    00000078     openlcb_node.o (.text.OpenLcbNode_find_by_alias)
+                  00007ed0    00000078     protocol_config_mem_read_handler.o (.text.ProtocolConfigMemReadHandler_read_request_acdi_user)
+                  00007f48    00000078     protocol_snip.o (.text.ProtocolSnip_load_hardware_version)
+                  00007fc0    00000078     protocol_snip.o (.text.ProtocolSnip_load_model)
+                  00008038    00000078     protocol_snip.o (.text.ProtocolSnip_load_software_version)
+                  000080b0    00000074     openlcb_login_statemachine.o (.text.OpenLcbLoginStateMachine_initialize)
+                  00008124    00000074     protocol_event_transport.o (.text._test_for_consumed_event)
+                  00008198    00000072     protocol_snip.o (.text.ProtocolSnip_load_name)
+                  0000820a    00000002     libclang_rt.builtins.a : aeabi_div0.c.obj (.text.__aeabi_ldiv0)
+                  0000820c    00000070     protocol_event_transport.o (.text._test_for_consumed_event_pcer)
+                  0000827c    0000006c     libsysbm.a : hostlseek.c.obj (.text.HOSTlseek)
+                  000082e8    0000006c                : hostrename.c.obj (.text.HOSTrename)
+                  00008354    0000006c     openlcb_login_statemachine.o (.text.OpenLcbLoginStatemachine_handle_outgoing_openlcb_message)
+                  000083c0    0000006c     openlcb_utilities.o (.text.OpenLcbUtilities_clear_openlcb_message_payload)
+                  0000842c    0000006c     protocol_datagram_handler.o (.text.ProtocolDatagramHandler_check_timeouts)
+                  00008498    0000006c     libc.a : fseek.c.obj (.text.fseeko)
+                  00008504    0000006c            : getdevice.c.obj (.text.getdevice)
+                  00008570    00000068     openlcb_buffer_list.o (.text.OpenLcbBufferList_find)
+                  000085d8    00000068     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_handle_outgoing_openlcb_message)
+                  00008640    00000068     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_handle_try_enumerate_first_node)
+                  000086a8    00000064     alias_mappings.o (.text.AliasMappings_find_mapping_by_node_id)
+                  0000870c    00000064     dl_sysctl_mspm0g1x0x_g3x0x.o (.text.DL_SYSCTL_setHFCLKSourceHFXTParams)
+                  00008770    00000064     openlcb_login_statemachine.o (.text.OpenLcbLoginStateMachine_process)
+                  000087d4    00000064     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message)
+                  00008838    00000064     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_load_interaction_rejected)
+                  0000889c    00000064     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_get_unique_id)
+                  00008900    00000064     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_get_unique_id_reply)
+                  00008964    00000064     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_options_cmd)
+                  000089c8    00000064     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_options_reply)
+                  00008a2c    00000064     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_reserve_lock)
+                  00008a90    00000064     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_reserve_lock_reply)
+                  00008af4    00000064     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_update_complete)
+                  00008b58    00000064     libc.a : _io_perm.c.obj (.text.__TI_wrt_ok)
+                  00008bbc    00000064            : memory.c.obj (.text.split)
+                  00008c20    00000062            : memset16.S.obj (.text:memset)
+                  00008c82    00000002            : _lock.c.obj (.text._nop)
+                  00008c84    00000060     can_login_message_handler.o (.text.CanLoginMessageHandler_state_load_amd)
+                  00008ce4    00000060     libsysbm.a : hostopen.c.obj (.text.HOSTopen)
+                  00008d44    00000060     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_does_node_process_msg)
+                  00008da4    00000060     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_reset_reboot)
+                  00008e04    00000060     libc.a : fflush.c.obj (.text.fflush)
+                  00008e64    0000005c     can_rx_message_handler.o (.text.CanRxMessageHandler_can_legacy_snip)
+                  00008ec0    0000005c     can_rx_message_handler.o (.text.CanRxMessageHandler_error_info_report_frame)
+                  00008f1c    0000005c     can_rx_message_handler.o (.text.CanRxMessageHandler_rid_frame)
+                  00008f78    0000005c     can_rx_message_handler.o (.text.CanRxMessageHandler_single_frame)
+                  00008fd4    0000005c     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_handle_try_enumerate_next_node)
+                  00009030    0000005c     openlcb_utilities.o (.text.OpenLcbUtilities_copy_string_to_openlcb_payload)
+                  0000908c    0000005c     openlcb_utilities.o (.text.OpenLcbUtilities_is_broadcast_time_event)
+                  000090e8    0000005c     openlcb_utilities.o (.text.OpenLcbUtilities_is_event_id_in_consumer_ranges)
+                  00009144    0000005c     openlcb_utilities.o (.text.OpenLcbUtilities_is_event_id_in_producer_ranges)
+                  000091a0    0000005c     openlcb_utilities.o (.text.OpenLcbUtilities_is_producer_event_assigned_to_node)
+                  000091fc    0000005c     protocol_config_mem_read_handler.o (.text.ProtocolConfigMemReadHandler_read_request_config_mem)
+                  00009258    0000005c     protocol_message_network.o (.text.ProtocolMessageNetwork_handle_optional_interaction_rejected)
+                  000092b4    0000005c     protocol_message_network.o (.text.ProtocolMessageNetwork_handle_terminate_due_to_error)
+                  00009310    0000005c     libc.a : printf.c.obj (.text.printf)
+                  0000936c    00000058     can_login_message_handler.o (.text.CanLoginMessageHandler_state_generate_seed)
+                  000093c4    00000058     can_main_statemachine.o (.text.CanMainStateMachine_run)
+                  0000941c    00000058     can_main_statemachine.o (.text.CanMainStatemachine_handle_outgoing_can_message)
+                  00009474    00000058     libsysbm.a : hostread.c.obj (.text.HOSTread)
+                  000094cc    00000058                : hostwrite.c.obj (.text.HOSTwrite)
+                  00009524    00000058     openlcb_utilities.o (.text.OpenLcbUtilities_is_consumer_event_assigned_to_node)
+                  0000957c    00000058     ti_msp_dl_config.o (.text.SYSCFG_DL_SYSCTL_init)
+                  000095d4    00000054     alias_mappings.o (.text.AliasMappings_unregister)
+                  00009628    00000054     openlcb_utilities.o (.text.OpenLcbUtilities_copy_node_id_to_openlcb_payload)
+                  0000967c    00000054     basic_node.o (.text.main)
+                  000096d0    00000052     libc.a : fflush.c.obj (.text.__TI_doflush)
+                  00009722    00000002     --HOLE-- [fill = 0]
+                  00009724    00000050     can_utilities.o (.text.CanUtilities_convert_can_mti_to_openlcb_mti)
+                  00009774    00000050     openlcb_node.o (.text.OpenLcbNode_initialize)
+                  000097c4    00000050     protocol_event_transport.o (.text.ProtocolEventTransport_handle_pc_event_report_with_payload)
+                  00009814    00000050     protocol_datagram_handler.o (.text._handle_subcommand)
+                  00009864    00000050     libsysbm.a : close.c.obj (.text.close)
+                  000098b4    0000004c     alias_mappings.o (.text.AliasMappings_find_mapping_by_alias)
+                  00009900    0000004c     alias_mappings.o (.text.AliasMappings_initialize)
+                  0000994c    0000004c     can_utilities.o (.text.CanUtilities_append_can_payload_to_openlcb_payload)
+                  00009998    0000004c     protocol_message_network.o (.text.ProtocolMessageNetwork_handle_verify_node_id_addressed)
+                  000099e4    00000048     libsysbm.a : hostclose.c.obj (.text.HOSTclose)
+                  00009a2c    00000048                : hostunlink.c.obj (.text.HOSTunlink)
+                  00009a74    00000048     protocol_datagram_handler.o (.text.ProtocolDatagramHandler_datagram_received_ok)
+                  00009abc    00000044     can_main_statemachine.o (.text.CanMainStatemachine_handle_try_enumerate_first_node)
+                  00009b00    00000044     can_main_statemachine.o (.text.CanMainStatemachine_handle_try_enumerate_next_node)
+                  00009b44    00000044     dl_mcan.o (.text.DL_MCAN_getRevisionId)
+                  00009b88    00000044     dl_sysctl_mspm0g1x0x_g3x0x.o (.text.DL_SYSCTL_switchMCLKfromSYSOSCtoHSCLK)
+                  00009bcc    00000044     openlcb_buffer_fifo.o (.text.OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias)
+                  00009c10    00000044     openlcb_utilities.o (.text.OpenLcbUtilities_copy_byte_array_to_openlcb_payload)
+                  00009c54    00000044     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_request_config_mem)
+                  00009c98    00000044     protocol_datagram_handler.o (.text.ProtocolDatagramHandler_load_datagram_rejected_message)
+                  00009cdc    00000044     libc.a : aeabi_portable.c.obj (.text.__aeabi_assert)
+                  00009d20    00000040     can_login_message_handler.o (.text.CanLoginMessageHandler_state_load_cid06)
+                  00009d60    00000040     dl_mcan.o (.text.DL_MCAN_writeRxFIFOAck)
+                  00009da0    00000040     openlcb_buffer_list.o (.text.OpenLcbBufferList_release)
+                  00009de0    00000040     ti_msp_dl_config.o (.text.SYSCFG_DL_GPIO_init)
+                  00009e20    00000040     libclang_rt.builtins.a : aeabi_uidivmod.S.obj (.text.__aeabi_uidivmod)
+                  00009e60    00000040     libc.a : atoi.c.obj (.text.atoi)
+                  00009ea0    0000003c     can_login_message_handler.o (.text.CanLoginMessageHandler_state_load_cid04)
+                  00009edc    0000003c     can_rx_message_handler.o (.text.CanRxMessageHandler_cid_frame)
+                  00009f18    0000003c     openlcb_buffer_list.o (.text.OpenLcbBufferList_add)
+                  00009f54    0000003c     openlcb_buffer_store.o (.text.OpenLcbBufferStore_free_buffer)
+                  00009f90    0000003c     openlcb_login_statemachine.o (.text.OpenLcbLoginStatemachine_handle_try_enumerate_first_node)
+                  00009fcc    0000003c     openlcb_login_statemachine.o (.text.OpenLcbLoginStatemachine_handle_try_enumerate_next_node)
+                  0000a008    0000003c     protocol_event_transport.o (.text.ProtocolEventTransport_handle_pc_event_report)
+                  0000a044    0000003c     protocol_event_transport.o (.text.ProtocolEventTransport_handle_producer_identified_clear)
+                  0000a080    0000003c     protocol_event_transport.o (.text.ProtocolEventTransport_handle_producer_identified_set)
+                  0000a0bc    0000003c     protocol_event_transport.o (.text.ProtocolEventTransport_handle_producer_identified_unknown)
+                  0000a0f8    0000003c     libc.a : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit)
+                  0000a134    0000003a     openlcb_utilities.o (.text.OpenLcbUtilities_generate_event_range_id)
+                  0000a16e    00000002     --HOLE-- [fill = 0]
+                  0000a170    0000003a     libclang_rt.builtins.a : muldsi3.S.obj (.text.__muldsi3)
+                  0000a1aa    00000002     --HOLE-- [fill = 0]
+                  0000a1ac    00000038     can_login_message_handler.o (.text.CanLoginMessageHandler_state_load_cid05)
+                  0000a1e4    00000038     can_login_message_handler.o (.text.CanLoginMessageHandler_state_load_cid07)
+                  0000a21c    00000038     can_utilities.o (.text.CanUtilities_extract_dest_alias_from_can_message)
+                  0000a254    00000038     dl_mcan.o (.text.DL_MCAN_getRxFIFOStatus)
+                  0000a28c    00000038     libc.a : sprintf.c.obj (.text.sprintf)
+                  0000a2c4    00000034     can_main_statemachine.o (.text.CanMainStatemachine_initialize)
+                  0000a2f8    00000034     dl_mcan.o (.text.DL_MCAN_TXBufAddReq)
+                  0000a32c    00000034     dl_mcan.o (.text.DL_MCAN_setExtIDAndMask)
+                  0000a360    00000034     openlcb_utilities.o (.text.OpenLcbUtilities_copy_event_id_to_openlcb_payload)
+                  0000a394    00000034     protocol_event_transport.o (.text.ProtocolEventTransport_handle_consumer_identified_clear)
+                  0000a3c8    00000034     protocol_event_transport.o (.text.ProtocolEventTransport_handle_consumer_identified_reserved)
+                  0000a3fc    00000034     protocol_event_transport.o (.text.ProtocolEventTransport_handle_consumer_identified_set)
+                  0000a430    00000034     protocol_event_transport.o (.text.ProtocolEventTransport_handle_consumer_identified_unknown)
+                  0000a464    00000034     protocol_event_transport.o (.text.ProtocolEventTransport_handle_consumer_range_identified)
+                  0000a498    00000034     protocol_event_transport.o (.text.ProtocolEventTransport_handle_event_learn)
+                  0000a4cc    00000034     protocol_event_transport.o (.text.ProtocolEventTransport_handle_producer_identified_reserved)
+                  0000a500    00000034     protocol_event_transport.o (.text.ProtocolEventTransport_handle_producer_range_identified)
+                  0000a534    00000034     ti_msp_dl_config.o (.text.SYSCFG_DL_initPower)
+                  0000a568    00000034     libc.a : fopen.c.obj (.text.__TI_cleanup)
+                  0000a59c    00000034     libsysbm.a : trgmsg.c.obj (.text.__TI_readmsg)
+                  0000a5d0    00000034                : trgmsg.c.obj (.text.__TI_writemsg)
+                  0000a604    00000034     libc.a : exit.c.obj (.text.exit)
+                  0000a638    00000034            : getdevice.c.obj (.text.finddevice)
+                  0000a66c    00000030     can_buffer_fifo.o (.text.CanBufferFifo_pop)
+                  0000a69c    00000030     can_buffer_fifo.o (.text.CanBufferFifo_push)
+                  0000a6cc    00000030     can_main_statemachine.o (.text.CanMainStatemachine_handle_login_outgoing_can_message)
+                  0000a6fc    00000030     openlcb_buffer_fifo.o (.text.OpenLcbBufferFifo_push)
+                  0000a72c    00000030     openlcb_node.o (.text.OpenLcbNode_get_next)
+                  0000a75c    00000030     openlcb_node.o (.text.OpenLcbNode_is_last)
+                  0000a78c    00000030     protocol_config_mem_read_handler.o (.text.ProtocolConfigMemReadHandler_read_request_config_definition_info)
+                  0000a7bc    00000030     ti_msp_dl_config.o (.text.SYSCFG_DL_SYSTICK_init)
+                  0000a7ec    00000030     ti_driverlib_drivers.o (.text.TI_DriverLibDrivers_config_mem_read)
+                  0000a81c    0000002c     callbacks_can.o (.text.CallbacksCan_on_rx)
+                  0000a848    0000002c     callbacks_can.o (.text.CallbacksCan_on_tx)
+                  0000a874    0000002c     can_login_message_handler.o (.text.CanLoginMessageHandler_state_load_rid)
+                  0000a8a0    0000002c     can_utilities.o (.text.CanUtilities_copy_node_id_to_payload)
+                  0000a8cc    0000002c     dl_mcan.o (.text.DL_MCAN_TXBufTransIntrEnable)
+                  0000a8f8    0000002c     dl_mcan.o (.text.DL_MCAN_addExtMsgIDFilter)
+                  0000a924    0000002c     openlcb_buffer_fifo.o (.text.OpenLcbBufferFifo_pop)
+                  0000a950    0000002c     openlcb_utilities.o (.text.OpenLcbUtilities_extract_event_id_from_openlcb_payload)
+                  0000a97c    0000002c     openlcb_config.o (.text.OpenLcb_run)
+                  0000a9a8    0000002c     protocol_config_mem_read_handler.o (.text.ProtocolConfigMemReadHandler_read_space_acdi_manufacturer)
+                  0000a9d4    0000002c     protocol_config_mem_read_handler.o (.text.ProtocolConfigMemReadHandler_read_space_acdi_user)
+                  0000aa00    0000002c     protocol_config_mem_read_handler.o (.text.ProtocolConfigMemReadHandler_read_space_all)
+                  0000aa2c    0000002c     protocol_config_mem_read_handler.o (.text.ProtocolConfigMemReadHandler_read_space_config_memory)
+                  0000aa58    0000002c     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_space_acdi_user)
+                  0000aa84    0000002c     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_space_config_memory)
+                  0000aab0    0000002c     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_space_firmware)
+                  0000aadc    0000002c     libsysbm.a : unlink.c.obj (.text.unlink)
+                  0000ab08    00000028     can_tx_message_handler.o (.text.CanTxMessageHandler_can_frame)
+                  0000ab30    00000028     openlcb_login_statemachine.o (.text.OpenLcbLoginStatemachine_handle_try_reenumerate)
+                  0000ab58    00000028     openlcb_node.o (.text.OpenLcbNode_100ms_timer_tick)
+                  0000ab80    00000028     openlcb_node.o (.text.OpenLcbNode_get_first)
+                  0000aba8    00000028     protocol_config_mem_read_handler.o (.text.ProtocolConfigMemReadHandler_read_space_config_description_info)
+                  0000abd0    00000028     ti_driverlib_can_driver.o (.text.TI_DriverLibCanDriver_is_can_tx_buffer_clear)
+                  0000abf8    00000028     libc.a : memory.c.obj (.text.free_list_insert)
+                  0000ac20    00000028     libsysbm.a : lseek.c.obj (.text.lseek)
+                  0000ac48    00000028                : write.c.obj (.text.write)
+                  0000ac70    00000028     libc.a : boot_cortex_m.c.obj (.text:_c_int00_noargs)
+                  0000ac98    00000026     openlcb_utilities.o (.text.OpenLcbUtilities_copy_dword_to_openlcb_payload)
+                  0000acbe    00000002     --HOLE-- [fill = 0]
+                  0000acc0    00000024     callbacks_can.o (.text.CallbacksCan_on_alias_change)
+                  0000ace4    00000024     callbacks_olcb.o (.text.CallbacksOlcb_on_100ms_timer)
+                  0000ad08    00000024     can_login_message_handler.o (.text.CanLoginMessageHandler_state_wait_200ms)
+                  0000ad2c    00000024     dl_mcan.o (.text.DL_MCAN_setClockConfig)
+                  0000ad50    00000024     openlcb_main_statemachine.o (.text.OpenLcbMainStatemachine_handle_try_reenumerate)
+                  0000ad74    00000024     protocol_event_transport.o (.text.ProtocolEventTransport_extract_producer_event_status_mti)
+                  0000ad98    00000024     protocol_snip.o (.text.ProtocolSnip_load_user_version_id)
+                  0000adbc    00000024     libclang_rt.builtins.a : muldi3.S.obj (.text.__muldi3)
+                  0000ade0    00000024     libc.a : fputs.c.obj (.text.puts)
+                  0000ae04    00000022     openlcb_utilities.o (.text.OpenLcbUtilities_extract_node_id_from_openlcb_payload)
+                  0000ae26    00000022     protocol_event_transport.o (.text.ProtocolEventTransport_handle_events_identify_dest)
+                  0000ae48    00000022     protocol_snip.o (.text.ProtocolSnip_load_manufacturer_version_id)
+                  0000ae6a    00000022     libc.a : memccpy.c.obj (.text.memccpy)
+                  0000ae8c    00000020     openlcb_utilities.o (.text.OpenLcbUtilities_is_addressed_message_for_node)
+                  0000aeac    00000020     openlcb_utilities.o (.text.OpenLcbUtilities_is_emergency_event)
+                  0000aecc    00000020     protocol_event_transport.o (.text.ProtocolEventTransport_extract_consumer_event_status_mti)
+                  0000aeec    0000001e     can_utilities.o (.text.CanUtilities_extract_can_payload_as_node_id)
+                  0000af0a    0000001e     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_manufacturer)
+                  0000af28    0000001e     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_user)
+                  0000af46    0000001e     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_under_mask_space_all)
+                  0000af64    0000001e     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory)
+                  0000af82    0000001e     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_under_mask_space_firmware)
+                  0000afa0    0000001e     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory)
+                  0000afbe    0000001e     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info)
+                  0000afdc    0000001e     libclang_rt.builtins.a : ashldi3.S.obj (.text.__ashldi3)
+                  0000affa    00000002     --HOLE-- [fill = 0]
+                  0000affc    0000001c     callbacks_config_mem.o (.text.CallbacksConfigMem_factory_reset)
+                  0000b018    0000001c     can_buffer_store.o (.text.CanBufferStore_free_buffer)
+                  0000b034    0000001c     dl_mcan.o (.text.DL_MCAN_enableIntr)
+                  0000b050    0000001c     dl_mcan.o (.text.DL_MCAN_enableIntrLine)
+                  0000b06c    0000001c     dl_mcan.o (.text.DL_MCAN_selectIntrLine)
+                  0000b088    0000001c     openlcb_utilities.o (.text.OpenLcbUtilities_clear_openlcb_message)
+                  0000b0a4    0000001c     libc.a : memory.c.obj (.text.free_list_remove)
+                  0000b0c0    0000001a     openlcb_utilities.o (.text.OpenLcbUtilities_extract_dword_from_openlcb_payload)
+                  0000b0da    0000001a     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info)
+                  0000b0f4    00000018     callbacks_config_mem.o (.text.CallbacksConfigMem_freeze)
+                  0000b10c    00000018     callbacks_config_mem.o (.text.CallbacksConfigMem_unfreeze)
+                  0000b124    00000018     can_login_message_handler.o (.text.CanLoginMessageHandler_state_init)
+                  0000b13c    00000018     dl_mcan.o (.text.DL_MCAN_setOpMode)
+                  0000b154    00000018     ti_msp_dl_config.o (.text.SYSCFG_DL_init)
+                  0000b16c    00000018     ti_driverlib_drivers.o (.text.TI_DriverLibDrivers_lock_shared_resources)
+                  0000b184    00000018     ti_driverlib_drivers.o (.text.TI_DriverLibDrivers_unlock_shared_resources)
+                  0000b19c    00000018     libc.a : assert.c.obj (.text._abort_msg)
+                  0000b1b4    00000018            : sprintf.c.obj (.text._outs)
+                  0000b1cc    00000016     openlcb_utilities.o (.text.OpenLcbUtilities_copy_word_to_openlcb_payload)
+                  0000b1e2    00000002     --HOLE-- [fill = 0]
+                  0000b1e4    00000014     dl_mcan.o (.text.DL_MCAN_clearIntrStatus)
+                  0000b1f8    00000014     openlcb_buffer_list.o (.text.OpenLcbBufferList_index_of)
+                  0000b20c    00000014     openlcb_utilities.o (.text.OpenLcbUtilities_payload_type_to_len)
+                  0000b220    00000014     ti_driverlib_can_driver.o (.text.TI_DriverLibCanDriver_pause_can_rx)
+                  0000b234    00000014     ti_driverlib_drivers.o (.text.TI_DriverLibDrivers_reboot)
+                  0000b248    00000014     libclang_rt.builtins.a : aeabi_uldivmod.S.obj (.text.__aeabi_uldivmod)
+                  0000b25c    00000012     can_utilities.o (.text.CanUtilities_clear_can_message)
+                  0000b26e    00000012     libc.a : copy_decompress_none.c.obj (.text:decompress:none)
+                  0000b280    00000010     alias_mappings.o (.text.AliasMappings_set_has_duplicate_alias_flag)
+                  0000b290    00000010     callbacks_config_mem.o (.text.CallbacksConfigMem_write_firmware)
+                  0000b2a0    00000010     can_buffer_fifo.o (.text.CanBufferFifo_initialize)
+                  0000b2b0    00000010     can_tx_statemachine.o (.text.CanTxStatemachine_send_can_message)
+                  0000b2c0    00000010     dl_mcan.o (.text.DL_MCAN_getOpMode)
+                  0000b2d0    00000010     dl_mcan.o (.text.DL_MCAN_isMemInitDone)
+                  0000b2e0    00000010     openlcb_buffer_fifo.o (.text.OpenLcbBufferFifo_initialize)
+                  0000b2f0    00000010     openlcb_buffer_list.o (.text.OpenLcbBufferList_initialize)
+                  0000b300    00000010     openlcb_node.o (.text.OpenLcbNode_get_count)
+                  0000b310    00000010     openlcb_utilities.o (.text.OpenLcbUtilities_extract_word_from_openlcb_payload)
+                  0000b320    00000010     openlcb_utilities.o (.text.OpenLcbUtilities_is_train_search_event)
+                  0000b330    00000010     openlcb_config.o (.text.OpenLcb_100ms_timer_tick)
+                  0000b340    00000010     libc.a : wcslen.c.obj (.text.wcslen)
+                  0000b350    00000010            : copy_zero_init.c.obj (.text:decompress:ZI)
+                  0000b360    0000000e            : memory.c.obj (.text.OUTLINED_FUNCTION_0)
+                  0000b36e    00000002     --HOLE-- [fill = 0]
+                  0000b370    0000000e     libclang_rt.builtins.a : aeabi_memset.S.obj (.text.__aeabi_memset)
+                  0000b37e    0000000e     libsysbm.a : hostrename.c.obj (.text.strcpy)
+                  0000b38c    0000000e     libc.a : _printfi.c.obj (.text.strlen)
+                  0000b39a    0000000e            : aeabi_portable.c.obj (.text.strlen)
+                  0000b3a8    0000000e     libsysbm.a : hostrename.c.obj (.text.strlen)
+                  0000b3b6    00000002     --HOLE-- [fill = 0]
+                  0000b3b8    0000000c     can_login_statemachine.o (.text.CanLoginStateMachine_initialize)
+                  0000b3c4    0000000c     can_rx_message_handler.o (.text.CanRxMessageHandler_initialize)
+                  0000b3d0    0000000c     can_rx_statemachine.o (.text.CanRxStatemachine_initialize)
+                  0000b3dc    0000000c     can_tx_message_handler.o (.text.CanTxMessageHandler_initialize)
+                  0000b3e8    0000000c     can_tx_statemachine.o (.text.CanTxStatemachine_initialize)
+                  0000b3f4    0000000c     can_utilities.o (.text.CanUtilities_extract_source_alias_from_can_identifier)
+                  0000b400    0000000c     dl_mcan.o (.text.DL_MCAN_getIntrStatus)
+                  0000b40c    0000000c     openlcb_application.o (.text.OpenLcbApplication_initialize)
+                  0000b418    0000000c     openlcb_login_statemachine_handler.o (.text.OpenLcbLoginMessageHandler_initialize)
+                  0000b424    0000000c     openlcb_utilities.o (.text.OpenLcbUtilities_copy_byte_to_openlcb_payload)
+                  0000b430    0000000c     openlcb_utilities.o (.text.OpenLcbUtilities_set_multi_frame_flag)
+                  0000b43c    0000000c     openlcb_config.o (.text.OpenLcb_get_global_100ms_tick)
+                  0000b448    0000000c     protocol_config_mem_operations_handler.o (.text.ProtocolConfigMemOperationsHandler_initialize)
+                  0000b454    0000000c     protocol_config_mem_read_handler.o (.text.ProtocolConfigMemReadHandler_initialize)
+                  0000b460    0000000c     protocol_config_mem_write_handler.o (.text.ProtocolConfigMemWriteHandler_initialize)
+                  0000b46c    0000000c     protocol_datagram_handler.o (.text.ProtocolDatagramHandler_initialize)
+                  0000b478    0000000c     protocol_event_transport.o (.text.ProtocolEventTransport_initialize)
+                  0000b484    0000000c     protocol_message_network.o (.text.ProtocolMessageNetwork_initialize)
+                  0000b490    0000000c     protocol_snip.o (.text.ProtocolSnip_initialize)
+                  0000b49c    0000000c     ti_driverlib_can_driver.o (.text.TI_DriverLibCanDriver_initialize)
+                  0000b4a8    0000000c     ti_driverlib_can_driver.o (.text.TI_DriverLibCanDriver_resume_can_rx)
+                  0000b4b4    0000000c     libclang_rt.builtins.a : aeabi_memset.S.obj (.text.__aeabi_memclr)
+                  0000b4c0    0000000c     libc.a : memory.c.obj (.text.malloc)
+                  0000b4cc    0000000a     can_utilities.o (.text.CanUtilities_is_openlcb_message)
+                  0000b4d6    0000000a     dl_common.o (.text.DL_Common_delayCycles)
+                  0000b4e0    0000000a     openlcb_utilities.o (.text.OpenLcbUtilities_is_addressed_openlcb_message)
+                  0000b4ea    0000000a     protocol_message_network.o (.text.ProtocolMessageNetwork_handle_protocol_support_reply)
+                  0000b4f4    0000000a     protocol_snip.o (.text.ProtocolSnip_handle_simple_node_info_reply)
+                  0000b4fe    0000000a     libc.a : sprintf.c.obj (.text._outc)
+                  0000b508    00000008     alias_mappings.o (.text.AliasMappings_get_alias_mapping_info)
+                  0000b510    00000008     openlcb_config.o (.text.OpenLcb_create_node)
+                  0000b518    00000008     ti_driverlib_drivers.o (.text.SysTick_Handler)
+                  0000b520    00000008     libc.a : aeabi_portable.c.obj (.text.__aeabi_errno_addr)
+                  0000b528    00000008     libclang_rt.builtins.a : aeabi_memcpy.S.obj (.text.__aeabi_memcpy)
+                  0000b530    00000008     libc.a : printf.c.obj (.text._outc)
+                  0000b538    00000008            : printf.c.obj (.text._outs)
+                  0000b540    00000008            : fseek.c.obj (.text.fseek)
+                  0000b548    00000008     libsysbm.a : remove.c.obj (.text.remove)
+                  0000b550    00000006     openlcb_utilities.o (.text.OpenLcbUtilities_extract_byte_from_openlcb_payload)
+                  0000b556    00000006     libc.a : exit.c.obj (.text:abort)
+                  0000b55c    00000004     can_tx_message_handler.o (.text.CanTxMessageHandler_stream_frame)
+                  0000b560    00000004     libsysbm.a : hostexit.c.obj (.text.HOSTexit)
+                  0000b564    00000004     startup_mspm0g350x_ticlang.o (.text.Reset_Handler)
+                  0000b568    00000010     libc.a : boot_cortex_m.c.obj (.tramp._c_int00_noargs.1)
+                  0000b578    00000004     ti_driverlib_drivers.o (.text.TI_DriverLibDrivers_config_mem_write)
+                  0000b57c    00000004     libc.a : pre_init.c.obj (.text._system_pre_init)
+
+.cinit     0    00010c00    00000090     
+                  00010c00    00000065     (.cinit..data.load) [load image, compression = lzss]
+                  00010c65    00000003     --HOLE-- [fill = 0]
+                  00010c68    0000000c     (__TI_handler_table)
+                  00010c74    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  00010c7c    00000010     (__TI_cinit_table)
+                  00010c8c    00000004     --HOLE-- [fill = 0]
+
+.rodata    0    0000b580    00005680     
+                  0000b580    00005130     openlcb_user_config.o (.rodata.OpenLcbUserConfig_node_parameters)
+                  000106b0    00000101     libc.a : aeabi_ctype.S.obj (.rodata:__aeabi_ctype_table_)
+                  000107b1    00000002            : fputs.c.obj (.rodata.str1.16607721268415185390.1)
+                  000107b3    00000001     --HOLE-- [fill = 0]
+                  000107b4    00000078     basic_node.o (.rodata.openlcb_config)
+                  0001082c    00000060     ti_msp_dl_config.o (.rodata.gMCAN0MsgRAMConfigParams)
+                  0001088c    00000049     callbacks_config_mem.o (.rodata.str1.205553780404799708.1)
+                  000108d5    00000003     --HOLE-- [fill = 0]
+                  000108d8    00000040     dl_mcan.o (.rodata..L__const.DL_MCAN_getDataSize.dataSize)
+                  00010918    00000039     can_tx_message_handler.o (.rodata.str1.12091788185785158655.1)
+                  00010951    00000035     callbacks_config_mem.o (.rodata.str1.18440576400699699724.1)
+                  00010986    00000002     --HOLE-- [fill = 0]
+                  00010988    00000034     ti_msp_dl_config.o (.rodata.gMCAN0InitParams)
+                  000109bc    0000002c     ti_msp_dl_config.o (.rodata.gMCAN0ConfigParams)
+                  000109e8    0000002a     libc.a : aeabi_portable.c.obj (.rodata.str1.1603242578795511017.1)
+                  00010a12    00000002     --HOLE-- [fill = 0]
+                  00010a14    00000028     ti_msp_dl_config.o (.rodata.gSYSPLLConfig)
+                  00010a3c    00000022     callbacks_config_mem.o (.rodata.str1.14299202259206105879.1)
+                  00010a5e    00000002     --HOLE-- [fill = 0]
+                  00010a60    00000020     openlcb_buffer_store.o (.rodata.cst16)
+                  00010a80    00000020     dl_mcan.o (.rodata.cst32)
+                  00010aa0    00000020     ti_msp_dl_config.o (.rodata.gMCAN0BitTimes)
+                  00010ac0    0000001c     basic_node.o (.rodata.can_config)
+                  00010adc    0000001b     callbacks_can.o (.rodata.str1.16751399061457667381.1)
+                  00010af7    0000001b     callbacks_config_mem.o (.rodata.str1.6780003700326924481.1)
+                  00010b12    00000018     libc.a : aeabi_portable.c.obj (.rodata.str1.12460630753207392619.1)
+                  00010b2a    00000002     --HOLE-- [fill = 0]
+                  00010b2c    00000014     openlcb_utilities.o (.rodata..Lswitch.table.OpenLcbUtilities_copy_string_to_openlcb_payload)
+                  00010b40    00000014     openlcb_utilities.o (.rodata..Lswitch.table.OpenLcbUtilities_load_config_mem_reply_read_fail_message_header)
+                  00010b54    00000014     ti_driverlib_drivers.o (.rodata.str1.8964333138500812083.4)
+                  00010b68    00000013     callbacks_can.o (.rodata.str1.8380515466579968945.1)
+                  00010b7b    00000011     libc.a : _printfi.c.obj (.rodata.str1.10348868589481759720.1)
+                  00010b8c    00000011            : _printfi.c.obj (.rodata.str1.15363888844622738466.1)
+                  00010b9d    00000003     --HOLE-- [fill = 0]
+                  00010ba0    00000010     openlcb_buffer_store.o (.rodata..Lswitch.table.OpenLcbBufferStore_free_buffer)
+                  00010bb0    00000010     ti_msp_dl_config.o (.rodata.gMCAN0ExtFiltelem)
+                  00010bc0    0000000a     openlcb_utilities.o (.rodata..Lswitch.table.OpenLcbUtilities_payload_type_to_len)
+                  00010bca    00000008     callbacks_can.o (.rodata.str1.3756357221947688964.1)
+                  00010bd2    00000008     callbacks_can.o (.rodata.str1.9043125366425901823.1)
+                  00010bda    00000007     basic_node.o (.rodata.str1.6910159876656296677.1)
+                  00010be1    00000006     openlcb_gridconnect.o (.rodata.str1.12664193696620260334.1)
+                  00010be7    00000006     can_tx_message_handler.o (.rodata.str1.8937946667223793284.1)
+                  00010bed    00000005     openlcb_gridconnect.o (.rodata.str1.8585830579133075644.1)
+                  00010bf2    00000004     ti_msp_dl_config.o (.rodata.gMCAN0ClockConf)
+                  00010bf6    0000000a     --HOLE-- [fill = 0]
+
+.init_array 
+*          0    00000000    00000000     UNINITIALIZED
+
+.binit     0    00000000    00000000     
+
+.bss       0    20200000    00004ad5     UNINITIALIZED
+                  20200000    00002448     openlcb_node.o (.bss._openlcb_nodes)
+                  20202448    00000d90     openlcb_buffer_store.o (.bss._message_buffer)
+                  202031d8    000005c8     openlcb_main_statemachine.o (.bss._sibling_response_queue)
+                  202037a0    000001b8     openlcb_config.o (.bss._datagram)
+                  20203958    00000190     can_buffer_store.o (.bss._can_buffer_store)
+                  20203ae8    00000180     openlcb_application_broadcast_time.o (.bss._clocks)
+                  20203c68    00000180     alias_mapping_listener.o (.bss._table)
+                  20203de8    00000148     openlcb_login_statemachine.o (.bss._sibling_statemachine_info)
+                  20203f30    00000148     openlcb_main_statemachine.o (.bss._sibling_statemachine_info)
+                  20204078    00000148     openlcb_main_statemachine.o (.bss._statemachine_info)
+                  202041c0    00000128     openlcb_main_statemachine.o (.bss._path_b_pending_msg)
+                  202042e8    00000120     libsysbm.a : trgmsg.c.obj (.bss:_CIOBUF_)
+                  20204408    000000f4     openlcb_config.o (.bss._main_sm)
+                  202044fc    000000ac     openlcb_buffer_fifo.o (.bss._openlcb_msg_buffer_fifo)
+                  202045a8    000000a4     openlcb_buffer_list.o (.bss._openlcb_msg_buffer_list)
+                  2020464c    000000a0     libc.a : defs.c.obj (.bss.__TI_tmpnams)
+                  202046ec    00000058     can_buffer_fifo.o (.bss.can_msg_buffer_fifo)
+                  20204744    0000004c     openlcb_config.o (.bss._config_read)
+                  20204790    00000048     alias_mappings.o (.bss._alias_mapping_info)
+                  202047d8    00000048     can_config.o (.bss._main_sm)
+                  20204820    00000048     openlcb_login_statemachine.o (.bss._statemachine_info)
+                  20204868    00000040     openlcb_config.o (.bss._config_ops)
+                  202048a8    0000003c     openlcb_config.o (.bss._event_transport)
+                  202048e4    00000038     openlcb_config.o (.bss._config_write)
+                  2020491c    00000038     openlcb_config.o (.bss._login_sm)
+                  20204954    00000038     can_config.o (.bss._rx_sm)
+                  2020498c    0000002c     can_config.o (.bss._rx_msg)
+                  202049b8    00000028     can_config.o (.bss._login_sm)
+                  202049e0    0000001c     can_config.o (.bss._tx_sm)
+                  202049fc    00000014     can_main_statemachine.o (.bss._can_msg)
+                  20204a10    00000014     can_main_statemachine.o (.bss._can_statemachine_info)
+                  20204a24    0000000c     openlcb_config.o (.bss._app)
+                  20204a30    0000000c     can_config.o (.bss._login_msg)
+                  20204a3c    0000000a     openlcb_node.o (.bss._node_enum_index_array)
+                  20204a46    00000002     can_buffer_store.o (.bss._can_buffer_store_message_allocated)
+                  20204a48    00000008     openlcb_config.o (.bss._login_msg)
+                  20204a50    00000008     openlcb_config.o (.bss._msg_network)
+                  20204a58    00000008     can_config.o (.bss._tx_msg)
+                  20204a60    00000008     libsysbm.a : hostopen.c.obj (.bss.parmbuf)
+                  20204a68    00000004     can_config.o (.bss._config)
+                  20204a6c    00000004     openlcb_config.o (.bss._config)
+                  20204a70    00000004     can_login_message_handler.o (.bss._interface)
+                  20204a74    00000004     can_login_statemachine.o (.bss._interface)
+                  20204a78    00000004     can_main_statemachine.o (.bss._interface)
+                  20204a7c    00000004     can_rx_message_handler.o (.bss._interface)
+                  20204a80    00000004     can_rx_statemachine.o (.bss._interface)
+                  20204a84    00000004     can_tx_message_handler.o (.bss._interface)
+                  20204a88    00000004     can_tx_statemachine.o (.bss._interface)
+                  20204a8c    00000004     openlcb_application.o (.bss._interface)
+                  20204a90    00000004     openlcb_login_statemachine.o (.bss._interface)
+                  20204a94    00000004     openlcb_login_statemachine_handler.o (.bss._interface)
+                  20204a98    00000004     openlcb_main_statemachine.o (.bss._interface)
+                  20204a9c    00000004     openlcb_node.o (.bss._interface)
+                  20204aa0    00000004     protocol_config_mem_operations_handler.o (.bss._interface)
+                  20204aa4    00000004     protocol_config_mem_read_handler.o (.bss._interface)
+                  20204aa8    00000004     protocol_config_mem_write_handler.o (.bss._interface)
+                  20204aac    00000004     protocol_datagram_handler.o (.bss._interface)
+                  20204ab0    00000004     protocol_event_transport.o (.bss._interface)
+                  20204ab4    00000004     protocol_message_network.o (.bss._interface)
+                  20204ab8    00000004     protocol_snip.o (.bss._interface)
+                  20204abc    00000004     openlcb_config.o (.bss._node)
+                  20204ac0    00000004     openlcb_main_statemachine.o (.bss._path_b_pending_ptr)
+                  20204ac4    00000004     openlcb_config.o (.bss._snip)
+                  20204ac8    00000004     libc.a : memory.c.obj (.bss.sys_free)
+                  20204acc    00000002     can_buffer_store.o (.bss._can_buffer_store_message_max_allocated)
+                  20204ace    00000001     openlcb_main_statemachine.o (.bss._path_b_pending)
+                  20204acf    00000001     openlcb_login_statemachine.o (.bss._sibling_dispatch_active)
+                  20204ad0    00000001     openlcb_main_statemachine.o (.bss._sibling_dispatch_active)
+                  20204ad1    00000001     openlcb_main_statemachine.o (.bss._sibling_response_queue_head)
+                  20204ad2    00000001     openlcb_main_statemachine.o (.bss._sibling_response_queue_high_water)
+                  20204ad3    00000001     openlcb_main_statemachine.o (.bss._sibling_response_queue_tail)
+                  20204ad4    00000001     openlcb_main_statemachine.o (.bss._train_search_match_found)
+
+.sysmem    0    20204ad8    00000800     UNINITIALIZED
+                  20204ad8    00000010     libc.a : memory.c.obj (.sysmem)
+                  20204ae8    000007f0     --HOLE--
+
+.data      0    202052d8    000001ed     UNINITIALIZED
+                  202052d8    000000f0     libc.a : defs.c.obj (.data._ftable)
+                  202053c8    00000078     libsysbm.a : host_device.c.obj (.data._device)
+                  20205440    00000050                : host_device.c.obj (.data._stream)
+                  20205490    00000008     libc.a : exit.c.obj (.data..L_MergedGlobals)
+                  20205498    00000004            : defs.c.obj (.data.__TI_ft_end)
+                  2020549c    00000004            : aeabi_portable.c.obj (.data.__aeabi_errno)
+                  202054a0    00000004            : _lock.c.obj (.data._lock)
+                  202054a4    00000004            : _lock.c.obj (.data._unlock)
+                  202054a8    00000002     callbacks_olcb.o (.data._100ms_ticks)
+                  202054aa    00000002     openlcb_buffer_store.o (.data._buffer_store_basic_max_messages_allocated)
+                  202054ac    00000002     openlcb_buffer_store.o (.data._buffer_store_basic_messages_allocated)
+                  202054ae    00000002     openlcb_buffer_store.o (.data._buffer_store_datagram_max_messages_allocated)
+                  202054b0    00000002     openlcb_buffer_store.o (.data._buffer_store_datagram_messages_allocated)
+                  202054b2    00000002     openlcb_buffer_store.o (.data._buffer_store_snip_max_messages_allocated)
+                  202054b4    00000002     openlcb_buffer_store.o (.data._buffer_store_snip_messages_allocated)
+                  202054b6    00000002     openlcb_buffer_store.o (.data._buffer_store_stream_max_messages_allocated)
+                  202054b8    00000002     openlcb_buffer_store.o (.data._buffer_store_stream_messages_allocated)
+                  202054ba    00000002     alias_mapping_listener.o (.data._verify_counter)
+                  202054bc    00000002     alias_mapping_listener.o (.data._verify_cursor)
+                  202054be    00000001     openlcb_config.o (.data._global_100ms_tick)
+                  202054bf    00000001     ti_driverlib_can_driver.o (.data._is_transmitting)
+                  202054c0    00000001     openlcb_node.o (.data._last_app_callback_tick)
+                  202054c1    00000001     alias_mapping_listener.o (.data._verify_last_tick)
+                  202054c2    00000002     --HOLE--
+                  202054c4    00000001     libc.a : memory.c.obj (.data.memory_is_initialized)
+
+.stack     0    20207e00    00000200     UNINITIALIZED
+                  20207e00    00000004     libc.a : boot_cortex_m.c.obj (.stack)
+                  20207e04    000001fc     --HOLE--
+
+__llvm_prf_cnts 
+*          0    20200000    00000000     UNINITIALIZED
+
+__llvm_prf_bits 
+*          0    20200000    00000000     UNINITIALIZED
+
+MODULE SUMMARY
+
+       Module                                     code    ro data   rw data
+       ------                                     ----    -------   -------
+    ./
+       openlcb_user_config.o                      0       20784     0      
+       ti_msp_dl_config.o                         560     284       0      
+       basic_node.o                               84      155       0      
+       startup_mspm0g350x_ticlang.o               6       192       0      
+    +--+------------------------------------------+-------+---------+---------+
+       Total:                                     650     21415     0      
+                                                                           
+    ./application_callbacks/
+       callbacks_config_mem.o                     92      187       0      
+       callbacks_can.o                            124     62        0      
+       callbacks_olcb.o                           38      0         2      
+    +--+------------------------------------------+-------+---------+---------+
+       Total:                                     254     249       2      
+                                                                           
+    ./application_drivers/
+       ti_driverlib_can_driver.o                  832     0         1      
+       ti_driverlib_drivers.o                     130     20        0      
+    +--+------------------------------------------+-------+---------+---------+
+       Total:                                     962     20        1      
+                                                                           
+    ./openlcb_c_lib/drivers/canbus/
+       can_rx_message_handler.o                   2166    0         4      
+       can_buffer_store.o                         704     0         404    
+       can_main_statemachine.o                    960     0         44     
+       can_config.o                               548     0         264    
+       can_utilities.o                            726     0         0      
+       can_login_message_handler.o                716     0         4      
+       alias_mappings.o                           576     0         72     
+       alias_mapping_listener.o                   192     0         389    
+       can_tx_message_handler.o                   480     63        4      
+       can_rx_statemachine.o                      528     0         4      
+       can_tx_statemachine.o                      412     0         4      
+       can_buffer_fifo.o                          112     0         88     
+       can_login_statemachine.o                   132     0         4      
+    +--+------------------------------------------+-------+---------+---------+
+       Total:                                     8252    63        1285   
+                                                                           
+    ./openlcb_c_lib/openlcb/
+       openlcb_node.o                             2156    0         9303   
+       openlcb_main_statemachine.o                2876    0         2446   
+       openlcb_buffer_store.o                     696     48        3488   
+       protocol_datagram_handler.o                4138    0         4      
+       protocol_config_mem_operations_handler.o   2764    0         4      
+       openlcb_utilities.o                        2612    50        0      
+       openlcb_config.o                           1484    0         1037   
+       protocol_event_transport.o                 2086    0         4      
+       protocol_snip.o                            1622    0         4      
+       protocol_config_mem_write_handler.o        1436    0         4      
+       openlcb_login_statemachine.o               700     0         405    
+       protocol_message_network.o                 1004    0         4      
+       protocol_config_mem_read_handler.o         880     0         4      
+       openlcb_application_broadcast_time.o       476     0         384    
+       openlcb_login_statemachine_handler.o       804     0         4      
+       openlcb_buffer_list.o                      392     0         164    
+       openlcb_buffer_fifo.o                      176     0         172    
+       openlcb_gridconnect.o                      328     11        0      
+       openlcb_application.o                      12      0         4      
+    +--+------------------------------------------+-------+---------+---------+
+       Total:                                     26642   109       17435  
+                                                                           
+    ./ti/driverlib/
+       dl_mcan.o                                  2296    96        0      
+       dl_common.o                                10      0         0      
+    +--+------------------------------------------+-------+---------+---------+
+       Total:                                     2306    96        0      
+                                                                           
+    ./ti/driverlib/m0p/sysctl/
+       dl_sysctl_mspm0g1x0x_g3x0x.o               388     0         0      
+    +--+------------------------------------------+-------+---------+---------+
+       Total:                                     388     0         0      
+                                                                           
+    /Applications/TI/ccs2020/ccs/tools/compiler/ti-cgt-armllvm_4.0.3.LTS/lib/armv6m-ti-none-eabi/c/libc.a
+       _printfi.c.obj                             2166    34        0      
+       memory.c.obj                               702     0         5      
+       defs.c.obj                                 0       0         404    
+       fputs.c.obj                                284     2         0      
+       aeabi_ctype.S.obj                          0       257       0      
+       setvbuf.c.obj                              224     0         0      
+       fflush.c.obj                               178     0         0      
+       aeabi_portable.c.obj                       90      66        4      
+       getdevice.c.obj                            160     0         0      
+       fputc.c.obj                                156     0         0      
+       memcpy16.S.obj                             154     0         0      
+       strcmp-armv6m.S.obj                        136     0         0      
+       copy_decompress_lzss.c.obj                 124     0         0      
+       fclose.c.obj                               124     0         0      
+       fseek.c.obj                                116     0         0      
+       printf.c.obj                               108     0         0      
+       _io_perm.c.obj                             100     0         0      
+       memset16.S.obj                             98      0         0      
+       sprintf.c.obj                              90      0         0      
+       exit.c.obj                                 58      0         8      
+       atoi.c.obj                                 64      0         0      
+       autoinit.c.obj                             60      0         0      
+       boot_cortex_m.c.obj                        56      0         0      
+       fopen.c.obj                                52      0         0      
+       memccpy.c.obj                              34      0         0      
+       assert.c.obj                               24      0         0      
+       copy_decompress_none.c.obj                 18      0         0      
+       copy_zero_init.c.obj                       16      0         0      
+       wcslen.c.obj                               16      0         0      
+       _lock.c.obj                                2       0         8      
+       pre_init.c.obj                             4       0         0      
+    +--+------------------------------------------+-------+---------+---------+
+       Total:                                     5414    359       429    
+                                                                           
+    /Applications/TI/ccs2020/ccs/tools/compiler/ti-cgt-armllvm_4.0.3.LTS/lib/armv6m-ti-none-eabi/c/libsysbm.a
+       trgmsg.c.obj                               104     0         288    
+       host_device.c.obj                          0       0         200    
+       hostrename.c.obj                           136     0         0      
+       hostlseek.c.obj                            108     0         0      
+       hostopen.c.obj                             96      0         8      
+       hostread.c.obj                             88      0         0      
+       hostwrite.c.obj                            88      0         0      
+       close.c.obj                                80      0         0      
+       hostclose.c.obj                            72      0         0      
+       hostunlink.c.obj                           72      0         0      
+       unlink.c.obj                               44      0         0      
+       lseek.c.obj                                40      0         0      
+       write.c.obj                                40      0         0      
+       remove.c.obj                               8       0         0      
+       hostexit.c.obj                             4       0         0      
+    +--+------------------------------------------+-------+---------+---------+
+       Total:                                     980     0         496    
+                                                                           
+    /Applications/TI/ccs2020/ccs/tools/compiler/ti-cgt-armllvm_4.0.3.LTS/lib/armv6m-ti-none-eabi/libclang_rt.builtins.a
+       udivmoddi4.S.obj                           162     0         0      
+       aeabi_uidivmod.S.obj                       64      0         0      
+       muldsi3.S.obj                              58      0         0      
+       muldi3.S.obj                               36      0         0      
+       ashldi3.S.obj                              30      0         0      
+       aeabi_memset.S.obj                         26      0         0      
+       aeabi_uldivmod.S.obj                       20      0         0      
+       aeabi_memcpy.S.obj                         8       0         0      
+       aeabi_div0.c.obj                           4       0         0      
+    +--+------------------------------------------+-------+---------+---------+
+       Total:                                     408     0         0      
+                                                                           
+       Heap:                                      0       0         2048   
+       Stack:                                     0       0         512    
+       Linker Generated:                          0       137       0      
+    +--+------------------------------------------+-------+---------+---------+
+       Grand Total:                               46256   22448     22208  
+
+
+LINKER GENERATED COPY TABLES
+
+__TI_cinit_table @ 00010c7c records: 2, size/record: 8, table size: 16
+	.data: load addr=00010c00, load size=00000065 bytes, run addr=202052d8, run size=000001ed bytes, compression=lzss
+	.bss: load addr=00010c74, load size=00000008 bytes, run addr=20200000, run size=00004ad5 bytes, compression=zero_init
+
+
+LINKER GENERATED HANDLER TABLE
+
+__TI_handler_table @ 00010c68 records: 3, size/record: 4, table size: 12
+	index: 0, handler: __TI_decompress_lzss
+	index: 1, handler: __TI_decompress_none
+	index: 2, handler: __TI_zero_init
+
+
+FAR CALL TRAMPOLINES
+
+callee name               trampoline name
+   callee addr  tramp addr   call addr  call info
+--------------  -----------  ---------  ----------------
+_c_int00_noargs           $Tramp$TT$L$PI$$_c_int00_noargs
+   0000ac71     0000b568     0000b564   startup_mspm0g350x_ticlang.o (.text.Reset_Handler)
+
+[1 trampolines]
+[1 trampoline calls]
+
+
+GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
+
+address   name                                                                               
+-------   ----                                                                               
+00007127  ADC0_IRQHandler                                                                    
+00007127  ADC1_IRQHandler                                                                    
+00007127  AES_IRQHandler                                                                     
+000098b5  AliasMappings_find_mapping_by_alias                                                
+000086a9  AliasMappings_find_mapping_by_node_id                                              
+0000b509  AliasMappings_get_alias_mapping_info                                               
+00009901  AliasMappings_initialize                                                           
+00005f39  AliasMappings_register                                                             
+0000b281  AliasMappings_set_has_duplicate_alias_flag                                         
+000095d5  AliasMappings_unregister                                                           
+0000b560  C$$EXIT                                                                            
+0000a5fd  C$$IO$$                                                                            
+0000215d  CANFD0_IRQHandler                                                                  
+0000acc1  CallbacksCan_on_alias_change                                                       
+0000a81d  CallbacksCan_on_rx                                                                 
+0000a849  CallbacksCan_on_tx                                                                 
+0000affd  CallbacksConfigMem_factory_reset                                                   
+0000b0f5  CallbacksConfigMem_freeze                                                          
+0000b10d  CallbacksConfigMem_unfreeze                                                        
+0000b291  CallbacksConfigMem_write_firmware                                                  
+00004c5b  CallbacksOlcb_initialize                                                           
+0000ace5  CallbacksOlcb_on_100ms_timer                                                       
+0000b2a1  CanBufferFifo_initialize                                                           
+0000a66d  CanBufferFifo_pop                                                                  
+0000a69d  CanBufferFifo_push                                                                 
+000042e9  CanBufferStore_allocate_buffer                                                     
+0000b019  CanBufferStore_free_buffer                                                         
+00003749  CanBufferStore_initialize                                                          
+00002839  CanConfig_initialize                                                               
+000078c5  CanLoginMessageHandler_initialize                                                  
+00006875  CanLoginMessageHandler_state_generate_alias                                        
+0000936d  CanLoginMessageHandler_state_generate_seed                                         
+0000b125  CanLoginMessageHandler_state_init                                                  
+00008c85  CanLoginMessageHandler_state_load_amd                                              
+00009ea1  CanLoginMessageHandler_state_load_cid04                                            
+0000a1ad  CanLoginMessageHandler_state_load_cid05                                            
+00009d21  CanLoginMessageHandler_state_load_cid06                                            
+0000a1e5  CanLoginMessageHandler_state_load_cid07                                            
+0000a875  CanLoginMessageHandler_state_load_rid                                              
+0000ad09  CanLoginMessageHandler_state_wait_200ms                                            
+0000b3b9  CanLoginStateMachine_initialize                                                    
+00007de1  CanLoginStateMachine_run                                                           
+000093c5  CanMainStateMachine_run                                                            
+000035ad  CanMainStatemachine_handle_duplicate_aliases                                       
+0000772d  CanMainStatemachine_handle_listener_verification                                   
+0000a6cd  CanMainStatemachine_handle_login_outgoing_can_message                              
+0000941d  CanMainStatemachine_handle_outgoing_can_message                                    
+00009abd  CanMainStatemachine_handle_try_enumerate_first_node                                
+00009b01  CanMainStatemachine_handle_try_enumerate_next_node                                 
+0000a2c5  CanMainStatemachine_initialize                                                     
+0000325d  CanRxMessageHandler_amd_frame                                                      
+00003409  CanRxMessageHandler_ame_frame                                                      
+00005aed  CanRxMessageHandler_amr_frame                                                      
+00008e65  CanRxMessageHandler_can_legacy_snip                                                
+00009edd  CanRxMessageHandler_cid_frame                                                      
+00008ec1  CanRxMessageHandler_error_info_report_frame                                        
+000040ad  CanRxMessageHandler_first_frame                                                    
+0000b3c5  CanRxMessageHandler_initialize                                                     
+00006929  CanRxMessageHandler_last_frame                                                     
+00006295  CanRxMessageHandler_middle_frame                                                   
+00008f1d  CanRxMessageHandler_rid_frame                                                      
+00008f79  CanRxMessageHandler_single_frame                                                   
+00006fdf  CanRxMessageHandler_stream_frame                                                   
+00002e7d  CanRxStatemachine_incoming_can_driver_callback                                     
+0000b3d1  CanRxStatemachine_initialize                                                       
+000074dd  CanTxMessageHandler_addressed_msg_frame                                            
+0000ab09  CanTxMessageHandler_can_frame                                                      
+0000769d  CanTxMessageHandler_datagram_frame                                                 
+0000b3dd  CanTxMessageHandler_initialize                                                     
+0000b55d  CanTxMessageHandler_stream_frame                                                   
+00007b69  CanTxMessageHandler_unaddressed_msg_frame                                          
+0000b3e9  CanTxStatemachine_initialize                                                       
+0000b2b1  CanTxStatemachine_send_can_message                                                 
+000038d5  CanTxStatemachine_send_openlcb_message                                             
+0000994d  CanUtilities_append_can_payload_to_openlcb_payload                                 
+0000b25d  CanUtilities_clear_can_message                                                     
+00009725  CanUtilities_convert_can_mti_to_openlcb_mti                                        
+0000a8a1  CanUtilities_copy_node_id_to_payload                                               
+00004b5d  CanUtilities_copy_openlcb_payload_to_can_payload                                   
+00007609  CanUtilities_count_nulls_in_payloads                                               
+0000aeed  CanUtilities_extract_can_payload_as_node_id                                        
+0000a21d  CanUtilities_extract_dest_alias_from_can_message                                   
+0000b3f5  CanUtilities_extract_source_alias_from_can_identifier                              
+0000b4cd  CanUtilities_is_openlcb_message                                                    
+00007127  DAC0_IRQHandler                                                                    
+0000b4d7  DL_Common_delayCycles                                                              
+0000a2f9  DL_MCAN_TXBufAddReq                                                                
+0000a8cd  DL_MCAN_TXBufTransIntrEnable                                                       
+0000a8f9  DL_MCAN_addExtMsgIDFilter                                                          
+0000b1e5  DL_MCAN_clearIntrStatus                                                            
+000053e5  DL_MCAN_config                                                                     
+0000b035  DL_MCAN_enableIntr                                                                 
+0000b051  DL_MCAN_enableIntrLine                                                             
+0000b401  DL_MCAN_getIntrStatus                                                              
+0000b2c1  DL_MCAN_getOpMode                                                                  
+00009b45  DL_MCAN_getRevisionId                                                              
+0000a255  DL_MCAN_getRxFIFOStatus                                                            
+00005bc9  DL_MCAN_init                                                                       
+0000b2d1  DL_MCAN_isMemInitDone                                                              
+00002a5d  DL_MCAN_msgRAMConfig                                                               
+00004741  DL_MCAN_readMsgRam                                                                 
+0000b06d  DL_MCAN_selectIntrLine                                                             
+00006011  DL_MCAN_setBitTime                                                                 
+0000ad2d  DL_MCAN_setClockConfig                                                             
+0000a32d  DL_MCAN_setExtIDAndMask                                                            
+0000b13d  DL_MCAN_setOpMode                                                                  
+00004f4d  DL_MCAN_writeMsgRam                                                                
+00009d61  DL_MCAN_writeRxFIFOAck                                                             
+00005ca5  DL_SYSCTL_configSYSPLL                                                             
+0000870d  DL_SYSCTL_setHFCLKSourceHFXTParams                                                 
+00009b89  DL_SYSCTL_switchMCLKfromSYSOSCtoHSCLK                                              
+00007127  DMA_IRQHandler                                                                     
+00007127  Default_Handler                                                                    
+00007127  GROUP0_IRQHandler                                                                  
+00007127  GROUP1_IRQHandler                                                                  
+000099e5  HOSTclose                                                                          
+0000b561  HOSTexit                                                                           
+0000827d  HOSTlseek                                                                          
+00008ce5  HOSTopen                                                                           
+00009475  HOSTread                                                                           
+000082e9  HOSTrename                                                                         
+00009a2d  HOSTunlink                                                                         
+000094cd  HOSTwrite                                                                          
+00007127  HardFault_Handler                                                                  
+00007127  I2C0_IRQHandler                                                                    
+00007127  I2C1_IRQHandler                                                                    
+00006355  ListenerAliasTable_check_one_verification                                          
+00007127  NMI_Handler                                                                        
+00003081  OpenLcbApplicationBroadcastTime_get_clock                                          
+0000b40d  OpenLcbApplication_initialize                                                      
+00009bcd  OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias                    
+0000b2e1  OpenLcbBufferFifo_initialize                                                       
+0000a925  OpenLcbBufferFifo_pop                                                              
+0000a6fd  OpenLcbBufferFifo_push                                                             
+00009f19  OpenLcbBufferList_add                                                              
+00007be9  OpenLcbBufferList_check_timeouts                                                   
+00008571  OpenLcbBufferList_find                                                             
+0000b1f9  OpenLcbBufferList_index_of                                                         
+0000b2f1  OpenLcbBufferList_initialize                                                       
+00009da1  OpenLcbBufferList_release                                                          
+0000484d  OpenLcbBufferStore_allocate_buffer                                                 
+00009f55  OpenLcbBufferStore_free_buffer                                                     
+00003a55  OpenLcbBufferStore_initialize                                                      
+00003bc9  OpenLcbGridConnect_from_can_msg                                                    
+000060e9  OpenLcbLoginMainStatemachine_run                                                   
+0000b419  OpenLcbLoginMessageHandler_initialize                                              
+00003e51  OpenLcbLoginMessageHandler_load_consumer_event                                     
+00007129  OpenLcbLoginMessageHandler_load_initialization_complete                            
+00003d11  OpenLcbLoginMessageHandler_load_producer_event                                     
+000080b1  OpenLcbLoginStateMachine_initialize                                                
+00008771  OpenLcbLoginStateMachine_process                                                   
+00008355  OpenLcbLoginStatemachine_handle_outgoing_openlcb_message                           
+00009f91  OpenLcbLoginStatemachine_handle_try_enumerate_first_node                           
+00009fcd  OpenLcbLoginStatemachine_handle_try_enumerate_next_node                            
+0000ab31  OpenLcbLoginStatemachine_handle_try_reenumerate                                    
+00008d45  OpenLcbMainStatemachine_does_node_process_msg                                      
+000085d9  OpenLcbMainStatemachine_handle_outgoing_openlcb_message                            
+00008641  OpenLcbMainStatemachine_handle_try_enumerate_first_node                            
+00008fd5  OpenLcbMainStatemachine_handle_try_enumerate_next_node                             
+000087d5  OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message               
+0000ad51  OpenLcbMainStatemachine_handle_try_reenumerate                                     
+00004c5d  OpenLcbMainStatemachine_initialize                                                 
+00008839  OpenLcbMainStatemachine_load_interaction_rejected                                  
+00000ea5  OpenLcbMainStatemachine_process_main_statemachine                                  
+00002601  OpenLcbMainStatemachine_run                                                        
+000071c9  OpenLcbMainStatemachine_send_with_sibling_dispatch                                 
+0000ab59  OpenLcbNode_100ms_timer_tick                                                       
+00001b9d  OpenLcbNode_allocate                                                               
+00007e59  OpenLcbNode_find_by_alias                                                          
+0000b301  OpenLcbNode_get_count                                                              
+0000ab81  OpenLcbNode_get_first                                                              
+0000a72d  OpenLcbNode_get_next                                                               
+00009775  OpenLcbNode_initialize                                                             
+0000a75d  OpenLcbNode_is_last                                                                
+0000b580  OpenLcbUserConfig_node_parameters                                                  
+0000b089  OpenLcbUtilities_clear_openlcb_message                                             
+000083c1  OpenLcbUtilities_clear_openlcb_message_payload                                     
+00009c11  OpenLcbUtilities_copy_byte_array_to_openlcb_payload                                
+0000b425  OpenLcbUtilities_copy_byte_to_openlcb_payload                                      
+0000ac99  OpenLcbUtilities_copy_dword_to_openlcb_payload                                     
+0000a361  OpenLcbUtilities_copy_event_id_to_openlcb_payload                                  
+00009629  OpenLcbUtilities_copy_node_id_to_openlcb_payload                                   
+00009031  OpenLcbUtilities_copy_string_to_openlcb_payload                                    
+0000b1cd  OpenLcbUtilities_copy_word_to_openlcb_payload                                      
+00007c69  OpenLcbUtilities_count_nulls_in_openlcb_payload                                    
+0000b551  OpenLcbUtilities_extract_byte_from_openlcb_payload                                 
+0000b0c1  OpenLcbUtilities_extract_dword_from_openlcb_payload                                
+0000a951  OpenLcbUtilities_extract_event_id_from_openlcb_payload                             
+0000ae05  OpenLcbUtilities_extract_node_id_from_openlcb_payload                              
+0000b311  OpenLcbUtilities_extract_word_from_openlcb_payload                                 
+0000a135  OpenLcbUtilities_generate_event_range_id                                           
+0000ae8d  OpenLcbUtilities_is_addressed_message_for_node                                     
+0000b4e1  OpenLcbUtilities_is_addressed_openlcb_message                                      
+0000908d  OpenLcbUtilities_is_broadcast_time_event                                           
+00009525  OpenLcbUtilities_is_consumer_event_assigned_to_node                                
+0000aead  OpenLcbUtilities_is_emergency_event                                                
+000090e9  OpenLcbUtilities_is_event_id_in_consumer_ranges                                    
+00009145  OpenLcbUtilities_is_event_id_in_producer_ranges                                    
+000091a1  OpenLcbUtilities_is_producer_event_assigned_to_node                                
+0000b321  OpenLcbUtilities_is_train_search_event                                             
+00004519  OpenLcbUtilities_load_config_mem_reply_read_fail_message_header                    
+00004955  OpenLcbUtilities_load_config_mem_reply_read_ok_message_header                      
+00003f89  OpenLcbUtilities_load_config_mem_reply_write_fail_message_header                   
+00004a59  OpenLcbUtilities_load_config_mem_reply_write_ok_message_header                     
+00007959  OpenLcbUtilities_load_openlcb_message                                              
+0000b20d  OpenLcbUtilities_payload_type_to_len                                               
+0000b431  OpenLcbUtilities_set_multi_frame_flag                                              
+0000b331  OpenLcb_100ms_timer_tick                                                           
+0000b511  OpenLcb_create_node                                                                
+0000b43d  OpenLcb_get_global_100ms_tick                                                      
+00000929  OpenLcb_initialize                                                                 
+0000a97d  OpenLcb_run                                                                        
+00007127  PendSV_Handler                                                                     
+000077b5  ProtocolConfigMemOperationsHandler_factory_reset                                   
+000055ad  ProtocolConfigMemOperationsHandler_freeze                                          
+0000568d  ProtocolConfigMemOperationsHandler_get_address_space_info                          
+0000576d  ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present        
+0000584d  ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present            
+0000889d  ProtocolConfigMemOperationsHandler_get_unique_id                                   
+00008901  ProtocolConfigMemOperationsHandler_get_unique_id_reply                             
+0000b449  ProtocolConfigMemOperationsHandler_initialize                                      
+00008965  ProtocolConfigMemOperationsHandler_options_cmd                                     
+000089c9  ProtocolConfigMemOperationsHandler_options_reply                                   
+00005d81  ProtocolConfigMemOperationsHandler_request_get_address_space_info                  
+00004d59  ProtocolConfigMemOperationsHandler_request_options_cmd                             
+000054c9  ProtocolConfigMemOperationsHandler_request_reserve_lock                            
+00008a2d  ProtocolConfigMemOperationsHandler_reserve_lock                                    
+00008a91  ProtocolConfigMemOperationsHandler_reserve_lock_reply                              
+00008da5  ProtocolConfigMemOperationsHandler_reset_reboot                                    
+0000592d  ProtocolConfigMemOperationsHandler_unfreeze                                        
+00008af5  ProtocolConfigMemOperationsHandler_update_complete                                 
+0000b455  ProtocolConfigMemReadHandler_initialize                                            
+00007309  ProtocolConfigMemReadHandler_read_request_acdi_manufacturer                        
+00007ed1  ProtocolConfigMemReadHandler_read_request_acdi_user                                
+0000a78d  ProtocolConfigMemReadHandler_read_request_config_definition_info                   
+000091fd  ProtocolConfigMemReadHandler_read_request_config_mem                               
+0000a9a9  ProtocolConfigMemReadHandler_read_space_acdi_manufacturer                          
+0000a9d5  ProtocolConfigMemReadHandler_read_space_acdi_user                                  
+0000aa01  ProtocolConfigMemReadHandler_read_space_all                                        
+0000aba9  ProtocolConfigMemReadHandler_read_space_config_description_info                    
+0000aa2d  ProtocolConfigMemReadHandler_read_space_config_memory                              
+0000b461  ProtocolConfigMemWriteHandler_initialize                                           
+00006705  ProtocolConfigMemWriteHandler_write_request_acdi_user                              
+00009c55  ProtocolConfigMemWriteHandler_write_request_config_mem                             
+0000aa59  ProtocolConfigMemWriteHandler_write_space_acdi_user                                
+0000aa85  ProtocolConfigMemWriteHandler_write_space_config_memory                            
+0000aab1  ProtocolConfigMemWriteHandler_write_space_firmware                                 
+0000af0b  ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_manufacturer             
+0000af29  ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_user                     
+0000af47  ProtocolConfigMemWriteHandler_write_under_mask_space_all                           
+0000b0db  ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info       
+0000af65  ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory                 
+0000af83  ProtocolConfigMemWriteHandler_write_under_mask_space_firmware                      
+0000afa1  ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory  
+0000afbf  ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info
+000074db  ProtocolDatagramHandler_100ms_timer_tick                                           
+0000842d  ProtocolDatagramHandler_check_timeouts                                             
+00001395  ProtocolDatagramHandler_datagram                                                   
+00009a75  ProtocolDatagramHandler_datagram_received_ok                                       
+00007575  ProtocolDatagramHandler_datagram_rejected                                          
+0000b46d  ProtocolDatagramHandler_initialize                                                 
+0000512d  ProtocolDatagramHandler_load_datagram_received_ok_message                          
+00009c99  ProtocolDatagramHandler_load_datagram_rejected_message                             
+0000aecd  ProtocolEventTransport_extract_consumer_event_status_mti                           
+0000ad75  ProtocolEventTransport_extract_producer_event_status_mti                           
+0000a395  ProtocolEventTransport_handle_consumer_identified_clear                            
+0000a3c9  ProtocolEventTransport_handle_consumer_identified_reserved                         
+0000a3fd  ProtocolEventTransport_handle_consumer_identified_set                              
+0000a431  ProtocolEventTransport_handle_consumer_identified_unknown                          
+000061c1  ProtocolEventTransport_handle_consumer_identify                                    
+0000a465  ProtocolEventTransport_handle_consumer_range_identified                            
+0000a499  ProtocolEventTransport_handle_event_learn                                          
+000023c1  ProtocolEventTransport_handle_events_identify                                      
+0000ae27  ProtocolEventTransport_handle_events_identify_dest                                 
+0000a009  ProtocolEventTransport_handle_pc_event_report                                      
+000097c5  ProtocolEventTransport_handle_pc_event_report_with_payload                         
+0000a045  ProtocolEventTransport_handle_producer_identified_clear                            
+0000a4cd  ProtocolEventTransport_handle_producer_identified_reserved                         
+0000a081  ProtocolEventTransport_handle_producer_identified_set                              
+0000a0bd  ProtocolEventTransport_handle_producer_identified_unknown                          
+00005e5d  ProtocolEventTransport_handle_producer_identify                                    
+0000a501  ProtocolEventTransport_handle_producer_range_identified                            
+0000b479  ProtocolEventTransport_initialize                                                  
+000079dd  ProtocolMessageNetwork_handle_initialization_complete                              
+00007a61  ProtocolMessageNetwork_handle_initialization_complete_simple                       
+00009259  ProtocolMessageNetwork_handle_optional_interaction_rejected                        
+00007269  ProtocolMessageNetwork_handle_protocol_support_inquiry                             
+0000b4eb  ProtocolMessageNetwork_handle_protocol_support_reply                               
+000092b5  ProtocolMessageNetwork_handle_terminate_due_to_error                               
+00007ae5  ProtocolMessageNetwork_handle_verified_node_id                                     
+00009999  ProtocolMessageNetwork_handle_verify_node_id_addressed                             
+00006f39  ProtocolMessageNetwork_handle_verify_node_id_global                                
+0000b485  ProtocolMessageNetwork_initialize                                                  
+0000b4f5  ProtocolSnip_handle_simple_node_info_reply                                         
+00001e89  ProtocolSnip_handle_simple_node_info_request                                       
+0000b491  ProtocolSnip_initialize                                                            
+00007f49  ProtocolSnip_load_hardware_version                                                 
+0000ae49  ProtocolSnip_load_manufacturer_version_id                                          
+00007fc1  ProtocolSnip_load_model                                                            
+00008199  ProtocolSnip_load_name                                                             
+00008039  ProtocolSnip_load_software_version                                                 
+00006d41  ProtocolSnip_load_user_description                                                 
+00006fe1  ProtocolSnip_load_user_name                                                        
+0000ad99  ProtocolSnip_load_user_version_id                                                  
+00007127  RTC_IRQHandler                                                                     
+0000b565  Reset_Handler                                                                      
+00007127  SPI0_IRQHandler                                                                    
+00007127  SPI1_IRQHandler                                                                    
+00007127  SVC_Handler                                                                        
+00009de1  SYSCFG_DL_GPIO_init                                                                
+000041cd  SYSCFG_DL_MCAN0_init                                                               
+0000957d  SYSCFG_DL_SYSCTL_init                                                              
+0000a7bd  SYSCFG_DL_SYSTICK_init                                                             
+0000b155  SYSCFG_DL_init                                                                     
+0000a535  SYSCFG_DL_initPower                                                                
+0000b519  SysTick_Handler                                                                    
+00007127  TIMA0_IRQHandler                                                                   
+00007127  TIMA1_IRQHandler                                                                   
+00007127  TIMG0_IRQHandler                                                                   
+00007127  TIMG12_IRQHandler                                                                  
+00007127  TIMG6_IRQHandler                                                                   
+00007127  TIMG7_IRQHandler                                                                   
+00007127  TIMG8_IRQHandler                                                                   
+0000b49d  TI_DriverLibCanDriver_initialize                                                   
+0000abd1  TI_DriverLibCanDriver_is_can_tx_buffer_clear                                       
+0000b221  TI_DriverLibCanDriver_pause_can_rx                                                 
+0000b4a9  TI_DriverLibCanDriver_resume_can_rx                                                
+0000783d  TI_DriverLibCanDriver_transmit_can_frame                                           
+0000a7ed  TI_DriverLibDrivers_config_mem_read                                                
+0000b579  TI_DriverLibDrivers_config_mem_write                                               
+0000769b  TI_DriverLibDrivers_initialize                                                     
+0000b16d  TI_DriverLibDrivers_lock_shared_resources                                          
+0000b235  TI_DriverLibDrivers_reboot                                                         
+0000b185  TI_DriverLibDrivers_unlock_shared_resources                                        
+00007127  UART0_IRQHandler                                                                   
+00007127  UART1_IRQHandler                                                                   
+00007127  UART2_IRQHandler                                                                   
+00007127  UART3_IRQHandler                                                                   
+202042e8  _CIOBUF_                                                                           
+202042e8  __CIOBUF_                                                                          
+20208000  __STACK_END                                                                        
+00000200  __STACK_SIZE                                                                       
+00000800  __SYSMEM_SIZE                                                                      
+00000000  __TI_ATRegion0_region_sz                                                           
+00000000  __TI_ATRegion0_src_addr                                                            
+00000000  __TI_ATRegion0_trg_addr                                                            
+00000000  __TI_ATRegion1_region_sz                                                           
+00000000  __TI_ATRegion1_src_addr                                                            
+00000000  __TI_ATRegion1_trg_addr                                                            
+00000000  __TI_ATRegion2_region_sz                                                           
+00000000  __TI_ATRegion2_src_addr                                                            
+00000000  __TI_ATRegion2_trg_addr                                                            
+00010c7c  __TI_CINIT_Base                                                                    
+00010c8c  __TI_CINIT_Limit                                                                   
+00010c8c  __TI_CINIT_Warm                                                                    
+00010c68  __TI_Handler_Table_Base                                                            
+00010c74  __TI_Handler_Table_Limit                                                           
+0000a0f9  __TI_auto_init_nobinit_nopinit                                                     
+0000a569  __TI_cleanup                                                                       
+20205490  __TI_cleanup_ptr                                                                   
+00007ce9  __TI_closefile                                                                     
+00007d65  __TI_decompress_lzss                                                               
+0000b26f  __TI_decompress_none                                                               
+000096d1  __TI_doflush                                                                       
+20205494  __TI_dtors_ptr                                                                     
+20205498  __TI_ft_end                                                                        
+ffffffff  __TI_pprof_out_hndl                                                                
+000000c1  __TI_printfi_nofloat                                                               
+ffffffff  __TI_prof_data_size                                                                
+ffffffff  __TI_prof_data_start                                                               
+0000a59d  __TI_readmsg                                                                       
+00000000  __TI_static_base__                                                                 
+2020464c  __TI_tmpnams                                                                       
+0000a5d1  __TI_writemsg                                                                      
+00008b59  __TI_wrt_ok                                                                        
+0000b351  __TI_zero_init                                                                     
+00009cdd  __aeabi_assert                                                                     
+000106b0  __aeabi_ctype_table_                                                               
+000106b0  __aeabi_ctype_table_C                                                              
+2020549c  __aeabi_errno                                                                      
+0000b521  __aeabi_errno_addr                                                                 
+00007ce7  __aeabi_idiv0                                                                      
+0000820b  __aeabi_ldiv0                                                                      
+0000afdd  __aeabi_llsl                                                                       
+0000adbd  __aeabi_lmul                                                                       
+0000b4b5  __aeabi_memclr                                                                     
+0000b4b5  __aeabi_memclr4                                                                    
+0000b4b5  __aeabi_memclr8                                                                    
+0000b529  __aeabi_memcpy                                                                     
+0000b529  __aeabi_memcpy4                                                                    
+0000b529  __aeabi_memcpy8                                                                    
+0000b371  __aeabi_memset                                                                     
+0000b371  __aeabi_memset4                                                                    
+0000b371  __aeabi_memset8                                                                    
+00009e21  __aeabi_uidiv                                                                      
+00009e21  __aeabi_uidivmod                                                                   
+0000b249  __aeabi_uldivmod                                                                   
+0000afdd  __ashldi3                                                                          
+ffffffff  __binit__                                                                          
+UNDEFED   __mpu_init                                                                         
+0000adbd  __muldi3                                                                           
+0000a171  __muldsi3                                                                          
+20207e00  __stack                                                                            
+20200000  __start___llvm_prf_bits                                                            
+20200000  __start___llvm_prf_cnts                                                            
+20200000  __stop___llvm_prf_bits                                                             
+20200000  __stop___llvm_prf_cnts                                                             
+00007085  __udivmoddi4                                                                       
+0000b19d  _abort_msg                                                                         
+0000ac71  _c_int00_noargs                                                                    
+202053c8  _device                                                                            
+202052d8  _ftable                                                                            
+202054a0  _lock                                                                              
+00008c83  _nop                                                                               
+20205440  _stream                                                                            
+20204ad8  _sys_memory                                                                        
+UNDEFED   _system_post_cinit                                                                 
+0000b57d  _system_pre_init                                                                   
+202054a4  _unlock                                                                            
+0000b557  abort                                                                              
+0000462d  aligned_alloc                                                                      
+00009e61  atoi                                                                               
+ffffffff  binit                                                                              
+00009865  close                                                                              
+0000a605  exit                                                                               
+00008e05  fflush                                                                             
+0000a639  finddevice                                                                         
+000073a5  fputc                                                                              
+00004e55  fputs                                                                              
+000052fd  free                                                                               
+0000b541  fseek                                                                              
+00008499  fseeko                                                                             
+00008505  getdevice                                                                          
+00000000  interruptVectors                                                                   
+0000ac21  lseek                                                                              
+0000967d  main                                                                               
+0000b4c1  malloc                                                                             
+0000462d  memalign                                                                           
+0000ae6b  memccpy                                                                            
+00007441  memcpy                                                                             
+00008c21  memset                                                                             
+20204a60  parmbuf                                                                            
+00009311  printf                                                                             
+0000ade1  puts                                                                               
+0000b549  remove                                                                             
+00005a0d  setvbuf                                                                            
+0000a28d  sprintf                                                                            
+000078d1  strcmp                                                                             
+0000aadd  unlink                                                                             
+0000b341  wcslen                                                                             
+0000ac49  write                                                                              
+
+
+GLOBAL SYMBOLS: SORTED BY Symbol Address 
+
+address   name                                                                               
+-------   ----                                                                               
+00000000  __TI_ATRegion0_region_sz                                                           
+00000000  __TI_ATRegion0_src_addr                                                            
+00000000  __TI_ATRegion0_trg_addr                                                            
+00000000  __TI_ATRegion1_region_sz                                                           
+00000000  __TI_ATRegion1_src_addr                                                            
+00000000  __TI_ATRegion1_trg_addr                                                            
+00000000  __TI_ATRegion2_region_sz                                                           
+00000000  __TI_ATRegion2_src_addr                                                            
+00000000  __TI_ATRegion2_trg_addr                                                            
+00000000  __TI_static_base__                                                                 
+00000000  interruptVectors                                                                   
+000000c1  __TI_printfi_nofloat                                                               
+00000200  __STACK_SIZE                                                                       
+00000800  __SYSMEM_SIZE                                                                      
+00000929  OpenLcb_initialize                                                                 
+00000ea5  OpenLcbMainStatemachine_process_main_statemachine                                  
+00001395  ProtocolDatagramHandler_datagram                                                   
+00001b9d  OpenLcbNode_allocate                                                               
+00001e89  ProtocolSnip_handle_simple_node_info_request                                       
+0000215d  CANFD0_IRQHandler                                                                  
+000023c1  ProtocolEventTransport_handle_events_identify                                      
+00002601  OpenLcbMainStatemachine_run                                                        
+00002839  CanConfig_initialize                                                               
+00002a5d  DL_MCAN_msgRAMConfig                                                               
+00002e7d  CanRxStatemachine_incoming_can_driver_callback                                     
+00003081  OpenLcbApplicationBroadcastTime_get_clock                                          
+0000325d  CanRxMessageHandler_amd_frame                                                      
+00003409  CanRxMessageHandler_ame_frame                                                      
+000035ad  CanMainStatemachine_handle_duplicate_aliases                                       
+00003749  CanBufferStore_initialize                                                          
+000038d5  CanTxStatemachine_send_openlcb_message                                             
+00003a55  OpenLcbBufferStore_initialize                                                      
+00003bc9  OpenLcbGridConnect_from_can_msg                                                    
+00003d11  OpenLcbLoginMessageHandler_load_producer_event                                     
+00003e51  OpenLcbLoginMessageHandler_load_consumer_event                                     
+00003f89  OpenLcbUtilities_load_config_mem_reply_write_fail_message_header                   
+000040ad  CanRxMessageHandler_first_frame                                                    
+000041cd  SYSCFG_DL_MCAN0_init                                                               
+000042e9  CanBufferStore_allocate_buffer                                                     
+00004519  OpenLcbUtilities_load_config_mem_reply_read_fail_message_header                    
+0000462d  aligned_alloc                                                                      
+0000462d  memalign                                                                           
+00004741  DL_MCAN_readMsgRam                                                                 
+0000484d  OpenLcbBufferStore_allocate_buffer                                                 
+00004955  OpenLcbUtilities_load_config_mem_reply_read_ok_message_header                      
+00004a59  OpenLcbUtilities_load_config_mem_reply_write_ok_message_header                     
+00004b5d  CanUtilities_copy_openlcb_payload_to_can_payload                                   
+00004c5b  CallbacksOlcb_initialize                                                           
+00004c5d  OpenLcbMainStatemachine_initialize                                                 
+00004d59  ProtocolConfigMemOperationsHandler_request_options_cmd                             
+00004e55  fputs                                                                              
+00004f4d  DL_MCAN_writeMsgRam                                                                
+0000512d  ProtocolDatagramHandler_load_datagram_received_ok_message                          
+000052fd  free                                                                               
+000053e5  DL_MCAN_config                                                                     
+000054c9  ProtocolConfigMemOperationsHandler_request_reserve_lock                            
+000055ad  ProtocolConfigMemOperationsHandler_freeze                                          
+0000568d  ProtocolConfigMemOperationsHandler_get_address_space_info                          
+0000576d  ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present        
+0000584d  ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present            
+0000592d  ProtocolConfigMemOperationsHandler_unfreeze                                        
+00005a0d  setvbuf                                                                            
+00005aed  CanRxMessageHandler_amr_frame                                                      
+00005bc9  DL_MCAN_init                                                                       
+00005ca5  DL_SYSCTL_configSYSPLL                                                             
+00005d81  ProtocolConfigMemOperationsHandler_request_get_address_space_info                  
+00005e5d  ProtocolEventTransport_handle_producer_identify                                    
+00005f39  AliasMappings_register                                                             
+00006011  DL_MCAN_setBitTime                                                                 
+000060e9  OpenLcbLoginMainStatemachine_run                                                   
+000061c1  ProtocolEventTransport_handle_consumer_identify                                    
+00006295  CanRxMessageHandler_middle_frame                                                   
+00006355  ListenerAliasTable_check_one_verification                                          
+00006705  ProtocolConfigMemWriteHandler_write_request_acdi_user                              
+00006875  CanLoginMessageHandler_state_generate_alias                                        
+00006929  CanRxMessageHandler_last_frame                                                     
+00006d41  ProtocolSnip_load_user_description                                                 
+00006f39  ProtocolMessageNetwork_handle_verify_node_id_global                                
+00006fdf  CanRxMessageHandler_stream_frame                                                   
+00006fe1  ProtocolSnip_load_user_name                                                        
+00007085  __udivmoddi4                                                                       
+00007127  ADC0_IRQHandler                                                                    
+00007127  ADC1_IRQHandler                                                                    
+00007127  AES_IRQHandler                                                                     
+00007127  DAC0_IRQHandler                                                                    
+00007127  DMA_IRQHandler                                                                     
+00007127  Default_Handler                                                                    
+00007127  GROUP0_IRQHandler                                                                  
+00007127  GROUP1_IRQHandler                                                                  
+00007127  HardFault_Handler                                                                  
+00007127  I2C0_IRQHandler                                                                    
+00007127  I2C1_IRQHandler                                                                    
+00007127  NMI_Handler                                                                        
+00007127  PendSV_Handler                                                                     
+00007127  RTC_IRQHandler                                                                     
+00007127  SPI0_IRQHandler                                                                    
+00007127  SPI1_IRQHandler                                                                    
+00007127  SVC_Handler                                                                        
+00007127  TIMA0_IRQHandler                                                                   
+00007127  TIMA1_IRQHandler                                                                   
+00007127  TIMG0_IRQHandler                                                                   
+00007127  TIMG12_IRQHandler                                                                  
+00007127  TIMG6_IRQHandler                                                                   
+00007127  TIMG7_IRQHandler                                                                   
+00007127  TIMG8_IRQHandler                                                                   
+00007127  UART0_IRQHandler                                                                   
+00007127  UART1_IRQHandler                                                                   
+00007127  UART2_IRQHandler                                                                   
+00007127  UART3_IRQHandler                                                                   
+00007129  OpenLcbLoginMessageHandler_load_initialization_complete                            
+000071c9  OpenLcbMainStatemachine_send_with_sibling_dispatch                                 
+00007269  ProtocolMessageNetwork_handle_protocol_support_inquiry                             
+00007309  ProtocolConfigMemReadHandler_read_request_acdi_manufacturer                        
+000073a5  fputc                                                                              
+00007441  memcpy                                                                             
+000074db  ProtocolDatagramHandler_100ms_timer_tick                                           
+000074dd  CanTxMessageHandler_addressed_msg_frame                                            
+00007575  ProtocolDatagramHandler_datagram_rejected                                          
+00007609  CanUtilities_count_nulls_in_payloads                                               
+0000769b  TI_DriverLibDrivers_initialize                                                     
+0000769d  CanTxMessageHandler_datagram_frame                                                 
+0000772d  CanMainStatemachine_handle_listener_verification                                   
+000077b5  ProtocolConfigMemOperationsHandler_factory_reset                                   
+0000783d  TI_DriverLibCanDriver_transmit_can_frame                                           
+000078c5  CanLoginMessageHandler_initialize                                                  
+000078d1  strcmp                                                                             
+00007959  OpenLcbUtilities_load_openlcb_message                                              
+000079dd  ProtocolMessageNetwork_handle_initialization_complete                              
+00007a61  ProtocolMessageNetwork_handle_initialization_complete_simple                       
+00007ae5  ProtocolMessageNetwork_handle_verified_node_id                                     
+00007b69  CanTxMessageHandler_unaddressed_msg_frame                                          
+00007be9  OpenLcbBufferList_check_timeouts                                                   
+00007c69  OpenLcbUtilities_count_nulls_in_openlcb_payload                                    
+00007ce7  __aeabi_idiv0                                                                      
+00007ce9  __TI_closefile                                                                     
+00007d65  __TI_decompress_lzss                                                               
+00007de1  CanLoginStateMachine_run                                                           
+00007e59  OpenLcbNode_find_by_alias                                                          
+00007ed1  ProtocolConfigMemReadHandler_read_request_acdi_user                                
+00007f49  ProtocolSnip_load_hardware_version                                                 
+00007fc1  ProtocolSnip_load_model                                                            
+00008039  ProtocolSnip_load_software_version                                                 
+000080b1  OpenLcbLoginStateMachine_initialize                                                
+00008199  ProtocolSnip_load_name                                                             
+0000820b  __aeabi_ldiv0                                                                      
+0000827d  HOSTlseek                                                                          
+000082e9  HOSTrename                                                                         
+00008355  OpenLcbLoginStatemachine_handle_outgoing_openlcb_message                           
+000083c1  OpenLcbUtilities_clear_openlcb_message_payload                                     
+0000842d  ProtocolDatagramHandler_check_timeouts                                             
+00008499  fseeko                                                                             
+00008505  getdevice                                                                          
+00008571  OpenLcbBufferList_find                                                             
+000085d9  OpenLcbMainStatemachine_handle_outgoing_openlcb_message                            
+00008641  OpenLcbMainStatemachine_handle_try_enumerate_first_node                            
+000086a9  AliasMappings_find_mapping_by_node_id                                              
+0000870d  DL_SYSCTL_setHFCLKSourceHFXTParams                                                 
+00008771  OpenLcbLoginStateMachine_process                                                   
+000087d5  OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message               
+00008839  OpenLcbMainStatemachine_load_interaction_rejected                                  
+0000889d  ProtocolConfigMemOperationsHandler_get_unique_id                                   
+00008901  ProtocolConfigMemOperationsHandler_get_unique_id_reply                             
+00008965  ProtocolConfigMemOperationsHandler_options_cmd                                     
+000089c9  ProtocolConfigMemOperationsHandler_options_reply                                   
+00008a2d  ProtocolConfigMemOperationsHandler_reserve_lock                                    
+00008a91  ProtocolConfigMemOperationsHandler_reserve_lock_reply                              
+00008af5  ProtocolConfigMemOperationsHandler_update_complete                                 
+00008b59  __TI_wrt_ok                                                                        
+00008c21  memset                                                                             
+00008c83  _nop                                                                               
+00008c85  CanLoginMessageHandler_state_load_amd                                              
+00008ce5  HOSTopen                                                                           
+00008d45  OpenLcbMainStatemachine_does_node_process_msg                                      
+00008da5  ProtocolConfigMemOperationsHandler_reset_reboot                                    
+00008e05  fflush                                                                             
+00008e65  CanRxMessageHandler_can_legacy_snip                                                
+00008ec1  CanRxMessageHandler_error_info_report_frame                                        
+00008f1d  CanRxMessageHandler_rid_frame                                                      
+00008f79  CanRxMessageHandler_single_frame                                                   
+00008fd5  OpenLcbMainStatemachine_handle_try_enumerate_next_node                             
+00009031  OpenLcbUtilities_copy_string_to_openlcb_payload                                    
+0000908d  OpenLcbUtilities_is_broadcast_time_event                                           
+000090e9  OpenLcbUtilities_is_event_id_in_consumer_ranges                                    
+00009145  OpenLcbUtilities_is_event_id_in_producer_ranges                                    
+000091a1  OpenLcbUtilities_is_producer_event_assigned_to_node                                
+000091fd  ProtocolConfigMemReadHandler_read_request_config_mem                               
+00009259  ProtocolMessageNetwork_handle_optional_interaction_rejected                        
+000092b5  ProtocolMessageNetwork_handle_terminate_due_to_error                               
+00009311  printf                                                                             
+0000936d  CanLoginMessageHandler_state_generate_seed                                         
+000093c5  CanMainStateMachine_run                                                            
+0000941d  CanMainStatemachine_handle_outgoing_can_message                                    
+00009475  HOSTread                                                                           
+000094cd  HOSTwrite                                                                          
+00009525  OpenLcbUtilities_is_consumer_event_assigned_to_node                                
+0000957d  SYSCFG_DL_SYSCTL_init                                                              
+000095d5  AliasMappings_unregister                                                           
+00009629  OpenLcbUtilities_copy_node_id_to_openlcb_payload                                   
+0000967d  main                                                                               
+000096d1  __TI_doflush                                                                       
+00009725  CanUtilities_convert_can_mti_to_openlcb_mti                                        
+00009775  OpenLcbNode_initialize                                                             
+000097c5  ProtocolEventTransport_handle_pc_event_report_with_payload                         
+00009865  close                                                                              
+000098b5  AliasMappings_find_mapping_by_alias                                                
+00009901  AliasMappings_initialize                                                           
+0000994d  CanUtilities_append_can_payload_to_openlcb_payload                                 
+00009999  ProtocolMessageNetwork_handle_verify_node_id_addressed                             
+000099e5  HOSTclose                                                                          
+00009a2d  HOSTunlink                                                                         
+00009a75  ProtocolDatagramHandler_datagram_received_ok                                       
+00009abd  CanMainStatemachine_handle_try_enumerate_first_node                                
+00009b01  CanMainStatemachine_handle_try_enumerate_next_node                                 
+00009b45  DL_MCAN_getRevisionId                                                              
+00009b89  DL_SYSCTL_switchMCLKfromSYSOSCtoHSCLK                                              
+00009bcd  OpenLcbBufferFifo_check_and_invalidate_messages_by_source_alias                    
+00009c11  OpenLcbUtilities_copy_byte_array_to_openlcb_payload                                
+00009c55  ProtocolConfigMemWriteHandler_write_request_config_mem                             
+00009c99  ProtocolDatagramHandler_load_datagram_rejected_message                             
+00009cdd  __aeabi_assert                                                                     
+00009d21  CanLoginMessageHandler_state_load_cid06                                            
+00009d61  DL_MCAN_writeRxFIFOAck                                                             
+00009da1  OpenLcbBufferList_release                                                          
+00009de1  SYSCFG_DL_GPIO_init                                                                
+00009e21  __aeabi_uidiv                                                                      
+00009e21  __aeabi_uidivmod                                                                   
+00009e61  atoi                                                                               
+00009ea1  CanLoginMessageHandler_state_load_cid04                                            
+00009edd  CanRxMessageHandler_cid_frame                                                      
+00009f19  OpenLcbBufferList_add                                                              
+00009f55  OpenLcbBufferStore_free_buffer                                                     
+00009f91  OpenLcbLoginStatemachine_handle_try_enumerate_first_node                           
+00009fcd  OpenLcbLoginStatemachine_handle_try_enumerate_next_node                            
+0000a009  ProtocolEventTransport_handle_pc_event_report                                      
+0000a045  ProtocolEventTransport_handle_producer_identified_clear                            
+0000a081  ProtocolEventTransport_handle_producer_identified_set                              
+0000a0bd  ProtocolEventTransport_handle_producer_identified_unknown                          
+0000a0f9  __TI_auto_init_nobinit_nopinit                                                     
+0000a135  OpenLcbUtilities_generate_event_range_id                                           
+0000a171  __muldsi3                                                                          
+0000a1ad  CanLoginMessageHandler_state_load_cid05                                            
+0000a1e5  CanLoginMessageHandler_state_load_cid07                                            
+0000a21d  CanUtilities_extract_dest_alias_from_can_message                                   
+0000a255  DL_MCAN_getRxFIFOStatus                                                            
+0000a28d  sprintf                                                                            
+0000a2c5  CanMainStatemachine_initialize                                                     
+0000a2f9  DL_MCAN_TXBufAddReq                                                                
+0000a32d  DL_MCAN_setExtIDAndMask                                                            
+0000a361  OpenLcbUtilities_copy_event_id_to_openlcb_payload                                  
+0000a395  ProtocolEventTransport_handle_consumer_identified_clear                            
+0000a3c9  ProtocolEventTransport_handle_consumer_identified_reserved                         
+0000a3fd  ProtocolEventTransport_handle_consumer_identified_set                              
+0000a431  ProtocolEventTransport_handle_consumer_identified_unknown                          
+0000a465  ProtocolEventTransport_handle_consumer_range_identified                            
+0000a499  ProtocolEventTransport_handle_event_learn                                          
+0000a4cd  ProtocolEventTransport_handle_producer_identified_reserved                         
+0000a501  ProtocolEventTransport_handle_producer_range_identified                            
+0000a535  SYSCFG_DL_initPower                                                                
+0000a569  __TI_cleanup                                                                       
+0000a59d  __TI_readmsg                                                                       
+0000a5d1  __TI_writemsg                                                                      
+0000a5fd  C$$IO$$                                                                            
+0000a605  exit                                                                               
+0000a639  finddevice                                                                         
+0000a66d  CanBufferFifo_pop                                                                  
+0000a69d  CanBufferFifo_push                                                                 
+0000a6cd  CanMainStatemachine_handle_login_outgoing_can_message                              
+0000a6fd  OpenLcbBufferFifo_push                                                             
+0000a72d  OpenLcbNode_get_next                                                               
+0000a75d  OpenLcbNode_is_last                                                                
+0000a78d  ProtocolConfigMemReadHandler_read_request_config_definition_info                   
+0000a7bd  SYSCFG_DL_SYSTICK_init                                                             
+0000a7ed  TI_DriverLibDrivers_config_mem_read                                                
+0000a81d  CallbacksCan_on_rx                                                                 
+0000a849  CallbacksCan_on_tx                                                                 
+0000a875  CanLoginMessageHandler_state_load_rid                                              
+0000a8a1  CanUtilities_copy_node_id_to_payload                                               
+0000a8cd  DL_MCAN_TXBufTransIntrEnable                                                       
+0000a8f9  DL_MCAN_addExtMsgIDFilter                                                          
+0000a925  OpenLcbBufferFifo_pop                                                              
+0000a951  OpenLcbUtilities_extract_event_id_from_openlcb_payload                             
+0000a97d  OpenLcb_run                                                                        
+0000a9a9  ProtocolConfigMemReadHandler_read_space_acdi_manufacturer                          
+0000a9d5  ProtocolConfigMemReadHandler_read_space_acdi_user                                  
+0000aa01  ProtocolConfigMemReadHandler_read_space_all                                        
+0000aa2d  ProtocolConfigMemReadHandler_read_space_config_memory                              
+0000aa59  ProtocolConfigMemWriteHandler_write_space_acdi_user                                
+0000aa85  ProtocolConfigMemWriteHandler_write_space_config_memory                            
+0000aab1  ProtocolConfigMemWriteHandler_write_space_firmware                                 
+0000aadd  unlink                                                                             
+0000ab09  CanTxMessageHandler_can_frame                                                      
+0000ab31  OpenLcbLoginStatemachine_handle_try_reenumerate                                    
+0000ab59  OpenLcbNode_100ms_timer_tick                                                       
+0000ab81  OpenLcbNode_get_first                                                              
+0000aba9  ProtocolConfigMemReadHandler_read_space_config_description_info                    
+0000abd1  TI_DriverLibCanDriver_is_can_tx_buffer_clear                                       
+0000ac21  lseek                                                                              
+0000ac49  write                                                                              
+0000ac71  _c_int00_noargs                                                                    
+0000ac99  OpenLcbUtilities_copy_dword_to_openlcb_payload                                     
+0000acc1  CallbacksCan_on_alias_change                                                       
+0000ace5  CallbacksOlcb_on_100ms_timer                                                       
+0000ad09  CanLoginMessageHandler_state_wait_200ms                                            
+0000ad2d  DL_MCAN_setClockConfig                                                             
+0000ad51  OpenLcbMainStatemachine_handle_try_reenumerate                                     
+0000ad75  ProtocolEventTransport_extract_producer_event_status_mti                           
+0000ad99  ProtocolSnip_load_user_version_id                                                  
+0000adbd  __aeabi_lmul                                                                       
+0000adbd  __muldi3                                                                           
+0000ade1  puts                                                                               
+0000ae05  OpenLcbUtilities_extract_node_id_from_openlcb_payload                              
+0000ae27  ProtocolEventTransport_handle_events_identify_dest                                 
+0000ae49  ProtocolSnip_load_manufacturer_version_id                                          
+0000ae6b  memccpy                                                                            
+0000ae8d  OpenLcbUtilities_is_addressed_message_for_node                                     
+0000aead  OpenLcbUtilities_is_emergency_event                                                
+0000aecd  ProtocolEventTransport_extract_consumer_event_status_mti                           
+0000aeed  CanUtilities_extract_can_payload_as_node_id                                        
+0000af0b  ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_manufacturer             
+0000af29  ProtocolConfigMemWriteHandler_write_under_mask_space_acdi_user                     
+0000af47  ProtocolConfigMemWriteHandler_write_under_mask_space_all                           
+0000af65  ProtocolConfigMemWriteHandler_write_under_mask_space_config_memory                 
+0000af83  ProtocolConfigMemWriteHandler_write_under_mask_space_firmware                      
+0000afa1  ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory  
+0000afbf  ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info
+0000afdd  __aeabi_llsl                                                                       
+0000afdd  __ashldi3                                                                          
+0000affd  CallbacksConfigMem_factory_reset                                                   
+0000b019  CanBufferStore_free_buffer                                                         
+0000b035  DL_MCAN_enableIntr                                                                 
+0000b051  DL_MCAN_enableIntrLine                                                             
+0000b06d  DL_MCAN_selectIntrLine                                                             
+0000b089  OpenLcbUtilities_clear_openlcb_message                                             
+0000b0c1  OpenLcbUtilities_extract_dword_from_openlcb_payload                                
+0000b0db  ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info       
+0000b0f5  CallbacksConfigMem_freeze                                                          
+0000b10d  CallbacksConfigMem_unfreeze                                                        
+0000b125  CanLoginMessageHandler_state_init                                                  
+0000b13d  DL_MCAN_setOpMode                                                                  
+0000b155  SYSCFG_DL_init                                                                     
+0000b16d  TI_DriverLibDrivers_lock_shared_resources                                          
+0000b185  TI_DriverLibDrivers_unlock_shared_resources                                        
+0000b19d  _abort_msg                                                                         
+0000b1cd  OpenLcbUtilities_copy_word_to_openlcb_payload                                      
+0000b1e5  DL_MCAN_clearIntrStatus                                                            
+0000b1f9  OpenLcbBufferList_index_of                                                         
+0000b20d  OpenLcbUtilities_payload_type_to_len                                               
+0000b221  TI_DriverLibCanDriver_pause_can_rx                                                 
+0000b235  TI_DriverLibDrivers_reboot                                                         
+0000b249  __aeabi_uldivmod                                                                   
+0000b25d  CanUtilities_clear_can_message                                                     
+0000b26f  __TI_decompress_none                                                               
+0000b281  AliasMappings_set_has_duplicate_alias_flag                                         
+0000b291  CallbacksConfigMem_write_firmware                                                  
+0000b2a1  CanBufferFifo_initialize                                                           
+0000b2b1  CanTxStatemachine_send_can_message                                                 
+0000b2c1  DL_MCAN_getOpMode                                                                  
+0000b2d1  DL_MCAN_isMemInitDone                                                              
+0000b2e1  OpenLcbBufferFifo_initialize                                                       
+0000b2f1  OpenLcbBufferList_initialize                                                       
+0000b301  OpenLcbNode_get_count                                                              
+0000b311  OpenLcbUtilities_extract_word_from_openlcb_payload                                 
+0000b321  OpenLcbUtilities_is_train_search_event                                             
+0000b331  OpenLcb_100ms_timer_tick                                                           
+0000b341  wcslen                                                                             
+0000b351  __TI_zero_init                                                                     
+0000b371  __aeabi_memset                                                                     
+0000b371  __aeabi_memset4                                                                    
+0000b371  __aeabi_memset8                                                                    
+0000b3b9  CanLoginStateMachine_initialize                                                    
+0000b3c5  CanRxMessageHandler_initialize                                                     
+0000b3d1  CanRxStatemachine_initialize                                                       
+0000b3dd  CanTxMessageHandler_initialize                                                     
+0000b3e9  CanTxStatemachine_initialize                                                       
+0000b3f5  CanUtilities_extract_source_alias_from_can_identifier                              
+0000b401  DL_MCAN_getIntrStatus                                                              
+0000b40d  OpenLcbApplication_initialize                                                      
+0000b419  OpenLcbLoginMessageHandler_initialize                                              
+0000b425  OpenLcbUtilities_copy_byte_to_openlcb_payload                                      
+0000b431  OpenLcbUtilities_set_multi_frame_flag                                              
+0000b43d  OpenLcb_get_global_100ms_tick                                                      
+0000b449  ProtocolConfigMemOperationsHandler_initialize                                      
+0000b455  ProtocolConfigMemReadHandler_initialize                                            
+0000b461  ProtocolConfigMemWriteHandler_initialize                                           
+0000b46d  ProtocolDatagramHandler_initialize                                                 
+0000b479  ProtocolEventTransport_initialize                                                  
+0000b485  ProtocolMessageNetwork_initialize                                                  
+0000b491  ProtocolSnip_initialize                                                            
+0000b49d  TI_DriverLibCanDriver_initialize                                                   
+0000b4a9  TI_DriverLibCanDriver_resume_can_rx                                                
+0000b4b5  __aeabi_memclr                                                                     
+0000b4b5  __aeabi_memclr4                                                                    
+0000b4b5  __aeabi_memclr8                                                                    
+0000b4c1  malloc                                                                             
+0000b4cd  CanUtilities_is_openlcb_message                                                    
+0000b4d7  DL_Common_delayCycles                                                              
+0000b4e1  OpenLcbUtilities_is_addressed_openlcb_message                                      
+0000b4eb  ProtocolMessageNetwork_handle_protocol_support_reply                               
+0000b4f5  ProtocolSnip_handle_simple_node_info_reply                                         
+0000b509  AliasMappings_get_alias_mapping_info                                               
+0000b511  OpenLcb_create_node                                                                
+0000b519  SysTick_Handler                                                                    
+0000b521  __aeabi_errno_addr                                                                 
+0000b529  __aeabi_memcpy                                                                     
+0000b529  __aeabi_memcpy4                                                                    
+0000b529  __aeabi_memcpy8                                                                    
+0000b541  fseek                                                                              
+0000b549  remove                                                                             
+0000b551  OpenLcbUtilities_extract_byte_from_openlcb_payload                                 
+0000b557  abort                                                                              
+0000b55d  CanTxMessageHandler_stream_frame                                                   
+0000b560  C$$EXIT                                                                            
+0000b561  HOSTexit                                                                           
+0000b565  Reset_Handler                                                                      
+0000b579  TI_DriverLibDrivers_config_mem_write                                               
+0000b57d  _system_pre_init                                                                   
+0000b580  OpenLcbUserConfig_node_parameters                                                  
+000106b0  __aeabi_ctype_table_                                                               
+000106b0  __aeabi_ctype_table_C                                                              
+00010c68  __TI_Handler_Table_Base                                                            
+00010c74  __TI_Handler_Table_Limit                                                           
+00010c7c  __TI_CINIT_Base                                                                    
+00010c8c  __TI_CINIT_Limit                                                                   
+00010c8c  __TI_CINIT_Warm                                                                    
+20200000  __start___llvm_prf_bits                                                            
+20200000  __start___llvm_prf_cnts                                                            
+20200000  __stop___llvm_prf_bits                                                             
+20200000  __stop___llvm_prf_cnts                                                             
+202042e8  _CIOBUF_                                                                           
+202042e8  __CIOBUF_                                                                          
+2020464c  __TI_tmpnams                                                                       
+20204a60  parmbuf                                                                            
+20204ad8  _sys_memory                                                                        
+202052d8  _ftable                                                                            
+202053c8  _device                                                                            
+20205440  _stream                                                                            
+20205490  __TI_cleanup_ptr                                                                   
+20205494  __TI_dtors_ptr                                                                     
+20205498  __TI_ft_end                                                                        
+2020549c  __aeabi_errno                                                                      
+202054a0  _lock                                                                              
+202054a4  _unlock                                                                            
+20207e00  __stack                                                                            
+20208000  __STACK_END                                                                        
+ffffffff  __TI_pprof_out_hndl                                                                
+ffffffff  __TI_prof_data_size                                                                
+ffffffff  __TI_prof_data_start                                                               
+ffffffff  __binit__                                                                          
+ffffffff  binit                                                                              
+UNDEFED   __mpu_init                                                                         
+UNDEFED   _system_post_cinit                                                                 
+
+[451 symbols]

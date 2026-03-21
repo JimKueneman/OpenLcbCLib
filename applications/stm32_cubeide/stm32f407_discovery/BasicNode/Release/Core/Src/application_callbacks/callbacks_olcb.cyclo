@@ -1,0 +1,5 @@
+../Core/Src/application_callbacks/callbacks_olcb.c:45:6:CallbacksOlcb_initialize	1
+../Core/Src/application_callbacks/callbacks_olcb.c:49:6:CallbacksOlcb_on_100ms_timer	2
+../Core/Src/application_callbacks/callbacks_olcb.c:68:6:CallbacksOlcb_write_firmware	1
+../Core/Src/application_callbacks/callbacks_olcb.c:74:6:CallbacksOlcb_freeze	2
+../Core/Src/application_callbacks/callbacks_olcb.c:83:6:CallbacksOlcb_unfreeze	2

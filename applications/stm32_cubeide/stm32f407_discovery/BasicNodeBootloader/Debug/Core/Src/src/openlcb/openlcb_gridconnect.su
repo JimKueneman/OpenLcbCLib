@@ -1,0 +1,4 @@
+../Core/Src/src/openlcb/openlcb_gridconnect.c:87:13:_is_valid_hex_char	16	static
+../Core/Src/src/openlcb/openlcb_gridconnect.c:121:6:OpenLcbGridConnect_copy_out_gridconnect_when_done	24	static
+../Core/Src/src/openlcb/openlcb_gridconnect.c:271:6:OpenLcbGridConnect_to_can_msg	120	static
+../Core/Src/src/openlcb/openlcb_gridconnect.c:349:6:OpenLcbGridConnect_from_can_msg	32	static

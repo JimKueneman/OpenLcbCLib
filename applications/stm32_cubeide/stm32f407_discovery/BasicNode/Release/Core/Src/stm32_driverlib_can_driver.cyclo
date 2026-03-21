@@ -1,0 +1,9 @@
+../Core/Src/stm32_driverlib_can_driver.c:53:6:STM32_DriverLibCanDriver_initialize	1
+../Core/Src/stm32_driverlib_can_driver.c:93:6:STM32_DriverLibCanDriver_pause_can_rx	1
+../Core/Src/stm32_driverlib_can_driver.c:99:6:STM32_DriverLibCanDriver_resume_can_rx	1
+../Core/Src/stm32_driverlib_can_driver.c:83:6:STM32_DriverLibCanDriver_is_can_tx_buffer_clear	1
+../Core/Src/stm32_driverlib_can_driver.c:108:6:STM32_DriverLibCanDriver_transmit_can_frame	4
+../Core/Src/stm32_driverlib_can_driver.c:148:6:HAL_CAN_TxMailbox0CompleteCallback	1
+../Core/Src/stm32_driverlib_can_driver.c:154:6:HAL_CAN_TxMailbox1CompleteCallback	1
+../Core/Src/stm32_driverlib_can_driver.c:160:6:HAL_CAN_TxMailbox2CompleteCallback	1
+../Core/Src/stm32_driverlib_can_driver.c:169:6:HAL_CAN_RxFifo0MsgPendingCallback	5

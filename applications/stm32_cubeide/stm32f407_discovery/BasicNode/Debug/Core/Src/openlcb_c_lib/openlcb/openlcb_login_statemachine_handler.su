@@ -1,0 +1,4 @@
+../Core/Src/openlcb_c_lib/openlcb/openlcb_login_statemachine_handler.c:82:6:OpenLcbLoginMessageHandler_initialize	16	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_login_statemachine_handler.c:102:6:OpenLcbLoginMessageHandler_load_initialization_complete	56	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_login_statemachine_handler.c:154:6:OpenLcbLoginMessageHandler_load_producer_event	64	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_login_statemachine_handler.c:260:6:OpenLcbLoginMessageHandler_load_consumer_event	64	static

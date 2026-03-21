@@ -1,0 +1,10 @@
+../Core/Src/src/drivers/canbus/can_main_statemachine.c:79:6:CanMainStatemachine_initialize	1
+../Core/Src/src/drivers/canbus/can_main_statemachine.c:105:13:_reset_node	3
+../Core/Src/src/drivers/canbus/can_main_statemachine.c:146:13:_process_duplicate_aliases	4
+../Core/Src/src/drivers/canbus/can_main_statemachine.c:173:26:CanMainStateMachine_get_can_statemachine_info	1
+../Core/Src/src/drivers/canbus/can_main_statemachine.c:187:6:CanMainStatemachine_handle_duplicate_aliases	2
+../Core/Src/src/drivers/canbus/can_main_statemachine.c:221:6:CanMainStatemachine_handle_outgoing_can_message	4
+../Core/Src/src/drivers/canbus/can_main_statemachine.c:257:6:CanMainStatemachine_handle_login_outgoing_can_message	3
+../Core/Src/src/drivers/canbus/can_main_statemachine.c:284:6:CanMainStatemachine_handle_try_enumerate_first_node	4
+../Core/Src/src/drivers/canbus/can_main_statemachine.c:321:6:CanMainStatemachine_handle_try_enumerate_next_node	3
+../Core/Src/src/drivers/canbus/can_main_statemachine.c:351:6:CanMainStateMachine_run	5

@@ -1,0 +1,4 @@
+../Core/Src/src/drivers/canbus/can_tx_statemachine.c:53:6:CanTxStatemachine_initialize	1
+../Core/Src/src/drivers/canbus/can_tx_statemachine.c:59:6:_transmit_openlcb_message	10
+../Core/Src/src/drivers/canbus/can_tx_statemachine.c:97:6:CanTxStatemachine_send_openlcb_message	5
+../Core/Src/src/drivers/canbus/can_tx_statemachine.c:130:6:CanTxStatemachine_send_can_message	1

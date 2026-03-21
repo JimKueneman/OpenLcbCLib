@@ -1,0 +1,3 @@
+../Core/Src/application_callbacks/callbacks_can.c:43:6:CallbacksCan_on_rx	16	static
+../Core/Src/application_callbacks/callbacks_can.c:55:6:CallbacksCan_on_tx	16	static
+../Core/Src/application_callbacks/callbacks_can.c:67:6:CallbacksCan_on_alias_change	24	static

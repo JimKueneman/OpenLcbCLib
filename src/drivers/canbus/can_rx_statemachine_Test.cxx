@@ -216,14 +216,14 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     .handle_middle_frame = &_handle_middle_frame,
     .handle_last_frame = &_handle_last_frame,
     .handle_stream_frame = &_handle_stream_frame,
-    .handle_cid_frame = &_handle_cid_frame,
     .handle_rid_frame = &_handle_rid_frame,
     .handle_amd_frame = &_handle_amd_frame,
-    .handle_amr_frame = &_handle_amr_frame,
     .handle_ame_frame = &_handle_ame_frame,
+    .handle_amr_frame = &_handle_amr_frame,
     .handle_error_info_report_frame = &_handle_error_info_report_frame,
-    .on_receive = &_on_receive,
-    .alias_mapping_find_mapping_by_alias = &_find_mapping_by_alias
+    .handle_cid_frame = &_handle_cid_frame,
+    .alias_mapping_find_mapping_by_alias = &_find_mapping_by_alias,
+    .on_receive = &_on_receive
 };
 
 /*******************************************************************************
@@ -238,14 +238,14 @@ const interface_can_rx_statemachine_t interface_minimal_handlers = {
     .handle_middle_frame = NULL,     // Optional - test NULL safety
     .handle_last_frame = NULL,       // Optional - test NULL safety
     .handle_stream_frame = NULL,     // Optional - test NULL safety
-    .handle_cid_frame = NULL,        // Optional - test NULL safety
     .handle_rid_frame = NULL,        // Optional - test NULL safety
     .handle_amd_frame = NULL,        // Optional - test NULL safety
-    .handle_amr_frame = NULL,        // Optional - test NULL safety
     .handle_ame_frame = NULL,        // Optional - test NULL safety
+    .handle_amr_frame = NULL,        // Optional - test NULL safety
     .handle_error_info_report_frame = NULL,  // Optional - test NULL safety
-    .on_receive = &_on_receive,      // Required - always provided
-    .alias_mapping_find_mapping_by_alias = &_find_mapping_by_alias  // Required
+    .handle_cid_frame = NULL,        // Optional - test NULL safety
+    .alias_mapping_find_mapping_by_alias = &_find_mapping_by_alias,  // Required
+    .on_receive = &_on_receive       // Required - always provided
 };
 
 /*******************************************************************************

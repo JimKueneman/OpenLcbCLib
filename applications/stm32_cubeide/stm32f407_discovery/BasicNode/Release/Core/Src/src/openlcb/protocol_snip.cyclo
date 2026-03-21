@@ -1,0 +1,15 @@
+../Core/Src/src/openlcb/protocol_snip.c:77:13:_process_snip_string	3
+../Core/Src/src/openlcb/protocol_snip.c:54:6:ProtocolSnip_initialize	1
+../Core/Src/src/openlcb/protocol_snip.c:125:10:ProtocolSnip_load_manufacturer_version_id	2
+../Core/Src/src/openlcb/protocol_snip.c:137:10:ProtocolSnip_load_name	1
+../Core/Src/src/openlcb/protocol_snip.c:145:10:ProtocolSnip_load_model	1
+../Core/Src/src/openlcb/protocol_snip.c:153:10:ProtocolSnip_load_hardware_version	1
+../Core/Src/src/openlcb/protocol_snip.c:161:10:ProtocolSnip_load_software_version	1
+../Core/Src/src/openlcb/protocol_snip.c:169:10:ProtocolSnip_load_user_version_id	2
+../Core/Src/src/openlcb/protocol_snip.c:181:10:ProtocolSnip_load_user_name	2
+../Core/Src/src/openlcb/protocol_snip.c:203:10:ProtocolSnip_load_user_description	2
+../Core/Src/src/openlcb/protocol_snip.c:224:6:ProtocolSnip_handle_simple_node_info_request	1
+../Core/Src/src/openlcb/protocol_snip.c:287:10:ProtocolSnip_write_user_name	2
+../Core/Src/src/openlcb/protocol_snip.c:293:10:ProtocolSnip_write_user_description	2
+../Core/Src/src/openlcb/protocol_snip.c:299:6:ProtocolSnip_handle_simple_node_info_reply	1
+../Core/Src/src/openlcb/protocol_snip.c:305:6:ProtocolSnip_validate_snip_reply	3

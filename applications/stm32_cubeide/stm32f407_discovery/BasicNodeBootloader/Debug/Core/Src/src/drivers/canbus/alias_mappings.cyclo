@@ -1,0 +1,10 @@
+../Core/Src/src/drivers/canbus/alias_mappings.c:63:13:_reset_mappings	2
+../Core/Src/src/drivers/canbus/alias_mappings.c:79:6:AliasMappings_initialize	1
+../Core/Src/src/drivers/canbus/alias_mappings.c:90:23:AliasMappings_get_alias_mapping_info	1
+../Core/Src/src/drivers/canbus/alias_mappings.c:97:6:AliasMappings_set_has_duplicate_alias_flag	1
+../Core/Src/src/drivers/canbus/alias_mappings.c:104:6:AliasMappings_clear_has_duplicate_alias_flag	1
+../Core/Src/src/drivers/canbus/alias_mappings.c:141:18:AliasMappings_register	8
+../Core/Src/src/drivers/canbus/alias_mappings.c:189:6:AliasMappings_unregister	3
+../Core/Src/src/drivers/canbus/alias_mappings.c:226:18:AliasMappings_find_mapping_by_alias	5
+../Core/Src/src/drivers/canbus/alias_mappings.c:266:18:AliasMappings_find_mapping_by_node_id	5
+../Core/Src/src/drivers/canbus/alias_mappings.c:289:6:AliasMappings_flush	1

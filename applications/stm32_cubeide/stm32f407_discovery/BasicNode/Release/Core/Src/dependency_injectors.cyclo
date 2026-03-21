@@ -1,0 +1,6 @@
+../Core/Src/dependency_injectors.c:42:6:DependencyInjectors_initialize	1
+../Core/Src/dependency_injectors.c:47:10:DependencyInjectors_on_100ms_timer_callback	2
+../Core/Src/dependency_injectors.c:63:6:DependencyInjectors_on_can_rx_callback	1
+../Core/Src/dependency_injectors.c:74:7:DependencyInjectors_on_can_tx_callback	1
+../Core/Src/dependency_injectors.c:86:7:DependencyInjectors_alias_change_callback	1
+../Core/Src/dependency_injectors.c:93:6:DependencyInjectors_operations_request_factory_reset	1

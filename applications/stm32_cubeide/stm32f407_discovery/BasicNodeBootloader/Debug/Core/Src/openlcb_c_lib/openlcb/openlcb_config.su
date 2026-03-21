@@ -1,0 +1,17 @@
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:161:9:OpenLcb_get_global_100ms_tick	4	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:291:13:_build_node	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:300:13:_build_login_message_handler	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:313:13:_build_login_statemachine	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:340:13:_build_msg_network	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:350:13:_build_snip	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:363:13:_build_config_mem_read	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:402:13:_build_config_mem_write	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:431:13:_build_config_mem_operations	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:460:13:_build_datagram_handler	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:537:13:_build_main_statemachine	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:627:13:_build_application	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:655:6:OpenLcb_initialize	16	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:757:17:OpenLcb_create_node	24	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:770:13:_run_periodic_services	16	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:792:6:OpenLcb_run	8	static
+../Core/Src/openlcb_c_lib/openlcb/openlcb_config.c:804:6:OpenLcb_100ms_timer_tick	4	static

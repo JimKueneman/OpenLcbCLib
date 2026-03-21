@@ -1,0 +1,8 @@
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:49:6:STM32_DriverLibDrivers_initialize	1
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:58:6:STM32_DriverLibDrivers_reboot	1
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:64:10:STM32_DriverLibDrivers_config_mem_read	4
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:96:10:STM32_DriverLibDrivers_config_mem_write	1
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:102:6:STM32_DriverLibDrivers_config_mem_factory_reset	1
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:107:6:STM32_DriverLibDrivers_lock_shared_resources	1
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:115:6:STM32_DriverLibDrivers_unlock_shared_resources	1
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:123:6:HAL_TIM_PeriodElapsedCallback	2

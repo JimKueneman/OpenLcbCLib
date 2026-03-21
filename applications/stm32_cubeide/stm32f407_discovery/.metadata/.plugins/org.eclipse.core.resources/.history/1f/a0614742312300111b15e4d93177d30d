@@ -1,0 +1,150 @@
+/** \copyright
+ * Copyright (c) 2024, Jim Kueneman
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \file openlcb_user_config.c
+ *
+ * Definition of the node at the application level.
+ *
+ * @author Jim Kueneman
+ * @date 5 Dec 2024
+ */
+
+#include "openlcb_user_config.h"
+#include "openlcb_c_lib/openlcb/openlcb_types.h"
+#include "openlcb_c_lib/openlcb/openlcb_defines.h"
+
+const node_parameters_t OpenLcbUserConfig_node_parameters = {
+
+	    .snip.mfg_version = 4,  // SNIP protocol version — fixed by spec
+	    .snip.name = "OpenLCB STM32 Bootloader",  // from wizard SNIP fields
+	    .snip.model = "Firmware Upgrade",  // from wizard SNIP fields
+	    .snip.hardware_version = "1.0",  // from wizard SNIP fields
+	    .snip.software_version = "0.1.0",  // from wizard SNIP fields
+	    .snip.user_version = 2,  // SNIP user-data version — fixed by spec
+
+	    .protocol_support = (
+	    PSI_SIMPLE_NODE_INFORMATION |
+	    PSI_IDENTIFICATION |
+	    PSI_DATAGRAM |
+	    PSI_MEMORY_CONFIGURATION |
+	    PSI_FIRMWARE_UPGRADE
+	    ),
+
+	    // For internal testing only do not set to anything but 0
+	    .consumer_count_autocreate = 0,
+	    .producer_count_autocreate = 0,
+
+	    // 5. configuration_options
+	    .configuration_options.high_address_space = CONFIG_MEM_SPACE_FIRMWARE,  // only firmware space
+	    .configuration_options.low_address_space = CONFIG_MEM_SPACE_FIRMWARE,   // only firmware space
+	    .configuration_options.read_from_manufacturer_space_0xfc_supported = false,  // not present in bootloader
+	    .configuration_options.read_from_user_space_0xfb_supported = false,          // not present in bootloader
+	    .configuration_options.stream_read_write_supported = false,
+	    .configuration_options.unaligned_reads_supported = false,   // not supported in bootloader
+	    .configuration_options.unaligned_writes_supported = false,  // not supported in bootloader
+	    .configuration_options.write_to_user_space_0xfb_supported = false,           // not present in bootloader
+	    .configuration_options.write_under_mask_supported = false,  // not supported in bootloader
+	    .configuration_options.description = "",
+
+	    // Space 0xFF — CDI (Configuration Description Information)
+	    .address_space_configuration_definition.present = false,  // auto-set: node type has config memory
+	    .address_space_configuration_definition.read_only = true,  // CDI is always read-only per spec
+	    .address_space_configuration_definition.low_address_valid = false,
+	    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+	    .address_space_configuration_definition.highest_address = 0,  // not present in bootloader
+	    .address_space_configuration_definition.low_address = 0,
+	    .address_space_configuration_definition.description = "",
+
+	    // Space 0xFE — All Memory (raw debug access)
+	    .address_space_all.present = false,  // not implemented — reserved by spec
+	    .address_space_all.read_only = true,  // not implemented — reserved by spec
+	    .address_space_all.low_address_valid = false,
+	    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
+	    .address_space_all.highest_address = 0,
+	    .address_space_all.low_address = 0,
+	    .address_space_all.description = "",
+
+	    // Space 0xFD — Configuration Memory (user-configurable settings)
+	    .address_space_config_memory.present = false,  // auto-set: node type has config memory
+	    .address_space_config_memory.read_only = true,
+	    .address_space_config_memory.low_address_valid = false,
+	    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+	    .address_space_config_memory.highest_address = 0,
+	    .address_space_config_memory.low_address = 0,
+	    .address_space_config_memory.description = "",
+
+	    // Space 0xFC — ACDI Manufacturer (read-only identification)
+	    .address_space_acdi_manufacturer.present = false,  // auto-set: node type has config memory
+	    .address_space_acdi_manufacturer.read_only = true,
+	    .address_space_acdi_manufacturer.low_address_valid = false,
+	    .address_space_acdi_manufacturer.address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
+	    .address_space_acdi_manufacturer.highest_address = 0,  // not present in bootloader
+	    .address_space_acdi_manufacturer.low_address = 0,
+	    .address_space_acdi_manufacturer.description = "",
+
+	    // Space 0xFB — ACDI User (user name & description)
+	    .address_space_acdi_user.present = false,  // auto-set: node type has config memory
+	    .address_space_acdi_user.read_only = true,
+	    .address_space_acdi_user.low_address_valid = false,
+	    .address_space_acdi_user.address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
+	    .address_space_acdi_user.highest_address = 0,  // not present in bootloader
+	    .address_space_acdi_user.low_address = 0,
+	    .address_space_acdi_user.description = "",
+
+	    // Space 0xFA — Train FDI (Function Description Information)
+	    .address_space_train_function_definition_info.present = false,  // auto-set: train (locomotive) node type only
+	    .address_space_train_function_definition_info.read_only = true,  // FDI is always read-only per spec
+	    .address_space_train_function_definition_info.low_address_valid = false,  // assume the low address starts at 0
+	    .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
+	    .address_space_train_function_definition_info.highest_address = 0,  // 0 FDI bytes including null terminator — from FDI XML
+	    .address_space_train_function_definition_info.low_address = 0,  // ignored if low_address_valid is false
+	    .address_space_train_function_definition_info.description = "",
+
+	    // Space 0xF9 — Train Function Configuration Memory
+	    .address_space_train_function_config_memory.present = false,  // auto-set: train (locomotive) node type only
+	    .address_space_train_function_config_memory.read_only = false,  // function config is read/write
+	    .address_space_train_function_config_memory.low_address_valid = false,  // assume the low address starts at 0
+	    .address_space_train_function_config_memory.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIG,
+	    .address_space_train_function_config_memory.highest_address = 0,  // library calculates from train function count at runtime
+	    .address_space_train_function_config_memory.low_address = 0,  // ignored if low_address_valid is false
+	    .address_space_train_function_config_memory.description = "",
+
+	    // Space 0xEF — Firmware Upgrade
+	    .address_space_firmware.present = true,  // from wizard Firmware Update option
+	    .address_space_firmware.read_only = false,  // firmware space accepts writes for flashing
+	    .address_space_firmware.low_address_valid = false,  // Firmware ALWAYS assumes it starts at 0
+	    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
+	    .address_space_firmware.highest_address = 0xFFFFFFFF,  // full range — firmware handler manages boundaries
+	    .address_space_firmware.low_address = 0,  // Firmware ALWAYS assumes it starts at 0
+	    .address_space_firmware.description = "",
+
+	    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
+	    .cdi = { 0x00 },
+
+	    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
+	    .fdi = { 0x00 },
+
+};

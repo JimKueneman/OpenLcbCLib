@@ -43,84 +43,84 @@
 
 #define COMMON_ADDRESS_SPACES \
     /* Space 0xFF - CDI */ \
-    .address_space_configuration_definition = {
-        .present = true, \,
-        .read_only = true, \,
-        .low_address_valid = false, \,
-        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, \,
-        .highest_address = 1081 - 1, \,
-        .low_address = 0, \,
+    .address_space_configuration_definition = { \
+        .present = true, \
+        .read_only = true, \
+        .low_address_valid = false, \
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, \
+        .highest_address = 1081 - 1, \
+        .low_address = 0, \
         .description = "Configuration definition info", \
-    },
+    }, \
     \
     /* Space 0xFE - All */ \
-    .address_space_all = {
-        .present = true, \,
-        .read_only = true, \,
-        .low_address_valid = true, \,
-        .address_space = CONFIG_MEM_SPACE_ALL, \,
-        .highest_address = 0xFFFF, \,
-        .low_address = 0x1234, \,
+    .address_space_all = { \
+        .present = true, \
+        .read_only = true, \
+        .low_address_valid = true, \
+        .address_space = CONFIG_MEM_SPACE_ALL, \
+        .highest_address = 0xFFFF, \
+        .low_address = 0x1234, \
         .description = "All memory Info", \
-    },
+    }, \
     \
     /* Space 0xFD - Config Memory */ \
-    .address_space_config_memory = {
-        .present = true, \,
-        .read_only = false, \,
-        .low_address_valid = false, \,
-        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY, \,
-        .highest_address = 0x0200, \,
-        .low_address = 0, \,
+    .address_space_config_memory = { \
+        .present = true, \
+        .read_only = false, \
+        .low_address_valid = false, \
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY, \
+        .highest_address = 0x0200, \
+        .low_address = 0, \
         .description = "Configuration memory storage", \
-    },
+    }, \
     \
     /* Space 0xFC - ACDI Manufacturer */ \
-    .address_space_acdi_manufacturer = {
-        .present = true, \,
-        .read_only = true, \,
-        .low_address_valid = false, \,
-        .address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS, \,
-        .highest_address = 125 - 1, \,
-        .low_address = 0, \,
+    .address_space_acdi_manufacturer = { \
+        .present = true, \
+        .read_only = true, \
+        .low_address_valid = false, \
+        .address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS, \
+        .highest_address = 125 - 1, \
+        .low_address = 0, \
         .description = "ACDI access manufacturer", \
-    },
+    }, \
     \
     /* Space 0xFB - ACDI User */ \
-    .address_space_acdi_user = {
-        .present = true, \,
-        .read_only = false, \,
-        .low_address_valid = false, \,
-        .address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS, \,
-        .highest_address = 128 - 1, \,
-        .low_address = 0, \,
+    .address_space_acdi_user = { \
+        .present = true, \
+        .read_only = false, \
+        .low_address_valid = false, \
+        .address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS, \
+        .highest_address = 128 - 1, \
+        .low_address = 0, \
         .description = "ACDI access user storage", \
-    },
+    }, \
     \
     /* Space 0xEF - Firmware */ \
-    .address_space_firmware = {
-        .present = true, \,
-        .read_only = false, \,
-        .low_address_valid = false, \,
-        .address_space = CONFIG_MEM_SPACE_FIRMWARE, \,
-        .highest_address = 0xFFFFFFFF, \,
-        .low_address = 0, \,
-        .description = "Firmware update address space"
-    },
+    .address_space_firmware = { \
+        .present = true, \
+        .read_only = false, \
+        .low_address_valid = false, \
+        .address_space = CONFIG_MEM_SPACE_FIRMWARE, \
+        .highest_address = 0xFFFFFFFF, \
+        .low_address = 0, \
+        .description = "Firmware update address space" \
+    }
 
 #define COMMON_CONFIG_OPTIONS \
-    .configuration_options = {
-        .write_under_mask_supported = true, \,
-        .unaligned_reads_supported = true, \,
-        .unaligned_writes_supported = true, \,
-        .read_from_manufacturer_space_0xfc_supported = true, \,
-        .read_from_user_space_0xfb_supported = true, \,
-        .write_to_user_space_0xfb_supported = true, \,
-        .stream_read_write_supported = false, \,
-        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, \,
-        .low_address_space = CONFIG_MEM_SPACE_FIRMWARE, \,
-        .description = "These are options that defined the memory space capabilities"
-    },
+    .configuration_options = { \
+        .write_under_mask_supported = true, \
+        .unaligned_reads_supported = true, \
+        .unaligned_writes_supported = true, \
+        .read_from_manufacturer_space_0xfc_supported = true, \
+        .read_from_user_space_0xfb_supported = true, \
+        .write_to_user_space_0xfb_supported = true, \
+        .stream_read_write_supported = false, \
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, \
+        .low_address_space = CONFIG_MEM_SPACE_FIRMWARE, \
+        .description = "These are options that defined the memory space capabilities" \
+    }
 
 // =============================================================================
 // Shared CDI — basic User Name + User Description segments
