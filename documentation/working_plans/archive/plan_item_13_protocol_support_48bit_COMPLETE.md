@@ -338,5 +338,5 @@ should use explicit parentheses:
 | Fix any test failures | 10 minutes |
 | **Total** | **~65 minutes** |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.

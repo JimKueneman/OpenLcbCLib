@@ -41,7 +41,7 @@ documenting a crash.
 |------|-------|--------|
 | `src/openlcb/protocol_snip_Test.cxx` | 718-721, 742-745 | Replace EXPECT_DEATH with assertions for graceful empty-string behavior |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 

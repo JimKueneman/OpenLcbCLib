@@ -26,7 +26,7 @@ also fed back into the incoming message processing path for delivery to sibling 
 | `src/openlcb/openlcb_main_statemachine.c` | Add loopback injection after outgoing message is sent; filter to avoid self-delivery |
 | `src/openlcb/openlcb_buffer_fifo.c` | (Possibly) Add a second FIFO for loopback messages, or reuse existing |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests

@@ -192,7 +192,7 @@ in `driver_defs.js` for the data format.
 ## 7. Platform Drivers
 
 **When:** A new supported board is added to the library, or existing driver templates
-need to be updated to match the latest demo application code in `src/applications/`.
+need to be updated to match the latest demo application code in `applications/`.
 
 **Detailed guide:** `platform/maintenance_guide.md`
 

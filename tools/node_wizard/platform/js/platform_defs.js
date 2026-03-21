@@ -2,7 +2,7 @@
  * Platform Definitions — code templates for each supported target platform.
  *
  * Each platform provides template code extracted from the working demo
- * applications in src/applications/.  Templates use {{paramName}} placeholders
+ * applications in applications/.  Templates use {{paramName}} placeholders
  * that are substituted with user-configured values at generation time.
  *
  * Structure:

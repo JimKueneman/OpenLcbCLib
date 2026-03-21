@@ -99,7 +99,7 @@ themselves. Every other context only reads the counter.
 | `src/drivers/canbus/can_rx_message_handler.c` | Use `_interface->get_current_tick()` to stamp FIRST frames (Item 7) |
 | `src/drivers/canbus/can_config.c` | Wire `get_current_tick` to `OpenLcb_get_global_100ms_tick` |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests

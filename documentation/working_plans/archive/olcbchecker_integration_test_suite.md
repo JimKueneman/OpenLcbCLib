@@ -114,18 +114,18 @@ before building:
 
 ```bash
 # Files copied (from update_applications.sh lines 53-61):
-cp src/openlcb/*.c   src/applications/xcode/BasicNode/src/openlcb/
-cp src/openlcb/*.h   src/applications/xcode/BasicNode/src/openlcb/
-cp src/drivers/canbus/*.c src/applications/xcode/BasicNode/src/drivers/canbus/
-cp src/drivers/canbus/*.h src/applications/xcode/BasicNode/src/drivers/canbus/
-cp src/utilities/*.c src/applications/xcode/BasicNode/src/utilities/
-cp src/utilities/*.h src/applications/xcode/BasicNode/src/utilities/
+cp src/openlcb/*.c   applications/xcode/BasicNode/src/openlcb/
+cp src/openlcb/*.h   applications/xcode/BasicNode/src/openlcb/
+cp src/drivers/canbus/*.c applications/xcode/BasicNode/src/drivers/canbus/
+cp src/drivers/canbus/*.h applications/xcode/BasicNode/src/drivers/canbus/
+cp src/utilities/*.c applications/xcode/BasicNode/src/utilities/
+cp src/utilities/*.h applications/xcode/BasicNode/src/utilities/
 ```
 
 ### Step 2: Compile the Xcode Demo
 
 ```bash
-xcodebuild -project src/applications/xcode/BasicNode.xcodeproj \
+xcodebuild -project applications/xcode/BasicNode.xcodeproj \
            -scheme BasicNode \
            -configuration Debug \
            build
@@ -137,7 +137,7 @@ The built binary will be at a path like:
 To get a predictable path, use `-derivedDataPath`:
 
 ```bash
-xcodebuild -project src/applications/xcode/BasicNode.xcodeproj \
+xcodebuild -project applications/xcode/BasicNode.xcodeproj \
            -scheme BasicNode \
            -configuration Debug \
            -derivedDataPath build/xcode \
@@ -258,7 +258,7 @@ bash update_applications.sh
 # (or just the xcode lines if a targeted script is created)
 
 echo "=== Step 2: Build BasicNode ==="
-xcodebuild -project "$REPO_ROOT/src/applications/xcode/BasicNode.xcodeproj" \
+xcodebuild -project "$REPO_ROOT/applications/xcode/BasicNode.xcodeproj" \
            -scheme BasicNode \
            -configuration Debug \
            -derivedDataPath "$BUILD_DIR" \
@@ -307,7 +307,7 @@ exit $RESULT
 
 ### 1. Fix `OSxDrivers_reboot()` (REQUIRED)
 
-**File:** `src/applications/xcode/BasicNode/application_drivers/osx_drivers.c`
+**File:** `applications/xcode/BasicNode/application_drivers/osx_drivers.c`
 
 Current (empty):
 ```c

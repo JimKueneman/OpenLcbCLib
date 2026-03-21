@@ -42,7 +42,7 @@ Section 4.3). After the limit is reached, the pending datagram is abandoned.
 | `src/openlcb/openlcb_types.h` | Add `uint8_t datagram_retry_count` field to `openlcb_node_t` |
 | `src/openlcb/protocol_datagram_handler.c` | Increment retry counter on temporary rejection; abandon after max retries; reset counter on OK or clear |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests

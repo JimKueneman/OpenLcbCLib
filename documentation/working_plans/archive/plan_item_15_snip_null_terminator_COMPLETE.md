@@ -49,7 +49,7 @@ to make room for it.
 | `src/openlcb/protocol_snip.c` (lines 91-123) | Fix `_process_snip_string()` else branch to always null-terminate |
 | `src/openlcb/protocol_snip_Test.cxx` | Update two tests that document the buggy no-null behavior; add one new edge-case test |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ---

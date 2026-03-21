@@ -28,7 +28,7 @@ used throughout the library.
 | `src/openlcb/openlcb_main_statemachine.c` | Add `else` branch to `MTI_DATAGRAM` case calling `load_datagram_rejected` |
 | `src/openlcb/openlcb_config.c` | Wire `load_datagram_rejected` to the datagram handler's reject builder |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests

@@ -26,7 +26,7 @@ The fix adds basic error parsing and application notification through callbacks 
 | `src/openlcb/protocol_message_network.c` | Parse error code and rejected MTI from OIR/TDE payload; invoke callbacks |
 | `src/openlcb/protocol_message_network.h` | Add `on_optional_interaction_rejected` and `on_terminate_due_to_error` callbacks to interface struct |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests

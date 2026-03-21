@@ -44,7 +44,7 @@ commands cannot be built for CAN transmission.
 | `src/openlcb/protocol_train_handler.c` | Populate listener alias on attach; clear on detach |
 | `src/drivers/canbus/can_rx_message_handler.c` | (Possibly) Maintain an alias-to-node-id cache from observed AMD frames |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests

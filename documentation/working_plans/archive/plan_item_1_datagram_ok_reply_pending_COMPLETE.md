@@ -36,7 +36,7 @@ The fix is a one-line change: only OR in the `DATAGRAM_OK_REPLY_PENDING` flag wh
 |------|--------|
 | `src/openlcb/protocol_datagram_handler.c` | Conditionally apply `DATAGRAM_OK_REPLY_PENDING` flag only when `reply_pending_time_in_seconds > 0` |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests

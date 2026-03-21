@@ -76,7 +76,7 @@ This means:
 | `src/openlcb/openlcb_main_statemachine.c` | Set `statemachine_info->current_tick` at the start of each dispatch cycle |
 | `src/drivers/canbus/can_main_statemachine.c` | Call `ProtocolDatagramHandler_check_timeouts(tick)` from main loop periodic services |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests

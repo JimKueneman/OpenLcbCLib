@@ -40,7 +40,7 @@ message's `source_alias` as the reply's `dest_alias`. No alias resolution needed
 |------|--------|
 | `src/openlcb/protocol_train_handler.c` | Modify `_load_controller_assign_reply()` to accept and append current controller Node ID on rejection |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests

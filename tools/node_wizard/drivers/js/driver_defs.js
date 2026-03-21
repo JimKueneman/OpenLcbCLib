@@ -3,8 +3,8 @@
  * Extracted from the existing demo application driver interfaces.
  *
  * Reference files:
- *   src/applications/xcode/BasicNode/application_drivers/osx_can_drivers.h
- *   src/applications/xcode/BasicNode/application_drivers/osx_drivers.h
+ *   applications/xcode/BasicNode/application_drivers/osx_can_drivers.h
+ *   applications/xcode/BasicNode/application_drivers/osx_drivers.h
  *   src/openlcb/openlcb_config.h  (openlcb_config_t struct)
  * ========================================================================= */
 

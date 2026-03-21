@@ -41,7 +41,7 @@ been checked without a match.
 | `src/openlcb/openlcb_node_Test.cxx` | Add test for `OpenLcbNode_is_last()` |
 | `src/openlcb/protocol_train_search_handler_Test.cxx` | Add tests for `ProtocolTrainSearch_handle_search_no_match()` |
 
-**Note:** Application copies in `src/applications/` are NOT edited -- they are updated via the
+**Note:** Application copies in `applications/` are NOT edited -- they are updated via the
 project's copy shell script.
 
 ## Implementation Steps

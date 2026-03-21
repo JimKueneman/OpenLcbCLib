@@ -39,7 +39,7 @@ Full stream protocol implementation is out of scope and noted as future work.
 |------|--------|
 | `src/openlcb/openlcb_main_statemachine_Test.cxx` | Update five existing null-handler stream tests; three flip from `EXPECT_FALSE` to `EXPECT_TRUE`, two remain `EXPECT_FALSE` |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ---

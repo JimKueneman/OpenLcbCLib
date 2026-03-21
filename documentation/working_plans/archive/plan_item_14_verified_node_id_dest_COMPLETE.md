@@ -34,7 +34,7 @@ message when replying to a global Verify Node ID request, so the response is a p
 |------|--------|
 | `src/openlcb/protocol_message_network.c` | Split `_load_verified_node_id()` into two paths or add a parameter so the global path passes 0/0 for dest fields |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests

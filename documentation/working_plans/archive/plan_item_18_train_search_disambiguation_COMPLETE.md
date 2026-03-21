@@ -28,7 +28,7 @@ address-type heuristics.
 |------|--------|
 | `src/openlcb/protocol_train_search_handler.c` | Fix the `else` branch in `_does_train_match()` (lines 258-266) |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests (1 file)

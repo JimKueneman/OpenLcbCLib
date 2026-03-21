@@ -57,7 +57,7 @@ This is safe because:
 | `src/openlcb/openlcb_buffer_list.h` | Declare `OpenLcbBufferList_check_timeouts()` |
 | `src/drivers/canbus/can_main_statemachine.c` | Call `OpenLcbBufferList_check_timeouts()` from main loop under lock, passing tick as parameter |
 
-**Note:** Application copies in `src/applications/` are updated automatically via the
+**Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
 
 ### Tests
