@@ -81,9 +81,6 @@ static int send_count = 0;
 
 static node_parameters_t _test_node_parameters = {
 
-    .consumer_count_autocreate = 5,
-    .producer_count_autocreate = 5,
-
     .snip.mfg_version = 4,
     .snip.name = "Test Node",
     .snip.model = "Test Model",
@@ -94,6 +91,9 @@ static node_parameters_t _test_node_parameters = {
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
                          PSI_SIMPLE_NODE_INFORMATION),
+
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
 
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,

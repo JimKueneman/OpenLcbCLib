@@ -104,9 +104,6 @@ static uint16_t config_read_type = 0;  // 0=none, 1=short, 2=full
 // ============================================================================
 
 node_parameters_t _node_parameters_main_node = {
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
     .snip.mfg_version = 4,
     .snip.name = SNIP_NAME_FULL,
     .snip.model = SNIP_MODEL,
@@ -121,6 +118,9 @@ node_parameters_t _node_parameters_main_node = {
                          PSI_ABBREVIATED_DEFAULT_CDI |
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
 
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
@@ -170,9 +170,6 @@ node_parameters_t _node_parameters_main_node = {
 
 // Node parameters with short name for testing string handling
 node_parameters_t _node_parameters_short_name = {
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
     .snip.mfg_version = 4,
     .snip.name = SNIP_NAME_SHORT,
     .snip.model = SNIP_MODEL,
@@ -181,6 +178,9 @@ node_parameters_t _node_parameters_short_name = {
     .snip.user_version = 2,
 
     .protocol_support = PSI_SIMPLE_NODE_INFORMATION,
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
 
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
@@ -197,9 +197,6 @@ node_parameters_t _node_parameters_short_name = {
 
 // Node parameters with low_address_valid for testing address offset
 node_parameters_t _node_parameters_with_low_address = {
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
     .snip.mfg_version = 4,
     .snip.name = SNIP_NAME_FULL,
     .snip.model = SNIP_MODEL,
@@ -208,6 +205,9 @@ node_parameters_t _node_parameters_with_low_address = {
     .snip.user_version = 2,
 
     .protocol_support = PSI_SIMPLE_NODE_INFORMATION,
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
 
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,

@@ -72,9 +72,6 @@
 
 node_parameters_t node_parameters = {
 
-    .consumer_count_autocreate = 10,
-    .producer_count_autocreate = 10,
-
     .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
     .snip.name = "GoogleTest",
     .snip.model = "Google Test Param",
@@ -89,6 +86,9 @@ node_parameters_t node_parameters = {
                          PSI_ABBREVIATED_DEFAULT_CDI |
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
+
+    .consumer_count_autocreate = 10,
+    .producer_count_autocreate = 10,
 
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_FIRMWARE,

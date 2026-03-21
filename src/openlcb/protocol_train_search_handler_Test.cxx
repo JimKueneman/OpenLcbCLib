@@ -150,9 +150,6 @@ static interface_openlcb_node_t _interface_openlcb_node = {};
 
 static node_parameters_t _test_node_parameters = {
 
-    .consumer_count_autocreate = 5,
-    .producer_count_autocreate = 5,
-
     .snip.mfg_version = 4,
     .snip.name = "Test Train Node",
     .snip.model = "Test Model",
@@ -164,15 +161,15 @@ static node_parameters_t _test_node_parameters = {
                          PSI_EVENT_EXCHANGE |
                          PSI_SIMPLE_NODE_INFORMATION),
 
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
 
 };
 
 static node_parameters_t _test_node_parameters_named = {
-
-    .consumer_count_autocreate = 5,
-    .producer_count_autocreate = 5,
 
     .snip.mfg_version = 4,
     .snip.name = "Loco 1234 Express",
@@ -185,15 +182,15 @@ static node_parameters_t _test_node_parameters_named = {
                          PSI_EVENT_EXCHANGE |
                          PSI_SIMPLE_NODE_INFORMATION),
 
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
 
 };
 
 static node_parameters_t _test_node_parameters_empty_name = {
-
-    .consumer_count_autocreate = 5,
-    .producer_count_autocreate = 5,
 
     .snip.mfg_version = 4,
     .snip.name = "",
@@ -206,12 +203,12 @@ static node_parameters_t _test_node_parameters_empty_name = {
                          PSI_EVENT_EXCHANGE |
                          PSI_SIMPLE_NODE_INFORMATION),
 
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
 };
 
 static node_parameters_t _test_node_parameters_ab12cd34 = {
-
-    .consumer_count_autocreate = 5,
-    .producer_count_autocreate = 5,
 
     .snip.mfg_version = 4,
     .snip.name = "AB12CD34",
@@ -224,12 +221,12 @@ static node_parameters_t _test_node_parameters_ab12cd34 = {
                          PSI_EVENT_EXCHANGE |
                          PSI_SIMPLE_NODE_INFORMATION),
 
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
 };
 
 static node_parameters_t _test_node_parameters_dashes = {
-
-    .consumer_count_autocreate = 5,
-    .producer_count_autocreate = 5,
 
     .snip.mfg_version = 4,
     .snip.name = "Unit 1-2-3",
@@ -242,12 +239,12 @@ static node_parameters_t _test_node_parameters_dashes = {
                          PSI_EVENT_EXCHANGE |
                          PSI_SIMPLE_NODE_INFORMATION),
 
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
 };
 
 static node_parameters_t _test_node_parameters_1357 = {
-
-    .consumer_count_autocreate = 5,
-    .producer_count_autocreate = 5,
 
     .snip.mfg_version = 4,
     .snip.name = "Train 1357",
@@ -260,12 +257,12 @@ static node_parameters_t _test_node_parameters_1357 = {
                          PSI_EVENT_EXCHANGE |
                          PSI_SIMPLE_NODE_INFORMATION),
 
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
 };
 
 static node_parameters_t _test_node_parameters_a5b = {
-
-    .consumer_count_autocreate = 5,
-    .producer_count_autocreate = 5,
 
     .snip.mfg_version = 4,
     .snip.name = "A5B",
@@ -278,12 +275,12 @@ static node_parameters_t _test_node_parameters_a5b = {
                          PSI_EVENT_EXCHANGE |
                          PSI_SIMPLE_NODE_INFORMATION),
 
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
 };
 
 static node_parameters_t _test_node_parameters_test42 = {
-
-    .consumer_count_autocreate = 5,
-    .producer_count_autocreate = 5,
 
     .snip.mfg_version = 4,
     .snip.name = "Test 42",
@@ -296,12 +293,12 @@ static node_parameters_t _test_node_parameters_test42 = {
                          PSI_EVENT_EXCHANGE |
                          PSI_SIMPLE_NODE_INFORMATION),
 
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
 };
 
 static node_parameters_t _test_node_parameters_digit_start = {
-
-    .consumer_count_autocreate = 5,
-    .producer_count_autocreate = 5,
 
     .snip.mfg_version = 4,
     .snip.name = "5Train",
@@ -313,6 +310,9 @@ static node_parameters_t _test_node_parameters_digit_start = {
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
                          PSI_SIMPLE_NODE_INFORMATION),
+
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
 
 };
 

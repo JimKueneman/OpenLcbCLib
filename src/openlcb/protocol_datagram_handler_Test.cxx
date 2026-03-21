@@ -96,9 +96,6 @@ bool unlock_shared_resources_called = false;
 
 node_parameters_t _node_parameters_main_node = {
 
-    .consumer_count_autocreate = AUTO_CREATE_EVENT_COUNT,
-    .producer_count_autocreate = AUTO_CREATE_EVENT_COUNT,
-
     .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
     .snip.name = SNIP_NAME_FULL,
     .snip.model = SNIP_MODEL,
@@ -114,6 +111,9 @@ node_parameters_t _node_parameters_main_node = {
                          PSI_ABBREVIATED_DEFAULT_CDI |
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
+
+    .consumer_count_autocreate = AUTO_CREATE_EVENT_COUNT,
+    .producer_count_autocreate = AUTO_CREATE_EVENT_COUNT,
 
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,

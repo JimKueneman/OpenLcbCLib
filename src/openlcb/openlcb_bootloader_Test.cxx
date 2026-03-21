@@ -110,9 +110,6 @@ extern "C" {
 
 const node_parameters_t _node_parameters_bootloader = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
     .snip.mfg_version = 4,
     .snip.name = "OpenLCB Bootloader",
     .snip.model = "Firmware Upgrade Test",
@@ -127,6 +124,9 @@ const node_parameters_t _node_parameters_bootloader = {
     PSI_MEMORY_CONFIGURATION |
     PSI_FIRMWARE_UPGRADE
     ),
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
 
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_FIRMWARE,

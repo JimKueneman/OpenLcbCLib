@@ -168,9 +168,6 @@ static const openlcb_config_t _config = {
 
 static const node_parameters_t _node_params = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
     .snip.mfg_version      = 4,
     .snip.name             = "Test Node",
     .snip.model            = "Config Test",
@@ -179,6 +176,9 @@ static const node_parameters_t _node_params = {
     .snip.user_version     = 2,
 
     .protocol_support = PSI_SIMPLE_NODE_INFORMATION | PSI_IDENTIFICATION,
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
 
 };
 

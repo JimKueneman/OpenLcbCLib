@@ -85,9 +85,6 @@
 // Full protocol node configuration
 node_parameters_t _node_parameters_main_node = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
     .snip.mfg_version = 4,
     .snip.name = "Test",
     .snip.model = "Test Model J",
@@ -102,6 +99,9 @@ node_parameters_t _node_parameters_main_node = {
                          PSI_ABBREVIATED_DEFAULT_CDI |
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
 
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
@@ -159,9 +159,6 @@ node_parameters_t _node_parameters_main_node = {
 // Simple protocol node configuration
 node_parameters_t _node_parameters_main_node_simple = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
     .snip.mfg_version = 4,
     .snip.name = "Test",
     .snip.model = "Test Model J",
@@ -177,6 +174,9 @@ node_parameters_t _node_parameters_main_node_simple = {
                          PSI_ABBREVIATED_DEFAULT_CDI |
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
 
     .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,

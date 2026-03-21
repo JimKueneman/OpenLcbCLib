@@ -63,9 +63,6 @@
 
 node_parameters_t _node_parameters_main_node = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
     .snip.mfg_version = 4,
     .snip.name = "E2E Test",
     .snip.model = "E2E Model",
@@ -74,6 +71,9 @@ node_parameters_t _node_parameters_main_node = {
     .snip.user_version = 2,
 
     .protocol_support = (PSI_DATAGRAM | PSI_SIMPLE_NODE_INFORMATION),
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
 
 };
 
