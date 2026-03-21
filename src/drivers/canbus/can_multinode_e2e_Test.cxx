@@ -80,12 +80,14 @@ node_parameters_t _node_parameters_main_node = {
     .consumer_count_autocreate = 0,
     .producer_count_autocreate = 0,
 
-    .snip.mfg_version = 4,
-    .snip.name = "E2E CAN Test",
-    .snip.model = "E2E CAN Model",
-    .snip.hardware_version = "1.0",
-    .snip.software_version = "1.0",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "E2E CAN Test",
+        .model = "E2E CAN Model",
+        .hardware_version = "1.0",
+        .software_version = "1.0",
+        .user_version = 2
+    },
 
     .protocol_support = PSI_SIMPLE_NODE_INFORMATION,
 

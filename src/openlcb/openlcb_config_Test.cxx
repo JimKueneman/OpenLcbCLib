@@ -168,12 +168,14 @@ static const openlcb_config_t _config = {
 
 static const node_parameters_t _node_params = {
 
-    .snip.mfg_version      = 4,
-    .snip.name             = "Test Node",
-    .snip.model            = "Config Test",
-    .snip.hardware_version = "1.0",
-    .snip.software_version = "1.0",
-    .snip.user_version     = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Test Node",
+        .model = "Config Test",
+        .hardware_version = "1.0",
+        .software_version = "1.0",
+        .user_version = 2
+    },
 
     .protocol_support = PSI_SIMPLE_NODE_INFORMATION | PSI_IDENTIFICATION,
 

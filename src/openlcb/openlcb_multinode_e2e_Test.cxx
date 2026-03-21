@@ -63,12 +63,14 @@
 
 node_parameters_t _node_parameters_main_node = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "E2E Test",
-    .snip.model = "E2E Model",
-    .snip.hardware_version = "1.0",
-    .snip.software_version = "1.0",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "E2E Test",
+        .model = "E2E Model",
+        .hardware_version = "1.0",
+        .software_version = "1.0",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM | PSI_SIMPLE_NODE_INFORMATION),
 

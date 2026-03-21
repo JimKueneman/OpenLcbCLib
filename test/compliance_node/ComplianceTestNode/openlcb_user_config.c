@@ -43,70 +43,84 @@
 
 #define COMMON_ADDRESS_SPACES \
     /* Space 0xFF - CDI */ \
-    .address_space_configuration_definition.read_only = true, \
-    .address_space_configuration_definition.present = true, \
-    .address_space_configuration_definition.low_address_valid = false, \
-    .address_space_configuration_definition.low_address = 0, \
-    .address_space_configuration_definition.highest_address = 1081 - 1, \
-    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, \
-    .address_space_configuration_definition.description = "Configuration definition info", \
+    .address_space_configuration_definition = {
+        .present = true, \,
+        .read_only = true, \,
+        .low_address_valid = false, \,
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, \,
+        .highest_address = 1081 - 1, \,
+        .low_address = 0, \,
+        .description = "Configuration definition info", \
+    },
     \
     /* Space 0xFE - All */ \
-    .address_space_all.read_only = true, \
-    .address_space_all.present = true, \
-    .address_space_all.low_address_valid = true, \
-    .address_space_all.low_address = 0x1234, \
-    .address_space_all.highest_address = 0xFFFF, \
-    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL, \
-    .address_space_all.description = "All memory Info", \
+    .address_space_all = {
+        .present = true, \,
+        .read_only = true, \,
+        .low_address_valid = true, \,
+        .address_space = CONFIG_MEM_SPACE_ALL, \,
+        .highest_address = 0xFFFF, \,
+        .low_address = 0x1234, \,
+        .description = "All memory Info", \
+    },
     \
     /* Space 0xFD - Config Memory */ \
-    .address_space_config_memory.read_only = false, \
-    .address_space_config_memory.present = true, \
-    .address_space_config_memory.low_address_valid = false, \
-    .address_space_config_memory.low_address = 0, \
-    .address_space_config_memory.highest_address = 0x0200, \
-    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY, \
-    .address_space_config_memory.description = "Configuration memory storage", \
+    .address_space_config_memory = {
+        .present = true, \,
+        .read_only = false, \,
+        .low_address_valid = false, \,
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY, \,
+        .highest_address = 0x0200, \,
+        .low_address = 0, \,
+        .description = "Configuration memory storage", \
+    },
     \
     /* Space 0xFC - ACDI Manufacturer */ \
-    .address_space_acdi_manufacturer.read_only = true, \
-    .address_space_acdi_manufacturer.present = true, \
-    .address_space_acdi_manufacturer.low_address_valid = false, \
-    .address_space_acdi_manufacturer.low_address = 0, \
-    .address_space_acdi_manufacturer.highest_address = 125 - 1, \
-    .address_space_acdi_manufacturer.address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS, \
-    .address_space_acdi_manufacturer.description = "ACDI access manufacturer", \
+    .address_space_acdi_manufacturer = {
+        .present = true, \,
+        .read_only = true, \,
+        .low_address_valid = false, \,
+        .address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS, \,
+        .highest_address = 125 - 1, \,
+        .low_address = 0, \,
+        .description = "ACDI access manufacturer", \
+    },
     \
     /* Space 0xFB - ACDI User */ \
-    .address_space_acdi_user.read_only = false, \
-    .address_space_acdi_user.present = true, \
-    .address_space_acdi_user.low_address_valid = false, \
-    .address_space_acdi_user.low_address = 0, \
-    .address_space_acdi_user.highest_address = 128 - 1, \
-    .address_space_acdi_user.address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS, \
-    .address_space_acdi_user.description = "ACDI access user storage", \
+    .address_space_acdi_user = {
+        .present = true, \,
+        .read_only = false, \,
+        .low_address_valid = false, \,
+        .address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS, \,
+        .highest_address = 128 - 1, \,
+        .low_address = 0, \,
+        .description = "ACDI access user storage", \
+    },
     \
     /* Space 0xEF - Firmware */ \
-    .address_space_firmware.read_only = false, \
-    .address_space_firmware.present = true, \
-    .address_space_firmware.low_address_valid = false, \
-    .address_space_firmware.low_address = 0, \
-    .address_space_firmware.highest_address = 0xFFFFFFFF, \
-    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE, \
-    .address_space_firmware.description = "Firmware update address space"
+    .address_space_firmware = {
+        .present = true, \,
+        .read_only = false, \,
+        .low_address_valid = false, \,
+        .address_space = CONFIG_MEM_SPACE_FIRMWARE, \,
+        .highest_address = 0xFFFFFFFF, \,
+        .low_address = 0, \,
+        .description = "Firmware update address space"
+    },
 
 #define COMMON_CONFIG_OPTIONS \
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, \
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_FIRMWARE, \
-    .configuration_options.read_from_manufacturer_space_0xfc_supported = true, \
-    .configuration_options.read_from_user_space_0xfb_supported = true, \
-    .configuration_options.stream_read_write_supported = false, \
-    .configuration_options.unaligned_reads_supported = true, \
-    .configuration_options.unaligned_writes_supported = true, \
-    .configuration_options.write_to_user_space_0xfb_supported = true, \
-    .configuration_options.write_under_mask_supported = true, \
-    .configuration_options.description = "These are options that defined the memory space capabilities"
+    .configuration_options = {
+        .write_under_mask_supported = true, \,
+        .unaligned_reads_supported = true, \,
+        .unaligned_writes_supported = true, \,
+        .read_from_manufacturer_space_0xfc_supported = true, \,
+        .read_from_user_space_0xfb_supported = true, \,
+        .write_to_user_space_0xfb_supported = true, \,
+        .stream_read_write_supported = false, \,
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, \,
+        .low_address_space = CONFIG_MEM_SPACE_FIRMWARE, \,
+        .description = "These are options that defined the memory space capabilities"
+    },
 
 // =============================================================================
 // Shared CDI — basic User Name + User Description segments
@@ -158,12 +172,14 @@
 const node_parameters_t compliance_basic_params = {
 
     // 1. snip
-    .snip.mfg_version = 4,
-    .snip.name = "Compliance Test Node",
-    .snip.model = "Basic Mode",
-    .snip.hardware_version = "0.0.1",
-    .snip.software_version = "0.0.1",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Compliance Test Node",
+        .model = "Basic Mode",
+        .hardware_version = "0.0.1",
+        .software_version = "0.0.1",
+        .user_version = 2
+    },
 
     // 2. protocol_support
     .protocol_support = (
@@ -202,12 +218,14 @@ const node_parameters_t compliance_basic_params = {
 const node_parameters_t compliance_broadcast_time_consumer_params = {
 
     // 1. snip
-    .snip.mfg_version = 4,
-    .snip.name = "Compliance Test Node",
-    .snip.model = "BroadcastTime Consumer",
-    .snip.hardware_version = "0.0.1",
-    .snip.software_version = "0.0.1",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Compliance Test Node",
+        .model = "BroadcastTime Consumer",
+        .hardware_version = "0.0.1",
+        .software_version = "0.0.1",
+        .user_version = 2
+    },
 
     // 2. protocol_support
     .protocol_support = (
@@ -246,12 +264,14 @@ const node_parameters_t compliance_broadcast_time_consumer_params = {
 const node_parameters_t compliance_broadcast_time_producer_params = {
 
     // 1. snip
-    .snip.mfg_version = 4,
-    .snip.name = "Compliance Test Node",
-    .snip.model = "BroadcastTime Producer",
-    .snip.hardware_version = "0.0.1",
-    .snip.software_version = "0.0.1",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Compliance Test Node",
+        .model = "BroadcastTime Producer",
+        .hardware_version = "0.0.1",
+        .software_version = "0.0.1",
+        .user_version = 2
+    },
 
     // 2. protocol_support
     .protocol_support = (
@@ -290,12 +310,14 @@ const node_parameters_t compliance_broadcast_time_producer_params = {
 const node_parameters_t compliance_train_params = {
 
     // 1. snip
-    .snip.mfg_version = 4,
-    .snip.name = "Compliance Test Node",
-    .snip.model = "Train Mode",
-    .snip.hardware_version = "0.0.1",
-    .snip.software_version = "0.0.1",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Compliance Test Node",
+        .model = "Train Mode",
+        .hardware_version = "0.0.1",
+        .software_version = "0.0.1",
+        .user_version = 2
+    },
 
     // 2. protocol_support
     .protocol_support = (
@@ -322,13 +344,15 @@ const node_parameters_t compliance_train_params = {
     COMMON_ADDRESS_SPACES,
 
     // 11. address_space_train_function_definition_info - Space 0xFA
-    .address_space_train_function_definition_info.read_only = true,
-    .address_space_train_function_definition_info.present = true,
-    .address_space_train_function_definition_info.low_address_valid = false,
-    .address_space_train_function_definition_info.low_address = 0,
-    .address_space_train_function_definition_info.highest_address = 513,
-    .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
-    .address_space_train_function_definition_info.description = "Train Function Definition Information",
+    .address_space_train_function_definition_info = {
+        .present = true,
+        .read_only = true,
+        .low_address_valid = false,
+        .address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
+        .highest_address = 513,
+        .low_address = 0,
+        .description = "Train Function Definition Information"
+    },
 
     // 14. cdi
     // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
@@ -358,12 +382,14 @@ const node_parameters_t compliance_train_params = {
 const node_parameters_t OpenLcbUserConfig_node_parameters = {
 
     // 1. snip
-    .snip.mfg_version = 4,
-    .snip.name = "Compliance Test Node",
-    .snip.model = "Default",
-    .snip.hardware_version = "0.0.1",
-    .snip.software_version = "0.0.1",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Compliance Test Node",
+        .model = "Default",
+        .hardware_version = "0.0.1",
+        .software_version = "0.0.1",
+        .user_version = 2
+    },
 
     // 2. protocol_support
     .protocol_support = (

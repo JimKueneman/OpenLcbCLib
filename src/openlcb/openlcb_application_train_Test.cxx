@@ -200,12 +200,14 @@ static interface_openlcb_node_t _interface_openlcb_node = {};
 
 static node_parameters_t _test_node_parameters = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "Test Train Node",
-    .snip.model = "Test Model",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Test Train Node",
+        .model = "Test Model",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
@@ -214,8 +216,10 @@ static node_parameters_t _test_node_parameters = {
     .consumer_count_autocreate = 5,
     .producer_count_autocreate = 5,
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options = {
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY
+    },
 
 };
 

@@ -135,12 +135,14 @@ static train_state_t _dummy_train_state;
 
 node_parameters_t _node_parameters_main_node = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "Test",
-    .snip.model = "Test Model J",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Test",
+        .model = "Test Model J",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_MEMORY_CONFIGURATION |
@@ -153,43 +155,51 @@ node_parameters_t _node_parameters_main_node = {
     .consumer_count_autocreate = 0,
     .producer_count_autocreate = 0,
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
-    .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
-    .configuration_options.read_from_user_space_0xfb_supported = 1,
-    .configuration_options.stream_read_write_supported = 0,
-    .configuration_options.unaligned_reads_supported = 1,
-    .configuration_options.unaligned_writes_supported = 1,
-    .configuration_options.write_to_user_space_0xfb_supported = 1,
-    .configuration_options.write_under_mask_supported = 1,
-    .configuration_options.description = "These are options that defined the memory space capabilities",
+    .configuration_options = {
+        .write_under_mask_supported = 1,
+        .unaligned_reads_supported = 1,
+        .unaligned_writes_supported = 1,
+        .read_from_manufacturer_space_0xfc_supported = 1,
+        .read_from_user_space_0xfb_supported = 1,
+        .write_to_user_space_0xfb_supported = 1,
+        .stream_read_write_supported = 0,
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .description = "These are options that defined the memory space capabilities"
+    },
 
     // Space 0xFF - Configuration Definition Info
-    .address_space_configuration_definition.read_only = 1,
-    .address_space_configuration_definition.present = 0,
-    .address_space_configuration_definition.low_address_valid = 0,
-    .address_space_configuration_definition.low_address = 0,
-    .address_space_configuration_definition.highest_address = 0x200,
-    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .address_space_configuration_definition.description = "Configuration definition info",
+    .address_space_configuration_definition = {
+        .present = 0,
+        .read_only = 1,
+        .low_address_valid = 0,
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .highest_address = 0x200,
+        .low_address = 0,
+        .description = "Configuration definition info"
+    },
 
     // Space 0xFE - All Memory
-    .address_space_all.read_only = 1,
-    .address_space_all.present = 0,
-    .address_space_all.low_address_valid = 0,
-    .address_space_all.low_address = 0,
-    .address_space_all.highest_address = 0,
-    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
-    .address_space_all.description = "All memory Info",
+    .address_space_all = {
+        .present = 0,
+        .read_only = 1,
+        .low_address_valid = 0,
+        .address_space = CONFIG_MEM_SPACE_ALL,
+        .highest_address = 0,
+        .low_address = 0,
+        .description = "All memory Info"
+    },
 
     // Space 0xFD - Configuration Memory
-    .address_space_config_memory.read_only = 0,
-    .address_space_config_memory.present = 0,
-    .address_space_config_memory.low_address_valid = 0,
-    .address_space_config_memory.low_address = 0,
-    .address_space_config_memory.highest_address = 0x200,
-    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
-    .address_space_config_memory.description = "Configuration memory storage",
+    .address_space_config_memory = {
+        .present = 0,
+        .read_only = 0,
+        .low_address_valid = 0,
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .highest_address = 0x200,
+        .low_address = 0,
+        .description = "Configuration memory storage"
+    },
 
     .cdi =
         {

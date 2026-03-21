@@ -104,12 +104,14 @@ static uint16_t config_read_type = 0;  // 0=none, 1=short, 2=full
 // ============================================================================
 
 node_parameters_t _node_parameters_main_node = {
-    .snip.mfg_version = 4,
-    .snip.name = SNIP_NAME_FULL,
-    .snip.model = SNIP_MODEL,
-    .snip.hardware_version = SNIP_HW_VERSION,
-    .snip.software_version = SNIP_SW_VERSION,
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = SNIP_NAME_FULL,
+        .model = SNIP_MODEL,
+        .hardware_version = SNIP_HW_VERSION,
+        .software_version = SNIP_SW_VERSION,
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_FIRMWARE_UPGRADE |
@@ -122,102 +124,124 @@ node_parameters_t _node_parameters_main_node = {
     .consumer_count_autocreate = 0,
     .producer_count_autocreate = 0,
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
-    .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
-    .configuration_options.read_from_user_space_0xfb_supported = 1,
-    .configuration_options.stream_read_write_supported = 0,
-    .configuration_options.unaligned_reads_supported = 1,
-    .configuration_options.unaligned_writes_supported = 1,
-    .configuration_options.write_to_user_space_0xfb_supported = 1,
-    .configuration_options.write_under_mask_supported = 1,
-    .configuration_options.description = "Memory space capabilities",
+    .configuration_options = {
+        .write_under_mask_supported = 1,
+        .unaligned_reads_supported = 1,
+        .unaligned_writes_supported = 1,
+        .read_from_manufacturer_space_0xfc_supported = 1,
+        .read_from_user_space_0xfb_supported = 1,
+        .write_to_user_space_0xfb_supported = 1,
+        .stream_read_write_supported = 0,
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .description = "Memory space capabilities"
+    },
 
-    .address_space_configuration_definition.read_only = 1,
-    .address_space_configuration_definition.present = 0,
-    .address_space_configuration_definition.low_address_valid = 0,
-    .address_space_configuration_definition.low_address = 0,
-    .address_space_configuration_definition.highest_address = 0x200,
-    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .address_space_configuration_definition.description = "Configuration definition info",
+    .address_space_configuration_definition = {
+        .present = 0,
+        .read_only = 1,
+        .low_address_valid = 0,
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .highest_address = 0x200,
+        .low_address = 0,
+        .description = "Configuration definition info"
+    },
 
-    .address_space_all.read_only = 1,
-    .address_space_all.present = 0,
-    .address_space_all.low_address_valid = 0,
-    .address_space_all.low_address = 0,
-    .address_space_all.highest_address = 0,
-    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
-    .address_space_all.description = "All memory Info",
+    .address_space_all = {
+        .present = 0,
+        .read_only = 1,
+        .low_address_valid = 0,
+        .address_space = CONFIG_MEM_SPACE_ALL,
+        .highest_address = 0,
+        .low_address = 0,
+        .description = "All memory Info"
+    },
 
-    .address_space_config_memory.read_only = 0,
-    .address_space_config_memory.present = 0,
-    .address_space_config_memory.low_address_valid = 0,
-    .address_space_config_memory.low_address = 0,
-    .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
-    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
-    .address_space_config_memory.description = "Configuration memory storage",
+    .address_space_config_memory = {
+        .present = 0,
+        .read_only = 0,
+        .low_address_valid = 0,
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
+        .low_address = 0,
+        .description = "Configuration memory storage"
+    },
 
-    .address_space_firmware.read_only = 0,
-    .address_space_firmware.present = 1,
-    .address_space_firmware.low_address_valid = 0,
-    .address_space_firmware.low_address = 0,
-    .address_space_firmware.highest_address = 0x200,
-    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
-    .address_space_firmware.description = "Firmware Bootloader",
+    .address_space_firmware = {
+        .present = 1,
+        .read_only = 0,
+        .low_address_valid = 0,
+        .address_space = CONFIG_MEM_SPACE_FIRMWARE,
+        .highest_address = 0x200,
+        .low_address = 0,
+        .description = "Firmware Bootloader"
+    },
 
     .cdi = {},
 };
 
 // Node parameters with short name for testing string handling
 node_parameters_t _node_parameters_short_name = {
-    .snip.mfg_version = 4,
-    .snip.name = SNIP_NAME_SHORT,
-    .snip.model = SNIP_MODEL,
-    .snip.hardware_version = SNIP_HW_VERSION,
-    .snip.software_version = SNIP_SW_VERSION,
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = SNIP_NAME_SHORT,
+        .model = SNIP_MODEL,
+        .hardware_version = SNIP_HW_VERSION,
+        .software_version = SNIP_SW_VERSION,
+        .user_version = 2
+    },
 
     .protocol_support = PSI_SIMPLE_NODE_INFORMATION,
 
     .consumer_count_autocreate = 0,
     .producer_count_autocreate = 0,
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options = {
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY
+    },
 
-    .address_space_config_memory.read_only = 0,
-    .address_space_config_memory.present = 0,
-    .address_space_config_memory.low_address_valid = 0,
-    .address_space_config_memory.low_address = 0,
-    .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
-    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+    .address_space_config_memory = {
+        .present = 0,
+        .read_only = 0,
+        .low_address_valid = 0,
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
+        .low_address = 0
+    },
 
     .cdi = {},
 };
 
 // Node parameters with low_address_valid for testing address offset
 node_parameters_t _node_parameters_with_low_address = {
-    .snip.mfg_version = 4,
-    .snip.name = SNIP_NAME_FULL,
-    .snip.model = SNIP_MODEL,
-    .snip.hardware_version = SNIP_HW_VERSION,
-    .snip.software_version = SNIP_SW_VERSION,
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = SNIP_NAME_FULL,
+        .model = SNIP_MODEL,
+        .hardware_version = SNIP_HW_VERSION,
+        .software_version = SNIP_SW_VERSION,
+        .user_version = 2
+    },
 
     .protocol_support = PSI_SIMPLE_NODE_INFORMATION,
 
     .consumer_count_autocreate = 0,
     .producer_count_autocreate = 0,
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options = {
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY
+    },
 
-    .address_space_config_memory.read_only = 0,
-    .address_space_config_memory.present = 0,
-    .address_space_config_memory.low_address_valid = 1,  // Enable low_address
-    .address_space_config_memory.low_address = CONFIG_MEM_START_ADDRESS,
-    .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
-    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+    .address_space_config_memory = {
+        .present = 0,
+        .read_only = 0,
+        .low_address_valid = 1, // Enable low_address
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
+        .low_address = CONFIG_MEM_START_ADDRESS
+    },
 
     .cdi = {},
 };

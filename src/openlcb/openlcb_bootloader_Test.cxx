@@ -110,12 +110,14 @@ extern "C" {
 
 const node_parameters_t _node_parameters_bootloader = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "OpenLCB Bootloader",
-    .snip.model = "Firmware Upgrade Test",
-    .snip.hardware_version = "1.0.0",
-    .snip.software_version = "1.0.0",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "OpenLCB Bootloader",
+        .model = "Firmware Upgrade Test",
+        .hardware_version = "1.0.0",
+        .software_version = "1.0.0",
+        .user_version = 2
+    },
 
     .protocol_support = (
     PSI_SIMPLE_NODE_INFORMATION |
@@ -128,44 +130,58 @@ const node_parameters_t _node_parameters_bootloader = {
     .consumer_count_autocreate = 0,
     .producer_count_autocreate = 0,
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_FIRMWARE,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_FIRMWARE,
-    .configuration_options.read_from_manufacturer_space_0xfc_supported = false,
-    .configuration_options.read_from_user_space_0xfb_supported = false,
-    .configuration_options.stream_read_write_supported = false,
-    .configuration_options.unaligned_reads_supported = false,
-    .configuration_options.unaligned_writes_supported = false,
-    .configuration_options.write_to_user_space_0xfb_supported = false,
-    .configuration_options.write_under_mask_supported = false,
-    .configuration_options.description = "",
+    .configuration_options = {
+        .write_under_mask_supported = false,
+        .unaligned_reads_supported = false,
+        .unaligned_writes_supported = false,
+        .read_from_manufacturer_space_0xfc_supported = false,
+        .read_from_user_space_0xfb_supported = false,
+        .write_to_user_space_0xfb_supported = false,
+        .stream_read_write_supported = false,
+        .high_address_space = CONFIG_MEM_SPACE_FIRMWARE,
+        .low_address_space = CONFIG_MEM_SPACE_FIRMWARE,
+        .description = ""
+    },
 
-    .address_space_configuration_definition.present = false,
-    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .address_space_configuration_definition.description = "",
+    .address_space_configuration_definition = {
+        .present = false,
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .description = ""
+    },
 
-    .address_space_all.present = false,
-    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
-    .address_space_all.description = "",
+    .address_space_all = {
+        .present = false,
+        .address_space = CONFIG_MEM_SPACE_ALL,
+        .description = ""
+    },
 
-    .address_space_config_memory.present = false,
-    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
-    .address_space_config_memory.description = "",
+    .address_space_config_memory = {
+        .present = false,
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .description = ""
+    },
 
-    .address_space_acdi_manufacturer.present = false,
-    .address_space_acdi_manufacturer.address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
-    .address_space_acdi_manufacturer.description = "",
+    .address_space_acdi_manufacturer = {
+        .present = false,
+        .address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
+        .description = ""
+    },
 
-    .address_space_acdi_user.present = false,
-    .address_space_acdi_user.address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
-    .address_space_acdi_user.description = "",
+    .address_space_acdi_user = {
+        .present = false,
+        .address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
+        .description = ""
+    },
 
-    .address_space_firmware.read_only = false,
-    .address_space_firmware.present = true,
-    .address_space_firmware.low_address_valid = false,
-    .address_space_firmware.low_address = 0,
-    .address_space_firmware.highest_address = 0xFFFFFFFF,
-    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
-    .address_space_firmware.description = "Firmware update address space",
+    .address_space_firmware = {
+        .present = true,
+        .read_only = false,
+        .low_address_valid = false,
+        .address_space = CONFIG_MEM_SPACE_FIRMWARE,
+        .highest_address = 0xFFFFFFFF,
+        .low_address = 0,
+        .description = "Firmware update address space"
+    },
 
     .cdi = { 0x00 },
 
@@ -306,8 +322,8 @@ static const interface_protocol_config_mem_operations_handler_t _ops_interface =
     .operations_request_options_cmd = &_mock_options_cmd,
     .operations_request_options_cmd_reply = nullptr,
     .operations_request_get_address_space_info = &_mock_get_address_space_info,
-    .operations_request_get_address_space_info_reply_not_present = nullptr,
     .operations_request_get_address_space_info_reply_present = nullptr,
+    .operations_request_get_address_space_info_reply_not_present = nullptr,
     .operations_request_reserve_lock = nullptr,
     .operations_request_reserve_lock_reply = nullptr,
     .operations_request_get_unique_id = nullptr,
@@ -324,6 +340,8 @@ static const interface_protocol_config_mem_write_handler_t _write_interface = {
 
     .load_datagram_received_ok_message = &_mock_write_datagram_ok,
     .load_datagram_received_rejected_message = &_mock_write_datagram_rejected,
+    .config_memory_write = nullptr,
+    .config_memory_read = nullptr,
     .write_request_config_definition_info = nullptr,
     .write_request_all = nullptr,
     .write_request_config_mem = nullptr,
@@ -332,10 +350,8 @@ static const interface_protocol_config_mem_write_handler_t _write_interface = {
     .write_request_train_function_config_definition_info = nullptr,
     .write_request_train_function_config_memory = nullptr,
     .write_request_firmware = &_mock_firmware_write,
-    .config_memory_read = nullptr,
-    .config_memory_write = nullptr,
-    .on_function_changed = nullptr,
     .delayed_reply_time = nullptr,
+    .on_function_changed = nullptr,
 
 };
 

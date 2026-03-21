@@ -107,12 +107,14 @@ bool config_memory_read_return_zero = false;
 
 const node_parameters_t _node_parameters_main_node = {
 
-    .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
-    .snip.name = SNIP_NAME_FULL,
-    .snip.model = SNIP_MODEL,
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
+    .snip = {
+        .mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
+        .name = SNIP_NAME_FULL,
+        .model = SNIP_MODEL,
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2 // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_FIRMWARE_UPGRADE |
@@ -125,91 +127,108 @@ const node_parameters_t _node_parameters_main_node = {
     .consumer_count_autocreate = AUTO_CREATE_EVENT_COUNT,
     .producer_count_autocreate = AUTO_CREATE_EVENT_COUNT,
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
-
-    .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
-    .configuration_options.read_from_user_space_0xfb_supported = 1,
-    .configuration_options.stream_read_write_supported = 0,
-    .configuration_options.unaligned_reads_supported = 1,
-    .configuration_options.unaligned_writes_supported = 1,
-    .configuration_options.write_to_user_space_0xfb_supported = 1,
-    .configuration_options.write_under_mask_supported = 1,
-    .configuration_options.description = "These are options that defined the memory space capabilities",
+    .configuration_options = {
+        .write_under_mask_supported = 1,
+        .unaligned_reads_supported = 1,
+        .unaligned_writes_supported = 1,
+        .read_from_manufacturer_space_0xfc_supported = 1,
+        .read_from_user_space_0xfb_supported = 1,
+        .write_to_user_space_0xfb_supported = 1,
+        .stream_read_write_supported = 0,
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .description = "These are options that defined the memory space capabilities"
+    },
 
     // Space 0xFF
     // WARNING: The ACDI write always maps to the first 128 bytes (64 Name + 64 Description) of the Config Memory System so
     //    make sure the CDI maps these 2 items to the first 128 bytes as well
-    .address_space_configuration_definition.read_only = true,
-    .address_space_configuration_definition.present = true,
-    .address_space_configuration_definition.low_address_valid = false,  // assume the low address starts at 0
-    .address_space_configuration_definition.low_address = 0,            // ignored if low_address_valid is false
-    .address_space_configuration_definition.highest_address = 1098 - 1, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .address_space_configuration_definition.description = "Configuration definition info",
+    .address_space_configuration_definition = {
+        .present = true,
+        .read_only = true,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .highest_address = 1098 - 1, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "Configuration definition info"
+    },
 
     // Space 0xFE
-    .address_space_all.read_only = true,
-    .address_space_all.present = true,
-    .address_space_all.low_address_valid = false, // assume the low address starts at 0
-    .address_space_all.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_all.highest_address = CONFIG_MEM_ALL_HIGH_MEMORY,
-    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
-    .address_space_all.description = "All memory Info",
+    .address_space_all = {
+        .present = true,
+        .read_only = true,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_ALL,
+        .highest_address = CONFIG_MEM_ALL_HIGH_MEMORY,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "All memory Info"
+    },
 
     // Space 0xFD
-    .address_space_config_memory.read_only = false,
-    .address_space_config_memory.present = true,
-    .address_space_config_memory.low_address_valid = false,                            // assume the low address starts at 0
-    .address_space_config_memory.low_address = 0,                                      // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
-    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
-    .address_space_config_memory.description = "Configuration memory storage",
+    .address_space_config_memory = {
+        .present = true,
+        .read_only = false,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "Configuration memory storage"
+    },
 
     // Space 0xFC
-    .address_space_acdi_manufacturer.read_only = true,
-    .address_space_acdi_manufacturer.present = true,
-    .address_space_acdi_manufacturer.low_address_valid = false, // assume the low address starts at 0
-    .address_space_acdi_manufacturer.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_acdi_manufacturer.highest_address = 0x0100, 
-    .address_space_acdi_manufacturer.address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
-    .address_space_acdi_manufacturer.description = "ADCI Manufacturer storage",
+    .address_space_acdi_manufacturer = {
+        .present = true,
+        .read_only = true,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
+        .highest_address = 0x0100,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "ADCI Manufacturer storage"
+    },
 
     // Space 0xFB
-    .address_space_acdi_user.read_only = false,
-    .address_space_acdi_user.present = true,
-    .address_space_acdi_user.low_address_valid = false, // assume the low address starts at 0
-    .address_space_acdi_user.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_acdi_user.highest_address = 0x0100, 
-    .address_space_acdi_user.address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
-    .address_space_acdi_user.description = "ADCI User storage",
+    .address_space_acdi_user = {
+        .present = true,
+        .read_only = false,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
+        .highest_address = 0x0100,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "ADCI User storage"
+    },
 
     // Space 0xFA
-    .address_space_train_function_definition_info.read_only = true,
-    .address_space_train_function_definition_info.present = true,
-    .address_space_train_function_definition_info.low_address_valid = false, // assume the low address starts at 0
-    .address_space_train_function_definition_info.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_train_function_definition_info.highest_address = 9,       // 10 bytes of test FDI data (index 0-9)
-    .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
-    .address_space_train_function_definition_info.description = "Train Configuration Definition Info",
+    .address_space_train_function_definition_info = {
+        .present = true,
+        .read_only = true,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
+        .highest_address = 9, // 10 bytes of test FDI data (index 0-9)
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "Train Configuration Definition Info"
+    },
 
     // Space 0xF9
-    .address_space_train_function_config_memory.read_only = false,
-    .address_space_train_function_config_memory.present = true,
-    .address_space_train_function_config_memory.low_address_valid = false,                          // assume the low address starts at 0
-    .address_space_train_function_config_memory.low_address = 0,                                    // ignored if low_address_valid is false
-    .address_space_train_function_config_memory.highest_address = (USER_DEFINED_MAX_TRAIN_FUNCTIONS * 2) - 1, // 29 functions x 2 bytes each
-    .address_space_train_function_config_memory.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
-    .address_space_train_function_config_memory.description = "Train Configuration Memory storage",
+    .address_space_train_function_config_memory = {
+        .present = true,
+        .read_only = false,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
+        .highest_address = (USER_DEFINED_MAX_TRAIN_FUNCTIONS * 2) - 1, // 29 functions x 2 bytes each
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "Train Configuration Memory storage"
+    },
 
     // Space 0xEF
-    .address_space_firmware.read_only = false,
-    .address_space_firmware.present = true,
-    .address_space_firmware.low_address_valid = false, // assume the low address starts at 0
-    .address_space_firmware.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_firmware.highest_address = 0x100,  
-    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
-    .address_space_firmware.description = "Firmware Bootloader",
+    .address_space_firmware = {
+        .present = true,
+        .read_only = false,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_FIRMWARE,
+        .highest_address = 0x100,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "Firmware Bootloader"
+    },
 
     .cdi =
         {
@@ -262,12 +281,14 @@ const node_parameters_t _node_parameters_main_node = {
 
 const node_parameters_t _node_parameters_main_node_all_not_present = {
 
-    .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
-    .snip.name = SNIP_NAME_FULL,
-    .snip.model = SNIP_MODEL,
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
+    .snip = {
+        .mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
+        .name = SNIP_NAME_FULL,
+        .model = SNIP_MODEL,
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2 // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_FIRMWARE_UPGRADE |
@@ -280,91 +301,108 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .consumer_count_autocreate = AUTO_CREATE_EVENT_COUNT,
     .producer_count_autocreate = AUTO_CREATE_EVENT_COUNT,
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
-
-    .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
-    .configuration_options.read_from_user_space_0xfb_supported = 1,
-    .configuration_options.stream_read_write_supported = 0,
-    .configuration_options.unaligned_reads_supported = 1,
-    .configuration_options.unaligned_writes_supported = 1,
-    .configuration_options.write_to_user_space_0xfb_supported = 1,
-    .configuration_options.write_under_mask_supported = 1,
-    .configuration_options.description = "These are options that defined the memory space capabilities",
+    .configuration_options = {
+        .write_under_mask_supported = 1,
+        .unaligned_reads_supported = 1,
+        .unaligned_writes_supported = 1,
+        .read_from_manufacturer_space_0xfc_supported = 1,
+        .read_from_user_space_0xfb_supported = 1,
+        .write_to_user_space_0xfb_supported = 1,
+        .stream_read_write_supported = 0,
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .description = "These are options that defined the memory space capabilities"
+    },
 
     // Space 0xFF
     // WARNING: The ACDI write always maps to the first 128 bytes (64 Name + 64 Description) of the Config Memory System so
     //    make sure the CDI maps these 2 items to the first 128 bytes as well
-    .address_space_configuration_definition.read_only = true,
-    .address_space_configuration_definition.present = true,
-    .address_space_configuration_definition.low_address_valid = false,  // assume the low address starts at 0
-    .address_space_configuration_definition.low_address = 0,            // ignored if low_address_valid is false
-    .address_space_configuration_definition.highest_address = 1098 - 1, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .address_space_configuration_definition.description = "Configuration definition info",
+    .address_space_configuration_definition = {
+        .present = true,
+        .read_only = true,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .highest_address = 1098 - 1, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "Configuration definition info"
+    },
 
     // Space 0xFE
-    .address_space_all.read_only = true,
-    .address_space_all.present = false,
-    .address_space_all.low_address_valid = false, // assume the low address starts at 0
-    .address_space_all.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_all.highest_address = CONFIG_MEM_ALL_HIGH_MEMORY,
-    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
-    .address_space_all.description = "All memory Info",
+    .address_space_all = {
+        .present = false,
+        .read_only = true,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_ALL,
+        .highest_address = CONFIG_MEM_ALL_HIGH_MEMORY,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "All memory Info"
+    },
 
     // Space 0xFD
-    .address_space_config_memory.read_only = false,
-    .address_space_config_memory.present = true,
-    .address_space_config_memory.low_address_valid = false,                            // assume the low address starts at 0
-    .address_space_config_memory.low_address = 0,                                      // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
-    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
-    .address_space_config_memory.description = "Configuration memory storage",
+    .address_space_config_memory = {
+        .present = true,
+        .read_only = false,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+        .highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "Configuration memory storage"
+    },
 
     // Space 0xFC
-    .address_space_acdi_manufacturer.read_only = true,
-    .address_space_acdi_manufacturer.present = true,
-    .address_space_acdi_manufacturer.low_address_valid = false, // assume the low address starts at 0
-    .address_space_acdi_manufacturer.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_acdi_manufacturer.highest_address = 0x0100, 
-    .address_space_acdi_manufacturer.address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
-    .address_space_acdi_manufacturer.description = "ADCI Manufacturer storage",
+    .address_space_acdi_manufacturer = {
+        .present = true,
+        .read_only = true,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
+        .highest_address = 0x0100,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "ADCI Manufacturer storage"
+    },
 
     // Space 0xFB
-    .address_space_acdi_user.read_only = false,
-    .address_space_acdi_user.present = true,
-    .address_space_acdi_user.low_address_valid = false, // assume the low address starts at 0
-    .address_space_acdi_user.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_acdi_user.highest_address = 0x0100, 
-    .address_space_acdi_user.address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
-    .address_space_acdi_user.description = "ADCI User storage",
+    .address_space_acdi_user = {
+        .present = true,
+        .read_only = false,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
+        .highest_address = 0x0100,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "ADCI User storage"
+    },
 
     // Space 0xFA
-    .address_space_train_function_definition_info.read_only = true,
-    .address_space_train_function_definition_info.present = true,
-    .address_space_train_function_definition_info.low_address_valid = false, // assume the low address starts at 0
-    .address_space_train_function_definition_info.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_train_function_definition_info.highest_address = 0x0100, 
-    .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
-    .address_space_train_function_definition_info.description = "Train Configuration Definition Info",
+    .address_space_train_function_definition_info = {
+        .present = true,
+        .read_only = true,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
+        .highest_address = 0x0100,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "Train Configuration Definition Info"
+    },
 
     // Space 0xF9
-    .address_space_train_function_config_memory.read_only = false,
-    .address_space_train_function_config_memory.present = true,
-    .address_space_train_function_config_memory.low_address_valid = false, // assume the low address starts at 0
-    .address_space_train_function_config_memory.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_train_function_config_memory.highest_address = 0x100,  
-    .address_space_train_function_config_memory.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
-    .address_space_train_function_config_memory.description = "Train Configuration Memory storage",
+    .address_space_train_function_config_memory = {
+        .present = true,
+        .read_only = false,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
+        .highest_address = 0x100,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "Train Configuration Memory storage"
+    },
 
     // Space 0xEF
-    .address_space_firmware.read_only = false,
-    .address_space_firmware.present = true,
-    .address_space_firmware.low_address_valid = false, // assume the low address starts at 0
-    .address_space_firmware.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_firmware.highest_address = 0x100,  
-    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
-    .address_space_firmware.description = "Firmware Bootloader",
+    .address_space_firmware = {
+        .present = true,
+        .read_only = false,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_FIRMWARE,
+        .highest_address = 0x100,
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "Firmware Bootloader"
+    },
 
     .cdi =
         {

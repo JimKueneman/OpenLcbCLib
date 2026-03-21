@@ -150,12 +150,14 @@ static interface_openlcb_node_t _interface_openlcb_node = {};
 
 static node_parameters_t _test_node_parameters = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "Test Train Node",
-    .snip.model = "Test Model",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Test Train Node",
+        .model = "Test Model",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
@@ -164,19 +166,23 @@ static node_parameters_t _test_node_parameters = {
     .consumer_count_autocreate = 5,
     .producer_count_autocreate = 5,
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options = {
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY
+    },
 
 };
 
 static node_parameters_t _test_node_parameters_named = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "Loco 1234 Express",
-    .snip.model = "Test Model",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Loco 1234 Express",
+        .model = "Test Model",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
@@ -185,19 +191,23 @@ static node_parameters_t _test_node_parameters_named = {
     .consumer_count_autocreate = 5,
     .producer_count_autocreate = 5,
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options = {
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+        .low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY
+    },
 
 };
 
 static node_parameters_t _test_node_parameters_empty_name = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "",
-    .snip.model = "Test Model",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "",
+        .model = "Test Model",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
@@ -210,12 +220,14 @@ static node_parameters_t _test_node_parameters_empty_name = {
 
 static node_parameters_t _test_node_parameters_ab12cd34 = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "AB12CD34",
-    .snip.model = "Test Model",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "AB12CD34",
+        .model = "Test Model",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
@@ -228,12 +240,14 @@ static node_parameters_t _test_node_parameters_ab12cd34 = {
 
 static node_parameters_t _test_node_parameters_dashes = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "Unit 1-2-3",
-    .snip.model = "Test Model",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Unit 1-2-3",
+        .model = "Test Model",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
@@ -246,12 +260,14 @@ static node_parameters_t _test_node_parameters_dashes = {
 
 static node_parameters_t _test_node_parameters_1357 = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "Train 1357",
-    .snip.model = "Test Model",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Train 1357",
+        .model = "Test Model",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
@@ -264,12 +280,14 @@ static node_parameters_t _test_node_parameters_1357 = {
 
 static node_parameters_t _test_node_parameters_a5b = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "A5B",
-    .snip.model = "Test Model",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "A5B",
+        .model = "Test Model",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
@@ -282,12 +300,14 @@ static node_parameters_t _test_node_parameters_a5b = {
 
 static node_parameters_t _test_node_parameters_test42 = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "Test 42",
-    .snip.model = "Test Model",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "Test 42",
+        .model = "Test Model",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
@@ -300,12 +320,14 @@ static node_parameters_t _test_node_parameters_test42 = {
 
 static node_parameters_t _test_node_parameters_digit_start = {
 
-    .snip.mfg_version = 4,
-    .snip.name = "5Train",
-    .snip.model = "Test Model",
-    .snip.hardware_version = "0.001",
-    .snip.software_version = "0.002",
-    .snip.user_version = 2,
+    .snip = {
+        .mfg_version = 4,
+        .name = "5Train",
+        .model = "Test Model",
+        .hardware_version = "0.001",
+        .software_version = "0.002",
+        .user_version = 2
+    },
 
     .protocol_support = (PSI_DATAGRAM |
                          PSI_EVENT_EXCHANGE |
