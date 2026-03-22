@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">
+  <identification>
+    <manufacturer>José García</manufacturer>
+    <model>Señal — Modelo</model>
+  </identification>
+</cdi>

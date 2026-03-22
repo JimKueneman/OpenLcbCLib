@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">
+  <identification>
+    <manufacturer>Your Manufacturer Name</manufacturer>
+    <model>Your Model Name</model>
+    <hardwareVersion>1.0</hardwareVersion>
+    <softwareVersion>1.0</softwareVersion>
+  </identification>
+  <!-- ACDI: declares Abbreviated CDI protocol support -->
+  <acdi/>
+  <!--
+    Space 253 (0xFD) — Configuration Memory
+    Bytes 0-127 are RESERVED by the default CDI:
+      Byte   0-61  : User Node Name        (62-byte null-terminated string)
+      Byte  62-124 : User Node Description (63-byte null-terminated string)
+    Place your custom configuration at origin 128 or higher.
+  -->
+  <segment space="253" origin="0">
+    <name>User Identification</name>
+    <group>
+      <name>User Identification</name>
+      <description>User-assigned name and description for this node</description>
+      <string size="62">
+        <name>Node Name</name>
+        <description>Short user-assigned name (max 62 characters)</description>
+      </string>
+      <string size="63">
+        <name>Node Description</name>
+        <description>Longer description of this node (max 63 characters)</description>
+      </string>
+    </group>
+  </segment>
+  <!-- Add your custom configuration here (origin >= 128 keeps reserved bytes intact) -->
+  <segment space="253" origin="128">
+    <name>Configuration</name>
+    <group>
+      <name>Configuration</name>
+      <description>Node configuration settings</description>
+      <!-- Example: integer field
+      <int size="1">
+        <name>My Setting</name>
+        <description>A simple 1-byte configuration value</description>
+        <min>0</min>
+        <max>255</max>
+        <default>0</default>
+      </int>
+      -->
+      <!-- Example: Event ID
+      <eventid>
+        <name>My Event</name>
+        <description>An event this node produces or consumes</description>
+      </eventid>
+      -->
+    </group>
+  </segment>
+</cdi>

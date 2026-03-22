@@ -1,9 +1,16 @@
 CdiToArray.py:
 
-     Converts an XML file into the minimal array of ASCII values to us in the node parameters structure including reporting the number of characters in th conversion.
-     
-     Usage:  python CdiToArray.py My_Cdi_File.xml
-     
-     the resulting file will the named My_Cdi_File.xml.c but it is not a valid C file it is just the values that can be cut and pasted into the node parameters structure initializer in the user application to embed the CDI into the Flash or RAM depending on the target CPU/System.
+    Converts an XML file into a C-style hex byte array for embedding in the
+    node parameters structure. XML comments are always stripped. By default
+    whitespace (indentation, newlines, blank lines) is also stripped to
+    minimize the byte array size. A null terminator (0x00) is always appended.
 
+    Usage:  python CdiToArray.py [options] [input.xml]
 
+    Options:
+      -h, --help        Show help message
+      -w, --whitespace  Preserve whitespace (indentation, newlines)
+
+    If no input file is given, defaults to "sample.xml".
+    The output file is named <input>.c and contains hex values with
+    // comments showing the original text for each line.

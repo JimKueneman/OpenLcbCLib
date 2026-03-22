@@ -22,6 +22,7 @@ let platformState     = null;    /* { platform, params, isArduino, framework, li
 let cdiValidation     = null;    /* { errors: N, warnings: N } from CDI editor */
 let fdiValidation     = null;    /* { errors: N, warnings: N } from FDI editor (future) */
 let filePreviewSelection = null; /* last selected file path in file-preview */
+let preserveWhitespace   = false; /* CDI editor: preserve whitespace in output byte array */
 
 /* ---------- DOM refs ---------- */
 
@@ -106,7 +107,8 @@ function _saveState() {
             driverState:      driverState,
             callbackState:    callbackState,
             platformState:    platformState,
-            filePreviewSelection: filePreviewSelection
+            filePreviewSelection: filePreviewSelection,
+            preserveWhitespace: preserveWhitespace
         };
 
         try {
@@ -161,6 +163,9 @@ function _restoreState() {
         }
         if (state.filePreviewSelection) {
             filePreviewSelection = state.filePreviewSelection;
+        }
+        if (state.preserveWhitespace !== undefined) {
+            preserveWhitespace = !!state.preserveWhitespace;
         }
 
         /* Migration: convert old arduinoMode to platform isArduino */
@@ -416,11 +421,14 @@ function _buildInitMessages(view) {
 
         /* Forward any CDI/FDI XML the user has edited */
         if (cdiUserXml) {
-            msgs.push({ type: 'setCdiBytes', xml: cdiUserXml });
+            msgs.push({ type: 'setCdiBytes', xml: cdiUserXml, preserveWhitespace: preserveWhitespace });
         }
         if (fdiUserXml) {
             msgs.push({ type: 'setFdiBytes', xml: fdiUserXml });
         }
+
+        /* Forward preserve-whitespace setting */
+        msgs.push({ type: 'setPreserveWhitespace', value: preserveWhitespace });
 
         /* Restore form state if we have it */
         if (configFormState) {
@@ -442,6 +450,9 @@ function _buildInitMessages(view) {
 
         /* Send config memory size BEFORE loadXml so the map has it when rendering */
         msgs.push({ type: 'setConfigMemSize', value: configMemHighest });
+
+        /* Restore preserve-whitespace checkbox state */
+        msgs.push({ type: 'setPreserveWhitespace', value: preserveWhitespace });
 
         /* Only send loadXml if we have user XML to restore */
         if (cdiUserXml) {
@@ -506,6 +517,7 @@ function _buildWizardState() {
         fdiUserXml:       fdiUserXml,
         cdiFilename:      cdiFilename,
         fdiFilename:      fdiFilename,
+        preserveWhitespace: preserveWhitespace,
         configMemHighest: configMemHighest,
         configFormState:  configFormState,
         driverState:      driverState,
@@ -572,6 +584,9 @@ window.addEventListener('message', function (e) {
 
                 cdiUserXml  = e.data.xml;
                 cdiFilename = e.data.filename || null;
+                if (e.data.preserveWhitespace !== undefined) {
+                    preserveWhitespace = !!e.data.preserveWhitespace;
+                }
                 if (!cdiUserXml) { cdiValidation = null; }
 
             } else if (currentView === 'fdi') {
@@ -583,6 +598,20 @@ window.addEventListener('message', function (e) {
             }
             _updateDescriptorBadges();
             _saveState();
+            break;
+
+        case 'preserveWhitespaceChanged':
+
+            preserveWhitespace = !!e.data.value;
+            _saveState();
+
+            /* Forward to config iframe if loaded */
+            if (_loadedView === 'config' && _iframeReady) {
+                elIframe.contentWindow.postMessage({
+                    type: 'setPreserveWhitespace',
+                    value: preserveWhitespace
+                }, '*');
+            }
             break;
 
         case 'updateConfigMemSize':
@@ -752,6 +781,7 @@ document.getElementById('file-load-project').addEventListener('change', function
             callbackState    = state.callbackState     || {};
             platformState    = state.platformState     || null;
             filePreviewSelection = state.filePreviewSelection || null;
+            preserveWhitespace   = !!state.preserveWhitespace;
             cdiValidation    = null;
             fdiValidation    = null;
 

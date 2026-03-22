@@ -56,8 +56,9 @@ function _buildCodegenState(ws) {
     s.driverState   = ws.driverState   || {};
     s.callbackState = ws.callbackState || {};
     s.platformState = ws.platformState || null;
-    s.cdiUserXml    = ws.cdiUserXml    || null;
-    s.fdiUserXml    = ws.fdiUserXml    || null;
+    s.cdiUserXml         = ws.cdiUserXml         || null;
+    s.fdiUserXml         = ws.fdiUserXml         || null;
+    s.preserveWhitespace = !!ws.preserveWhitespace;
 
     return s;
 

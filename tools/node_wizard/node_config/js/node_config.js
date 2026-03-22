@@ -11,6 +11,7 @@ let cdiUserBytes     = null;
 let cdiUserText      = null;
 let fdiUserBytes     = null;
 let fdiUserText      = null;
+let preserveWhitespace = false;
 let driverStateFromParent   = {};   /* { 'can-drivers': { checked: [...] }, ... } */
 let callbackStateFromParent = {};   /* { 'cb-events': { checked: [...] }, ... } */
 let platformStateFromParent = null; /* { platform, params, framework, libraries, notes } */
@@ -544,6 +545,7 @@ function getState() {
         fdiBytes:            activeFdi,
         fdiLength:           activeFdi ? activeFdi.length : 0,
         fdiXml:              activeFdiXml || null,
+        preserveWhitespace:  preserveWhitespace,
         /* Advanced panel */
         advBasicBuf:         parseInt(document.getElementById('adv-basic-buf').value, 10) || 16,
         advDatagramBuf:      parseInt(document.getElementById('adv-datagram-buf').value, 10),
@@ -1349,26 +1351,37 @@ window.addEventListener('message', function (e) {
 
         /* Parent sends updated CDI bytes from CDI editor */
         cdiUserText  = e.data.xml;
-        const raw    = new TextEncoder().encode(cdiUserText);
-        cdiUserBytes = new Uint8Array(raw.length + 1);
-        cdiUserBytes.set(raw);
-        cdiUserBytes[raw.length] = 0;
+        if (e.data.preserveWhitespace !== undefined) {
+            preserveWhitespace = !!e.data.preserveWhitespace;
+        }
+        cdiUserBytes = _xmlToBytes(cdiUserText, preserveWhitespace);
         updatePreview();
 
     } else if (e.data.type === 'setFdiBytes') {
 
         /* Parent sends updated FDI bytes from FDI editor */
         fdiUserText  = e.data.xml;
-        const raw    = new TextEncoder().encode(fdiUserText);
-        fdiUserBytes = new Uint8Array(raw.length + 1);
-        fdiUserBytes.set(raw);
-        fdiUserBytes[raw.length] = 0;
+        fdiUserBytes = _xmlToBytes(fdiUserText, preserveWhitespace);
         updatePreview();
 
     } else if (e.data.type === 'setConfigMemSize') {
 
         /* CDI editor requested a config memory size update */
         document.getElementById('config-mem-highest-addr').value = e.data.value;
+        updatePreview();
+
+    } else if (e.data.type === 'setPreserveWhitespace') {
+
+        /* CDI editor toggled the preserve-whitespace option */
+        preserveWhitespace = !!e.data.value;
+
+        /* Re-encode CDI/FDI bytes with the new setting */
+        if (cdiUserText) {
+            cdiUserBytes = _xmlToBytes(cdiUserText, preserveWhitespace);
+        }
+        if (fdiUserText) {
+            fdiUserBytes = _xmlToBytes(fdiUserText, preserveWhitespace);
+        }
         updatePreview();
 
     } else if (e.data.type === 'restoreFormState') {

@@ -66,12 +66,75 @@ var DEFAULT_FDI_XML = [
     '</fdi>'
 ].join('\n');
 
+/* ---------- XML preprocessing -------------------------------------------- */
+
+/*
+ * Strip XML comments and optionally whitespace before byte conversion.
+ * Always strips <!-- ... --> comments (including multi-line).
+ * When preserveWhitespace is false (default), also strips leading/trailing
+ * whitespace from each line, drops blank lines, and removes newlines —
+ * producing the minimal byte representation per the CDI spec.
+ */
+function _preprocessXml(xml, preserveWhitespace) {
+
+    if (!xml) { return ''; }
+
+    /* Always strip XML comments (single-line and multi-line) */
+    var cleaned = xml.replace(/<!--[\s\S]*?-->/g, '');
+
+    /* Normalize line endings */
+    cleaned = cleaned.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    if (preserveWhitespace) {
+
+        /* Drop lines that became whitespace-only after comment removal */
+        var lines = cleaned.split('\n');
+        var kept = [];
+
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i].trim().length > 0) {
+                kept.push(lines[i]);
+            }
+        }
+
+        return kept.join('\n');
+
+    }
+
+    /* Default: strip leading/trailing whitespace per line, drop blank lines.
+     * Lines stay newline-separated so _byteArrayStr() can emit one row per
+     * XML line — but no 0x0A bytes are emitted between them. */
+    var lines = cleaned.split('\n');
+    var kept = [];
+
+    for (var i = 0; i < lines.length; i++) {
+
+        var trimmed = lines[i].trim();
+
+        if (trimmed.length > 0) {
+            kept.push(trimmed);
+        }
+
+    }
+
+    return kept.join('\n');
+
+}
+
 /* Pre-computed default byte arrays (XML → UTF-8 + null terminator) */
 
-function _xmlToBytes(xml) {
+function _xmlToBytes(xml, preserveWhitespace) {
 
-    var raw    = new TextEncoder().encode(xml);
-    var result = new Uint8Array(raw.length + 1);
+    var processed = _preprocessXml(xml, preserveWhitespace);
+
+    /* _preprocessXml always returns \n-separated lines for display.
+     * For byte encoding in stripped mode, remove those separators. */
+    if (!preserveWhitespace) {
+        processed = processed.replace(/\n/g, '');
+    }
+
+    var raw       = new TextEncoder().encode(processed);
+    var result    = new Uint8Array(raw.length + 1);
 
     result.set(raw);
     result[raw.length] = 0;
@@ -235,23 +298,68 @@ function _cdiHighestAddrInSpace(xmlText, spaceNum) {
 }
 
 /*
- * Format a Uint8Array as a C initializer.
- * Shows at most maxRows rows of 16 bytes, then a "... N bytes total" comment.
+ * Format XML as a C byte-array initializer.
+ * Each XML line becomes one row of hex bytes followed by a // comment
+ * showing the original text.  A 0x00 null terminator is appended as the
+ * final row.  When preserveWhitespace is true, 0x0A newline bytes are
+ * emitted between lines.
+ *
+ * Falls back to a plain hex dump when xmlText is not provided.
  */
-function _byteArrayStr(bytes, maxRows, indent) {
+function _byteArrayStr(bytes, xmlText, preserveWhitespace, indent) {
 
-    maxRows = maxRows || 4;
-    indent  = indent  || '    ';
+    indent = indent || '    ';
 
     if (!bytes || bytes.length === 0) {
         return '{ 0x00 }';
     }
 
+    /* If we have the original XML text, emit one row per line with a comment */
+    if (xmlText) {
+
+        var processed = _preprocessXml(xmlText, preserveWhitespace);
+        var xmlLines  = processed.split('\n');
+        var encoder   = new TextEncoder();
+        var lines     = [];
+        var totalBytes = 0;
+
+        for (var i = 0; i < xmlLines.length; i++) {
+
+            var lineText = xmlLines[i];
+            if (!preserveWhitespace && lineText.trim().length === 0) { continue; }
+
+            var lineBytes = encoder.encode(lineText);
+            var chunk = [];
+
+            for (var j = 0; j < lineBytes.length; j++) {
+                chunk.push('0x' + (lineBytes[j] < 16 ? '0' : '') + lineBytes[j].toString(16).toUpperCase());
+            }
+
+            totalBytes += lineBytes.length;
+
+            /* Add newline byte between lines when preserving whitespace */
+            if (preserveWhitespace && i < xmlLines.length - 1) {
+                chunk.push('0x0A');
+                totalBytes += 1;
+            }
+
+            lines.push(indent + chunk.join(', ') + ',  // ' + lineText);
+
+        }
+
+        /* Null terminator */
+        totalBytes += 1;
+        lines.push(indent + '0x00  // null terminator (' + totalBytes + ' bytes total)');
+
+        return '{\n' + lines.join('\n') + '\n' + indent.slice(0, -4) + '}';
+
+    }
+
+    /* Fallback: plain hex dump (no XML text available) */
     var cols = 16;
     var lines = [];
-    var rowCount = 0;
 
-    for (var i = 0; i < bytes.length && rowCount < maxRows; i += cols, rowCount++) {
+    for (var i = 0; i < bytes.length; i += cols) {
 
         var chunk = [];
 
@@ -265,11 +373,7 @@ function _byteArrayStr(bytes, maxRows, indent) {
     }
 
     var result = '{\n' + lines.join('\n');
-
-    if (rowCount * cols < bytes.length) {
-        result += '\n' + indent + '/* ... ' + bytes.length + ' bytes total */';
-    }
-
+    result += '\n' + indent + '/* ' + bytes.length + ' bytes total */';
     result += '\n' + indent.slice(0, -4) + '}';
 
     return result;
@@ -286,6 +390,26 @@ function _section(title) {
 
 }
 
+/*
+ * Lazily convert cdiUserXml / fdiUserXml to byte arrays if the caller
+ * passed XML strings but not pre-built Uint8Arrays (file-preview path).
+ */
+function _ensureBytes(s) {
+
+    var pw = !!s.preserveWhitespace;
+
+    if (!s.cdiBytes && s.cdiUserXml) {
+        s.cdiBytes  = _xmlToBytes(s.cdiUserXml, pw);
+        s.cdiLength = s.cdiBytes.length;
+    }
+
+    if (!s.fdiBytes && s.fdiUserXml) {
+        s.fdiBytes  = _xmlToBytes(s.fdiUserXml, pw);
+        s.fdiLength = s.fdiBytes.length;
+    }
+
+}
+
 /* ---------- generateH ---------- */
 
 function generateH(s) {
@@ -293,6 +417,8 @@ function generateH(s) {
     if (!s || !s.nodeType) {
         return '/* Select a node type above to see the generated .h file */';
     }
+
+    _ensureBytes(s);
 
     var isTrainRole  = s.nodeType === 'train' || s.nodeType === 'train-controller';
     var isTrain      = isTrainRole;   /* alias: both roles need train feature flags */
@@ -595,6 +721,8 @@ function generateC(s) {
     if (!s || !s.nodeType) {
         return '/* Select a node type above to see the generated .c file */';
     }
+
+    _ensureBytes(s);
 
     var isTrainRole  = s.nodeType === 'train' || s.nodeType === 'train-controller';
     var isTrain      = isTrainRole;   /* alias: both roles enable train address spaces */
@@ -940,7 +1068,7 @@ function generateC(s) {
     /* ---- 14. .cdi[] ---- */
     if (s.cdiBytes && s.cdiBytes.length > 1) {
         L.push('    .cdi =');
-        L.push('    ' + _byteArrayStr(s.cdiBytes, 4, '        ') + ',');
+        L.push('    ' + _byteArrayStr(s.cdiBytes, s.cdiXml || s.cdiUserXml, !!s.preserveWhitespace, '        ') + ',');
     } else {
         L.push('    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL');
         L.push('    .cdi = { 0x00 },');
@@ -951,7 +1079,7 @@ function generateC(s) {
     /* ---- 15. .fdi[] ---- */
     if (isTrainNode && s.fdiBytes && s.fdiBytes.length > 1) {
         L.push('    .fdi =');
-        L.push('    ' + _byteArrayStr(s.fdiBytes, 4, '        ') + ',');
+        L.push('    ' + _byteArrayStr(s.fdiBytes, s.fdiXml || s.fdiUserXml, !!s.preserveWhitespace, '        ') + ',');
     } else {
         L.push('    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL');
         L.push('    .fdi = { 0x00 },');

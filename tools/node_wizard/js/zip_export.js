@@ -140,8 +140,9 @@ var ZipExport = (function () {
         s.driverState    = wizardState.driverState    || {};
         s.callbackState  = wizardState.callbackState  || {};
         s.platformState  = wizardState.platformState   || null;
-        s.cdiUserXml     = wizardState.cdiUserXml || null;
-        s.fdiUserXml     = wizardState.fdiUserXml || null;
+        s.cdiUserXml         = wizardState.cdiUserXml || null;
+        s.fdiUserXml         = wizardState.fdiUserXml || null;
+        s.preserveWhitespace = !!wizardState.preserveWhitespace;
 
         return s;
 
