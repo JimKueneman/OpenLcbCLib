@@ -12,6 +12,7 @@ SOURCES
     can_login_statemachine.c 
     can_tx_statemachine.c 
     can_utilities.c
+    can_config.c
     alias_mappings.c
     alias_mapping_listener.c
 )
