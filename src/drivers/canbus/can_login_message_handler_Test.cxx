@@ -76,8 +76,6 @@ bool on_alias_change_called = false;
 
 // Simplified node parameters for testing
 node_parameters_t _node_parameters_main_node = {
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
 
     .snip = {
         .mfg_version = 4,
@@ -94,6 +92,9 @@ node_parameters_t _node_parameters_main_node = {
                          PSI_ABBREVIATED_DEFAULT_CDI |
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
 
     .configuration_options = {
         .write_under_mask_supported = 1,

@@ -2447,7 +2447,7 @@ TEST(OpenLcbMainStatemachine, process_all_event_transport_mtis)
         MTI_PC_EVENT_REPORT_WITH_PAYLOAD
     };
 
-    for (int i = 0; i < sizeof(event_mtis) / sizeof(event_mtis[0]); i++)
+    for (unsigned int i = 0; i < sizeof(event_mtis) / sizeof(event_mtis[0]); i++)
     {
         openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
         msg->mti = event_mtis[i];

@@ -248,7 +248,7 @@ void _reset_variables(void)
     last_sent_event_id = 0;
     clock_msg_send_count = 0;
 
-    for (int i = 0; i < sizeof(write_buffer); i++)
+    for (unsigned int i = 0; i < sizeof(write_buffer); i++)
     {
         write_buffer[i] = 0x00;
     }

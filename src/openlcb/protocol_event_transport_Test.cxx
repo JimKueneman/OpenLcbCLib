@@ -332,7 +332,7 @@ void _on_pc_event_report_with_payload(openlcb_node_t *node, event_id_t *event_id
 
     // Copy payload data for verification
     if (payload) {
-        for (int i = 0; i < sizeof(event_payload_t) && i < count; i++) {
+        for (unsigned int i = 0; i < sizeof(event_payload_t) && i < count; i++) {
             event_with_payload[i] = (*payload)[i];
         }
     }
@@ -440,7 +440,7 @@ void _reset_variables(void)
     last_event_index_received = 0xFFFF;
     last_event_status_received = EVENT_STATUS_UNKNOWN;
 
-    for (int i = 0; i < sizeof(event_payload_t); i++) {
+    for (unsigned int i = 0; i < sizeof(event_payload_t); i++) {
         event_with_payload[i] = 0x00;
     }
 }
