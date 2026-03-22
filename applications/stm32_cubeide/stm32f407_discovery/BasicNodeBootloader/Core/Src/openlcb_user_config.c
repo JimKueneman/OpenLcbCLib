@@ -79,8 +79,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_configuration_definition.present = false,
     .address_space_configuration_definition.low_address_valid = false,    // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0,              // ignored if low_address_valid is false
-    .address_space_configuration_definition.highest_address = (1081 - 1), // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .address_space_configuration_definition.highest_address = (1081 - 1), // length of the .cdi file byte array contents    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
     // 7. address_space_all - Space 0xFE
@@ -129,11 +128,11 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_firmware.description = "Firmware update address space",
 
     // 14. cdi
-    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
-    .cdi = { 0x00 },
+    // NULL when CDI is not used, otherwise points to a standalone const byte array
+    .cdi = NULL,
 
     // 15. fdi
-    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
-    .fdi = { 0x00 },
+    // NULL when FDI is not used, otherwise points to a standalone const byte array
+    .fdi = NULL,
 
 };

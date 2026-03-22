@@ -145,12 +145,10 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware update address space",
 
-    // 14. cdi
-    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
-    .cdi = { 0x00 },
+    // 14. cdi — pointer to a const uint8_t array defined above (or NULL if unused)
+    .cdi = NULL,
 
-    // 15. fdi
-    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
-    .fdi = { 0x00 },
+    // 15. fdi — pointer to a const uint8_t array defined above (or NULL if unused)
+    .fdi = NULL,
 
 };

@@ -205,9 +205,8 @@ node_parameters_t _node_parameters_main_node = {
         .description = "Firmware Bootloader"
     },
 
-    .cdi = {
-        // </cdi>
-    },
+    .cdi = NULL,
+    .fdi = NULL,
 };
 
 // OpenLCB Node interface (currently empty, for future expansion)

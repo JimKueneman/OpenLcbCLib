@@ -183,7 +183,8 @@ const node_parameters_t _node_parameters_bootloader = {
         .description = "Firmware update address space"
     },
 
-    .cdi = { 0x00 },
+    .cdi = NULL,
+    .fdi = NULL,
 
 };
 
@@ -538,8 +539,6 @@ TEST(BootloaderCompile, minimum_array_counts_nonzero) {
     EXPECT_GE(USER_DEFINED_PRODUCER_RANGE_COUNT, 1);
     EXPECT_GE(USER_DEFINED_CONSUMER_COUNT, 1);
     EXPECT_GE(USER_DEFINED_CONSUMER_RANGE_COUNT, 1);
-    EXPECT_GE(USER_DEFINED_CDI_LENGTH, 1);
-    EXPECT_GE(USER_DEFINED_FDI_LENGTH, 1);
     EXPECT_GE(USER_DEFINED_TRAIN_NODE_COUNT, 1);
     EXPECT_GE(USER_DEFINED_MAX_LISTENERS_PER_TRAIN, 1);
     EXPECT_GE(USER_DEFINED_MAX_TRAIN_FUNCTIONS, 1);

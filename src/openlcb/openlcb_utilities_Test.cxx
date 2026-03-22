@@ -113,8 +113,7 @@ node_parameters_t node_parameters = {
         .read_only = 1,
         .low_address_valid = 0, // assume the low address starts at 0
         .address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-        .highest_address = 0, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-        .low_address = 0, // ignored if low_address_valid is false
+        .highest_address = 0, // length of the .cdi file byte array contents        .low_address = 0, // ignored if low_address_valid is false
         .description = "Configuration definition info"
     },
 
@@ -173,7 +172,8 @@ node_parameters_t node_parameters = {
         .description = "Firmware update address space"
     },
 
-    .cdi = {},
+    .cdi = NULL,
+    .fdi = NULL,
 
 };
 

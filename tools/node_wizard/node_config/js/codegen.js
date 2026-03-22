@@ -600,20 +600,11 @@ function generateH(s) {
 
     /* ---- Memory Configuration ---- */
     L.push(_section('Memory Configuration (requires OPENLCB_COMPILE_MEMORY_CONFIGURATION)'));
-    L.push('// CDI_LENGTH -- size in bytes of the CDI (Configuration Description Information)');
-    L.push('//   XML buffer.  Must be large enough to hold your node\'s complete CDI XML.');
-    L.push('// FDI_LENGTH -- size in bytes of the FDI (Function Description Information)');
-    L.push('//   buffer.  Only used by train nodes; set small (e.g. 100) if not a train.');
-    L.push('//');
     L.push('// The two address values tell the SNIP protocol where in your node\'s');
     L.push('// configuration memory space the user-editable name and description strings');
     L.push('// begin.  The standard layout puts the user name at address 0 and the user');
     L.push('// description immediately after at byte 62:');
     L.push('//   63 = LEN_SNIP_USER_NAME_BUFFER (63)');
-    L.push('');
-    /* Bootloader: no CDI or FDI — minimum safe value (1 = single null byte) */
-    L.push(_def('USER_DEFINED_CDI_LENGTH',  isBootloader ? '1' : s.cdiLength.toString()) + '  // must be >= 1; enforced by compiler');
-    L.push(_def('USER_DEFINED_FDI_LENGTH',  isBootloader ? '1' : s.fdiLength.toString()) + '  // must be >= 1; enforced by compiler; overridden to 1 if OPENLCB_COMPILE_TRAIN is not defined');
     L.push('');
 
     /* ---- Train Protocol ---- */
@@ -767,6 +758,18 @@ function generateC(s) {
     L.push('#include "src/openlcb/openlcb_defines.h"');
     L.push('');
     L.push('');
+    /* ---- standalone CDI/FDI byte arrays (before the struct so sizeof works) ---- */
+    if (s.cdiBytes && s.cdiBytes.length > 1) {
+        L.push('static const uint8_t _cdi_data[] =');
+        L.push('    ' + _byteArrayStr(s.cdiBytes, s.cdiXml || s.cdiUserXml, !!s.preserveWhitespace, '        ') + ';');
+        L.push('');
+    }
+    if (isTrainNode && s.fdiBytes && s.fdiBytes.length > 1) {
+        L.push('static const uint8_t _fdi_data[] =');
+        L.push('    ' + _byteArrayStr(s.fdiBytes, s.fdiXml || s.fdiUserXml, !!s.preserveWhitespace, '        ') + ';');
+        L.push('');
+    }
+
     L.push('const node_parameters_t OpenLcbUserConfig_node_parameters = {');
     L.push('');
 
@@ -971,7 +974,13 @@ function generateC(s) {
     L.push('    .address_space_configuration_definition.read_only = true,  // CDI is always read-only per spec');
     L.push('    .address_space_configuration_definition.low_address_valid = false,');
     L.push('    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,');
-    L.push('    .address_space_configuration_definition.highest_address = ' + (isBootloader ? '0' : cdiHighest) + ',' + (isBootloader ? '  // not present in bootloader' : '  // ' + s.cdiLength + ' CDI bytes including null terminator — from CDI XML'));
+    if (isBootloader) {
+        L.push('    .address_space_configuration_definition.highest_address = 0,  // not present in bootloader');
+    } else if (s.cdiBytes && s.cdiBytes.length > 1) {
+        L.push('    .address_space_configuration_definition.highest_address = sizeof(_cdi_data) - 1,  // auto-computed from CDI byte array');
+    } else {
+        L.push('    .address_space_configuration_definition.highest_address = 0,');
+    }
     L.push('    .address_space_configuration_definition.low_address = 0,');
     L.push('    .address_space_configuration_definition.description = "",');
     L.push('');
@@ -1038,7 +1047,11 @@ function generateC(s) {
     L.push('    .address_space_train_function_definition_info.read_only = true,  // FDI is always read-only per spec');
     L.push('    .address_space_train_function_definition_info.low_address_valid = false,  // assume the low address starts at 0');
     L.push('    .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,');
-    L.push('    .address_space_train_function_definition_info.highest_address = ' + fdiHighest + ',  // ' + s.fdiLength + ' FDI bytes including null terminator — from FDI XML');
+    if (isTrainNode && s.fdiBytes && s.fdiBytes.length > 1) {
+        L.push('    .address_space_train_function_definition_info.highest_address = sizeof(_fdi_data) - 1,  // auto-computed from FDI byte array');
+    } else {
+        L.push('    .address_space_train_function_definition_info.highest_address = 0,');
+    }
     L.push('    .address_space_train_function_definition_info.low_address = 0,  // ignored if low_address_valid is false');
     L.push('    .address_space_train_function_definition_info.description = "",');
     L.push('');
@@ -1065,24 +1078,20 @@ function generateC(s) {
     L.push('    .address_space_firmware.description = "",');
     L.push('');
 
-    /* ---- 14. .cdi[] ---- */
+    /* ---- 14. .cdi ---- */
     if (s.cdiBytes && s.cdiBytes.length > 1) {
-        L.push('    .cdi =');
-        L.push('    ' + _byteArrayStr(s.cdiBytes, s.cdiXml || s.cdiUserXml, !!s.preserveWhitespace, '        ') + ',');
+        L.push('    .cdi = _cdi_data,');
     } else {
-        L.push('    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL');
-        L.push('    .cdi = { 0x00 },');
+        L.push('    .cdi = NULL,  // no CDI');
     }
 
     L.push('');
 
-    /* ---- 15. .fdi[] ---- */
+    /* ---- 15. .fdi ---- */
     if (isTrainNode && s.fdiBytes && s.fdiBytes.length > 1) {
-        L.push('    .fdi =');
-        L.push('    ' + _byteArrayStr(s.fdiBytes, s.fdiXml || s.fdiUserXml, !!s.preserveWhitespace, '        ') + ',');
+        L.push('    .fdi = _fdi_data,');
     } else {
-        L.push('    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL');
-        L.push('    .fdi = { 0x00 },');
+        L.push('    .fdi = NULL,  // no FDI');
     }
 
     L.push('');

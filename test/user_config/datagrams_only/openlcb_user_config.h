@@ -35,8 +35,6 @@
 #define USER_DEFINED_PRODUCER_RANGE_COUNT            1
 #define USER_DEFINED_CONSUMER_COUNT                  1
 #define USER_DEFINED_CONSUMER_RANGE_COUNT            1
-#define USER_DEFINED_CDI_LENGTH                      1
-#define USER_DEFINED_FDI_LENGTH                      1
 #define USER_DEFINED_TRAIN_NODE_COUNT                1
 #define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         1
 #define USER_DEFINED_MAX_TRAIN_FUNCTIONS             1

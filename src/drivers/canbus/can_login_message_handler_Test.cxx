@@ -139,7 +139,8 @@ node_parameters_t _node_parameters_main_node = {
         .description = "Configuration memory storage"
     },
 
-    .cdi = {},
+    .cdi = NULL,
+    .fdi = NULL,
 };
 
     /** @brief Legacy single-entry alias used by existing tests that read it directly */

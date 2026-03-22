@@ -79,8 +79,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
         .read_only = true,
         .low_address_valid = false, // assume the low address starts at 0
         .address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-        .highest_address = (1081 - 1), // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-        .low_address = 0, // ignored if low_address_valid is false
+        .highest_address = (1081 - 1), // length of the .cdi file byte array contents        .low_address = 0, // ignored if low_address_valid is false
         .description = "Configuration definition info"
     },
 
@@ -139,6 +138,8 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
         .description = "Firmware update address space"
     },
 
-    .cdi = { 0x00 },
+    .cdi = NULL,
+
+    .fdi = NULL,
 
 };

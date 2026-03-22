@@ -170,7 +170,8 @@ node_parameters_t _node_parameters_main_node = {
         .description = "Configuration memory storage"
     },
 
-    .cdi = {},
+    .cdi = NULL,
+    .fdi = NULL,
 };
 
 /*******************************************************************************

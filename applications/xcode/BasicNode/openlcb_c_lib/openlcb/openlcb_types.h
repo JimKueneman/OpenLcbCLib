@@ -132,26 +132,6 @@
 #error "USER_DEFINED_NODE_BUFFER_DEPTH must be >= 1 to avoid a zero-length array"
 #endif
 
-    /** @brief Size of CDI buffer in bytes */
-#ifndef USER_DEFINED_CDI_LENGTH
-#error "USER_DEFINED_CDI_LENGTH must be defined in openlcb_user_config.h"
-#endif
-#if USER_DEFINED_CDI_LENGTH < 1
-#error "USER_DEFINED_CDI_LENGTH must be >= 1 to avoid a zero-length array"
-#endif
-
-    /** @brief Size of FDI buffer in bytes.  Equals USER_DEFINED_FDI_LENGTH when
-     *         OPENLCB_COMPILE_TRAIN is defined; collapses to 1 byte otherwise to save RAM. */
-#ifndef USER_DEFINED_FDI_LENGTH
-#error "USER_DEFINED_FDI_LENGTH must be defined in openlcb_user_config.h"
-#endif
-#ifndef OPENLCB_COMPILE_TRAIN
-#undef  USER_DEFINED_FDI_LENGTH
-#define USER_DEFINED_FDI_LENGTH 1
-#endif
-#if USER_DEFINED_FDI_LENGTH < 1
-#error "USER_DEFINED_FDI_LENGTH must be >= 1 to avoid a zero-length array"
-#endif
 
     /** @brief Maximum number of events a node can produce */
 #ifndef USER_DEFINED_PRODUCER_COUNT
@@ -661,8 +641,8 @@
         user_address_space_info_t address_space_train_function_definition_info; /**< Space 0xFA */
         user_address_space_info_t address_space_train_function_config_memory;   /**< Space 0xF9 */
         user_address_space_info_t address_space_firmware;                 /**< Space 0xEF */
-        uint8_t cdi[USER_DEFINED_CDI_LENGTH];   /**< CDI XML byte array; if unused set to { 0x00 } */
-        uint8_t fdi[USER_DEFINED_FDI_LENGTH];   /**< FDI XML byte array; if unused set to { 0x00 } */
+        const uint8_t *cdi;   /**< Pointer to CDI XML byte array; NULL when unused */
+        const uint8_t *fdi;   /**< Pointer to FDI XML byte array; NULL when unused */
 
     } node_parameters_t;
 

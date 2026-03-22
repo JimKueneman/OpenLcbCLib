@@ -164,6 +164,12 @@
     0x3C, 0x2F, 0x73, 0x65, 0x67, 0x6D, 0x65, 0x6E, 0x74, 0x3E, \
     0x3C, 0x2F, 0x63, 0x64, 0x69, 0x3E, 0x00
 
+// Shared CDI data — all structs point here
+static const uint8_t _cdi_data[] = { BASIC_CDI };
+
+// Placeholder FDI data — the real FDI will be filled in later
+static const uint8_t _fdi_data[] = { 0x00 };
+
 
 // =============================================================================
 // Basic Node — core compliance (no optional protocols)
@@ -204,10 +210,11 @@ const node_parameters_t compliance_basic_params = {
 
     // 14. cdi
     // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
-    .cdi = { BASIC_CDI },
+    .cdi = _cdi_data,
 
     // 15. fdi
     // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
+    .fdi = NULL,
 };
 
 
@@ -250,10 +257,11 @@ const node_parameters_t compliance_broadcast_time_consumer_params = {
 
     // 14. cdi
     // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
-    .cdi = { BASIC_CDI },
+    .cdi = _cdi_data,
 
     // 15. fdi
     // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
+    .fdi = NULL,
 };
 
 
@@ -296,10 +304,11 @@ const node_parameters_t compliance_broadcast_time_producer_params = {
 
     // 14. cdi
     // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
-    .cdi = { BASIC_CDI },
+    .cdi = _cdi_data,
 
     // 15. fdi
     // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
+    .fdi = NULL,
 };
 
 
@@ -356,22 +365,11 @@ const node_parameters_t compliance_train_params = {
 
     // 14. cdi
     // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
-    .cdi = { BASIC_CDI },
+    .cdi = _cdi_data,
 
     // 15. fdi
     // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
-    .fdi = "<?xml version=\"1.0\"?>"
-           "<?xml-stylesheet type='text/xsl' href='xslt/fdi.xsl'?>"
-           "<fdi xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"
-           " xsi:noNamespaceSchemaLocation='https://openlcb.org/schema/fdi/1/0/fdi.xsd'>"
-           "<segment space='249'>"
-           "<group><name/>"
-           "<function size='1' kind='binary'><name>Headlight</name><number>0</number></function>"
-           "<function size='1' kind='binary'><name>Bell</name><number>1</number></function>"
-           "<function size='1' kind='momentary'><name>Horn</name><number>2</number></function>"
-           "</group>"
-           "</segment>"
-           "</fdi>",
+    .fdi = _fdi_data,
 };
 
 
@@ -414,8 +412,9 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
 
     // 14. cdi
     // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
-    .cdi = { BASIC_CDI },
+    .cdi = _cdi_data,
 
     // 15. fdi
     // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
+    .fdi = NULL,
 };

@@ -162,9 +162,8 @@ node_parameters_t _node_parameters_main_node = {
         .description = "Firmware Bootloader"
     },
 
-    .cdi = {
-        // </cdi>
-    },
+    .cdi = NULL,
+    .fdi = NULL,
 };
 
 // Simple protocol node configuration
@@ -248,9 +247,8 @@ node_parameters_t _node_parameters_main_node_simple = {
         .description = "Firmware Bootloader"
     },
 
-    .cdi = {
-        // </cdi>
-    },
+    .cdi = NULL,
+    .fdi = NULL,
 };
 
 // ============================================================================

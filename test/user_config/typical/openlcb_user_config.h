@@ -60,19 +60,12 @@
 // =============================================================================
 // Memory Configuration (requires OPENLCB_COMPILE_MEMORY_CONFIGURATION)
 // =============================================================================
-// CDI_LENGTH -- size in bytes of the CDI (Configuration Description Information)
-//   XML buffer.  Must be large enough to hold your node's complete CDI XML.
-// FDI_LENGTH -- size in bytes of the FDI (Function Description Information)
-//   buffer.  Only used by train nodes; set small (e.g. 100) if not a train.
 //
 // The two address values tell the SNIP protocol where in your node's
 // configuration memory space the user-editable name and description strings
 // begin.  The standard layout puts the user name at address 0 and the user
 // description immediately after at byte 62:
 //   63 = LEN_SNIP_USER_NAME_BUFFER (63)
-
-#define USER_DEFINED_CDI_LENGTH                      20000 // must be >= 1; enforced by compiler
-#define USER_DEFINED_FDI_LENGTH                      1000 // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Train Protocol (requires OPENLCB_COMPILE_TRAIN)

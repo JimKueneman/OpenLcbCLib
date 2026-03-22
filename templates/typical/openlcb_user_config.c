@@ -79,7 +79,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_configuration_definition.present = true,
     .address_space_configuration_definition.low_address_valid = false,    // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0,              // ignored if low_address_valid is false
-    .address_space_configuration_definition.highest_address = (1081 - 1), // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
+    .address_space_configuration_definition.highest_address = (1081 - 1), // length of the .cdi file byte array contents
     .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "",
 
@@ -146,12 +146,10 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "",
 
-    // 14. cdi
-    // If the CDI is not used it always contains one byte, it is recommended it be set to NULL
-    .cdi = { 0x00 },
+    // 14. cdi — pointer to a const uint8_t array defined above (or NULL if unused)
+    .cdi = NULL,
 
-    // 15. fdi
-    // If the FDI is not used it always contains one byte, it is recommended it be set to NULL
-    .fdi = { 0x00 },
+    // 15. fdi — pointer to a const uint8_t array defined above (or NULL if unused)
+    .fdi = NULL,
 
 };

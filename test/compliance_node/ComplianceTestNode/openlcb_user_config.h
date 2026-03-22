@@ -50,9 +50,6 @@
 // Memory Configuration (requires OPENLCB_COMPILE_MEMORY_CONFIGURATION)
 // =============================================================================
 
-#define USER_DEFINED_CDI_LENGTH                      20000 // must be >= 1; enforced by compiler
-#define USER_DEFINED_FDI_LENGTH                      1000 // must be >= 1; enforced by compiler
-
 // =============================================================================
 // Train Protocol (requires OPENLCB_COMPILE_TRAIN)
 // =============================================================================

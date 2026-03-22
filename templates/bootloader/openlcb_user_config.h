@@ -77,14 +77,6 @@
 // =============================================================================
 // Configuration Memory (requires OPENLCB_COMPILE_MEMORY_CONFIGURATION) — not used, set to 1 (minimum)
 // =============================================================================
-// CDI_LENGTH -- size in bytes of the CDI (Configuration Description Information)
-//   XML buffer.  Must be large enough to hold your node's complete CDI XML.
-// FDI_LENGTH -- size in bytes of the FDI (Function Description Information)
-//   buffer.  Only used by train nodes; set small (e.g. 100) if not a train.
-
-#define USER_DEFINED_CDI_LENGTH                      1      // must be >= 1; enforced by compiler
-#define USER_DEFINED_FDI_LENGTH                      1      // must be >= 1; enforced by compiler; overridden to 1 if OPENLCB_COMPILE_TRAIN is not defined
-
 // =============================================================================
 // Train Protocol (requires OPENLCB_COMPILE_TRAIN) — not used, set to 1 (minimum)
 // =============================================================================

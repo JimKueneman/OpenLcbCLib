@@ -177,7 +177,8 @@ node_parameters_t _node_parameters_main_node = {
         .description = "Firmware Bootloader"
     },
 
-    .cdi = {},
+    .cdi = NULL,
+    .fdi = NULL,
 };
 
 // Node parameters with short name for testing string handling
@@ -210,7 +211,8 @@ node_parameters_t _node_parameters_short_name = {
         .low_address = 0
     },
 
-    .cdi = {},
+    .cdi = NULL,
+    .fdi = NULL,
 };
 
 // Node parameters with low_address_valid for testing address offset
@@ -243,7 +245,8 @@ node_parameters_t _node_parameters_with_low_address = {
         .low_address = CONFIG_MEM_START_ADDRESS
     },
 
-    .cdi = {},
+    .cdi = NULL,
+    .fdi = NULL,
 };
 
 // ============================================================================
