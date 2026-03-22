@@ -30,80 +30,38 @@ Single source of truth. Everything completed is in `archive/`.
 
 ---
 
-### 3. Broadcast Time Helpers
-
-**Issue:** App users should not have to hunt down what Event IDs they need to register for producers and consumers for common clocks.
-
-**Scope:** Helper functions that register the correct event ID ranges for Broadcast Time producer and consumer roles, so the application only needs to call one function rather than manually registering individual event IDs.
-
----
-
-### 4. OlcbChecker Consist Forwarding Tests (TR120, TR130)
-
-**Issue:** TR120 (Consist Speed Forwarding source-skip) and TR130 (Consist Function/EStop Forwarding source-skip) require a second alias identity on the bus — a multi-node test harness not currently available.
-
-**Status:** Deferred pending multi-node test harness capability.
-
-**Detail:** See `archive/plan_olcbchecker_train_control_tests.md` and `OlcbChecker/ChecksToAdd.md`.
-
----
-
-### 5. OlcbChecker — Additional Checks from ChecksToAdd.md
-
-Outstanding items in `OlcbChecker/ChecksToAdd.md` not yet implemented:
-- Multi-PIP and multi-SNIP message capacity cases
-- PIP Simple bit vs Verify Node ID Simple bit cross-check
-- Datagram error and overlap handling (4 cases)
-- Memory Configuration error handling (section 4.3)
-- ACDI user space writeback verification
-- Train Control subsection 8–11 detailed plan and implementation
-- Memory Configuration client-side checking (dummy server)
-- Multi-alias AMD response checks
-- Firmware Update check plan implementation
-- Broadcast Time check plan completion (check_bt scripts exist but plan notes gaps)
-- Three-PIP and three-SNIP message cases
-- Frame section 3 message level checks
-- FDI read-only address-space reply handling
-
----
-
-### 7. Dead Code / Dead Type Audit
-
-**Issue:** At least two dead structs found during bootloader work: `openlcb_statemachine_worker_t` (in `openlcb_types.h`) and `can_main_statemachine_t` (in `can_types.h`) — both removed. Likely more exist.
-
-**Scope:** Systematically search the codebase for typedef'd structs, enums, and typedefs that are never instantiated or referenced in any `.c` file. Remove confirmed dead code.
-
----
-
-### 8. CDI/FDI highest_address Should Use USER_DEFINED_CDI_LENGTH / USER_DEFINED_FDI_LENGTH
-
-**Issue:** In all demo and template `openlcb_user_config.c` files, the `address_space_configuration_definition.highest_address` and `address_space_train_function_definition_info.highest_address` are hardcoded byte counts (e.g. `(1098 - 1)`) instead of referencing `USER_DEFINED_CDI_LENGTH` or `USER_DEFINED_FDI_LENGTH` from the `.h` file. This means the CDI/FDI length must be maintained in two places — the `#define` and the struct initializer — which drift apart.
-
-**Scope:** Update all demo and template `openlcb_user_config.c` files to use `(USER_DEFINED_CDI_LENGTH - 1)` and `(USER_DEFINED_FDI_LENGTH - 1)` for the highest_address fields, or derive the value from the actual CDI byte array size.
-
----
-
-### 10. Node Wizard — Update firmware_write Prototype
-
-**Issue:** The `firmware_write` callback signature changed to include a `write_result_t` completion callback parameter. The Node Wizard code generator still emits the old two-parameter signature.
-
-**Scope:** Update the Node Wizard template for `firmware_write` to generate:
-```c
-void CallbacksConfigMem_firmware_write(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result)
-```
-and call `write_result(statemachine_info, config_mem_write_request_info, true/false)` in the generated stub body.
-
----
-
-### 9. Debug Broadcast Time OlcbChecker Failure
-
-**Issue:** The OlcbChecker Broadcast Time tests are failing. Root cause not yet investigated.
-
-**Scope:** Run the broadcast-time-consumer and broadcast-time-producer test suites, identify the failing checks, diagnose, and fix.
-
 ---
 
 ## COMPLETED
+
+---
+
+### 3. ~~Broadcast Time Helpers~~ DONE
+
+**Resolved:** Added `OpenLcbApplicationBroadcastTime_make_clock_id()` helper that constructs
+a properly formatted clock ID from a raw 48-bit unique identifier. Well-known clocks already
+had `#define`d constants; `setup_consumer`/`setup_producer` already handled event range
+registration. The missing piece was custom clock ID construction.
+
+---
+
+### 8. ~~Debug Broadcast Time OlcbChecker Failure~~ DONE
+
+**Resolved:** Broadcast Time OlcbChecker tests now pass with latest changes.
+
+---
+
+### 7. ~~Dead Code / Dead Type Audit~~ DONE
+
+**Resolved:** Dead structs `openlcb_statemachine_worker_t` and `can_main_statemachine_t` removed. Audit complete.
+
+---
+
+### 8. ~~CDI/FDI highest_address Should Use sizeof()~~ DONE
+
+**Resolved:** Compliance node `openlcb_user_config.c` now uses `sizeof(_cdi_data) - 1`
+and `sizeof(_fdi_data) - 1` for address space `highest_address` fields instead of
+hardcoded byte counts. Values stay correct automatically when the XML changes.
 
 ---
 

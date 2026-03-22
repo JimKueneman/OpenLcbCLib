@@ -73,6 +73,11 @@
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_utilities.h"
 
+#ifdef OPENLCB_COMPILE_TRAIN
+#include "can_buffer_store.h"
+#include "can_buffer_fifo.h"
+#endif
+
 /*******************************************************************************
  * Mock Handler Tracking Variables
  ******************************************************************************/
@@ -332,6 +337,75 @@ const interface_can_tx_statemachine_t interface_can_tx_statemachine_with_listene
     .listener_find_by_node_id = &_mock_listener_find_by_node_id
 };
 
+#ifdef OPENLCB_COMPILE_TRAIN
+
+/*******************************************************************************
+ * Listener Config Reply Sniff Mocks
+ ******************************************************************************/
+
+// Track listener register/unregister mock calls
+bool _listener_register_called = false;
+node_id_t _listener_register_last_arg = 0;
+bool _listener_unregister_called = false;
+node_id_t _listener_unregister_last_arg = 0;
+
+// Track lock/unlock calls
+int _lock_call_count = 0;
+int _unlock_call_count = 0;
+
+// Static entry returned by register mock
+listener_alias_entry_t _listener_register_mock_entry;
+
+listener_alias_entry_t *_mock_listener_register(node_id_t node_id) {
+
+    _listener_register_called = true;
+    _listener_register_last_arg = node_id;
+    _listener_register_mock_entry.node_id = node_id;
+    _listener_register_mock_entry.alias = 0;
+
+    return &_listener_register_mock_entry;
+
+}
+
+void _mock_listener_unregister(node_id_t node_id) {
+
+    _listener_unregister_called = true;
+    _listener_unregister_last_arg = node_id;
+
+}
+
+void _mock_lock_shared_resources(void) {
+
+    _lock_call_count++;
+
+}
+
+void _mock_unlock_shared_resources(void) {
+
+    _unlock_call_count++;
+
+}
+
+/*******************************************************************************
+ * Interface With Listener Sniff Support
+ ******************************************************************************/
+
+const interface_can_tx_statemachine_t interface_can_tx_statemachine_with_sniff = {
+    .is_tx_buffer_empty = &_is_can_tx_buffer_empty,
+    .handle_addressed_msg_frame = &_handle_addressed_msg_frame,
+    .handle_unaddressed_msg_frame = &_handle_unaddressed_msg_frame,
+    .handle_datagram_frame = &_handle_datagram_frame,
+    .handle_stream_frame = &_handle_stream_frame,
+    .handle_can_frame = &_handle_can_frame,
+    .listener_find_by_node_id = &_mock_listener_find_by_node_id,
+    .listener_register = &_mock_listener_register,
+    .listener_unregister = &_mock_listener_unregister,
+    .lock_shared_resources = &_mock_lock_shared_resources,
+    .unlock_shared_resources = &_mock_unlock_shared_resources
+};
+
+#endif
+
 /**
  * Reset all mock tracking variables
  */
@@ -357,6 +431,15 @@ void _reset_variables(void)
     _listener_mock_entry.node_id = 0;
     _listener_mock_entry.alias = 0;
 
+#ifdef OPENLCB_COMPILE_TRAIN
+    _listener_register_called = false;
+    _listener_register_last_arg = 0;
+    _listener_unregister_called = false;
+    _listener_unregister_last_arg = 0;
+    _lock_call_count = 0;
+    _unlock_call_count = 0;
+#endif
+
 }
 
 /**
@@ -380,6 +463,23 @@ void _initialize_with_listener(void)
     CanTxStatemachine_initialize(&interface_can_tx_statemachine_with_listener);
 
 }
+
+#ifdef OPENLCB_COMPILE_TRAIN
+
+/**
+ * Initialize all subsystems with listener sniff support (register/unregister/AME)
+ */
+void _initialize_with_sniff(void)
+{
+
+    OpenLcbBufferStore_initialize();
+    CanBufferStore_initialize();
+    CanBufferFifo_initialize();
+    CanTxStatemachine_initialize(&interface_can_tx_statemachine_with_sniff);
+
+}
+
+#endif
 
 /*******************************************************************************
  * Tests
@@ -1113,3 +1213,337 @@ TEST(CanTxStatemachine, listener_entry_alias_zero_drops_message)
     OpenLcbBufferStore_free_buffer(openlcb_msg);
 
 }
+
+#ifdef OPENLCB_COMPILE_TRAIN
+
+/*******************************************************************************
+ * Listener Config Reply Sniff Tests
+ ******************************************************************************/
+
+/**
+ * Helper: build a Listener Config Reply message (MTI_TRAIN_REPLY).
+ *
+ * Payload layout:
+ *   Byte 0: TRAIN_LISTENER_CONFIG (0x30)
+ *   Byte 1: sub_cmd (ATTACH=0x01 or DETACH=0x02)
+ *   Bytes 2-7: listener node_id (big-endian)
+ *   Byte 8: result (0x00 = success)
+ */
+static void _load_listener_config_reply(openlcb_msg_t *msg, uint16_t source_alias,
+                                         node_id_t source_id, uint16_t dest_alias,
+                                         node_id_t dest_id, uint8_t sub_cmd,
+                                         node_id_t listener_id, uint8_t result) {
+
+    OpenLcbUtilities_load_openlcb_message(msg, source_alias, source_id,
+                                           dest_alias, dest_id,
+                                           MTI_TRAIN_REPLY);
+    msg->payload_count = 9;
+
+    *msg->payload[0] = TRAIN_LISTENER_CONFIG;
+    *msg->payload[1] = sub_cmd;
+    *msg->payload[2] = (uint8_t) (listener_id >> 40);
+    *msg->payload[3] = (uint8_t) (listener_id >> 32);
+    *msg->payload[4] = (uint8_t) (listener_id >> 24);
+    *msg->payload[5] = (uint8_t) (listener_id >> 16);
+    *msg->payload[6] = (uint8_t) (listener_id >> 8);
+    *msg->payload[7] = (uint8_t) (listener_id);
+    *msg->payload[8] = result;
+
+}
+
+/**
+ * Test: Successful attach reply registers listener and sends AME
+ */
+TEST(CanTxStatemachine, attach_reply_success_registers_listener) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_ATTACH, 0xA1A2A3A4A5A6, 0x00);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    // Verify register was called with correct node_id
+    EXPECT_TRUE(_listener_register_called);
+    EXPECT_EQ(_listener_register_last_arg, (node_id_t) 0xA1A2A3A4A5A6);
+
+    // Verify unregister was NOT called
+    EXPECT_FALSE(_listener_unregister_called);
+
+    // Clean up AME from FIFO
+    can_msg_t *ame = CanBufferFifo_pop();
+    if (ame) { CanBufferStore_free_buffer(ame); }
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: Successful attach reply sends targeted AME
+ */
+TEST(CanTxStatemachine, attach_reply_success_sends_ame) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_ATTACH, 0xA1A2A3A4A5A6, 0x00);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    // Verify an AME was pushed to the FIFO
+    can_msg_t *ame = CanBufferFifo_pop();
+    ASSERT_NE(ame, nullptr);
+
+    // AME identifier: RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME | source_alias
+    EXPECT_EQ(ame->identifier, (uint32_t) (RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME | 0xAAA));
+    EXPECT_EQ(ame->payload_count, 6);
+
+    // Verify the node_id in the AME payload (big-endian, 6 bytes)
+    EXPECT_EQ(ame->payload[0], 0xA1);
+    EXPECT_EQ(ame->payload[1], 0xA2);
+    EXPECT_EQ(ame->payload[2], 0xA3);
+    EXPECT_EQ(ame->payload[3], 0xA4);
+    EXPECT_EQ(ame->payload[4], 0xA5);
+    EXPECT_EQ(ame->payload[5], 0xA6);
+
+    CanBufferStore_free_buffer(ame);
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: Failed attach reply does not register or send AME
+ */
+TEST(CanTxStatemachine, attach_reply_fail_does_not_register) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_ATTACH, 0xA1A2A3A4A5A6, 0xFF);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    EXPECT_FALSE(_listener_register_called);
+    EXPECT_FALSE(_listener_unregister_called);
+
+    // Verify no AME was pushed
+    can_msg_t *ame = CanBufferFifo_pop();
+    EXPECT_EQ(ame, nullptr);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: Successful detach reply unregisters listener
+ */
+TEST(CanTxStatemachine, detach_reply_success_unregisters_listener) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_DETACH, 0xA1A2A3A4A5A6, 0x00);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    // Verify unregister was called with correct node_id
+    EXPECT_TRUE(_listener_unregister_called);
+    EXPECT_EQ(_listener_unregister_last_arg, (node_id_t) 0xA1A2A3A4A5A6);
+
+    // Verify register was NOT called
+    EXPECT_FALSE(_listener_register_called);
+
+    // Verify no AME was sent (detach does not need alias resolution)
+    can_msg_t *ame = CanBufferFifo_pop();
+    EXPECT_EQ(ame, nullptr);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: Failed detach reply does not unregister
+ */
+TEST(CanTxStatemachine, detach_reply_fail_does_not_unregister) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_DETACH, 0xA1A2A3A4A5A6, 0xFF);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    EXPECT_FALSE(_listener_unregister_called);
+    EXPECT_FALSE(_listener_register_called);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: Non-listener Train Reply is ignored
+ * (byte 0 != TRAIN_LISTENER_CONFIG)
+ */
+TEST(CanTxStatemachine, non_listener_reply_ignored) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    // Use a speed/direction reply (byte 0 = something other than 0x30)
+    OpenLcbUtilities_load_openlcb_message(msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_TRAIN_REPLY);
+    msg->payload_count = 9;
+    *msg->payload[0] = 0x01;  // Not TRAIN_LISTENER_CONFIG
+    for (int i = 1; i < 9; i++) {
+
+        *msg->payload[i] = 0;
+
+    }
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    EXPECT_FALSE(_listener_register_called);
+    EXPECT_FALSE(_listener_unregister_called);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: Non-train-reply MTI is ignored
+ */
+TEST(CanTxStatemachine, non_train_reply_ignored) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    // Use a different MTI
+    OpenLcbUtilities_load_openlcb_message(msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_VERIFY_NODE_ID_ADDRESSED);
+    msg->payload_count = 9;
+    *msg->payload[0] = TRAIN_LISTENER_CONFIG;
+    *msg->payload[1] = TRAIN_LISTENER_ATTACH;
+    *msg->payload[8] = 0x00;
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    EXPECT_FALSE(_listener_register_called);
+    EXPECT_FALSE(_listener_unregister_called);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: NULL listener_register pointer is safe (no crash)
+ */
+TEST(CanTxStatemachine, null_listener_register_safe) {
+
+    // Use the interface WITHOUT sniff pointers (listener_register == NULL)
+    _initialize_with_listener();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_ATTACH, 0xA1A2A3A4A5A6, 0x00);
+
+    // Should not crash — listener_register is NULL, sniff exits early
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: Short payload (< 9 bytes) is ignored
+ */
+TEST(CanTxStatemachine, short_payload_ignored) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    OpenLcbUtilities_load_openlcb_message(msg, 0xAAA, 0x010203040506,
+                                           0xBBB, 0x060504030201,
+                                           MTI_TRAIN_REPLY);
+    msg->payload_count = 8;  // One byte short
+    *msg->payload[0] = TRAIN_LISTENER_CONFIG;
+    *msg->payload[1] = TRAIN_LISTENER_ATTACH;
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    EXPECT_FALSE(_listener_register_called);
+    EXPECT_FALSE(_listener_unregister_called);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: Lock/unlock are called around AME buffer operations
+ */
+TEST(CanTxStatemachine, lock_unlock_called_around_ame) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_ATTACH, 0xA1A2A3A4A5A6, 0x00);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    // Lock/unlock called twice: once for allocate, once for push
+    EXPECT_EQ(_lock_call_count, 2);
+    EXPECT_EQ(_unlock_call_count, 2);
+
+    // Clean up the AME from the FIFO
+    can_msg_t *ame = CanBufferFifo_pop();
+    if (ame) { CanBufferStore_free_buffer(ame); }
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+#endif

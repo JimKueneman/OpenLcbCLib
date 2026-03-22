@@ -6,6 +6,17 @@ For library changes, see the root `CHANGELOG.md`.
 
 ---
 
+## [1.0.1] — 2026-03-22
+
+### Housekeeping
+
+- **Consolidated duplicate `codegen.js`** — moved the active version from
+  `node_config/js/codegen.js` to `js/codegen.js` and deleted the stale copy.
+  Updated script references in `node_wizard.html`, `node_config.html`,
+  `file_preview.html`, and `MAINTENANCE.md`.
+
+---
+
 ## [1.0.0] — 2026-03-16
 
 Initial production release of the Node Wizard toolchain.

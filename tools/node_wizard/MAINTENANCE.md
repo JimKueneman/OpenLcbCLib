@@ -217,7 +217,7 @@ need to be updated to match the latest demo application code in `applications/`.
 | File | Role |
 |------|------|
 | `node_config/js/node_config.js` | `WELL_KNOWN_EVENT_GROUPS` data and UI builder |
-| `node_config/js/codegen.js` | Generates `_register_app_producers/consumers()` calls |
+| `js/codegen.js` | Generates `_register_app_producers/consumers()` calls |
 | `src/openlcb/openlcb_defines.h` | Source of truth for `#define` constant names |
 
 ---

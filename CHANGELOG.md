@@ -8,7 +8,25 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
 
 ## [Unreleased]
 
+### Added
+- **Listener alias table registration on attach/detach.** The CAN TX path now sniffs
+  outgoing Listener Config Reply messages (MTI 0x01E9, byte 0 = 0x30). On a successful
+  attach reply, it registers the listener's node_id in the alias table and immediately
+  sends a targeted AME to resolve the alias. On a successful detach reply, it
+  unregisters the node_id. This fixes consist forwarding, which previously always
+  failed because the listener alias table was never populated.
+  (`can_tx_statemachine.c`, `can_tx_statemachine.h`, `can_config.c`)
+- **10 new tests for listener config reply sniffing** in `can_tx_statemachine_Test.cxx`:
+  attach/detach success and failure, AME generation, lock/unlock verification, null
+  pointer safety, short payload and non-matching MTI guards.
+
 ### Fixed
+- **Compliance node FDI data.** Replaced single-byte placeholder with valid FDI XML
+  byte array. The `<function>` element now uses `<number>` as a child element instead
+  of an attribute, matching the FDI XSD schema.
+- **Address space highest_address now computed from data.** CDI and FDI address space
+  `highest_address` fields in the compliance node use `sizeof(_xxx_data) - 1` instead
+  of hardcoded values, preventing mismatches when the XML changes.
 - **CDI/FDI read failure when stream not compiled in.** The main statemachine outgoing
   message payload was backed by `payload_stream_t`, which collapsed to 1 byte when
   `OPENLCB_COMPILE_STREAM` was not defined. All datagram-based reads (CDI, FDI, config
@@ -17,8 +35,18 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   256 bytes regardless of stream compilation state.
 - Added `default: break;` to `free_buffer()` switch in `openlcb_buffer_store.c` to
   suppress compiler warnings from the new `WORKER` enum value.
+- **Uninitialized variables across much of the library.** Fixed multiple uninitialized
+  variable bugs caught during cross-platform testing.
+- **Linux test compile fixes.** Multiple rounds of fixes for C++ designated initializer
+  ordering, sign-compare warnings (`-Werror`), and other portability issues to get the
+  full test suite compiling on Linux with GCC.
+- **Fixed sample CDI.** Corrected the sample CDI XML and the byte array generation in
+  both the Python tool and Node Wizard.
 
 ### Changed
+- **CDI/FDI arrays moved to pointers.** `node_parameters_t` now holds `const uint8_t *`
+  pointers to CDI and FDI byte arrays instead of embedding fixed-size arrays in the
+  struct. Allows auto-generation of array-only files when new XMLs are created.
 - **Replaced dispatcher types with worker types.** `LEN_MESSAGE_BYTES_SIBLING_DISPATCH`,
   `payload_dispatcher_t`, and `openlcb_dispatcher_message_t` replaced by
   `LEN_MESSAGE_BYTES_WORKER`, `payload_worker_t`, and `openlcb_worker_message_t`.
@@ -35,22 +63,34 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
 - **FDI length auto-collapse.** `USER_DEFINED_FDI_LENGTH` is overridden to 1 in
   `openlcb_types.h` when `OPENLCB_COMPILE_TRAIN` is not defined, saving RAM in
   non-train nodes without requiring users to set it manually.
+- **`firmware_write` prototype simplified.** Changed the function signature to make it
+  easier for users to implement.
+- **Repository layout.** Moved `applications/` from `src/` to the project root so
+  `src/` contains only the library source.
+- **`node_parameters_t` struct reordered.** `configuration_options` moved after
+  `consumer/producer_count_autocreate`; `cdi` and `fdi` changed from arrays to pointers
+  at the end of the struct. All templates, demos, and compliance node initializers
+  updated to match.
+
 ### Added
+- **Custom clock ID helper.** Added `OpenLcbApplicationBroadcastTime_make_clock_id()`
+  that constructs a properly formatted broadcast time clock ID from a raw 48-bit
+  unique identifier, for use with custom clocks beyond the four well-known ones.
 - **Compile-time zero-length array guards.** `#if DEFINE < 1 #error` checks in
-  `openlcb_types.h` for all buffer depth and count defines: `USER_DEFINED_BASIC_BUFFER_DEPTH`,
-  `USER_DEFINED_DATAGRAM_BUFFER_DEPTH`, `USER_DEFINED_SNIP_BUFFER_DEPTH`,
-  `USER_DEFINED_STREAM_BUFFER_DEPTH`, `USER_DEFINED_NODE_BUFFER_DEPTH`,
-  `USER_DEFINED_CDI_LENGTH`, `USER_DEFINED_FDI_LENGTH`, `USER_DEFINED_PRODUCER_COUNT`,
-  `USER_DEFINED_PRODUCER_RANGE_COUNT`, `USER_DEFINED_CONSUMER_COUNT`,
-  `USER_DEFINED_CONSUMER_RANGE_COUNT`, `USER_DEFINED_MAX_LISTENERS_PER_TRAIN`,
-  `USER_DEFINED_MAX_TRAIN_FUNCTIONS`.
+  `openlcb_types.h` for all buffer depth and count defines.
 - **`can_user_config.h` required.** `can_types.h` now searches for `can_user_config.h`
   using the same `__has_include` pattern as `openlcb_types.h`. CAN buffer depth is
   user-configurable via `USER_DEFINED_CAN_MSG_BUFFER_DEPTH` (default 20). Template
   added at `templates/canbus/can_user_config.h`.
-- **`node_parameters_t` struct reordered.** `configuration_options` moved after
-  `consumer/producer_count_autocreate`; `cdi[]` and `fdi[]` moved to the end of the
-  struct. All templates, demos, and compliance node initializers updated to match.
+- **`can_config.c` added to CMake** test build.
+- **XmlToArray.py tool** (renamed from CdiToArray.py). Generates CDI/FDI byte array
+  `.c`/`.h` files with options for licence headers, author/company metadata, and
+  whitespace stripping.
+- **Compile flag coverage tests.** Tests verifying each `OPENLCB_COMPILE_*` flag
+  compiles correctly, plus tests validating dead code is stripped for lazy linkers
+  (e.g. XC16).
+- **CAN driver DI cleanup.** Added dependency injection points in the CAN driver to
+  remove some hard dependencies.
 
 ### Removed
 - Dead code: `openlcb_statemachine_worker_t` (from `openlcb_types.h`) and

@@ -203,6 +203,13 @@ static void _build_tx_statemachine(void) {
     // Listener alias resolution for consist forwarding (OPTIONAL — NULL if not compiled)
 #ifdef OPENLCB_COMPILE_TRAIN
     _tx_sm.listener_find_by_node_id = &ListenerAliasTable_find_by_node_id;
+
+    // Listener alias table registration — TX path sniffs outgoing Listener
+    // Config Reply messages and registers/unregisters listener node_ids.
+    _tx_sm.listener_register         = &ListenerAliasTable_register;
+    _tx_sm.listener_unregister       = &ListenerAliasTable_unregister;
+    _tx_sm.lock_shared_resources     = _config->lock_shared_resources;
+    _tx_sm.unlock_shared_resources   = _config->unlock_shared_resources;
 #endif
 
 }

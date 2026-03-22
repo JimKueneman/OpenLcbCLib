@@ -432,6 +432,20 @@ extern "C" {
          */
     extern void OpenLcbApplicationBroadcastTime_trigger_sync_delay(event_id_t clock_id);
 
+        /**
+         * @brief Constructs a broadcast time clock ID from a 48-bit unique identifier.
+         *
+         * @details Takes a raw 48-bit OpenLCB unique identifier (e.g. a node ID,
+         * manufacturer ID, or user-assigned ID) and returns a properly formatted
+         * 64-bit clock_id with the upper 6 bytes set and lower 16 bits zeroed.
+         * The result can be passed directly to setup_consumer() or setup_producer().
+         *
+         * @param unique_id_48bit  48-bit unique identifier to use as the clock ID.
+         *
+         * @return Formatted @ref event_id_t suitable for use as a broadcast time clock ID.
+         */
+    extern event_id_t OpenLcbApplicationBroadcastTime_make_clock_id(uint64_t unique_id_48bit);
+
 #ifdef __cplusplus
 }
 #endif

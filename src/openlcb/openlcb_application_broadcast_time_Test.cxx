@@ -3821,3 +3821,74 @@ TEST(BroadcastTimeApp, auto_sync_null_producer_node_no_crash)
     EXPECT_FALSE(ct->query_reply_pending);
 
 }
+
+// =========================================================================
+// Section 27: make_clock_id Helper Tests
+// =========================================================================
+
+TEST(BroadcastTimeApp, make_clock_id_basic)
+{
+
+    // 48-bit unique ID 0x050101011234 should produce clock_id 0x0501010112340000
+    uint64_t unique_id = 0x050101011234ULL;
+    event_id_t clock_id = OpenLcbApplicationBroadcastTime_make_clock_id(unique_id);
+
+    EXPECT_EQ(clock_id, 0x0501010112340000ULL);
+
+}
+
+TEST(BroadcastTimeApp, make_clock_id_upper_bits_masked)
+{
+
+    // If caller passes more than 48 bits, upper bits are masked off
+    uint64_t unique_id = 0xFFFF050101011234ULL;
+    event_id_t clock_id = OpenLcbApplicationBroadcastTime_make_clock_id(unique_id);
+
+    EXPECT_EQ(clock_id, 0x0501010112340000ULL);
+
+}
+
+TEST(BroadcastTimeApp, make_clock_id_lower_bytes_zeroed)
+{
+
+    // Lower 16 bits must always be zero (reserved for command/data)
+    uint64_t unique_id = 0x010100000100ULL;
+    event_id_t clock_id = OpenLcbApplicationBroadcastTime_make_clock_id(unique_id);
+
+    EXPECT_EQ(clock_id & BROADCAST_TIME_MASK_COMMAND_DATA, 0x0000ULL);
+
+}
+
+TEST(BroadcastTimeApp, make_clock_id_round_trips_with_extract)
+{
+
+    // Clock ID created by helper should round-trip through extract_clock_id
+    uint64_t unique_id = 0x050101011234ULL;
+    event_id_t clock_id = OpenLcbApplicationBroadcastTime_make_clock_id(unique_id);
+
+    // Create a time event from this clock_id and extract the clock_id back
+    event_id_t time_event = ProtocolBroadcastTime_create_time_event_id(
+        clock_id, 10, 30, false);
+    uint64_t extracted = ProtocolBroadcastTime_extract_clock_id(time_event);
+
+    EXPECT_EQ(extracted, clock_id);
+
+}
+
+TEST(BroadcastTimeApp, make_clock_id_works_with_setup_consumer)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    uint64_t unique_id = 0x050101011234ULL;
+    event_id_t clock_id = OpenLcbApplicationBroadcastTime_make_clock_id(unique_id);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, clock_id);
+
+    EXPECT_TRUE(cs != NULL);
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_is_consumer(clock_id));
+    EXPECT_EQ(cs->clock_id, clock_id);
+
+}

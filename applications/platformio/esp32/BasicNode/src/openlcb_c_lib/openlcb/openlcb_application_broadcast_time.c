@@ -1452,4 +1452,10 @@ void OpenLcbApplicationBroadcastTime_trigger_sync_delay(event_id_t clock_id) {
 
 }
 
+event_id_t OpenLcbApplicationBroadcastTime_make_clock_id(uint64_t unique_id_48bit) {
+
+    return (unique_id_48bit << 16) & BROADCAST_TIME_MASK_CLOCK_ID;
+
+}
+
 #endif /* OPENLCB_COMPILE_BROADCAST_TIME */

@@ -17,14 +17,13 @@ tools/node_wizard/
     node_wizard.css             Shell styles (sidebar, tiles, header)
     js/
         app.js                  Sidebar controller, state management, postMessage relay
-        codegen.js              Code generation helpers shared by node_config and zip_export
+        codegen.js              Code generation for user config, CAN config, and main.c
         zip_export.js           Builds and downloads the project ZIP via JSZip
     node_config/                Node configuration view (generates openlcb_user_config.c/h + main.c)
         node_config.html
         node_config.css
         js/
             node_config.js      UI logic, form state, Well Known Events
-            codegen.js          Code generation for user config and main.c
             wke_defs.js         Well Known Event group definitions
     cdi_editor/                 CDI XML editor view
         cdi_view.html

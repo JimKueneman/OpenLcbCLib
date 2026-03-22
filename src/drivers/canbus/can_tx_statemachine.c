@@ -48,6 +48,13 @@
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_utilities.h"
 
+#ifdef OPENLCB_COMPILE_TRAIN
+#include "can_buffer_store.h"
+#include "can_buffer_fifo.h"
+#include "can_utilities.h"
+#include "../../openlcb/openlcb_defines.h"
+#endif
+
 
 /** @brief Saved pointer to the dependency-injected transmit interface. */
 static interface_can_tx_statemachine_t *_interface;
@@ -58,6 +65,88 @@ void CanTxStatemachine_initialize(const interface_can_tx_statemachine_t *interfa
     _interface = (interface_can_tx_statemachine_t*) interface_can_tx_statemachine;
 
 }
+
+#ifdef OPENLCB_COMPILE_TRAIN
+
+    /**
+     * @brief Sniffs outgoing Listener Config Reply messages and synchronizes
+     *        the listener alias table.
+     *
+     * @details The CAN layer watches for outgoing Train Control Reply messages
+     * that carry Listener Config Attach/Detach results. On a successful attach,
+     * it registers the listener's node_id in the alias table and immediately
+     * sends a targeted AME to resolve the alias. On a successful detach, it
+     * unregisters the listener.
+     *
+     * This keeps alias table management entirely in the CAN layer where it
+     * belongs — the protocol layer does not need to know about CAN aliases.
+     *
+     * Reply payload layout:
+     *   Byte 0: 0x30 (TRAIN_LISTENER_CONFIG)
+     *   Byte 1: 0x01 (ATTACH) or 0x02 (DETACH)
+     *   Bytes 2-7: Listener Node ID (6 bytes, big-endian)
+     *   Byte 8: Result code (0x00 = success, non-zero = fail)
+     */
+static void _sniff_listener_config_reply(openlcb_msg_t *msg) {
+
+    if (!_interface->listener_register) { return; }
+
+    if (msg->mti != MTI_TRAIN_REPLY) { return; }
+
+    if (msg->payload_count < 9) { return; }
+
+    uint8_t cmd = *msg->payload[0];
+
+    if (cmd != TRAIN_LISTENER_CONFIG) { return; }
+
+    uint8_t sub_cmd = *msg->payload[1];
+    uint8_t result = *msg->payload[8];
+
+    if (result != 0) { return; }
+
+    // Extract listener node_id from bytes 2-7 (big-endian)
+    node_id_t listener_id =
+            ((uint64_t) *msg->payload[2] << 40) |
+            ((uint64_t) *msg->payload[3] << 32) |
+            ((uint64_t) *msg->payload[4] << 24) |
+            ((uint64_t) *msg->payload[5] << 16) |
+            ((uint64_t) *msg->payload[6] << 8) |
+            ((uint64_t) *msg->payload[7]);
+
+    if (sub_cmd == TRAIN_LISTENER_ATTACH) {
+
+        _interface->listener_register(listener_id);
+
+        // Immediately send a targeted AME to resolve the new listener's alias
+        if (_interface->lock_shared_resources && _interface->unlock_shared_resources) {
+
+            _interface->lock_shared_resources();
+            can_msg_t *ame = CanBufferStore_allocate_buffer();
+            _interface->unlock_shared_resources();
+
+            if (ame) {
+
+                ame->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AME | msg->source_alias;
+                ame->payload_count = 6;
+                CanUtilities_copy_node_id_to_payload(ame, listener_id, 0);
+
+                _interface->lock_shared_resources();
+                CanBufferFifo_push(ame);
+                _interface->unlock_shared_resources();
+
+            }
+
+        }
+
+    } else if (sub_cmd == TRAIN_LISTENER_DETACH && _interface->listener_unregister) {
+
+        _interface->listener_unregister(listener_id);
+
+    }
+
+}
+
+#endif
 
     /**
      * @brief Routes an OpenLCB message to its appropriate CAN frame handler.
@@ -185,6 +274,10 @@ bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
             _transmit_openlcb_message(openlcb_msg, &worker_can_msg, &payload_index);
 
         }
+
+#ifdef OPENLCB_COMPILE_TRAIN
+        _sniff_listener_config_reply(openlcb_msg);
+#endif
 
         return true;
 

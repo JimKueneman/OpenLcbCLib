@@ -83,6 +83,38 @@ extern "C" {
          */
         listener_alias_entry_t *(*listener_find_by_node_id)(node_id_t node_id);
 
+#ifdef OPENLCB_COMPILE_TRAIN
+
+        /**
+         * @brief OPTIONAL. Register a listener node_id in the alias table.
+         *
+         * @details Called when the TX path sniffs a successful Listener Config
+         * Attach Reply being transmitted. Adds the node_id to the listener
+         * alias table so periodic verification can resolve its alias.
+         *
+         * @note Typical: ListenerAliasTable_register. May be NULL.
+         */
+        listener_alias_entry_t *(*listener_register)(node_id_t node_id);
+
+        /**
+         * @brief OPTIONAL. Unregister a listener node_id from the alias table.
+         *
+         * @details Called when the TX path sniffs a successful Listener Config
+         * Detach Reply being transmitted. Removes the node_id from the listener
+         * alias table.
+         *
+         * @note Typical: ListenerAliasTable_unregister. May be NULL.
+         */
+        void (*listener_unregister)(node_id_t node_id);
+
+        /** @brief OPTIONAL. Lock shared CAN resources (buffer store, FIFO). */
+        void (*lock_shared_resources)(void);
+
+        /** @brief OPTIONAL. Unlock shared CAN resources. */
+        void (*unlock_shared_resources)(void);
+
+#endif
+
     } interface_can_tx_statemachine_t;
 
 
