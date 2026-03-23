@@ -1,0 +1,16 @@
+# MPLAB X build artifacts
+**/.generated_files/
+**/dist/
+**/build/
+**/nbproject/private/
+**/nbproject/Makefile-default.mk
+**/nbproject/Makefile-genesis.properties
+**/nbproject/Makefile-local-default.mk
+
+# Merged hex files
+turnoutboss_merged.hex
+turnoutboss_merged_summed.hex
+turnoutboss_merged_summed.hex.dshex
+
+# Generated version header
+TurnoutBossCommon/turnoutboss_version.h
