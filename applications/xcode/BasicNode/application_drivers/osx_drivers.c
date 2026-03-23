@@ -49,7 +49,6 @@
 #include <unistd.h>
 
 uint8_t _is_clock_running = false;
-uint8_t _timer_pause = false;
 char *user_data;
 uint8_t _is_input_running = false;
 
@@ -103,10 +102,7 @@ void *thread_function_timer(void *arg) {
 
     while (1) {
 
-        if (_timer_pause == 0) {
-
-            OpenLcb_100ms_timer_tick();
-        }
+        OpenLcb_100ms_timer_tick();
 
         usleep(100000);
     }
@@ -175,13 +171,11 @@ uint16_t OSxDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t addr
 void OSxDrivers_lock_shared_resources(void) {
 
     OSxCanDriver_pause_can_rx();
-    _timer_pause = true;
 }
 
 void OSxDrivers_unlock_shared_resources(void) {
 
     OSxCanDriver_resume_can_rx();
-    _timer_pause = false;
 }
 
 void OSxDrivers_firmware_write(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result) {

@@ -65,16 +65,12 @@ void STM32_DriverLibDrivers_lock_shared_resources(void)
 {
 
 	STM32_DriverLibCanDriver_pause_can_rx();
-
-	HAL_TIM_Base_Stop(_htim7);
 }
 
 void STM32_DriverLibDrivers_unlock_shared_resources(void)
 {
 
 	STM32_DriverLibCanDriver_resume_can_rx();
-
-	HAL_TIM_Base_Start_IT(_htim7);
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)

@@ -139,22 +139,12 @@ uint16_t Esp32Drivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t ad
 
 void Esp32Drivers_lock_shared_resources(void)
 {
-#ifdef PLATFORMIO
-  timerAlarmDisable(Timer0_Cfg);
-#else
-  timerStop(Timer0_Cfg);
-#endif
 
   Esp32WiFiGridconnectDriver_pause_can_rx();
 }
 
 void Esp32Drivers_unlock_shared_resources(void)
 {
-#ifdef PLATFORMIO
-  timerAlarmEnable(Timer0_Cfg);
-#else
-  timerStart(Timer0_Cfg);
-#endif
 
   Esp32WiFiGridconnectDriver_resume_can_rx();
 }

@@ -53,36 +53,18 @@
 
 // Create a Timer interrupt or task and call the following
 struct repeating_timer timer;
-static bool timer_enabled = false;
-static bool timer_unhandled_tick = false;
-
-void _handle_timer_tick(void) {
-
-  OpenLcb_100ms_timer_tick();
-}
 
 bool timer_task_or_interrupt(__unused struct repeating_timer *timer) {
-  // You can access user data if needed:
-  // int* data = (int*) t->user_data;
-  // printf("Timer callback fired, data value: %d\n", *data);
 
-  // a Timer interrupt or task (if using RTOS) and call the following every 100ms or so (not critical)
-  if (timer_enabled) {
+  OpenLcb_100ms_timer_tick();
 
-    _handle_timer_tick();
-
-  } else {
-
-    timer_unhandled_tick = true;
-  }
-  // printf("Timer fired!\n");
-  return true;  // Keep the timer running
+  return true;
 }
 
 void RPiPicoDriver_setup(void) {
   // Initialize Raspberry Pi Pico interrupt and any features needed for config memory read/writes
 
-  timer_enabled = add_repeating_timer_ms(-100, timer_task_or_interrupt, NULL, &timer);
+  add_repeating_timer_ms(-100, timer_task_or_interrupt, NULL, &timer);
 }
 
 void RPiPicoDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
@@ -179,23 +161,10 @@ uint16_t RPiPicoDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t 
 
 void RPiPicoDrivers_lock_shared_resources(void) {
 
-// Pause the CAN Rx thread
   RPiPicoCanDriver_pause_can_rx();
-  
-  // Pause the 100ms Timer here
-  timer_enabled = false;
 }
 
 void RPiPicoDrivers_unlock_shared_resources(void) {
-  // Resume the CAN Rx thread
+
   RPiPicoCanDriver_resume_can_rx();
-
-  if (timer_unhandled_tick) {
-
-    // Resume the 100ms Timer here
-    timer_enabled = true;
-
-    timer_unhandled_tick = false;
-    _handle_timer_tick();
-  }
 }

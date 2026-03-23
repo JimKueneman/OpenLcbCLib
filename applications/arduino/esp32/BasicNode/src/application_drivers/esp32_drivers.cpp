@@ -146,24 +146,11 @@ uint16_t Esp32Drivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t ad
 void Esp32Drivers_lock_shared_resources(void)
 {
 
-// Disable the 100ms Timer
-#ifdef PLATFORMIO
-  timerAlarmDisable(Timer0_Cfg);
-#else
-  timerStop(Timer0_Cfg);
-#endif
-
-  // Pause the CAN Rx Task thread
   Esp32CanDriver_pause_can_rx();
 }
 
 void Esp32Drivers_unlock_shared_resources(void)
 {
-#ifdef PLATFORMIO
-  timerAlarmEnable(Timer0_Cfg);
-#else
-  timerStart(Timer0_Cfg);
-#endif
 
   Esp32CanDriver_resume_can_rx();
 }

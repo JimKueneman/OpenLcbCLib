@@ -105,16 +105,12 @@ void TI_DriverLibDrivers_lock_shared_resources(void)
 {
 
    TI_DriverLibCanDriver_pause_can_rx();
-
-   DL_SYSTICK_disable();
 }
 
 void TI_DriverLibDrivers_unlock_shared_resources(void)
 {
 
    TI_DriverLibCanDriver_resume_can_rx();
-
-   DL_SYSTICK_enable();
 }
 
 void SysTick_Handler(void)

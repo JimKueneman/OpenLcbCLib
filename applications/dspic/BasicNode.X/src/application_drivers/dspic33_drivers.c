@@ -141,16 +141,12 @@ uint16_t BasicNodeDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_
 
 void BasicNodeDrivers_lock_shared_resources(void) {
 
-    T2CONbits.TON = 0; // Turn off 100ms Timer
-    
     Dspic33CanDriver_pause_can_rx();
 
 }
 
 void BasicNodeDrivers_unlock_shared_resources(void) {
 
-    T2CONbits.TON = 1; // Turn 0n 100ms Timer
-    
     Dspic33CanDriver_resume_can_rx();
 
 }
