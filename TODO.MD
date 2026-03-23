@@ -14,7 +14,9 @@ Single source of truth. Everything completed is in `archive/`.
 
 **Status:** Deferred — Stream Transport specification has not been officially released by the OpenLCB standards group. Implementation will begin once the spec is stable.
 
-**When spec is released, see:** `archive/plan_stream_transport.md` for the full implementation plan.
+**Working plan:** `documentation/working_plans/stream_plan.md` — updated from Working Note PDF, includes payload layouts and open questions on CAN byte 0 (SID vs DID) and OpenMRN discrepancies.
+
+**Archived earlier draft:** `documentation/working_plans/archive/plan_stream_transport.md`
 
 **Note:** Spec section 8.3 contradicts section 7.1 on which stream ID is in CAN data byte 0. TN section 2.4.1 confirms Destination Stream ID. Follow normative table (Section 7.1): byte 0 = DID.
 
