@@ -47,12 +47,15 @@ void CallbacksConfigMem_factory_reset(
     printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));
 }
 
-void CallbacksConfigMem_write_firmware(
+void CallbacksConfigMem_firmware_write(
         openlcb_statemachine_info_t *statemachine_info,
-        config_mem_write_request_info_t *config_mem_write_request_info)
+        config_mem_write_request_info_t *config_mem_write_request_info,
+        write_result_t write_result)
 {
 
     printf("Firmware Write, buffer is in config_mem_write_request_info->writebuffer ");
+
+    write_result(statemachine_info, config_mem_write_request_info, true);
 }
 
 void CallbacksConfigMem_freeze(

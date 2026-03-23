@@ -87,9 +87,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	}
 }
 
-void STM32_DriverLibDrivers_write_firmware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+void STM32_DriverLibDrivers_firmware_write(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result) {
 
-    // TODO: Implement write_firmware
+    // TODO: Implement firmware_write
+
+    write_result(statemachine_info, config_mem_write_request_info, true);
 
 }
 

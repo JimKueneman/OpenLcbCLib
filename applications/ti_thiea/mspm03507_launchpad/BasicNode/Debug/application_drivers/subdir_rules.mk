@@ -6,7 +6,7 @@
 application_drivers/%.o: ../application_drivers/%.c $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
 	@echo 'Building file: "$<"'
 	@echo 'Invoking: Arm Compiler'
-	"/Applications/TI/ccs2020/ccs/tools/compiler/ti-cgt-armllvm_4.0.3.LTS/bin/tiarmclang" -c @"device.opt"  -march=thumbv6m -mcpu=cortex-m0plus -mfloat-abi=soft -mlittle-endian -mthumb -O2 -I"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/ti_thiea/mspm03507_launchpad/BasicNode" -I"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/ti_thiea/mspm03507_launchpad/BasicNode/Debug" -I"/Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/third_party/CMSIS/Core/Include" -I"/Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source" -gdwarf-3 -MMD -MP -MF"application_drivers/$(basename $(<F)).d_raw" -MT"$(@)"  $(GEN_OPTS__FLAG) -o"$@" "$<"
+	"/Applications/TI/ccs2020/ccs/tools/compiler/ti-cgt-armllvm_4.0.3.LTS/bin/tiarmclang" -c @"device.opt"  -march=thumbv6m -mcpu=cortex-m0plus -mfloat-abi=soft -mlittle-endian -mthumb -O2 -I"/Users/jimkueneman/Documents/OpenLcbCLib/applications/ti_thiea/mspm03507_launchpad/BasicNode" -I"/Users/jimkueneman/Documents/OpenLcbCLib/applications/ti_thiea/mspm03507_launchpad/BasicNode/Debug" -I"/Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/third_party/CMSIS/Core/Include" -I"/Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source" -gdwarf-3 -MMD -MP -MF"application_drivers/$(basename $(<F)).d_raw" -MT"$(@)"  $(GEN_OPTS__FLAG) -o"$@" "$<"
 	@echo 'Finished building: "$<"'
 	@echo ' '
 

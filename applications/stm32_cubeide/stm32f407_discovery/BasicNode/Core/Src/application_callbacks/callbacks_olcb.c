@@ -65,9 +65,11 @@ void CallbacksOlcb_on_100ms_timer(void) {
 
 }
 
-void CallbacksOlcb_write_firmware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+void CallbacksOlcb_firmware_write(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result) {
 
     printf("Firmware Write, buffer is in config_mem_write_request_info->writebuffer ");
+
+    write_result(statemachine_info, config_mem_write_request_info, true);
 
 }
 

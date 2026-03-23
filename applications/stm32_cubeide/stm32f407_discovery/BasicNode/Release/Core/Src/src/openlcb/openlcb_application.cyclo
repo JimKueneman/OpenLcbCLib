@@ -1,9 +1,0 @@
-../Core/Src/src/openlcb/openlcb_application.c:25:6:OpenLcbApplication_initialize	1
-../Core/Src/src/openlcb/openlcb_application.c:31:6:OpenLcbApplication_clear_consumer_eventids	1
-../Core/Src/src/openlcb/openlcb_application.c:37:6:OpenLcbApplication_clear_producer_eventids	1
-../Core/Src/src/openlcb/openlcb_application.c:43:10:OpenLcbApplication_register_consumer_eventid	2
-../Core/Src/src/openlcb/openlcb_application.c:58:10:OpenLcbApplication_register_producer_eventid	2
-../Core/Src/src/openlcb/openlcb_application.c:72:6:OpenLcbApplication_send_event_pc_report	1
-../Core/Src/src/openlcb/openlcb_application.c:101:6:OpenLcbApplication_send_teach_event	1
-../Core/Src/src/openlcb/openlcb_application.c:131:10:OpenLcbApplication_read_configuration_memory	2
-../Core/Src/src/openlcb/openlcb_application.c:142:10:OpenLcbApplication_write_configuration_memory	2

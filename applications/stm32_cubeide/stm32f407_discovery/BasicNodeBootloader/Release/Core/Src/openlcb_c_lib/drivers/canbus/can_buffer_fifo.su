@@ -1,5 +1,0 @@
-../Core/Src/openlcb_c_lib/drivers/canbus/can_buffer_fifo.c:65:6:CanBufferFifo_initialize	8	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_buffer_fifo.c:92:6:CanBufferFifo_push	8	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_buffer_fifo.c:125:12:CanBufferFifo_pop	0	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_buffer_fifo.c:148:9:CanBufferFifo_is_empty	0	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_buffer_fifo.c:161:10:CanBufferFifo_get_allocated_count	0	static

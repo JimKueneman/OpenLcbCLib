@@ -49,9 +49,10 @@ extern "C"
             openlcb_statemachine_info_t *statemachine_info,
             config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-    extern void CallbacksConfigMem_write_firmware(
+    extern void CallbacksConfigMem_firmware_write(
             openlcb_statemachine_info_t *statemachine_info,
-            config_mem_write_request_info_t *config_mem_write_request_info);
+            config_mem_write_request_info_t *config_mem_write_request_info,
+            write_result_t write_result);
 
     extern void CallbacksConfigMem_freeze(
             openlcb_statemachine_info_t *statemachine_info,

@@ -1,7 +1,7 @@
 # FIXED
 
 ti/driverlib/dl_npu.o: ../ti/driverlib/dl_npu.c \
- /Users/jimkueneman/Documents/OpenLcbCLib/src/applications/ti_thiea/mspm03507_launchpad/BasicNode/ti/driverlib/dl_npu.h \
+ /Users/jimkueneman/Documents/OpenLcbCLib/applications/ti_thiea/mspm03507_launchpad/BasicNode/ti/driverlib/dl_npu.h \
  /Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/ti/devices/msp/msp.h \
  /Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/ti/devices/DeviceFamily.h \
  /Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/ti/devices/msp/m0p/mspm0g350x.h \
@@ -32,7 +32,7 @@ ti/driverlib/dl_npu.o: ../ti/driverlib/dl_npu.c \
  /Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/ti/devices/msp/peripherals/m0p/hw_debugss.h \
  /Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/ti/devices/msp/peripherals/m0p/hw_sysctl.h \
  /Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/ti/devices/msp/peripherals/m0p/sysctl/hw_sysctl_mspm0g1x0x_g3x0x.h
-/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/ti_thiea/mspm03507_launchpad/BasicNode/ti/driverlib/dl_npu.h:
+/Users/jimkueneman/Documents/OpenLcbCLib/applications/ti_thiea/mspm03507_launchpad/BasicNode/ti/driverlib/dl_npu.h:
 /Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/ti/devices/msp/msp.h:
 /Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/ti/devices/DeviceFamily.h:
 /Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source/ti/devices/msp/m0p/mspm0g350x.h:

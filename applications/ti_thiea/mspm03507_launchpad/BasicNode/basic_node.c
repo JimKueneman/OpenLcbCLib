@@ -73,7 +73,7 @@ static const openlcb_config_t openlcb_config = {
     .factory_reset           = &CallbacksConfigMem_factory_reset,
     .freeze                  = &CallbacksConfigMem_freeze,
     .unfreeze                = &CallbacksConfigMem_unfreeze,
-    .firmware_write          = &CallbacksConfigMem_write_firmware,
+    .firmware_write          = &CallbacksConfigMem_firmware_write,
     .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
 
 };

@@ -3,6 +3,6 @@
 ../Core/Src/application_drivers/stm32_driverlib_drivers.c:64:6:STM32_DriverLibDrivers_lock_shared_resources	1
 ../Core/Src/application_drivers/stm32_driverlib_drivers.c:72:6:STM32_DriverLibDrivers_unlock_shared_resources	1
 ../Core/Src/application_drivers/stm32_driverlib_drivers.c:80:6:HAL_TIM_PeriodElapsedCallback	2
-../Core/Src/application_drivers/stm32_driverlib_drivers.c:90:6:STM32_DriverLibDrivers_write_firmware	1
-../Core/Src/application_drivers/stm32_driverlib_drivers.c:97:6:STM32_DriverLibDrivers_freeze	1
-../Core/Src/application_drivers/stm32_driverlib_drivers.c:104:6:STM32_DriverLibDrivers_unfreeze	1
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:90:6:STM32_DriverLibDrivers_firmware_write	1
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:99:6:STM32_DriverLibDrivers_freeze	1
+../Core/Src/application_drivers/stm32_driverlib_drivers.c:106:6:STM32_DriverLibDrivers_unfreeze	1

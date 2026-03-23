@@ -44,6 +44,7 @@
 #define __OPENLCB_OPENLCB_TYPES__
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #ifdef __has_include

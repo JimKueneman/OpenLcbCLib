@@ -1,7 +1,0 @@
-../Core/Src/openlcb_c_lib/drivers/canbus/can_tx_message_handler.c:131:13:_transmit_can_frame	16	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_tx_message_handler.c:70:6:CanTxMessageHandler_initialize	0	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_tx_message_handler.c:242:6:CanTxMessageHandler_datagram_frame	24	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_tx_message_handler.c:293:6:CanTxMessageHandler_unaddressed_msg_frame	24	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_tx_message_handler.c:343:6:CanTxMessageHandler_addressed_msg_frame	24	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_tx_message_handler.c:381:6:CanTxMessageHandler_stream_frame	0	static
-../Core/Src/openlcb_c_lib/drivers/canbus/can_tx_message_handler.c:388:6:CanTxMessageHandler_can_frame	0	static

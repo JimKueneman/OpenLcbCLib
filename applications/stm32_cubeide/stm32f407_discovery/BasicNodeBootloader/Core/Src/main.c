@@ -137,7 +137,7 @@ static const openlcb_config_t openlcb_config = {
 	// Firmware upgrade — REQUIRED when Firmware enabled
     .freeze                  = &STM32_DriverLibDrivers_freeze,
     .unfreeze                = &STM32_DriverLibDrivers_unfreeze,
-    .firmware_write          = &STM32_DriverLibDrivers_write_firmware,
+    .firmware_write          = &STM32_DriverLibDrivers_firmware_write,
 
     // Core application callbacks
     .on_optional_interaction_rejected = NULL,

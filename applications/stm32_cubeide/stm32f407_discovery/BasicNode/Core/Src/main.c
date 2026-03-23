@@ -138,7 +138,7 @@ static const openlcb_config_t openlcb_config = {
     .factory_reset           = &STM32_DriverLibDrivers_config_mem_factory_reset,
     .freeze                  = &CallbacksOlcb_freeze,
     .unfreeze                = &CallbacksOlcb_unfreeze,
-    .firmware_write          = &CallbacksOlcb_write_firmware,
+    .firmware_write          = &CallbacksOlcb_firmware_write,
     .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
 };
 

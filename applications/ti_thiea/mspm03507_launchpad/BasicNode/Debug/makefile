@@ -247,7 +247,7 @@ all: $(OBJS) $(GEN_CMDS)
 BasicNode.out: $(OBJS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: Arm Linker'
-	"/Applications/TI/ccs2020/ccs/tools/compiler/ti-cgt-armllvm_4.0.3.LTS/bin/tiarmclang" @"device.opt"  -march=thumbv6m -mcpu=cortex-m0plus -mfloat-abi=soft -mlittle-endian -mthumb -O2 -gdwarf-3 -Wl,-m"BasicNode.map" -Wl,--heap_size=0x0800 -Wl,-i"/Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source" -Wl,-i"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/ti_thiea/mspm03507_launchpad/BasicNode" -Wl,-i"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/ti_thiea/mspm03507_launchpad/BasicNode/Debug/syscfg" -Wl,-i"/Applications/TI/ccs2020/ccs/tools/compiler/ti-cgt-armllvm_4.0.3.LTS/lib" -Wl,--diag_wrap=off -Wl,--display_error_number -Wl,--warn_sections -Wl,--xml_link_info="BasicNode_linkInfo.xml" -Wl,--rom_model -o "BasicNode.out" $(ORDERED_OBJS)
+	"/Applications/TI/ccs2020/ccs/tools/compiler/ti-cgt-armllvm_4.0.3.LTS/bin/tiarmclang" @"device.opt"  -march=thumbv6m -mcpu=cortex-m0plus -mfloat-abi=soft -mlittle-endian -mthumb -O2 -gdwarf-3 -Wl,-m"BasicNode.map" -Wl,--heap_size=0x0800 -Wl,-i"/Users/jimkueneman/ti/mspm0_sdk_2_07_00_05/source" -Wl,-i"/Users/jimkueneman/Documents/OpenLcbCLib/applications/ti_thiea/mspm03507_launchpad/BasicNode" -Wl,-i"/Users/jimkueneman/Documents/OpenLcbCLib/applications/ti_thiea/mspm03507_launchpad/BasicNode/Debug/syscfg" -Wl,-i"/Applications/TI/ccs2020/ccs/tools/compiler/ti-cgt-armllvm_4.0.3.LTS/lib" -Wl,--diag_wrap=off -Wl,--display_error_number -Wl,--warn_sections -Wl,--xml_link_info="BasicNode_linkInfo.xml" -Wl,--rom_model -o "BasicNode.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 

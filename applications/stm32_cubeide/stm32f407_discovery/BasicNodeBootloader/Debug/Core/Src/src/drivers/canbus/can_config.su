@@ -1,8 +1,0 @@
-../Core/Src/src/drivers/canbus/can_config.c:92:13:_build_login_message_handler	8	static
-../Core/Src/src/drivers/canbus/can_config.c:106:13:_build_login_statemachine	8	static
-../Core/Src/src/drivers/canbus/can_config.c:125:13:_build_rx_message_handler	8	static
-../Core/Src/src/drivers/canbus/can_config.c:141:13:_build_rx_statemachine	8	static
-../Core/Src/src/drivers/canbus/can_config.c:168:13:_build_tx_message_handler	8	static
-../Core/Src/src/drivers/canbus/can_config.c:181:13:_build_tx_statemachine	8	static
-../Core/Src/src/drivers/canbus/can_config.c:198:13:_build_main_statemachine	8	static
-../Core/Src/src/drivers/canbus/can_config.c:249:6:CanConfig_initialize	16	static

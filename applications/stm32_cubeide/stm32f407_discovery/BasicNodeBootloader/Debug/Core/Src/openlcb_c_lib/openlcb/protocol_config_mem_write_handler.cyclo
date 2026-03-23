@@ -1,6 +1,8 @@
-../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:72:6:ProtocolConfigMemWriteHandler_initialize	1
-../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:84:13:_extract_write_command_parameters	2
-../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:110:17:_is_valid_write_parameters	6
-../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:147:13:_check_for_write_overrun	2
-../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:170:13:_dispatch_write_request	5
-../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:227:6:ProtocolConfigMemWriteHandler_write_space_firmware	1
+../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:71:6:ProtocolConfigMemWriteHandler_initialize	1
+../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:83:13:_extract_write_command_parameters	2
+../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:109:17:_is_valid_write_parameters	6
+../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:146:13:_check_for_write_overrun	2
+../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:169:13:_dispatch_write_request	5
+../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:231:13:_write_result	2
+../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:251:13:_firmware_write_wrapper	2
+../Core/Src/openlcb_c_lib/openlcb/protocol_config_mem_write_handler.c:262:6:ProtocolConfigMemWriteHandler_write_space_firmware	2

@@ -47,7 +47,7 @@ static const openlcb_config_t openlcb_config = {
     .factory_reset           = &CallbacksConfigMem_factory_reset,
     .freeze                  = &OSxDrivers_freeze,
     .unfreeze                = &OSxDrivers_unfreeze,
-    .firmware_write          = &OSxDrivers_write_firmware,
+    .firmware_write          = &OSxDrivers_firmware_write,
 
     // Core application callbacks
     .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,

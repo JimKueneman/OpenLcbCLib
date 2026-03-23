@@ -1,4 +1,0 @@
-../Core/Src/src/utilities/mustangpeak_endian_helper.c:51:9:swap_endian8	1
-../Core/Src/src/utilities/mustangpeak_endian_helper.c:70:10:swap_endian16	1
-../Core/Src/src/utilities/mustangpeak_endian_helper.c:99:10:swap_endian32	1
-../Core/Src/src/utilities/mustangpeak_endian_helper.c:125:10:swap_endian64	1
