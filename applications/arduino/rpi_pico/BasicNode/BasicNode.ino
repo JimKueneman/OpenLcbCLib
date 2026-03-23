@@ -85,7 +85,7 @@ void setup()
 
   Serial.println("Can Statemachine init.....");
 
-  RPiPicoCanDriver_setup();
+  RPiPicoCanDriver_initialize();
   RPiPicoDriver_setup();
 
   CanConfig_initialize(&can_config);

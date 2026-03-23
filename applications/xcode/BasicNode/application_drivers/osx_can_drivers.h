@@ -47,7 +47,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void OSxCanDriver_setup(void);
+    extern void OSxCanDriver_initialize(void);
 
     extern bool OSxCanDriver_transmit_raw_can_frame(can_msg_t *can_msg);
 

@@ -117,7 +117,7 @@ uint8_t OSxDrivers_100ms_is_connected(void) {
     return _is_clock_running;
 }
 
-void OSxDrivers_setup(void) {
+void OSxDrivers_initialize(void) {
 
     user_data = strnew_initialized(LEN_SNIP_USER_NAME_BUFFER + LEN_SNIP_USER_DESCRIPTION_BUFFER + 1);
 

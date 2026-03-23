@@ -83,8 +83,8 @@ void setup()
 
   Serial.println("Can Statemachine init.....");
 
-  Esp32CanDriver_setup();
-  Esp32Drivers_setup();
+  Esp32CanDriver_initialize();
+  Esp32Drivers_initialize();
 
   CanConfig_initialize(&can_config);
   OpenLcb_initialize(&openlcb_config);

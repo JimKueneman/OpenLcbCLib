@@ -198,7 +198,7 @@ void Esp32CanDriver_resume_can_rx(void)
   vTaskResume(receive_task_handle);
 }
 
-void Esp32CanDriver_setup(void)
+void Esp32CanDriver_initialize(void)
 {
 
   // Initialize configuration structures using macro initializers

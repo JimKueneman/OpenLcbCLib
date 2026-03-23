@@ -49,7 +49,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-  extern void RPiPicoCanDriver_setup(void);
+  extern void RPiPicoCanDriver_initialize(void);
 
   extern bool RPiPicoCanDriver_is_can_tx_buffer_clear(void);
 

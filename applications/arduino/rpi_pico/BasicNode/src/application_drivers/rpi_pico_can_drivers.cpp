@@ -61,7 +61,7 @@ static const byte MCP2517_INT = 20;  // INT output of MCP2517
 // Create a ACAN2517 Object
 static ACAN2517 can(MCP2517_CS, SPI, MCP2517_INT);
 
-void RPiPicoCanDriver_setup(void) {
+void RPiPicoCanDriver_initialize(void) {
 
   // Initialize Raspberry Pi Pico CAN features
 

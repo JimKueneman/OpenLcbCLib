@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
   printf("Initializing...\n");
 
 
-  OSxDrivers_setup();
-  OSxCanDriver_setup();
+  OSxDrivers_initialize();
+  OSxCanDriver_initialize();
 
   CanConfig_initialize(&can_config);
   OpenLcb_initialize(&openlcb_config);

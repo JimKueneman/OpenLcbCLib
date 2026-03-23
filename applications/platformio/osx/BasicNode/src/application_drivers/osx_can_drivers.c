@@ -324,7 +324,7 @@ uint8_t OSxCanDriver_data_was_received(void) {
     return val;
 }
 
-void OSxCanDriver_setup(void)
+void OSxCanDriver_initialize(void)
 {
 
     printf("Mutex initialization for CAN - Result Code: %d\n", pthread_mutex_init(&can_mutex, NULL));

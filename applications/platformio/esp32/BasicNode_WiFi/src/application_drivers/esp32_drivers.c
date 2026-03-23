@@ -67,7 +67,7 @@ bool Esp32Drivers_100ms_running()
   return _is_100ms_timer_running;
 }
 
-void Esp32Drivers_setup(void)
+void Esp32Drivers_initialize(void)
 {
 
   // Speed kills!

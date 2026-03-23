@@ -44,7 +44,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void OSxDrivers_setup(void);
+    extern void OSxDrivers_initialize(void);
 
     extern void OSxDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 

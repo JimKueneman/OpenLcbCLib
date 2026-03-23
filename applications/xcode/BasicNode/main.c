@@ -134,8 +134,8 @@ int main(int argc, char *argv[])
 
   CallbacksOlcb_initialize();
 
-  OSxDrivers_setup();
-  OSxCanDriver_setup();
+  OSxDrivers_initialize();
+  OSxCanDriver_initialize();
 
   printf("Waiting for CAN and 100ms Timer Drivers to connect\n");
 

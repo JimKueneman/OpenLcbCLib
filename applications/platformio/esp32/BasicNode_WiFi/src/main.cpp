@@ -58,7 +58,7 @@ void setup()
 
     Serial.println("Setting up Drivers.....");
     Esp32WiFiGridconnectDriver_setup();
-    Esp32Drivers_setup();
+    Esp32Drivers_initialize();
 
     CanConfig_initialize(&can_config);
     OpenLcb_initialize(&openlcb_config);

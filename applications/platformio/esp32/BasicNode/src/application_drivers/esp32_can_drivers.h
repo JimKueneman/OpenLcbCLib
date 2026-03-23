@@ -49,7 +49,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-  extern void Esp32CanDriver_setup(void);
+  extern void Esp32CanDriver_initialize(void);
 
   extern bool Esp32CanDriver_is_can_tx_buffer_clear(void);
 

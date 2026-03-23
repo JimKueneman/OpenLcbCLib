@@ -47,7 +47,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void OSxCanDriver_setup(void);
+    extern void OSxCanDriver_initialize(void);
 
     extern bool OSxCanDriver_is_can_tx_buffer_clear(void);
 

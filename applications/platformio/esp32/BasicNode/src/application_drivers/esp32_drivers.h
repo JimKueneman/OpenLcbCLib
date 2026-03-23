@@ -44,7 +44,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void Esp32Drivers_setup(void);
+    extern void Esp32Drivers_initialize(void);
 
     extern void Esp32Drivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
