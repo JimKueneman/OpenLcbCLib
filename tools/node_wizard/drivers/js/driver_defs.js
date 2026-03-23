@@ -24,7 +24,7 @@ const DRIVER_GROUPS = {
         functions: [
 
             {
-                name: 'setup',
+                name: 'initialize',
                 returnType: 'void',
                 params: 'void',
                 description: 'Initialize CAN hardware',
@@ -76,7 +76,7 @@ const DRIVER_GROUPS = {
         functions: [
 
             {
-                name: 'setup',
+                name: 'initialize',
                 returnType: 'void',
                 params: 'void',
                 description: 'Initialize platform hardware',
@@ -138,11 +138,11 @@ const DRIVER_GROUPS = {
             },
 
             {
-                name: 'write_firmware',
+                name: 'firmware_write',
                 returnType: 'void',
-                params: 'openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info',
+                params: 'openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result',
                 description: 'Write firmware data during over-the-air upgrade',
-                detail: 'Write a chunk of firmware image data to storage (Flash, file system, etc.). The data arrives in config_mem_write_request_info->write_buffer with the byte count in the request. Write the chunk to the firmware image file or flash region that was opened during freeze(). After writing, send a write-OK or write-error reply using the library helper functions. This is called repeatedly with sequential chunks until the entire firmware image has been transferred.',
+                detail: 'Write a chunk of firmware image data to storage (Flash, file system, etc.). The data arrives in config_mem_write_request_info->write_buffer with the byte count in the request. Write the chunk to the firmware image file or flash region that was opened during freeze(). Call write_result when finished to send a write-OK or write-error reply. This is called repeatedly with sequential chunks until the entire firmware image has been transferred.',
                 required: true,
                 configField: 'firmware_write',
                 requiresFirmware: true
@@ -153,7 +153,7 @@ const DRIVER_GROUPS = {
                 returnType: 'void',
                 params: 'openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info',
                 description: 'Prepare for firmware upgrade (stop motors, disable I/O, open image file)',
-                detail: 'Called at the start of a firmware upgrade sequence. Safely shut down any hardware that should not be active during the update (motors, relays, outputs), then open or prepare the firmware storage destination (e.g. open a file on LittleFS, erase a Flash sector). Set a flag so the node knows it is in firmware upgrade mode. The upgrade tool will then send firmware data chunks via write_firmware() calls.',
+                detail: 'Called at the start of a firmware upgrade sequence. Safely shut down any hardware that should not be active during the update (motors, relays, outputs), then open or prepare the firmware storage destination (e.g. open a file on LittleFS, erase a Flash sector). Set a flag so the node knows it is in firmware upgrade mode. The upgrade tool will then send firmware data chunks via firmware_write() calls.',
                 required: true,
                 configField: 'freeze',
                 requiresFirmware: true

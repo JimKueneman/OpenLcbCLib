@@ -1339,7 +1339,7 @@ function generateMain(s) {
         L.push('    // Firmware upgrade — REQUIRED when Firmware enabled');
         L.push('    .freeze         = &Drivers_freeze,');
         L.push('    .unfreeze       = &Drivers_unfreeze,');
-        L.push('    .firmware_write = &Drivers_write_firmware,');
+        L.push('    .firmware_write = &Drivers_firmware_write,');
         L.push('');
 
     }

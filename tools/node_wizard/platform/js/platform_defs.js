@@ -47,6 +47,7 @@ const PLATFORM_DEFS = {
     /* ================================================================== */
     'esp32-twai': {
 
+        disabled: true,
         name: 'ESP32 + TWAI',
         description: 'Espressif ESP32 with built-in TWAI CAN controller',
         image: 'images/esp32-twai.svg',
@@ -112,7 +113,7 @@ const PLATFORM_DEFS = {
 
             templates: {
 
-                setup: [
+                initialize: [
                     '    twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT(GPIO_NUM_{{can_tx_pin}}, GPIO_NUM_{{can_rx_pin}}, TWAI_MODE_NORMAL);',
                     '    twai_timing_config_t t_config = TWAI_TIMING_CONFIG_125KBITS();',
                     '    twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();',
@@ -192,7 +193,7 @@ const PLATFORM_DEFS = {
 
             templates: {
 
-                setup: [
+                initialize: [
                     '    setCpuFrequencyMhz(240);',
                     '',
                     '    _timer = timerBegin(1000000);              // 1 MHz',
@@ -225,6 +226,7 @@ const PLATFORM_DEFS = {
     /* ================================================================== */
     'esp32-wifi': {
 
+        disabled: true,
         name: 'ESP32 + WiFi GridConnect',
         description: 'ESP32 using WiFi TCP/IP CAN gateway (no physical CAN bus)',
         image: 'images/esp32-wifi.svg',
@@ -300,7 +302,7 @@ const PLATFORM_DEFS = {
 
             templates: {
 
-                setup: [
+                initialize: [
                     '    // TODO: Connect to WiFi access point before calling this',
                     '    // WiFi.begin("your_ssid", "your_password");',
                     '    // while (WiFi.status() != WL_CONNECTED) { delay(500); }',
@@ -364,7 +366,7 @@ const PLATFORM_DEFS = {
 
             templates: {
 
-                setup: [
+                initialize: [
                     '    setCpuFrequencyMhz(240);',
                     '',
                     '    _timer = timerBegin(1000000);              // 1 MHz',
@@ -395,6 +397,7 @@ const PLATFORM_DEFS = {
     /* ================================================================== */
     'rp2040-mcp2517': {
 
+        disabled: true,
         name: 'RP2040 + MCP2517FD',
         description: 'Raspberry Pi Pico with MCP2517FD CAN controller via SPI',
         image: 'images/rp2040-mcp2517.svg',
@@ -471,7 +474,7 @@ const PLATFORM_DEFS = {
 
             templates: {
 
-                setup: [
+                initialize: [
                     '    SPI.begin(true);',
                     '    ACAN2517Settings settings(ACAN2517Settings::OSC_{{osc_freq}}MHz, 125UL * 1000UL);',
                     '',
@@ -544,7 +547,7 @@ const PLATFORM_DEFS = {
 
             templates: {
 
-                setup: [
+                initialize: [
                     '    _timer_enabled = add_repeating_timer_ms(-100, _timer_callback, NULL, &_timer);'
                 ].join('\n'),
 
@@ -583,6 +586,7 @@ const PLATFORM_DEFS = {
     /* ================================================================== */
     'stm32f4': {
 
+        disabled: true,
         name: 'STM32F4xx + CAN',
         description: 'STM32F4 with built-in CAN peripheral (CubeIDE / HAL)',
         image: 'images/stm32f4.svg',
@@ -675,7 +679,7 @@ const PLATFORM_DEFS = {
 
             templates: {
 
-                setup: [
+                initialize: [
                     '    // CAN peripheral is configured by CubeMX.',
                     '    // Call CanDriver_initialize_hal(&hcan1) from main() after MX_CAN1_Init().'
                 ].join('\n'),
@@ -750,7 +754,7 @@ const PLATFORM_DEFS = {
 
             templates: {
 
-                setup: [
+                initialize: [
                     '    // Timer peripheral is configured by CubeMX.',
                     '    // Call Drivers_initialize_hal(&htim7) from main() after MX_TIM7_Init().'
                 ].join('\n'),
@@ -780,6 +784,7 @@ const PLATFORM_DEFS = {
     /* ================================================================== */
     'ti-mspm0': {
 
+        disabled: true,
         name: 'TI MSPM0 + MCAN',
         description: 'TI MSPM0 with built-in MCAN peripheral (DriverLib)',
         image: 'images/ti-mspm0.svg',
@@ -864,7 +869,7 @@ const PLATFORM_DEFS = {
 
             templates: {
 
-                setup: [
+                initialize: [
                     '    NVIC_EnableIRQ(MCAN0_INST_INT_IRQN);'
                 ].join('\n'),
 
@@ -928,7 +933,7 @@ const PLATFORM_DEFS = {
 
             templates: {
 
-                setup: [
+                initialize: [
                     '    // SysTick is configured by SysConfig (.syscfg) — no additional setup needed.'
                 ].join('\n'),
 

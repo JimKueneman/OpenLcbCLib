@@ -22,9 +22,17 @@ function _renderCards() {
 
     elCards.innerHTML = '';
 
+    /* "Under Construction" notice for upcoming platform support */
+    var notice = document.createElement('div');
+    notice.className = 'info-box notes';
+    notice.textContent = 'Additional target platforms are under construction.';
+    elCards.appendChild(notice);
+
     Object.keys(PLATFORM_DEFS).forEach(function (key) {
 
         var def = PLATFORM_DEFS[key];
+
+        if (def.disabled) { return; }
 
         var card = document.createElement('div');
         card.className = 'platform-card' + (key === _selectedPlatform ? ' selected' : '');

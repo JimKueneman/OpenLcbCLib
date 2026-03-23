@@ -375,9 +375,9 @@ const CALLBACK_GROUPS = {
             {
                 name: 'firmware_write',
                 returnType: 'void',
-                params: 'openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info',
+                params: 'openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result',
                 description: 'Write a block of firmware data to flash',
-                detail: 'Fires for each firmware data block received during an upgrade. The write_request_info contains the target address and data buffer. Write the data to your flash memory at the specified offset. The address space is 0xEF (firmware). Handle flash page alignment and erase as needed for your platform. Return errors via the standard datagram reply mechanism if a write fails.',
+                detail: 'Fires for each firmware data block received during an upgrade. The write_request_info contains the target address and data buffer. Write the data to your flash memory at the specified offset. The address space is 0xEF (firmware). Handle flash page alignment and erase as needed for your platform. Call write_result when finished to send a write-OK or write-error reply.',
                 required: false,
                 configField: 'firmware_write'
             }

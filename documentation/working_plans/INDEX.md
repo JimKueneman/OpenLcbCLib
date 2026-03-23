@@ -82,6 +82,7 @@ Their content has been folded into active plans. Retained for historical referen
 | File | Title / Topic | Status |
 |------|---------------|--------|
 | [plan_virtual_node_verification_protocol.md](plan_virtual_node_verification_protocol.md) | Virtual Node Verification Protocol (DRAFT) | Draft protocol spec — not yet proposed to OpenLCB standards group |
+| [stream_plan.md](stream_plan.md) | Stream Transport Protocol | DEFERRED — spec is Preliminary (Apr 2021); awaiting OpenMRN payload layout confirmation |
 
 ---
 

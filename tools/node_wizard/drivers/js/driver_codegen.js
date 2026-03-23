@@ -103,9 +103,6 @@ const DriverCodegen = {
         lines.push('#endif /* __cplusplus */');
         lines.push('');
 
-        lines.push('    extern void ' + group.functionPrefix + '_initialize(void);');
-        lines.push('');
-
         checkedFunctions.forEach(function (fn) {
 
             lines.push('    extern ' + fn.returnType + ' ' + group.functionPrefix + '_' + fn.name + '(' + fn.params + ');');
@@ -175,28 +172,7 @@ const DriverCodegen = {
 
         }
 
-        lines.push('');
-        lines.push('');
-        lines.push('void ' + group.functionPrefix + '_initialize(void) {');
-        lines.push('');
-
-        if (templates.setup) {
-
-            lines.push(self._substituteParams(templates.setup, params));
-
-        } else {
-
-            lines.push('    // TODO: Initialize hardware');
-
-        }
-
-        lines.push('');
-        lines.push('}');
-
         checkedFunctions.forEach(function (fn) {
-
-            /* Skip 'setup' — it's handled inside _initialize above */
-            if (fn.name === 'setup') { return; }
 
             lines.push('');
             lines.push('');
