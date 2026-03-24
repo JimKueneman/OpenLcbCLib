@@ -37,6 +37,8 @@
 
 #include <stdbool.h>
 
+#include "bootloader_types.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -47,17 +49,20 @@ extern "C" {
      *     Initializes hardware, checks whether to enter bootloader or jump
      *     to the application, then runs the bootloader main loop.
      *
-     *     Call this from main().
+     *     @param can_driver CAN physical layer driver interface
+     *     @param openlcb_driver hardware driver interface
      */
-    extern void Bootloader_entry(void);
+    extern void Bootloader_entry(const bootloader_can_driver_t *can_driver, const bootloader_openlcb_driver_t *openlcb_driver);
 
     /**
      *     Initializes the bootloader state and transport.
      *
+     *     @param can_driver CAN physical layer driver interface
+     *     @param openlcb_driver hardware driver interface
      *     @return true if the application should be started (valid checksum,
      *             bootloader not requested), false if the bootloader should run
      */
-    extern bool Bootloader_init(void);
+    extern bool Bootloader_init(const bootloader_can_driver_t *can_driver, const bootloader_openlcb_driver_t *openlcb_driver);
 
     /**
      *     Runs one iteration of the bootloader main loop.

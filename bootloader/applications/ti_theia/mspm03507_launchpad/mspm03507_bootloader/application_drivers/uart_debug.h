@@ -24,56 +24,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @file bootloader_can_driver.h
+ * @file uart_debug.h
  *
- * CAN-specific hardware driver interface. These extern functions are
- * implemented in application_drivers/ alongside the BootloaderDriver_*
- * functions. Only used by the CAN transport layer (bootloader_can.c).
+ * Temporary UART debug output over the XDS110 backchannel.
+ * Include this header and call UartDebug_putchar / UartDebug_print
+ * wherever you need visibility.  Remove when done debugging.
  *
  * @author Jim Kueneman
- * @date 23 Mar 2026
+ * @date 24 Mar 2026
  */
 
-#ifndef __BOOTLOADER_LIB_DRIVERS_CANBUS_BOOTLOADER_CAN_DRIVER__
-#define __BOOTLOADER_LIB_DRIVERS_CANBUS_BOOTLOADER_CAN_DRIVER__
+#ifndef __UART_DEBUG__
+#define __UART_DEBUG__
 
 #include <stdint.h>
-#include <stdbool.h>
-
-#include "bootloader_can.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
     /**
-     *     Polls for an incoming CAN frame.
+     *     Transmit a single character over UART0 (blocking).
      *
-     *     @param frame will be loaded with the incoming frame
-     *     @return true if a frame was received, false if no frame available
+     *     @param c character to send
      */
-    extern bool BootloaderCanDriver_read_can_frame(bootloader_can_frame_t *frame);
+    extern void UartDebug_putchar(char c);
 
     /**
-     *     Attempts to send a CAN frame.
+     *     Transmit a null-terminated string over UART0 (blocking).
      *
-     *     @param frame the frame to send
-     *     @return true if sent, false if the TX buffer is busy (retry later)
+     *     @param s string to send
      */
-    extern bool BootloaderCanDriver_try_send_can_frame(const bootloader_can_frame_t *frame);
-
-    /**
-     *     Returns a suggested CAN alias for this node.
-     *
-     *     If the application saved its alias before rebooting into the
-     *     bootloader, return that alias here for seamless handoff.
-     *
-     *     @return suggested 12-bit alias, or 0 to auto-generate from node ID
-     */
-    extern uint16_t BootloaderCanDriver_node_alias(void);
+    extern void UartDebug_print(const char *s);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __BOOTLOADER_LIB_DRIVERS_CANBUS_BOOTLOADER_CAN_DRIVER__ */
+#endif /* __UART_DEBUG__ */

@@ -4,8 +4,8 @@
  *
  * @file bootloader_can_Test.cxx
  *
- * Unit tests for bootloader_can.c — alias negotiation, CAN frame dispatch,
- * datagram assembly.
+ * Unit tests for bootloader_can_statemachine.c — alias negotiation,
+ * CAN frame dispatch, send helpers.
  */
 
 #include <gtest/gtest.h>
@@ -16,7 +16,7 @@
 extern "C" {
 
 #include "bootloader.h"
-#include "bootloader_transport.h"
+#include "bootloader_can_statemachine.h"
 
 }
 
@@ -25,12 +25,12 @@ static void _run_until_initialized(void) {
 
     mock_reset();
     mock_request_bootloader = true;
-    Bootloader_init();
+    Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
     for (int i = 0; i < 20; i++) {
 
         mock_timer_tick = (uint8_t) (i * 2);
-        BootloaderTransport_loop();
+        BootloaderCanSM_loop();
 
     }
 
@@ -44,8 +44,8 @@ TEST(BootloaderCan, init_completes_with_alias) {
 
     _run_until_initialized();
 
-    EXPECT_TRUE(BootloaderTransport_is_initialized());
-    EXPECT_NE(BootloaderCan_get_alias(), 0);
+    EXPECT_TRUE(BootloaderCanSM_is_initialized());
+    EXPECT_NE(BootloaderCanSM_alias(), 0);
 
 }
 
@@ -54,16 +54,16 @@ TEST(BootloaderCan, init_uses_provided_alias) {
     mock_reset();
     mock_alias = 0x456;
     mock_request_bootloader = true;
-    Bootloader_init();
+    Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
     for (int i = 0; i < 20; i++) {
 
         mock_timer_tick = (uint8_t) (i * 2);
-        BootloaderTransport_loop();
+        BootloaderCanSM_loop();
 
     }
 
-    EXPECT_EQ(BootloaderCan_get_alias(), 0x456);
+    EXPECT_EQ(BootloaderCanSM_alias(), 0x456);
 
 }
 
@@ -72,17 +72,17 @@ TEST(BootloaderCan, init_auto_generates_alias) {
     mock_reset();
     mock_alias = 0;  /* Force auto-generation. */
     mock_request_bootloader = true;
-    Bootloader_init();
+    Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
     for (int i = 0; i < 20; i++) {
 
         mock_timer_tick = (uint8_t) (i * 2);
-        BootloaderTransport_loop();
+        BootloaderCanSM_loop();
 
     }
 
-    EXPECT_TRUE(BootloaderTransport_is_initialized());
-    EXPECT_NE(BootloaderCan_get_alias(), 0);
+    EXPECT_TRUE(BootloaderCanSM_is_initialized());
+    EXPECT_NE(BootloaderCanSM_alias(), 0);
 
 }
 
@@ -91,13 +91,12 @@ TEST(BootloaderCan, init_sends_cid_rid_amd_init_complete) {
     mock_reset();
     mock_alias = 0x123;
     mock_request_bootloader = true;
-    Bootloader_init();
+    Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
-    /* Run enough loops to complete init. */
     for (int i = 0; i < 20; i++) {
 
         mock_timer_tick = (uint8_t) (i * 2);
-        BootloaderTransport_loop();
+        BootloaderCanSM_loop();
 
     }
 
@@ -107,7 +106,7 @@ TEST(BootloaderCan, init_sends_cid_rid_amd_init_complete) {
 }
 
 /* ====================================================================== */
-/* Transport send functions                                                */
+/* Send helpers                                                            */
 /* ====================================================================== */
 
 TEST(BootloaderCan, send_datagram_ok) {
@@ -115,12 +114,9 @@ TEST(BootloaderCan, send_datagram_ok) {
     _run_until_initialized();
     mock_tx_count = 0;
 
-    bool result = BootloaderTransport_send_datagram_ok(0x456);
+    /* New architecture: sends inline (blocking). */
+    bool result = BootloaderCanSM_send_datagram_ok(0x456, 0);
     EXPECT_TRUE(result);
-    EXPECT_EQ(mock_tx_count, 0);
-
-    /* Frame is in the output buffer — send it on next loop. */
-    BootloaderTransport_loop();
     EXPECT_GE(mock_tx_count, 1);
 
 }
@@ -130,10 +126,8 @@ TEST(BootloaderCan, send_datagram_rejected) {
     _run_until_initialized();
     mock_tx_count = 0;
 
-    bool result = BootloaderTransport_send_datagram_rejected(0x456, 0x1081);
+    bool result = BootloaderCanSM_send_datagram_rejected(0x456, 0, 0x1081);
     EXPECT_TRUE(result);
-
-    BootloaderTransport_loop();
     EXPECT_GE(mock_tx_count, 1);
 
 }

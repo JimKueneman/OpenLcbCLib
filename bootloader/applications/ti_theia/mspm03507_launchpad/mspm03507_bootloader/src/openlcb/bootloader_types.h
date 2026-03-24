@@ -43,6 +43,100 @@ extern "C" {
 #endif /* __cplusplus */
 
     /* ================================================================== */
+    /* CAN frame type                                                      */
+    /* ================================================================== */
+
+    /** Minimal CAN frame structure. Bit 31 of can_id = EFF flag. */
+    typedef struct {
+
+        uint32_t can_id;
+        uint8_t can_dlc;
+        uint8_t data[8];
+
+    } bootloader_can_frame_t;
+
+    /* ================================================================== */
+    /* Application header (embedded in firmware image at linker address)    */
+    /* ================================================================== */
+
+    /** Number of 32-bit words in one checksum block. */
+    #define BOOTLOADER_CHECKSUM_COUNT 4
+
+    /**
+     *     Application header embedded in the firmware image.
+     *
+     *     The linker places this struct at a known address in the application
+     *     flash region. A post-link tool computes the checksums and patches
+     *     them into the binary.
+     *
+     *     checksum_pre covers bytes from flash_min to the start of this struct.
+     *     checksum_post covers bytes from end of this struct to app_size.
+     */
+    typedef struct bootloader_app_header {
+
+        uint32_t app_size;
+        uint32_t checksum_pre[BOOTLOADER_CHECKSUM_COUNT];
+        uint32_t checksum_post[BOOTLOADER_CHECKSUM_COUNT];
+
+    } bootloader_app_header_t;
+
+    /* ================================================================== */
+    /* LED function identifiers (must precede DI struct that references it) */
+    /* ================================================================== */
+
+    /** LED function identifiers. */
+    typedef enum {
+
+        BOOTLOADER_LED_ACTIVE     = 1,
+        BOOTLOADER_LED_WRITING    = 2,
+        BOOTLOADER_LED_CSUM_ERROR = 8,
+        BOOTLOADER_LED_REQUEST    = 16,
+        BOOTLOADER_LED_FRAME_LOST = 32
+
+    } bootloader_led_enum;
+
+    /* ================================================================== */
+    /* Forward declarations and typedefs for DI struct parameters          */
+    /* ================================================================== */
+
+    struct bootloader_app_header;
+
+    /** Function pointer type for computing a checksum over a data range. */
+    typedef void (*compute_checksum_func_t)(const void *data, uint32_t size, uint32_t *checksum);
+
+    /* ================================================================== */
+    /* DI structs                                                          */
+    /* ================================================================== */
+
+    /** CAN physical layer driver — used by RX and TX engines. */
+    typedef struct {
+
+        bool (*read_received_frame)(bootloader_can_frame_t *frame);
+        bool (*try_send_frame)(const bootloader_can_frame_t *frame);
+        uint16_t (*get_cached_alias)(void);
+
+    } bootloader_can_driver_t;
+
+    /** OpenLCB driver — used by CAN SM, OpenLCB SM, bootloader.c. */
+    typedef struct {
+
+        uint64_t (*get_persistent_node_id)(void);
+        uint8_t (*get_100ms_timer_tick)(void);
+        void (*set_status_led)(bootloader_led_enum led, bool state);
+        bool (*is_bootloader_requested)(void);
+        void (*jump_to_application)(void);
+        void (*reboot)(void);
+        void (*initialize_hardware)(void);
+        void (*get_flash_boundaries)(const void **flash_min, const void **flash_max, const struct bootloader_app_header **app_header);
+        void (*get_flash_page_info)(const void *address, const void **page_start, uint32_t *page_length_bytes);
+        uint16_t (*erase_flash_page)(const void *address);
+        uint16_t (*write_flash)(const void *address, const void *data, uint32_t size_bytes);
+        uint16_t (*finalize_flash)(compute_checksum_func_t compute_checksum_helper);
+        compute_checksum_func_t compute_checksum;
+
+    } bootloader_openlcb_driver_t;
+
+    /* ================================================================== */
     /* SNIP string defaults — override with -D compiler flags per platform */
     /* ================================================================== */
 
@@ -95,7 +189,10 @@ extern "C" {
     #define CONFIG_MEM_WRITE_SPACE_IN_BYTE_6         0x00
     #define CONFIG_MEM_OPTIONS_CMD                    0x80
     #define CONFIG_MEM_GET_ADDRESS_SPACE_INFO_CMD     0x84
+    #define CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT 0x86
     #define CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT 0x87
+    #define CONFIG_MEM_OPTIONS_REPLY                  0x82
+    #define CONFIG_OPTIONS_WRITE_LENGTH_RESERVED      (0x80 | 0x40 | 0x20 | 0x02)
     #define CONFIG_MEM_FREEZE                        0xA1
     #define CONFIG_MEM_UNFREEZE                      0xA0
     #define CONFIG_MEM_RESET_REBOOT                  0xA9
@@ -126,16 +223,9 @@ extern "C" {
     #define ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS 0x1082
     #define ERROR_PERMANENT_INVALID_ARGUMENTS        0x1080
 
-    /* LED function identifiers. */
-    typedef enum {
-
-        BOOTLOADER_LED_ACTIVE     = 1,
-        BOOTLOADER_LED_WRITING    = 2,
-        BOOTLOADER_LED_CSUM_ERROR = 8,
-        BOOTLOADER_LED_REQUEST    = 16,
-        BOOTLOADER_LED_FRAME_LOST = 32
-
-    } bootloader_led_enum;
+    /* Temporary error codes (names from openlcb_defines.h). */
+    #define ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START 0x2041
+    #define ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END    0x2042
 
     /* ================================================================== */
     /* Bootloader state                                                    */

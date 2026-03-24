@@ -37,24 +37,26 @@
 
 #include "bootloader.h"
 #include "bootloader_types.h"
-#include "bootloader_driver.h"
-#include "bootloader_transport.h"
-#include "../crc/bootloader_app_header.h"
+#include "bootloader_openlcb_statemachine.h"
+#include "../drivers/canbus/bootloader_can_statemachine.h"
 
-/** Global bootloader state shared with bootloader_protocol.c. */
+/** Global bootloader state shared with bootloader_openlcb_statemachine.c. */
 bootloader_state_t bootloader_state;
+
+/** Stored OpenLCB driver pointer for use by loop and checksum. */
+static const bootloader_openlcb_driver_t *_openlcb_driver;
 
 /* ====================================================================== */
 /* Application checksum validation                                         */
 /* ====================================================================== */
 
-bool Bootloader_check_application_checksum(void) {
+static bool _check_application_checksum(void) {
 
     const void *flash_min = NULL;
     const void *flash_max = NULL;
     const bootloader_app_header_t *app_header = NULL;
 
-    BootloaderDriver_get_flash_boundaries(&flash_min, &flash_max, &app_header);
+    _openlcb_driver->get_flash_boundaries(&flash_min, &flash_max, &app_header);
 
     /* Copy the header to RAM so we can compare after computing checksums. */
     bootloader_app_header_t header_copy;
@@ -66,13 +68,12 @@ bool Bootloader_check_application_checksum(void) {
     if (header_copy.app_size > flash_size) { return false; }
 
     /* Pre-checksum: flash_min to app_header. */
-    uint32_t pre_size = (uint32_t) ((const uint8_t *) app_header -
-            (const uint8_t *) flash_min);
+    uint32_t pre_size = (uint32_t) ((const uint8_t *) app_header - (const uint8_t *) flash_min);
 
     uint32_t checksum[BOOTLOADER_CHECKSUM_COUNT];
     memset(checksum, 0, sizeof(checksum));
 
-    BootloaderDriver_checksum_data(flash_min, pre_size, checksum);
+    _openlcb_driver->compute_checksum(flash_min, pre_size, checksum);
 
     if (memcmp(header_copy.checksum_pre, checksum, sizeof(checksum)) != 0) {
 
@@ -91,10 +92,7 @@ bool Bootloader_check_application_checksum(void) {
     }
 
     memset(checksum, 0, sizeof(checksum));
-    BootloaderDriver_checksum_data(
-            (const uint8_t *) app_header + sizeof(bootloader_app_header_t),
-            post_size,
-            checksum);
+    _openlcb_driver->compute_checksum((const uint8_t *) app_header + sizeof(bootloader_app_header_t), post_size, checksum);
 
     if (memcmp(header_copy.checksum_post, checksum, sizeof(checksum)) != 0) {
 
@@ -110,19 +108,21 @@ bool Bootloader_check_application_checksum(void) {
 /* Public API                                                              */
 /* ====================================================================== */
 
-bool Bootloader_init(void) {
+bool Bootloader_init(const bootloader_can_driver_t *can_driver, const bootloader_openlcb_driver_t *openlcb_driver) {
 
-    bool request = BootloaderDriver_request_bootloader();
-    BootloaderDriver_led(BOOTLOADER_LED_REQUEST, request);
+    _openlcb_driver = openlcb_driver;
+
+    bool request = openlcb_driver->is_bootloader_requested();
+    openlcb_driver->set_status_led(BOOTLOADER_LED_REQUEST, request);
 
     if (!request) {
 
-        bool csum_ok = Bootloader_check_application_checksum();
-        BootloaderDriver_led(BOOTLOADER_LED_CSUM_ERROR, !csum_ok);
+        bool csum_ok = _check_application_checksum();
+        openlcb_driver->set_status_led(BOOTLOADER_LED_CSUM_ERROR, !csum_ok);
 
         if (csum_ok) {
 
-            BootloaderDriver_application_entry();
+            openlcb_driver->jump_to_application();
             return true;
 
         }
@@ -130,7 +130,8 @@ bool Bootloader_init(void) {
     }
 
     memset(&bootloader_state, 0, sizeof(bootloader_state));
-    BootloaderTransport_init();
+    BootloaderCanSM_init(can_driver, openlcb_driver);
+    BootloaderOpenlcbSM_init(openlcb_driver);
 
     return false;
 
@@ -138,28 +139,26 @@ bool Bootloader_init(void) {
 
 bool Bootloader_loop(void) {
 
-    BootloaderTransport_loop();
+    BootloaderCanSM_loop();
 
-    if (bootloader_state.request_reset && BootloaderTransport_is_initialized()) {
+    if (bootloader_state.request_reset && BootloaderCanSM_is_initialized()) {
 
-        BootloaderDriver_reboot();
+        _openlcb_driver->reboot();
         return true;
 
     }
 
-    BootloaderDriver_led(BOOTLOADER_LED_ACTIVE,
-            !BootloaderTransport_is_initialized());
+    _openlcb_driver->set_status_led(BOOTLOADER_LED_ACTIVE, !BootloaderCanSM_is_initialized());
 
     return false;
 
 }
 
-void Bootloader_entry(void) {
+void Bootloader_entry(const bootloader_can_driver_t *can_driver, const bootloader_openlcb_driver_t *openlcb_driver) {
 
-    BootloaderDriver_hw_set_to_safe();
-    BootloaderDriver_hw_init();
+    openlcb_driver->initialize_hardware();
 
-    if (Bootloader_init()) { return; }
+    if (Bootloader_init(can_driver, openlcb_driver)) { return; }
 
     while (true) {
 

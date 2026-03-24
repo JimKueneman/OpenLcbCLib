@@ -24,7 +24,7 @@ TEST(BootloaderInit, bootloader_requested_enters_bootloader) {
     mock_reset();
     mock_request_bootloader = true;
 
-    bool result = Bootloader_init();
+    bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
     EXPECT_FALSE(result);
     EXPECT_FALSE(mock_application_entered);
 
@@ -58,7 +58,7 @@ TEST(BootloaderInit, valid_checksum_enters_application) {
     header->checksum_post[2] = post_crc[2];
     header->checksum_post[3] = 0;
 
-    bool result = Bootloader_init();
+    bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
     EXPECT_TRUE(result);
     EXPECT_TRUE(mock_application_entered);
 
@@ -70,7 +70,7 @@ TEST(BootloaderInit, invalid_checksum_enters_bootloader) {
     mock_request_bootloader = false;
 
     /* Flash is all 0xFF — app_header has wrong checksums. */
-    bool result = Bootloader_init();
+    bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
     EXPECT_FALSE(result);
     EXPECT_FALSE(mock_application_entered);
     EXPECT_TRUE(mock_led_state & BOOTLOADER_LED_CSUM_ERROR);
@@ -81,9 +81,9 @@ TEST(BootloaderLoop, reset_request_causes_reboot) {
 
     mock_reset();
     mock_request_bootloader = true;
-    Bootloader_init();
+    Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
-    /* Run transport loops until initialized (alias negotiation).
+    /* Run loops until initialized (alias negotiation).
      * Advance mock timer to satisfy the 200 ms wait after CID4. */
     for (int i = 0; i < 20; i++) {
 

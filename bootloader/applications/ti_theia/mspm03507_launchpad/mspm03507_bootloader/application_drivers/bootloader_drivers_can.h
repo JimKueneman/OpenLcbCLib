@@ -24,56 +24,56 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @file bootloader_can_driver.h
+ * @file bootloader_drivers_can.h
  *
- * CAN-specific hardware driver interface. These extern functions are
- * implemented in application_drivers/ alongside the BootloaderDriver_*
- * functions. Only used by the CAN transport layer (bootloader_can.c).
+ * MSPM0G3507 CAN physical-layer driver for the standalone bootloader.
+ * Provides the platform-specific MCAN read/write functions that satisfy
+ * the bootloader_can_driver_t DI interface.
  *
  * @author Jim Kueneman
  * @date 23 Mar 2026
  */
 
-#ifndef __BOOTLOADER_LIB_DRIVERS_CANBUS_BOOTLOADER_CAN_DRIVER__
-#define __BOOTLOADER_LIB_DRIVERS_CANBUS_BOOTLOADER_CAN_DRIVER__
+#ifndef __MSPM03507_BOOTLOADER_DRIVERS_CAN__
+#define __MSPM03507_BOOTLOADER_DRIVERS_CAN__
 
-#include <stdint.h>
-#include <stdbool.h>
-
-#include "bootloader_can.h"
+#include "../src/openlcb/bootloader_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
     /**
-     *     Polls for an incoming CAN frame.
+     *     Polls the MCAN RX FIFO 1 for a received CAN frame.  If a frame is
+     *     available it is copied into the caller's struct and the FIFO read
+     *     index is acknowledged.
      *
-     *     @param frame will be loaded with the incoming frame
-     *     @return true if a frame was received, false if no frame available
+     *     @param frame  output struct populated on success
+     *     @return true if a frame was read, false if the FIFO was empty
      */
-    extern bool BootloaderCanDriver_read_can_frame(bootloader_can_frame_t *frame);
+    extern bool BootloaderDriversCan_read_received_frame(bootloader_can_frame_t *frame);
 
     /**
-     *     Attempts to send a CAN frame.
+     *     Attempts to transmit a CAN frame through the MCAN TX buffer.
+     *     Uses buffer 0 if free, falls back to buffer 1, or returns false
+     *     when both buffers are pending.
      *
-     *     @param frame the frame to send
-     *     @return true if sent, false if the TX buffer is busy (retry later)
+     *     @param frame  frame to transmit
+     *     @return true if the frame was queued, false if no TX buffer was free
      */
-    extern bool BootloaderCanDriver_try_send_can_frame(const bootloader_can_frame_t *frame);
+    extern bool BootloaderDriversCan_try_send_frame(const bootloader_can_frame_t *frame);
 
     /**
-     *     Returns a suggested CAN alias for this node.
+     *     Returns the pre-assigned CAN alias for this node.  Returns 0
+     *     to let the CAN transport layer generate its own alias during
+     *     initialization.
      *
-     *     If the application saved its alias before rebooting into the
-     *     bootloader, return that alias here for seamless handoff.
-     *
-     *     @return suggested 12-bit alias, or 0 to auto-generate from node ID
+     *     @return 12-bit alias, or 0 for auto-generation
      */
-    extern uint16_t BootloaderCanDriver_node_alias(void);
+    extern uint16_t BootloaderDriversCan_get_cached_alias_passed_from_application(void);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __BOOTLOADER_LIB_DRIVERS_CANBUS_BOOTLOADER_CAN_DRIVER__ */
+#endif /* __MSPM03507_BOOTLOADER_DRIVERS_CAN__ */

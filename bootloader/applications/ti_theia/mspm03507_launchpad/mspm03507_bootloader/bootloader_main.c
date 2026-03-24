@@ -27,16 +27,49 @@
  * @file bootloader_main.c
  *
  * Entry point for the MSPM0G3507 standalone bootloader.
+ * Wires the platform-specific driver functions into the DI structs and
+ * hands them to the bootloader entry point.
  *
  * @author Jim Kueneman
  * @date 23 Mar 2026
  */
 
 #include "src/openlcb/bootloader.h"
+#include "application_drivers/bootloader_drivers_can.h"
+#include "application_drivers/bootloader_drivers_openlcb.h"
+/* #include "application_drivers/uart_debug.h" */
 
 int main(void) {
 
-    Bootloader_entry();
+    const bootloader_can_driver_t can_driver = {
+
+        .read_received_frame = BootloaderDriversCan_read_received_frame,
+        .try_send_frame = BootloaderDriversCan_try_send_frame,
+        .get_cached_alias = BootloaderDriversCan_get_cached_alias_passed_from_application
+
+    };
+
+    const bootloader_openlcb_driver_t openlcb_driver = {
+
+        .get_persistent_node_id = BootloaderDriversOpenlcb_get_persistent_node_id,
+        .get_100ms_timer_tick = BootloaderDriversOpenlcb_get_100ms_timer_tick,
+        .set_status_led = BootloaderDriversOpenlcb_set_status_led,
+        .is_bootloader_requested = BootloaderDriversOpenlcb_is_bootloader_requested,
+        .jump_to_application = BootloaderDriversOpenlcb_jump_to_application,
+        .reboot = BootloaderDriversOpenlcb_reboot,
+        .initialize_hardware = BootloaderDriversOpenlcb_initialize_hardware,
+        .get_flash_boundaries = BootloaderDriversOpenlcb_get_flash_boundaries,
+        .get_flash_page_info = BootloaderDriversOpenlcb_get_flash_page_info,
+        .erase_flash_page = BootloaderDriversOpenlcb_erase_flash_page,
+        .write_flash = BootloaderDriversOpenlcb_write_flash,
+        .finalize_flash = BootloaderDriversOpenlcb_finalize_flash,
+        .compute_checksum = BootloaderDriversOpenlcb_compute_checksum
+
+    };
+
+    BootloaderDriversOpenlcb_initialize_hardware();
+
+    Bootloader_entry(&can_driver, &openlcb_driver);
 
     return 0;
 

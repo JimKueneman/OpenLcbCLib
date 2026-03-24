@@ -39,22 +39,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "../../openlcb/bootloader_types.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-    /* ================================================================== */
-    /* CAN frame type                                                      */
-    /* ================================================================== */
-
-    /** Minimal CAN frame structure. Bit 31 of can_id = EFF flag. */
-    typedef struct {
-
-        uint32_t can_id;
-        uint8_t can_dlc;
-        uint8_t data[8];
-
-    } bootloader_can_frame_t;
 
     /* ================================================================== */
     /* CAN ID field constants (names from openlcb_defines.h)               */
