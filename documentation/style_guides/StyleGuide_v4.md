@@ -34,6 +34,8 @@ Doxygen blocks are always indented 4 spaces more than the code they document.  F
 
 **Line Length**
 
+Do not break a line prematurely if the content fits within 160 characters. Use the available width before wrapping.
+
 Any function that has a large number or long identifier names shall be split up using these rules:
 
 1) If the line is longer than 160 characters (converting tabs equivalent number of space in the count) do the following
