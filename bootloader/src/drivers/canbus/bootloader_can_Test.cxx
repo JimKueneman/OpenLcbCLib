@@ -24,7 +24,7 @@ extern "C" {
 static void _run_until_initialized(void) {
 
     mock_reset();
-    mock_request_bootloader = true;
+    mock_request_bootloader = BOOTLOADER_REQUESTED_BY_BUTTON;
     Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
     for (int i = 0; i < 20; i++) {
@@ -53,7 +53,7 @@ TEST(BootloaderCan, init_uses_provided_alias) {
 
     mock_reset();
     mock_alias = 0x456;
-    mock_request_bootloader = true;
+    mock_request_bootloader = BOOTLOADER_REQUESTED_BY_BUTTON;
     Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
     for (int i = 0; i < 20; i++) {
@@ -71,7 +71,7 @@ TEST(BootloaderCan, init_auto_generates_alias) {
 
     mock_reset();
     mock_alias = 0;  /* Force auto-generation. */
-    mock_request_bootloader = true;
+    mock_request_bootloader = BOOTLOADER_REQUESTED_BY_BUTTON;
     Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
     for (int i = 0; i < 20; i++) {
@@ -89,8 +89,8 @@ TEST(BootloaderCan, init_auto_generates_alias) {
 TEST(BootloaderCan, init_sends_cid_rid_amd_init_complete) {
 
     mock_reset();
-    mock_alias = 0x123;
-    mock_request_bootloader = true;
+    mock_alias = 0;
+    mock_request_bootloader = BOOTLOADER_REQUESTED_BY_BUTTON;
     Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
     for (int i = 0; i < 20; i++) {

@@ -46,7 +46,9 @@ main.c
           BootloaderRx_init(can_driver)
           BootloaderTx_init(can_driver)
           BootloaderOpenlcbSM_init(openlcb_driver)
-        Check: is_bootloader_requested? checksum valid? -> run or jump to app
+        Check: is_bootloader_requested? checksum valid? (or NO_CHECKSUM bypass?)
+        Check: flash_min[0] != 0xFFFFFFFF? -> cleanup_before_handoff() -> jump to app
+        Otherwise: -> bootloader mode (hardware untouched)
 
       Bootloader_loop()  [called forever]
         BootloaderCanSM_loop()
@@ -258,7 +260,7 @@ Used by CAN SM, OpenLCB SM, and bootloader.c.
 | `get_100ms_timer_tick` | `uint8_t (*)(void)` | Monotonic 100ms tick counter |
 | `set_status_led` | `void (*)(led_enum, bool)` | Control status LEDs |
 | `is_bootloader_requested` | `bool (*)(void)` | Check if bootloader entry was requested |
-| `jump_to_application` | `void (*)(void)` | Jump to application code |
+| `jump_to_application` | `void (*)(void)` | Jump to application code — library has already checked flash_min[0] != 0xFFFFFFFF and called cleanup_before_handoff() before this call; driver does not need to re-check for erased flash |
 | `reboot` | `void (*)(void)` | Reset the processor |
 | `initialize_hardware` | `void (*)(void)` | Reset peripherals and initialize hardware |
 | `get_flash_boundaries` | `void (*)(...)` | Return app flash min/max and header pointer |
@@ -334,7 +336,7 @@ else" for format 1 frames.
 | Aspect | Main Library | Bootloader |
 |---|---|---|
 | Inter-module coupling | DI structs (function pointers) wired in `openlcb_config.c` | Direct `#include` and function calls between protocol modules |
-| Feature flags | `OPENLCB_COMPILE_*` ifdefs | None — bootloader has no conditional compilation |
+| Feature flags | `OPENLCB_COMPILE_*` ifdefs | `NO_CHECKSUM` — bypasses checksum validation (define in `bootloader_types.h`) |
 | Hardware abstraction | DI structs | DI structs (same pattern) |
 | Code priority | Flexibility, extensibility | Minimal code size, clarity |
 | Buffer strategy | Dispatcher queues, sibling dispatch | Circular buffer (non-datagram) + single assembly buffer (datagrams) |

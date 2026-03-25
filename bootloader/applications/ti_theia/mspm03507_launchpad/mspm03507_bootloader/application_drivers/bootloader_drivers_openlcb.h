@@ -44,15 +44,31 @@ extern "C" {
 #endif /* __cplusplus */
 
     /* ================================================================== */
+    /* User configuration                                                  */
+    /* ================================================================== */
+
+    /**
+     *     To bypass checksum validation, uncomment NO_CHECKSUM in
+     *     bootloader_types.h.  That header is included by all library
+     *     files, so a single edit enables the bypass everywhere.
+     *
+     *     Alternatively, define it here or as a compiler flag
+     *     (-D NO_CHECKSUM) — but note that defining it only here affects
+     *     only this driver file; bootloader_types.h is the recommended
+     *     location so that bootloader.c also sees the flag.
+     */
+    /* #define NO_CHECKSUM */
+
+    /* ================================================================== */
     /* Flash memory layout                                                 */
     /* ================================================================== */
 
-    /** Bootloader occupies the first 16KB of flash. */
+    /** Bootloader occupies the first 15KB of flash. */
     #define BOOTLOADER_FLASH_START     0x00000000U
-    #define BOOTLOADER_FLASH_SIZE      0x00004000U
+    #define BOOTLOADER_FLASH_SIZE      0x00003C00U
 
-    /** Application region: 16KB to 127KB. */
-    #define APP_FLASH_START            0x00004000U
+    /** Application region: 15KB to 127KB. */
+    #define APP_FLASH_START            0x00003C00U
     #define APP_FLASH_END              0x0001FBFFU
 
     /** Node ID stored in the last 1KB sector of main flash (production-programmed). */
@@ -102,11 +118,13 @@ extern "C" {
     extern void BootloaderDriversOpenlcb_initialize_hardware(void);
 
     /**
-     *     Reads the bootloader-request button (PB21, active low).
+     *     Checks whether the bootloader should stay in bootloader mode.
      *
-     *     @return true if the button is pressed (bootloader requested)
+     *     @return BOOTLOADER_NOT_REQUESTED      — normal boot
+     *             BOOTLOADER_REQUESTED_BY_APP    — app set magic flag
+     *             BOOTLOADER_REQUESTED_BY_BUTTON — hardware button held
      */
-    extern bool BootloaderDriversOpenlcb_is_bootloader_requested(void);
+    extern bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void);
 
     /**
      *     Disables interrupts, relocates the vector table to the application
@@ -119,6 +137,13 @@ extern "C" {
      *     Triggers an NVIC system reset.  Does not return.
      */
     extern void BootloaderDriversOpenlcb_reboot(void);
+
+    /**
+     *     @brief Tears down all peripherals and ARM core state before handing off to the other binary.
+     *
+     *     @details On MSPM0 this stops SysTick, disables and clears all NVIC interrupts, and resets the MCAN peripheral.
+     */
+    extern void BootloaderDriversOpenlcb_cleanup_before_handoff(void);
 
     /* ================================================================== */
     /* Flash operations                                                    */

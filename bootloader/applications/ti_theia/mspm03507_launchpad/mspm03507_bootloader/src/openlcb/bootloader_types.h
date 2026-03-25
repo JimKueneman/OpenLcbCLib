@@ -42,6 +42,21 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/* ================================================================== */
+    /* Feature flags — uncomment to disable optional features             */
+    /* ================================================================== */
+
+    /**
+     *     Uncomment NO_CHECKSUM to bypass application image checksum
+     *     validation — both at boot time and after a firmware write.
+     *
+     *     WARNING: The bootloader will jump to any image in flash without
+     *     verifying it is valid.  Use only during development or on
+     *     platforms where the post-link checksum tool has not yet been
+     *     integrated.
+     */
+     #define NO_CHECKSUM 
+
     /* ================================================================== */
     /* CAN frame type                                                      */
     /* ================================================================== */
@@ -96,6 +111,32 @@ extern "C" {
     } bootloader_led_enum;
 
     /* ================================================================== */
+    /* Bootloader request reason (returned by is_bootloader_requested)     */
+    /* ================================================================== */
+
+    /**
+     *     Why the bootloader should stay in bootloader mode (or not).
+     *
+     *     NOT_REQUESTED     — normal boot, jump to application if valid.
+     *     REQUESTED_BY_APP  — the application set the magic value and reset.
+     *                         The CT already sent Freeze, so the bootloader
+     *                         starts with firmware_active = 1 (transfer in
+     *                         progress) and the CT does not need to send
+     *                         Freeze again.
+     *     REQUESTED_BY_BUTTON — the user held a hardware button at power-on.
+     *                         The bootloader starts as a normal node with
+     *                         firmware_active = 0.  The CT must send Freeze
+     *                         before it can transfer firmware.
+     */
+    typedef enum {
+
+        BOOTLOADER_NOT_REQUESTED      = 0,
+        BOOTLOADER_REQUESTED_BY_APP   = 1,
+        BOOTLOADER_REQUESTED_BY_BUTTON = 2
+
+    } bootloader_request_t;
+
+    /* ================================================================== */
     /* Forward declarations and typedefs for DI struct parameters          */
     /* ================================================================== */
 
@@ -123,7 +164,7 @@ extern "C" {
         uint64_t (*get_persistent_node_id)(void);
         uint8_t (*get_100ms_timer_tick)(void);
         void (*set_status_led)(bootloader_led_enum led, bool state);
-        bool (*is_bootloader_requested)(void);
+        bootloader_request_t (*is_bootloader_requested)(void);
         void (*jump_to_application)(void);
         void (*reboot)(void);
         void (*initialize_hardware)(void);
@@ -133,6 +174,9 @@ extern "C" {
         uint16_t (*write_flash)(const void *address, const void *data, uint32_t size_bytes);
         uint16_t (*finalize_flash)(compute_checksum_func_t compute_checksum_helper);
         compute_checksum_func_t compute_checksum;
+
+        /** @brief Tear down all peripherals and core state before handing off to the other binary. */
+        void (*cleanup_before_handoff)(void);
 
     } bootloader_openlcb_driver_t;
 
@@ -243,8 +287,11 @@ extern "C" {
         unsigned request_reset : 1;
         unsigned firmware_active : 1;
 
-        /** Write buffer for accumulating firmware data from datagrams. */
-        uint8_t write_buffer[BOOTLOADER_WRITE_BUFFER_SIZE];
+        /** Write buffer for accumulating firmware data from datagrams.
+         * Must be 8-byte aligned because the flash programming API
+         * (DL_FlashCTL_programMemoryFromRAM64WithECCGenerated) reads
+         * the source data as 64-bit words via a uint32_t* pointer. */
+        uint8_t write_buffer[BOOTLOADER_WRITE_BUFFER_SIZE] __attribute__((aligned(8)));
         uint32_t write_buffer_offset;
         uint16_t write_buffer_index;
 
@@ -259,6 +306,29 @@ extern "C" {
 
     /** Global bootloader state. */
     extern bootloader_state_t bootloader_state;
+
+    /* ================================================================== */
+    /* Application-to-bootloader drop-back ("magic value" handshake)       */
+    /* ================================================================== */
+
+    /*
+     * The shared RAM definitions (BOOTLOADER_REQUEST_MAGIC, bootloader_request_flag,
+     * bootloader_cached_alias) live in a standalone header/source pair:
+     *
+     *   shared/bootloader_shared_ram.h  — #define and extern declarations
+     *   shared/bootloader_shared_ram.c  — variable definitions with .noinit attr
+     *
+     * The application includes bootloader_shared_ram.h directly (no need to
+     * pull in all of bootloader_types.h).  The bootloader project should also
+     * add the shared/ folder to its include path so that any source file that
+     * needs the magic value or shared variables can include it.
+     *
+     * Both projects compile bootloader_shared_ram.c and both linker scripts
+     * map .noinit to the same fixed SRAM address (SHARED_NOINIT) so the two
+     * binaries see the same physical memory.
+     *
+     * Test builds define these symbols in bootloader_test_mocks.c instead.
+     */
 
 #ifdef __cplusplus
 }

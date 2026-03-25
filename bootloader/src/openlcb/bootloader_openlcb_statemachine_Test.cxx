@@ -25,7 +25,7 @@ extern "C" {
 static void _init_bootloader(void) {
 
     mock_reset();
-    mock_request_bootloader = true;
+    mock_request_bootloader = BOOTLOADER_REQUESTED_BY_BUTTON;
     Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
     for (int i = 0; i < 20; i++) {

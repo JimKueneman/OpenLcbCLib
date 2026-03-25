@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bootloader — Code Path Reference</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+    }
+
+    /* ── PAGE HEADER ──────────────────────────────────────── */
+    #page-header {
+      background: linear-gradient(135deg, #161b22 0%, #1c2128 100%);
+      border-bottom: 1px solid #30363d;
+      padding: 22px 40px 18px;
+    }
+    #page-header h1 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #58a6ff;
+      margin-bottom: 4px;
+    }
+    #page-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #e6edf3;
+    }
+
+    /* ── TOOLBAR ────────────────────────────────────────────── */
+    #toolbar {
+      display: flex;
+      gap: 6px;
+      padding: 10px 40px;
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+      letter-spacing: .03em;
+    }
+    .tab-btn:hover {
+      background: #2d333b;
+      color: #c9d1d9;
+    }
+    .tab-btn.active {
+      background: #1a3c5c;
+      border-color: #58a6ff;
+      color: #79c0ff;
+    }
+
+    /* ── PANEL SUBTITLE ─────────────────────────────────────── */
+    #panel-subtitle {
+      padding: 8px 40px;
+      background: #161b22;
+      font-size: 13px;
+      color: #8b949e;
+      border-bottom: 1px solid #21262d;
+      min-height: 36px;
+    }
+    #panel-subtitle strong { color: #c9d1d9; }
+
+    /* ── LEGEND ─────────────────────────────────────────────── */
+    #legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 22px;
+      padding: 12px 40px;
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #8b949e;
+    }
+    .legend-swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      border: 2px solid transparent;
+      flex-shrink: 0;
+    }
+    .legend-swatch.process   { background:#0d2137; border-color:#58a6ff; }
+    .legend-swatch.state     { background:#0d2b1a; border-color:#3fb950; }
+    .legend-swatch.decision  { background:#2b2000; border-color:#e3b341; }
+    .legend-swatch.di-inline { background:#2b1400; border-color:#f0883e; }
+    .legend-swatch.di-call   { background:#1e1100; border-color:#f0883e; border-style:dashed; }
+    .legend-swatch.bypass    { background:#1a1a1a; border-color:#484f58; border-style:dashed; }
+
+    /* ── HINT BAR ────────────────────────────────────────────── */
+    #hint-bar {
+      padding: 7px 40px;
+      background: #161b22;
+      font-size: 12px;
+      color: #6e7681;
+      border-bottom: 1px solid #21262d;
+    }
+    #hint-bar span { color: #58a6ff; }
+
+    /* ── DIAGRAM WRAPPER ─────────────────────────────────────── */
+    #diagram-wrapper {
+      overflow-x: auto;
+      padding: 30px 40px 60px;
+    }
+    #diagram-container {
+      position: relative;
+    }
+
+    /* ── FLOW NODE BASE ──────────────────────────────────────── */
+    .flow-node {
+      position: absolute;
+      border-radius: 6px;
+      border: 1.5px solid #30363d;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.1s;
+      overflow: hidden;
+      user-select: none;
+    }
+    .flow-node:hover {
+      filter: brightness(1.18);
+      transform: translateY(-1px);
+    }
+    .flow-node.active-node {
+      box-shadow: 0 0 0 2.5px #58a6ff;
+    }
+
+    .node-header {
+      padding: 5px 10px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .node-body { padding: 7px 10px 8px; }
+    .node-label {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+      white-space: pre-line;
+    }
+    .node-sublabel {
+      font-size: 10.5px;
+      color: #8b949e;
+      margin-top: 3px;
+      line-height: 1.4;
+      font-family: 'Courier New', monospace;
+      white-space: pre-line;
+    }
+
+    /* ── NODE TYPE COLOURS ───────────────────────────────────── */
+    .node-type-start, .node-type-end_wait {
+      background: #161b22; border-color: #6e7681;
+    }
+    .node-type-start .node-header, .node-type-end_wait .node-header {
+      background: #21262d; color: #c9d1d9;
+    }
+
+    .node-type-process { background: #0d2137; border-color: #58a6ff; }
+    .node-type-process .node-header { background: #1a3c5c; color: #79c0ff; }
+
+    .node-type-state { background: #0d2b1a; border-color: #3fb950; }
+    .node-type-state .node-header { background: #163b22; color: #56d364; }
+
+    .node-type-decision { background: #2b2000; border-color: #e3b341; }
+    .node-type-decision .node-header { background: #3b2c00; color: #f0c040; }
+
+    .node-type-di_inline {
+      background: #2b1400; border-color: #f0883e;
+      border-style: dashed; border-width: 2px;
+    }
+    .node-type-di_inline .node-header { background: #3d1e00; color: #ffa657; }
+
+    .node-type-loop { background: #1e1030; border-color: #a371f7; }
+    .node-type-loop .node-header { background: #2d1854; color: #d2a8ff; }
+
+    .node-type-app_node { background: #0d2137; border-color: #58a6ff; }
+    .node-type-app_node .node-header { background: #1a3c5c; color: #79c0ff; }
+
+    .node-type-bl_node { background: #0d2b1a; border-color: #3fb950; }
+    .node-type-bl_node .node-header { background: #163b22; color: #56d364; }
+
+    /* ── DI CALLOUT NODES ────────────────────────────────────── */
+    .di-node {
+      position: absolute;
+      border-radius: 6px;
+      border: 2px dashed #f0883e;
+      background: #1e1000;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.1s;
+      overflow: hidden;
+      user-select: none;
+    }
+    .di-node:hover { filter: brightness(1.2); transform: translateY(-1px); }
+    .di-node.bypass-node { border-color: #484f58; background: #161b22; opacity: 0.72; }
+    .di-node.active-node { box-shadow: 0 0 0 2.5px #f0883e; }
+
+    .di-header {
+      background: #2d1800;
+      padding: 4px 8px;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #ffa657;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .di-node.bypass-node .di-header { background: #21262d; color: #6e7681; }
+    .di-header-badges { display: flex; gap: 5px; align-items: center; }
+    .badge {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 10px;
+      letter-spacing: .05em;
+    }
+    .badge-nullable { background: #2d3a00; color: #9be928; border: 1px solid #4d6600; }
+    .badge-required { background: #3a0000; color: #ff7b72; border: 1px solid #6a0000; }
+    .badge-notaken  { background: #21262d; color: #6e7681; border: 1px solid #30363d; }
+    .badge-struct   { background: #0d2137; color: #79c0ff; border: 1px solid #1e4060; font-family: monospace; }
+
+    .di-body { padding: 6px 9px 7px; }
+    .di-label {
+      font-size: 12.5px; font-weight: 700;
+      color: #ffa657; font-family: 'Courier New', monospace;
+    }
+    .di-node.bypass-node .di-label { color: #6e7681; }
+    .di-sig {
+      font-size: 9.5px; color: #6e7681;
+      margin-top: 3px; font-family: 'Courier New', monospace;
+      line-height: 1.4; word-break: break-all;
+    }
+    .di-result {
+      font-size: 10px; color: #3fb950;
+      margin-top: 2px; font-family: 'Courier New', monospace;
+    }
+
+    /* ── DETAIL PANEL ────────────────────────────────────────── */
+    #detail-panel {
+      position: fixed;
+      right: 0; top: 0; bottom: 0;
+      width: 400px;
+      background: #161b22;
+      border-left: 1px solid #30363d;
+      box-shadow: -4px 0 20px rgba(0,0,0,.5);
+      transform: translateX(100%);
+      transition: transform .25s ease;
+      overflow-y: auto;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+    #detail-panel.open { transform: translateX(0); }
+    #detail-panel-header {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid #30363d;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky; top: 0;
+      background: #161b22;
+    }
+    #detail-title {
+      font-size: 15px; font-weight: 700;
+      color: #e6edf3;
+      font-family: 'Courier New', monospace;
+      line-height: 1.3;
+    }
+    #detail-close {
+      background: none;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      cursor: pointer;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    #detail-close:hover { background: #21262d; color: #e6edf3; }
+    #detail-body { padding: 16px; flex: 1; }
+    .detail-section { margin-bottom: 18px; }
+    .detail-section-title {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: #6e7681; margin-bottom: 6px;
+    }
+    .detail-section p, .detail-section .detail-text {
+      font-size: 13px; color: #c9d1d9; line-height: 1.65;
+    }
+    .detail-code {
+      background: #0d1117; border: 1px solid #30363d;
+      border-radius: 4px; padding: 8px 10px;
+      font-size: 11.5px; font-family: 'Courier New', monospace;
+      color: #79c0ff; margin-top: 4px; word-break: break-all;
+    }
+    .detail-tag {
+      display: inline-block; padding: 2px 8px;
+      border-radius: 10px; font-size: 11px;
+      font-weight: 600; margin-top: 4px;
+    }
+    .detail-tag.nullable { background: #2d3a00; color: #9be928; }
+    .detail-tag.required { background: #3a0000; color: #ff7b72; }
+    .detail-tag.notaken  { background: #21262d; color: #6e7681; }
+
+    /* ── SVG OVERLAY ─────────────────────────────────────────── */
+    #svg-overlay {
+      position: absolute; top: 0; left: 0;
+      pointer-events: none; overflow: visible;
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="page-header">
+  <h1>OpenLCB Bootloader — Code Path Reference</h1>
+  <h2>Interactive Diagram</h2>
+</div>
+
+<div id="toolbar">
+  <button class="tab-btn active" data-panel="cold-no-app">Cold Boot · No App Image</button>
+  <button class="tab-btn"        data-panel="cold-load-app">Cold Boot · Load App</button>
+  <button class="tab-btn"        data-panel="enter-from-app">Enter Bootloader from App</button>
+</div>
+
+<div id="panel-subtitle">
+  <strong>Cold Boot · No Application Image</strong> —
+  Traces execution from hardware reset through CAN alias negotiation to the point where
+  the node is active and awaiting a Freeze command from a Configuration Tool.
+</div>
+
+<div id="legend">
+  <div class="legend-item"><div class="legend-swatch process"></div>Library process / function call</div>
+  <div class="legend-item"><div class="legend-swatch state"></div>Stable state</div>
+  <div class="legend-item"><div class="legend-swatch decision"></div>Decision / branch</div>
+  <div class="legend-item"><div class="legend-swatch di-inline"></div>DI callout — inline in flow</div>
+  <div class="legend-item"><div class="legend-swatch di-call"></div>DI callout — helper (off to side)</div>
+  <div class="legend-item"><div class="legend-swatch bypass"></div>DI callout — path NOT taken (shown for context)</div>
+</div>
+
+<div id="hint-bar">
+  <span>Click any block</span> for full description, function signature, and implementer notes.
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  Orange dashed blocks are your responsibility — the library calls through these pointers.
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  Gray dashed blocks show paths that exist but are not taken on this scenario.
+</div>
+
+<div id="diagram-wrapper">
+  <div id="diagram-container"></div>
+</div>
+
+<div id="detail-panel">
+  <div id="detail-panel-header">
+    <div id="detail-title">—</div>
+    <button id="detail-close">✕</button>
+  </div>
+  <div id="detail-body"></div>
+</div>
+
+<script src="bootloader_diagram_shared.js"></script>
+<script src="cold_boot_no_app.js"></script>
+<script src="cold_boot_load_app.js"></script>
+<script src="enter_bootloader_from_app.js"></script>
+
+<script>
+'use strict';
+
+/* ── Panel metadata ─────────────────────────────────────────────────── */
+const PANELS = {
+  'cold-no-app': {
+    render:   container => renderPanel_ColdBootNoApp(container),
+    subtitle: '<strong>Cold Boot \u00b7 No Application Image</strong> \u2014 ' +
+              'Traces execution from hardware reset through CAN alias negotiation to the point where ' +
+              'the node is active and awaiting a Freeze command from a Configuration Tool.',
+  },
+  'cold-load-app': {
+    render:   container => renderPanel_ColdBootLoadApp(container),
+    subtitle: '<strong>Cold Boot \u00b7 Load Application</strong> \u2014 ' +
+              'Traces checksum validation, jump_to_application(), and VTOR/MSP handoff to the app image.',
+  },
+  'enter-from-app': {
+    render:   container => renderPanel_EnterFromApp(container),
+    subtitle: '<strong>Enter Bootloader from Application</strong> \u2014 ' +
+              'Shows the two-binary handshake: app writes magic + alias to .noinit SRAM, triggers software reset, ' +
+              'bootloader reads them back and enters transfer mode immediately.',
+  },
+};
+
+let activePanel = 'cold-no-app';
+
+function switchPanel(panelId) {
+  if (panelId === activePanel) return;
+  activePanel = panelId;
+
+  /* Persist across refreshes */
+  localStorage.setItem('bootloader_active_panel', panelId);
+
+  /* Update toolbar */
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.panel === panelId);
+  });
+
+  /* Update subtitle */
+  document.getElementById('panel-subtitle').innerHTML = PANELS[panelId].subtitle;
+
+  /* Close detail panel */
+  closeDetail();
+
+  /* Clear and re-render diagram */
+  const container = document.getElementById('diagram-container');
+  container.innerHTML = '';
+  container.style.width  = '';
+  container.style.height = '';
+  PANELS[panelId].render(container);
+}
+
+/* ── Init ────────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('detail-close').addEventListener('click', closeDetail);
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchPanel(btn.dataset.panel));
+  });
+
+  /* Restore last-viewed panel, falling back to default */
+  const saved = localStorage.getItem('bootloader_active_panel');
+  const initial = (saved && PANELS[saved]) ? saved : 'cold-no-app';
+
+  /* Prime activePanel so switchPanel's early-return doesn't block first render */
+  activePanel = initial;
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.panel === initial);
+  });
+  document.getElementById('panel-subtitle').innerHTML = PANELS[initial].subtitle;
+  const container = document.getElementById('diagram-container');
+  PANELS[initial].render(container);
+});
+</script>
+
+</body>
+</html>

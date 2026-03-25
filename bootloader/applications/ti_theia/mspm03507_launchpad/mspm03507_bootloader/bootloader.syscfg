@@ -5,6 +5,7 @@
  * @v2CliArgs --device "MSPM0G3507" --package "LQFP-64(PM)" --product "mspm0_sdk@2.10.00.04"
  * @versions {"tool":"1.26.2+4477"}
  */
+scripting.excludeFromBuild("device_linker.cmd");
 
 /**
  * Import the modules used in this configuration.
@@ -15,8 +16,6 @@ const MCAN    = scripting.addModule("/ti/driverlib/MCAN", {}, false);
 const MCAN1   = MCAN.addInstance();
 const SYSCTL  = scripting.addModule("/ti/driverlib/SYSCTL");
 const SYSTICK = scripting.addModule("/ti/driverlib/SYSTICK");
-const UART    = scripting.addModule("/ti/driverlib/UART", {}, false);
-const UART1   = UART.addInstance();
 
 /**
  * Write custom configuration values to the imported modules.
@@ -47,7 +46,7 @@ pinFunction4.HFCLKMonitor = true;
 
 GPIO1.$name                         = "GPIO_LEDS";
 GPIO1.port                          = "PORTB";
-GPIO1.associatedPins.create(7);
+GPIO1.associatedPins.create(8);
 GPIO1.associatedPins[0].$name       = "USER_LED_1";
 GPIO1.associatedPins[0].assignedPin = "22";
 GPIO1.associatedPins[1].$name       = "USER_LED_2";
@@ -62,6 +61,9 @@ GPIO1.associatedPins[5].assignedPin = "6";
 GPIO1.associatedPins[5].$name       = "USER_TEST_B6";
 GPIO1.associatedPins[6].$name       = "USER_TEST_B7";
 GPIO1.associatedPins[6].assignedPin = "7";
+GPIO1.associatedPins[7].$name       = "Bootloader_Button";
+GPIO1.associatedPins[7].direction   = "INPUT";
+GPIO1.associatedPins[7].assignedPin = "21";
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
 
@@ -108,13 +110,6 @@ SYSTICK.interruptEnable = true;
 SYSTICK.systickEnable   = true;
 SYSTICK.period          = 4000000;
 
-UART1.$name                    = "UART_0";
-UART1.targetBaudRate           = 115200;
-UART1.peripheral.rxPin.$assign = "PA11";
-UART1.peripheral.txPin.$assign = "PA10";
-UART1.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric2";
-UART1.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric3";
-
 /**
  * Pinmux solution for unlocked pins/peripherals. This ensures that minor changes to the automatic solver in a future
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
@@ -130,7 +125,7 @@ GPIO1.associatedPins[3].pin.$suggestSolution       = "PB16";
 GPIO1.associatedPins[4].pin.$suggestSolution       = "PB0";
 GPIO1.associatedPins[5].pin.$suggestSolution       = "PB6";
 GPIO1.associatedPins[6].pin.$suggestSolution       = "PB7";
+GPIO1.associatedPins[7].pin.$suggestSolution       = "PB21";
 Board.peripheral.$suggestSolution                  = "DEBUGSS";
 Board.peripheral.swclkPin.$suggestSolution         = "PA20";
 Board.peripheral.swdioPin.$suggestSolution         = "PA19";
-UART1.peripheral.$suggestSolution                  = "UART0";

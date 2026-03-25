@@ -184,7 +184,13 @@ static void _handle_init(void) {
 
             if (saved != 0) {
 
+                /* The application was already logged in with this alias.
+                 * Skip the full CID negotiation, 200ms wait, and AMD —
+                 * the alias is still valid and mapped on the bus.  The CT
+                 * that sent Freeze is waiting for Init Complete, so jump
+                 * straight there.  (Sending AMD would confuse the CT.) */
                 _sm.alias = saved;
+                _sm.init_state = INIT_SEND_INIT_COMPLETE;
 
             } else {
 
@@ -197,9 +203,10 @@ static void _handle_init(void) {
 
                 } while (_sm.alias == 0);
 
+                _sm.init_state = INIT_SEND_CID_7;
+
             }
 
-            _sm.init_state = INIT_SEND_CID_7;
             break;
 
         }

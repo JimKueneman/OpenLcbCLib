@@ -52,13 +52,13 @@ cp ../../src/utilities/*.h ../../applications/xcode/BasicNode/openlcb_c_lib/util
 cp ../../src/utilities_pc/*.c ../../applications/xcode/BasicNode/openlcb_c_lib/utilities/
 cp ../../src/utilities_pc/*.h ../../applications/xcode/BasicNode/openlcb_c_lib/utilities/
 
-echo "Updating: ti_thiea/mspm03507_launchpad/BasicNode"
-cp ../../src/openlcb/*.c ../../applications/ti_thiea/mspm03507_launchpad/BasicNode/openlcb_c_lib/openlcb/
-cp ../../src/openlcb/*.h ../../applications/ti_thiea/mspm03507_launchpad/BasicNode/openlcb_c_lib/openlcb/
-cp ../../src/drivers/canbus/*.c ../../applications/ti_thiea/mspm03507_launchpad/BasicNode/openlcb_c_lib/drivers/canbus/
-cp ../../src/drivers/canbus/*.h ../../applications/ti_thiea/mspm03507_launchpad/BasicNode/openlcb_c_lib/drivers/canbus/
-cp ../../src/utilities/*.c ../../applications/ti_thiea/mspm03507_launchpad/BasicNode/openlcb_c_lib/utilities/
-cp ../../src/utilities/*.h ../../applications/ti_thiea/mspm03507_launchpad/BasicNode/openlcb_c_lib/utilities/
+echo "Updating: ti_theia/mspm03507_launchpad/BasicNode"
+cp ../../src/openlcb/*.c ../../applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/openlcb/
+cp ../../src/openlcb/*.h ../../applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/openlcb/
+cp ../../src/drivers/canbus/*.c ../../applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/drivers/canbus/
+cp ../../src/drivers/canbus/*.h ../../applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/drivers/canbus/
+cp ../../src/utilities/*.c ../../applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/utilities/
+cp ../../src/utilities/*.h ../../applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/utilities/
 
 echo "Updating: dspic/BasicNode.X"
 cp ../../src/openlcb/*.c ../../applications/dspic/BasicNode.X/src/openlcb_c_lib/openlcb/
@@ -107,5 +107,13 @@ cp ../../src/drivers/canbus/*.c "../../../LCC Projects/TurnoutBoss2_Firmware/Tur
 cp ../../src/drivers/canbus/*.h "../../../LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon/drivers/canbus/"
 cp ../../src/utilities/*.c "../../../LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon/utilities/"
 cp ../../src/utilities/*.h "../../../LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon/utilities/"
+
+echo "Updating: bootloader/applications/ti_theia/mspm03507_launchpad/BasicNode"
+cp ../../src/openlcb/*.c ../../bootloader/applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/openlcb/
+cp ../../src/openlcb/*.h ../../bootloader/applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/openlcb/
+cp ../../src/drivers/canbus/*.c ../../bootloader/applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/drivers/canbus/
+cp ../../src/drivers/canbus/*.h ../../bootloader/applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/drivers/canbus/
+cp ../../src/utilities/*.c ../../bootloader/applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/utilities/
+cp ../../src/utilities/*.h ../../bootloader/applications/ti_theia/mspm03507_launchpad/BasicNode/openlcb_c_lib/utilities/
 
 echo "Done."

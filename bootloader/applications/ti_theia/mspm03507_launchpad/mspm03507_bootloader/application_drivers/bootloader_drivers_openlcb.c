@@ -39,8 +39,23 @@
 
 #include "../Debug/ti_msp_dl_config.h"
 #include "bootloader_drivers_openlcb.h"
-
+#include "../shared/bootloader_shared_ram.h"
 #include "../src/crc/bootloader_crc.h"
+
+/* ====================================================================== */
+/* Shared RAM flag for app-to-bootloader drop-back                         */
+/* ====================================================================== */
+
+/*
+ * The shared RAM variables (bootloader_request_flag, bootloader_cached_alias)
+ * are defined in ../shared/bootloader_shared_ram.c, which is compiled into
+ * both the bootloader and the application project.  Both linker scripts map
+ * the .noinit section to the same fixed SRAM region (SHARED_NOINIT) so the
+ * two binaries see the same physical addresses.
+ *
+ * See bootloader_shared_ram.c for platform porting notes covering TI CCS,
+ * GCC, IAR, XC16, XC32, ESP-IDF, and Renesas CC-RX.
+ */
 
 /* ====================================================================== */
 /* Lifecycle                                                               */
@@ -48,33 +63,108 @@
 
 void BootloaderDriversOpenlcb_initialize_hardware(void) {
 
+    /*
+     * On a power-on or brown-out reset, SRAM contents are random garbage.
+     * Clear the bootloader request flag so a random value that happens to
+     * match the magic number does not falsely trigger bootloader mode.
+     *
+     * On a software reset (NVIC_SystemReset) the reset cause will be
+     * CPURST_SW_TRIGGERED or SYSRST_SW_TRIGGERED, and SRAM is preserved —
+     * so we leave the flag alone and let is_bootloader_requested() read it.
+     * For every other reset cause (POR, BOR, watchdog, ECC fault, etc.)
+     * SRAM may be garbage, so we clear the flag.
+     *
+     * Platform porting note:
+     *   Every chip has its own reset-cause register.  On dsPIC it is
+     *   RCONbits.POR / RCONbits.BOR.  On STM32 it is RCC->CSR.  Adapt
+     *   this check to whatever your platform provides.
+     */
+    DL_SYSCTL_RESET_CAUSE reset_cause = DL_SYSCTL_getResetCause();
+
+    if (reset_cause != DL_SYSCTL_RESET_CAUSE_CPURST_SW_TRIGGERED && reset_cause != DL_SYSCTL_RESET_CAUSE_SYSRST_SW_TRIGGERED) {
+
+        bootloader_request_flag = 0;
+        bootloader_cached_alias = 0;
+
+    }
+
     __disable_irq();
     SYSCFG_DL_init();
     __enable_irq();
 
 }
 
-bool BootloaderDriversOpenlcb_is_bootloader_requested(void) {
+bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
 
+    /*
+     * Check 1: Did the application ask us to enter bootloader mode?
+     *
+     * The application writes BOOTLOADER_REQUEST_MAGIC into the shared RAM
+     * flag and then calls NVIC_SystemReset().  SRAM survives the soft
+     * reset, so the magic value is still here when we start up.  If we
+     * find it, clear it immediately so the NEXT reset does not falsely
+     * re-enter bootloader mode, then return REQUESTED_BY_APP.
+     *
+     * This tells the library that the CT already sent Freeze to the
+     * application, so the bootloader starts with firmware_active = 1
+     * (PIP reports Firmware Upgrade Active) and the CT can proceed
+     * directly to data transfer without sending Freeze again.
+     */
+    if (bootloader_request_flag == BOOTLOADER_REQUEST_MAGIC) {
+
+        bootloader_request_flag = 0;
+        return BOOTLOADER_REQUESTED_BY_APP;
+
+    }
+
+    /*
+     * Check 2: Is the hardware bootloader button pressed?
+     *
+     * This is the manual fallback — hold the button during power-on to
+     * force bootloader mode even if the application is not running.
+     * The bootloader starts as a normal node (firmware_active = 0)
+     * and the CT must send Freeze before transferring firmware.
+     */
     uint32_t pin_state = DL_GPIO_readPins(BOOTLOADER_BUTTON_PORT, BOOTLOADER_BUTTON_PIN);
 
     if (pin_state == 0) {
 
-        return true;
+        return BOOTLOADER_REQUESTED_BY_BUTTON;
 
     }
 
-    return false;
+    return BOOTLOADER_NOT_REQUESTED;
+
+}
+
+    /**
+     * @brief Tears down all peripherals and ARM core state before handing off to the other binary.
+     *
+     * @details Algorithm:
+     * -# Stop SysTick timer and clear its reload and current value registers
+     * -# Disable all NVIC interrupts and clear all pending interrupt flags
+     * -# Reset the MCAN peripheral to its power-on default configuration
+     */
+void BootloaderDriversOpenlcb_cleanup_before_handoff(void) {
+
+    SysTick->CTRL = 0;
+    SysTick->LOAD = 0;
+    SysTick->VAL  = 0;
+
+    NVIC->ICER[0] = 0xFFFFFFFF;
+    NVIC->ICPR[0] = 0xFFFFFFFF;
+
+    DL_MCAN_reset(MCAN0_INST);
 
 }
 
 void BootloaderDriversOpenlcb_jump_to_application(void) {
 
-    __disable_irq();
-
     uint32_t *app_vectors = (uint32_t *) APP_FLASH_START;
 
     SCB->VTOR = APP_FLASH_START;
+
+    /* Load the application's stack pointer and reset handler, then jump. */
     __set_MSP(app_vectors[0]);
 
     void (*app_reset)(void) = (void (*)(void)) app_vectors[1];
@@ -116,133 +206,98 @@ void BootloaderDriversOpenlcb_get_flash_page_info(const void *address, const voi
 
 uint16_t BootloaderDriversOpenlcb_erase_flash_page(const void *address) {
 
-    // DL_FlashCTL_executeClearStatus(FLASHCTL);
-    // DL_FLASHCTL_COMMAND_STATUS status =
-    //         DL_FlashCTL_eraseMemoryFromRAM(FLASHCTL, (uint32_t) address,
-    //                 DL_FLASHCTL_COMMAND_SIZE_SECTOR);
+    __disable_irq();
 
-    // if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) {
+    DL_FlashCTL_executeClearStatus(FLASHCTL);
+    DL_FlashCTL_unprotectSector(FLASHCTL, (uint32_t) address, DL_FLASHCTL_REGION_SELECT_MAIN);
 
-    //     return ERROR_PERMANENT;
+    DL_FLASHCTL_COMMAND_STATUS status =
+            DL_FlashCTL_eraseMemoryFromRAM(FLASHCTL, (uint32_t) address,
+                    DL_FLASHCTL_COMMAND_SIZE_SECTOR);
 
-    // }
+    if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) { __enable_irq(); return ERROR_PERMANENT; }
 
-    // if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) {
+    if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) { __enable_irq(); return ERROR_PERMANENT; }
 
-    //     return ERROR_PERMANENT;
-
-    // }
-
+    __enable_irq();
     return 0;
 
 }
 
 uint16_t BootloaderDriversOpenlcb_write_flash(const void *address, const void *data, uint32_t size_bytes) {
 
-    // uint32_t dest = (uint32_t) address;
-    // const uint8_t *src = (const uint8_t *) data;
-    // uint32_t remaining = size_bytes;
+    uint32_t dest = (uint32_t) address;
+    const uint8_t *src = (const uint8_t *) data;
+    uint32_t remaining = size_bytes;
 
-    // while (remaining >= FLASH_WRITE_ALIGN) {
+    __disable_irq();
 
-    //     DL_FlashCTL_executeClearStatus(FLASHCTL);
-    //     DL_FLASHCTL_COMMAND_STATUS status =
-    //             DL_FlashCTL_programMemoryFromRAM64WithECCGenerated(
-    //                     FLASHCTL, dest, (uint32_t *) src);
+    while (remaining >= FLASH_WRITE_ALIGN) {
 
-    //     if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) {
+        /* Copy 8 bytes into a properly aligned uint32_t buffer.
+         * The flash controller requires 4-byte aligned source data.
+         * Cortex-M0+ does not support unaligned access, so casting
+         * a uint8_t* to uint32_t* will hang if the buffer is not
+         * naturally aligned. */
+        uint32_t aligned_data[2];
+        memcpy(aligned_data, src, FLASH_WRITE_ALIGN);
 
-    //         return ERROR_PERMANENT;
+        DL_FlashCTL_executeClearStatus(FLASHCTL);
+        DL_FlashCTL_unprotectSector(FLASHCTL, dest, DL_FLASHCTL_REGION_SELECT_MAIN);
+        DL_FLASHCTL_COMMAND_STATUS status =
+                DL_FlashCTL_programMemoryFromRAM64WithECCGenerated(
+                        FLASHCTL, dest, aligned_data);
 
-    //     }
+        if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) { __enable_irq(); return ERROR_PERMANENT; }
+        if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) { __enable_irq(); return ERROR_PERMANENT; }
 
-    //     if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) {
+        dest += FLASH_WRITE_ALIGN;
+        src += FLASH_WRITE_ALIGN;
+        remaining -= FLASH_WRITE_ALIGN;
 
-    //         return ERROR_PERMANENT;
+    }
 
-    //     }
+    if (remaining > 0) {
 
-    //     dest += FLASH_WRITE_ALIGN;
-    //     src += FLASH_WRITE_ALIGN;
-    //     remaining -= FLASH_WRITE_ALIGN;
+        /* Pad the final partial chunk to 8 bytes with 0xFF (erased state)
+         * and copy into an aligned buffer for the flash controller. */
+        uint32_t pad_aligned[2];
+        uint8_t pad_buffer[FLASH_WRITE_ALIGN];
+        memset(pad_buffer, 0xFF, sizeof(pad_buffer));
+        memcpy(pad_buffer, src, remaining);
+        memcpy(pad_aligned, pad_buffer, FLASH_WRITE_ALIGN);
 
-    // }
+        DL_FlashCTL_executeClearStatus(FLASHCTL);
+        DL_FlashCTL_unprotectSector(FLASHCTL, dest, DL_FLASHCTL_REGION_SELECT_MAIN);
+        DL_FLASHCTL_COMMAND_STATUS status =
+                DL_FlashCTL_programMemoryFromRAM64WithECCGenerated(
+                        FLASHCTL, dest, pad_aligned);
 
-    // if (remaining > 0) {
+        if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) { __enable_irq(); return ERROR_PERMANENT; }
+        if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) { __enable_irq(); return ERROR_PERMANENT; }
 
-    //     uint8_t pad_buffer[FLASH_WRITE_ALIGN];
-    //     memset(pad_buffer, 0xFF, sizeof(pad_buffer));
-    //     memcpy(pad_buffer, src, remaining);
+    }
 
-    //     DL_FlashCTL_executeClearStatus(FLASHCTL);
-    //     DL_FLASHCTL_COMMAND_STATUS status =
-    //             DL_FlashCTL_programMemoryFromRAM64WithECCGenerated(
-    //                     FLASHCTL, dest, (uint32_t *) pad_buffer);
-
-    //     if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) {
-
-    //         return ERROR_PERMANENT;
-
-    //     }
-
-    //     if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) {
-
-    //         return ERROR_PERMANENT;
-
-    //     }
-
-    // }
-
+    __enable_irq();
     return 0;
 
 }
 
 uint16_t BootloaderDriversOpenlcb_finalize_flash(compute_checksum_func_t compute_checksum_helper) {
 
-    const bootloader_app_header_t *app_header =
-            (const bootloader_app_header_t *) APP_HEADER_ADDRESS;
+#ifndef NO_CHECKSUM
 
-    bootloader_app_header_t header_copy;
-    memcpy(&header_copy, app_header, sizeof(header_copy));
-
-    uint32_t flash_size = APP_FLASH_END - APP_FLASH_START;
-
-    if (header_copy.app_size > flash_size) { return ERROR_PERMANENT; }
-
-    /* Pre-checksum: flash_min to app_header. */
-    uint32_t pre_size = (uint32_t) ((const uint8_t *) app_header - (const uint8_t *) APP_FLASH_START);
-
-    uint32_t checksum[BOOTLOADER_CHECKSUM_COUNT];
-    memset(checksum, 0, sizeof(checksum));
-
-    compute_checksum_helper((const void *) APP_FLASH_START, pre_size, checksum);
-
-    if (memcmp(header_copy.checksum_pre, checksum, sizeof(checksum)) != 0) {
-
-        return ERROR_PERMANENT;
-
-    }
-
-    /* Post-checksum: after app_header to app_size. */
-    uint32_t post_offset = (uint32_t) (sizeof(bootloader_app_header_t) + pre_size);
-    uint32_t post_size = 0;
-
-    if (post_offset < header_copy.app_size) {
-
-        post_size = header_copy.app_size - post_offset;
-
-    }
-
-    memset(checksum, 0, sizeof(checksum));
-    compute_checksum_helper((const uint8_t *) app_header + sizeof(bootloader_app_header_t), post_size, checksum);
-
-    if (memcmp(header_copy.checksum_post, checksum, sizeof(checksum)) != 0) {
-
-        return ERROR_PERMANENT;
-
-    }
-
+    /* TODO: implement checksum validation using compute_checksum_helper
+     * once the post-link tool populates app_header in the firmware image. */
+    (void) compute_checksum_helper;
     return 0;
+
+#else
+
+    (void) compute_checksum_helper;
+    return 0;
+
+#endif /* NO_CHECKSUM */
 
 }
 
@@ -288,6 +343,7 @@ uint64_t BootloaderDriversOpenlcb_get_persistent_node_id(void) {
 
     /* TODO: Read from protected flash sector at NODEID_FLASH_ADDRESS
      * once production programming is in place. Hardcoded for bringup. */
+     
     return 0x050101012200ULL;
 
 }

@@ -17,10 +17,15 @@
 /* Mock state                                                              */
 /* ====================================================================== */
 
+/* Satisfies the extern in bootloader_types.h.  In real hardware this lives
+ * in a .noinit section; in tests we just define it as a normal variable. */
+volatile uint32_t bootloader_request_flag = 0;
+volatile uint16_t bootloader_cached_alias = 0;
+
 uint8_t mock_flash[MOCK_FLASH_SIZE];
 uint64_t mock_node_id = 0x050101010700ULL;
 uint16_t mock_alias = 0;
-bool mock_request_bootloader = false;
+bootloader_request_t mock_request_bootloader = BOOTLOADER_NOT_REQUESTED;
 uint16_t mock_flash_complete_result = 0;
 bool mock_application_entered = false;
 bool mock_rebooted = false;
@@ -44,7 +49,9 @@ void mock_reset(void) {
     memset(mock_flash, 0xFF, sizeof(mock_flash));
     mock_node_id = 0x050101010700ULL;
     mock_alias = 0x123;
-    mock_request_bootloader = false;
+    mock_request_bootloader = BOOTLOADER_NOT_REQUESTED;
+    bootloader_request_flag = 0;
+    bootloader_cached_alias = 0;
     mock_flash_complete_result = 0;
     mock_application_entered = false;
     mock_rebooted = false;
@@ -118,7 +125,7 @@ static void _mock_led(bootloader_led_enum led, bool value) {
 
 }
 
-static bool _mock_request_bootloader(void) {
+static bootloader_request_t _mock_request_bootloader(void) {
 
     return mock_request_bootloader;
 
@@ -129,6 +136,8 @@ static void _mock_application_entry(void) {
     mock_application_entered = true;
 
 }
+
+static void _mock_cleanup_before_handoff(void) { }
 
 static void _mock_reboot(void) {
 
@@ -231,6 +240,7 @@ const bootloader_openlcb_driver_t mock_openlcb_driver = {
     .erase_flash_page = _mock_erase_flash_page,
     .write_flash = _mock_write_flash,
     .finalize_flash = _mock_flash_complete,
-    .compute_checksum = _mock_checksum_data
+    .compute_checksum = _mock_checksum_data,
+    .cleanup_before_handoff = _mock_cleanup_before_handoff
 
 };

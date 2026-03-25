@@ -39,6 +39,7 @@
 
 #include "../Debug/ti_msp_dl_config.h"
 #include "bootloader_drivers_can.h"
+#include "../shared/bootloader_shared_ram.h"
 
 #include "../src/drivers/canbus/bootloader_can.h"
 
@@ -143,6 +144,9 @@ bool BootloaderDriversCan_try_send_frame(const bootloader_can_frame_t *frame) {
 
 uint16_t BootloaderDriversCan_get_cached_alias_passed_from_application(void) {
 
-    return 0;
+    uint16_t alias = bootloader_cached_alias;
+    bootloader_cached_alias = 0;
+
+    return alias;
 
 }

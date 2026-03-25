@@ -37,7 +37,7 @@ extern "C" {
 extern uint8_t mock_flash[MOCK_FLASH_SIZE];
 extern uint64_t mock_node_id;
 extern uint16_t mock_alias;
-extern bool mock_request_bootloader;
+extern bootloader_request_t mock_request_bootloader;
 extern uint16_t mock_flash_complete_result;
 extern bool mock_application_entered;
 extern bool mock_rebooted;

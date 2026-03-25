@@ -444,6 +444,7 @@ static void _build_config_mem_operations(void) {
 #endif
 
 #ifdef OPENLCB_COMPILE_FIRMWARE
+    _config_ops.cleanup_before_handoff                    = _config->cleanup_before_handoff;
     _config_ops.operations_request_freeze                 = _config->freeze;
     _config_ops.operations_request_unfreeze               = _config->unfreeze;
 #endif

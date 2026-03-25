@@ -50,6 +50,8 @@ static const bootloader_openlcb_driver_t *_openlcb_driver;
 /* Application checksum validation                                         */
 /* ====================================================================== */
 
+#ifndef NO_CHECKSUM
+
 static bool _check_application_checksum(void) {
 
     const void *flash_min = NULL;
@@ -104,6 +106,8 @@ static bool _check_application_checksum(void) {
 
 }
 
+#endif /* NO_CHECKSUM */
+
 /* ====================================================================== */
 /* Public API                                                              */
 /* ====================================================================== */
@@ -112,24 +116,51 @@ bool Bootloader_init(const bootloader_can_driver_t *can_driver, const bootloader
 
     _openlcb_driver = openlcb_driver;
 
-    bool request = openlcb_driver->is_bootloader_requested();
-    openlcb_driver->set_status_led(BOOTLOADER_LED_REQUEST, request);
+    bootloader_request_t request = openlcb_driver->is_bootloader_requested();
+    openlcb_driver->set_status_led(BOOTLOADER_LED_REQUEST, request != BOOTLOADER_NOT_REQUESTED);
 
-    if (!request) {
+    if (request == BOOTLOADER_NOT_REQUESTED) {
 
+#ifndef NO_CHECKSUM
         bool csum_ok = _check_application_checksum();
         openlcb_driver->set_status_led(BOOTLOADER_LED_CSUM_ERROR, !csum_ok);
+#else
+        bool csum_ok = true;
+        openlcb_driver->set_status_led(BOOTLOADER_LED_CSUM_ERROR, false);
+#endif
 
         if (csum_ok) {
 
-            openlcb_driver->jump_to_application();
-            return true;
+            const void *flash_min = NULL;
+            const void *flash_max = NULL;
+            const bootloader_app_header_t *app_header = NULL;
+            openlcb_driver->get_flash_boundaries(&flash_min, &flash_max, &app_header);
+
+            if (((const uint32_t *) flash_min)[0] != 0xFFFFFFFF) {
+
+                openlcb_driver->cleanup_before_handoff();
+                openlcb_driver->jump_to_application();
+                /* jump_to_application() never returns on a successful jump. */
+
+            }
+            /* Flash is blank — no app present, fall through to bootloader mode. */
 
         }
 
     }
 
     memset(&bootloader_state, 0, sizeof(bootloader_state));
+
+    /* If the application sent Freeze and then dropped back to us, the CT
+     * is already waiting for data transfer — we start with firmware_active
+     * so PIP reports Firmware Upgrade Active immediately.  For button or
+     * no-valid-app entry, the CT must send Freeze first. */
+    if (request == BOOTLOADER_REQUESTED_BY_APP) {
+
+        bootloader_state.firmware_active = 1;
+
+    }
+
     BootloaderCanSM_init(can_driver, openlcb_driver);
     BootloaderOpenlcbSM_init(openlcb_driver);
 

@@ -22,7 +22,7 @@ extern "C" {
 TEST(BootloaderInit, bootloader_requested_enters_bootloader) {
 
     mock_reset();
-    mock_request_bootloader = true;
+    mock_request_bootloader = BOOTLOADER_REQUESTED_BY_BUTTON;
 
     bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
     EXPECT_FALSE(result);
@@ -30,10 +30,10 @@ TEST(BootloaderInit, bootloader_requested_enters_bootloader) {
 
 }
 
-TEST(BootloaderInit, valid_checksum_enters_application) {
+TEST(BootloaderInit, valid_checksum_attempts_application_jump) {
 
     mock_reset();
-    mock_request_bootloader = false;
+    mock_request_bootloader = BOOTLOADER_NOT_REQUESTED;
 
     /* Set up a valid app_header with correct checksums. */
     bootloader_app_header_t *header =
@@ -58,8 +58,11 @@ TEST(BootloaderInit, valid_checksum_enters_application) {
     header->checksum_post[2] = post_crc[2];
     header->checksum_post[3] = 0;
 
+    /* On real hardware jump_to_application() never returns.  In the test
+     * mock it does return, so Bootloader_init() falls through to bootloader
+     * mode (returns false).  We verify the jump was attempted. */
     bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
     EXPECT_TRUE(mock_application_entered);
 
 }
@@ -67,7 +70,7 @@ TEST(BootloaderInit, valid_checksum_enters_application) {
 TEST(BootloaderInit, invalid_checksum_enters_bootloader) {
 
     mock_reset();
-    mock_request_bootloader = false;
+    mock_request_bootloader = BOOTLOADER_NOT_REQUESTED;
 
     /* Flash is all 0xFF — app_header has wrong checksums. */
     bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
@@ -80,7 +83,7 @@ TEST(BootloaderInit, invalid_checksum_enters_bootloader) {
 TEST(BootloaderLoop, reset_request_causes_reboot) {
 
     mock_reset();
-    mock_request_bootloader = true;
+    mock_request_bootloader = BOOTLOADER_REQUESTED_BY_BUTTON;
     Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
 
     /* Run loops until initialized (alias negotiation).
