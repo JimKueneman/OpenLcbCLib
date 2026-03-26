@@ -44,23 +44,63 @@ API reference: [https://jimkueneman.github.io/OpenLcbCLib/documentation/help/htm
 ## Repository layout
 
 ```
-src/                        library source and platform examples
-  openlcb/                  protocol engine
-  drivers/                  CAN and platform driver implementations
-  applications/             ready-to-run example projects
-    arduino/esp32/BasicNode/    ESP32 starting point
-  utilities/                endian and string helpers
-  test/                     unit tests
-templates/                  CDI/FDI XML templates and user config templates
-  typical/                  standard node openlcb_user_config.h/.c template
-  bootloader/               bootloader-only openlcb_user_config.h/.c template
+src/                              main library source
+  openlcb/                        protocol engine — state machines and handlers
+  drivers/
+    canbus/                       CAN bus driver layer (alias, RX/TX, login)
+  utilities/                      endian and string helpers
+  test/                           unit test CMakeLists
+
+applications/                     ready-to-run example projects (full node apps)
+  arduino/                        Arduino / ESP32 examples
+  dspic/                          MPLAB X dsPIC examples
+  platformio/                     PlatformIO examples
+  stm32_cubeide/                  STM32CubeIDE STM32F4xx examples
+  ti_theia/                       Code Composer Theia TI MSPM0 examples
+  xcode/                          macOS virtual-CAN example
+
+bootloader/                       standalone OpenLCB firmware-upgrade bootloader
+  src/                            bootloader library source
+    crc/                          CRC-16/IBM and CRC-3 implementation
+    drivers/
+      canbus/                     CAN state machine, RX, TX engines
+    openlcb/                      OpenLCB protocol layer, boot-decision logic
+  applications/                   platform-specific bootloader projects
+    dspic/
+      BasicNodeBootloader.X/      MPLAB X bootloader project (dsPIC33)
+      BasicNode.X/                matching application project
+      shared/                     bootloader_shared_ram — noinit handshake RAM
+    stm32_cubeide/
+      stm32f407_discovery/
+        BasicNodeBootloader/      STM32CubeIDE bootloader project
+        BasicNode/                matching application project
+        shared/                   bootloader_shared_ram — noinit handshake RAM
+    ti_theia/
+      mspm03507_launchpad/
+        BasicNodeBootloader/      Theia bootloader project (MSPM0G3507)
+        BasicNode/                matching application project
+        shared/                   bootloader_shared_ram — noinit handshake RAM
+  test/                           bootloader unit tests (CMake / GoogleTest)
+  tools/
+    update_bootloaders/           script to sync bootloader sources across platforms
+  documentation/
+    implementation_flow_trees/    bootloader state-machine diagrams
+
+test/                             compliance and integration tests
+  user_config/                    test configurations (minimal, typical, events-only…)
+  compliance_node/                macOS compliance-test node (Xcode)
+  olcbchecker_bridge/             bridge to the NMRA olcbchecker tool
+
+templates/                        user config templates for new projects
+  typical/                        standard node openlcb_user_config.h/.c
+  bootloader/                     bootloader openlcb_user_config.h/.c
+
 tools/
-  node_wizard/              browser-based project generator
-  cdi_to_array/             Python script — convert CDI XML to a C byte array
-  cdi_to_array_webbrowser/  browser-based CDI to C array converter
-  update_applications/      script to sync platform application files
-documentation/              guides, design notes, style guides
-test/                       compliance and integration tests
+  node_wizard/                    browser-based project generator (runs offline)
+  xml_to_array/                   convert CDI/FDI XML to a C byte array
+  update_applications/            script to sync library files across platform apps
+
+documentation/                    guides, design notes, API reference, style guides
 ```
 
 ## Node Wizard
