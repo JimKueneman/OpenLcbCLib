@@ -35,6 +35,10 @@ TEST(BootloaderInit, valid_checksum_attempts_application_jump) {
     mock_reset();
     mock_request_bootloader = BOOTLOADER_NOT_REQUESTED;
 
+    /* Simulate a real application image: first byte must be non-0xFF so the
+     * blank-flash guard in Bootloader_init() does not suppress the jump. */
+    mock_flash[0] = 0x00;
+
     /* Set up a valid app_header with correct checksums. */
     bootloader_app_header_t *header =
             (bootloader_app_header_t *) (mock_flash + MOCK_APP_HEADER_OFFSET);

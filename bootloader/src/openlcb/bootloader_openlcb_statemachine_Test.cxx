@@ -201,7 +201,7 @@ TEST(BootloaderProtocol, write_erase_fail_sends_write_reply_fail) {
 
 }
 
-TEST(BootloaderProtocol, write_flash_fail_sends_write_reply_fail) {
+TEST(BootloaderProtocol, write_flash_bytes_fail_sends_write_reply_fail) {
 
     _init_bootloader();
     mock_write_result = 0x1080;

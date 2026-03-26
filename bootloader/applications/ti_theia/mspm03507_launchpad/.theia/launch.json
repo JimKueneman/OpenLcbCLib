@@ -2,12 +2,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "mspm03507_bootloader",
+            "name": "BasicNodeBootloader",
             "type": "ccs-debug",
             "request": "launch",
             "projectInfo": {
-                "name": "mspm03507_bootloader",
-                "resourceId": "/mspm03507_bootloader"
+                "name": "BasicNodeBootloader",
+                "resourceId": "/BasicNodeBootloader"
             },
             "connections": [
                 {

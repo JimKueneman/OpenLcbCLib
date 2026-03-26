@@ -180,7 +180,7 @@ static uint16_t _mock_erase_flash_page(const void *address) {
 
 }
 
-static uint16_t _mock_write_flash(const void *address, const void *data, uint32_t size_bytes) {
+static uint16_t _mock_write_flash_bytes(const void *address, const void *data, uint32_t size_bytes) {
 
     uintptr_t offset = (uintptr_t) address - (uintptr_t) mock_flash;
 
@@ -214,6 +214,18 @@ static void _mock_checksum_data(const void *data, uint32_t size, uint32_t *check
 
 }
 
+static void _mock_read_flash_bytes(uint32_t flash_addr, void *dest_ram, uint32_t size_bytes) {
+
+    /* On 64-bit test hosts the caller truncates the real pointer to uint32_t.
+     * Recover the correct source address by computing the byte offset from
+     * the low-32-bit representation of mock_flash[0]; modular subtraction is
+     * exact as long as the array never crosses a 4 GB boundary. */
+    uint32_t base32 = (uint32_t)(uintptr_t) mock_flash;
+    uint32_t offset = flash_addr - base32;
+    memcpy(dest_ram, mock_flash + offset, size_bytes);
+
+}
+
 /* ====================================================================== */
 /* DI struct instances                                                     */
 /* ====================================================================== */
@@ -238,9 +250,10 @@ const bootloader_openlcb_driver_t mock_openlcb_driver = {
     .get_flash_boundaries = _mock_get_flash_boundaries,
     .get_flash_page_info = _mock_get_flash_page_info,
     .erase_flash_page = _mock_erase_flash_page,
-    .write_flash = _mock_write_flash,
+    .write_flash_bytes = _mock_write_flash_bytes,
     .finalize_flash = _mock_flash_complete,
     .compute_checksum = _mock_checksum_data,
+    .read_flash_bytes = _mock_read_flash_bytes,
     .cleanup_before_handoff = _mock_cleanup_before_handoff
 
 };

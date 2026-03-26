@@ -266,7 +266,7 @@ Used by CAN SM, OpenLCB SM, and bootloader.c.
 | `get_flash_boundaries` | `void (*)(...)` | Return app flash min/max and header pointer |
 | `get_flash_page_info` | `void (*)(...)` | Return page start and length for an address |
 | `erase_flash_page` | `uint16_t (*)(...)` | Erase one flash page; 0=success, error code on failure |
-| `write_flash` | `uint16_t (*)(...)` | Write data to flash; 0=success, error code on failure |
+| `write_flash_bytes` | `uint16_t (*)(...)` | Write data to flash; 0=success, error code on failure |
 | `finalize_flash` | `uint16_t (*)(checksum_helper)` | Validate written firmware; receives `compute_checksum` as helper |
 | `compute_checksum` | `void (*)(...)` | Compute checksum over a data range |
 
@@ -291,7 +291,7 @@ const bootloader_openlcb_driver_t openlcb_driver = {
     .get_flash_boundaries   = BootloaderDriversOpenlcb_get_flash_boundaries,
     .get_flash_page_info    = BootloaderDriversOpenlcb_get_flash_page_info,
     .erase_flash_page       = BootloaderDriversOpenlcb_erase_flash_page,
-    .write_flash            = BootloaderDriversOpenlcb_write_flash,
+    .write_flash_bytes            = BootloaderDriversOpenlcb_write_flash_bytes,
     .finalize_flash         = BootloaderDriversOpenlcb_finalize_flash,
     .compute_checksum       = BootloaderDriversOpenlcb_compute_checksum
 };

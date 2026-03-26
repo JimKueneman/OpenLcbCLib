@@ -29,7 +29,7 @@
  * Configuration memory callback functions for the BasicNode application.
  *
  * @author Jim Kueneman
- * @date 15 Mar 2025
+ * @date 25 Mar 2026
  */
 
 #include "callbacks_config_mem.h"
@@ -59,10 +59,6 @@ void CallbacksConfigMem_freeze(openlcb_statemachine_info_t *statemachine_info, c
 
         bootloader_cached_alias = statemachine_info->openlcb_node->alias;
         bootloader_request_flag = BOOTLOADER_REQUEST_MAGIC;
-
-        printf("APP DROP-BACK: wrote magic=0x%08lX alias=0x%03X - resetting to bootloader\r\n",
-               (unsigned long) bootloader_request_flag,
-               (unsigned int)  bootloader_cached_alias);
 
         DL_SYSCTL_resetDevice(DL_SYSCTL_RESET_SYSRST);
 

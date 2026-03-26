@@ -58,15 +58,13 @@ update_app() {
 # Application targets — add new applications here
 # =========================================================================
 
-update_app "ti_theia/mspm03507_launchpad/mspm03507_bootloader" \
-    "${BOOT_APPS}/ti_theia/mspm03507_launchpad/mspm03507_bootloader/src"
+update_app "dspic/BasicNodeBootloader.X" \
+    "${BOOT_APPS}/dspic/BasicNodeBootloader.X/openlcb_c_lib_bootloader"
 
-# --- Add future application targets below this line ---
+update_app "stm32_cubeide/stm32f407_discovery/BasicNodeBootloader" \
+    "${BOOT_APPS}/stm32_cubeide/stm32f407_discovery/BasicNodeBootloader/Core/Src/openlcb_c_lib_bootloader"
 
-# update_app "dspic/BasicNodeBootloader.X" \
-#     "${BOOT_APPS}/dspic/BasicNodeBootloader.X/src"
-
-# update_app "stm32_cubeide/stm32f407_discovery/Bootloader" \
-#     "${BOOT_APPS}/stm32_cubeide/stm32f407_discovery/Bootloader/Core/Src"
+update_app "ti_theia/mspm03507_launchpad/BasicNodeBootloader" \
+    "${BOOT_APPS}/ti_theia/mspm03507_launchpad/BasicNodeBootloader/openlcb_c_lib_bootloader"
 
 echo "Done."

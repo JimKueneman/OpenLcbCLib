@@ -156,9 +156,38 @@ extern "C" {
         void (*get_flash_boundaries)(const void **flash_min, const void **flash_max, const struct bootloader_app_header **app_header);
         void (*get_flash_page_info)(const void *address, const void **page_start, uint32_t *page_length_bytes);
         uint16_t (*erase_flash_page)(const void *address);
-        uint16_t (*write_flash)(const void *address, const void *data, uint32_t size_bytes);
+        uint16_t (*write_flash_bytes)(const void *address, const void *data, uint32_t size_bytes);
         uint16_t (*finalize_flash)(compute_checksum_func_t compute_checksum_helper);
         compute_checksum_func_t compute_checksum;
+
+        /**
+         *     Copy bytes from flash into a RAM buffer.
+         *
+         *     Von Neumann (STM32, MSPM0, most ARM): flash is memory-mapped
+         *     and readable via a normal data pointer.  Implement as:
+         *         memcpy(dest_ram, (const void *)(uintptr_t)flash_addr, size_bytes);
+         *
+         *     Harvard (dsPIC33): program flash and data SRAM are SEPARATE
+         *     address spaces.  A data pointer cannot legally address flash --
+         *     dereferencing one reads unrelated SRAM instead.  Implement
+         *     using the TBLRDL/TBLRDH table-read instructions, exposed by
+         *     MCC as FLASH_ReadWord24().  See bootloader_drivers_openlcb.c
+         *     in the dsPIC demo for the full implementation.
+         *
+         *     This DI slot is why the library never calls memcpy() directly
+         *     on flash pointers and never dereferences a flash address as a
+         *     data pointer.  Routing all flash reads through this function
+         *     pointer lets a single bootloader.c compile and run correctly
+         *     on both Von Neumann and Harvard targets with no #ifdefs in the
+         *     library source.
+         *
+         *     @param flash_addr  source address in program flash (always
+         *                        32-bit, even on platforms where pointers
+         *                        are narrower, to avoid truncation)
+         *     @param dest_ram    destination buffer in data SRAM
+         *     @param size_bytes  number of bytes to copy
+         */
+        void (*read_flash_bytes)(uint32_t flash_addr, void *dest_ram, uint32_t size_bytes);
 
         /** @brief Tear down all peripherals and core state before handing off to the other binary. */
         void (*cleanup_before_handoff)(void);

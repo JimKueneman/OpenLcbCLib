@@ -100,7 +100,7 @@
 - `erase_flash_page()` — erase one page/sector
   - Must run from RAM on some chips (MSPM0, some STM32)
   - Return 0 on success, error code on failure
-- `write_flash()` — write data to flash
+- `write_flash_bytes()` — write data to flash
   - Handle alignment requirements (8-byte on MSPM0, 4-byte on STM32, etc.)
   - Pad the last write if data is not aligned
   - Return 0 on success, error code on failure
