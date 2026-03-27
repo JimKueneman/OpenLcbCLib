@@ -7,7 +7,6 @@
       <logicalFolder name="application_drivers"
                      displayName="application_drivers"
                      projectFiles="true">
-        <itemPath>application_drivers/bootloader_isr_redirect.h</itemPath>
         <itemPath>application_drivers/bootloader_drivers_can.h</itemPath>
         <itemPath>application_drivers/bootloader_drivers_openlcb.h</itemPath>
       </logicalFolder>
@@ -64,6 +63,7 @@
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
+      <itemPath>p33EP512MC506_BasicNodeBootloader.gld</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -72,7 +72,6 @@
                      displayName="application_drivers"
                      projectFiles="true">
         <itemPath>application_drivers/bootloader_drivers_openlcb.c</itemPath>
-        <itemPath>application_drivers/bootloader_isr_redirect.c</itemPath>
         <itemPath>application_drivers/bootloader_drivers_can.c</itemPath>
       </logicalFolder>
       <logicalFolder name="mcc_generated_files"
@@ -90,6 +89,7 @@
         <itemPath>mcc_generated_files/mcc.c</itemPath>
         <itemPath>mcc_generated_files/pin_manager.c</itemPath>
         <itemPath>mcc_generated_files/interrupt_manager.c</itemPath>
+        <itemPath>mcc_generated_files/where_was_i.s</itemPath>
       </logicalFolder>
       <logicalFolder name="openlcb_c_lib_bootloader"
                      displayName="openlcb_c_lib_bootloader"
@@ -112,6 +112,7 @@
       <itemPath>../shared/bootloader_shared_ram.c</itemPath>
       <itemPath>bootloader_main.c</itemPath>
       <itemPath>mcc_generated_files/memory/flash.s</itemPath>
+      <itemPath>main.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -295,9 +296,15 @@
         <property key="codecoverage.enabled" value="Disable"/>
         <property key="codecoverage.enableoutputtofile" value="false"/>
         <property key="codecoverage.outputfile" value=""/>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
+        <property key="lastid" value=""/>
         <property key="oscillator.auxfrequency" value="120"/>
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
-        <property key="oscillator.frequency" value="1"/>
+        <property key="oscillator.frequency" value="70"/>
         <property key="oscillator.frequencyunit" value="Mega"/>
         <property key="oscillator.rcfrequency" value="250"/>
         <property key="oscillator.rcfrequencyunit" value="Kilo"/>
@@ -331,7 +338,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="false"/>
+        <property key="uart1io.uartioenabled" value="true"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>
@@ -769,9 +776,15 @@
         <property key="codecoverage.enabled" value="Disable"/>
         <property key="codecoverage.enableoutputtofile" value="false"/>
         <property key="codecoverage.outputfile" value=""/>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
+        <property key="lastid" value=""/>
         <property key="oscillator.auxfrequency" value="120"/>
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
-        <property key="oscillator.frequency" value="1"/>
+        <property key="oscillator.frequency" value="70"/>
         <property key="oscillator.frequencyunit" value="Mega"/>
         <property key="oscillator.rcfrequency" value="250"/>
         <property key="oscillator.rcfrequencyunit" value="Kilo"/>
@@ -805,7 +818,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="false"/>
+        <property key="uart1io.uartioenabled" value="true"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>
@@ -1239,6 +1252,20 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
+      <item path="main.c" ex="true" overriding="false">
+        <C30>
+        </C30>
+        <C30-AR>
+        </C30-AR>
+        <C30-AS>
+        </C30-AS>
+        <C30-CO>
+        </C30-CO>
+        <C30-LD>
+        </C30-LD>
+        <C30Global>
+        </C30Global>
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>

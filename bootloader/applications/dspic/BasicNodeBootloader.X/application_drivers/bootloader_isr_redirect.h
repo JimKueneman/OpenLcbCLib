@@ -46,10 +46,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    /**
-     * Installs the VIVT proxy as the TMR2 interrupt handler and clears
-     * the interrupt_redirect flag.  Call once from initialize_hardware().
-     */
+        /**
+         * Installs the VIVT proxy as the TMR2 interrupt handler and clears
+         * the interrupt_redirect flag.  Call once from initialize_hardware().
+         */
     extern void BootloaderIsrRedirect_initialize(void);
 
 #ifdef __cplusplus

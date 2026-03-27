@@ -4,7 +4,7 @@
  *
  * @file bootloader_rx_Test.cxx
  *
- * Unit tests for the bootloader RX engine — frame filtering, datagram
+ * Unit tests for the bootloader RX engine -- frame filtering, datagram
  * assembly, error flagging, and collision detection.
  */
 
@@ -395,7 +395,7 @@ TEST(BootloaderRx, no_collision_when_alias_is_zero) {
 
     _reset();
 
-    /* CID with alias 0 — should not trigger collision. */
+    /* CID with alias 0 -- should not trigger collision. */
     uint32_t cid7 = BOOTLOADER_CAN_EFF_FLAG | RESERVED_TOP_BIT |
             CAN_CONTROL_FRAME_CID7 | 0x000;
     _enqueue_frame(cid7, 0, NULL);
@@ -476,7 +476,7 @@ TEST(BootloaderRxDatagram, first_during_assembly_flags_error) {
     EXPECT_FALSE(BootloaderRx_has_datagram());
     EXPECT_FALSE(BootloaderRx_has_error());
 
-    /* Second FIRST interrupts — flags error for the old src. */
+    /* Second FIRST interrupts -- flags error for the old src. */
     _enqueue_frame(_make_datagram_first_id(OUR_ALIAS, OTHER_ALIAS), 4, data2);
     BootloaderRx_poll(OUR_ALIAS, 0);
 
@@ -527,7 +527,7 @@ TEST(BootloaderRxDatagram, assembly_timeout_flags_error) {
 
     EXPECT_FALSE(BootloaderRx_has_error());
 
-    /* Middle arrives 30 ticks (3 seconds) later — timeout. */
+    /* Middle arrives 30 ticks (3 seconds) later -- timeout. */
     uint8_t middle_data[4] = {0xAA, 0xBB, 0xCC, 0xDD};
     _enqueue_frame(_make_datagram_middle_id(OUR_ALIAS, SENDER_ALIAS), 4, middle_data);
     BootloaderRx_poll(OUR_ALIAS, 30);
@@ -546,7 +546,7 @@ TEST(BootloaderRxDatagram, assembly_timeout_boundary_no_error) {
     _enqueue_frame(_make_datagram_first_id(OUR_ALIAS, SENDER_ALIAS), 4, first_data);
     BootloaderRx_poll(OUR_ALIAS, 0);
 
-    /* Middle arrives 29 ticks later — just under timeout. */
+    /* Middle arrives 29 ticks later -- just under timeout. */
     uint8_t middle_data[4] = {0xAA, 0xBB, 0xCC, 0xDD};
     _enqueue_frame(_make_datagram_middle_id(OUR_ALIAS, SENDER_ALIAS), 4, middle_data);
     BootloaderRx_poll(OUR_ALIAS, 29);

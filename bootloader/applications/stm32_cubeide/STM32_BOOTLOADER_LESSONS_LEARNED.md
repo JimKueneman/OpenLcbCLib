@@ -549,3 +549,35 @@ bootloader will reject the image on the next cold boot.
 - [ ] Implement `cleanup_before_handoff` — at minimum: de-init CAN, stop SysTick, disable/clear all NVIC
 - [ ] Implement `finalize_flash` — read back, verify CRC, erase on failure
 - [ ] Build and verify the sector lookup table matches your device's actual flash geometry
+
+---
+
+## 11. `.noinit` Cleanup Must Use the `request` Parameter, Not Reset-Cause Registers
+
+**Problem:** The original `initialize_hardware()` checked STM32 reset-cause flags (`RCC->CSR & RCC_CSR_SFTRSTF`, `RCC_CSR_PORRSTF`, etc.) to decide whether to clear shared `.noinit` variables (`bootloader_request_flag`, `bootloader_cached_alias`). This approach has several failure modes:
+
+1. **Stale flags:** `RCC->CSR` reset-cause bits are sticky -- they accumulate across resets until manually cleared with `__HAL_RCC_CLEAR_RESET_FLAGS()`. After a POR followed by a soft reset, BOTH `PORRSTF` and `SFTRSTF` are set, making it ambiguous which reset just occurred.
+
+2. **Stale `bootloader_cached_alias`:** On POR or programmer reset, `bootloader_cached_alias` in `.noinit` RAM contains garbage (whatever was in SRAM). If the CAN state machine picks up a non-zero garbage value, it uses it as the 12-bit alias without CID negotiation. A 16-bit garbage value overflows the alias field and corrupts the MTI bits of the CAN identifier, producing a malformed CAN frame that no node recognises.
+
+3. **Flag-clearing order:** If the flag was consumed (cleared) in `is_bootloader_requested()` and then `initialize_hardware()` checked it again, the second check always saw zero. This was part of the double-call bug fixed in the library.
+
+**Solution:** `initialize_hardware(request)` now takes the `bootloader_request_t` parameter and bases all cleanup decisions on it:
+
+```c
+void BootloaderDriversOpenlcb_initialize_hardware(bootloader_request_t request) {
+    /* Always clear the magic flag */
+    bootloader_request_flag = 0;
+
+    /* Clear cached alias on every path except app drop-back */
+    if (request != BOOTLOADER_REQUESTED_BY_APP) {
+        bootloader_cached_alias = 0;
+    }
+
+    /* ... peripheral init ... */
+}
+```
+
+No `RCC->CSR` inspection is needed. No `__HAL_RCC_CLEAR_RESET_FLAGS()` call is needed. The `request` parameter from `is_bootloader_requested()` is unambiguous: `BOOTLOADER_REQUESTED_BY_APP` means the application wrote the magic flag and the cached alias is valid; anything else means the alias is stale garbage.
+
+**This pattern is consistent across all platforms** (dsPIC, ESP32, TI MSPM0, Template).

@@ -67,99 +67,99 @@ extern "C" {
     /* Initialization                                                      */
     /* ================================================================== */
 
-    /**
-     *     Initializes the RX engine.
-     *
-     *     @param can_driver CAN hardware driver interface
-     */
+        /**
+         *     Initializes the RX engine.
+         *
+         *     @param can_driver CAN hardware driver interface
+         */
     void BootloaderRx_init(const bootloader_can_driver_t *can_driver);
 
     /* ================================================================== */
     /* Polling                                                             */
     /* ================================================================== */
 
-    /**
-     *     Polls hardware for new CAN frames, filters, and buffers them.
-     *     Datagram frames are assembled directly into the datagram buffer
-     *     and do not enter the frame FIFO.  Non-datagram frames (control,
-     *     addressed, global) are buffered in the frame FIFO as before.
-     *     Sets collision flags if alias conflicts are detected.
-     *     Call this from the main loop and from TX spin loops.
-     *
-     *     @param our_alias    the current alias to filter against
-     *     @param current_tick monotonic 100ms tick for assembly timeout
-     */
+        /**
+         *     Polls hardware for new CAN frames, filters, and buffers them.
+         *     Datagram frames are assembled directly into the datagram buffer
+         *     and do not enter the frame FIFO.  Non-datagram frames (control,
+         *     addressed, global) are buffered in the frame FIFO as before.
+         *     Sets collision flags if alias conflicts are detected.
+         *     Call this from the main loop and from TX spin loops.
+         *
+         *     @param our_alias    the current alias to filter against
+         *     @param current_tick monotonic 100ms tick for assembly timeout
+         */
     void BootloaderRx_poll(uint16_t our_alias, uint8_t current_tick);
 
     /* ================================================================== */
     /* Non-datagram frame FIFO                                             */
     /* ================================================================== */
 
-    /**
-     *     @return true if at least one filtered frame is available
-     */
+        /**
+         *     @return true if at least one filtered frame is available
+         */
     bool BootloaderRx_has_frame(void);
 
-    /**
-     *     Dequeues the oldest filtered frame.
-     *
-     *     @param frame output frame
-     *     @return true if a frame was dequeued, false if buffer empty
-     */
+        /**
+         *     Dequeues the oldest filtered frame.
+         *
+         *     @param frame output frame
+         *     @return true if a frame was dequeued, false if buffer empty
+         */
     bool BootloaderRx_get_frame(bootloader_can_frame_t *frame);
 
     /* ================================================================== */
     /* Datagram assembly                                                   */
     /* ================================================================== */
 
-    /**
-     *     @return true if a complete datagram has been assembled
-     */
+        /**
+         *     @return true if a complete datagram has been assembled
+         */
     bool BootloaderRx_has_datagram(void);
 
-    /**
-     *     Copies the assembled datagram to the caller and clears the flag.
-     *
-     *     @param src_alias output: source alias of the datagram sender
-     *     @param buffer    output: datagram payload (caller provides 72 bytes)
-     *     @param len       output: payload length
-     *     @return true if a datagram was available, false if none pending
-     */
-    bool BootloaderRx_get_datagram(uint16_t *src_alias, uint8_t *buffer, uint8_t *len);
+        /**
+         *     Copies the assembled datagram to the caller and clears the flag.
+         *
+         *     @param src_alias        output: source alias of the datagram sender
+         *     @param buffer           output: datagram payload (caller provides 72 bytes)
+         *     @param datagram_length  output: payload length
+         *     @return true if a datagram was available, false if none pending
+         */
+    bool BootloaderRx_get_datagram(uint16_t *src_alias, uint8_t *buffer, uint8_t *datagram_length);
 
     /* ================================================================== */
     /* Assembly error reporting                                            */
     /* ================================================================== */
 
-    /**
-     *     @return true if a datagram assembly error occurred
-     */
+        /**
+         *     @return true if a datagram assembly error occurred
+         */
     bool BootloaderRx_has_error(void);
 
-    /**
-     *     Returns the pending error and clears the flag.
-     *
-     *     @return error information (error_code and source alias)
-     */
+        /**
+         *     Returns the pending error and clears the flag.
+         *
+         *     @return error information (error_code and source alias)
+         */
     bootloader_rx_error_t BootloaderRx_get_error(void);
 
     /* ================================================================== */
     /* Collision flags                                                      */
     /* ================================================================== */
 
-    /**
-     *     @return true if a CID collision was detected since last clear
-     */
+        /**
+         *     @return true if a CID collision was detected since last clear
+         */
     bool BootloaderRx_collision_cid(void);
 
-    /**
-     *     @return true if a non-CID collision was detected since last clear
-     */
+        /**
+         *     @return true if a non-CID collision was detected since last clear
+         */
     bool BootloaderRx_collision_non_cid(void);
 
-    /**
-     *     Clears both collision flags.
-     */
+        /**
+         *     Clears both collision flags.
+         */
     void BootloaderRx_clear_collision_flags(void);
 
 #ifdef __cplusplus

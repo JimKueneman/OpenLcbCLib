@@ -184,14 +184,19 @@ void BasicNodeDrivers_unlock_shared_resources(void) {
  * and the OpenLCB state machine will not advance properly when running
  * under the bootloader (i.e., after jump_to_application()).
  *
- * TODO: Extract handler body and add VIVT registration to
- *       BasicNodeDrivers_initialize().
+ * TODO: Add VIVT registration to BasicNodeDrivers_initialize().
  */
-void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
+void Dspic33Drivers_t2_interrupt_handler(void) {
 
-    IFS0bits.T2IF = 0; // Clear T2IF
+    IFS0bits.T2IF = 0;
 
     OpenLcb_100ms_timer_tick();
+
+}
+
+void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
+
+    Dspic33Drivers_t2_interrupt_handler();
 
 }
 

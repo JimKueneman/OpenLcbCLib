@@ -4,7 +4,7 @@
  *
  * @file bootloader_openlcb_statemachine_Test.cxx
  *
- * Unit tests for bootloader_openlcb_statemachine.c — PIP, SNIP, Verify Node ID,
+ * Unit tests for bootloader_openlcb_statemachine.c -- PIP, SNIP, Verify Node ID,
  * Memory Config commands (FREEZE, WRITE, UNFREEZE, RESET).
  */
 
@@ -26,7 +26,7 @@ static void _init_bootloader(void) {
 
     mock_reset();
     mock_request_bootloader = BOOTLOADER_REQUESTED_BY_BUTTON;
-    Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
+    Bootloader_init(&mock_can_driver, &mock_openlcb_driver, mock_request_bootloader);
 
     for (int i = 0; i < 20; i++) {
 
@@ -48,7 +48,7 @@ static void _init_bootloader(void) {
  *   Middle: 0x1C,ddd,sss   (RESERVED | OPENLCB | 0x04)
  *   Last:   0x1D,ddd,sss   (RESERVED | OPENLCB | 0x05)
  *
- * All 8 CAN data bytes are payload — no framing bits in data.
+ * All 8 CAN data bytes are payload -- no framing bits in data.
  * Mask bits 28-24 of the CAN ID to identify the frame type.
  */
 #define MASK_DG_FRAME_TYPE 0x1F000000U

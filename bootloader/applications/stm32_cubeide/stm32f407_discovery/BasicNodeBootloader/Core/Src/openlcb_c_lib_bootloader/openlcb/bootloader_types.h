@@ -46,7 +46,7 @@ extern "C" {
     /* CAN frame type                                                      */
     /* ================================================================== */
 
-    /** Minimal CAN frame structure. Bit 31 of can_id = EFF flag. */
+        /** Minimal CAN frame structure. Bit 31 of can_id = EFF flag. */
     typedef struct {
 
         uint32_t can_id;
@@ -62,16 +62,16 @@ extern "C" {
     /** Number of 32-bit words in one checksum block. */
     #define BOOTLOADER_CHECKSUM_COUNT 4
 
-    /**
-     *     Application header embedded in the firmware image.
-     *
-     *     The linker places this struct at a known address in the application
-     *     flash region. A post-link tool computes the checksums and patches
-     *     them into the binary.
-     *
-     *     checksum_pre covers bytes from flash_min to the start of this struct.
-     *     checksum_post covers bytes from end of this struct to app_size.
-     */
+        /**
+         *     Application header embedded in the firmware image.
+         *
+         *     The linker places this struct at a known address in the application
+         *     flash region. A post-link tool computes the checksums and patches
+         *     them into the binary.
+         *
+         *     checksum_pre covers bytes from flash_min to the start of this struct.
+         *     checksum_post covers bytes from end of this struct to app_size.
+         */
     typedef struct bootloader_app_header {
 
         uint32_t app_size;
@@ -84,7 +84,7 @@ extern "C" {
     /* LED function identifiers (must precede DI struct that references it) */
     /* ================================================================== */
 
-    /** LED function identifiers. */
+        /** LED function identifiers. */
     typedef enum {
 
         BOOTLOADER_LED_ACTIVE     = 1,
@@ -99,20 +99,20 @@ extern "C" {
     /* Bootloader request reason (returned by is_bootloader_requested)     */
     /* ================================================================== */
 
-    /**
-     *     Why the bootloader should stay in bootloader mode (or not).
-     *
-     *     NOT_REQUESTED     — normal boot, jump to application if valid.
-     *     REQUESTED_BY_APP  — the application set the magic value and reset.
-     *                         The CT already sent Freeze, so the bootloader
-     *                         starts with firmware_active = 1 (transfer in
-     *                         progress) and the CT does not need to send
-     *                         Freeze again.
-     *     REQUESTED_BY_BUTTON — the user held a hardware button at power-on.
-     *                         The bootloader starts as a normal node with
-     *                         firmware_active = 0.  The CT must send Freeze
-     *                         before it can transfer firmware.
-     */
+        /**
+         *     Why the bootloader should stay in bootloader mode (or not).
+         *
+         *     NOT_REQUESTED     -- normal boot, jump to application if valid.
+         *     REQUESTED_BY_APP  -- the application set the magic value and reset.
+         *                         The CT already sent Freeze, so the bootloader
+         *                         starts with firmware_active = 1 (transfer in
+         *                         progress) and the CT does not need to send
+         *                         Freeze again.
+         *     REQUESTED_BY_BUTTON -- the user held a hardware button at power-on.
+         *                         The bootloader starts as a normal node with
+         *                         firmware_active = 0.  The CT must send Freeze
+         *                         before it can transfer firmware.
+         */
     typedef enum {
 
         BOOTLOADER_NOT_REQUESTED      = 0,
@@ -127,14 +127,18 @@ extern "C" {
 
     struct bootloader_app_header;
 
-    /** Function pointer type for computing a checksum over a data range. */
-    typedef void (*compute_checksum_func_t)(const void *data, uint32_t size, uint32_t *checksum);
+        /** Function pointer type for computing a checksum over a flash region.
+         *  flash_addr is a 32-bit flash address (PC units on dsPIC33, byte
+         *  address on Von Neumann targets).  size has the same units.
+         *  Using uint32_t avoids truncation on Harvard targets where
+         *  uintptr_t / void* are 16-bit (e.g. XC16 / dsPIC33). */
+    typedef void (*compute_checksum_func_t)(uint32_t flash_addr, uint32_t size, uint32_t *checksum);
 
     /* ================================================================== */
     /* DI structs                                                          */
     /* ================================================================== */
 
-    /** CAN physical layer driver — used by RX and TX engines. */
+        /** CAN physical layer driver -- used by RX and TX engines. */
     typedef struct {
 
         bool (*read_received_frame)(bootloader_can_frame_t *frame);
@@ -143,7 +147,7 @@ extern "C" {
 
     } bootloader_can_driver_t;
 
-    /** OpenLCB driver — used by CAN SM, OpenLCB SM, bootloader.c. */
+        /** OpenLCB driver -- used by CAN SM, OpenLCB SM, bootloader.c. */
     typedef struct {
 
         uint64_t (*get_persistent_node_id)(void);
@@ -152,55 +156,59 @@ extern "C" {
         bootloader_request_t (*is_bootloader_requested)(void);
         void (*jump_to_application)(void);
         void (*reboot)(void);
-        void (*initialize_hardware)(void);
-        void (*get_flash_boundaries)(const void **flash_min, const void **flash_max, const struct bootloader_app_header **app_header);
-        void (*get_flash_page_info)(const void *address, const void **page_start, uint32_t *page_length_bytes);
-        uint16_t (*erase_flash_page)(const void *address);
-        uint16_t (*write_flash_bytes)(const void *address, const void *data, uint32_t size_bytes);
+        void (*initialize_hardware)(bootloader_request_t request);
+        /* Flash address parameters are always uint32_t to avoid silent
+         * truncation on Harvard targets (e.g. dsPIC33/XC16) where
+         * uintptr_t and void* are only 16-bit.  Von Neumann platforms
+         * cast to (const void *)(uintptr_t) inside their implementations. */
+        void (*get_flash_boundaries)(uint32_t *flash_min, uint32_t *flash_max, uint32_t *app_header);
+        void (*get_flash_page_info)(uint32_t address, uint32_t *page_start, uint32_t *page_length_bytes);
+        uint16_t (*erase_flash_page)(uint32_t address);
+        uint16_t (*write_flash_bytes)(uint32_t address, const uint8_t *data, uint32_t size_bytes);
         uint16_t (*finalize_flash)(compute_checksum_func_t compute_checksum_helper);
         compute_checksum_func_t compute_checksum;
 
-        /**
-         *     Copy bytes from flash into a RAM buffer.
-         *
-         *     Von Neumann (STM32, MSPM0, most ARM): flash is memory-mapped
-         *     and readable via a normal data pointer.  Implement as:
-         *         memcpy(dest_ram, (const void *)(uintptr_t)flash_addr, size_bytes);
-         *
-         *     Harvard (dsPIC33): program flash and data SRAM are SEPARATE
-         *     address spaces.  A data pointer cannot legally address flash --
-         *     dereferencing one reads unrelated SRAM instead.  Implement
-         *     using the TBLRDL/TBLRDH table-read instructions, exposed by
-         *     MCC as FLASH_ReadWord24().  See bootloader_drivers_openlcb.c
-         *     in the dsPIC demo for the full implementation.
-         *
-         *     This DI slot is why the library never calls memcpy() directly
-         *     on flash pointers and never dereferences a flash address as a
-         *     data pointer.  Routing all flash reads through this function
-         *     pointer lets a single bootloader.c compile and run correctly
-         *     on both Von Neumann and Harvard targets with no #ifdefs in the
-         *     library source.
-         *
-         *     @param flash_addr  source address in program flash (always
-         *                        32-bit, even on platforms where pointers
-         *                        are narrower, to avoid truncation)
-         *     @param dest_ram    destination buffer in data SRAM
-         *     @param size_bytes  number of bytes to copy
-         */
+            /**
+             *     Copy bytes from flash into a RAM buffer.
+             *
+             *     Von Neumann (STM32, MSPM0, most ARM): flash is memory-mapped
+             *     and readable via a normal data pointer.  Implement as:
+             *         memcpy(dest_ram, (const void *)(uintptr_t)flash_addr, size_bytes);
+             *
+             *     Harvard (dsPIC33): program flash and data SRAM are SEPARATE
+             *     address spaces.  A data pointer cannot legally address flash --
+             *     dereferencing one reads unrelated SRAM instead.  Implement
+             *     using the TBLRDL/TBLRDH table-read instructions, exposed by
+             *     MCC as FLASH_ReadWord24().  See bootloader_drivers_openlcb.c
+             *     in the dsPIC demo for the full implementation.
+             *
+             *     This DI slot is why the library never calls memcpy() directly
+             *     on flash pointers and never dereferences a flash address as a
+             *     data pointer.  Routing all flash reads through this function
+             *     pointer lets a single bootloader.c compile and run correctly
+             *     on both Von Neumann and Harvard targets with no #ifdefs in the
+             *     library source.
+             *
+             *     @param flash_addr  source address in program flash (always
+             *                        32-bit, even on platforms where pointers
+             *                        are narrower, to avoid truncation)
+             *     @param dest_ram    destination buffer in data SRAM
+             *     @param size_bytes  number of bytes to copy
+             */
         void (*read_flash_bytes)(uint32_t flash_addr, void *dest_ram, uint32_t size_bytes);
 
-        /** @brief Tear down all peripherals and core state before handing off to the other binary. */
+            /** @brief Tear down all peripherals and core state before handing off to the other binary. */
         void (*cleanup_before_handoff)(void);
 
     } bootloader_openlcb_driver_t;
 
     /* ================================================================== */
-    /* Feature flags — uncomment to disable optional features             */
+    /* Feature flags -- uncomment to disable optional features             */
     /* ================================================================== */
 
     /**
      *     Uncomment NO_CHECKSUM to bypass application image checksum
-     *     validation — both at boot time and after a firmware write.
+     *     validation -- both at boot time and after a firmware write.
      *
      *     WARNING: The bootloader will jump to any image in flash without
      *     verifying it is valid.  Use only during development or on
@@ -210,7 +218,7 @@ extern "C" {
     #define NO_CHECKSUM
 
     /* ================================================================== */
-    /* SNIP string defaults — override with -D compiler flags per platform */
+    /* SNIP string defaults -- override with -D compiler flags per platform */
     /* ================================================================== */
 
     #ifndef BOOTLOADER_SNIP_MANUFACTURER
@@ -241,7 +249,7 @@ extern "C" {
     /* OpenLCB constants                                                   */
     /* ================================================================== */
 
-    /** Write buffer size — one datagram payload worth of data. */
+        /** Write buffer size -- one datagram payload worth of data. */
     #define BOOTLOADER_WRITE_BUFFER_SIZE 64
 
     /* MTI values (names from openlcb_defines.h). */
@@ -304,13 +312,13 @@ extern "C" {
     /* Bootloader state                                                    */
     /* ================================================================== */
 
-    /**
-     *     Protocol-layer state for the bootloader.
-     *
-     *     This state is shared between bootloader.c and bootloader_protocol.c.
-     *     Transport-layer state (CAN alias, frames, etc.) is internal to the
-     *     transport and not visible here.
-     */
+        /**
+         *     Protocol-layer state for the bootloader.
+         *
+         *     This state is shared between bootloader.c and bootloader_protocol.c.
+         *     Transport-layer state (CAN alias, frames, etc.) is internal to the
+         *     transport and not visible here.
+         */
     typedef struct {
 
         unsigned request_reset : 1;
@@ -333,7 +341,7 @@ extern "C" {
 
     } bootloader_state_t;
 
-    /** Global bootloader state. */
+        /** Global bootloader state. */
     extern bootloader_state_t bootloader_state;
 
     /* ================================================================== */
@@ -344,8 +352,8 @@ extern "C" {
      * The shared RAM definitions (BOOTLOADER_REQUEST_MAGIC, bootloader_request_flag,
      * bootloader_cached_alias) live in a standalone header/source pair:
      *
-     *   shared/bootloader_shared_ram.h  — #define and extern declarations
-     *   shared/bootloader_shared_ram.c  — variable definitions with .noinit attr
+     *   shared/bootloader_shared_ram.h  -- #define and extern declarations
+     *   shared/bootloader_shared_ram.c  -- variable definitions with .noinit attr
      *
      * The application includes bootloader_shared_ram.h directly (no need to
      * pull in all of bootloader_types.h).  The bootloader project should also

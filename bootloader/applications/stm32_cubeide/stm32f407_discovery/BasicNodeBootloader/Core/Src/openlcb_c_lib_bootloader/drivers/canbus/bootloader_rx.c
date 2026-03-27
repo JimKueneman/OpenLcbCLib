@@ -131,14 +131,14 @@ static bool _is_ame_frame(uint32_t can_id) {
 
 }
 
-/**
- *     Returns the datagram frame type if the frame is a datagram addressed
- *     to us, or 0 if it is not a datagram for us.
- *
- *     @param can_id    CAN ID with EFF flag stripped
- *     @param our_alias our current alias
- *     @return CAN_FRAME_TYPE_DATAGRAM_* value, or 0
- */
+    /**
+     *     Returns the datagram frame type if the frame is a datagram addressed
+     *     to us, or 0 if it is not a datagram for us.
+     *
+     *     @param can_id    CAN ID with EFF flag stripped
+     *     @param our_alias our current alias
+     *     @return CAN_FRAME_TYPE_DATAGRAM_* value, or 0
+     */
 static uint32_t _datagram_type_for_us(uint32_t can_id, uint16_t our_alias) {
 
     uint32_t frame_type = can_id & MASK_CAN_FRAME_TYPE;
@@ -203,22 +203,22 @@ static void _flag_error(uint16_t error_code, uint16_t src_alias) {
 
 }
 
-static void _append_datagram_data(const uint8_t *data, uint8_t dlc) {
+static void _append_datagram_data(const uint8_t *data, uint8_t data_length) {
 
-    uint8_t copy_len = dlc;
+    uint8_t bytes_to_copy = data_length;
 
-    if (_rx.datagram_len + copy_len > 72) {
+    if (_rx.datagram_len + bytes_to_copy > 72) {
 
-        copy_len = 72 - _rx.datagram_len;
+        bytes_to_copy = 72 - _rx.datagram_len;
 
     }
 
-    memcpy(_rx.datagram_buffer + _rx.datagram_len, data, copy_len);
-    _rx.datagram_len += copy_len;
+    memcpy(_rx.datagram_buffer + _rx.datagram_len, data, bytes_to_copy);
+    _rx.datagram_len += bytes_to_copy;
 
 }
 
-static void _handle_datagram_frame(uint32_t frame_type, uint16_t src_alias, const uint8_t *data, uint8_t dlc, uint8_t current_tick) {
+static void _handle_datagram_frame(uint32_t frame_type, uint16_t src_alias, const uint8_t *data, uint8_t data_length, uint8_t current_tick) {
 
     if (frame_type == CAN_FRAME_TYPE_DATAGRAM_ONLY) {
 
@@ -230,7 +230,7 @@ static void _handle_datagram_frame(uint32_t frame_type, uint16_t src_alias, cons
 
         _rx.datagram_len = 0;
         _rx.datagram_src = src_alias;
-        _append_datagram_data(data, dlc);
+        _append_datagram_data(data, data_length);
         _rx.datagram_complete = 1;
         _rx.datagram_in_progress = 0;
         return;
@@ -249,12 +249,12 @@ static void _handle_datagram_frame(uint32_t frame_type, uint16_t src_alias, cons
         _rx.datagram_src = src_alias;
         _rx.datagram_in_progress = 1;
         _rx.datagram_last_tick = current_tick;
-        _append_datagram_data(data, dlc);
+        _append_datagram_data(data, data_length);
         return;
 
     }
 
-    /* MIDDLE or FINAL — must have a matching in-progress assembly. */
+    /* MIDDLE or FINAL -- must have a matching in-progress assembly. */
     if (!_rx.datagram_in_progress || src_alias != _rx.datagram_src) {
 
         _flag_error(ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START, src_alias);
@@ -273,7 +273,7 @@ static void _handle_datagram_frame(uint32_t frame_type, uint16_t src_alias, cons
     }
 
     _rx.datagram_last_tick = current_tick;
-    _append_datagram_data(data, dlc);
+    _append_datagram_data(data, data_length);
 
     if (frame_type == CAN_FRAME_TYPE_DATAGRAM_FINAL) {
 
@@ -312,7 +312,7 @@ void BootloaderRx_poll(uint16_t our_alias, uint8_t current_tick) {
         /* Discard frames without reserved top bit. */
         if (!(id & RESERVED_TOP_BIT)) { continue; }
 
-        /* Check alias collision — set flags, do not buffer. */
+        /* Check alias collision -- set flags, do not buffer. */
         if (_is_alias_collision(id, our_alias)) {
 
             if (_is_cid_frame(id)) {
@@ -329,7 +329,7 @@ void BootloaderRx_poll(uint16_t our_alias, uint8_t current_tick) {
 
         }
 
-        /* CAN control frames — only buffer AME. */
+        /* CAN control frames -- only buffer AME. */
         if (_is_control_frame(id)) {
 
             if (_is_ame_frame(id)) {
@@ -342,13 +342,13 @@ void BootloaderRx_poll(uint16_t our_alias, uint8_t current_tick) {
 
         }
 
-        /* Datagram frames — assemble directly, do not enter FIFO. */
+        /* Datagram frames -- assemble directly, do not enter FIFO. */
         uint32_t dg_type = _datagram_type_for_us(id, our_alias);
 
         if (dg_type != 0) {
 
-            uint16_t src = id & 0xFFF;
-            _handle_datagram_frame(dg_type, src, frame.data, frame.can_dlc, current_tick);
+            uint16_t source_alias = id & 0xFFF;
+            _handle_datagram_frame(dg_type, source_alias, frame.data, frame.can_dlc, current_tick);
             continue;
 
         }
@@ -406,13 +406,13 @@ bool BootloaderRx_has_datagram(void) {
 
 }
 
-bool BootloaderRx_get_datagram(uint16_t *src_alias, uint8_t *buffer, uint8_t *len) {
+bool BootloaderRx_get_datagram(uint16_t *src_alias, uint8_t *buffer, uint8_t *datagram_length) {
 
     if (!_rx.datagram_complete) { return false; }
 
     *src_alias = _rx.datagram_src;
     memcpy(buffer, _rx.datagram_buffer, _rx.datagram_len);
-    *len = _rx.datagram_len;
+    *datagram_length = _rx.datagram_len;
 
     _rx.datagram_complete = 0;
     _rx.datagram_len = 0;
@@ -433,9 +433,9 @@ bool BootloaderRx_has_error(void) {
 
 bootloader_rx_error_t BootloaderRx_get_error(void) {
 
-    bootloader_rx_error_t err = _rx.pending_error;
+    bootloader_rx_error_t assembly_error = _rx.pending_error;
     _rx.pending_error.has_error = 0;
-    return err;
+    return assembly_error;
 
 }
 

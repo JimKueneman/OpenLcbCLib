@@ -43,33 +43,33 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    /**
-     *     Polls the MCAN RX FIFO 1 for a received CAN frame.  If a frame is
-     *     available it is copied into the caller's struct and the FIFO read
-     *     index is acknowledged.
-     *
-     *     @param frame  output struct populated on success
-     *     @return true if a frame was read, false if the FIFO was empty
-     */
+        /**
+         *     Polls the MCAN RX FIFO 1 for a received CAN frame.  If a frame is
+         *     available it is copied into the caller's struct and the FIFO read
+         *     index is acknowledged.
+         *
+         *     @param frame  output struct populated on success
+         *     @return true if a frame was read, false if the FIFO was empty
+         */
     extern bool BootloaderDriversCan_read_received_frame(bootloader_can_frame_t *frame);
 
-    /**
-     *     Attempts to transmit a CAN frame through the MCAN TX buffer.
-     *     Uses buffer 0 if free, falls back to buffer 1, or returns false
-     *     when both buffers are pending.
-     *
-     *     @param frame  frame to transmit
-     *     @return true if the frame was queued, false if no TX buffer was free
-     */
+        /**
+         *     Attempts to transmit a CAN frame through the MCAN TX buffer.
+         *     Uses buffer 0 if free, falls back to buffer 1, or returns false
+         *     when both buffers are pending.
+         *
+         *     @param frame  frame to transmit
+         *     @return true if the frame was queued, false if no TX buffer was free
+         */
     extern bool BootloaderDriversCan_try_send_frame(const bootloader_can_frame_t *frame);
 
-    /**
-     *     Returns the pre-assigned CAN alias for this node.  Returns 0
-     *     to let the CAN transport layer generate its own alias during
-     *     initialization.
-     *
-     *     @return 12-bit alias, or 0 for auto-generation
-     */
+        /**
+         *     Returns the pre-assigned CAN alias for this node.  Returns 0
+         *     to let the CAN transport layer generate its own alias during
+         *     initialization.
+         *
+         *     @return 12-bit alias, or 0 for auto-generation
+         */
     extern uint16_t BootloaderDriversCan_get_cached_alias_passed_from_application(void);
 
 #ifdef __cplusplus

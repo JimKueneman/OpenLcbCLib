@@ -47,81 +47,81 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    /**
-     *     Initializes the CAN state machine, RX engine, and TX engine.
-     *
-     *     @param can_driver CAN hardware driver (forwarded to RX/TX)
-     *     @param openlcb_driver hardware driver (for timer_tick, node_id)
-     */
+        /**
+         *     Initializes the CAN state machine, RX engine, and TX engine.
+         *
+         *     @param can_driver    CAN hardware driver (forwarded to RX/TX)
+         *     @param openlcb_driver hardware driver (for timer_tick, node_id)
+         */
     void BootloaderCanSM_init(const bootloader_can_driver_t *can_driver, const bootloader_openlcb_driver_t *openlcb_driver);
 
-    /**
-     *     Runs one iteration: poll RX, handle collisions, run alias
-     *     state machine, dispatch received frames to protocol layer.
-     */
+        /**
+         *     Runs one iteration: poll RX, handle collisions, run alias
+         *     state machine, dispatch received frames to protocol layer.
+         */
     void BootloaderCanSM_loop(void);
 
-    /**
-     *     @return true after alias negotiation is complete
-     */
+        /**
+         *     @return true after alias negotiation is complete
+         */
     bool BootloaderCanSM_is_initialized(void);
 
-    /**
-     *     @return the current 12-bit CAN alias
-     */
+        /**
+         *     @return the current 12-bit CAN alias
+         */
     uint16_t BootloaderCanSM_alias(void);
 
-    /**
-     *     Sends an addressed message (single or multi-frame).
-     *
-     *     @param mti message type indicator
-     *     @param dest_alias destination CAN alias
-     *     @param dest_node_id destination node ID (0 on CAN)
-     *     @param data payload bytes (may be NULL if len is 0)
-     *     @param len number of payload bytes
-     *     @return true if sent
-     */
-    bool BootloaderCanSM_send_addressed(uint16_t mti, uint16_t dest_alias, uint64_t dest_node_id, const uint8_t *data, uint8_t len);
+        /**
+         *     Sends an addressed message (single or multi-frame).
+         *
+         *     @param mti            message type indicator
+         *     @param dest_alias     destination CAN alias
+         *     @param dest_node_id   destination node ID (0 on CAN)
+         *     @param data           payload bytes (may be NULL if payload_length is 0)
+         *     @param payload_length number of payload bytes
+         *     @return true if sent
+         */
+    bool BootloaderCanSM_send_addressed(uint16_t mti, uint16_t dest_alias, uint64_t dest_node_id, const uint8_t *data, uint8_t payload_length);
 
-    /**
-     *     Sends a global (unaddressed) message.
-     *
-     *     @param mti message type indicator
-     *     @param data payload bytes (may be NULL if len is 0)
-     *     @param len number of payload bytes
-     *     @return true if sent
-     */
-    bool BootloaderCanSM_send_global(uint16_t mti, const uint8_t *data, uint8_t len);
+        /**
+         *     Sends a global (unaddressed) message.
+         *
+         *     @param mti            message type indicator
+         *     @param data           payload bytes (may be NULL if payload_length is 0)
+         *     @param payload_length number of payload bytes
+         *     @return true if sent
+         */
+    bool BootloaderCanSM_send_global(uint16_t mti, const uint8_t *data, uint8_t payload_length);
 
-    /**
-     *     Sends a Datagram Received OK reply.
-     *
-     *     @param dest_alias destination CAN alias
-     *     @param dest_node_id destination node ID (0 on CAN)
-     *     @return true if sent
-     */
+        /**
+         *     Sends a Datagram Received OK reply.
+         *
+         *     @param dest_alias   destination CAN alias
+         *     @param dest_node_id destination node ID (0 on CAN)
+         *     @return true if sent
+         */
     bool BootloaderCanSM_send_datagram_ok(uint16_t dest_alias, uint64_t dest_node_id);
 
-    /**
-     *     Sends a Datagram Rejected reply.
-     *
-     *     @param dest_alias destination CAN alias
-     *     @param dest_node_id destination node ID (0 on CAN)
-     *     @param error_code OpenLCB error code
-     *     @return true if sent
-     */
+        /**
+         *     Sends a Datagram Rejected reply.
+         *
+         *     @param dest_alias   destination CAN alias
+         *     @param dest_node_id destination node ID (0 on CAN)
+         *     @param error_code   OpenLCB error code
+         *     @return true if sent
+         */
     bool BootloaderCanSM_send_datagram_rejected(uint16_t dest_alias, uint64_t dest_node_id, uint16_t error_code);
 
-    /**
-     *     Sends a response datagram (Options reply, Address Space Info reply).
-     *
-     *     @param dest_alias destination CAN alias
-     *     @param dest_node_id destination node ID (0 on CAN)
-     *     @param data datagram payload
-     *     @param len payload length (max 72)
-     *     @return true if sent
-     */
-    bool BootloaderCanSM_send_datagram(uint16_t dest_alias, uint64_t dest_node_id, const uint8_t *data, uint8_t len);
+        /**
+         *     Sends a response datagram (Options reply, Address Space Info reply).
+         *
+         *     @param dest_alias     destination CAN alias
+         *     @param dest_node_id   destination node ID (0 on CAN)
+         *     @param data           datagram payload
+         *     @param payload_length payload length (max 72)
+         *     @return true if sent
+         */
+    bool BootloaderCanSM_send_datagram(uint16_t dest_alias, uint64_t dest_node_id, const uint8_t *data, uint8_t payload_length);
 
 #ifdef __cplusplus
 }

@@ -49,6 +49,7 @@
 
 #include <stdio.h>
 #include "tmr2.h"
+#include "../../shared/bootloader_shared_ram.h"  /* HAND-EDIT: VIVT redirect */
 
 /**
  Section: File specific functions
@@ -112,18 +113,10 @@ void TMR2_Initialize (void)
 
 void __attribute__ ( ( interrupt, no_auto_psv ) ) _T2Interrupt (  )
 {
-    /* Check if the Timer Interrupt/Status is set */
-
-    //***User Area Begin
-
-    // ticker function call;
-    // ticker is 1 -> Callback function gets called everytime this ISR executes
-    if(TMR2_InterruptHandler) 
-    { 
-           TMR2_InterruptHandler(); 
+    /* HAND-EDIT: VIVT redirect */
+    if (bootloader_vivt_jumptable.timer_2_handler) {
+        bootloader_vivt_jumptable.timer_2_handler();
     }
-
-    //***User Area End
 
     tmr2_obj.count++;
     tmr2_obj.timerElapsed = true;

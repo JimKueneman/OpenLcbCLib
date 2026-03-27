@@ -79,9 +79,6 @@
 #define TEST_PIN_1404_TRIS _TRISA12
 #define TEST_PIN_1404 _LATA12
 
-#define LED_GREEN_TRIS _TRISA0
-#define LED_GREEN _LATA0
-
 #include <libpic30.h>
 
 #include "xc.h"
@@ -98,6 +95,9 @@
 
 #include "src/openlcb_c_lib/drivers/canbus/can_config.h"
 #include "src/openlcb_c_lib/openlcb/openlcb_config.h"
+
+#include "../shared/bootloader_shared_ram.h"
+#include "traps.h"
 
 #define NODE_ID 0x0501010107AA
 
@@ -136,8 +136,6 @@ static void _initialize_io_early_for_test(void)
     ANSELC = 0x00;
     ANSELE = 0x00;
 
-    LED_GREEN_TRIS = 0;
-
     TEST_PIN_1401_TRIS = 0;
     TEST_PIN_1402_TRIS = 0;
     TEST_PIN_1403_TRIS = 0;
@@ -149,6 +147,28 @@ int main(void)
 {
 
     _initialize_io_early_for_test();
+
+    /* Register VIVT handlers before any interrupts are enabled.
+     * The bootloader owns the hardware IVT; these function pointers
+     * let the bootloader's ISR stubs forward to our handlers. */
+    bootloader_vivt_jumptable.timer_2_handler        = Dspic33Drivers_t2_interrupt_handler;
+    bootloader_vivt_jumptable.can1_handler            = Dspic33CanDriver_c1_interrupt_handler;
+    bootloader_vivt_jumptable.oscillatorfail_handler  = Traps_oscillator_fail_handler;
+    bootloader_vivt_jumptable.addresserror_handler    = Traps_address_error_handler;
+    bootloader_vivt_jumptable.stackerror_handler      = Traps_stack_error_handler;
+    bootloader_vivt_jumptable.matherror_handler       = Traps_math_error_handler;
+    bootloader_vivt_jumptable.dmacerror_handler       = Traps_dmac_error_handler;
+
+    /* Temporary UART init — bootloader MCC values may be clobbered by app CRT0.
+     * 333333 baud, 8N1, BRGH=1, U1BRG=29 @ FCY=40 MHz.
+     * Remove once app has its own MCC UART setup. */
+    U1MODEbits.STSEL  = 0;   /* 1 stop bit          */
+    U1MODEbits.PDSEL  = 0;   /* 8-bit, no parity    */
+    U1MODEbits.ABAUD  = 0;   /* no auto-baud        */
+    U1MODEbits.BRGH   = 1;   /* high-speed mode     */
+    U1BRG             = 29;  /* 333333 baud @ 40 MHz */
+    U1MODEbits.UARTEN = 1;   /* enable UART module  */
+    U1STAbits.UTXEN   = 1;   /* enable transmitter  */
 
     CallbacksOlcb_initialize();
 
@@ -163,6 +183,31 @@ int main(void)
     OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
     printf("Node Allocated\n");
+    
+    printf("Re-enable Global Interrupts\n");
+     _GIE = 1;
+
+    printf("=== VIVT DEBUG ===\n");
+    printf("VIVT addr=%p\n", (void*)&bootloader_vivt_jumptable);
+    printf("  t2_handler=%p\n",  (void*)bootloader_vivt_jumptable.timer_2_handler);
+    printf("  can1_handler=%p\n", (void*)bootloader_vivt_jumptable.can1_handler);
+    printf("  oscfail=%p\n",  (void*)bootloader_vivt_jumptable.oscillatorfail_handler);
+    printf("  addrerr=%p\n",  (void*)bootloader_vivt_jumptable.addresserror_handler);
+    printf("  stkerr=%p\n",   (void*)bootloader_vivt_jumptable.stackerror_handler);
+    printf("  matherr=%p\n",  (void*)bootloader_vivt_jumptable.matherror_handler);
+    printf("  dmacerr=%p\n",  (void*)bootloader_vivt_jumptable.dmacerror_handler);
+    printf("IEC0=0x%04X (T2IE=%d)\n", IEC0, IEC0bits.T2IE);
+    printf("IEC2=0x%04X (C1IE=%d)\n", IEC2, IEC2bits.C1IE);
+    printf("T2CON=0x%04X (TON=%d)\n", T2CON, T2CONbits.TON);
+    printf("C1CTRL1=0x%04X\n", C1CTRL1);
+    printf("C1INTE=0x%04X\n", C1INTE);
+    printf("C1INTF=0x%04X\n", C1INTF);
+    printf("DMA0CON=0x%04X DMA1CON=0x%04X DMA2CON=0x%04X\n", DMA0CON, DMA1CON, DMA2CON);
+    printf("DMA0STAL=0x%04X DMA1STAL=0x%04X DMA2STAL=0x%04X\n", DMA0STAL, DMA1STAL, DMA2STAL);
+    printf("C1RXM0SID=0x%04X C1RXM0EID=0x%04X\n", C1RXM0SID, C1RXM0EID);
+    printf("C1RXF0SID=0x%04X C1FEN1=0x%04X\n", C1RXF0SID, C1FEN1);
+    printf("_GIE=%d\n", _GIE);
+    printf("=================\n");
 
     while (1)
     {

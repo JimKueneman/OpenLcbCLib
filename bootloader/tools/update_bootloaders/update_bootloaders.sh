@@ -67,4 +67,7 @@ update_app "stm32_cubeide/stm32f407_discovery/BasicNodeBootloader" \
 update_app "ti_theia/mspm03507_launchpad/BasicNodeBootloader" \
     "${BOOT_APPS}/ti_theia/mspm03507_launchpad/BasicNodeBootloader/openlcb_c_lib_bootloader"
 
+update_app "esp32/BasicNodeBootloader" \
+    "${BOOT_APPS}/esp32/BasicNodeBootloader/src/openlcb_c_lib_bootloader"
+
 echo "Done."

@@ -64,28 +64,21 @@ extern CAN_HandleTypeDef hcan1;
 /* Lifecycle                                                               */
 /* ====================================================================== */
 
-void BootloaderDriversOpenlcb_initialize_hardware(void) {
+void BootloaderDriversOpenlcb_initialize_hardware(bootloader_request_t request) {
 
-    /*
-     * On a power-on or brown-out reset, SRAM contents are random garbage.
-     * Clear the bootloader request flag so a random value that happens to
-     * match the magic number does not falsely trigger bootloader mode.
-     *
-     * On a software reset (NVIC_SystemReset) SRAM is preserved — leave the
-     * flag alone so is_bootloader_requested() can read it.
-     *
-     * RCC_CSR_SFTRSTF is set only on a software reset (NVIC_SystemReset).
-     * If it is NOT set, clear the shared RAM so random SRAM never triggers
-     * bootloader mode on power-on or hardware reset.
-     */
-    if (!(RCC->CSR & RCC_CSR_SFTRSTF)) {
+    /* Centralized .noinit shared RAM cleanup.
+     * bootloader_request_flag was already consumed by is_bootloader_requested()
+     * before this function runs; clear it unconditionally as belt-and-suspenders.
+     * bootloader_cached_alias is only meaningful on app drop-back -- the library
+     * CAN state machine reads it via get_cached_alias() during INIT_PICK_ALIAS
+     * and clears it after pickup.  On any other reset path it is stale garbage. */
+    bootloader_request_flag = 0;
 
-        bootloader_request_flag = 0;
+    if (request != BOOTLOADER_REQUESTED_BY_APP) {
+
         bootloader_cached_alias = 0;
 
     }
-
-    __HAL_RCC_CLEAR_RESET_FLAGS();
 
 }
 
@@ -96,9 +89,8 @@ bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
      *
      * The application writes BOOTLOADER_REQUEST_MAGIC into the shared RAM
      * flag and then calls NVIC_SystemReset().  SRAM survives the soft
-     * reset, so the magic value is still here when we start up.  If we
-     * find it, clear it immediately so the NEXT reset does not falsely
-     * re-enter bootloader mode, then return REQUESTED_BY_APP.
+     * reset, so the magic value is still here when we start up.  The flag
+     * is cleared centrally by initialize_hardware(), not here.
      *
      * This tells the library that the CT already sent Freeze to the
      * application, so the bootloader starts with firmware_active = 1
@@ -107,7 +99,7 @@ bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
      */
     if (bootloader_request_flag == BOOTLOADER_REQUEST_MAGIC) {
 
-        bootloader_request_flag = 0;
+        /* Flag is cleared centrally by initialize_hardware(). */
         return BOOTLOADER_REQUESTED_BY_APP;
 
     }
@@ -207,16 +199,14 @@ static const flash_sector_entry_t _flash_sectors[] = {
 
 #define FLASH_SECTOR_COUNT (sizeof(_flash_sectors) / sizeof(_flash_sectors[0]))
 
-static const flash_sector_entry_t *_find_sector(const void *address) {
+static const flash_sector_entry_t *_find_sector(uint32_t address) {
 
-    uintptr_t addr = (uintptr_t) address;
+    for (uint32_t sector_index = 0; sector_index < FLASH_SECTOR_COUNT; sector_index++) {
 
-    for (uint32_t i = 0; i < FLASH_SECTOR_COUNT; i++) {
+        if (address >= _flash_sectors[sector_index].start &&
+            address <  _flash_sectors[sector_index].start + _flash_sectors[sector_index].size) {
 
-        if (addr >= _flash_sectors[i].start &&
-            addr <  _flash_sectors[i].start + _flash_sectors[i].size) {
-
-            return &_flash_sectors[i];
+            return &_flash_sectors[sector_index];
 
         }
 
@@ -230,15 +220,15 @@ static const flash_sector_entry_t *_find_sector(const void *address) {
 /* Flash operations                                                        */
 /* ====================================================================== */
 
-void BootloaderDriversOpenlcb_get_flash_boundaries(const void **flash_min, const void **flash_max, const struct bootloader_app_header **app_header) {
+void BootloaderDriversOpenlcb_get_flash_boundaries(uint32_t *flash_min, uint32_t *flash_max, uint32_t *app_header) {
 
-    *flash_min = (const void *) APP_FLASH_START;
-    *flash_max = (const void *) APP_FLASH_END;
-    *app_header = (const struct bootloader_app_header *) APP_HEADER_ADDRESS;
+    *flash_min  = APP_FLASH_START;
+    *flash_max  = APP_FLASH_END;
+    *app_header = APP_HEADER_ADDRESS;
 
 }
 
-void BootloaderDriversOpenlcb_get_flash_page_info(const void *address, const void **page_start, uint32_t *page_length_bytes) {
+void BootloaderDriversOpenlcb_get_flash_page_info(uint32_t address, uint32_t *page_start, uint32_t *page_length_bytes) {
 
     const flash_sector_entry_t *s = _find_sector(address);
 
@@ -250,12 +240,12 @@ void BootloaderDriversOpenlcb_get_flash_page_info(const void *address, const voi
 
     }
 
-    *page_start        = (const void *) s->start;
+    *page_start        = s->start;
     *page_length_bytes = s->size;
 
 }
 
-uint16_t BootloaderDriversOpenlcb_erase_flash_page(const void *address) {
+uint16_t BootloaderDriversOpenlcb_erase_flash_page(uint32_t address) {
 
     const flash_sector_entry_t *s = _find_sector(address);
 
@@ -298,18 +288,18 @@ void BootloaderDriversOpenlcb_read_flash_bytes(uint32_t flash_addr, void *dest_r
 
 }
 
-uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const void *data, uint32_t size_bytes) {
+uint16_t BootloaderDriversOpenlcb_write_flash_bytes(uint32_t address, const uint8_t *data, uint32_t size_bytes) {
 
-    uint32_t       dest      = (uint32_t) address;
-    const uint8_t *src       = (const uint8_t *) data;
-    uint32_t       remaining = size_bytes;
+    uint32_t       dest        = address;
+    const uint8_t *source_data = data;
+    uint32_t       remaining   = size_bytes;
 
     HAL_FLASH_Unlock();
 
     while (remaining >= FLASH_WRITE_ALIGN) {
 
         uint32_t word;
-        memcpy(&word, src, FLASH_WRITE_ALIGN);
+        memcpy(&word, source_data, FLASH_WRITE_ALIGN);
 
         if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, dest, (uint64_t) word) != HAL_OK) {
 
@@ -318,9 +308,9 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const v
 
         }
 
-        dest      += FLASH_WRITE_ALIGN;
-        src       += FLASH_WRITE_ALIGN;
-        remaining -= FLASH_WRITE_ALIGN;
+        dest        += FLASH_WRITE_ALIGN;
+        source_data += FLASH_WRITE_ALIGN;
+        remaining   -= FLASH_WRITE_ALIGN;
 
     }
 
@@ -329,7 +319,7 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const v
         uint8_t  pad[FLASH_WRITE_ALIGN];
         uint32_t word;
         memset(pad, 0xFF, sizeof(pad));
-        memcpy(pad, src, remaining);
+        memcpy(pad, source_data, remaining);
         memcpy(&word, pad, FLASH_WRITE_ALIGN);
 
         if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, dest, (uint64_t) word) != HAL_OK) {
@@ -368,10 +358,10 @@ uint16_t BootloaderDriversOpenlcb_finalize_flash(compute_checksum_func_t compute
 /* Checksum                                                                */
 /* ====================================================================== */
 
-void BootloaderDriversOpenlcb_compute_checksum(const void *data, uint32_t size, uint32_t *checksum) {
+void BootloaderDriversOpenlcb_compute_checksum(uint32_t flash_addr, uint32_t size, uint32_t *checksum) {
 
     uint16_t crc3[3];
-    BootloaderCrc_crc3_crc16_ibm(data, size, crc3);
+    BootloaderCrc_crc3_crc16_ibm((const void *)(uintptr_t) flash_addr, size, crc3);
 
     checksum[0] = (uint32_t) crc3[0];
     checksum[1] = (uint32_t) crc3[1];

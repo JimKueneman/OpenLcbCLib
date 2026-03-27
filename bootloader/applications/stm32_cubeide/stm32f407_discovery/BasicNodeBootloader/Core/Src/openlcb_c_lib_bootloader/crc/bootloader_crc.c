@@ -53,12 +53,12 @@ static const uint16_t _CRC16_IBM_LO[16] = {
 
 };
 
-/**
- *     Appends one byte to the CRC-16-IBM state.
- *
- *     @param state pointer to current CRC state (modified in place)
- *     @param data byte to add
- */
+    /**
+     *     Appends one byte to the CRC-16-IBM state.
+     *
+     *     @param state pointer to current CRC state (modified in place)
+     *     @param data byte to add
+     */
 static void _crc16_ibm_add(uint16_t *state, uint8_t data) {
 
     *state ^= data;
@@ -72,9 +72,9 @@ uint16_t BootloaderCrc_crc16_ibm(const void *data, uint32_t length_bytes) {
     const uint8_t *payload = (const uint8_t *) data;
     uint16_t state = 0x0000;
 
-    for (uint32_t i = 0; i < length_bytes; i++) {
+    for (uint32_t byte_index = 0; byte_index < length_bytes; byte_index++) {
 
-        _crc16_ibm_add(&state, payload[i]);
+        _crc16_ibm_add(&state, payload[byte_index]);
 
     }
 
@@ -89,17 +89,17 @@ void BootloaderCrc_crc3_crc16_ibm(const void *data, uint32_t length_bytes, uint1
     uint16_t state_odd = 0x0000;
     uint16_t state_even = 0x0000;
 
-    for (uint32_t i = 1; i <= length_bytes; i++) {
+    for (uint32_t byte_index = 1; byte_index <= length_bytes; byte_index++) {
 
-        _crc16_ibm_add(&state_all, payload[i - 1]);
+        _crc16_ibm_add(&state_all, payload[byte_index - 1]);
 
-        if (i & 1) {
+        if (byte_index & 1) {
 
-            _crc16_ibm_add(&state_odd, payload[i - 1]);
+            _crc16_ibm_add(&state_odd, payload[byte_index - 1]);
 
         } else {
 
-            _crc16_ibm_add(&state_even, payload[i - 1]);
+            _crc16_ibm_add(&state_even, payload[byte_index - 1]);
 
         }
 

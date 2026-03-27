@@ -45,42 +45,42 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    /**
-     *     Initializes the OpenLCB protocol state machine.
-     *
-     *     @param openlcb_driver hardware driver for flash ops, LED, node_id
-     */
+        /**
+         *     Initializes the OpenLCB protocol state machine.
+         *
+         *     @param openlcb_driver hardware driver for flash ops, LED, node_id
+         */
     void BootloaderOpenlcbSM_init(const bootloader_openlcb_driver_t *openlcb_driver);
 
-    /**
-     *     Called when a complete datagram is received.
-     *
-     *     @param src_alias source node alias (0 on non-CAN)
-     *     @param src_node_id source node ID (0 on CAN)
-     *     @param data datagram payload bytes
-     *     @param len payload length (1-72)
-     */
-    void BootloaderOpenlcbSM_on_datagram_received(uint16_t src_alias, uint64_t src_node_id, const uint8_t *data, uint8_t len);
+        /**
+         *     Called when a complete datagram is received.
+         *
+         *     @param src_alias      source node alias (0 on non-CAN)
+         *     @param src_node_id    source node ID (0 on CAN)
+         *     @param data           datagram payload bytes
+         *     @param payload_length payload length (1-72)
+         */
+    void BootloaderOpenlcbSM_on_datagram_received(uint16_t src_alias, uint64_t src_node_id, const uint8_t *data, uint8_t payload_length);
 
-    /**
-     *     Called when an addressed message is received.
-     *
-     *     @param mti message type indicator
-     *     @param src_alias source node alias (0 on non-CAN)
-     *     @param src_node_id source node ID (0 on CAN)
-     *     @param data payload bytes after address bytes
-     *     @param len payload length
-     */
-    void BootloaderOpenlcbSM_on_addressed_message(uint16_t mti, uint16_t src_alias, uint64_t src_node_id, const uint8_t *data, uint8_t len);
+        /**
+         *     Called when an addressed message is received.
+         *
+         *     @param mti            message type indicator
+         *     @param src_alias      source node alias (0 on non-CAN)
+         *     @param src_node_id    source node ID (0 on CAN)
+         *     @param data           payload bytes after address bytes
+         *     @param payload_length payload length
+         */
+    void BootloaderOpenlcbSM_on_addressed_message(uint16_t mti, uint16_t src_alias, uint64_t src_node_id, const uint8_t *data, uint8_t payload_length);
 
-    /**
-     *     Called when a global message is received.
-     *
-     *     @param mti message type indicator
-     *     @param data payload bytes
-     *     @param len payload length
-     */
-    void BootloaderOpenlcbSM_on_global_message(uint16_t mti, const uint8_t *data, uint8_t len);
+        /**
+         *     Called when a global message is received.
+         *
+         *     @param mti            message type indicator
+         *     @param data           payload bytes
+         *     @param payload_length payload length
+         */
+    void BootloaderOpenlcbSM_on_global_message(uint16_t mti, const uint8_t *data, uint8_t payload_length);
 
 #ifdef __cplusplus
 }

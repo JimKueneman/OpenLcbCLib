@@ -115,29 +115,29 @@ bool BootloaderTx_send_multiframe(
             uint16_t our_alias,
             uint8_t current_tick,
             const uint8_t *data,
-            uint8_t len) {
+            uint8_t payload_length) {
 
     bootloader_can_frame_t frame;
 
-    /* Single frame — fits with the 2-byte address header. */
-    if (len <= 6) {
+    /* Single frame -- fits with the 2-byte address header. */
+    if (payload_length <= 6) {
 
-        _build_addressed_frame(&frame, mti, src_alias, dest_alias, MULTIFRAME_ONLY, data, len);
+        _build_addressed_frame(&frame, mti, src_alias, dest_alias, MULTIFRAME_ONLY, data, payload_length);
         _block_send(&frame, our_alias, current_tick);
         return true;
 
     }
 
-    /* First frame — 6 data bytes. */
+    /* First frame -- 6 data bytes. */
     _build_addressed_frame(&frame, mti, src_alias, dest_alias, MULTIFRAME_FIRST, data, 6);
     _block_send(&frame, our_alias, current_tick);
 
     uint8_t offset = 6;
 
     /* Middle and last frames. */
-    while (offset < len) {
+    while (offset < payload_length) {
 
-        uint8_t remaining = len - offset;
+        uint8_t remaining = payload_length - offset;
         uint8_t chunk = (remaining > 6) ? 6 : remaining;
         uint8_t flag = (remaining > 6) ? MULTIFRAME_MIDDLE : MULTIFRAME_FINAL;
 
@@ -152,7 +152,7 @@ bool BootloaderTx_send_multiframe(
 
 }
 
-bool BootloaderTx_send_global(uint16_t mti, uint16_t src_alias, uint16_t our_alias, uint8_t current_tick, const uint8_t *data, uint8_t len) {
+bool BootloaderTx_send_global(uint16_t mti, uint16_t src_alias, uint16_t our_alias, uint8_t current_tick, const uint8_t *data, uint8_t payload_length) {
 
     bootloader_can_frame_t frame;
     memset(&frame, 0, sizeof(frame));
@@ -161,15 +161,15 @@ bool BootloaderTx_send_global(uint16_t mti, uint16_t src_alias, uint16_t our_ali
             CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE |
             ((uint32_t)(mti & 0xFFF) << 12) | src_alias;
 
-    uint8_t copy_len = (len > 8) ? 8 : len;
+    uint8_t bytes_to_send = (payload_length > 8) ? 8 : payload_length;
 
-    if (data && copy_len > 0) {
+    if (data && bytes_to_send > 0) {
 
-        memcpy(frame.data, data, copy_len);
+        memcpy(frame.data, data, bytes_to_send);
 
     }
 
-    frame.can_dlc = copy_len;
+    frame.can_dlc = bytes_to_send;
 
     _block_send(&frame, our_alias, current_tick);
 
@@ -177,22 +177,22 @@ bool BootloaderTx_send_global(uint16_t mti, uint16_t src_alias, uint16_t our_ali
 
 }
 
-bool BootloaderTx_send_datagram(uint16_t src_alias, uint16_t dest_alias, uint16_t our_alias, uint8_t current_tick, const uint8_t *data, uint8_t len) {
+bool BootloaderTx_send_datagram(uint16_t src_alias, uint16_t dest_alias, uint16_t our_alias, uint8_t current_tick, const uint8_t *data, uint8_t payload_length) {
 
     uint32_t base_id = BOOTLOADER_CAN_EFF_FLAG | RESERVED_TOP_BIT |
             CAN_OPENLCB_MSG | ((uint32_t) dest_alias << 12) | src_alias;
 
-    if (len <= 8) {
+    if (payload_length <= 8) {
 
         bootloader_can_frame_t frame;
         memset(&frame, 0, sizeof(frame));
 
         frame.can_id = base_id | CAN_FRAME_TYPE_DATAGRAM_ONLY;
-        frame.can_dlc = len;
+        frame.can_dlc = payload_length;
 
-        if (data && len > 0) {
+        if (data && payload_length > 0) {
 
-            memcpy(frame.data, data, len);
+            memcpy(frame.data, data, payload_length);
 
         }
 
@@ -202,13 +202,13 @@ bool BootloaderTx_send_datagram(uint16_t src_alias, uint16_t dest_alias, uint16_
 
         uint8_t offset = 0;
 
-        while (offset < len) {
+        while (offset < payload_length) {
 
             bootloader_can_frame_t frame;
             memset(&frame, 0, sizeof(frame));
 
             uint32_t frame_type;
-            uint8_t remaining = len - offset;
+            uint8_t remaining = payload_length - offset;
             uint8_t chunk;
 
             if (offset == 0) {

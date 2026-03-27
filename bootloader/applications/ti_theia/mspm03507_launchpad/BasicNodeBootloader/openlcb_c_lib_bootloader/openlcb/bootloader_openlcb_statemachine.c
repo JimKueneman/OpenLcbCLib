@@ -44,6 +44,10 @@
 
 static const bootloader_openlcb_driver_t *_openlcb_driver;
 
+/* True when the current write offset falls in the binary pre-app skip region.
+ * _flush_write_buffer() returns success immediately without touching flash. */
+static bool _skip_write = false;
+
 /* ====================================================================== */
 /* Flash write buffer management                                           */
 /* ====================================================================== */
@@ -57,8 +61,16 @@ static void _init_write_buffer(void) {
 
 static uint16_t _flush_write_buffer(void) {
 
-    const void *address = (const void *) (uintptr_t) bootloader_state.write_buffer_offset;
-    const void *page_start = NULL;
+    if (_skip_write) {
+
+        _skip_write = false;
+        _init_write_buffer();
+        return 0;
+
+    }
+
+    uint32_t address    = bootloader_state.write_buffer_offset;
+    uint32_t page_start = 0;
     uint32_t page_length = 0;
 
     _openlcb_driver->get_flash_page_info(address, &page_start, &page_length);
@@ -95,20 +107,22 @@ static uint16_t _flush_write_buffer(void) {
 
 static bool _normalize_write_offset(void) {
 
-    const void *flash_min = NULL;
-    const void *flash_max = NULL;
-    const bootloader_app_header_t *app_header = NULL;
+    uint32_t flash_min     = 0;
+    uint32_t flash_max     = 0;
+    uint32_t app_header    = 0;
 
     _openlcb_driver->get_flash_boundaries(&flash_min, &flash_max, &app_header);
 
-    if (bootloader_state.write_buffer_offset >=
-            ((uintptr_t) flash_max - (uintptr_t) flash_min)) {
+    _skip_write = false;
 
-        return false;
+    if (bootloader_state.write_buffer_offset >= (flash_max - flash_min)) {
+
+        _skip_write = true;   /* past end of flash -- ACK without writing */
+        return true;
 
     }
 
-    bootloader_state.write_buffer_offset += (uintptr_t) flash_min;
+    bootloader_state.write_buffer_offset += flash_min;
     _init_write_buffer();
 
     return true;
@@ -119,12 +133,12 @@ static bool _normalize_write_offset(void) {
 /* Big-endian helpers                                                       */
 /* ====================================================================== */
 
-static uint32_t _load_uint32_be(const uint8_t *ptr) {
+static uint32_t _load_uint32_be(const uint8_t *byte_array) {
 
-    return ((uint32_t) ptr[0] << 24) |
-            ((uint32_t) ptr[1] << 16) |
-            ((uint32_t) ptr[2] << 8) |
-            (uint32_t) ptr[3];
+    return ((uint32_t) byte_array[0] << 24) |
+            ((uint32_t) byte_array[1] << 16) |
+            ((uint32_t) byte_array[2] << 8) |
+            (uint32_t) byte_array[3];
 
 }
 
@@ -132,9 +146,9 @@ static uint32_t _load_uint32_be(const uint8_t *ptr) {
 /* Memory Configuration command handler                                    */
 /* ====================================================================== */
 
-static void _handle_memconfig(uint16_t src_alias, uint64_t src_node_id, const uint8_t *data, uint8_t len) {
+static void _handle_memconfig(uint16_t src_alias, uint64_t src_node_id, const uint8_t *data, uint8_t payload_length) {
 
-    if (len < 2) {
+    if (payload_length < 2) {
 
         BootloaderCanSM_send_datagram_rejected(src_alias, src_node_id, ERROR_PERMANENT_INVALID_ARGUMENTS);
         return;
@@ -147,7 +161,7 @@ static void _handle_memconfig(uint16_t src_alias, uint64_t src_node_id, const ui
 
         case CONFIG_MEM_FREEZE:
 
-            if (len < 3 || data[2] != CONFIG_MEM_SPACE_FIRMWARE) {
+            if (payload_length < 3 || data[2] != CONFIG_MEM_SPACE_FIRMWARE) {
 
                 BootloaderCanSM_send_datagram_rejected(src_alias, src_node_id, ERROR_PERMANENT_INVALID_ARGUMENTS);
                 return;
@@ -182,7 +196,7 @@ static void _handle_memconfig(uint16_t src_alias, uint64_t src_node_id, const ui
         case CONFIG_MEM_WRITE_SPACE_IN_BYTE_6:
         {
 
-            if (len < 7) {
+            if (payload_length < 7) {
 
                 BootloaderCanSM_send_datagram_rejected(src_alias, src_node_id, ERROR_PERMANENT_INVALID_ARGUMENTS);
                 return;
@@ -208,16 +222,16 @@ static void _handle_memconfig(uint16_t src_alias, uint64_t src_node_id, const ui
             }
 
             uint8_t data_start = 7;
-            uint8_t data_len = len - data_start;
+            uint8_t write_byte_count = payload_length - data_start;
 
-            if (data_len > BOOTLOADER_WRITE_BUFFER_SIZE) {
+            if (write_byte_count > BOOTLOADER_WRITE_BUFFER_SIZE) {
 
-                data_len = BOOTLOADER_WRITE_BUFFER_SIZE;
+                write_byte_count = BOOTLOADER_WRITE_BUFFER_SIZE;
 
             }
 
-            memcpy(bootloader_state.write_buffer, data + data_start, data_len);
-            bootloader_state.write_buffer_index = data_len;
+            memcpy(bootloader_state.write_buffer, data + data_start, write_byte_count);
+            bootloader_state.write_buffer_index = write_byte_count;
 
             BootloaderCanSM_send_datagram_ok(src_alias, src_node_id);
 
@@ -259,7 +273,7 @@ static void _handle_memconfig(uint16_t src_alias, uint64_t src_node_id, const ui
 
         case CONFIG_MEM_UNFREEZE:
 
-            if (len < 3 || data[2] != CONFIG_MEM_SPACE_FIRMWARE) {
+            if (payload_length < 3 || data[2] != CONFIG_MEM_SPACE_FIRMWARE) {
 
                 BootloaderCanSM_send_datagram_rejected(src_alias, src_node_id, ERROR_PERMANENT_INVALID_ARGUMENTS);
                 return;
@@ -312,7 +326,7 @@ static void _handle_memconfig(uint16_t src_alias, uint64_t src_node_id, const ui
         case CONFIG_MEM_GET_ADDRESS_SPACE_INFO_CMD:
         {
 
-            if (len < 3) {
+            if (payload_length < 3) {
 
                 BootloaderCanSM_send_datagram_rejected(src_alias, src_node_id, ERROR_PERMANENT_INVALID_ARGUMENTS);
                 return;
@@ -397,49 +411,73 @@ static void _handle_pip(uint16_t src_alias, uint64_t src_node_id) {
 static void _handle_snip(uint16_t src_alias, uint64_t src_node_id) {
 
     uint8_t snip_buf[72];
-    uint8_t pos = 0;
+    uint8_t write_position = 0;
 
-    snip_buf[pos++] = 4;
+    snip_buf[write_position++] = 4;
 
-    const char *mfg = BOOTLOADER_SNIP_MANUFACTURER;
+    const char *manufacturer = BOOTLOADER_SNIP_MANUFACTURER;
 
-    while (*mfg && pos < 70) { snip_buf[pos++] = *mfg++; }
+    while (*manufacturer && write_position < 70) {
 
-    snip_buf[pos++] = 0;
+        snip_buf[write_position++] = *manufacturer++;
+
+    }
+
+    snip_buf[write_position++] = 0;
 
     const char *model = BOOTLOADER_SNIP_MODEL;
 
-    while (*model && pos < 70) { snip_buf[pos++] = *model++; }
+    while (*model && write_position < 70) {
 
-    snip_buf[pos++] = 0;
+        snip_buf[write_position++] = *model++;
 
-    const char *hw = BOOTLOADER_SNIP_HW_VERSION;
+    }
 
-    while (*hw && pos < 70) { snip_buf[pos++] = *hw++; }
+    snip_buf[write_position++] = 0;
 
-    snip_buf[pos++] = 0;
+    const char *hardware_str = BOOTLOADER_SNIP_HW_VERSION;
 
-    const char *sw = BOOTLOADER_SNIP_SW_VERSION;
+    while (*hardware_str && write_position < 70) {
 
-    while (*sw && pos < 70) { snip_buf[pos++] = *sw++; }
+        snip_buf[write_position++] = *hardware_str++;
 
-    snip_buf[pos++] = 0;
+    }
 
-    snip_buf[pos++] = 2;
+    snip_buf[write_position++] = 0;
 
-    const char *uname = BOOTLOADER_SNIP_USER_NAME;
+    const char *software_str = BOOTLOADER_SNIP_SW_VERSION;
 
-    while (*uname && pos < 71) { snip_buf[pos++] = *uname++; }
+    while (*software_str && write_position < 70) {
 
-    snip_buf[pos++] = 0;
+        snip_buf[write_position++] = *software_str++;
 
-    const char *udesc = BOOTLOADER_SNIP_USER_DESCRIPTION;
+    }
 
-    while (*udesc && pos < 71) { snip_buf[pos++] = *udesc++; }
+    snip_buf[write_position++] = 0;
 
-    snip_buf[pos++] = 0;
+    snip_buf[write_position++] = 2;
 
-    BootloaderCanSM_send_addressed(MTI_SIMPLE_NODE_INFO_REPLY, src_alias, src_node_id, snip_buf, pos);
+    const char *user_name = BOOTLOADER_SNIP_USER_NAME;
+
+    while (*user_name && write_position < 71) {
+
+        snip_buf[write_position++] = *user_name++;
+
+    }
+
+    snip_buf[write_position++] = 0;
+
+    const char *user_description = BOOTLOADER_SNIP_USER_DESCRIPTION;
+
+    while (*user_description && write_position < 71) {
+
+        snip_buf[write_position++] = *user_description++;
+
+    }
+
+    snip_buf[write_position++] = 0;
+
+    BootloaderCanSM_send_addressed(MTI_SIMPLE_NODE_INFO_REPLY, src_alias, src_node_id, snip_buf, write_position);
 
 }
 
@@ -473,13 +511,13 @@ void BootloaderOpenlcbSM_init(const bootloader_openlcb_driver_t *openlcb_driver)
 
 }
 
-void BootloaderOpenlcbSM_on_datagram_received(uint16_t src_alias, uint64_t src_node_id, const uint8_t *data, uint8_t len) {
+void BootloaderOpenlcbSM_on_datagram_received(uint16_t src_alias, uint64_t src_node_id, const uint8_t *data, uint8_t payload_length) {
 
-    if (len < 1) { return; }
+    if (payload_length < 1) { return; }
 
     if (data[0] == CONFIG_MEM_CONFIGURATION) {
 
-        _handle_memconfig(src_alias, src_node_id, data, len);
+        _handle_memconfig(src_alias, src_node_id, data, payload_length);
 
     } else {
 
@@ -489,10 +527,10 @@ void BootloaderOpenlcbSM_on_datagram_received(uint16_t src_alias, uint64_t src_n
 
 }
 
-void BootloaderOpenlcbSM_on_addressed_message(uint16_t mti, uint16_t src_alias, uint64_t src_node_id, const uint8_t *data, uint8_t len) {
+void BootloaderOpenlcbSM_on_addressed_message(uint16_t mti, uint16_t src_alias, uint64_t src_node_id, const uint8_t *data, uint8_t payload_length) {
 
     (void) data;
-    (void) len;
+    (void) payload_length;
 
     switch (mti) {
 
@@ -534,17 +572,17 @@ void BootloaderOpenlcbSM_on_addressed_message(uint16_t mti, uint16_t src_alias, 
 
 }
 
-void BootloaderOpenlcbSM_on_global_message(uint16_t mti, const uint8_t *data, uint8_t len) {
+void BootloaderOpenlcbSM_on_global_message(uint16_t mti, const uint8_t *data, uint8_t payload_length) {
 
     switch (mti) {
 
         case MTI_VERIFY_NODE_ID_GLOBAL:
 
-            if (len == 0) {
+            if (payload_length == 0) {
 
                 _send_verified_node_id();
 
-            } else if (len >= 6) {
+            } else if (payload_length >= 6) {
 
                 uint64_t node_id = _openlcb_driver->get_persistent_node_id();
                 uint64_t received_id =

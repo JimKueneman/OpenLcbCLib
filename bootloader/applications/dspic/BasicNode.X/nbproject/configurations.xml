@@ -82,10 +82,12 @@
                    displayName="Important Files"
                    projectFiles="true">
       <itemPath>Makefile</itemPath>
+      <itemPath>BasicNode.mc3</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
+      <itemPath>p33EP512MC506_BasicNode.gld</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -160,6 +162,7 @@
       <itemPath>openlcb_user_config.c</itemPath>
       <itemPath>traps.c</itemPath>
       <itemPath>../shared/bootloader_shared_ram.c</itemPath>
+      <itemPath>reset_vector.s</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

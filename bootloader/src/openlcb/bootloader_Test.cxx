@@ -4,7 +4,7 @@
  *
  * @file bootloader_Test.cxx
  *
- * Unit tests for bootloader.c — boot decision, checksum validation, main loop.
+ * Unit tests for bootloader.c -- boot decision, checksum validation, main loop.
  */
 
 #include <gtest/gtest.h>
@@ -24,7 +24,7 @@ TEST(BootloaderInit, bootloader_requested_enters_bootloader) {
     mock_reset();
     mock_request_bootloader = BOOTLOADER_REQUESTED_BY_BUTTON;
 
-    bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
+    bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver, mock_request_bootloader);
     EXPECT_FALSE(result);
     EXPECT_FALSE(mock_application_entered);
 
@@ -65,7 +65,7 @@ TEST(BootloaderInit, valid_checksum_attempts_application_jump) {
     /* On real hardware jump_to_application() never returns.  In the test
      * mock it does return, so Bootloader_init() falls through to bootloader
      * mode (returns false).  We verify the jump was attempted. */
-    bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
+    bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver, mock_request_bootloader);
     EXPECT_FALSE(result);
     EXPECT_TRUE(mock_application_entered);
 
@@ -76,8 +76,8 @@ TEST(BootloaderInit, invalid_checksum_enters_bootloader) {
     mock_reset();
     mock_request_bootloader = BOOTLOADER_NOT_REQUESTED;
 
-    /* Flash is all 0xFF — app_header has wrong checksums. */
-    bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
+    /* Flash is all 0xFF -- app_header has wrong checksums. */
+    bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver, mock_request_bootloader);
     EXPECT_FALSE(result);
     EXPECT_FALSE(mock_application_entered);
     EXPECT_TRUE(mock_led_state & BOOTLOADER_LED_CSUM_ERROR);
@@ -88,7 +88,7 @@ TEST(BootloaderLoop, reset_request_causes_reboot) {
 
     mock_reset();
     mock_request_bootloader = BOOTLOADER_REQUESTED_BY_BUTTON;
-    Bootloader_init(&mock_can_driver, &mock_openlcb_driver);
+    Bootloader_init(&mock_can_driver, &mock_openlcb_driver, mock_request_bootloader);
 
     /* Run loops until initialized (alias negotiation).
      * Advance mock timer to satisfy the 200 ms wait after CID4. */

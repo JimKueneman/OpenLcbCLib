@@ -48,11 +48,10 @@
 
 #include "can1.h"
 #include "dma.h"
-/* HAND-EDIT: VIVT redirect support -- do not remove on MCC regeneration */
-#include "../../shared/bootloader_shared_ram.h"
+#include "../../shared/bootloader_shared_ram.h"  /* HAND-EDIT: VIVT redirect */
 
-#define CAN1_TX_DMA_CHANNEL DMA_CHANNEL_1
-#define CAN1_RX_DMA_CHANNEL DMA_CHANNEL_0
+#define CAN1_TX_DMA_CHANNEL DMA_CHANNEL_0
+#define CAN1_RX_DMA_CHANNEL DMA_CHANNEL_1
 
 /* Valid options are 4, 6, 8, 12, 16, 24, or 32. */
 #define CAN1_MESSAGE_BUFFERS         32
@@ -238,13 +237,16 @@ void CAN1_Initialize(void)
     C1CFG1 = 0x13;	//BRP TQ = (2 x 20)/FCAN; SJW 1 x TQ; 
     C1CFG2 = 0x198;	//WAKFIL disabled; SEG2PHTS Freely programmable; SEG2PH 2 x TQ; SEG1PH 4 x TQ; PRSEG 1 x TQ; SAM Once at the sample point; 
     C1FCTRL = 0xC001;	//FSA Transmit/Receive Buffer TRB1; DMABS 32; 
-    C1FEN1 = 0x00;	//FLTEN8 disabled; FLTEN7 disabled; FLTEN9 disabled; FLTEN0 disabled; FLTEN2 disabled; FLTEN10 disabled; FLTEN1 disabled; FLTEN11 disabled; FLTEN4 disabled; FLTEN3 disabled; FLTEN6 disabled; FLTEN5 disabled; FLTEN12 disabled; FLTEN13 disabled; FLTEN14 disabled; FLTEN15 disabled; 
+    C1FEN1 = 0x01;	//FLTEN8 disabled; FLTEN7 disabled; FLTEN9 disabled; FLTEN0 enabled; FLTEN2 disabled; FLTEN10 disabled; FLTEN1 disabled; FLTEN11 disabled; FLTEN4 disabled; FLTEN3 disabled; FLTEN6 disabled; FLTEN5 disabled; FLTEN12 disabled; FLTEN13 disabled; FLTEN14 disabled; FLTEN15 disabled; 
     C1CTRL1 = 0x00;	//CANCKS FOSC/2; CSIDL disabled; ABAT disabled; REQOP Sets Normal Operation Mode; WIN Uses buffer window; CANCAP disabled; 
 
     /* Filter configuration */
     /* enable window to access the filter configuration registers */
     /* use filter window*/
     C1CTRL1bits.WIN=1;	   
+    
+    /* select acceptance masks for filters */
+    C1FMSKSEL1bits.F0MSK = 0x0; //Select Mask 0 for Filter 0
     
     /* Configure the masks */
     C1RXM0SIDbits.SID = 0x0; 
@@ -262,6 +264,18 @@ void CAN1_Initialize(void)
     C1RXM0SIDbits.MIDE = 0x0; 
     C1RXM1SIDbits.MIDE = 0x0; 
     C1RXM2SIDbits.MIDE = 0x0; 
+    
+    /* Configure the filters */
+    C1RXF0SIDbits.SID = 0x0; 
+    
+    C1RXF0SIDbits.EID = 0x0; 
+    
+    C1RXF0EID = 0x00; 
+    
+    C1RXF0SIDbits.EXIDE = 0x0; 
+    
+    /* FIFO Mode */
+    C1BUFPNT1bits.F0BP = 0xf; //Filter 0 uses FIFO
     
     /* clear window bit to access CAN1 control registers */
     C1CTRL1bits.WIN=0;    
@@ -570,21 +584,9 @@ void CAN1_SetBusWakeUpActivityInterruptHandler(void *handler)
 
 void __attribute__((__interrupt__, no_auto_psv)) _C1Interrupt(void)
 {
-    if(C1INTFbits.WAKIF)
-    {
-        if(CAN1_BusWakeUpActivityInterruptHandler)
-        {
-            CAN1_BusWakeUpActivityInterruptHandler();
-        }
-
-        C1INTFbits.WAKIF = 0;
-    }
-
-    /* HAND-EDIT: VIVT redirect -- route to application CAN handler after jump */
+    /* HAND-EDIT: VIVT redirect */
     if (bootloader_vivt_jumptable.can1_handler) {
-
         bootloader_vivt_jumptable.can1_handler();
-
     }
 
     IFS2bits.C1IF = 0;

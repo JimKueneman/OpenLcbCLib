@@ -75,11 +75,11 @@ bool BootloaderDriversCan_read_received_frame(bootloader_can_frame_t *frame) {
 
     frame->can_dlc = (uint8_t) msg.field.dlc;
 
-    uint8_t i;
+    uint8_t byte_index;
 
-    for (i = 0; i < frame->can_dlc; i++) {
+    for (byte_index = 0; byte_index < frame->can_dlc; byte_index++) {
 
-        frame->data[i] = rx_data[i];
+        frame->data[byte_index] = rx_data[byte_index];
 
     }
 
@@ -94,11 +94,11 @@ bool BootloaderDriversCan_read_received_frame(bootloader_can_frame_t *frame) {
 bool BootloaderDriversCan_try_send_frame(const bootloader_can_frame_t *frame) {
 
     uint8_t tx_data[8] = {0};
-    uint8_t i;
+    uint8_t byte_index;
 
-    for (i = 0; i < frame->can_dlc && i < 8U; i++) {
+    for (byte_index = 0; byte_index < frame->can_dlc && byte_index < 8U; byte_index++) {
 
-        tx_data[i] = frame->data[i];
+        tx_data[byte_index] = frame->data[byte_index];
 
     }
 

@@ -47,49 +47,49 @@ extern "C" {
     /* User configuration                                                  */
     /* ================================================================== */
 
-    /**
-     *     To bypass checksum validation, uncomment NO_CHECKSUM in
-     *     bootloader_types.h.  That header is included by all library
-     *     files, so a single edit enables the bypass everywhere.
-     *
-     *     Alternatively, define it here or as a compiler flag
-     *     (-D NO_CHECKSUM) — but note that defining it only here affects
-     *     only this driver file; bootloader_types.h is the recommended
-     *     location so that bootloader.c also sees the flag.
-     */
+        /**
+         *     To bypass checksum validation, uncomment NO_CHECKSUM in
+         *     bootloader_types.h.  That header is included by all library
+         *     files, so a single edit enables the bypass everywhere.
+         *
+         *     Alternatively, define it here or as a compiler flag
+         *     (-D NO_CHECKSUM) — but note that defining it only here affects
+         *     only this driver file; bootloader_types.h is the recommended
+         *     location so that bootloader.c also sees the flag.
+         */
     /* #define NO_CHECKSUM */
 
     /* ================================================================== */
     /* Flash memory layout                                                 */
     /* ================================================================== */
 
-    /** Bootloader occupies the first 15KB of flash. */
+        /** Bootloader occupies the first 15KB of flash. */
     #define BOOTLOADER_FLASH_START     0x00000000U
     #define BOOTLOADER_FLASH_SIZE      0x00003C00U
 
-    /** Application region: 15KB to 127KB. */
+        /** Application region: 15KB to 127KB. */
     #define APP_FLASH_START            0x00003C00U
     #define APP_FLASH_END              0x0001FBFFU
 
-    /** Node ID stored in the last 1KB sector of main flash (production-programmed). */
+        /** Node ID stored in the last 1KB sector of main flash (production-programmed). */
     #define NODEID_FLASH_ADDRESS       0x0001FC00U
 
-    /** MSPM0G3507 flash sector size: 1KB uniform. */
+        /** MSPM0G3507 flash sector size: 1KB uniform. */
     #define FLASH_SECTOR_SIZE          1024U
 
-    /** MSPM0G3507 flash write granularity: 8 bytes (64-bit word). */
+        /** MSPM0G3507 flash write granularity: 8 bytes (64-bit word). */
     #define FLASH_WRITE_ALIGN          8U
 
     /* ================================================================== */
     /* Application header location                                         */
     /* ================================================================== */
 
-    /**
-     *     The app_header sits at a fixed offset within the application image.
-     *     On Cortex-M0+, the vector table is at least 48 entries x 4 bytes = 192
-     *     bytes. Place the app_header right after the vector table at offset 0xC0
-     *     (192 bytes) from the app start.
-     */
+        /**
+         *     The app_header sits at a fixed offset within the application image.
+         *     On Cortex-M0+, the vector table is at least 48 entries x 4 bytes = 192
+         *     bytes. Place the app_header right after the vector table at offset 0xC0
+         *     (192 bytes) from the app start.
+         */
     #define APP_HEADER_OFFSET          0x000000C0U
     #define APP_HEADER_ADDRESS         (APP_FLASH_START + APP_HEADER_OFFSET)
 
@@ -111,146 +111,146 @@ extern "C" {
     /* Lifecycle                                                           */
     /* ================================================================== */
 
-    /**
-     *     Resets hardware to a known state and initializes all peripherals
-     *     needed by the bootloader (clocks, CAN, GPIOs, SysTick).
-     */
-    extern void BootloaderDriversOpenlcb_initialize_hardware(void);
+        /**
+         *     Resets hardware to a known state and initializes all peripherals
+         *     needed by the bootloader (clocks, CAN, GPIOs, SysTick).
+         */
+    extern void BootloaderDriversOpenlcb_initialize_hardware(bootloader_request_t request);
 
-    /**
-     *     Checks whether the bootloader should stay in bootloader mode.
-     *
-     *     @return BOOTLOADER_NOT_REQUESTED      — normal boot
-     *             BOOTLOADER_REQUESTED_BY_APP    — app set magic flag
-     *             BOOTLOADER_REQUESTED_BY_BUTTON — hardware button held
-     */
+        /**
+         *     Checks whether the bootloader should stay in bootloader mode.
+         *
+         *     @return BOOTLOADER_NOT_REQUESTED      — normal boot
+         *             BOOTLOADER_REQUESTED_BY_APP    — app set magic flag
+         *             BOOTLOADER_REQUESTED_BY_BUTTON — hardware button held
+         */
     extern bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void);
 
-    /**
-     *     Disables interrupts, relocates the vector table to the application
-     *     region, sets the stack pointer, and jumps to the application reset
-     *     handler.  Does not return.
-     */
+        /**
+         *     Disables interrupts, relocates the vector table to the application
+         *     region, sets the stack pointer, and jumps to the application reset
+         *     handler.  Does not return.
+         */
     extern void BootloaderDriversOpenlcb_jump_to_application(void);
 
-    /**
-     *     Triggers an NVIC system reset.  Does not return.
-     */
+        /**
+         *     Triggers an NVIC system reset.  Does not return.
+         */
     extern void BootloaderDriversOpenlcb_reboot(void);
 
-    /**
-     *     @brief Tears down all peripherals and ARM core state before handing off to the other binary.
-     *
-     *     @details On MSPM0 this stops SysTick, disables and clears all NVIC interrupts, and resets the MCAN peripheral.
-     */
+        /**
+         *     @brief Tears down all peripherals and ARM core state before handing off to the other binary.
+         *
+         *     @details On MSPM0 this stops SysTick, disables and clears all NVIC interrupts, and resets the MCAN peripheral.
+         */
     extern void BootloaderDriversOpenlcb_cleanup_before_handoff(void);
 
     /* ================================================================== */
     /* Flash operations                                                    */
     /* ================================================================== */
 
-    /**
-     *     Returns the application flash boundaries and the location of
-     *     the embedded app_header struct.
-     *
-     *     @param flash_min   output: start of writable application flash
-     *     @param flash_max   output: last byte of writable application flash
-     *     @param app_header  output: pointer to the app_header in flash
-     */
-    extern void BootloaderDriversOpenlcb_get_flash_boundaries(const void **flash_min, const void **flash_max, const struct bootloader_app_header **app_header);
+        /**
+         *     Returns the application flash boundaries and the location of
+         *     the embedded app_header struct.
+         *
+         *     @param flash_min   output: start of writable application flash
+         *     @param flash_max   output: last byte of writable application flash
+         *     @param app_header  output: pointer to the app_header in flash
+         */
+    extern void BootloaderDriversOpenlcb_get_flash_boundaries(uint32_t *flash_min, uint32_t *flash_max, uint32_t *app_header);
 
-    /**
-     *     Returns the start address and size of the 1KB flash sector that
-     *     contains the given address.
-     *
-     *     @param address            address within the sector
-     *     @param page_start         output: sector-aligned start address
-     *     @param page_length_bytes  output: sector size in bytes (1024)
-     */
-    extern void BootloaderDriversOpenlcb_get_flash_page_info(const void *address, const void **page_start, uint32_t *page_length_bytes);
+        /**
+         *     Returns the start address and size of the 1KB flash sector that
+         *     contains the given address.
+         *
+         *     @param address            address within the sector
+         *     @param page_start         output: sector-aligned start address
+         *     @param page_length_bytes  output: sector size in bytes (1024)
+         */
+    extern void BootloaderDriversOpenlcb_get_flash_page_info(uint32_t address, uint32_t *page_start, uint32_t *page_length_bytes);
 
-    /**
-     *     Erases the 1KB flash sector that contains the given address.
-     *
-     *     @param address  any address within the sector to erase
-     */
-    extern uint16_t BootloaderDriversOpenlcb_erase_flash_page(const void *address);
+        /**
+         *     Erases the 1KB flash sector that contains the given address.
+         *
+         *     @param address  any address within the sector to erase
+         */
+    extern uint16_t BootloaderDriversOpenlcb_erase_flash_page(uint32_t address);
 
-    /**
-     *     Programs flash in 8-byte aligned writes.  Data shorter than the
-     *     alignment granularity is padded with 0xFF.
-     *
-     *     @param address     destination address in flash (must be 8-byte aligned)
-     *     @param data        source data to write
-     *     @param size_bytes  number of bytes to write
-     */
-    extern uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const void *data, uint32_t size_bytes);
+        /**
+         *     Programs flash in 8-byte aligned writes.  Data shorter than the
+         *     alignment granularity is padded with 0xFF.
+         *
+         *     @param address     destination address in flash (must be 8-byte aligned)
+         *     @param data        source data to write
+         *     @param size_bytes  number of bytes to write
+         */
+    extern uint16_t BootloaderDriversOpenlcb_write_flash_bytes(uint32_t address, const uint8_t *data, uint32_t size_bytes);
 
-    /**
-     *     Called after a write sequence completes.  Returns 0 on the
-     *     MSPM0G3507 (flash writes are synchronous).
-     *
-     *     @return 0 on success
-     */
+        /**
+         *     Called after a write sequence completes.  Returns 0 on the
+         *     MSPM0G3507 (flash writes are synchronous).
+         *
+         *     @return 0 on success
+         */
     extern uint16_t BootloaderDriversOpenlcb_finalize_flash(compute_checksum_func_t compute_checksum_helper);
 
-    /**
-     *     Reads bytes from flash into a RAM buffer.
-     *
-     *     On MSPM0G3507 (Von Neumann) this is a memcpy from the flash address.
-     *
-     *     @param flash_addr  flash byte address
-     *     @param dest_ram    destination RAM buffer
-     *     @param size_bytes  number of bytes to read
-     */
+        /**
+         *     Reads bytes from flash into a RAM buffer.
+         *
+         *     On MSPM0G3507 (Von Neumann) this is a memcpy from the flash address.
+         *
+         *     @param flash_addr  flash byte address
+         *     @param dest_ram    destination RAM buffer
+         *     @param size_bytes  number of bytes to read
+         */
     extern void BootloaderDriversOpenlcb_read_flash_bytes(uint32_t flash_addr, void *dest_ram, uint32_t size_bytes);
 
     /* ================================================================== */
     /* Checksum                                                            */
     /* ================================================================== */
 
-    /**
-     *     Computes a triple-CRC16-IBM checksum over a block of data.
-     *
-     *     @param data      pointer to the data to checksum
-     *     @param size      number of bytes
-     *     @param checksum  output: four uint32_t values (three CRCs + zero pad)
-     */
-    extern void BootloaderDriversOpenlcb_compute_checksum(const void *data, uint32_t size, uint32_t *checksum);
+        /**
+         *     Computes a triple-CRC16-IBM checksum over a block of data.
+         *
+         *     @param data      pointer to the data to checksum
+         *     @param size      number of bytes
+         *     @param checksum  output: four uint32_t values (three CRCs + zero pad)
+         */
+    extern void BootloaderDriversOpenlcb_compute_checksum(uint32_t flash_addr, uint32_t size, uint32_t *checksum);
 
     /* ================================================================== */
     /* Timer                                                               */
     /* ================================================================== */
 
-    /**
-     *     Returns the current SysTick counter value.  Incremented by the
-     *     SysTick_Handler ISR.
-     *
-     *     @return monotonic tick count (wraps at 255)
-     */
+        /**
+         *     Returns the current SysTick counter value.  Incremented by the
+         *     SysTick_Handler ISR.
+         *
+         *     @return monotonic tick count (wraps at 255)
+         */
     extern uint8_t BootloaderDriversOpenlcb_get_100ms_timer_tick(void);
 
     /* ================================================================== */
     /* Identity                                                            */
     /* ================================================================== */
 
-    /**
-     *     Returns the 48-bit OpenLCB node ID for this board.
-     *
-     *     @return node ID (upper 16 bits zero)
-     */
+        /**
+         *     Returns the 48-bit OpenLCB node ID for this board.
+         *
+         *     @return node ID (upper 16 bits zero)
+         */
     extern uint64_t BootloaderDriversOpenlcb_get_persistent_node_id(void);
 
     /* ================================================================== */
     /* LED                                                                 */
     /* ================================================================== */
 
-    /**
-     *     Drives the bootloader status LED (PA0, negative logic).
-     *
-     *     @param led    which logical LED function is being set
-     *     @param value  true = LED on, false = LED off
-     */
+        /**
+         *     Drives the bootloader status LED (PA0, negative logic).
+         *
+         *     @param led    which logical LED function is being set
+         *     @param value  true = LED on, false = LED off
+         */
     extern void BootloaderDriversOpenlcb_set_status_led(bootloader_led_enum led, bool value);
 
 #ifdef __cplusplus

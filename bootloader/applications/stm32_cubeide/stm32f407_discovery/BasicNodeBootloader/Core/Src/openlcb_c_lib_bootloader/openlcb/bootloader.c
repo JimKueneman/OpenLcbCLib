@@ -54,24 +54,24 @@ static const bootloader_openlcb_driver_t *_openlcb_driver;
 
 static bool _check_application_checksum(void) {
 
-    const void *flash_min = NULL;
-    const void *flash_max = NULL;
-    const bootloader_app_header_t *app_header = NULL;
+    uint32_t flash_min  = 0;
+    uint32_t flash_max  = 0;
+    uint32_t app_header = 0;
 
     _openlcb_driver->get_flash_boundaries(&flash_min, &flash_max, &app_header);
 
     /* Copy the header to RAM via the DI flash-read so Harvard architectures
      * (e.g. dsPIC33) can use table reads instead of data-pointer dereference. */
     bootloader_app_header_t header_copy;
-    _openlcb_driver->read_flash_bytes((uint32_t)(uintptr_t) app_header, &header_copy, sizeof(header_copy));
+    _openlcb_driver->read_flash_bytes(app_header, &header_copy, sizeof(header_copy));
 
     /* Validate app_size is reasonable. */
-    uint32_t flash_size = (uint32_t) ((uintptr_t) flash_max - (uintptr_t) flash_min);
+    uint32_t flash_size = flash_max - flash_min;
 
     if (header_copy.app_size > flash_size) { return false; }
 
     /* Pre-checksum: flash_min to app_header. */
-    uint32_t pre_size = (uint32_t) ((const uint8_t *) app_header - (const uint8_t *) flash_min);
+    uint32_t pre_size = app_header - flash_min;
 
     uint32_t checksum[BOOTLOADER_CHECKSUM_COUNT];
     memset(checksum, 0, sizeof(checksum));
@@ -85,7 +85,7 @@ static bool _check_application_checksum(void) {
     }
 
     /* Post-checksum: after app_header to app_size. */
-    uint32_t post_offset = (uint32_t) (sizeof(bootloader_app_header_t) + pre_size);
+    uint32_t post_offset = (uint32_t) sizeof(bootloader_app_header_t) + pre_size;
     uint32_t post_size = 0;
 
     if (post_offset < header_copy.app_size) {
@@ -95,7 +95,7 @@ static bool _check_application_checksum(void) {
     }
 
     memset(checksum, 0, sizeof(checksum));
-    _openlcb_driver->compute_checksum((const uint8_t *) app_header + sizeof(bootloader_app_header_t), post_size, checksum);
+    _openlcb_driver->compute_checksum(app_header + (uint32_t) sizeof(bootloader_app_header_t), post_size, checksum);
 
     if (memcmp(header_copy.checksum_post, checksum, sizeof(checksum)) != 0) {
 
@@ -113,11 +113,9 @@ static bool _check_application_checksum(void) {
 /* Public API                                                              */
 /* ====================================================================== */
 
-bool Bootloader_init(const bootloader_can_driver_t *can_driver, const bootloader_openlcb_driver_t *openlcb_driver) {
+bool Bootloader_init(const bootloader_can_driver_t *can_driver, const bootloader_openlcb_driver_t *openlcb_driver, bootloader_request_t request) {
 
     _openlcb_driver = openlcb_driver;
-
-    bootloader_request_t request = openlcb_driver->is_bootloader_requested();
     openlcb_driver->set_status_led(BOOTLOADER_LED_REQUEST, request != BOOTLOADER_NOT_REQUESTED);
 
     if (request == BOOTLOADER_NOT_REQUESTED) {
@@ -132,15 +130,17 @@ bool Bootloader_init(const bootloader_can_driver_t *can_driver, const bootloader
 
         if (csum_ok) {
 
-            const void *flash_min = NULL;
-            const void *flash_max = NULL;
-            const bootloader_app_header_t *app_header = NULL;
+            uint32_t flash_min  = 0;
+            uint32_t flash_max  = 0;
+            uint32_t app_header = 0;
             openlcb_driver->get_flash_boundaries(&flash_min, &flash_max, &app_header);
+            (void) flash_max;
+            (void) app_header;
 
             /* Read the first word via the DI so Harvard architectures use
              * table reads.  Erased flash reads as 0xFFFFFFFF on all targets. */
             uint32_t first_word = 0;
-            openlcb_driver->read_flash_bytes((uint32_t)(uintptr_t) flash_min, &first_word, sizeof(first_word));
+            openlcb_driver->read_flash_bytes(flash_min, &first_word, sizeof(first_word));
 
             if (first_word != 0xFFFFFFFF) {
 
@@ -149,7 +149,7 @@ bool Bootloader_init(const bootloader_can_driver_t *can_driver, const bootloader
                 /* jump_to_application() never returns on a successful jump. */
 
             }
-            /* Flash is blank — no app present, fall through to bootloader mode. */
+            /* Flash is blank -- no app present, fall through to bootloader mode. */
 
         }
 
@@ -158,7 +158,7 @@ bool Bootloader_init(const bootloader_can_driver_t *can_driver, const bootloader
     memset(&bootloader_state, 0, sizeof(bootloader_state));
 
     /* If the application sent Freeze and then dropped back to us, the CT
-     * is already waiting for data transfer — we start with firmware_active
+     * is already waiting for data transfer -- we start with firmware_active
      * so PIP reports Firmware Upgrade Active immediately.  For button or
      * no-valid-app entry, the CT must send Freeze first. */
     if (request == BOOTLOADER_REQUESTED_BY_APP) {
@@ -193,9 +193,10 @@ bool Bootloader_loop(void) {
 
 void Bootloader_entry(const bootloader_can_driver_t *can_driver, const bootloader_openlcb_driver_t *openlcb_driver) {
 
-    openlcb_driver->initialize_hardware();
+    bootloader_request_t request = openlcb_driver->is_bootloader_requested();
+    openlcb_driver->initialize_hardware(request);
 
-    if (Bootloader_init(can_driver, openlcb_driver)) { return; }
+    if (Bootloader_init(can_driver, openlcb_driver, request)) { return; }
 
     while (true) {
 

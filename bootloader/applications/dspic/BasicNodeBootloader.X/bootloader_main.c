@@ -41,19 +41,15 @@
 #include "application_drivers/bootloader_drivers_can.h"
 #include "application_drivers/bootloader_drivers_openlcb.h"
 
-int main(void) {
-
-    SYSTEM_Initialize();
-
-    /* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
     /* CAN physical layer driver                                           */
     /* ------------------------------------------------------------------ */
 
     const bootloader_can_driver_t can_driver = {
 
-        .read_received_frame = BootloaderDriversCan_read_received_frame,
-        .try_send_frame      = BootloaderDriversCan_try_send_frame,
-        .get_cached_alias    = BootloaderDriversCan_get_cached_alias_passed_from_application,
+        .read_received_frame = &BootloaderDriversCan_read_received_frame,
+        .try_send_frame      = &BootloaderDriversCan_try_send_frame,
+        .get_cached_alias    = &BootloaderDriversCan_get_cached_alias_passed_from_application,
 
     };
 
@@ -63,23 +59,29 @@ int main(void) {
 
     const bootloader_openlcb_driver_t openlcb_driver = {
 
-        .get_persistent_node_id  = BootloaderDriversOpenlcb_get_persistent_node_id,
-        .get_100ms_timer_tick    = BootloaderDriversOpenlcb_get_100ms_timer_tick,
-        .set_status_led          = BootloaderDriversOpenlcb_set_status_led,
-        .is_bootloader_requested = BootloaderDriversOpenlcb_is_bootloader_requested,
-        .jump_to_application     = BootloaderDriversOpenlcb_jump_to_application,
-        .reboot                  = BootloaderDriversOpenlcb_reboot,
-        .initialize_hardware     = BootloaderDriversOpenlcb_initialize_hardware,
-        .get_flash_boundaries    = BootloaderDriversOpenlcb_get_flash_boundaries,
-        .get_flash_page_info     = BootloaderDriversOpenlcb_get_flash_page_info,
-        .erase_flash_page        = BootloaderDriversOpenlcb_erase_flash_page,
-        .write_flash_bytes       = BootloaderDriversOpenlcb_write_flash_bytes,
-        .finalize_flash          = BootloaderDriversOpenlcb_finalize_flash,
-        .compute_checksum        = BootloaderDriversOpenlcb_compute_checksum,
-        .read_flash_bytes        = BootloaderDriversOpenlcb_read_flash_bytes,
-        .cleanup_before_handoff  = BootloaderDriversOpenlcb_cleanup_before_handoff,
+        .get_persistent_node_id  = &BootloaderDriversOpenlcb_get_persistent_node_id,
+        .get_100ms_timer_tick    = &BootloaderDriversOpenlcb_get_100ms_timer_tick,
+        .set_status_led          = &BootloaderDriversOpenlcb_set_status_led,
+        .is_bootloader_requested = &BootloaderDriversOpenlcb_is_bootloader_requested,
+        .jump_to_application     = &BootloaderDriversOpenlcb_jump_to_application,
+        .reboot                  = &BootloaderDriversOpenlcb_reboot,
+        .initialize_hardware     = &BootloaderDriversOpenlcb_initialize_hardware,
+        .get_flash_boundaries    = &BootloaderDriversOpenlcb_get_flash_boundaries,
+        .get_flash_page_info     = &BootloaderDriversOpenlcb_get_flash_page_info,
+        .erase_flash_page        = &BootloaderDriversOpenlcb_erase_flash_page,
+        .write_flash_bytes       = &BootloaderDriversOpenlcb_write_flash_bytes,
+        .finalize_flash          = &BootloaderDriversOpenlcb_finalize_flash,
+        .compute_checksum        = &BootloaderDriversOpenlcb_compute_checksum,
+        .read_flash_bytes        = &BootloaderDriversOpenlcb_read_flash_bytes,
+        .cleanup_before_handoff  = &BootloaderDriversOpenlcb_cleanup_before_handoff,
 
     };
+
+int main(void) {
+
+    _GIE = 0;
+    
+    SYSTEM_Initialize();  // This MCC call is hand edited to not enable Global Interrupts.  That is handled after the call to BootloaderDriversOpenlcb_initialize_hardware after everything is setup
 
     /* ------------------------------------------------------------------ */
     /* Hand control to the bootloader library -- does not return            */

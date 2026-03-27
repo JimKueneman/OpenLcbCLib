@@ -99,9 +99,9 @@ const EL_STEPS = [
   {
     type:     'bl',
     h:        EL.stepH,
-    label:    'initialize_hardware()  [DI]',
-    sublabel: 'Clocks · CAN peripheral · GPIO · UART',
-    desc:     'The bootloader\'s first DI call — reinitialises all hardware from scratch. Because this is a software reset, MCU registers are at power-on defaults, but the .noinit SRAM values written by the application are intact and readable.\n\nThe implementer must configure:\n  • System clocks / PLL\n  • CAN peripheral (baud rate, filters)\n  • Status GPIO (LEDs)\n  • Debug UART (optional)',
+    label:    'initialize_hardware(request)  [DI]',
+    sublabel: 'VIVT clear · CAN IRQ disable · CAN reinit',
+    desc:     'Called by Bootloader_entry() after is_bootloader_requested() returns. The request parameter (BOOTLOADER_REQUESTED_BY_APP on this path) tells the implementation why the bootloader was entered.\n\nOn app drop-back the implementation must:\n  1. Clear bootloader_request_flag unconditionally (centralized .noinit cleanup -- already consumed by is_bootloader_requested())\n  2. Clear the VIVT unconditionally -- stale app handler pointers must never be called\n  3. Disable CAN interrupt (C1IE) and clear pending flag (C1IF) -- SYSTEM_Initialize() already enabled C1IE, and the VIVT is now NULL\n  4. Leave bootloader_cached_alias intact -- the library CAN state machine reads it via get_cached_alias() during INIT_PICK_ALIAS and clears it after pickup\n  5. Reinitialize the CAN peripheral for bootloader use\n  6. Enable global interrupts (VIVT is safe, CAN interrupt is clean)',
   },
   {
     type:     'arrow',
@@ -110,7 +110,7 @@ const EL_STEPS = [
     to:       'bl',
     label:    '.noinit SRAM  →  MAGIC + alias',
     color:    '#a371f7',
-    desc:     'is_bootloader_requested() reads bootloader_request_flag from .noinit SRAM.\n\nValue equals BOOTLOADER_REQUEST_MAGIC (0xB00710AD) → this was a deliberate software-reset entry from the application, not a cold power-on.\n\nget_cached_alias() reads bootloader_cached_alias.\n\nValue is non-zero → the application\'s alias is available for immediate reuse. The bootloader skips the full CID7→CID6→CID5→CID4 → 200 ms wait → RID → AMD negotiation sequence entirely.',
+    desc:     'is_bootloader_requested() reads bootloader_request_flag from .noinit SRAM.\n\nValue equals BOOTLOADER_REQUEST_MAGIC (0xB00710AD) -> this was a deliberate software-reset entry from the application, not a cold power-on. Flag is cleared centrally by initialize_hardware(), not by is_bootloader_requested().\n\nget_cached_alias() reads bootloader_cached_alias (left intact by initialize_hardware() on the app drop-back path).\n\nValue is non-zero -> the application\'s alias is available for immediate reuse. The library CAN state machine clears it after pickup. The bootloader skips the full CID7->CID6->CID5->CID4 -> 200 ms wait -> RID -> AMD negotiation sequence entirely.',
   },
   {
     type:     'bl',

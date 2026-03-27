@@ -49,13 +49,13 @@ extern "C" {
     /* CAN ID field constants (names from openlcb_defines.h)               */
     /* ================================================================== */
 
-    /** EFF flag in can_id (bit 31) — not part of OpenLCB, used by driver layer. */
+    /** EFF flag in can_id (bit 31) -- not part of OpenLCB, used by driver layer. */
     #define BOOTLOADER_CAN_EFF_FLAG 0x80000000U
 
     /** Bit 28: reserved, shall be sent as 1 (CAN Frame Transfer Standard §4). */
     #define RESERVED_TOP_BIT 0x10000000U
 
-    /** Bit 27: Frame Type — 1=OpenLCB Message, 0=CAN Control Frame. */
+    /** Bit 27: Frame Type -- 1=OpenLCB Message, 0=CAN Control Frame. */
     #define CAN_OPENLCB_MSG 0x08000000U
 
     /** Mask for frame type bits (26-24). */
@@ -97,12 +97,12 @@ extern "C" {
     /* Helper to get the current transport alias                           */
     /* ================================================================== */
 
-    /**
-     *     Returns the alias currently in use by the CAN transport.
-     *     Available after initialization is complete.
-     *
-     *     @return 12-bit CAN alias
-     */
+        /**
+         *     Returns the alias currently in use by the CAN transport.
+         *     Available after initialization is complete.
+         *
+         *     @return 12-bit CAN alias
+         */
     extern uint16_t BootloaderCan_get_alias(void);
 
 #ifdef __cplusplus

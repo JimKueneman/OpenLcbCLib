@@ -47,39 +47,39 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    /**
-     *     Initializes the TX engine.
-     *
-     *     @param can_driver CAN hardware driver interface
-     */
+        /**
+         *     Initializes the TX engine.
+         *
+         *     @param can_driver CAN hardware driver interface
+         */
     void BootloaderTx_init(const bootloader_can_driver_t *can_driver);
 
-    /**
-     *     Non-blocking single frame send. Attempts to send immediately.
-     *
-     *     @param frame the CAN frame to send
-     *     @return true if sent, false if TX buffer busy (retry later)
-     */
+        /**
+         *     Non-blocking single frame send. Attempts to send immediately.
+         *
+         *     @param frame the CAN frame to send
+         *     @return true if sent, false if TX buffer busy (retry later)
+         */
     bool BootloaderTx_send_frame(const bootloader_can_frame_t *frame);
 
-    /**
-     *     Blocking multi-frame send for addressed messages (SNIP, PIP, OIR).
-     *     Constructs proper MULTIFRAME_FIRST/MIDDLE/FINAL framing bits in
-     *     data byte 0. Calls BootloaderRx_poll() while spinning to keep the
-     *     RX buffer drained during the send.
-     *
-     *     For messages that fit in a single frame (len <= 6), this sets
-     *     MULTIFRAME_ONLY and sends via a single blocking call.
-     *
-     *     @param mti the message type indicator (12-bit CAN MTI)
-     *     @param src_alias our CAN alias (12-bit)
-     *     @param dest_alias destination CAN alias (12-bit)
-     *     @param our_alias alias to pass to BootloaderRx_poll for filtering
-     *     @param current_tick monotonic 100ms tick for BootloaderRx_poll
-     *     @param data payload bytes (after the 2-byte address header)
-     *     @param len number of payload bytes
-     *     @return true if all frames sent
-     */
+        /**
+         *     Blocking multi-frame send for addressed messages (SNIP, PIP, OIR).
+         *     Constructs proper MULTIFRAME_FIRST/MIDDLE/FINAL framing bits in
+         *     data byte 0. Calls BootloaderRx_poll() while spinning to keep the
+         *     RX buffer drained during the send.
+         *
+         *     For messages that fit in a single frame (payload_length <= 6), this
+         *     sets MULTIFRAME_ONLY and sends via a single blocking call.
+         *
+         *     @param mti            the message type indicator (12-bit CAN MTI)
+         *     @param src_alias      our CAN alias (12-bit)
+         *     @param dest_alias     destination CAN alias (12-bit)
+         *     @param our_alias      alias to pass to BootloaderRx_poll for filtering
+         *     @param current_tick   monotonic 100ms tick for BootloaderRx_poll
+         *     @param data           payload bytes (after the 2-byte address header)
+         *     @param payload_length number of payload bytes
+         *     @return true if all frames sent
+         */
     bool BootloaderTx_send_multiframe(
             uint16_t mti,
             uint16_t src_alias,
@@ -87,71 +87,71 @@ extern "C" {
             uint16_t our_alias,
             uint8_t current_tick,
             const uint8_t *data,
-            uint8_t len);
+            uint8_t payload_length);
 
-    /**
-     *     Blocking send for a global (unaddressed) OpenLCB message.
-     *     Constructs the CAN ID from the MTI and source alias, copies
-     *     payload data directly into the frame.
-     *
-     *     @param mti the message type indicator (12-bit CAN MTI)
-     *     @param src_alias our CAN alias (12-bit)
-     *     @param our_alias alias to pass to BootloaderRx_poll for filtering
-     *     @param current_tick monotonic 100ms tick for BootloaderRx_poll
-     *     @param data payload bytes (up to 8)
-     *     @param len number of payload bytes
-     *     @return true when sent
-     */
-    extern bool BootloaderTx_send_global(uint16_t mti, uint16_t src_alias, uint16_t our_alias, uint8_t current_tick, const uint8_t *data, uint8_t len);
+        /**
+         *     Blocking send for a global (unaddressed) OpenLCB message.
+         *     Constructs the CAN ID from the MTI and source alias, copies
+         *     payload data directly into the frame.
+         *
+         *     @param mti            the message type indicator (12-bit CAN MTI)
+         *     @param src_alias      our CAN alias (12-bit)
+         *     @param our_alias      alias to pass to BootloaderRx_poll for filtering
+         *     @param current_tick   monotonic 100ms tick for BootloaderRx_poll
+         *     @param data           payload bytes (up to 8)
+         *     @param payload_length number of payload bytes
+         *     @return true when sent
+         */
+    extern bool BootloaderTx_send_global(uint16_t mti, uint16_t src_alias, uint16_t our_alias, uint8_t current_tick, const uint8_t *data, uint8_t payload_length);
 
-    /**
-     *     Blocking send for a datagram (single or multi-frame).
-     *     Builds DATAGRAM_ONLY for payloads <= 8 bytes, or
-     *     DATAGRAM_FIRST / DATAGRAM_MIDDLE / DATAGRAM_FINAL sequence
-     *     for larger payloads. Calls BootloaderRx_poll() while spinning.
-     *
-     *     @param src_alias our CAN alias (12-bit)
-     *     @param dest_alias destination CAN alias (12-bit)
-     *     @param our_alias alias to pass to BootloaderRx_poll for filtering
-     *     @param current_tick monotonic 100ms tick for BootloaderRx_poll
-     *     @param data datagram payload bytes
-     *     @param len number of payload bytes (max 72)
-     *     @return true when sent
-     */
+        /**
+         *     Blocking send for a datagram (single or multi-frame).
+         *     Builds DATAGRAM_ONLY for payloads <= 8 bytes, or
+         *     DATAGRAM_FIRST / DATAGRAM_MIDDLE / DATAGRAM_FINAL sequence
+         *     for larger payloads. Calls BootloaderRx_poll() while spinning.
+         *
+         *     @param src_alias      our CAN alias (12-bit)
+         *     @param dest_alias     destination CAN alias (12-bit)
+         *     @param our_alias      alias to pass to BootloaderRx_poll for filtering
+         *     @param current_tick   monotonic 100ms tick for BootloaderRx_poll
+         *     @param data           datagram payload bytes
+         *     @param payload_length number of payload bytes (max 72)
+         *     @return true when sent
+         */
     extern bool BootloaderTx_send_datagram(
             uint16_t src_alias,
             uint16_t dest_alias,
             uint16_t our_alias,
             uint8_t current_tick,
             const uint8_t *data,
-            uint8_t len);
+            uint8_t payload_length);
 
-    /**
-     *     Blocking send for Datagram Received OK.
-     *     Constructs a single addressed CAN frame with the datagram OK MTI,
-     *     destination alias in data[0:1], and flags byte in data[2].
-     *
-     *     @param src_alias our CAN alias (12-bit)
-     *     @param dest_alias destination CAN alias (12-bit)
-     *     @param our_alias alias to pass to BootloaderRx_poll for filtering
-     *     @param current_tick monotonic 100ms tick for BootloaderRx_poll
-     *     @param flags datagram OK flags (e.g. DATAGRAM_OK_REPLY_PENDING)
-     *     @return true when sent
-     */
+        /**
+         *     Blocking send for Datagram Received OK.
+         *     Constructs a single addressed CAN frame with the datagram OK MTI,
+         *     destination alias in data[0:1], and flags byte in data[2].
+         *
+         *     @param src_alias    our CAN alias (12-bit)
+         *     @param dest_alias   destination CAN alias (12-bit)
+         *     @param our_alias    alias to pass to BootloaderRx_poll for filtering
+         *     @param current_tick monotonic 100ms tick for BootloaderRx_poll
+         *     @param flags        datagram OK flags (e.g. DATAGRAM_OK_REPLY_PENDING)
+         *     @return true when sent
+         */
     extern bool BootloaderTx_send_datagram_ok(uint16_t src_alias, uint16_t dest_alias, uint16_t our_alias, uint8_t current_tick, uint8_t flags);
 
-    /**
-     *     Blocking send for Datagram Rejected.
-     *     Constructs a single addressed CAN frame with the datagram rejected
-     *     MTI, destination alias in data[0:1], and error code in data[2:3].
-     *
-     *     @param src_alias our CAN alias (12-bit)
-     *     @param dest_alias destination CAN alias (12-bit)
-     *     @param our_alias alias to pass to BootloaderRx_poll for filtering
-     *     @param current_tick monotonic 100ms tick for BootloaderRx_poll
-     *     @param error_code OpenLCB error code (16-bit, big-endian in frame)
-     *     @return true when sent
-     */
+        /**
+         *     Blocking send for Datagram Rejected.
+         *     Constructs a single addressed CAN frame with the datagram rejected
+         *     MTI, destination alias in data[0:1], and error code in data[2:3].
+         *
+         *     @param src_alias    our CAN alias (12-bit)
+         *     @param dest_alias   destination CAN alias (12-bit)
+         *     @param our_alias    alias to pass to BootloaderRx_poll for filtering
+         *     @param current_tick monotonic 100ms tick for BootloaderRx_poll
+         *     @param error_code   OpenLCB error code (16-bit, big-endian in frame)
+         *     @return true when sent
+         */
     extern bool BootloaderTx_send_datagram_rejected(uint16_t src_alias, uint16_t dest_alias, uint16_t our_alias, uint8_t current_tick, uint16_t error_code);
 
 #ifdef __cplusplus

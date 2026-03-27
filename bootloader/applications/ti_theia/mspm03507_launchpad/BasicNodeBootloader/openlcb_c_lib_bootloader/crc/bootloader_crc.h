@@ -43,31 +43,31 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    /**
-     *     Computes CRC-16-IBM (ANSI) over a block of data.
-     *
-     *     Polynomial 0xA001 (reversed), init 0x0000, no final XOR.
-     *     Test vector: "123456789" -> 0xBB3D.
-     *
-     *     @param data pointer to data to checksum
-     *     @param length_bytes number of bytes
-     *     @return CRC-16-IBM value
-     */
+        /**
+         *     Computes CRC-16-IBM (ANSI) over a block of data.
+         *
+         *     Polynomial 0xA001 (reversed), init 0x0000, no final XOR.
+         *     Test vector: "123456789" -> 0xBB3D.
+         *
+         *     @param data pointer to data to checksum
+         *     @param length_bytes number of bytes
+         *     @return CRC-16-IBM value
+         */
     extern uint16_t BootloaderCrc_crc16_ibm(const void *data, uint32_t length_bytes);
 
-    /**
-     *     Computes triple CRC-16-IBM over a block of data.
-     *
-     *     checksum[0] = CRC of all bytes
-     *     checksum[1] = CRC of odd-indexed bytes (1st, 3rd, 5th, ...)
-     *     checksum[2] = CRC of even-indexed bytes (2nd, 4th, 6th, ...)
-     *
-     *     Compatible with TI Tiva ROM_Crc16Array3() hardware CRC function.
-     *
-     *     @param data pointer to data to checksum
-     *     @param length_bytes number of bytes
-     *     @param checksum output array of 3 uint16_t values
-     */
+        /**
+         *     Computes triple CRC-16-IBM over a block of data.
+         *
+         *     checksum[0] = CRC of all bytes
+         *     checksum[1] = CRC of odd-indexed bytes (1st, 3rd, 5th, ...)
+         *     checksum[2] = CRC of even-indexed bytes (2nd, 4th, 6th, ...)
+         *
+         *     Compatible with TI Tiva ROM_Crc16Array3() hardware CRC function.
+         *
+         *     @param data pointer to data to checksum
+         *     @param length_bytes number of bytes
+         *     @param checksum output array of 3 uint16_t values
+         */
     extern void BootloaderCrc_crc3_crc16_ibm(const void *data, uint32_t length_bytes, uint16_t *checksum);
 
 #ifdef __cplusplus

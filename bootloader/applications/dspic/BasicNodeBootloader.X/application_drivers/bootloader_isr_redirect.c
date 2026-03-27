@@ -171,10 +171,9 @@
 
 #include "bootloader_isr_redirect.h"
 #include "../../shared/bootloader_shared_ram.h"
-#include "../mcc_generated_files/tmr2.h"
 
 /* ====================================================================== */
-/* TMR2 VIVT proxy                                                         */
+/* TMR2 VIVT redirect                                                      */
 /*                                                                         */
 /* Installed as MCC's TMR2_InterruptHandler via TMR2_SetInterruptHandler() */
 /* in BootloaderIsrRedirect_initialize() below.                            */
@@ -187,27 +186,22 @@
 /* registered handler transparently.                                       */
 /* ====================================================================== */
 
-static void _vivt_t2_proxy(void) {
-
-    if (bootloader_vivt_jumptable.timer_2_handler) {
-
-        bootloader_vivt_jumptable.timer_2_handler();
-
-    }
-
-}
-
 /* ====================================================================== */
 /* Initialization                                                          */
 /*                                                                         */
 /* Call once from BootloaderDriversOpenlcb_initialize_hardware() before    */
-/* any interrupts are enabled.  Wires the TMR2 proxy into MCC's function   */
-/* pointer slot so the hardware _T2Interrupt flows through our VIVT.       */
+/* any interrupts are enabled.                                             */
+/*                                                                         */
+/* NOTE: TMR2 VIVT redirect is now handled directly inside the hand-edited */
+/* _T2Interrupt in mcc_generated_files/tmr2.c (same pattern as CAN1).      */
+/* The MCC TMR2_InterruptHandler function pointer is NOT used because the  */
+/* app's CRT0 startup clobbers it (plain RAM global, not persistent).      */
 /* ====================================================================== */
 
 void BootloaderIsrRedirect_initialize(void) {
 
-    TMR2_SetInterruptHandler(_vivt_t2_proxy);
+    _TRISA0 = 0;  /* green LED as output for VIVT debug toggle */
+    _LATA0 = 0;
 
 }
 
@@ -238,7 +232,7 @@ void __attribute__((interrupt, no_auto_psv)) _OscillatorFail(void) {
 
     } else {
 
-        while (1);
+        while (1) { }
 
     }
 
@@ -254,7 +248,7 @@ void __attribute__((interrupt, no_auto_psv)) _AddressError(void) {
 
     } else {
 
-        while (1);
+        while (1) { }
 
     }
 
@@ -270,7 +264,7 @@ void __attribute__((interrupt, no_auto_psv)) _StackError(void) {
 
     } else {
 
-        while (1);
+        while (1) { }
 
     }
 
@@ -286,7 +280,7 @@ void __attribute__((interrupt, no_auto_psv)) _MathError(void) {
 
     } else {
 
-        while (1);
+        while (1) { }
 
     }
 
@@ -302,7 +296,7 @@ void __attribute__((interrupt, no_auto_psv)) _DMACError(void) {
 
     } else {
 
-        while (1);
+        while (1) { }
 
     }
 

@@ -92,9 +92,8 @@ void CallbacksConfigMem_factory_reset(openlcb_statemachine_info_t *statemachine_
 /* THE CORRECT DROP-BACK SEQUENCE (must happen in this exact order):       */
 /*                                                                         */
 /*  1. Disable global interrupts                                           */
-/*     __builtin_disi(0x3FFF) issues the DISI instruction which prevents   */
-/*     any interrupt from firing for up to 16383 instruction cycles.       */
-/*     We reset inside that window so the counter never expires.           */
+/*     _GIE = 0 hard-disables all interrupts including traps.              */
+/*     We never re-enable; asm("RESET") fires with interrupts off.         */
 /*                                                                         */
 /*  2. Zero every VIVT slot                                                */
 /*     The bootloader owns the hardware IVT but routes interrupts to the   */
@@ -126,9 +125,10 @@ void CallbacksConfigMem_factory_reset(openlcb_statemachine_info_t *statemachine_
 /*                                                                         */
 /* WHY THE VIVT MUST BE CLEARED BEFORE THE MAGIC FLAG IS WRITTEN:         */
 /*     Both the VIVT table and the magic flag live in the same shared-SRAM */
-/*     region.  BootloaderDriversOpenlcb_initialize_hardware() clears the  */
-/*     shared RAM ONLY on POR/BOR.  On a software reset it leaves shared   */
-/*     RAM intact so it can recover the magic flag and alias.  This means  */
+/*     region.  initialize_hardware() clears bootloader_request_flag       */
+/*     unconditionally and clears bootloader_cached_alias on non-app-      */
+/*     dropback resets, but leaves bootloader_cached_alias intact on the   */
+/*     app drop-back path so the CAN state machine can reuse the alias.    */
 /*     IF we wrote the magic flag first and THEN tried to clear the VIVT,  */
 /*     an interrupt firing in that narrow window would see the magic flag   */
 /*     already set but VIVT not yet cleared -- inconsistent state.         */
@@ -140,10 +140,11 @@ void CallbacksConfigMem_freeze(openlcb_statemachine_info_t *statemachine_info, c
 
     if (config_mem_operations_request_info->space_info->address_space == CONFIG_MEM_SPACE_FIRMWARE) {
 
-        /* Step 1: Disable interrupts for the duration of the critical section.
-         * DISI disables interrupts for up to 16383 instruction cycles.
-         * The asm("RESET") at the end fires well within that window. */
-        __builtin_disi(0x3FFF);
+        /* Step 1: Hard-disable global interrupts.
+         * _GIE = 0 blocks all interrupt priorities including traps.
+         * DISI only blocks priority 0-6 for a cycle count -- not sufficient.
+         * We never re-enable; asm("RESET") fires with interrupts off. */
+        _GIE = 0;
 
         /* Step 2: Clear every VIVT slot so the bootloader ISR stubs do not
          * call back into dead application code after the software reset.

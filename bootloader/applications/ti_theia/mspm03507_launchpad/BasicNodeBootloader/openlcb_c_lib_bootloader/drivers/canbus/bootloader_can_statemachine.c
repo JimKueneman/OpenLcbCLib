@@ -185,7 +185,7 @@ static void _handle_init(void) {
             if (saved != 0) {
 
                 /* The application was already logged in with this alias.
-                 * Skip the full CID negotiation, 200ms wait, and AMD —
+                 * Skip the full CID negotiation, 200ms wait, and AMD --
                  * the alias is still valid and mapped on the bus.  The CT
                  * that sent Freeze is waiting for Init Complete, so jump
                  * straight there.  (Sending AMD would confuse the CT.) */
@@ -288,7 +288,7 @@ static void _dispatch_frame(const bootloader_can_frame_t *frame) {
     uint32_t can_id = frame->can_id & ~BOOTLOADER_CAN_EFF_FLAG;
     uint32_t frame_type = can_id & MASK_CAN_FRAME_TYPE;
 
-    /* AME control frame — respond with AMD if node ID matches or no data. */
+    /* AME control frame -- respond with AMD if node ID matches or no data. */
     if (!(can_id & CAN_OPENLCB_MSG)) {
 
         uint32_t control_field = can_id & MASK_CAN_VARIABLE_FIELD;
@@ -306,19 +306,19 @@ static void _dispatch_frame(const bootloader_can_frame_t *frame) {
 
     }
 
-    /* Datagram frames are assembled by the RX engine — they never
+    /* Datagram frames are assembled by the RX engine -- they never
      * appear in the frame FIFO, so nothing to handle here. */
 
     /* Standard OpenLCB messages. */
     if (frame_type == OPENLCB_MESSAGE_STANDARD_FRAME_TYPE) {
 
         uint16_t mti_raw = (can_id >> 12) & 0xFFF;
-        uint16_t src = can_id & 0xFFF;
+        uint16_t source_alias = can_id & 0xFFF;
         bool is_addressed = (mti_raw & 0x0008) != 0;
 
         if (is_addressed) {
 
-            BootloaderOpenlcbSM_on_addressed_message(mti_raw, src, 0, frame->data + 2, (frame->can_dlc > 2) ? frame->can_dlc - 2 : 0);
+            BootloaderOpenlcbSM_on_addressed_message(mti_raw, source_alias, 0, frame->data + 2, (frame->can_dlc > 2) ? frame->can_dlc - 2 : 0);
 
         } else {
 
@@ -340,12 +340,12 @@ static void _handle_collisions(void) {
 
         if (_sm.init_state == INIT_INITIALIZED) {
 
-            /* CID for our alias — reply with RID. */
+            /* CID for our alias -- reply with RID. */
             _build_pending_control_frame(CAN_CONTROL_FRAME_RID);
 
         } else {
 
-            /* Inhibited — restart alias reservation. */
+            /* Inhibited -- restart alias reservation. */
             _sm.pending_frame_full = 0;
             _sm.seed = _generate_seed(_sm.seed);
             _sm.init_state = INIT_PICK_ALIAS;
@@ -358,14 +358,14 @@ static void _handle_collisions(void) {
 
         if (_sm.init_state == INIT_INITIALIZED) {
 
-            /* Hard conflict — send AMR, then restart. */
+            /* Hard conflict -- send AMR, then restart. */
             _build_pending_control_frame(CAN_CONTROL_FRAME_AMR);
             _set_node_id_payload(&_sm.pending_frame);
             _sm.init_state = INIT_PICK_ALIAS;
 
         } else {
 
-            /* Inhibited — restart. */
+            /* Inhibited -- restart. */
             _sm.pending_frame_full = 0;
             _sm.seed = _generate_seed(_sm.seed);
             _sm.init_state = INIT_PICK_ALIAS;
@@ -395,7 +395,7 @@ void BootloaderCanSM_init(const bootloader_can_driver_t *can_driver, const bootl
 
 void BootloaderCanSM_loop(void) {
 
-    /* Poll RX — assembles datagrams, flags errors, buffers other frames. */
+    /* Poll RX -- assembles datagrams, flags errors, buffers other frames. */
     BootloaderRx_poll(_sm.alias, _sm.openlcb_driver->get_100ms_timer_tick());
 
     /* Handle alias collisions. */
@@ -432,24 +432,24 @@ void BootloaderCanSM_loop(void) {
 
     if (_sm.init_state != INIT_INITIALIZED) { return; }
 
-    /* Check for datagram assembly errors — send rejection. */
+    /* Check for datagram assembly errors -- send rejection. */
     if (BootloaderRx_has_error()) {
 
-        bootloader_rx_error_t err = BootloaderRx_get_error();
-        BootloaderCanSM_send_datagram_rejected(err.error_src_alias, 0, err.error_code);
+        bootloader_rx_error_t assembly_error = BootloaderRx_get_error();
+        BootloaderCanSM_send_datagram_rejected(assembly_error.error_src_alias, 0, assembly_error.error_code);
 
     }
 
     /* Check for completed datagram. */
     if (BootloaderRx_has_datagram()) {
 
-        uint16_t src;
-        uint8_t buf[72];
-        uint8_t len;
+        uint16_t source_alias;
+        uint8_t datagram_buffer[72];
+        uint8_t datagram_length;
 
-        if (BootloaderRx_get_datagram(&src, buf, &len)) {
+        if (BootloaderRx_get_datagram(&source_alias, datagram_buffer, &datagram_length)) {
 
-            BootloaderOpenlcbSM_on_datagram_received(src, 0, buf, len);
+            BootloaderOpenlcbSM_on_datagram_received(source_alias, 0, datagram_buffer, datagram_length);
 
         }
 
@@ -482,17 +482,17 @@ uint16_t BootloaderCanSM_alias(void) {
 /* Send helpers                                                            */
 /* ====================================================================== */
 
-bool BootloaderCanSM_send_addressed(uint16_t mti, uint16_t dest_alias, uint64_t dest_node_id, const uint8_t *data, uint8_t len) {
+bool BootloaderCanSM_send_addressed(uint16_t mti, uint16_t dest_alias, uint64_t dest_node_id, const uint8_t *data, uint8_t payload_length) {
 
     (void) dest_node_id;
 
-    return BootloaderTx_send_multiframe(mti, _sm.alias, dest_alias, _sm.alias, _sm.openlcb_driver->get_100ms_timer_tick(), data, len);
+    return BootloaderTx_send_multiframe(mti, _sm.alias, dest_alias, _sm.alias, _sm.openlcb_driver->get_100ms_timer_tick(), data, payload_length);
 
 }
 
-bool BootloaderCanSM_send_global(uint16_t mti, const uint8_t *data, uint8_t len) {
+bool BootloaderCanSM_send_global(uint16_t mti, const uint8_t *data, uint8_t payload_length) {
 
-    return BootloaderTx_send_global(mti, _sm.alias, _sm.alias, _sm.openlcb_driver->get_100ms_timer_tick(), data, len);
+    return BootloaderTx_send_global(mti, _sm.alias, _sm.alias, _sm.openlcb_driver->get_100ms_timer_tick(), data, payload_length);
 
 }
 
@@ -512,10 +512,10 @@ bool BootloaderCanSM_send_datagram_rejected(uint16_t dest_alias, uint64_t dest_n
 
 }
 
-bool BootloaderCanSM_send_datagram(uint16_t dest_alias, uint64_t dest_node_id, const uint8_t *data, uint8_t len) {
+bool BootloaderCanSM_send_datagram(uint16_t dest_alias, uint64_t dest_node_id, const uint8_t *data, uint8_t payload_length) {
 
     (void) dest_node_id;
 
-    return BootloaderTx_send_datagram(_sm.alias, dest_alias, _sm.alias, _sm.openlcb_driver->get_100ms_timer_tick(), data, len);
+    return BootloaderTx_send_datagram(_sm.alias, dest_alias, _sm.alias, _sm.openlcb_driver->get_100ms_timer_tick(), data, payload_length);
 
 }

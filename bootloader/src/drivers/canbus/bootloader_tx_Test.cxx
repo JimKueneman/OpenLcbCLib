@@ -88,7 +88,7 @@ static void _reset(void) {
 }
 
 /* ====================================================================== */
-/* Tests — send_frame                                                      */
+/* Tests -- send_frame                                                      */
 /* ====================================================================== */
 
 TEST(BootloaderTx, send_frame_success) {
@@ -122,7 +122,7 @@ TEST(BootloaderTx, send_frame_failure) {
 }
 
 /* ====================================================================== */
-/* Tests — send_multiframe single frame                                    */
+/* Tests -- send_multiframe single frame                                    */
 /* ====================================================================== */
 
 TEST(BootloaderTx, multiframe_single_frame_pip_reply) {
@@ -157,7 +157,7 @@ TEST(BootloaderTx, multiframe_single_frame_pip_reply) {
 }
 
 /* ====================================================================== */
-/* Tests — send_multiframe multi-frame (SNIP)                              */
+/* Tests -- send_multiframe multi-frame (SNIP)                              */
 /* ====================================================================== */
 
 TEST(BootloaderTx, multiframe_snip_reply) {

@@ -61,29 +61,18 @@
 /* Lifecycle                                                               */
 /* ====================================================================== */
 
-void BootloaderDriversOpenlcb_initialize_hardware(void) {
+void BootloaderDriversOpenlcb_initialize_hardware(bootloader_request_t request) {
 
-    /*
-     * On a power-on or brown-out reset, SRAM contents are random garbage.
-     * Clear the bootloader request flag so a random value that happens to
-     * match the magic number does not falsely trigger bootloader mode.
-     *
-     * On a software reset (NVIC_SystemReset) the reset cause will be
-     * CPURST_SW_TRIGGERED or SYSRST_SW_TRIGGERED, and SRAM is preserved —
-     * so we leave the flag alone and let is_bootloader_requested() read it.
-     * For every other reset cause (POR, BOR, watchdog, ECC fault, etc.)
-     * SRAM may be garbage, so we clear the flag.
-     *
-     * Platform porting note:
-     *   Every chip has its own reset-cause register.  On dsPIC it is
-     *   RCONbits.POR / RCONbits.BOR.  On STM32 it is RCC->CSR.  Adapt
-     *   this check to whatever your platform provides.
-     */
-    DL_SYSCTL_RESET_CAUSE reset_cause = DL_SYSCTL_getResetCause();
+    /* Centralized .noinit shared RAM cleanup.
+     * bootloader_request_flag was already consumed by is_bootloader_requested()
+     * before this function runs; clear it unconditionally as belt-and-suspenders.
+     * bootloader_cached_alias is only meaningful on app drop-back -- the library
+     * CAN state machine reads it via get_cached_alias() during INIT_PICK_ALIAS
+     * and clears it after pickup.  On any other reset path it is stale garbage. */
+    bootloader_request_flag = 0;
 
-    if (reset_cause != DL_SYSCTL_RESET_CAUSE_CPURST_SW_TRIGGERED && reset_cause != DL_SYSCTL_RESET_CAUSE_SYSRST_SW_TRIGGERED) {
+    if (request != BOOTLOADER_REQUESTED_BY_APP) {
 
-        bootloader_request_flag = 0;
         bootloader_cached_alias = 0;
 
     }
@@ -101,9 +90,8 @@ bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
      *
      * The application writes BOOTLOADER_REQUEST_MAGIC into the shared RAM
      * flag and then calls NVIC_SystemReset().  SRAM survives the soft
-     * reset, so the magic value is still here when we start up.  If we
-     * find it, clear it immediately so the NEXT reset does not falsely
-     * re-enter bootloader mode, then return REQUESTED_BY_APP.
+     * reset, so the magic value is still here when we start up.  The flag
+     * is cleared centrally by initialize_hardware(), not here.
      *
      * This tells the library that the CT already sent Freeze to the
      * application, so the bootloader starts with firmware_active = 1
@@ -112,7 +100,7 @@ bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
      */
     if (bootloader_request_flag == BOOTLOADER_REQUEST_MAGIC) {
 
-        bootloader_request_flag = 0;
+        /* Flag is cleared centrally by initialize_hardware(). */
         return BOOTLOADER_REQUESTED_BY_APP;
 
     }
@@ -188,47 +176,56 @@ void BootloaderDriversOpenlcb_reboot(void) {
 /* Flash operations                                                        */
 /* ====================================================================== */
 
-void BootloaderDriversOpenlcb_get_flash_boundaries(const void **flash_min, const void **flash_max, const struct bootloader_app_header **app_header) {
+void BootloaderDriversOpenlcb_get_flash_boundaries(uint32_t *flash_min, uint32_t *flash_max, uint32_t *app_header) {
 
-    *flash_min = (const void *) APP_FLASH_START;
-    *flash_max = (const void *) APP_FLASH_END;
-    *app_header = (const struct bootloader_app_header *) APP_HEADER_ADDRESS;
+    *flash_min  = APP_FLASH_START;
+    *flash_max  = APP_FLASH_END;
+    *app_header = APP_HEADER_ADDRESS;
 
 }
 
-void BootloaderDriversOpenlcb_get_flash_page_info(const void *address, const void **page_start, uint32_t *page_length_bytes) {
+void BootloaderDriversOpenlcb_get_flash_page_info(uint32_t address, uint32_t *page_start, uint32_t *page_length_bytes) {
 
-    uintptr_t addr = (uintptr_t) address;
-    *page_start = (const void *) (addr & ~(FLASH_SECTOR_SIZE - 1));
+    *page_start        = address & ~((uint32_t)(FLASH_SECTOR_SIZE - 1));
     *page_length_bytes = FLASH_SECTOR_SIZE;
 
 }
 
-uint16_t BootloaderDriversOpenlcb_erase_flash_page(const void *address) {
+uint16_t BootloaderDriversOpenlcb_erase_flash_page(uint32_t address) {
 
     __disable_irq();
 
     DL_FlashCTL_executeClearStatus(FLASHCTL);
-    DL_FlashCTL_unprotectSector(FLASHCTL, (uint32_t) address, DL_FLASHCTL_REGION_SELECT_MAIN);
+    DL_FlashCTL_unprotectSector(FLASHCTL, address, DL_FLASHCTL_REGION_SELECT_MAIN);
 
     DL_FLASHCTL_COMMAND_STATUS status =
-            DL_FlashCTL_eraseMemoryFromRAM(FLASHCTL, (uint32_t) address,
+            DL_FlashCTL_eraseMemoryFromRAM(FLASHCTL, address,
                     DL_FLASHCTL_COMMAND_SIZE_SECTOR);
 
-    if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) { __enable_irq(); return ERROR_PERMANENT; }
+    if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) {
 
-    if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) { __enable_irq(); return ERROR_PERMANENT; }
+        __enable_irq();
+        return ERROR_PERMANENT;
+
+    }
+
+    if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) {
+
+        __enable_irq();
+        return ERROR_PERMANENT;
+
+    }
 
     __enable_irq();
     return 0;
 
 }
 
-uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const void *data, uint32_t size_bytes) {
+uint16_t BootloaderDriversOpenlcb_write_flash_bytes(uint32_t address, const uint8_t *data, uint32_t size_bytes) {
 
-    uint32_t dest = (uint32_t) address;
-    const uint8_t *src = (const uint8_t *) data;
-    uint32_t remaining = size_bytes;
+    uint32_t       dest        = address;
+    const uint8_t *source_data = data;
+    uint32_t       remaining   = size_bytes;
 
     __disable_irq();
 
@@ -240,7 +237,7 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const v
          * a uint8_t* to uint32_t* will hang if the buffer is not
          * naturally aligned. */
         uint32_t aligned_data[2];
-        memcpy(aligned_data, src, FLASH_WRITE_ALIGN);
+        memcpy(aligned_data, source_data, FLASH_WRITE_ALIGN);
 
         DL_FlashCTL_executeClearStatus(FLASHCTL);
         DL_FlashCTL_unprotectSector(FLASHCTL, dest, DL_FLASHCTL_REGION_SELECT_MAIN);
@@ -248,12 +245,23 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const v
                 DL_FlashCTL_programMemoryFromRAM64WithECCGenerated(
                         FLASHCTL, dest, aligned_data);
 
-        if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) { __enable_irq(); return ERROR_PERMANENT; }
-        if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) { __enable_irq(); return ERROR_PERMANENT; }
+        if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) {
 
-        dest += FLASH_WRITE_ALIGN;
-        src += FLASH_WRITE_ALIGN;
-        remaining -= FLASH_WRITE_ALIGN;
+            __enable_irq();
+            return ERROR_PERMANENT;
+
+        }
+
+        if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) {
+
+            __enable_irq();
+            return ERROR_PERMANENT;
+
+        }
+
+        dest        += FLASH_WRITE_ALIGN;
+        source_data += FLASH_WRITE_ALIGN;
+        remaining   -= FLASH_WRITE_ALIGN;
 
     }
 
@@ -264,7 +272,7 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const v
         uint32_t pad_aligned[2];
         uint8_t pad_buffer[FLASH_WRITE_ALIGN];
         memset(pad_buffer, 0xFF, sizeof(pad_buffer));
-        memcpy(pad_buffer, src, remaining);
+        memcpy(pad_buffer, source_data, remaining);
         memcpy(pad_aligned, pad_buffer, FLASH_WRITE_ALIGN);
 
         DL_FlashCTL_executeClearStatus(FLASHCTL);
@@ -273,8 +281,19 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const v
                 DL_FlashCTL_programMemoryFromRAM64WithECCGenerated(
                         FLASHCTL, dest, pad_aligned);
 
-        if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) { __enable_irq(); return ERROR_PERMANENT; }
-        if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) { __enable_irq(); return ERROR_PERMANENT; }
+        if (status == DL_FLASHCTL_COMMAND_STATUS_FAILED) {
+
+            __enable_irq();
+            return ERROR_PERMANENT;
+
+        }
+
+        if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) {
+
+            __enable_irq();
+            return ERROR_PERMANENT;
+
+        }
 
     }
 
@@ -317,10 +336,10 @@ void BootloaderDriversOpenlcb_read_flash_bytes(uint32_t flash_addr, void *dest_r
 /* Checksum                                                                */
 /* ====================================================================== */
 
-void BootloaderDriversOpenlcb_compute_checksum(const void *data, uint32_t size, uint32_t *checksum) {
+void BootloaderDriversOpenlcb_compute_checksum(uint32_t flash_addr, uint32_t size, uint32_t *checksum) {
 
     uint16_t crc3[3];
-    BootloaderCrc_crc3_crc16_ibm(data, size, crc3);
+    BootloaderCrc_crc3_crc16_ibm((const void *)(uintptr_t) flash_addr, size, crc3);
 
     checksum[0] = (uint32_t) crc3[0];
     checksum[1] = (uint32_t) crc3[1];

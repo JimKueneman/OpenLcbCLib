@@ -66,39 +66,60 @@
 /* Lifecycle                                                               */
 /* ====================================================================== */
 
-void BootloaderDriversOpenlcb_initialize_hardware(void) {
+void BootloaderDriversOpenlcb_initialize_hardware(bootloader_request_t request) {
 
     /*
-     * On a power-on or brownout reset, SRAM contents are random.
-     * Clear the shared RAM variables so a random value that happens to
-     * match the magic number does not falsely trigger bootloader mode.
+     * The `request` parameter tells us WHY the bootloader was entered,
+     * allowing reset-reason-specific cleanup.
      *
-     * On a software reset (asm RESET) SRAM is preserved -- leave the
-     * shared RAM alone so is_bootloader_requested() can read the magic
-     * flag and get_cached_alias() can recover the application's alias.
+     * VIVT (Virtual Interrupt Vector Table):
+     *   Always cleared unconditionally.  After any reset the bootloader
+     *   owns the hardware IVT; stale app handler pointers in persistent
+     *   RAM must never be called.
      *
-     * RCONbits.POR is set after power-on reset.
-     * RCONbits.BOR is set after brownout reset.
-     * Neither is set after a software reset.
+     * CAN interrupt (app drop-back only):
+     *   SYSTEM_Initialize() already ran and enabled C1IE.  With the VIVT
+     *   now cleared, a pending CAN interrupt would vector into NULL.
+     *   Disable C1IE before global interrupts can deliver it.
+     *   BootloaderDriversCan_initialize() re-enables CAN cleanly.
      */
-    if (RCONbits.POR || RCONbits.BOR) {
 
-        bootloader_request_flag  = 0;
-        bootloader_cached_alias  = 0;
+    /* Centralized .noinit shared RAM cleanup.
+     * bootloader_request_flag was already consumed by is_bootloader_requested()
+     * before this function runs; clear it unconditionally as belt-and-suspenders.
+     * bootloader_cached_alias is only meaningful on app drop-back -- the library
+     * CAN state machine reads it via get_cached_alias() during INIT_PICK_ALIAS
+     * and clears it after pickup.  On any other reset path it is stale garbage. */
+    bootloader_request_flag = 0;
 
-        bootloader_vivt_jumptable.oscillatorfail_handler = 0;
-        bootloader_vivt_jumptable.addresserror_handler   = 0;
-        bootloader_vivt_jumptable.stackerror_handler     = 0;
-        bootloader_vivt_jumptable.matherror_handler      = 0;
-        bootloader_vivt_jumptable.dmacerror_handler      = 0;
-        bootloader_vivt_jumptable.timer_2_handler        = 0;
-        bootloader_vivt_jumptable.can1_handler           = 0;
+    /* VIVT: always clear unconditionally regardless of reset reason. */
+    bootloader_vivt_jumptable.oscillatorfail_handler = 0;
+    bootloader_vivt_jumptable.addresserror_handler   = 0;
+    bootloader_vivt_jumptable.stackerror_handler     = 0;
+    bootloader_vivt_jumptable.matherror_handler      = 0;
+    bootloader_vivt_jumptable.dmacerror_handler      = 0;
+    bootloader_vivt_jumptable.timer_2_handler        = 0;
+    bootloader_vivt_jumptable.can1_handler           = 0;
 
-        RCON = 0; /* clear POR/BOR flags so next reset is not misidentified */
+    if (request == BOOTLOADER_REQUESTED_BY_APP) {
+
+        IEC2bits.C1IE = 0;
+        IFS2bits.C1IF = 0;
+        /* bootloader_cached_alias is left intact here -- the library
+         * CAN state machine reads it via get_cached_alias() during
+         * INIT_PICK_ALIAS and clears it after pickup. */
+
+    } else {
+
+        bootloader_cached_alias = 0;
 
     }
 
-    BootloaderIsrRedirect_initialize();
+    BootloaderDriversCan_initialize();
+
+    /* VIVT is safe, CAN interrupt is clean -- enable global interrupts.
+     * SYSTEM_Initialize() no longer enables GIE (hand-edited out). */
+    _GIE = 1;
 
 }
 
@@ -109,8 +130,8 @@ bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
      *
      * The application writes BOOTLOADER_REQUEST_MAGIC into the shared RAM
      * flag and then calls asm("RESET").  SRAM survives the soft reset, so
-     * the magic value is still here when we start up.  Clear it immediately
-     * so the NEXT reset does not falsely re-enter bootloader mode.
+     * the magic value is still here when we start up.  The flag is cleared
+     * centrally by initialize_hardware(), not here.
      *
      * This tells the library that the CT already sent Freeze to the
      * application, so the bootloader starts with firmware_active = 1
@@ -119,7 +140,7 @@ bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
      */
     if (bootloader_request_flag == BOOTLOADER_REQUEST_MAGIC) {
 
-        bootloader_request_flag = 0;
+        /* Flag is cleared centrally by initialize_hardware(). */
         return BOOTLOADER_REQUESTED_BY_APP;
 
     }
@@ -224,21 +245,21 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const v
      * PC address advances by 4 (2 instructions × 2 PC units each).
      * Image pointer advances by 8 (2 instructions × 4 image bytes each).
      */
-    uint32_t       dest      = (uint32_t)(uintptr_t) address;
-    const uint8_t *src       = (const uint8_t *) data;
-    uint32_t       remaining = size_bytes;
+    uint32_t       dest        = (uint32_t)(uintptr_t) address;
+    const uint8_t *source_data = (const uint8_t *) data;
+    uint32_t       remaining   = size_bytes;
 
     FLASH_Unlock(FLASH_UNLOCK_KEY);
 
     while (remaining >= 8U) {
 
-        uint32_t instr0 = (uint32_t) src[0]
-                        | ((uint32_t) src[1] << 8)
-                        | ((uint32_t) src[2] << 16);
+        uint32_t instr0 = (uint32_t) source_data[0]
+                        | ((uint32_t) source_data[1] << 8)
+                        | ((uint32_t) source_data[2] << 16);
 
-        uint32_t instr1 = (uint32_t) src[4]
-                        | ((uint32_t) src[5] << 8)
-                        | ((uint32_t) src[6] << 16);
+        uint32_t instr1 = (uint32_t) source_data[4]
+                        | ((uint32_t) source_data[5] << 8)
+                        | ((uint32_t) source_data[6] << 16);
 
         if (!FLASH_WriteDoubleWord24(dest, instr0, instr1)) {
 
@@ -247,9 +268,9 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const v
 
         }
 
-        dest      += 4U;
-        src       += 8U;
-        remaining -= 8U;
+        dest        += 4U;
+        source_data += 8U;
+        remaining   -= 8U;
 
     }
 
@@ -258,7 +279,7 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(const void *address, const v
 
         uint8_t pad[8];
         memset(pad, 0xFF, sizeof(pad));
-        memcpy(pad, src, remaining);
+        memcpy(pad, source_data, remaining);
 
         uint32_t instr0 = (uint32_t) pad[0]
                         | ((uint32_t) pad[1] << 8)
@@ -337,8 +358,17 @@ void BootloaderDriversOpenlcb_read_flash_bytes(uint32_t flash_addr, void *dest_r
 
         uint32_t word = FLASH_ReadWord24(addr);
 
-        if (remaining >= 1U) { *dest++ = (uint8_t)(word        & 0xFFU); }
-        if (remaining >= 2U) { *dest++ = (uint8_t)((word >> 8) & 0xFFU); }
+        if (remaining >= 1U) {
+
+            *dest++ = (uint8_t)(word & 0xFFU);
+
+        }
+
+        if (remaining >= 2U) {
+
+            *dest++ = (uint8_t)((word >> 8) & 0xFFU);
+
+        }
 
     }
 
@@ -385,37 +415,37 @@ typedef struct {
 
 } _crc3_state_t;
 
-static void _crc3_init(_crc3_state_t *s) {
+static void _crc3_init(_crc3_state_t *crc_state) {
 
-    s->state_all = 0x0000;
-    s->state_odd = 0x0000;
-    s->state_even = 0x0000;
-    s->count = 0;
+    crc_state->state_all = 0x0000;
+    crc_state->state_odd = 0x0000;
+    crc_state->state_even = 0x0000;
+    crc_state->count = 0;
 
 }
 
-static void _crc3_add_byte(_crc3_state_t *s, uint8_t byte) {
+static void _crc3_add_byte(_crc3_state_t *crc_state, uint8_t byte) {
 
-    s->count++;
-    _crc16_ibm_add(&s->state_all, byte);
+    crc_state->count++;
+    _crc16_ibm_add(&crc_state->state_all, byte);
 
-    if (s->count & 1U) {
+    if (crc_state->count & 1U) {
 
-        _crc16_ibm_add(&s->state_odd, byte);
+        _crc16_ibm_add(&crc_state->state_odd, byte);
 
     } else {
 
-        _crc16_ibm_add(&s->state_even, byte);
+        _crc16_ibm_add(&crc_state->state_even, byte);
 
     }
 
 }
 
-static void _crc3_finish(const _crc3_state_t *s, uint16_t *checksum) {
+static void _crc3_finish(const _crc3_state_t *crc_state, uint16_t *checksum) {
 
-    checksum[0] = s->state_all;
-    checksum[1] = s->state_odd;
-    checksum[2] = s->state_even;
+    checksum[0] = crc_state->state_all;
+    checksum[1] = crc_state->state_odd;
+    checksum[2] = crc_state->state_even;
 
 }
 
@@ -438,11 +468,11 @@ void BootloaderDriversOpenlcb_compute_checksum(const void *data, uint32_t size, 
     _crc3_state_t state;
     _crc3_init(&state);
 
-    for (uint32_t i = 0U; i < num_instructions; i++) {
+    for (uint32_t instruction_index = 0U; instruction_index < num_instructions; instruction_index++) {
 
         uint32_t word = FLASH_ReadWord24(addr);
-        _crc3_add_byte(&state, (uint8_t)(word        & 0xFFU));
-        _crc3_add_byte(&state, (uint8_t)((word >> 8) & 0xFFU));
+        _crc3_add_byte(&state, (uint8_t)(word         & 0xFFU));
+        _crc3_add_byte(&state, (uint8_t)((word >> 8)  & 0xFFU));
         _crc3_add_byte(&state, (uint8_t)((word >> 16) & 0xFFU));
         addr += 2U;
 

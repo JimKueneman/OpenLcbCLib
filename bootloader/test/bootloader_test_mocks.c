@@ -145,7 +145,7 @@ static void _mock_reboot(void) {
 
 }
 
-static void _mock_openlcb_init(void) { }
+static void _mock_openlcb_init(bootloader_request_t request) { (void)request; }
 
 static void _mock_get_flash_boundaries(const void **flash_min, const void **flash_max, const struct bootloader_app_header **app_header) {
 

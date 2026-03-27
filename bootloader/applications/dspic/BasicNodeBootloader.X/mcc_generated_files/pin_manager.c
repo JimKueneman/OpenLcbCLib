@@ -122,8 +122,8 @@ void PIN_MANAGER_Initialize (void)
      ***************************************************************************/
     __builtin_write_OSCCONL(OSCCON & 0xbf); // unlock PPS
 
-    RPOR8bits.RP118R = 0x000E;    //RG6->ECAN1:C1TX
     RPINR26bits.C1RXR = 0x002F;    //RB15->ECAN1:C1RX
+    RPOR8bits.RP118R = 0x000E;    //RG6->ECAN1:C1TX
 
     __builtin_write_OSCCONL(OSCCON | 0x40); // lock PPS
 }

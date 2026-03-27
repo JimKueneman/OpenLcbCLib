@@ -483,21 +483,24 @@ void Dspic33CanDriver_initialize(void)
     C1INTEbits.TBIE = 1; // Enable CAN1 TX
     C1INTEbits.RBIE = 1; // Enable CAN1 RX
 
-    // DMA 2 Initialize (CAN RX)
-    DMA2CON = 0x0020;
-    DMA2PAD = (uint16_t)&C1RXD;
-    DMA2CNT = 0x0007;
-    DMA2REQ = 0x0022;
+    // DMA1 Initialize (CAN RX) — matches bootloader MCC DMA channel assignment
+    // Writing DMA1CON first clears CHEN, killing any stale bootloader DMA1 transfer
+    DMA1CON = 0x0020;
+    DMA1PAD = (uint16_t)&C1RXD;
+    DMA1CNT = 0x0007;
+    DMA1REQ = 0x0022;
+    IEC0bits.DMA1IE = 0;
+    IFS0bits.DMA1IF = 0;
 
 #ifdef _HAS_DMA_
-    DMA2STAL = __builtin_dmaoffset(ecan1msgBuf);
-    DMA2STAH = __builtin_dmapage(ecan1msgBuf);
+    DMA1STAL = __builtin_dmaoffset(ecan1msgBuf);
+    DMA1STAH = __builtin_dmapage(ecan1msgBuf);
 #else
-    DMA2STAL = (uint16_t)(int_least24_t)(&ecan1msgBuf);
-    DMA2STAH = 0;
+    DMA1STAL = (uint16_t)(int_least24_t)(&ecan1msgBuf);
+    DMA1STAH = 0;
 #endif
 
-    DMA2CONbits.CHEN = 1;
+    DMA1CONbits.CHEN = 1;
 
     // DMA0 Initialize (CAN TX)
     DMA0CON = 0x2020;

@@ -42,6 +42,17 @@
 #include "../mcc_generated_files/can1.h"
 
 /* ====================================================================== */
+/* Init                                                                    */
+/* ====================================================================== */
+
+void BootloaderDriversCan_initialize(void) {
+
+    CAN1_TransmitEnable();
+    CAN1_ReceiveEnable();
+
+}
+
+/* ====================================================================== */
 /* CAN receive                                                             */
 /* ====================================================================== */
 
@@ -54,32 +65,32 @@ bool BootloaderDriversCan_read_received_frame(bootloader_can_frame_t *frame) {
     }
 
     uint8_t rx_data[8] = {0};
-    CAN_MSG_OBJ msg;
-    msg.data = rx_data;
+    CAN_MSG_OBJ rx_msg;
+    rx_msg.data = rx_data;
 
-    if (!CAN1_Receive(&msg)) {
+    if (!CAN1_Receive(&rx_msg)) {
 
         return false;
 
     }
 
-    if (msg.field.idType == CAN_FRAME_EXT) {
+    if (rx_msg.field.idType == CAN_FRAME_EXT) {
 
-        frame->can_id = (msg.msgId & 0x1FFFFFFFU) | BOOTLOADER_CAN_EFF_FLAG;
+        frame->can_id = (rx_msg.msgId & 0x1FFFFFFFU) | BOOTLOADER_CAN_EFF_FLAG;
 
     } else {
 
-        frame->can_id = msg.msgId & 0x7FFU;
+        frame->can_id = rx_msg.msgId & 0x7FFU;
 
     }
 
-    frame->can_dlc = (uint8_t) msg.field.dlc;
+    frame->can_dlc = (uint8_t) rx_msg.field.dlc;
 
-    uint8_t i;
+    uint8_t byte_index;
 
-    for (i = 0; i < frame->can_dlc; i++) {
+    for (byte_index = 0; byte_index < frame->can_dlc; byte_index++) {
 
-        frame->data[i] = rx_data[i];
+        frame->data[byte_index] = rx_data[byte_index];
 
     }
 
@@ -94,33 +105,33 @@ bool BootloaderDriversCan_read_received_frame(bootloader_can_frame_t *frame) {
 bool BootloaderDriversCan_try_send_frame(const bootloader_can_frame_t *frame) {
 
     uint8_t tx_data[8] = {0};
-    uint8_t i;
+    uint8_t byte_index;
 
-    for (i = 0; i < frame->can_dlc && i < 8U; i++) {
+    for (byte_index = 0; byte_index < frame->can_dlc && byte_index < 8U; byte_index++) {
 
-        tx_data[i] = frame->data[i];
+        tx_data[byte_index] = frame->data[byte_index];
 
     }
 
-    CAN_MSG_OBJ msg;
-    msg.data             = tx_data;
-    msg.field.frameType  = CAN_FRAME_DATA;
-    msg.field.dlc        = (uint8_t) frame->can_dlc;
-    msg.field.reserved   = 0;
+    CAN_MSG_OBJ tx_msg;
+    tx_msg.data             = tx_data;
+    tx_msg.field.frameType  = CAN_FRAME_DATA;
+    tx_msg.field.dlc        = (uint8_t) frame->can_dlc;
+    tx_msg.field.reserved   = 0;
 
     if (frame->can_id & BOOTLOADER_CAN_EFF_FLAG) {
 
-        msg.msgId         = frame->can_id & 0x1FFFFFFFU;
-        msg.field.idType  = CAN_FRAME_EXT;
+        tx_msg.msgId         = frame->can_id & 0x1FFFFFFFU;
+        tx_msg.field.idType  = CAN_FRAME_EXT;
 
     } else {
 
-        msg.msgId         = frame->can_id & 0x7FFU;
-        msg.field.idType  = CAN_FRAME_STD;
+        tx_msg.msgId         = frame->can_id & 0x7FFU;
+        tx_msg.field.idType  = CAN_FRAME_STD;
 
     }
 
-    return (CAN1_Transmit(CAN_PRIORITY_HIGH, &msg) == CAN_TX_MSG_REQUEST_SUCCESS);
+    return (CAN1_Transmit(CAN_PRIORITY_HIGH, &tx_msg) == CAN_TX_MSG_REQUEST_SUCCESS);
 
 }
 

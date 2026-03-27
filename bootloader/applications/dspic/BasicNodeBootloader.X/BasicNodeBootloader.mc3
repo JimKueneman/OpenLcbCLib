@@ -1,4 +1,4 @@
-<config configVersion="1.3" device="dsPIC33EP512MC506" deviceLibraryClass="com.microchip.mcc.mcu16.Mcu16PeripheralLibrary" coreVersion="5.8.4">
+<config configName="default" projectName="BasicNodeBootloader" configVersion="1.3" device="dsPIC33EP512MC506" deviceLibraryClass="com.microchip.mcc.mcu16.Mcu16PeripheralLibrary" coreVersion="5.8.4">
    <usedPackages class="java.util.ArrayList"/>
    <usedClasses class="java.util.TreeMap">
       <entry>
@@ -76,7 +76,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="DMA" name="uiUpdateForCan"/>
-         <value>NonCAN</value>
+         <value>CAN1 TX0CAN1 RX1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="DMA" registerAlias="DMACH0" settingAlias="AMODE0" alias="Peripheral Indirect Addressing mode"/>
@@ -832,11 +832,11 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="DMA" registerAlias="DMACH0"/>
-         <value>0</value>
+         <value>8224</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="DMA" registerAlias="DMACH1"/>
-         <value>0</value>
+         <value>32</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="DMA" registerAlias="DMACH2"/>
@@ -848,11 +848,11 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="DMA" registerAlias="DMACNT0"/>
-         <value>0</value>
+         <value>7</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="DMA" registerAlias="DMACNT1"/>
-         <value>0</value>
+         <value>7</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="DMA" registerAlias="DMACNT2"/>
@@ -864,11 +864,11 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="DMA" registerAlias="DMAINT0"/>
-         <value>0</value>
+         <value>70</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="DMA" registerAlias="DMAINT1"/>
-         <value>0</value>
+         <value>34</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="DMA" registerAlias="DMAINT2"/>
@@ -1040,7 +1040,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMACH0" settingAlias="AMODE0"/>
-         <value>Register Indirect with Post-Increment mode</value>
+         <value>Peripheral Indirect Addressing mode</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMACH0" settingAlias="CHEN0"/>
@@ -1048,7 +1048,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMACH0" settingAlias="DIR0"/>
-         <value>Reads from peripheral address, writes to RAM address</value>
+         <value>Reads from RAM address, writes to peripheral address</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMACH0" settingAlias="HALF0"/>
@@ -1068,7 +1068,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMACH1" settingAlias="AMODE1"/>
-         <value>Register Indirect with Post-Increment mode</value>
+         <value>Peripheral Indirect Addressing mode</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMACH1" settingAlias="CHEN1"/>
@@ -1152,11 +1152,11 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMACNT0" settingAlias="CNT0"/>
-         <value>0</value>
+         <value>7</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMACNT1" settingAlias="CNT1"/>
-         <value>0</value>
+         <value>7</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMACNT2" settingAlias="CNT2"/>
@@ -1172,7 +1172,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMAINT0" settingAlias="IRQSEL0"/>
-         <value>INT0</value>
+         <value>CAN1 TX</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMAINT1" settingAlias="FORCE"/>
@@ -1180,7 +1180,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMAINT1" settingAlias="IRQSEL1"/>
-         <value>INT0</value>
+         <value>CAN1 RX</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="DMA" registerAlias="DMAINT2" settingAlias="FORCE"/>
@@ -1352,7 +1352,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="ECAN1" name="Id type"/>
-         <value>SID</value>
+         <value>EID</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="ECAN1" name="Mask Value"/>
@@ -1364,11 +1364,11 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="ECAN1" name="RxDMAChannel"/>
-         <value>0</value>
+         <value>1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="ECAN1" name="TxDMAChannel"/>
-         <value>1</value>
+         <value>0</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="ECAN1" name="canBaudComboBox"/>
@@ -1396,7 +1396,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="ECAN1" name="message ID"/>
-         <value>0</value>
+         <value>0x</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="ECAN1" name="receive buffer mode"/>
@@ -3715,6 +3715,26 @@
          <value>65535</value>
       </entry>
       <entry>
+         <key class="com.microchip.mcc.core.tokenManager.PropertyTokenKey" moduleName="ECAN1" name="data%0%canFilter"/>
+         <value>Filter 0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.PropertyTokenKey" moduleName="ECAN1" name="data%0%canID"/>
+         <value>0x0x</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.PropertyTokenKey" moduleName="ECAN1" name="data%0%canIdType"/>
+         <value>EID</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.PropertyTokenKey" moduleName="ECAN1" name="data%0%canMask"/>
+         <value>Mask 0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.PropertyTokenKey" moduleName="ECAN1" name="data%0%canReceiveBuffer"/>
+         <value>FIFO</value>
+      </entry>
+      <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="ECAN1" registerAlias="CBUFPNT1"/>
          <value>65535</value>
       </entry>
@@ -3752,7 +3772,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="ECAN1" registerAlias="CFEN1"/>
-         <value>0</value>
+         <value>1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="ECAN1" registerAlias="CFMSKSEL1"/>
@@ -4104,7 +4124,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="ECAN1" registerAlias="CFEN1" settingAlias="FLTEN0"/>
-         <value>disabled</value>
+         <value>enabled</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="ECAN1" registerAlias="CFEN1" settingAlias="FLTEN1"/>
@@ -13386,7 +13406,7 @@
       </entry>
       <entry>
          <file>mcc_generated_files/can1.c</file>
-         <hash>ec593dbd7e64c0fde9bfbce462cb236174e5d2d7bbd5404f20fdc2fd8cb8f2de</hash>
+         <hash>fa12d7642ab16f86922f4bf327d6044fb007ab7161706c5ebf8cfc9d5c30b26a</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/can1.h</file>
@@ -13410,7 +13430,7 @@
       </entry>
       <entry>
          <file>mcc_generated_files/dma.c</file>
-         <hash>ff66b7209caf3cbd5936d85df64e2c991b6110f53921f156116afd47bed81741</hash>
+         <hash>88e4e7b21778b0ec9ca1f89bc61f88dde7384890f2516c06b53b0f2034222922</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/dma.h</file>
@@ -13430,7 +13450,7 @@
       </entry>
       <entry>
          <file>mcc_generated_files/mcc.h</file>
-         <hash>8ea4f2b53ff29960bd18014e442c5b62222656819427c7127a55bf2ba65deba9</hash>
+         <hash>e858a6a44c56f799a9a58464a9897bc5c9f039dfad938153ebc34e380b53c8b7</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/memory/flash.h</file>
@@ -13442,7 +13462,7 @@
       </entry>
       <entry>
          <file>mcc_generated_files/pin_manager.c</file>
-         <hash>3f777456e5f8fdeca783c815c6b5605a486a901557b3e549def8080a7260202d</hash>
+         <hash>e711c046af23ae738b904a85a961e137ed52d5789c4eeb4e09dd5b65aa35f44c</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/pin_manager.h</file>
@@ -13462,7 +13482,7 @@
       </entry>
       <entry>
          <file>mcc_generated_files/system.c</file>
-         <hash>d8deec43f3e67f0356f460c2ea86e50341b4116fe5864216106420be02f70eb0</hash>
+         <hash>186c0f6b8823175f72915b3bdb0f77f764969c3f9ecbda2b30ddadf8899af6a9</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/system.h</file>

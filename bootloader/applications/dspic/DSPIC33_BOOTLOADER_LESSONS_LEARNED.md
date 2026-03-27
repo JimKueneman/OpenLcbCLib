@@ -4,23 +4,54 @@
 
 **Context:** The bootloader occupies the start of flash (0x0200+) and therefore owns the hardware Interrupt Vector Table (IVT). After `jump_to_application()`, the application code runs but ALL interrupts still route through the bootloader's IVT. To let the application receive interrupts normally, the bootloader must redirect each fired interrupt to a function pointer registered by the application -- the Virtual Interrupt Vector Table (VIVT) pattern.
 
-**Problem:** MCC generates `_T2Interrupt` (tmr2.c) and `_C1Interrupt` (can1.c) as strong (non-weak) symbols. You cannot define your own versions in a separate file without a linker conflict. This means adding VIVT redirect logic normally requires editing MCC-generated files, which get overwritten on regeneration.
+**Problem:** MCC generates `_T2Interrupt` (tmr2.c) and `_C1Interrupt` (can1.c) as strong (non-weak) symbols. Traps (`_OscillatorFail`, `_AddressError`, etc.) are generated as weak symbols. All of these ISRs need VIVT redirect logic.
 
-**Workaround for `_T2Interrupt`:** MCC's `_T2Interrupt` already calls through a function pointer (`TMR2_InterruptHandler`). Call `TMR2_SetInterruptHandler(vivt_t2_proxy)` from application code before jumping. The proxy checks `bootloader_state.interrupt_redirect` and calls `vivt_jumptable.timer_2_handler`. No MCC file modification needed.
+**Solution -- hand-edit ALL MCC ISR files consistently:** For consistency and reliability, ALL VIVT redirects are hand-edited directly into the MCC source files where the ISR is defined. Each hand-edit is marked with a `/* HAND-EDIT: VIVT redirect */` comment and includes the `bootloader_shared_ram.h` header. No separate `bootloader_isr_redirect.c` file is used.
 
-**No clean workaround for `_C1Interrupt`:** MCC's `_C1Interrupt` only handles the WAKIF (bus wakeup) flag and exposes only a `CAN1_BusWakeUpActivityInterruptHandler` hook inside that branch. There is no hook for general CAN RX/TX interrupts. Options:
-- Modify `can1.c` (small -- add ~3 lines before `IFS2bits.C1IF = 0`)
-- Replace MCC's CAN driver entirely with a hand-written `_C1Interrupt` that has VIVT support built in (cleaner long-term, same approach used in TurnoutBossBootloader.X)
+The three hand-edited MCC files:
 
-**Traps are fine:** MCC marks all trap handlers with `__attribute__((weak))`, so they can be fully overridden in a separate project file with no modification to MCC files.
+- **`tmr2.c`** -- VIVT check added inside `_T2Interrupt`:
+  ```c
+  #include "../shared/bootloader_shared_ram.h"  /* HAND-EDIT */
+  // ...
+  void _T2Interrupt(void) {
+      if (bootloader_vivt_jumptable.timer_2_handler) {
+          bootloader_vivt_jumptable.timer_2_handler();
+      }
+      tmr2_obj.count++;
+      tmr2_obj.timerElapsed = true;
+      IFS0bits.T2IF = false;
+  }
+  ```
 
-**Why MCC only put WAKIF inside `_C1Interrupt`:** MCC always emits the `_C1Interrupt` wrapper function regardless of what is checked -- it just fills the body with only the interrupt sources that are enabled. Unchecking all CAN interrupt sources results in an ISR shell that only contains the WAKIF (bus wakeup) handler, because that is the one source MCC still enabled. The symbol `_C1Interrupt` is still claimed by MCC; only the body is minimal.
+- **`can1.c`** -- VIVT check added inside `_C1Interrupt`:
+  ```c
+  #include "../shared/bootloader_shared_ram.h"  /* HAND-EDIT */
+  // ...
+  if (bootloader_vivt_jumptable.can1_handler) {
+      bootloader_vivt_jumptable.can1_handler();
+  }
+  IFS2bits.C1IF = 0;
+  ```
 
-**Solution -- disable the interrupt in MCC:** The bootloader polls CAN; it does not need `_C1Interrupt` at all. Uncheck the CAN interrupt in MCC Easy Setup so MCC stops generating `_C1Interrupt` in `can1.c`. With that symbol now unclaimed, define your own `_C1Interrupt` in a project-owned file (e.g. `bootloader_isr_redirect.c`) with full VIVT redirect logic. No MCC file modification required.
+- **`traps.c`** -- VIVT check added to each trap handler (traps are weak so could be overridden in a separate file, but hand-editing keeps all VIVT logic in one consistent pattern):
+  ```c
+  #include "../shared/bootloader_shared_ram.h"  /* HAND-EDIT */
+  // ...
+  void ERROR_HANDLER _OscillatorFail(void) {
+      INTCON1bits.OSCFAIL = 0;
+      if (bootloader_vivt_jumptable.oscillatorfail_handler) {
+          bootloader_vivt_jumptable.oscillatorfail_handler();
+          return;
+      }
+      TRAPS_halt_on_error(TRAPS_OSC_FAIL);
+  }
+  // same pattern for _AddressError, _StackError, _MathError, _DMACError
+  ```
 
-**Takeaway:** If the bootloader does not need a peripheral's ISR (because it polls that peripheral), disable the interrupt in MCC. This frees the ISR symbol so you can define it yourself with VIVT support -- without ever touching a generated file.
+**CRITICAL: Do NOT use MCC's TMR2_InterruptHandler function pointer for VIVT.** MCC's `TMR2_InterruptHandler` is a plain RAM global (`void (*TMR2_InterruptHandler)(void) = NULL;` in tmr2.c). When the bootloader jumps to the application, the app's CRT0 startup code re-initializes `.data` and `.bss` in RAM, clobbering this pointer back to NULL. The VIVT function pointers in `bootloader_vivt_jumptable` survive because they are declared with `__attribute__((persistent, address(...)))`. Always check the persistent VIVT directly -- never go through an MCC function pointer for interrupt redirect.
 
-**MCC merge behaviour:** MCC does NOT blindly overwrite modified generated files. When you regenerate and a conflict is detected, MCC prompts you to keep your changes or accept the new generated version. It is therefore safe to hand-edit generated files (e.g. adding VIVT redirect lines to `_C1Interrupt` in `can1.c`). Leave a clear comment marking the hand-edit so you know what to re-apply if you ever accept a regeneration.
+**MCC merge behaviour:** MCC does NOT blindly overwrite modified generated files. When you regenerate and a conflict is detected, MCC prompts you to keep your changes or accept the new generated version. Leave clear `HAND-EDIT` comments marking each change so you know what to re-apply if you ever accept a regeneration.
 
 ---
 
@@ -28,91 +59,90 @@
 
 **Context:** When the application receives a Freeze command from the OpenLCB Config Tool it resets into the bootloader so the bootloader can receive new firmware. On dsPIC33 the hardware IVT is fixed in flash and always owned by the bootloader. After `jump_to_application()` the application runs but the bootloader's ISR stubs remain active. Each stub checks a function pointer in `bootloader_vivt_jumptable` (shared persistent SRAM) and calls through to the application's registered handler.
 
-**The Gap:** A software reset (`asm("RESET")`) preserves SRAM. The VIVT function pointers still hold the application's handler addresses after the reset. The bootloader's `initialize_hardware()` only clears the VIVT on POR or BOR (power-on/brownout) -- it deliberately leaves SRAM intact on a software reset so it can read the magic handshake flag and cached CAN alias that the application wrote just before the reset.
-
-**What goes wrong without the fix:** The first interrupt that fires in the bootloader after drop-back (typically the TMR2 100ms tick) will see a non-NULL VIVT slot and call into dead application code. The application's code is still in flash but its stack, data, and peripherals are no longer properly set up. The result is a hard fault, a stack overflow, or silent state corruption.
-
-**The Fix -- Application clears VIVT before reset:**
-
-The application's `CallbacksConfigMem_freeze()` (in `callbacks_config_mem.c`) performs the drop-back in this exact order, with global interrupts disabled throughout:
+**The application's `CallbacksConfigMem_freeze()` performs the drop-back:**
 
 ```c
-__builtin_disi(0x3FFF);   /* disable interrupts for the critical section */
+_GIE = 0;   /* hard-disable all interrupts including traps */
 
 /* 1. Clear every VIVT slot FIRST */
 bootloader_vivt_jumptable.oscillatorfail_handler = 0;
-bootloader_vivt_jumptable.addresserror_handler   = 0;
-bootloader_vivt_jumptable.stackerror_handler     = 0;
-bootloader_vivt_jumptable.matherror_handler      = 0;
-bootloader_vivt_jumptable.dmacerror_handler      = 0;
-bootloader_vivt_jumptable.timer_2_handler        = 0;
+/* ... all slots ... */
 bootloader_vivt_jumptable.can1_handler           = 0;
 
-/* 2. Cache the CAN alias so the bootloader can skip negotiation */
+/* 2. Cache the CAN alias */
 bootloader_cached_alias = statemachine_info->openlcb_node->alias;
 
-/* 3. Write the magic flag so the bootloader knows this was intentional */
+/* 3. Write the magic flag */
 bootloader_request_flag = BOOTLOADER_REQUEST_MAGIC;
 
-/* 4. Reset -- SRAM survives, POR/BOR bits stay clear */
+/* 4. Software reset -- SRAM survives */
 asm("RESET");
 ```
 
-**Why this order matters:**
-- VIVT clear FIRST: ensures that if a trap fires in the narrow window between clearing VIVT and writing the magic flag, the bootloader stub sees NULL and halts safely rather than calling dead code.
-- Magic flag LAST: `initialize_hardware()` does not clear shared RAM on software reset so the bootloader can read the flag and alias that the application just wrote.
+**Why `_GIE = 0` instead of `__builtin_disi(0x3FFF)`:** DISI only blocks priority 0-6 interrupts for a cycle count. Traps (priority 7) can still fire. `_GIE = 0` is the hard global disable that blocks everything. Since we never need to re-enable (the reset fires next), `_GIE = 0` is correct.
 
-**Responsibility boundary:**
+**Why VIVT clear before magic flag:** If a trap fires between clearing VIVT and writing the magic flag, the bootloader stub sees NULL and halts safely rather than calling dead code.
 
-| Event | Who clears VIVT |
-|---|---|
-| Power-on or brownout reset | `initialize_hardware()` -- random SRAM must be zeroed |
-| Application drop-back (software reset) | The APPLICATION -- in the Freeze callback |
+**Bootloader `initialize_hardware(request)` now clears VIVT unconditionally:**
 
-This division is intentional. `initialize_hardware()` cannot clear VIVT on software reset because doing so would also wipe the magic flag and cached alias the application wrote.
+The old design only cleared VIVT on POR/BOR and relied on the application to clear it before drop-back. This had a race condition if an interrupt fired between `SYSTEM_Initialize()` enabling C1IE and `initialize_hardware()` clearing the VIVT. The new design:
+
+1. Clears VIVT unconditionally on every reset (not just POR/BOR)
+2. On app drop-back: disables C1IE and clears C1IF (prevents CAN interrupt from vectoring into NULL VIVT)
+3. Enables `_GIE = 1` at the end after everything is safe
+4. `SYSTEM_Initialize()` is hand-edited to NOT enable GIE
 
 **Application startup responsibility:**
 
-After `jump_to_application()` the application must REGISTER its handlers in the VIVT during startup with global interrupts disabled:
+After `jump_to_application()` the application must REGISTER its handlers in the VIVT during startup with global interrupts disabled, then re-enable GIE:
 
 ```c
-/* With global interrupts disabled (e.g. in BasicNodeDrivers_initialize()): */
-bootloader_vivt_jumptable.timer_2_handler = &my_t2_handler;
-bootloader_vivt_jumptable.can1_handler    = &Dspic33CanDriver_c1_interrupt_handler;
-/* ... register any other handlers needed ... */
+/* VIVT registration (GIE is off -- bootloader disabled it in cleanup_before_handoff) */
+bootloader_vivt_jumptable.timer_2_handler = Dspic33Drivers_t2_interrupt_handler;
+bootloader_vivt_jumptable.can1_handler    = Dspic33CanDriver_c1_interrupt_handler;
+/* ... all handlers ... */
+
+/* Initialize peripherals, library, etc. */
+
+/* Re-enable global interrupts */
+_GIE = 1;
 ```
-
-Without this registration the application's interrupt-driven code will silently not fire -- the bootloader ISR stubs see NULL and skip the call.
-
-Note: The application's `_T2Interrupt` and `_C1Interrupt` symbols are compiled into the application binary but they are NOT in the hardware IVT (which is owned by the bootloader). They are effectively unreachable unless called explicitly through the VIVT. The handler logic must be extracted into plain functions and registered in the VIVT table.
 
 **Complete VIVT lifecycle:**
 
 ```
-Power-on / BOR
-    initialize_hardware() zeros VIVT (random SRAM is dangerous)
-    Bootloader runs -- all VIVT slots NULL -- ISR stubs are no-ops / spin on traps
+Any reset (POR, BOR, software, programmer)
+    initialize_hardware(request) zeros VIVT unconditionally
+    initialize_hardware(request) clears bootloader_request_flag unconditionally
+    If request != BOOTLOADER_REQUESTED_BY_APP:
+        clears bootloader_cached_alias (stale garbage)
+    If request == BOOTLOADER_REQUESTED_BY_APP:
+        disables C1IE, clears C1IF
+        leaves bootloader_cached_alias for CAN state machine
+    Enables GIE after VIVT is safe and CAN interrupt is clean
 
 jump_to_application()
-    Application code runs -- VIVT still all NULL
+    cleanup_before_handoff() disables GIE
+    Application starts with GIE off
 
-Application startup (global interrupts disabled)
-    Application writes handler function addresses into VIVT slots
-    Application enables global interrupts
-    Interrupts now flow: hardware IVT --> bootloader stub --> VIVT --> app handler
+Application startup
+    Application registers handler function addresses into VIVT slots
+    Application initializes peripherals
+    Application enables GIE
 
 Freeze command received by application
-    (global interrupts disabled via __builtin_disi(0x3FFF))
-    Application zeros all VIVT slots           <-- CRITICAL STEP
+    _GIE = 0 (hard disable all interrupts)
+    Application zeros all VIVT slots
     Application caches CAN alias in shared RAM
     Application sets magic flag in shared RAM
     asm("RESET")
 
 Bootloader starts again (software reset, SRAM intact)
-    initialize_hardware() sees POR=0, BOR=0 -- leaves SRAM untouched
     is_bootloader_requested() reads magic flag -- returns BOOTLOADER_REQUESTED_BY_APP
-    Bootloader enters firmware-update mode with VIVT all NULL (safe)
-    Bootloader reuses cached alias -- no alias negotiation delay
+    initialize_hardware(BOOTLOADER_REQUESTED_BY_APP):
+        clears VIVT, clears flag, disables C1IE, leaves cached alias, enables GIE
+    Bootloader_init(request) sees REQUESTED_BY_APP -- skips app jump
+    CAN state machine picks up cached alias -- no negotiation delay
 ```
 
 ---
@@ -124,6 +154,24 @@ Bootloader starts again (software reset, SRAM intact)
 **Workaround:** `APP_FLASH_END` in `bootloader_drivers_openlcb.h` is capped at `0x00FFFE`. The full 512 KB flash is not accessible through the current library. Fixing this requires changing the library to use `uint32_t` instead of `uintptr_t` for flash addresses throughout.
 
 **The `-mlarge-data` flag does NOT fix this:** The large-data memory model widens data pointers but does NOT allow reading program flash via a data pointer. dsPIC33 is a Harvard architecture -- flash and SRAM are separate address spaces. Even with 32-bit data pointers, dereferencing a flash address as a data pointer is undefined behavior. The correct way to read dsPIC33 flash is via table-read instructions (TBLRDL/TBLRDH), exposed by MCC as `FLASH_ReadWord24()`.
+
+---
+
+## 5. MCC ECAN Acceptance Filter: Entering an Extended-Frame Filter Value
+
+To configure an acceptance filter or mask for **extended frames** in the MCC ECAN
+GUI, append a lowercase `x` to the hex value in the filter/mask field:
+
+```
+0x0x
+```
+
+Without the trailing `x`, MCC treats the value as a standard-frame (11-bit SID)
+filter and generates `EXIDE = 0` with `SID = 0x7FF` (full mask), which rejects
+all extended-frame traffic including every OpenLCB frame.
+
+With the trailing `x`, MCC generates `EXIDE = 1` and the correct mask/filter
+register values for 29-bit extended IDs.
 
 ---
 
@@ -146,3 +194,92 @@ PC address advances by 2 per instruction.
 **Contrast with Von Neumann (ARM):** On STM32 and MSPM0 flash is memory-mapped and readable via a normal data pointer. The `read_flash_bytes()` implementation on those platforms is simply `memcpy(dest, (const void *)flash_addr, size_bytes)`. The DI function pointer lets both architectures share the same library code with different implementations injected at startup.
 
 **CRC/checksum for large flash regions:** A streaming CRC API (`bootloader_crc3_state_t`) was added to `bootloader_crc.c` so the `compute_checksum` driver function can process flash one instruction at a time without needing a large RAM buffer. This is necessary on dsPIC33 because flash cannot be bulk-copied to RAM for checksumming.
+
+---
+
+## 6. Application Reset Vector (`reset_vector.s`) Required for Bootloaded Apps
+
+**Problem:** The bootloader jumps to the application entry point (e.g. PC 0x8000) via a function pointer call. Without an explicit `GOTO __reset` instruction at that address, the PC lands on whatever code the linker happened to place first in the `program` section — NOT the C runtime startup (`__reset` / `crt0`). The application hangs or crashes because the stack pointer, data sections, and C runtime are never initialised.
+
+**Why it's not automatic:** The standard XC16 linker script emits a `GOTO __reset` in the `.reset` section at address 0x0000. But address 0x0000 is owned by the bootloader. Even with `__CORESIDENT` defined (which suppresses the 0x0000 reset vector), the linker does NOT automatically place a `GOTO __reset` at the application's `program` origin.
+
+**Solution:** Add a `reset_vector.s` assembly file to the application project that forces a `GOTO __reset` at the application start address:
+
+```asm
+; reset_vector.s
+;
+; Places a GOTO __reset at the application entry point so the
+; bootloader can jump here and reach the C runtime startup.
+
+    .section resetvector, address(0x8000), code
+    goto __reset
+```
+
+The address must match `APP_FLASH_START` in the bootloader's `bootloader_drivers_openlcb.h` and the `ORIGIN` of the `program` region in the application's linker script.
+
+**Symptom without this file:** The bootloader UART debug log shows a successful jump (`JUMP TO APP at PC=0x00008000`) but the application never runs. A hard power cycle produces the same result — the data in flash is verified correct but execution hangs immediately after the jump.
+
+**TurnoutBoss reference:** The working TurnoutBoss bootloader uses this exact pattern — both the bootloader and application projects have their own `reset_vector.s` placing `GOTO __reset` at their respective entry points (0x0200 for bootloader, 0xB000 for application).
+
+---
+
+## 7. Stale `bootloader_cached_alias` After Programmer Reset
+
+**Problem:** After programming the dsPIC via PICkit/ICD and the device resets, `bootloader_cached_alias` (in `.noinit` / persistent RAM) contains garbage -- typically 0xFFFF. The CAN alias negotiation state machine checks this variable and, if non-zero, skips CID negotiation and uses it directly as the node's alias. A 16-bit value like 0xFFFF overflows the 12-bit alias field, corrupting the MTI bits of the CAN identifier. The first frame sent looks like `[1910FFFF] 05 01 01 01 07 AA` -- a malformed CAN frame that no node on the bus recognises.
+
+**Symptom:** After programming, the bootloader sends one junk CAN frame and then goes silent. The PC configuration tool never sees the node. A hard power cycle produces the same result because SRAM is not guaranteed to be zeroed on POR either -- `.noinit` variables contain whatever was in RAM.
+
+**Root cause:** The old `initialize_hardware()` only cleared `.noinit` variables on POR/BOR resets (checking `RCONbits.POR || RCONbits.BOR`). Programmer resets, watchdog resets, and software resets did not clear the cached alias.
+
+**Solution:** `initialize_hardware(request)` now clears `bootloader_cached_alias` unconditionally on every reset EXCEPT when `request == BOOTLOADER_REQUESTED_BY_APP` (where the alias is intentionally preserved for fast CAN re-login). The cleanup decision is based on the `request` parameter, not hardware reset-cause registers.
+
+```c
+bootloader_request_flag = 0;  /* always clear */
+
+if (request != BOOTLOADER_REQUESTED_BY_APP) {
+    bootloader_cached_alias = 0;  /* stale garbage on POR/programmer/button */
+}
+```
+
+**Why not use RCON bits:** Hardware reset-cause registers (`RCONbits.POR`, `RCONbits.BOR`, `RCC->CSR` on STM32, `esp_reset_reason()` on ESP32) are unreliable for this purpose. They may have stale flags from prior resets, require manual clearing, and have platform-specific edge cases. The `request` parameter from `is_bootloader_requested()` is unambiguous: if the app wrote the magic flag, it's a drop-back; otherwise, clear everything.
+
+---
+
+## 8. Double-Call Bug in `Bootloader_init()` / `Bootloader_entry()`
+
+**Problem:** `Bootloader_entry()` calls `is_bootloader_requested()` to check the magic flag, then passes execution to `Bootloader_init()`. The old `Bootloader_init()` called `is_bootloader_requested()` a second time. But `is_bootloader_requested()` consumed (cleared) the magic flag on the first call. The second call always returned `BOOTLOADER_NOT_REQUESTED`, causing the bootloader to attempt a jump back to the application instead of staying in bootloader mode.
+
+**Symptom:** On app drop-back (Freeze command), the CAN trace shows the bootloader briefly starting, then the application restarting with full CID negotiation. The bootloader bounces back to the app because it thinks no bootloader request was made.
+
+**Solution:** `Bootloader_init()` now takes a `bootloader_request_t request` parameter. `Bootloader_entry()` calls `is_bootloader_requested()` once, passes the result to `initialize_hardware(request)` and then to `Bootloader_init(can_driver, openlcb_driver, request)`. The magic flag is consumed once and flows through as a parameter.
+
+```c
+void Bootloader_entry(...) {
+    bootloader_request_t request = openlcb_driver->is_bootloader_requested();
+    openlcb_driver->initialize_hardware(request);
+    if (Bootloader_init(can_driver, openlcb_driver, request)) { return; }
+    while (true) {
+        if (Bootloader_loop()) { return; }
+    }
+}
+```
+
+**This is a library-level fix** in `bootloader/src/openlcb/bootloader.c` that affects all platforms.
+
+---
+
+## 9. GIE Ownership and `SYSTEM_Initialize()` Hand-Edit
+
+**Context:** On dsPIC33, MCC's `SYSTEM_Initialize()` enables global interrupts (`_GIE = 1`) as one of its last steps. In the bootloader, this is dangerous: if GIE is enabled before the VIVT is cleared, a pending interrupt (e.g. CAN C1IF left set from the application) will vector through the bootloader's ISR stub, find a NULL function pointer in the VIVT, and crash.
+
+**Solution:** `SYSTEM_Initialize()` (in MCC-generated `system.c`) is hand-edited to NOT enable GIE. The `initialize_hardware()` function owns GIE: it clears the VIVT, optionally disables C1IE/clears C1IF on app drop-back, and enables `_GIE = 1` at the very end when everything is safe.
+
+```
+Ownership chain:
+  SYSTEM_Initialize()           -- does NOT touch GIE (hand-edited)
+  initialize_hardware(request)  -- clears VIVT, sets up peripherals, enables GIE last
+  cleanup_before_handoff()      -- disables GIE before jump_to_application()
+  Application startup           -- registers VIVT handlers, enables GIE when ready
+```
+
+Mark the hand-edit in `system.c` with a `/* HAND-EDIT: GIE disabled -- bootloader owns GIE lifecycle */` comment so it's preserved across MCC regenerations.
