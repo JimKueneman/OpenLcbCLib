@@ -112,7 +112,6 @@
       <itemPath>../shared/bootloader_shared_ram.c</itemPath>
       <itemPath>bootloader_main.c</itemPath>
       <itemPath>mcc_generated_files/memory/flash.s</itemPath>
-      <itemPath>main.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -1252,20 +1251,6 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
-      <item path="main.c" ex="true" overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
-      </item>
     </conf>
   </confs>
 </configurationDescriptor>
