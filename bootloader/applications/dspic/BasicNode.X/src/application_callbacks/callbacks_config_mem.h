@@ -46,7 +46,6 @@ extern "C"
 
     extern void CallbacksConfigMem_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-    extern void CallbacksConfigMem_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
 #ifdef __cplusplus
 }

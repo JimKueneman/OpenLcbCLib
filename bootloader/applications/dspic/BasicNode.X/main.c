@@ -32,40 +32,8 @@
  * @date 19 Mar 2026
  */
 
-// DSPIC33EP512GP504 Configuration Bit Settings
-
-// 'C' source line config statements
-
-// FICD
-#pragma config ICS = PGD1   // ICD Communication Channel Select bits (Communicate on PGEC1 and PGED1)
-#pragma config JTAGEN = OFF // JTAG Enable bit (JTAG is disabled)
-
-// FPOR
-#pragma config ALTI2C1 = OFF  // Alternate I2C1 pins (I2C1 mapped to SDA1/SCL1 pins)
-#pragma config ALTI2C2 = OFF  // Alternate I2C2 pins (I2C2 mapped to SDA2/SCL2 pins)
-#pragma config WDTWIN = WIN25 // Watchdog Window Select bits (WDT Window is 25% of WDT period)
-
-// FWDT
-#pragma config WDTPOST = PS32768 // Watchdog Timer Postscaler bits (1:32,768)
-#pragma config WDTPRE = PR128    // Watchdog Timer Prescaler bit (1:128)
-#pragma config PLLKEN = ON       // PLL Lock Enable bit (Clock switch to PLL source will wait until the PLL lock signal is valid.)
-#pragma config WINDIS = OFF      // Watchdog Timer Window Enable bit (Watchdog Timer in Non-Window mode)
-#pragma config FWDTEN = OFF      // Watchdog Timer Enable bit (Watchdog timer enabled/disabled by user software)
-
-// FOSC
-#pragma config POSCMD = HS    // Primary Oscillator Mode Select bits (HS Crystal Oscillator Mode)
-#pragma config OSCIOFNC = OFF // OSC2 Pin Function bit (OSC2 is clock output)
-#pragma config IOL1WAY = OFF  // Peripheral pin select configuration (Allow multiple reconfigurations)
-#pragma config FCKSM = CSDCMD // Clock Switching Mode bits (Both Clock switching and Fail-safe Clock Monitor are disabled)
-
-// FOSCSEL
-#pragma config FNOSC = PRIPLL // Oscillator Source Selection (Primary Oscillator with PLL module (XT + PLL, HS + PLL, EC + PLL))
-#pragma config PWMLOCK = OFF  // PWM Lock Enable bit (PWM registers may be written without key sequence)
-#pragma config IESO = ON      // Two-speed Oscillator Start-up Enable bit (Start up device with FRC, then switch to user-selected oscillator source)
-
-// FGS
-#pragma config GWRP = OFF // General Segment Write-Protect bit (General Segment may be written)
-#pragma config GCP = OFF  // General Segment Code-Protect bit (General Segment Code protect is Disabled)
+// Configuration bits are defined in mcc_generated_files/system.c (MCC-generated).
+// Do NOT add #pragma config here -- having them in two files is a compiler error.
 
 #define TEST_PIN_1401_TRIS _TRISA11
 #define TEST_PIN_1401 _RA11
@@ -79,14 +47,12 @@
 #define TEST_PIN_1404_TRIS _TRISA12
 #define TEST_PIN_1404 _LATA12
 
-#include <libpic30.h>
-
 #include "xc.h"
-#include "stdio.h" // printf
 #include "string.h"
 #include "stdlib.h"
 
-#include "src/application_drivers/dspic33_drivers.h"
+#include "mcc_generated_files/system.h"
+#include "src/application_drivers/dspic33_olcb_drivers.h"
 #include "src/application_drivers/dspic33_can_drivers.h"
 #include "openlcb_user_config.h"
 #include "src/application_callbacks/callbacks_can.h"
@@ -105,8 +71,8 @@ static const can_config_t can_config = {
 
     .transmit_raw_can_frame  = &Dspic33CanDriver_transmit_can_frame,
     .is_tx_buffer_clear      = &Dspic33CanDriver_is_can_tx_buffer_clear,
-    .lock_shared_resources   = &BasicNodeDrivers_lock_shared_resources,
-    .unlock_shared_resources = &BasicNodeDrivers_unlock_shared_resources,
+    .lock_shared_resources   = &Dspic33OlcbDrivers_lock_shared_resources,
+    .unlock_shared_resources = &Dspic33OlcbDrivers_unlock_shared_resources,
     .on_rx                   = &CallbacksCan_on_rx,
     .on_tx                   = &CallbacksCan_on_tx,
     .on_alias_change         = &CallbacksCan_on_alias_change,
@@ -115,21 +81,20 @@ static const can_config_t can_config = {
 
 static const openlcb_config_t openlcb_config = {
 
-    .lock_shared_resources   = &BasicNodeDrivers_lock_shared_resources,
-    .unlock_shared_resources = &BasicNodeDrivers_unlock_shared_resources,
-    .config_mem_read         = &BasicNodeDrivers_config_mem_read,
-    .config_mem_write        = &BasicNodeDrivers_config_mem_write,
-    .reboot                  = &BasicNodeDrivers_reboot,
+    .lock_shared_resources   = &Dspic33OlcbDrivers_lock_shared_resources,
+    .unlock_shared_resources = &Dspic33OlcbDrivers_unlock_shared_resources,
+    .config_mem_read         = &Dspic33OlcbDrivers_config_mem_read,
+    .config_mem_write        = &Dspic33OlcbDrivers_config_mem_write,
+    .reboot                  = &Dspic33OlcbDrivers_reboot,
     .factory_reset           = &CallbacksConfigMem_factory_reset,
     .freeze                  = &CallbacksConfigMem_freeze,
-    .unfreeze                = &CallbacksConfigMem_unfreeze,
+    .unfreeze                = NULL,
     .firmware_write          = NULL,
     .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
 
 };
 
-static void _initialize_io_early_for_test(void)
-{
+static void _initialize_io_early_for_test(void) {
 
     ANSELA = 0x00; // Convert all I/O pins to digital
     ANSELB = 0x00;
@@ -143,15 +108,26 @@ static void _initialize_io_early_for_test(void)
 
 }
 
-int main(void)
-{
+/* Register application interrupt handlers into the Virtual Interrupt Vector
+ * Table (VIVT) in shared persistent SRAM.
+ *
+ * The bootloader owns the hardware IVT at flash address 0x0004.  After the
+ * bootloader jumps to this application, all interrupts still fire into the
+ * bootloader's ISR stubs.  Each stub checks its corresponding function pointer
+ * in bootloader_vivt_jumptable; if non-NULL it calls through to the handler
+ * registered here.
+ *
+ * This must run before _GIE is enabled.  The bootloader disables GIE in
+ * cleanup_before_handoff() before jumping, so we have a safe window to
+ * populate the table.
+ *
+ * When running standalone (no bootloader), these pointers are unused -- the
+ * MCC ISRs call the handlers directly via weak callback overrides or
+ * hand-edits.  Registering them here is harmless and keeps the code ready
+ * for either mode. */
+static void _register_vivt_handlers(void) {
 
-    _initialize_io_early_for_test();
-
-    /* Register VIVT handlers before any interrupts are enabled.
-     * The bootloader owns the hardware IVT; these function pointers
-     * let the bootloader's ISR stubs forward to our handlers. */
-    bootloader_vivt_jumptable.timer_2_handler        = Dspic33Drivers_t2_interrupt_handler;
+    bootloader_vivt_jumptable.timer_2_handler        = Dspic33OlcbDrivers_t2_interrupt_handler;
     bootloader_vivt_jumptable.can1_handler            = Dspic33CanDriver_c1_interrupt_handler;
     bootloader_vivt_jumptable.oscillatorfail_handler  = Traps_oscillator_fail_handler;
     bootloader_vivt_jumptable.addresserror_handler    = Traps_address_error_handler;
@@ -159,58 +135,27 @@ int main(void)
     bootloader_vivt_jumptable.matherror_handler       = Traps_math_error_handler;
     bootloader_vivt_jumptable.dmacerror_handler       = Traps_dmac_error_handler;
 
-    /* Temporary UART init — bootloader MCC values may be clobbered by app CRT0.
-     * 333333 baud, 8N1, BRGH=1, U1BRG=29 @ FCY=40 MHz.
-     * Remove once app has its own MCC UART setup. */
-    U1MODEbits.STSEL  = 0;   /* 1 stop bit          */
-    U1MODEbits.PDSEL  = 0;   /* 8-bit, no parity    */
-    U1MODEbits.ABAUD  = 0;   /* no auto-baud        */
-    U1MODEbits.BRGH   = 1;   /* high-speed mode     */
-    U1BRG             = 29;  /* 333333 baud @ 40 MHz */
-    U1MODEbits.UARTEN = 1;   /* enable UART module  */
-    U1STAbits.UTXEN   = 1;   /* enable transmitter  */
+}
+
+int main(void) {
+
+    _initialize_io_early_for_test();
+    _register_vivt_handlers();
 
     CallbacksOlcb_initialize();
 
+    SYSTEM_Initialize();
     Dspic33CanDriver_initialize();
-    BasicNodeDrivers_initialize();
 
     CanConfig_initialize(&can_config);
     OpenLcb_initialize(&openlcb_config);
 
-    printf("MCU Initialized\n");
-
     OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
-    printf("Node Allocated\n");
-    
-    printf("Re-enable Global Interrupts\n");
-     _GIE = 1;
+    // All setup, re-enable all the interrupts (important if a bootloader jump here was made)
+    _GIE = 1;
 
-    printf("=== VIVT DEBUG ===\n");
-    printf("VIVT addr=%p\n", (void*)&bootloader_vivt_jumptable);
-    printf("  t2_handler=%p\n",  (void*)bootloader_vivt_jumptable.timer_2_handler);
-    printf("  can1_handler=%p\n", (void*)bootloader_vivt_jumptable.can1_handler);
-    printf("  oscfail=%p\n",  (void*)bootloader_vivt_jumptable.oscillatorfail_handler);
-    printf("  addrerr=%p\n",  (void*)bootloader_vivt_jumptable.addresserror_handler);
-    printf("  stkerr=%p\n",   (void*)bootloader_vivt_jumptable.stackerror_handler);
-    printf("  matherr=%p\n",  (void*)bootloader_vivt_jumptable.matherror_handler);
-    printf("  dmacerr=%p\n",  (void*)bootloader_vivt_jumptable.dmacerror_handler);
-    printf("IEC0=0x%04X (T2IE=%d)\n", IEC0, IEC0bits.T2IE);
-    printf("IEC2=0x%04X (C1IE=%d)\n", IEC2, IEC2bits.C1IE);
-    printf("T2CON=0x%04X (TON=%d)\n", T2CON, T2CONbits.TON);
-    printf("C1CTRL1=0x%04X\n", C1CTRL1);
-    printf("C1INTE=0x%04X\n", C1INTE);
-    printf("C1INTF=0x%04X\n", C1INTF);
-    printf("DMA0CON=0x%04X DMA1CON=0x%04X DMA2CON=0x%04X\n", DMA0CON, DMA1CON, DMA2CON);
-    printf("DMA0STAL=0x%04X DMA1STAL=0x%04X DMA2STAL=0x%04X\n", DMA0STAL, DMA1STAL, DMA2STAL);
-    printf("C1RXM0SID=0x%04X C1RXM0EID=0x%04X\n", C1RXM0SID, C1RXM0EID);
-    printf("C1RXF0SID=0x%04X C1FEN1=0x%04X\n", C1RXF0SID, C1FEN1);
-    printf("_GIE=%d\n", _GIE);
-    printf("=================\n");
-
-    while (1)
-    {
+    while (1) {
 
         OpenLcb_run();
 

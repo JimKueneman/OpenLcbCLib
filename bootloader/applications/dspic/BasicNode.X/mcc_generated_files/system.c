@@ -64,10 +64,10 @@
  *
  * HAND-EDIT -- GIE ownership:
  *   INTERRUPT_GlobalEnable() is commented out below.
- *   The bootloader owns the GIE lifecycle:
- *     initialize_hardware() clears the VIVT, then enables GIE last.
- *   See bootloader_drivers_openlcb.c: BootloaderDriversOpenlcb_initialize_hardware()
- *   Mark this comment if re-running MCC so it is not silently re-enabled.
+ *   The bootloader disables GIE in cleanup_before_handoff() before jumping
+ *   to the application.  main() owns GIE: it registers all VIVT handlers
+ *   first, then re-enables GIE when it is safe to do so.
+ *   If MCC regenerates this file, re-comment INTERRUPT_GlobalEnable() out.
  * ============================================================================
  */
 
@@ -123,7 +123,10 @@ void SYSTEM_Initialize(void)
     CAN1_Initialize();
     TMR2_Initialize();
     DMA_Initialize();
-    /* HAND-EDIT: GIE is enabled by initialize_hardware() after VIVT is cleared */
+    /* HAND-EDIT: GIE is enabled by main() after VIVT handlers are registered     */
+    /* The bootloader disables GIE in cleanup_before_handoff() before jumping here. */
+    /* main() must populate bootloader_vivt_jumptable before re-enabling GIE.       */
+    /* If MCC regenerates this file, re-comment this line out.                      */
     /* INTERRUPT_GlobalEnable(); */
     SYSTEM_CORCONModeOperatingSet(CORCON_MODE_PORVALUES);
 }

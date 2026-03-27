@@ -43,42 +43,12 @@
     TERMS.
 */
 
-/*
- * ============================================================================
- * PORTING NOTE -- Timer 2 Configuration
- * ============================================================================
- * Period : 100 ms tick  (PR2 = 0x3D08 = 15624)
- * Clock  : Fcy = 40 MHz, prescaler 1:256  (T2CON = 0x8030)
- * Formula: PR2 = (Fcy / (prescaler x tick_rate)) - 1
- *          PR2 = (40,000,000 / (256 x 10)) - 1 = 15624
- * If Fcy changes, recalculate PR2.  Tick rate drives bootloader timeout logic.
- *
- * HAND-EDIT -- VIVT redirect in _T2Interrupt:
- *   The bootloader owns the hardware IVT at 0x0004.  After jump_to_application()
- *   all TMR2 interrupts still fire here.  The VIVT check below forwards to the
- *   application's registered handler if one has been registered.
- *   See shared/bootloader_shared_ram.h: bootloader_vivt_jumptable.timer_2_handler
- *
- *   If MCC regenerates this file, reapply:
- *     #include "../../shared/bootloader_shared_ram.h"  // HAND-EDIT: VIVT redirect
- *     -- and inside _T2Interrupt, before tmr2_obj.count++: --
- *     if (bootloader_vivt_jumptable.timer_2_handler) {
- *         bootloader_vivt_jumptable.timer_2_handler();
- *     }
- *
- *   DO NOT use MCC's TMR2_InterruptHandler function pointer for this purpose.
- *   CRT0 startup zeroes .data/.bss and will clobber that pointer.  The VIVT
- *   slots survive soft reset because they are __attribute__((persistent)).
- * ============================================================================
- */
-
 /**
   Section: Included Files
 */
 
 #include <stdio.h>
 #include "tmr2.h"
-#include "../../shared/bootloader_shared_ram.h"  /* HAND-EDIT: VIVT redirect */
 
 /**
  Section: File specific functions
@@ -142,9 +112,8 @@ void TMR2_Initialize (void)
 
 void __attribute__ ( ( interrupt, no_auto_psv ) ) _T2Interrupt (  )
 {
-    /* HAND-EDIT: VIVT redirect */
-    if (bootloader_vivt_jumptable.timer_2_handler) {
-        bootloader_vivt_jumptable.timer_2_handler();
+    if (TMR2_InterruptHandler) {
+        TMR2_InterruptHandler();
     }
 
     tmr2_obj.count++;

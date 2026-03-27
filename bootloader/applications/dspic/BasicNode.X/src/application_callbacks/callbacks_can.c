@@ -35,9 +35,6 @@
 #include "callbacks_can.h"
 
 #include "xc.h"
-#include <stdio.h>
-
-#include "../openlcb_c_lib/openlcb/openlcb_gridconnect.h"
 
 #define LED_BLUE_TRIS _TRISA7
 #define LED_BLUE _LATA7
@@ -47,29 +44,16 @@
 
 void CallbacksCan_on_rx(can_msg_t *can_msg) {
 
-    gridconnect_buffer_t gridconnect;
-
-    OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
-    printf("[R] %s\n", (char *)&gridconnect);
-
     LED_BLUE = 1;
 
 }
 
 void CallbacksCan_on_tx(can_msg_t *can_msg) {
 
-    gridconnect_buffer_t gridconnect;
-
-    OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
-    printf("[S] %s\n", (char *)&gridconnect);
-
     LED_YELLOW = 1;
 
 }
 
 void CallbacksCan_on_alias_change(uint16_t alias, node_id_t node_id) {
-
-    printf("Alias Allocation: 0x%02X  ", alias);
-    printf("NodeID: 0x%06llX\n\n", node_id);
 
 }

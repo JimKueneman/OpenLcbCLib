@@ -68,13 +68,13 @@ MEMORY
  * Flash layout (dsPIC33EP512MC506, total flash 0x55800 PC addresses):
  *
  *   0x0000-0x01FF  reset vector + IVT         (owned by bootloader)
- *   0x0200-0x7FFF  bootloader code            (owned by bootloader)
- *   0x8000-0x547FC application code           (this region)
+ *   0x0200-0x3FFF  bootloader code            (owned by bootloader)
+ *   0x4000-0x547FC application code           (this region)
  *   0x54800-0x54FFF checksum / Node ID page   (reserved, 1 erase page = 0x800)
  *   0x55000-0x557FF config bits page          (reserved, never erase)
  *
  * Flash page size: 1024 instruction words = 2048 PC addresses (0x800).
- * Application starts at 0x8000 (immediately after the bootloader boundary).
+ * Application starts at 0x4000 (immediately after the bootloader boundary).
  * Two pages (2 x 0x800) are subtracted from the top:
  *   - one for the bootloader checksum / Node ID storage
  *   - one for config bits (0x55000-0x55800, hardware protected)
@@ -85,7 +85,7 @@ MEMORY
  * for this project so the C runtime does not emit its own reset vector at
  * 0x0000 (which would overwrite the bootloader's reset vector).
  */
-  program (xr)   : ORIGIN = 0x8000,         LENGTH = 0x55800-0x8000-0x0800-0x0800-0x0004
+  program (xr)   : ORIGIN = 0x4000,         LENGTH = 0x55800-0x4000-0x0800-0x0800-0x0004
 
 
   FICD           : ORIGIN = 0x557F0,       LENGTH = 0x2
@@ -112,8 +112,8 @@ __FUID2 = 0x800FFC;
 __FUID3 = 0x800FFE;
 
 /* BasicNode application (co-resident with BasicNodeBootloader) */
-__CODE_BASE = 0x8000;
-__CODE_LENGTH = 0x55800-0x8000-0x0800-0x0800-0x0004;
+__CODE_BASE = 0x4000;
+__CODE_LENGTH = 0x55800-0x4000-0x0800-0x0800-0x0004;
 
 
 __IVT_BASE  = 0x4;

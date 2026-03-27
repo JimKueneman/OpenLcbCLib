@@ -72,20 +72,20 @@ extern "C" {
      *   FLASH_ERASE_PAGE_SIZE_IN_INSTRUCTIONS = 1024 instructions/page
      *   FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS      = 2048 PC units/page (0x800)
      *
-     * Bootloader occupies the first 16 pages (0x000000–0x007FFE, inclusive).
-     * Adjust APP_FLASH_START if the bootloader grows beyond 16 pages.
+     * Bootloader occupies the first 8 pages (0x000000-0x003FFE, inclusive).
+     * Adjust APP_FLASH_START if the bootloader grows beyond 8 pages.
      */
     #define BOOTLOADER_FLASH_START     0x000000UL
-    #define BOOTLOADER_FLASH_PAGES     16U                /* pages reserved for bootloader */
+    #define BOOTLOADER_FLASH_PAGES     8U                 /* pages reserved for bootloader */
 
     /*
-     * Application region starts at page 16 (PC address 0x8000).
+     * Application region starts at page 8 (PC address 0x4000).
      * The library uses uint32_t for all flash addresses so there is no
      * 16-bit uintptr_t truncation.  APP_FLASH_END can now address the
      * full dsPIC33EP512MC506 program space (512 KB, PC 0x000000-0x042FFE).
      * Cap at the last full page boundary below 0x042FFE for this part.
      */
-    #define APP_FLASH_START            0x008000UL   /* PC addr: first app page  */
+    #define APP_FLASH_START            0x004000UL   /* PC addr: first app page  */
     #define APP_FLASH_END              0x0547FCUL   /* PC addr: last app page (before Node ID + config pages) */
 
     /*

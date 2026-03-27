@@ -24,44 +24,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @file dspic33_drivers.h
+ * @file dspic33_olcb_drivers.h
  *
  * General platform drivers for the dsPIC33EP512MC506 BasicNode demo.
- * Oscillator, GPIO, SPI, UART, timer, and config memory access.
+ * Oscillator, GPIO, SPI, timer, and config memory access.
  *
  * @author Jim Kueneman
  * @date 19 Mar 2026
  */
 
-#ifndef __DSPIC33_DRIVERS__
-#define __DSPIC33_DRIVERS__
+#ifndef __DSPIC33_OLCB_DRIVERS__
+#define __DSPIC33_OLCB_DRIVERS__
 
 #include <xc.h>
 #include "../openlcb_c_lib/openlcb/openlcb_types.h"
-
-// UART ------------------------------------------------------------------------
-// with FCY = 40000000UL
-
-#define FP FCY
-#define BAUDRATE 333333
-#define BRGVAL_BRGH_L ((FP/BAUDRATE)/16)-1
-#define BRGVAL_BRGH_H ((FP/BAUDRATE)/4)-1
-
-#define BRG_OFFSET 0
-
-// Oscillator ------------------------------------------------------------------
-// Fine tune to get exactly 40Mhz
-
-#define PLLDIV_OFFSET -2
-
-// UART Pins -------------------------------------------------------------------
-
-#define UART_TX _RB10
-#define UART_RX _RB11
-#define UART_CTS _RC9
-#define UART_CTS_TRIS _TRISC9
-#define RTS _RB12
-#define UART_RTS_TRIS _TRISB12
 
 // SPI Pins --------------------------------------------------------------------
 
@@ -87,22 +63,20 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void BasicNodeDrivers_initialize(void);
+    extern void Dspic33OlcbDrivers_t2_interrupt_handler(void);
 
-    extern void Dspic33Drivers_t2_interrupt_handler(void);
+    extern void Dspic33OlcbDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-    extern void BasicNodeDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    extern uint16_t Dspic33OlcbDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern uint16_t BasicNodeDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t Dspic33OlcbDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern uint16_t BasicNodeDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
+    extern void Dspic33OlcbDrivers_lock_shared_resources(void);
 
-    extern void BasicNodeDrivers_lock_shared_resources(void);
-
-    extern void BasicNodeDrivers_unlock_shared_resources(void);
+    extern void Dspic33OlcbDrivers_unlock_shared_resources(void);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __DSPIC33_DRIVERS__ */
+#endif /* __DSPIC33_OLCB_DRIVERS__ */

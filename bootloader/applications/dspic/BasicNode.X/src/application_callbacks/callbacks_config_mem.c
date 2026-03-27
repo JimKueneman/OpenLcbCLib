@@ -44,9 +44,7 @@
 #include "callbacks_config_mem.h"
 
 #include <xc.h>
-#include <stdio.h>
 
-#include "../openlcb_c_lib/openlcb/openlcb_utilities.h"
 #include "../openlcb_c_lib/openlcb/openlcb_defines.h"
 
 /*
@@ -69,12 +67,10 @@
 /*                                                                         */
 /* Called when the OpenLCB Config Tool sends a Factory Reset datagram.     */
 /* A real product would erase user configuration from NVM here and         */
-/* restore defaults.  This demo just prints the requesting node's ID.      */
+/* restore defaults.  This demo is a stub.                                 */
 /* ====================================================================== */
 
 void CallbacksConfigMem_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));
 
 }
 
@@ -145,6 +141,11 @@ void CallbacksConfigMem_freeze(openlcb_statemachine_info_t *statemachine_info, c
          * DISI only blocks priority 0-6 for a cycle count -- not sufficient.
          * We never re-enable; asm("RESET") fires with interrupts off. */
         _GIE = 0;
+        
+        /* CAN interrupt was disabled in MCC (bootloader uses polling).
+         * The application needs interrupt-driven RX. */
+        C1INTEbits.RBIE = 0;
+        IEC2bits.C1IE = 0;
 
         /* Step 2: Clear every VIVT slot so the bootloader ISR stubs do not
          * call back into dead application code after the software reset.
@@ -177,25 +178,6 @@ void CallbacksConfigMem_freeze(openlcb_statemachine_info_t *statemachine_info, c
          * SRAM is preserved across this reset (POR/BOR bits stay clear).
          * The bootloader reads the values written in steps 3 and 4 above. */
         asm("RESET");
-
-    }
-
-}
-
-/* ====================================================================== */
-/* Unfreeze                                                                */
-/*                                                                         */
-/* Called when the Config Tool sends an Unfreeze datagram after a firmware */
-/* update completes without a drop-back reset.  In this demo the           */
-/* bootloader handles firmware transfer directly; the application never     */
-/* sees the firmware data bytes.  This stub is a placeholder.              */
-/* ====================================================================== */
-
-void CallbacksConfigMem_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    if (config_mem_operations_request_info->space_info->address_space == CONFIG_MEM_SPACE_FIRMWARE) {
-
-        printf("Requesting Firmware firmware update complete, reboot");
 
     }
 

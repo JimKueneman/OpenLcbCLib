@@ -4,6 +4,28 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="mcc_generated_files"
+                     displayName="mcc_generated_files"
+                     projectFiles="true">
+        <logicalFolder name="memory" displayName="memory" projectFiles="true">
+          <itemPath>mcc_generated_files/memory/flash.h</itemPath>
+        </logicalFolder>
+        <itemPath>mcc_generated_files/mcc.h</itemPath>
+        <itemPath>mcc_generated_files/dma.h</itemPath>
+        <itemPath>mcc_generated_files/can_module_features.h</itemPath>
+        <itemPath>mcc_generated_files/watchdog.h</itemPath>
+        <itemPath>mcc_generated_files/pin_manager.h</itemPath>
+        <itemPath>mcc_generated_files/reset_types.h</itemPath>
+        <itemPath>mcc_generated_files/interrupt_manager.h</itemPath>
+        <itemPath>mcc_generated_files/can_types.h</itemPath>
+        <itemPath>mcc_generated_files/system_types.h</itemPath>
+        <itemPath>mcc_generated_files/tmr2.h</itemPath>
+        <itemPath>mcc_generated_files/system.h</itemPath>
+        <itemPath>mcc_generated_files/can1.h</itemPath>
+        <itemPath>mcc_generated_files/traps.h</itemPath>
+        <itemPath>mcc_generated_files/reset.h</itemPath>
+        <itemPath>mcc_generated_files/clock.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="src" displayName="src" projectFiles="true">
         <logicalFolder name="application_callbacks"
                        displayName="application_callbacks"
@@ -16,7 +38,7 @@
                        displayName="application_drivers"
                        projectFiles="true">
           <itemPath>src/application_drivers/dspic33_can_drivers.h</itemPath>
-          <itemPath>src/application_drivers/dspic33_drivers.h</itemPath>
+          <itemPath>src/application_drivers/dspic33_olcb_drivers.h</itemPath>
         </logicalFolder>
         <logicalFolder name="openlcb_c_lib"
                        displayName="openlcb_c_lib"
@@ -92,6 +114,22 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="mcc_generated_files"
+                     displayName="mcc_generated_files"
+                     projectFiles="true">
+        <logicalFolder name="memory" displayName="memory" projectFiles="true">
+        </logicalFolder>
+        <itemPath>mcc_generated_files/tmr2.c</itemPath>
+        <itemPath>mcc_generated_files/traps.c</itemPath>
+        <itemPath>mcc_generated_files/can1.c</itemPath>
+        <itemPath>mcc_generated_files/system.c</itemPath>
+        <itemPath>mcc_generated_files/clock.c</itemPath>
+        <itemPath>mcc_generated_files/reset.c</itemPath>
+        <itemPath>mcc_generated_files/dma.c</itemPath>
+        <itemPath>mcc_generated_files/mcc.c</itemPath>
+        <itemPath>mcc_generated_files/pin_manager.c</itemPath>
+        <itemPath>mcc_generated_files/interrupt_manager.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="src" displayName="src" projectFiles="true">
         <logicalFolder name="application_callbacks"
                        displayName="application_callbacks"
@@ -104,7 +142,7 @@
                        displayName="application_drivers"
                        projectFiles="true">
           <itemPath>src/application_drivers/dspic33_can_drivers.c</itemPath>
-          <itemPath>src/application_drivers/dspic33_drivers.c</itemPath>
+          <itemPath>src/application_drivers/dspic33_olcb_drivers.c</itemPath>
         </logicalFolder>
         <logicalFolder name="openlcb_c_lib"
                        displayName="openlcb_c_lib"

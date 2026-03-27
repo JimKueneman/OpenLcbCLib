@@ -66,13 +66,13 @@ MEMORY
  * BasicNodeBootloader -- bootloader region only.
  *
  * Flash page size: 1024 instruction words = 2048 PC addresses (0x800).
- * Bootloader occupies pages 0-15 (0x0000-0x7FFF).
+ * Bootloader occupies pages 0-7 (0x0000-0x3FFF).
  * Code begins at 0x200 (after reset vector at 0x0 and IVT at 0x4).
- * Bootloader/application boundary: 0x8000 (page-aligned, 16 pages).
+ * Bootloader/application boundary: 0x4000 (page-aligned, 8 pages).
  * Reserve 4 bytes (0x0004) at the top so the linker does not place an
  * instruction at the exact boundary address.
  */
-  program (xr)   : ORIGIN = 0x200,         LENGTH = 0x8000-0x200-0x0004
+  program (xr)   : ORIGIN = 0x200,         LENGTH = 0x4000-0x200-0x0004
 
 
   FICD           : ORIGIN = 0x557F0,       LENGTH = 0x2
@@ -100,7 +100,7 @@ __FUID3 = 0x800FFE;
 
 /* BasicNodeBootloader */
 __CODE_BASE = 0x200;
-__CODE_LENGTH = 0x8000-0x200-0x0004;
+__CODE_LENGTH = 0x4000-0x200-0x0004;
 
 
 __IVT_BASE  = 0x4;

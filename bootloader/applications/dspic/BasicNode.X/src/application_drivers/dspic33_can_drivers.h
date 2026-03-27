@@ -59,8 +59,6 @@ extern "C" {
 
     extern void Dspic33CanDriver_c1_interrupt_handler(void);
 
-    extern uint8_t Dspic33CanDriver_get_max_can_fifo_depth(void);
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

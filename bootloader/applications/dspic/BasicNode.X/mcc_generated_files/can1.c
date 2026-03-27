@@ -42,37 +42,31 @@
     TERMS.
 */
 
-/*
- * ============================================================================
- * PORTING NOTE -- CAN1 Configuration
- * ============================================================================
- * Baud rate : 125 kbps  (C1CFG1 = 0x13, C1CFG2 = 0x198)  @ Fcy = 40 MHz
- * DMA       : TX = DMA Channel 0, RX = DMA Channel 1  (see dma.c)
- * Buffers   : 32 message buffers  (CAN1_MESSAGE_BUFFERS = 32)
- * Frame type: Extended (29-bit) frames only -- acceptance filter uses
- *             extended-frame mode (EXIDE=1).  In MCC ECAN GUI the filter/mask
- *             value must have a trailing lowercase 'x' (e.g. "0x0x") to
- *             generate EXIDE=1.  Without it MCC sets EXIDE=0 and rejects all
- *             OpenLCB traffic.
- * Pins      : RX = RB15 (RP47), TX = RG6 (RP118)  -- see pin_manager.c
+/* ---------------------------------------------------------------------------
+ * PORTING NOTE  (BasicNode.X -- standalone application)
  *
- * If Fcy changes, recalculate C1CFG1 and C1CFG2.  Use the MPLAB X MCC ECAN
- * baud rate calculator or the dsPIC33 Family Reference Manual Section 34.
+ * This file is MCC-generated.  Two hand-edits are required and must be
+ * reapplied any time MCC regenerates can1.c:
  *
- * HAND-EDIT -- VIVT redirect in _C1Interrupt:
- *   The bootloader owns the hardware IVT.  After jump_to_application() all
- *   CAN1 interrupts still fire here.  The VIVT check forwards to the
- *   application's registered handler if one has been registered.
- *   See shared/bootloader_shared_ram.h: bootloader_vivt_jumptable.can1_handler
+ *   1. #include  -- add this line in the "Included Files" section:
+ *        #include "../src/application_drivers/dspic33_can_drivers.h"
  *
- *   If MCC regenerates this file, reapply:
- *     #include "../../shared/bootloader_shared_ram.h"  // HAND-EDIT: VIVT redirect
- *     -- and at the top of _C1Interrupt, before IFS2bits.C1IF = 0: --
- *     if (bootloader_vivt_jumptable.can1_handler) {
- *         bootloader_vivt_jumptable.can1_handler();
- *     }
- * ============================================================================
- */
+ *   2. _C1Interrupt  -- MCC generates an empty ISR body.  Replace it with
+ *      a direct call to the app CAN handler:
+ *        void __attribute__((__interrupt__, no_auto_psv)) _C1Interrupt(void)
+ *        {
+ *            Dspic33CanDriver_c1_interrupt_handler();
+ *        }
+ *
+ * Why: MCC does not provide a weak callback for CAN interrupts (unlike
+ *      TMR2_CallBack).  The only way to hook app code into _C1Interrupt
+ *      is a direct hand-edit in this file.
+ *
+ * CAN config: 125 kbps @ Fcy 40 MHz, extended frames (29-bit),
+ *             DMA0 = TX, DMA1 = RX.
+ * CAN interrupt was disabled in MCC (bootloader uses polling).
+ * Dspic33CanDriver_initialize() enables C1IE and RBIE for the app.
+ * ------------------------------------------------------------------------- */
 
 /**
   Section: Included Files
@@ -80,7 +74,7 @@
 
 #include "can1.h"
 #include "dma.h"
-#include "../../shared/bootloader_shared_ram.h"  /* HAND-EDIT: VIVT redirect */
+#include "../src/application_drivers/dspic33_can_drivers.h"  /* HAND-EDIT: app CAN handler */
 
 #define CAN1_TX_DMA_CHANNEL DMA_CHANNEL_0
 #define CAN1_RX_DMA_CHANNEL DMA_CHANNEL_1
@@ -616,12 +610,8 @@ void CAN1_SetBusWakeUpActivityInterruptHandler(void *handler)
 
 void __attribute__((__interrupt__, no_auto_psv)) _C1Interrupt(void)
 {
-    /* HAND-EDIT: VIVT redirect */
-    if (bootloader_vivt_jumptable.can1_handler) {
-        bootloader_vivt_jumptable.can1_handler();
-    }
-
-    IFS2bits.C1IF = 0;
+    /* HAND-EDIT: call app CAN handler */
+    Dspic33CanDriver_c1_interrupt_handler();
 }
 
 /*******************************************************************************
