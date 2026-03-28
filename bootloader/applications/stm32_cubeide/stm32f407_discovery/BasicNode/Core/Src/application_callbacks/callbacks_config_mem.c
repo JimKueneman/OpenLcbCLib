@@ -52,13 +52,6 @@ void CallbacksConfigMem_factory_reset(openlcb_statemachine_info_t *statemachine_
     /**
      * @brief Drops back to the bootloader when a firmware-space Freeze is received.
      *
-     * @details Algorithm:
-     * -# Ignore the request if the target space is not CONFIG_MEM_SPACE_FIRMWARE
-     * -# Write the current node CAN alias to bootloader_cached_alias in shared .noinit RAM
-     * -# Write BOOTLOADER_REQUEST_MAGIC to bootloader_request_flag in shared .noinit RAM
-     * -# Call HAL_NVIC_SystemReset() — the DSB barrier in the HAL wrapper flushes the
-     *    write buffer before the reset fires so the bootloader reliably sees both values
-     *
      * @verbatim
      * @param statemachine_info                  Pointer to openlcb_statemachine_info_t context.
      * @param config_mem_operations_request_info Pointer to config_mem_operations_request_info_t describing the Freeze request.
@@ -68,11 +61,32 @@ void CallbacksConfigMem_freeze(openlcb_statemachine_info_t *statemachine_info, c
 
     if (config_mem_operations_request_info->space_info->address_space == CONFIG_MEM_SPACE_FIRMWARE) {
 
-        // STM32_DriverLibDrivers_cleanup_before_handoff will be called by the library
+        /* Disable all interrupts so no ISR can fire between the shared RAM
+         * writes below and the system reset.  Without this a CAN RX interrupt
+         * could corrupt state or process a stale message while the handshake
+         * variables are half-written.  We never re-enable -- the reset fires
+         * with interrupts off. */
+        __disable_irq();
 
-        bootloader_cached_alias = statemachine_info->openlcb_node->alias;
-        bootloader_request_flag = BOOTLOADER_REQUEST_MAGIC;
+        /* Cache the 12-bit CAN alias the application negotiated at startup.
+         * The bootloader reuses it so the Config Tool sees the same alias
+         * and can continue the firmware transfer without re-negotiation. */
+        bootloader_shared_ram.cached_alias = statemachine_info->openlcb_node->alias;
 
+        /* Set the magic flag so the bootloader knows this was an application-
+         * requested entry (not a power-on or button press).  It will start
+         * with firmware_active = 1 and the Config Tool can send data
+         * immediately without sending another Freeze. */
+        bootloader_shared_ram.request_flag = BOOTLOADER_REQUEST_MAGIC;
+
+        /* Reset the entire CPU and all peripherals.  The HAL wrapper includes
+         * a __DSB() barrier that flushes the write buffer before the reset
+         * fires, so both shared RAM values are reliably visible afterward.
+         *
+         * No peripheral teardown (HAL_CAN_DeInit, SysTick stop, etc.) is
+         * needed here -- NVIC_SystemReset resets all peripherals to their
+         * power-on state.  __disable_irq() above is sufficient to prevent
+         * any ISR from running in the window before the reset completes. */
         HAL_NVIC_SystemReset();
 
     }

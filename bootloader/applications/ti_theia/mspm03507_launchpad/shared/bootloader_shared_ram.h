@@ -98,48 +98,57 @@ extern "C" {
      *
      *   #include "bootloader_shared_ram.h"
      *
-     *   bootloader_cached_alias = my_current_alias;
-     *   bootloader_request_flag = BOOTLOADER_REQUEST_MAGIC;
+     *   bootloader_shared_ram.cached_alias = my_current_alias;
+     *   bootloader_shared_ram.request_flag = BOOTLOADER_REQUEST_MAGIC;
      *   NVIC_SystemReset();   // or asm("RESET") on dsPIC, etc.
      */
 
     /**
-     *     Magic value written to bootloader_request_flag by the application
+     *     Magic value written to bootloader_shared_ram.request_flag by the application
      *     before a software reset to request bootloader mode.  The hex
      *     digits spell "BOOTLOAD" (0xB00710AD) as a mnemonic.
      */
     #define BOOTLOADER_REQUEST_MAGIC 0xB00710ADUL
 
     /**
-     *     Shared RAM flag for application-to-bootloader communication.
+     *     Shared RAM struct for application-to-bootloader communication.
      *
-     *     The application writes BOOTLOADER_REQUEST_MAGIC here before
-     *     issuing a software reset.  The bootloader's is_bootloader_requested()
-     *     driver checks this value on startup, clears it, and returns
-     *     BOOTLOADER_REQUESTED_BY_APP if it matches.
+     *     Both variables are wrapped in a single struct so the linker
+     *     produces identical memory layout in both binaries.  Without the
+     *     struct, the linker is free to reorder the individual variables
+     *     within the .noinit section -- and it DOES: Debug vs Release
+     *     builds, different object file link order, or different
+     *     optimisation levels can all cause the variables to swap
+     *     positions.  The app writes the alias at one address and the
+     *     bootloader reads it from a different address.  The handshake
+     *     silently fails.
+     *
+     *     request_flag: The application writes BOOTLOADER_REQUEST_MAGIC
+     *     here before issuing a software reset.  The bootloader's
+     *     is_bootloader_requested() driver checks this value on startup,
+     *     clears it, and returns BOOTLOADER_REQUESTED_BY_APP if it
+     *     matches.
+     *
+     *     cached_alias: The application writes its current 12-bit CAN
+     *     alias here before issuing a software reset alongside
+     *     BOOTLOADER_REQUEST_MAGIC.  The bootloader's get_cached_alias()
+     *     driver reads this value so it can skip the full CID negotiation
+     *     and 200ms wait -- the alias is still valid on the bus.  Set to 0
+     *     if no alias is available (cold boot, button entry, or corrupted
+     *     app).  The bootloader will then negotiate a new alias from
+     *     scratch.
      *
      *     Defined (with platform-specific .noinit placement) in
      *     bootloader_shared_ram.c.
      */
-    extern volatile uint32_t bootloader_request_flag;
+    typedef struct {
 
-    /**
-     *     CAN alias the application was using before it dropped back.
-     *
-     *     The application writes its current 12-bit CAN alias here before
-     *     issuing a software reset alongside BOOTLOADER_REQUEST_MAGIC.
-     *     The bootloader's get_cached_alias() driver reads this value so
-     *     it can skip the full CID negotiation and 200ms wait — the alias
-     *     is still valid on the bus.
-     *
-     *     Set to 0 if no alias is available (cold boot, button entry, or
-     *     corrupted app).  The bootloader will then negotiate a new alias
-     *     from scratch.
-     *
-     *     Defined (with platform-specific .noinit placement) in
-     *     bootloader_shared_ram.c.
-     */
-    extern volatile uint16_t bootloader_cached_alias;
+        volatile uint32_t request_flag;
+        volatile uint16_t cached_alias;
+
+    } bootloader_shared_ram_t;
+
+    extern bootloader_shared_ram_t bootloader_shared_ram;
 
 #ifdef __cplusplus
 }

@@ -47,7 +47,7 @@
 /* ====================================================================== */
 
 /*
- * The shared RAM variables (bootloader_request_flag, bootloader_cached_alias)
+ * The shared RAM variables (bootloader_shared_ram.request_flag, bootloader_shared_ram.cached_alias)
  * are defined in ../shared/bootloader_shared_ram.c, which is compiled into
  * both the bootloader and the application project.  Both linker scripts map
  * the .noinit section to the same fixed SRAM region (SHARED_NOINIT) so the
@@ -63,20 +63,34 @@
 
 void BootloaderDriversOpenlcb_initialize_hardware(bootloader_request_t request) {
 
-    /* Centralized .noinit shared RAM cleanup.
-     * bootloader_request_flag was already consumed by is_bootloader_requested()
-     * before this function runs; clear it unconditionally as belt-and-suspenders.
-     * bootloader_cached_alias is only meaningful on app drop-back -- the library
-     * CAN state machine reads it via get_cached_alias() during INIT_PICK_ALIAS
-     * and clears it after pickup.  On any other reset path it is stale garbage. */
-    bootloader_request_flag = 0;
+    /* Clear the magic flag unconditionally.  is_bootloader_requested() already
+     * consumed it; zeroing here prevents a stale flag from falsely re-entering
+     * bootloader mode on the next reset. */
+    bootloader_shared_ram.request_flag = 0;
 
+    /* On an app drop-back the cached alias is valid -- the application wrote
+     * it before resetting so the bootloader can reuse the same CAN alias
+     * without re-negotiation.  The CAN state machine reads and clears it
+     * during alias pickup.
+     *
+     * On any other reset path (power-on, button, brownout) the .noinit RAM
+     * contains random garbage, so clear it to force normal alias negotiation. */
     if (request != BOOTLOADER_REQUESTED_BY_APP) {
 
-        bootloader_cached_alias = 0;
+        bootloader_shared_ram.cached_alias = 0;
 
     }
 
+    /* SYSCFG_DL_init() configures clocks, GPIO, MCAN, and SysTick via the
+     * TI SysConfig-generated code.  Interrupts are disabled around it to
+     * prevent any peripheral ISR from firing before the full configuration
+     * is complete.
+     *
+     * No explicit MCAN interrupt disable is needed here.  Unlike the
+     * application (which enables MCAN RX interrupts), the bootloader uses
+     * polling -- it never enables the MCAN NVIC line.  SYSCFG_DL_init()
+     * configures the peripheral but does not enable its NVIC interrupt,
+     * so no CAN ISR can fire during or after init. */
     __disable_irq();
     SYSCFG_DL_init();
     __enable_irq();
@@ -98,7 +112,7 @@ bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
      * (PIP reports Firmware Upgrade Active) and the CT can proceed
      * directly to data transfer without sending Freeze again.
      */
-    if (bootloader_request_flag == BOOTLOADER_REQUEST_MAGIC) {
+    if (bootloader_shared_ram.request_flag == BOOTLOADER_REQUEST_MAGIC) {
 
         /* Flag is cleared centrally by initialize_hardware(). */
         return BOOTLOADER_REQUESTED_BY_APP;
@@ -126,38 +140,65 @@ bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
 }
 
     /**
-     * @brief Tears down all peripherals and ARM core state before handing off to the other binary.
+     * @brief Tears down all peripherals and ARM core state before handing
+     *        off to the application (or before a reboot).
      *
-     * @details Algorithm:
-     * -# Stop SysTick timer and clear its reload and current value registers
-     * -# Disable all NVIC interrupts and clear all pending interrupt flags
-     * -# Reset the MCAN peripheral to its power-on default configuration
+     * @details The application expects to start from a clean hardware state,
+     *          as if after a power-on reset.  Every peripheral the bootloader
+     *          touched must be returned to its reset-default condition so the
+     *          application's own SYSCFG_DL_init() sequence works correctly.
      */
 void BootloaderDriversOpenlcb_cleanup_before_handoff(void) {
 
+    /* Stop SysTick completely.  The bootloader uses it for the 100ms timer.
+     * If left running, the SysTick interrupt would fire into the application's
+     * vector table before its own SysTick_Handler is ready, potentially
+     * calling into uninitialised code or faulting if the handler address is
+     * still erased flash (0xFFFFFFFF). */
     SysTick->CTRL = 0;
     SysTick->LOAD = 0;
     SysTick->VAL  = 0;
 
+    /* Disable all NVIC interrupt sources and clear any pending flags.
+     * MSPM0G3507 has fewer than 32 interrupts, so a single ICER/ICPR
+     * register pair covers all of them.  (If porting to a chip with more
+     * than 32 IRQs, loop over ICER[0..N] and ICPR[0..N] as STM32 does.) */
     NVIC->ICER[0] = 0xFFFFFFFF;
     NVIC->ICPR[0] = 0xFFFFFFFF;
 
+    /* Reset the MCAN peripheral to its power-on default configuration so
+     * the application can re-init it with its own filter/interrupt settings.
+     * Without this the peripheral retains the bootloader's configuration. */
     DL_MCAN_reset(MCAN0_INST);
 
 }
 
 void BootloaderDriversOpenlcb_jump_to_application(void) {
 
+    /* The application's vector table starts at APP_FLASH_START.  Entry [0]
+     * is the initial stack pointer, entry [1] is the reset handler address. */
     uint32_t *app_vectors = (uint32_t *) APP_FLASH_START;
 
+    /* Relocate the vector table so all interrupts and faults route to the
+     * application's handlers instead of the bootloader's.  The DSB ensures
+     * the VTOR write completes before any subsequent instruction, and the
+     * ISB flushes the pipeline so the CPU fetches vectors from the new
+     * table -- not a stale cached copy of the bootloader's table. */
     SCB->VTOR = APP_FLASH_START;
+    __DSB();
+    __ISB();
 
-    /* Load the application's stack pointer and reset handler, then jump. */
+    /* Load the application's stack pointer from its vector table entry [0].
+     * The bootloader's stack is no longer needed. */
     __set_MSP(app_vectors[0]);
 
+    /* Jump to the application's reset handler (vector table entry [1]).
+     * This never returns -- the application runs its own startup code
+     * (SystemInit, __libc_init_array, main) from this point forward. */
     void (*app_reset)(void) = (void (*)(void)) app_vectors[1];
     app_reset();
 
+    /* Unreachable -- the application's reset handler does not return. */
     while (1) {
     }
 
@@ -165,8 +206,13 @@ void BootloaderDriversOpenlcb_jump_to_application(void) {
 
 void BootloaderDriversOpenlcb_reboot(void) {
 
+    /* NVIC_SystemReset resets the entire CPU and all peripherals.  The CMSIS
+     * implementation includes a __DSB() barrier that flushes pending writes
+     * before the reset fires.  No peripheral teardown is needed -- everything
+     * returns to power-on state. */
     NVIC_SystemReset();
 
+    /* Unreachable -- the reset completes before this line executes. */
     while (1) {
     }
 
@@ -193,9 +239,19 @@ void BootloaderDriversOpenlcb_get_flash_page_info(uint32_t address, uint32_t *pa
 
 uint16_t BootloaderDriversOpenlcb_erase_flash_page(uint32_t address) {
 
+    /* Interrupts must be disabled during flash erase.  On MSPM0 the flash
+     * controller executes erase/program operations from a RAM trampoline
+     * (eraseMemoryFromRAM).  If an interrupt fires while the flash controller
+     * is busy, the ISR's instruction fetches from flash would stall or fault.
+     * Disabling interrupts prevents this. */
     __disable_irq();
 
+    /* Clear any leftover error flags from a previous operation. */
     DL_FlashCTL_executeClearStatus(FLASHCTL);
+
+    /* The MSPM0 flash has per-sector write/erase protection.  Unprotect the
+     * target sector before erasing.  Protection is restored automatically
+     * after the operation completes. */
     DL_FlashCTL_unprotectSector(FLASHCTL, address, DL_FLASHCTL_REGION_SELECT_MAIN);
 
     DL_FLASHCTL_COMMAND_STATUS status =
@@ -227,6 +283,9 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(uint32_t address, const uint
     const uint8_t *source_data = data;
     uint32_t       remaining   = size_bytes;
 
+    /* Interrupts must be disabled during flash programming for the same
+     * reason as erase: the flash controller runs from a RAM trampoline
+     * and instruction fetches from flash would stall or fault. */
     __disable_irq();
 
     while (remaining >= FLASH_WRITE_ALIGN) {
@@ -253,6 +312,21 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(uint32_t address, const uint
         }
 
         if (!DL_FlashCTL_waitForCmdDone(FLASHCTL)) {
+
+            __enable_irq();
+            return ERROR_PERMANENT;
+
+        }
+
+        /* Read-back verification: the flash controller returning success
+         * only means the command was accepted, not that the bits landed
+         * correctly.  Flash can fail silently due to wear, voltage droop,
+         * or marginal cells.  Reading back catches these failures before
+         * the bootloader declares success and reboots into a corrupted
+         * image. */
+        uint32_t readback[2];
+        memcpy(readback, (const void *)(uintptr_t) dest, FLASH_WRITE_ALIGN);
+        if (readback[0] != aligned_data[0] || readback[1] != aligned_data[1]) {
 
             __enable_irq();
             return ERROR_PERMANENT;
@@ -295,6 +369,16 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(uint32_t address, const uint
 
         }
 
+        /* Read-back verification for the partial tail chunk. */
+        uint32_t tail_readback[2];
+        memcpy(tail_readback, (const void *)(uintptr_t) dest, FLASH_WRITE_ALIGN);
+        if (tail_readback[0] != pad_aligned[0] || tail_readback[1] != pad_aligned[1]) {
+
+            __enable_irq();
+            return ERROR_PERMANENT;
+
+        }
+
     }
 
     __enable_irq();
@@ -306,9 +390,47 @@ uint16_t BootloaderDriversOpenlcb_finalize_flash(compute_checksum_func_t compute
 
 #ifndef NO_CHECKSUM
 
-    /* TODO: implement checksum validation using compute_checksum_helper
-     * once the post-link tool populates app_header in the firmware image. */
-    (void) compute_checksum_helper;
+    /* Read the app header from the freshly written flash image. */
+    bootloader_app_header_t header;
+    memcpy(&header, (const void *) APP_HEADER_ADDRESS, sizeof(header));
+
+    /* Validate app_size is within flash bounds. */
+    uint32_t flash_size = APP_FLASH_END - APP_FLASH_START + 1U;
+
+    if (header.app_size > flash_size) { return ERROR_PERMANENT; }
+
+    /* Pre-checksum: flash_min to app_header. */
+    uint32_t pre_size = APP_HEADER_ADDRESS - APP_FLASH_START;
+
+    uint32_t checksum[BOOTLOADER_CHECKSUM_COUNT];
+    memset(checksum, 0, sizeof(checksum));
+    compute_checksum_helper(APP_FLASH_START, pre_size, checksum);
+
+    if (memcmp(header.checksum_pre, checksum, sizeof(checksum)) != 0) {
+
+        return ERROR_PERMANENT;
+
+    }
+
+    /* Post-checksum: after app_header to end of image. */
+    uint32_t post_start = APP_HEADER_ADDRESS + (uint32_t) sizeof(bootloader_app_header_t);
+    uint32_t post_size = 0;
+
+    if ((pre_size + (uint32_t) sizeof(bootloader_app_header_t)) < header.app_size) {
+
+        post_size = header.app_size - pre_size - (uint32_t) sizeof(bootloader_app_header_t);
+
+    }
+
+    memset(checksum, 0, sizeof(checksum));
+    compute_checksum_helper(post_start, post_size, checksum);
+
+    if (memcmp(header.checksum_post, checksum, sizeof(checksum)) != 0) {
+
+        return ERROR_PERMANENT;
+
+    }
+
     return 0;
 
 #else
@@ -352,6 +474,10 @@ void BootloaderDriversOpenlcb_compute_checksum(uint32_t flash_addr, uint32_t siz
 /* Timer                                                                   */
 /* ====================================================================== */
 
+/* SysTick is configured by SYSCFG_DL_init() to fire every 100ms.
+ * Each interrupt increments a uint8_t counter that wraps at 256,
+ * matching the bootloader library's expected interface for protocol
+ * timeouts (alias negotiation, datagram retries). */
 static volatile uint8_t _tick_counter = 0;
 
 void SysTick_Handler(void) {
@@ -362,6 +488,9 @@ void SysTick_Handler(void) {
 
 uint8_t BootloaderDriversOpenlcb_get_100ms_timer_tick(void) {
 
+    /* Return the raw counter value.  The library compares successive
+     * readings to detect elapsed time; the uint8_t wrap is intentional
+     * and handled correctly by unsigned subtraction in the caller. */
     return _tick_counter;
 
 }
@@ -385,6 +514,11 @@ uint64_t BootloaderDriversOpenlcb_get_persistent_node_id(void) {
 
 void BootloaderDriversOpenlcb_set_status_led(bootloader_led_enum led, bool value) {
 
+    /* The MSPM0G3507 Launchpad has a single user LED on PA0 with negative
+     * logic (active-low): clearPins turns it ON, setPins turns it OFF.
+     * The led parameter is ignored -- all logical LED functions map to the
+     * same physical LED.  On boards with multiple LEDs, add a switch on
+     * the led enum (see the STM32 demo for an example). */
     (void) led;
 
     if (value) {

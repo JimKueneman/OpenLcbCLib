@@ -144,8 +144,8 @@ bool BootloaderDriversCan_try_send_frame(const bootloader_can_frame_t *frame) {
 
 uint16_t BootloaderDriversCan_get_cached_alias_passed_from_application(void) {
 
-    uint16_t alias = bootloader_cached_alias;
-    bootloader_cached_alias = 0;
+    uint16_t alias = bootloader_shared_ram.cached_alias;
+    bootloader_shared_ram.cached_alias = 0;
 
     return alias;
 

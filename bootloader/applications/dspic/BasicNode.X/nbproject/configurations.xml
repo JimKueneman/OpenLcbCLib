@@ -201,6 +201,7 @@
       <itemPath>traps.c</itemPath>
       <itemPath>../shared/bootloader_shared_ram.c</itemPath>
       <itemPath>reset_vector.s</itemPath>
+      <itemPath>app_header.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

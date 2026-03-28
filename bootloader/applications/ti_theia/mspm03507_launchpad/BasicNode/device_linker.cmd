@@ -63,6 +63,17 @@ MEMORY
 SECTIONS
 {
     .intvecs:   > 0x00003C00
+
+    /* Application header for bootloader CRC validation.
+     *
+     * Fixed at APP_FLASH_START + 0xC0 = 0x00003CC0, immediately after the
+     * Cortex-M0+ vector table (48 entries x 4 bytes = 192 bytes = 0xC0).
+     *
+     * The bootloader_app_header_t struct must be defined in the application
+     * with __attribute__((section(".app_header"))).  The post-link tool
+     * patches the checksum fields before programming. */
+    .app_header : {} > 0x00003CC0
+
     .text   : palign(8) {} > APP_FLASH
     .const  : palign(8) {} > APP_FLASH
     .cinit  : palign(8) {} > APP_FLASH

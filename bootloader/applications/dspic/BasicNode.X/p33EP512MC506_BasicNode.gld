@@ -114,6 +114,7 @@ __FUID3 = 0x800FFE;
 /* BasicNode application (co-resident with BasicNodeBootloader) */
 __CODE_BASE = 0x4000;
 __CODE_LENGTH = 0x55800-0x4000-0x0800-0x0800-0x0004;
+__APP_HEADER_ADDR = 0x4004;   /* PC addr: app header (CODE_BASE + 0x4, after GOTO) */
 
 
 __IVT_BASE  = 0x4;
@@ -155,6 +156,22 @@ SECTIONS
   ** Vector table source code appears below.
   */
 
+
+  /*
+  ** Application header for bootloader CRC validation.
+  **
+  ** Fixed at __CODE_BASE + 0x4 = 0x4004 in PC units.  The GOTO at 0x4000
+  ** occupies 1 instruction (2 PC addresses).  The header is 36 data bytes
+  ** = 12 instructions = 24 PC addresses, so it spans 0x4004-0x401B.
+  **
+  ** The bootloader_app_header_t struct must be defined in the application
+  ** with __attribute__((section(".app_header"), space(prog))).  The
+  ** post-link tool patches the checksum fields before programming.
+  */
+  .app_header 0x4004 :
+  {
+        KEEP (*(.app_header));
+  } >program
 
   /*
   ** User Code and Library Code

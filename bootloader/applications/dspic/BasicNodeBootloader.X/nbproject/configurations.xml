@@ -117,6 +117,7 @@
   <sourceRootList>
     <Elem>.</Elem>
     <Elem>../shared</Elem>
+    <Elem>../BasicNode.X</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

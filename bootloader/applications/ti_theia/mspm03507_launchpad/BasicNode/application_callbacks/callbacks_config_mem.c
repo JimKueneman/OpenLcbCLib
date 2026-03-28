@@ -55,11 +55,29 @@ void CallbacksConfigMem_freeze(openlcb_statemachine_info_t *statemachine_info, c
     if (config_mem_operations_request_info->space_info->address_space == CONFIG_MEM_SPACE_FIRMWARE)
     {
 
-        // TI_DriverLibDrivers_cleanup_before_handoff will get called by the library
+        /* Disable all interrupts so no ISR can fire between the shared RAM
+         * writes below and the system reset.  Without this a CAN RX interrupt
+         * could corrupt state or process a stale message while the handshake
+         * variables are half-written.  We never re-enable -- the reset fires
+         * with interrupts off. */
+        __disable_irq();
 
-        bootloader_cached_alias = statemachine_info->openlcb_node->alias;
-        bootloader_request_flag = BOOTLOADER_REQUEST_MAGIC;
+        /* Cache the 12-bit CAN alias the application negotiated at startup.
+         * The bootloader reuses it so the Config Tool sees the same alias
+         * and can continue the firmware transfer without re-negotiation. */
+        bootloader_shared_ram.cached_alias = statemachine_info->openlcb_node->alias;
 
+        /* Set the magic flag so the bootloader knows this was an application-
+         * requested entry (not a power-on or button press).  It will start
+         * with firmware_active = 1 and the Config Tool can send data
+         * immediately without sending another Freeze. */
+        bootloader_shared_ram.request_flag = BOOTLOADER_REQUEST_MAGIC;
+
+        /* Reset the entire CPU and all peripherals.  No peripheral teardown
+         * (DL_MCAN_reset, SysTick stop, etc.) is needed here -- the system
+         * reset returns all peripherals to their power-on state.
+         * __disable_irq() above is sufficient to prevent any ISR from
+         * running in the window before the reset completes. */
         DL_SYSCTL_resetDevice(DL_SYSCTL_RESET_SYSRST);
 
     }

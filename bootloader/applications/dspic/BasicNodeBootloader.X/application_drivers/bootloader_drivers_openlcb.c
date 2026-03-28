@@ -406,9 +406,53 @@ uint16_t BootloaderDriversOpenlcb_finalize_flash(compute_checksum_func_t compute
 
 #ifndef NO_CHECKSUM
 
-    /* TODO: implement checksum validation using compute_checksum_helper
-     * once the post-link tool populates app_header in the firmware image. */
-    (void) compute_checksum_helper;
+    /* Read the app header from the freshly written flash image.
+     * dsPIC33 is a Harvard architecture -- program flash is not in the data
+     * address space, so we use the local read_flash_bytes function instead
+     * of memcpy. */
+    bootloader_app_header_t header;
+    uint32_t flash_min = APP_FLASH_START * BINARY_TO_PC_DIVISOR;
+    uint32_t flash_max = APP_FLASH_END   * BINARY_TO_PC_DIVISOR;
+
+    BootloaderDriversOpenlcb_read_flash_bytes(APP_HEADER_ADDRESS, &header, sizeof(header));
+
+    /* Validate app_size is within flash bounds. */
+    uint32_t flash_size = flash_max - flash_min;
+
+    if (header.app_size > flash_size) { return ERROR_PERMANENT; }
+
+    /* Pre-checksum: flash_min to app_header. */
+    uint32_t pre_size = APP_HEADER_ADDRESS - flash_min;
+
+    uint32_t checksum[BOOTLOADER_CHECKSUM_COUNT];
+    memset(checksum, 0, sizeof(checksum));
+    compute_checksum_helper(flash_min, pre_size, checksum);
+
+    if (memcmp(header.checksum_pre, checksum, sizeof(checksum)) != 0) {
+
+        return ERROR_PERMANENT;
+
+    }
+
+    /* Post-checksum: after app_header to end of image. */
+    uint32_t post_start = APP_HEADER_ADDRESS + (uint32_t) sizeof(bootloader_app_header_t);
+    uint32_t post_size = 0;
+
+    if ((pre_size + (uint32_t) sizeof(bootloader_app_header_t)) < header.app_size) {
+
+        post_size = header.app_size - pre_size - (uint32_t) sizeof(bootloader_app_header_t);
+
+    }
+
+    memset(checksum, 0, sizeof(checksum));
+    compute_checksum_helper(post_start, post_size, checksum);
+
+    if (memcmp(header.checksum_post, checksum, sizeof(checksum)) != 0) {
+
+        return ERROR_PERMANENT;
+
+    }
+
     return 0;
 
 #else

@@ -42,29 +42,50 @@
  * @date 24 Mar 2026
  */
 
+#include "bootloader_shared_ram.h"
+
 #include <stdint.h>
 
 /*
- * bootloader_request_flag — the application writes BOOTLOADER_REQUEST_MAGIC
- * (0xB00710AD) here before calling NVIC_SystemReset().  The bootloader reads
- * it on startup to decide whether to stay in bootloader mode.
+ * bootloader_shared_ram is a struct containing:
+ *   .request_flag  -- the application writes BOOTLOADER_REQUEST_MAGIC
+ *                     (0xB00710AD) here before calling NVIC_SystemReset().
+ *                     The bootloader reads it on startup to decide whether
+ *                     to stay in bootloader mode.
+ *   .cached_alias  -- the application writes its current 12-bit CAN alias
+ *                     here before resetting.  The bootloader reads it to
+ *                     skip CID negotiation and reuse the alias.
  *
- * bootloader_cached_alias — the application writes its current 12-bit CAN
- * alias here before resetting.  The bootloader reads it to skip the full
- * CID negotiation and reuse the alias for faster startup.
+ * The struct is placed in the .noinit section.  The linker script in each
+ * project maps .noinit to SHARED_NOINIT -- a small fixed region at the top
+ * of SRAM that both binaries agree on.
  *
- * Both variables are placed in the .noinit section.  The linker script in
- * each project maps .noinit to SHARED_NOINIT — a small fixed region at the
- * top of SRAM that both binaries agree on.
+ * WHY A STRUCT?  Without it, the linker is free to reorder individual
+ * variables within the .noinit section.  Debug vs Release builds, different
+ * link orders, or different optimisation levels can cause the variables to
+ * swap addresses between the two binaries.  The app writes the alias at one
+ * address and the bootloader reads it from a different address -- the
+ * handshake silently fails.  A struct guarantees the field order is
+ * identical in both binaries regardless of linker decisions.
  *
  * =========================================================================
  * PLATFORM PORTING NOTES
  *
- * When porting to a different chip/compiler, replace the variable definitions
+ * When porting to a different chip/compiler, replace the variable definition
  * below with the appropriate attribute and update the linker script.  The
- * key requirement is:
+ * key requirements are:
  *   1. The variable must NOT be zeroed by C startup code
  *   2. Both binaries must place it at the SAME physical RAM address
+ *   3. Keep both fields in a STRUCT -- do not use separate variables.
+ *      GCC and most linkers are free to reorder individual variables
+ *      within a section.  Two separately-linked binaries (bootloader
+ *      and application) can end up with the variables at different
+ *      offsets, silently breaking the handshake.  A struct guarantees
+ *      identical layout in both binaries.
+ *
+ * The examples below show individual variables for brevity (showing
+ * the platform-specific noinit attribute).  In practice, wrap them in
+ * a struct as this file does.
  *
  * -------------------------------------------------------------------------
  * TI CCS / MSPM0 (tiarmclang — this file):
@@ -161,5 +182,4 @@
  * =========================================================================
  */
 
-volatile uint32_t bootloader_request_flag __attribute__((section(".noinit")));
-volatile uint16_t bootloader_cached_alias __attribute__((section(".noinit")));
+bootloader_shared_ram_t bootloader_shared_ram __attribute__((section(".noinit")));

@@ -57,7 +57,21 @@ Single read of GPIO PB21 with no debounce logic. Electrical noise could theoreti
 trigger false bootloader entry. Low risk since the button is only checked once at startup,
 but worth noting for noisy environments.
 
-### `finalize_flash()` checksum validation is stubbed
+### `finalize_flash()` checksum validation is implemented but inactive
 
-Returns 0 unconditionally without validating the written image. Gated by `NO_CHECKSUM`.
-Once the post-link checksum tool is integrated, implement the validation logic here.
+**File:** `BasicNodeBootloader/application_drivers/bootloader_drivers_openlcb.c`
+
+The `#ifndef NO_CHECKSUM` branch now reads the app header, recomputes both
+pre and post triple-CRC checksums, and returns `ERROR_PERMANENT` on mismatch.
+Currently inactive because `NO_CHECKSUM` is defined.
+
+Blocked on: post-link checksum tool populating app_header in firmware images.
+
+### BasicNode `app_header.c` and linker section added
+
+**Files:**
+- `BasicNode/application_callbacks/app_header.c` -- zero-initialized header struct
+- `BasicNode/device_linker.cmd` -- `.app_header` section at 0x00003CC0
+
+The app header struct is placed in flash at the expected address. All checksum
+fields are zero. A post-link tool must patch them before production programming.

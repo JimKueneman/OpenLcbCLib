@@ -100,8 +100,9 @@ int main(void)
    * CAN physical layer driver.
    *
    * Abstracts the CAN hardware so the bootloader library works with any
-   * CAN peripheral.  read_received_frame and try_send_frame are currently
-   * stubbed — replace them with HAL CAN calls once the project compiles.
+   * CAN peripheral.  The three function pointers handle frame RX (polling),
+   * frame TX (non-blocking mailbox send), and alias recovery from the
+   * application's cached value in shared .noinit RAM.
    */
   const bootloader_can_driver_t can_driver = {
 
@@ -115,8 +116,8 @@ int main(void)
    * OpenLCB / hardware driver.
    *
    * Abstracts identity, timing, LEDs, flash memory, and lifecycle control.
-   * TI-specific bodies are currently commented out — replace with STM32
-   * HAL calls once the project compiles.
+   * Each function pointer maps to an implementation in
+   * bootloader_drivers_openlcb.c that uses STM32 HAL calls.
    */
   const bootloader_openlcb_driver_t openlcb_driver = {
 

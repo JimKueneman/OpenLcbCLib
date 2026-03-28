@@ -11,6 +11,7 @@
             <sourceRootList>
                 <sourceRootElem>.</sourceRootElem>
                 <sourceRootElem>../shared</sourceRootElem>
+                <sourceRootElem>../BasicNode.X</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

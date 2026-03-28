@@ -118,7 +118,7 @@ int main(void) {
 
         /* One-time hardware setup: configure clocks, GPIO, CAN peripheral,
          * SysTick timer, and anything else the bootloader needs. Also
-         * clears the bootloader_request_flag on power-on reset so random
+         * clears bootloader_shared_ram.request_flag on power-on reset so random
          * SRAM garbage does not falsely trigger bootloader mode.
          * Called once at startup before anything else. */
         .initialize_hardware = BootloaderDriversOpenlcb_initialize_hardware,
