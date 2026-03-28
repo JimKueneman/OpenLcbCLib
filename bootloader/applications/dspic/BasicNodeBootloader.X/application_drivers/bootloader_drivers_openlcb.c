@@ -127,6 +127,45 @@ static void _crc3_finish(const _crc3_state_t *crc_state, uint16_t *checksum) {
 }
 
 /* ====================================================================== */
+/* Binary-format flash read (4 bytes per instruction, including phantom)  */
+/* ====================================================================== */
+
+/*
+ * Reads flash in binary-image format: 4 bytes per instruction word
+ * (3 data bytes + phantom 0x00).  This matches the .bin file layout
+ * produced by hex2bin.py and the encoding used by write_flash_bytes().
+ *
+ * Used by finalize_flash to read the bootloader_app_header_t from flash.
+ * Each uint32_t field in the struct aligns with one instruction word,
+ * and the phantom 0x00 byte lands on the MSB of each uint32_t -- which
+ * is always 0x00 for all header fields (app_size < 16 MB, CRC-16 values
+ * fit in 16 bits, reserved slots are zero).
+ *
+ * The public read_flash_bytes (3 data bytes per instruction) is kept
+ * unchanged for other uses such as the blank-flash check in bootloader.c.
+ */
+static void _read_flash_image_bytes(uint32_t flash_addr, void *dest_ram,
+                                    uint32_t size_bytes) {
+
+    uint8_t  *dest_ptr   = (uint8_t *) dest_ram;
+    uint32_t  pc_address = flash_addr / BINARY_TO_PC_DIVISOR;
+    uint32_t  remaining  = size_bytes;
+
+    while (remaining >= 4U) {
+
+        uint32_t flash_word = FLASH_ReadWord24(pc_address);
+        *dest_ptr++ = (uint8_t)(flash_word         & 0xFFU);
+        *dest_ptr++ = (uint8_t)((flash_word >>  8) & 0xFFU);
+        *dest_ptr++ = (uint8_t)((flash_word >> 16) & 0xFFU);
+        *dest_ptr++ = 0x00U;   /* phantom byte -- always zero in flash */
+        remaining  -= 4U;
+        pc_address += 2U;
+
+    }
+
+}
+
+/* ====================================================================== */
 /* Shared RAM flag for app-to-bootloader drop-back                         */
 /* ====================================================================== */
 
@@ -408,13 +447,15 @@ uint16_t BootloaderDriversOpenlcb_finalize_flash(compute_checksum_func_t compute
 
     /* Read the app header from the freshly written flash image.
      * dsPIC33 is a Harvard architecture -- program flash is not in the data
-     * address space, so we use the local read_flash_bytes function instead
-     * of memcpy. */
+     * address space.  _read_flash_image_bytes reads 4 bytes per instruction
+     * (3 data + phantom 0x00), matching the binary image format.  Each
+     * uint32_t field aligns with one instruction; the phantom lands on the
+     * MSB which is always 0x00 for all header fields. */
     bootloader_app_header_t header;
     uint32_t flash_min = APP_FLASH_START * BINARY_TO_PC_DIVISOR;
     uint32_t flash_max = APP_FLASH_END   * BINARY_TO_PC_DIVISOR;
 
-    BootloaderDriversOpenlcb_read_flash_bytes(APP_HEADER_ADDRESS, &header, sizeof(header));
+    _read_flash_image_bytes(APP_HEADER_ADDRESS, &header, sizeof(header));
 
     /* Validate app_size is within flash bounds. */
     uint32_t flash_size = flash_max - flash_min;
@@ -525,24 +566,28 @@ void BootloaderDriversOpenlcb_read_flash_bytes(uint32_t flash_addr, void *dest_r
 void BootloaderDriversOpenlcb_compute_checksum(uint32_t flash_addr, uint32_t size, uint32_t *checksum) {
 
     /*
-     * flash_addr is a 32-bit PC address.  size is the PC-unit span of the
-     * region; each pair of PC units = one 24-bit instruction = 3 data bytes.
-     * Feed bytes from flash into the streaming CRC one instruction at a time
-     * so no large RAM buffer is needed.
+     * flash_addr and size are in binary-byte units (PC * BINARY_TO_PC_DIVISOR),
+     * matching get_flash_boundaries() and the Von Neumann convention used by
+     * the STM32 and MSPM0 platforms.
+     *
+     * Each instruction = 4 binary bytes (3 real data + 1 phantom 0x00).
+     * CRC all 4 bytes per instruction so the result matches a flat CRC of
+     * the .bin file produced by hex2bin.py.
      */
-    uint32_t addr             = flash_addr;
-    uint32_t num_instructions = size / 2U;
+    uint32_t pc_addr          = flash_addr / BINARY_TO_PC_DIVISOR;
+    uint32_t num_instructions = size / (2U * BINARY_TO_PC_DIVISOR);
 
     _crc3_state_t state;
     _crc3_init(&state);
 
-    for (uint32_t instruction_index = 0U; instruction_index < num_instructions; instruction_index++) {
+    for (uint32_t i = 0U; i < num_instructions; i++) {
 
-        uint32_t flash_word = FLASH_ReadWord24(addr);
+        uint32_t flash_word = FLASH_ReadWord24(pc_addr);
         _crc3_add_byte(&state, (uint8_t)(flash_word         & 0xFFU));
         _crc3_add_byte(&state, (uint8_t)((flash_word >> 8)  & 0xFFU));
         _crc3_add_byte(&state, (uint8_t)((flash_word >> 16) & 0xFFU));
-        addr += 2U;
+        _crc3_add_byte(&state, 0x00U);  /* phantom byte -- always zero in flash */
+        pc_addr += 2U;
 
     }
 

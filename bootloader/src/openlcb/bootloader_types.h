@@ -215,7 +215,7 @@ extern "C" {
      *     platforms where the post-link checksum tool has not yet been
      *     integrated.
      */
-    #define NO_CHECKSUM
+    /* #define NO_CHECKSUM */
 
     /* ================================================================== */
     /* SNIP string defaults -- override with -D compiler flags per platform */

@@ -43,71 +43,8 @@
 /** Global bootloader state shared with bootloader_openlcb_statemachine.c. */
 bootloader_state_t bootloader_state;
 
-/** Stored OpenLCB driver pointer for use by loop and checksum. */
+/** Stored OpenLCB driver pointer for use by loop. */
 static const bootloader_openlcb_driver_t *_openlcb_driver;
-
-/* ====================================================================== */
-/* Application checksum validation                                         */
-/* ====================================================================== */
-
-#ifndef NO_CHECKSUM
-
-static bool _check_application_checksum(void) {
-
-    uint32_t flash_min  = 0;
-    uint32_t flash_max  = 0;
-    uint32_t app_header = 0;
-
-    _openlcb_driver->get_flash_boundaries(&flash_min, &flash_max, &app_header);
-
-    /* Copy the header to RAM via the DI flash-read so Harvard architectures
-     * (e.g. dsPIC33) can use table reads instead of data-pointer dereference. */
-    bootloader_app_header_t header_copy;
-    _openlcb_driver->read_flash_bytes(app_header, &header_copy, sizeof(header_copy));
-
-    /* Validate app_size is reasonable. */
-    uint32_t flash_size = flash_max - flash_min;
-
-    if (header_copy.app_size > flash_size) { return false; }
-
-    /* Pre-checksum: flash_min to app_header. */
-    uint32_t pre_size = app_header - flash_min;
-
-    uint32_t checksum[BOOTLOADER_CHECKSUM_COUNT];
-    memset(checksum, 0, sizeof(checksum));
-
-    _openlcb_driver->compute_checksum(flash_min, pre_size, checksum);
-
-    if (memcmp(header_copy.checksum_pre, checksum, sizeof(checksum)) != 0) {
-
-        return false;
-
-    }
-
-    /* Post-checksum: after app_header to app_size. */
-    uint32_t post_offset = (uint32_t) sizeof(bootloader_app_header_t) + pre_size;
-    uint32_t post_size = 0;
-
-    if (post_offset < header_copy.app_size) {
-
-        post_size = header_copy.app_size - post_offset;
-
-    }
-
-    memset(checksum, 0, sizeof(checksum));
-    _openlcb_driver->compute_checksum(app_header + (uint32_t) sizeof(bootloader_app_header_t), post_size, checksum);
-
-    if (memcmp(header_copy.checksum_post, checksum, sizeof(checksum)) != 0) {
-
-        return false;
-
-    }
-
-    return true;
-
-}
-
-#endif /* NO_CHECKSUM */
 
 /* ====================================================================== */
 /* Public API                                                              */
@@ -121,7 +58,9 @@ bool Bootloader_init(const bootloader_can_driver_t *can_driver, const bootloader
     if (request == BOOTLOADER_NOT_REQUESTED) {
 
 #ifndef NO_CHECKSUM
-        bool csum_ok = _check_application_checksum();
+        uint16_t csum_result = openlcb_driver->finalize_flash(
+                openlcb_driver->compute_checksum);
+        bool csum_ok = (csum_result == 0);
         openlcb_driver->set_status_led(BOOTLOADER_LED_CSUM_ERROR, !csum_ok);
 #else
         bool csum_ok = true;

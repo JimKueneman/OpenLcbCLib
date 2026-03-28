@@ -89,4 +89,8 @@ _Static_assert(sizeof(app_header_image_t) == 36U,
  */
 __attribute__((section(".app_header")))
 __attribute__((used))
-const app_header_image_t app_header = { 0U };
+const app_header_image_t app_header = {
+    0U,
+    { 0U, 0U, 0U, 0U },
+    { 0U, 0U, 0U, 0U }
+};

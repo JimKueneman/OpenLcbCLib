@@ -161,10 +161,15 @@ SECTIONS
   ** Application header for bootloader CRC validation.
   **
   ** Fixed at __CODE_BASE + 0x4 = 0x4004 in PC units.  The GOTO at 0x4000
-  ** occupies 1 instruction (2 PC addresses).  The header is 36 data bytes
-  ** = 12 instructions = 24 PC addresses, so it spans 0x4004-0x401B.
+  ** occupies 1 instruction (2 PC addresses).  The header is 27 data bytes
+  ** = 9 instructions = 18 PC addresses, so it spans 0x4004-0x4015.
   **
-  ** The bootloader_app_header_t struct must be defined in the application
+  ** 9 instructions x 4 binary bytes = 36 binary bytes, matching
+  ** sizeof(bootloader_app_header_t) on all platforms.  Each uint32_t
+  ** field aligns with one instruction; the phantom byte (always 0x00)
+  ** lands on the MSB which is naturally zero for all header fields.
+  **
+  ** The app_header_image_t struct must be defined in the application
   ** with __attribute__((section(".app_header"), space(prog))).  The
   ** post-link tool patches the checksum fields before programming.
   */

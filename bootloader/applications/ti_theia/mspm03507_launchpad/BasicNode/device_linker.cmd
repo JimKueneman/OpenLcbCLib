@@ -72,7 +72,7 @@ SECTIONS
      * The bootloader_app_header_t struct must be defined in the application
      * with __attribute__((section(".app_header"))).  The post-link tool
      * patches the checksum fields before programming. */
-    .app_header : {} > 0x00003CC0
+    .app_header : fill = 0x00000000 {} > 0x00003CC0
 
     .text   : palign(8) {} > APP_FLASH
     .const  : palign(8) {} > APP_FLASH

@@ -29,12 +29,13 @@
  *          @c openlcb_bootloader_src/openlcb/bootloader_types.h) to skip
  *          CRC validation at boot time.
  *
- *          @par Struct compatibility
- *          The local @c app_header_image_t type mirrors
- *          @c bootloader_app_header_t from
- *          @c bootloader/src/openlcb/bootloader_types.h.
- *          If that library struct changes (field order, array size, or
- *          @c BOOTLOADER_CHECKSUM_COUNT), update this file to match.
+ *          @par Struct sizing
+ *          The local @c app_header_image_t is a 27-byte opaque array that
+ *          produces exactly 9 dsPIC instruction words in @c space(prog).
+ *          This matches the 36 binary-byte footprint of
+ *          @c bootloader_app_header_t (9 instructions x 4 binary bytes).
+ *          If the library struct changes size, update the array size here
+ *          to @c ceil(new_size / 4) * 3.
  *
  *          @par dsPIC Harvard note
  *          The @c space(prog) attribute is required on dsPIC33 (Harvard
@@ -45,37 +46,41 @@
 #include <stdint.h>
 
 /* -------------------------------------------------------------------------
- * Local mirror of bootloader_app_header_t.
+ * Flash reservation for bootloader_app_header_t.
  *
- * Must match bootloader/src/openlcb/bootloader_types.h exactly:
- *   BOOTLOADER_CHECKSUM_COUNT = 4
- *   struct bootloader_app_header { app_size, checksum_pre[4], checksum_post[4] }
+ * On dsPIC with space(prog), XC16 packs 3 data bytes per instruction word.
+ * The bootloader_app_header_t is 36 bytes and occupies 36 binary bytes in
+ * the firmware image (9 instructions x 4 binary bytes each).
+ *
+ * Each uint32_t field aligns with one instruction.  The phantom byte (4th
+ * byte of each instruction, always 0x00) lands on the MSB of each uint32_t,
+ * which is naturally 0x00 for all header fields (app_size < 16 MB, CRC-16
+ * values fit in 16 bits, reserved slots are zero).
+ *
+ * To produce exactly 9 instructions, this struct is declared as a 27-byte
+ * opaque array (9 instructions x 3 data bytes).  The post-link tool
+ * (hex2bin.py) patches the 36 flat binary bytes at the correct offset;
+ * write_flash_bytes discards the phantom bytes, leaving the correct 27
+ * data bytes in flash.
+ *
+ * The bootloader reads back with _read_flash_image_bytes (4 bytes per
+ * instruction) and reconstructs the original 36-byte struct.
  * ------------------------------------------------------------------------- */
 
-/** Number of CRC words per checksum array -- must equal BOOTLOADER_CHECKSUM_COUNT. */
-#define APP_HEADER_CHECKSUM_COUNT  4U
-
 /**
- * @brief Local mirror of @c bootloader_app_header_t.
+ * @brief Flash reservation sized to produce exactly 9 instruction words.
  *
- * @details
- * | Field          | Size   | Description                                    |
- * |----------------|--------|------------------------------------------------|
- * | app_size       | 4 B    | Total image bytes from flash_min to image end  |
- * | checksum_pre   | 16 B   | Triple CRC-16-IBM of the pre-header region     |
- * | checksum_post  | 16 B   | Triple CRC-16-IBM of the post-header region    |
- *
- * Total: 36 bytes.
+ * @details 9 instructions x 3 data bytes = 27 bytes.  The phantom byte
+ *          per instruction is implicit in space(prog) encoding.
  */
 typedef struct {
-    uint32_t app_size;
-    uint32_t checksum_pre[APP_HEADER_CHECKSUM_COUNT];
-    uint32_t checksum_post[APP_HEADER_CHECKSUM_COUNT];
+
+    uint8_t raw[27];
+
 } app_header_image_t;
 
-/** Size guard: fail at compile time if this drifts from the library struct.
- *  XC16 does not support C11 _Static_assert, so use the negative-array-size trick. */
-typedef char _check_app_header_size[(sizeof(app_header_image_t) == 36U) ? 1 : -1];
+/** Size guard: must produce exactly 9 instructions (27 data bytes). */
+typedef char _check_app_header_size[(sizeof(app_header_image_t) == 27U) ? 1 : -1];
 
 /* -------------------------------------------------------------------------
  * Image header instance
@@ -94,4 +99,4 @@ typedef char _check_app_header_size[(sizeof(app_header_image_t) == 36U) ? 1 : -1
  */
 __attribute__((section(".app_header"), space(prog)))
 __attribute__((used))
-const app_header_image_t app_header = { 0U };
+const app_header_image_t app_header = {{ 0U }};
