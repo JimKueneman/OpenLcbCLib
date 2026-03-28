@@ -77,7 +77,6 @@ MCAN1.rrfs                     = true;
 MCAN1.txEventFIFOWaterMark     = 0;
 MCAN1.rxFIFO0waterMark         = 0;
 MCAN1.stdFiltID1               = 4;
-MCAN1.enableInterrupt          = true;
 MCAN1.interruptLine            = ["DL_MCAN_INTR_LINE_NUM_1"];
 MCAN1.m0interrupts             = ["DL_MCAN_MSP_INTERRUPT_LINE1"];
 MCAN1.overrideRetention        = true;

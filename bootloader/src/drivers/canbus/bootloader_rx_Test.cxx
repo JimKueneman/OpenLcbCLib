@@ -615,3 +615,74 @@ TEST(BootloaderRxDatagram, get_datagram_clears_flag) {
     EXPECT_FALSE(BootloaderRx_has_datagram());
 
 }
+
+/* ====================================================================== */
+/* Idle datagram assembly timeout tests                                    */
+/* ====================================================================== */
+
+TEST(BootloaderRxDatagram, idle_timeout_clears_stale_assembly) {
+
+    _reset();
+
+    /* FIRST frame arrives at tick 0. */
+    uint8_t first_data[4] = {0x20, 0x00, 0x00, 0x00};
+    _enqueue_frame(_make_datagram_first_id(OUR_ALIAS, SENDER_ALIAS), 4, first_data);
+    BootloaderRx_poll(OUR_ALIAS, 0);
+
+    EXPECT_FALSE(BootloaderRx_has_error());
+    EXPECT_FALSE(BootloaderRx_has_datagram());
+
+    /* No more frames arrive.  Poll again 30 ticks later (3 seconds).
+     * The idle timeout check should clear the stale assembly. */
+    BootloaderRx_poll(OUR_ALIAS, 30);
+
+    EXPECT_TRUE(BootloaderRx_has_error());
+    bootloader_rx_error_t err = BootloaderRx_get_error();
+    EXPECT_EQ(err.error_code, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+    EXPECT_EQ(err.error_src_alias, SENDER_ALIAS);
+
+    /* After the stale assembly is cleared, a new datagram should
+     * be accepted without error. */
+    uint8_t new_data[3] = {0x20, 0x80, 0xEF};
+    _enqueue_frame(_make_datagram_only_id(OUR_ALIAS, SENDER_ALIAS), 3, new_data);
+    BootloaderRx_poll(OUR_ALIAS, 31);
+
+    EXPECT_TRUE(BootloaderRx_has_datagram());
+    EXPECT_FALSE(BootloaderRx_has_error());
+
+}
+
+TEST(BootloaderRxDatagram, idle_timeout_boundary_no_error) {
+
+    _reset();
+
+    /* FIRST frame arrives at tick 0. */
+    uint8_t first_data[4] = {0x20, 0x00, 0x00, 0x00};
+    _enqueue_frame(_make_datagram_first_id(OUR_ALIAS, SENDER_ALIAS), 4, first_data);
+    BootloaderRx_poll(OUR_ALIAS, 0);
+
+    EXPECT_FALSE(BootloaderRx_has_error());
+
+    /* Poll at tick 29 -- just under the 30-tick timeout.
+     * Assembly should still be in progress, no error. */
+    BootloaderRx_poll(OUR_ALIAS, 29);
+
+    EXPECT_FALSE(BootloaderRx_has_error());
+
+    /* A FINAL frame arriving at tick 29 should complete normally. */
+    uint8_t final_data[4] = {0xAA, 0xBB, 0xCC, 0xDD};
+    _enqueue_frame(_make_datagram_final_id(OUR_ALIAS, SENDER_ALIAS), 4, final_data);
+    BootloaderRx_poll(OUR_ALIAS, 29);
+
+    EXPECT_TRUE(BootloaderRx_has_datagram());
+    EXPECT_FALSE(BootloaderRx_has_error());
+
+    uint16_t src;
+    uint8_t buf[72];
+    uint8_t len;
+    EXPECT_TRUE(BootloaderRx_get_datagram(&src, buf, &len));
+    EXPECT_EQ(len, 8);
+    EXPECT_EQ(buf[0], 0x20);
+    EXPECT_EQ(buf[4], 0xAA);
+
+}

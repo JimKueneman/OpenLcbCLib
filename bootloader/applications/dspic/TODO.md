@@ -1,17 +1,42 @@
 # dsPIC33 Bootloader TODO
 
-The dsPIC implementation is the reference pattern. All three swimlanes are fully implemented
-and working. The items below are shared issues that also apply to all other platforms.
+The dsPIC implementation is the reference pattern. All three swimlanes are fully
+implemented, tested on real hardware, and working end-to-end (PICkit program,
+boot-time checksum validation, OTA firmware upload via OpenLCB Config Tool,
+application drop-back via Freeze, and reboot into new firmware).
 
-## MEDIUM
+## DONE (kept for history)
 
-### `NO_CHECKSUM` is globally enabled
+### `NO_CHECKSUM` -- RESOLVED
 
-**File:** Shared `bootloader_types.h:218`
+`NO_CHECKSUM` in `bootloader_types.h` is now commented out (disabled).
+Checksum validation is active at both boot time and after firmware write.
+The post-link tool (`hex2bin.py --arch dspic`) patches the app header with
+correct triple-CRC-16-IBM checksums including phantom byte correction.
 
-`#define NO_CHECKSUM` is uncommented. All checksum validation is skipped -- both at boot and
-after firmware write. Any corrupted image will be jumped to. Acceptable for development, must
-be addressed before production.
+### `finalize_flash()` checksum validation -- RESOLVED
+
+The `#ifndef NO_CHECKSUM` branch reads the app header via Harvard-safe
+`_read_flash_image_bytes()`, recomputes both pre and post triple-CRC
+checksums, and returns `ERROR_PERMANENT` on mismatch. Active and verified
+on hardware.
+
+### BasicNode `app_header.c` and linker sections -- RESOLVED
+
+- `BasicNode.X/app_header.c` -- 27-byte zero-init struct with `space(prog)`
+- `BasicNode.X/p33EP512MC506_BasicNode.gld` -- `.app_reset` at `__CODE_BASE`,
+  `.app_header` at PC 0x4004
+- `BasicNode.X/reset_vector.s` -- `GOTO __reset` via linker-controlled section
+
+All checksum fields are patched by hex2bin.py before upload.
+
+### firmware_active not cleared on Unfreeze failure -- RESOLVED
+
+**File:** Shared `bootloader_openlcb_statemachine.c`
+
+The Unfreeze error path now clears `bootloader_state.firmware_active = 0`
+before sending datagram_rejected, so the node does not stay stuck with the
+Firmware Upgrade Active PIP bit set.
 
 ## LOW
 
@@ -19,26 +44,11 @@ be addressed before production.
 
 **File:** `BasicNodeBootloader.X/application_drivers/bootloader_drivers_openlcb.c`
 
-Returns a fixed node ID for all boards. Two dsPIC boards on the same CAN bus will have
-identical node IDs. TODO comment already present about reading from protected flash.
+Returns a fixed node ID (`0x0501010107AA`) for all boards. Two dsPIC boards
+on the same CAN bus will have identical node IDs. TODO comment already present
+about reading from protected flash or device unique ID.
 
-### `finalize_flash()` checksum validation is implemented but inactive
+### DSPIC33_BOOTLOADER_LESSONS_LEARNED.md -- DELETED
 
-**File:** `BasicNodeBootloader.X/application_drivers/bootloader_drivers_openlcb.c`
-
-The `#ifndef NO_CHECKSUM` branch now reads the app header via Harvard-safe
-`BootloaderDriversOpenlcb_read_flash_bytes()`, recomputes both pre and post
-triple-CRC checksums, and returns `ERROR_PERMANENT` on mismatch. Currently
-inactive because `NO_CHECKSUM` is defined.
-
-Blocked on: post-link checksum tool populating app_header in firmware images.
-
-### BasicNode `app_header.c` and linker section added
-
-**Files:**
-- `BasicNode.X/src/application_callbacks/app_header.c` -- zero-initialized header struct with `space(prog)`
-- `BasicNode.X/p33EP512MC506_BasicNode.gld` -- `.app_header` section at PC 0x4004
-
-The app header struct is placed in program flash at the expected address. All
-checksum fields are zero. A post-link tool must patch them before production
-programming.
+Content was integrated into `How_To_Modify_For_Your_dsPIC.md`. The old file
+has been removed.

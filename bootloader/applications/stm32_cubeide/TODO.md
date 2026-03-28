@@ -38,28 +38,39 @@ mismatch. Covers both the main write loop and the partial-word tail.
 Added `__DSB()` + `__ISB()` after writing `SCB->VTOR` to ensure the pipeline fetches
 vectors from the new table before the jump.
 
-## OPEN -- Development Only
+### `NO_CHECKSUM` commented out -- checksums now active
 
-### `NO_CHECKSUM` is globally enabled
+**Fixed in:** `bootloader_drivers_openlcb.h` and shared `bootloader_types.h`
 
-**File:** Shared `bootloader_types.h:218`
+`NO_CHECKSUM` is now commented out on both copies. Boot-time and post-write checksum
+validation are active. The `finalize_flash()` triple-CRC logic in
+`bootloader_drivers_openlcb.c` is no longer gated. Verified against source 2026-03-28.
 
-`#define NO_CHECKSUM` is uncommented. All checksum validation is skipped -- both at boot
-and after firmware write. Any corrupted image will be jumped to. Acceptable for
-development, must be addressed before production.
+### `finalize_flash()` checksum validation now active
 
-Blocked on: post-link checksum tool integration.
+**Fixed in:** `BasicNodeBootloader/Core/Src/application_drivers/bootloader_drivers_openlcb.c`
 
-### `finalize_flash()` checksum validation is implemented but inactive
+The `#ifndef NO_CHECKSUM` branch reads the app header, recomputes both pre and post
+triple-CRC checksums, and returns `ERROR_PERMANENT` on mismatch. The logic mirrors
+`_check_application_checksum()` in the library's `bootloader.c`. Now active since
+`NO_CHECKSUM` is undefined. Verified against source 2026-03-28.
 
-**File:** `BasicNodeBootloader/Core/Src/application_drivers/bootloader_drivers_openlcb.c`
+### BasicNode `app_header.c` and linker section added
 
-The `#ifndef NO_CHECKSUM` branch now reads the app header, recomputes both
-pre and post triple-CRC checksums, and returns `ERROR_PERMANENT` on mismatch.
-The logic mirrors `_check_application_checksum()` in the library's `bootloader.c`.
-Currently inactive because `NO_CHECKSUM` is defined.
+**Fixed in:**
+- `BasicNode/Core/Src/app_header.c` -- zero-initialized header struct with `_Static_assert` size guard
+- `BasicNode/STM32F407VGTX_APPLICATION.ld` -- `.app_header` section at 0x08008200
 
-Blocked on: post-link checksum tool populating app_header in firmware images.
+The app header struct is placed in flash at the expected address. The post-link
+checksum tool patches the fields before programming. Verified against source 2026-03-28.
+
+### STM32 lessons learned files -- DELETED
+
+`STM32F407_BOOTLOADER_LESSONS_LEARNED.md` and `STM32_BOOTLOADER_LESSONS_LEARNED.md`
+content was integrated into `How_To_Modify_For_Your_STM32.md`. The old files
+have been removed.
+
+## LOW
 
 ### Node ID is hardcoded
 
@@ -69,4 +80,9 @@ Returns `0x050101012201ULL` for all boards. Two STM32 boards on the same CAN bus
 have identical node IDs. TODO comment already present about reading from protected flash
 sector at `NODEID_FLASH_ADDRESS`.
 
-Blocked on: production flash programming workflow.
+### No button debouncing
+
+**File:** `BasicNodeBootloader/Core/Src/application_drivers/bootloader_drivers_openlcb.c`
+
+Single read of B1 (PA0) with no debounce logic. Low risk since the button is only
+checked once at startup, but worth noting for noisy environments.

@@ -147,27 +147,25 @@ static void _mock_reboot(void) {
 
 static void _mock_openlcb_init(bootloader_request_t request) { (void)request; }
 
-static void _mock_get_flash_boundaries(const void **flash_min, const void **flash_max, const struct bootloader_app_header **app_header) {
+static void _mock_get_flash_boundaries(uint32_t *flash_min, uint32_t *flash_max, uint32_t *app_header) {
 
-    *flash_min = mock_flash;
-    *flash_max = mock_flash + MOCK_FLASH_SIZE;
-    *app_header = (const struct bootloader_app_header *)
-            (mock_flash + MOCK_APP_HEADER_OFFSET);
+    *flash_min = (uint32_t)(uintptr_t) mock_flash;
+    *flash_max = (uint32_t)(uintptr_t)(mock_flash + MOCK_FLASH_SIZE);
+    *app_header = (uint32_t)(uintptr_t)(mock_flash + MOCK_APP_HEADER_OFFSET);
 
 }
 
-static void _mock_get_flash_page_info(const void *address, const void **page_start, uint32_t *page_length_bytes) {
+static void _mock_get_flash_page_info(uint32_t address, uint32_t *page_start, uint32_t *page_length_bytes) {
 
-    uintptr_t addr = (uintptr_t) address;
-    uintptr_t page = addr & ~((uintptr_t) 1023);
-    *page_start = (const void *) page;
+    *page_start = address & ~((uint32_t) 1023);
     *page_length_bytes = 1024;
 
 }
 
-static uint16_t _mock_erase_flash_page(const void *address) {
+static uint16_t _mock_erase_flash_page(uint32_t address) {
 
-    uintptr_t offset = (uintptr_t) address - (uintptr_t) mock_flash;
+    uint32_t base32 = (uint32_t)(uintptr_t) mock_flash;
+    uint32_t offset = address - base32;
 
     if (offset + 1024 <= MOCK_FLASH_SIZE) {
 
@@ -180,9 +178,10 @@ static uint16_t _mock_erase_flash_page(const void *address) {
 
 }
 
-static uint16_t _mock_write_flash_bytes(const void *address, const void *data, uint32_t size_bytes) {
+static uint16_t _mock_write_flash_bytes(uint32_t address, const uint8_t *data, uint32_t size_bytes) {
 
-    uintptr_t offset = (uintptr_t) address - (uintptr_t) mock_flash;
+    uint32_t base32 = (uint32_t)(uintptr_t) mock_flash;
+    uint32_t offset = address - base32;
 
     if (offset + size_bytes <= MOCK_FLASH_SIZE) {
 
@@ -202,7 +201,10 @@ static uint16_t _mock_flash_complete(compute_checksum_func_t compute_checksum_he
 
 }
 
-static void _mock_checksum_data(const void *data, uint32_t size, uint32_t *checksum) {
+static void _mock_checksum_data(uint32_t flash_addr, uint32_t size, uint32_t *checksum) {
+
+    uint32_t base32 = (uint32_t)(uintptr_t) mock_flash;
+    const uint8_t *data = mock_flash + (flash_addr - base32);
 
     memset(checksum, 0, BOOTLOADER_CHECKSUM_COUNT * sizeof(uint32_t));
     uint16_t crc_out[3] = {0, 0, 0};

@@ -97,8 +97,8 @@ extern "C" {
     /* LED pin (PA0, negative logic)                                       */
     /* ================================================================== */
 
-    #define BOOTLOADER_LED_PORT        GPIOA
-    #define BOOTLOADER_LED_PIN         DL_GPIO_PIN_0
+    #define BOOTLOADER_LED_PORT        GPIOB
+    #define BOOTLOADER_LED_PIN         DL_GPIO_PIN_22
 
     /* ================================================================== */
     /* Button pin (PB21, negative logic, needs pull-up)                    */

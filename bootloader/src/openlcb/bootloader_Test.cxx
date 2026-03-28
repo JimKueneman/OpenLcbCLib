@@ -75,6 +75,7 @@ TEST(BootloaderInit, invalid_checksum_enters_bootloader) {
 
     mock_reset();
     mock_request_bootloader = BOOTLOADER_NOT_REQUESTED;
+    mock_flash_complete_result = ERROR_PERMANENT;
 
     /* Flash is all 0xFF -- app_header has wrong checksums. */
     bool result = Bootloader_init(&mock_can_driver, &mock_openlcb_driver, mock_request_bootloader);

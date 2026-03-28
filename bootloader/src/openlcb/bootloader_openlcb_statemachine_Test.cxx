@@ -252,6 +252,7 @@ TEST(BootloaderProtocol, unfreeze_fail_rejected) {
     BootloaderOpenlcbSM_on_datagram_received(0x456, 0, unfreeze_dg, 3);
 
     EXPECT_FALSE(bootloader_state.request_reset);
+    EXPECT_FALSE(bootloader_state.firmware_active);
 
 }
 
@@ -350,5 +351,64 @@ TEST(BootloaderProtocol, non_memconfig_datagram_rejected) {
     BootloaderOpenlcbSM_on_datagram_received(0x456, 0, unknown_dg, 2);
 
     EXPECT_FALSE(bootloader_state.request_reset);
+
+}
+
+/* ====================================================================== */
+/* Write retry: read-before-write skip                                     */
+/* ====================================================================== */
+
+TEST(BootloaderProtocol, write_retry_skips_already_programmed_flash) {
+
+    _init_bootloader();
+
+    /* First write -- data goes into flash normally. */
+    uint8_t write_dg[] = {0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0xEF,
+                          0xAA, 0xBB, 0xCC, 0xDD};
+    BootloaderOpenlcbSM_on_datagram_received(0x456, 0, write_dg, 11);
+
+    EXPECT_EQ(mock_write_count, 1);
+    EXPECT_EQ(mock_erase_count, 1);
+
+    mock_tx_count = 0;
+
+    /* Retry -- same offset, same data.  The read-before-write check
+     * should see that flash already contains the data and skip the
+     * write_flash_bytes call. */
+    BootloaderOpenlcbSM_on_datagram_received(0x456, 0, write_dg, 11);
+
+    EXPECT_EQ(mock_write_count, 1);  /* Still 1 -- write was skipped. */
+
+    /* Should still send a successful write reply. */
+    uint8_t reply[72];
+    uint8_t reply_len = _reassemble_datagram(reply, sizeof(reply));
+
+    ASSERT_EQ(reply_len, 7);
+    EXPECT_EQ(reply[0], 0x20);
+    EXPECT_EQ(reply[1], 0x10);  /* CONFIG_MEM_WRITE_REPLY_OK */
+    EXPECT_EQ(reply[6], 0xEF);
+
+}
+
+TEST(BootloaderProtocol, write_different_data_proceeds_normally) {
+
+    _init_bootloader();
+
+    /* First write. */
+    uint8_t write_dg1[] = {0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0xEF,
+                           0xAA, 0xBB, 0xCC, 0xDD};
+    BootloaderOpenlcbSM_on_datagram_received(0x456, 0, write_dg1, 11);
+
+    EXPECT_EQ(mock_write_count, 1);
+
+    mock_tx_count = 0;
+
+    /* Second write -- same offset but different data.
+     * The read-before-write check should see a mismatch and proceed. */
+    uint8_t write_dg2[] = {0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0xEF,
+                           0x11, 0x22, 0x33, 0x44};
+    BootloaderOpenlcbSM_on_datagram_received(0x456, 0, write_dg2, 11);
+
+    EXPECT_EQ(mock_write_count, 2);  /* Write proceeded. */
 
 }

@@ -75,6 +75,28 @@ static uint16_t _flush_write_buffer(void) {
 
     _openlcb_driver->get_flash_page_info(address, &page_start, &page_length);
 
+    /* Read current flash content and skip if it already matches.
+     * This makes CT retries safe -- a retry re-sends the same data for an
+     * address that was already programmed.  Without this check, writing
+     * already-programmed flash words causes undefined behavior on some
+     * targets (e.g. MSPM0 flash controller hangs permanently).
+     *
+     * The check must happen BEFORE the erase -- if the address is
+     * page-aligned, erasing first would destroy the data we need to
+     * compare against. */
+    uint8_t flash_read_buf[BOOTLOADER_WRITE_BUFFER_SIZE];
+    _openlcb_driver->read_flash_bytes(address, flash_read_buf,
+            bootloader_state.write_buffer_index);
+
+    if (memcmp(flash_read_buf, bootloader_state.write_buffer,
+            bootloader_state.write_buffer_index) == 0) {
+
+        bootloader_state.write_buffer_offset += bootloader_state.write_buffer_index;
+        _init_write_buffer();
+        return 0;
+
+    }
+
     if (page_start == address) {
 
         _openlcb_driver->set_status_led(BOOTLOADER_LED_WRITING, true);
@@ -286,6 +308,7 @@ static void _handle_memconfig(uint16_t src_alias, uint64_t src_node_id, const ui
 
                 if (result != 0) {
 
+                    bootloader_state.firmware_active = 0;
                     BootloaderCanSM_send_datagram_rejected(src_alias, src_node_id, result);
                     return;
 

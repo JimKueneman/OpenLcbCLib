@@ -2,42 +2,51 @@
 
 Issues found by swimlane analysis against the dsPIC reference implementation.
 
-## MEDIUM
+## FIXED
 
 ### Freeze callback does not disable interrupts before writing shared RAM
 
-**File:** `BasicNode/application_callbacks/callbacks_config_mem.c:52-67`
+**Fixed in:** `BasicNode/application_callbacks/callbacks_config_mem.c`
 
-The freeze callback writes `bootloader_cached_alias` and `bootloader_request_flag` then
-calls `DL_SYSCTL_resetDevice(DL_SYSCTL_RESET_SYSRST)` without disabling interrupts first.
-If a CAN (MCAN) interrupt fires between the alias write and the reset, it could corrupt
-state or cause the library to process a stale message while shared RAM is half-written.
-
-The dsPIC reference does `_GIE = 0` and disables CAN interrupts before touching shared
-RAM (see `bootloader/applications/dspic/BasicNode.X/src/application_callbacks/callbacks_config_mem.c:139-148`).
-
-Suggested fix -- add before the shared RAM writes:
-
-```c
-__disable_irq();
-```
+Added `__disable_irq()` before shared RAM writes. Comment explains why no peripheral
+teardown is needed (DL_SYSCTL_resetDevice resets all peripherals).
 
 ### Misleading comment about cleanup
 
-**File:** `BasicNode/application_callbacks/callbacks_config_mem.c:58`
+**Fixed in:** `BasicNode/application_callbacks/callbacks_config_mem.c`
 
-Comment says "TI_DriverLibDrivers_cleanup_before_handoff will get called by the library"
-but the `DL_SYSCTL_resetDevice()` call fires immediately -- the library never gets a chance
-to call cleanup. The comment should be removed or the cleanup should be called explicitly
-before reset if peripheral teardown matters.
+Removed the incorrect comment claiming the library would call cleanup. Replaced with
+comments explaining each step of the drop-back sequence.
 
-### `NO_CHECKSUM` is globally enabled
+### `NO_CHECKSUM` commented out -- checksums now active
 
-**File:** Shared `bootloader_types.h:218`
+**Fixed in:** `bootloader_drivers_openlcb.h` and shared `bootloader_types.h`
 
-`#define NO_CHECKSUM` is uncommented. All checksum validation is skipped -- both at boot and
-after firmware write. Any corrupted image will be jumped to. Acceptable for development, must
-be addressed before production.
+`NO_CHECKSUM` is now commented out on both copies. Boot-time and post-write checksum
+validation are active. The `finalize_flash()` triple-CRC logic in
+`bootloader_drivers_openlcb.c` is no longer gated. Verified against source 2026-03-28.
+
+### `finalize_flash()` checksum validation now active
+
+**Fixed in:** `BasicNodeBootloader/application_drivers/bootloader_drivers_openlcb.c`
+
+The `#ifndef NO_CHECKSUM` branch reads the app header, recomputes both pre and post
+triple-CRC checksums, and returns `ERROR_PERMANENT` on mismatch. Now active since
+`NO_CHECKSUM` is undefined. Verified against source 2026-03-28.
+
+### BasicNode `app_header.c` and linker section added
+
+**Fixed in:**
+- `BasicNode/app_header.c` -- zero-initialized header struct with `_Static_assert` size guard
+- `BasicNode/device_linker.cmd` -- `.app_header` section at 0x00003CC0
+
+The app header struct is placed in flash at the expected address. The post-link
+checksum tool patches the fields before programming. Verified against source 2026-03-28.
+
+### `TI_MSPM0_BOOTLOADER_LESSONS_LEARNED.md` -- DELETED
+
+Content was integrated into `How_To_Modify_For_Your_MSPM0.md`. The old file
+has been removed.
 
 ## LOW
 
@@ -56,22 +65,3 @@ at `NODEID_FLASH_ADDRESS`.
 Single read of GPIO PB21 with no debounce logic. Electrical noise could theoretically
 trigger false bootloader entry. Low risk since the button is only checked once at startup,
 but worth noting for noisy environments.
-
-### `finalize_flash()` checksum validation is implemented but inactive
-
-**File:** `BasicNodeBootloader/application_drivers/bootloader_drivers_openlcb.c`
-
-The `#ifndef NO_CHECKSUM` branch now reads the app header, recomputes both
-pre and post triple-CRC checksums, and returns `ERROR_PERMANENT` on mismatch.
-Currently inactive because `NO_CHECKSUM` is defined.
-
-Blocked on: post-link checksum tool populating app_header in firmware images.
-
-### BasicNode `app_header.c` and linker section added
-
-**Files:**
-- `BasicNode/application_callbacks/app_header.c` -- zero-initialized header struct
-- `BasicNode/device_linker.cmd` -- `.app_header` section at 0x00003CC0
-
-The app header struct is placed in flash at the expected address. All checksum
-fields are zero. A post-link tool must patch them before production programming.

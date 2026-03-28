@@ -268,8 +268,6 @@ bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
      */
     if (!IO_BOOT_GetValue()) {
 
-        IO_BOOTLOADER_LED_ACTIVE_SetHigh();
-        
         return BOOTLOADER_REQUESTED_BY_BUTTON;
 
     }
@@ -636,14 +634,6 @@ uint64_t BootloaderDriversOpenlcb_get_persistent_node_id(void) {
 
 void BootloaderDriversOpenlcb_set_status_led(bootloader_led_enum led, bool value) {
 
-    (void) led;
-    (void) value;
-
-    /* LED feedback from the library is disabled.  The single status LED
-     * is used instead to indicate push-button entry into bootloader mode
-     * (see is_bootloader_requested). */
-
-    /*
     switch (led) {
 
         case BOOTLOADER_LED_ACTIVE:
@@ -682,6 +672,5 @@ void BootloaderDriversOpenlcb_set_status_led(bootloader_led_enum led, bool value
             break;
 
     }
-    */
 
 }

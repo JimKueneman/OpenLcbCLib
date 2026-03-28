@@ -158,6 +158,24 @@ SECTIONS
 
 
   /*
+  ** Application reset vector (GOTO __reset) at __CODE_BASE.
+  **
+  ** The bootloader jumps to __CODE_BASE (0x4000) to start the application.
+  ** This section places a GOTO __reset instruction there so execution
+  ** reaches the C runtime startup.  The input section "resetvector" is
+  ** defined in reset_vector.s.
+  **
+  ** The XC16 assembler's address() attribute on .section directives does
+  ** not reliably emit data into the hex file when the target address falls
+  ** inside a linker-script-defined memory region.  Mapping the section
+  ** explicitly in the linker script ensures it appears in the output.
+  */
+  .app_reset __CODE_BASE :
+  {
+        KEEP (*(.resetvector));
+  } >program
+
+  /*
   ** Application header for bootloader CRC validation.
   **
   ** Fixed at __CODE_BASE + 0x4 = 0x4004 in PC units.  The GOTO at 0x4000

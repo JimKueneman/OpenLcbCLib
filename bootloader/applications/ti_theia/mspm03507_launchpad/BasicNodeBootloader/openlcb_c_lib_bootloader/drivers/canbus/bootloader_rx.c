@@ -297,6 +297,24 @@ void BootloaderRx_init(const bootloader_can_driver_t *can_driver) {
 
 void BootloaderRx_poll(uint16_t our_alias, uint8_t current_tick) {
 
+    /* Check for stale datagram assembly on idle.  If a FIRST frame was
+     * received but no MIDDLE/FINAL frames arrive (e.g. frame lost on the
+     * bus), the assembly stays stuck until a new frame triggers the timeout
+     * check inside _handle_datagram_frame().  This idle check clears the
+     * stale assembly so the next datagram can be received immediately
+     * instead of waiting for the CT to retry and hit the in-frame timeout. */
+    if (_rx.datagram_in_progress) {
+
+        uint8_t elapsed = (uint8_t) (current_tick - _rx.datagram_last_tick);
+
+        if (elapsed >= BOOTLOADER_RX_ASSEMBLY_TIMEOUT_TICKS) {
+
+            _flag_error(ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START, _rx.datagram_src);
+
+        }
+
+    }
+
     bootloader_can_frame_t frame;
 
     while (_rx.can_driver->read_received_frame(&frame)) {
