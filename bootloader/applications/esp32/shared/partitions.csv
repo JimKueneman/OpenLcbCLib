@@ -1,0 +1,12 @@
+# OpenLCB ESP32 partition table -- dual OTA for bootloader support.
+#
+# Total flash: 4 MB (standard ESP32-DevKit V1).
+#
+# Each OTA slot is 1,920 KB (0x1E0000), large enough for a typical
+# OpenLCB application with Arduino framework overhead.
+#
+# Name,     Type, SubType, Offset,     Size,       Flags
+nvs,        data, nvs,     0x9000,     0x5000,
+otadata,    data, ota,     0xE000,     0x2000,
+ota_0,      app,  ota_0,   0x10000,    0x1E0000,
+ota_1,      app,  ota_1,   0x1F0000,   0x1E0000,

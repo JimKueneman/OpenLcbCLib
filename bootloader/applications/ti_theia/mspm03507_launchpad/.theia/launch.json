@@ -44,6 +44,15 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "gpio_toggle_output",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "gpio_toggle_output",
+                "resourceId": "/gpio_toggle_output"
+            }
         }
     ]
 }

@@ -27,37 +27,26 @@
  * @file bootloader_shared_ram.h
  *
  * Shared RAM definitions for the bootloader <-> application handshake on
- * dsPIC33EP512MC506.  This header is compiled into BOTH the bootloader
- * project and the application project.
+ * ESP32.  This header is compiled into BOTH the bootloader project and the
+ * application project.
  *
- * RAM layout (dsPIC33EP512MC506, RAM starts at 0x1000):
+ * On ESP32, variables are placed in RTC slow memory using RTC_NOINIT_ATTR.
+ * This region survives both software reset (esp_restart) and deep sleep.
+ * The ESP-IDF linker script already defines the rtc_noinit segment, so no
+ * linker script changes are needed.
  *
- *   0x1000  bootloader_cached_alias  (2 bytes)  -- CAN alias from app before reset
- *   0x1002  bootloader_request_flag  (4 bytes)  -- magic value 0xB00710AD
- *   0x1006  bootloader_vivt_jumptable            -- 7 x 4-byte function pointers
- *
- * All addresses are below 0x2000 (near data window) so no far attribute is
- * needed.  All variables use __attribute__((persistent)) so they are not
- * zeroed by the C startup code and survive a software reset.
+ * A struct is used (rather than bare globals) to prevent the linker from
+ * reordering the fields independently in each binary.  Both projects
+ * compile this same file, so the struct layout is identical and the
+ * bootloader reads exactly what the application wrote.
  *
  * HOW THE MAGIC VALUE WORKS:
- *   Before issuing a software reset to enter the bootloader, the application
- *   writes BOOTLOADER_REQUEST_MAGIC into bootloader_request_flag and its
- *   current CAN alias into bootloader_cached_alias.  After the reset the
- *   bootloader checks bootloader_request_flag; if it matches it clears the
- *   flag and enters firmware-update mode using the cached alias.  A 32-bit
- *   magic value is used (not a single bit) so random SRAM garbage after
- *   power-on cannot accidentally trigger bootloader mode.
- *
- * HOW INTERRUPT REDIRECT (VIVT) WORKS:
- *   On dsPIC33 the hardware IVT is at a fixed flash address owned by the
- *   bootloader.  After jump_to_application() the application code runs but
- *   all interrupts still fire into the bootloader's ISR stubs.  Each stub
- *   checks its corresponding function pointer in bootloader_vivt_jumptable;
- *   if non-NULL it calls it.  The application fills in those pointers during
- *   its startup so normal interrupt-driven operation resumes transparently.
- *   A NULL pointer means the redirect is not yet set up -- no separate
- *   interrupt_redirect flag is required.
+ *   Before issuing esp_restart() to enter the bootloader, the application
+ *   writes BOOTLOADER_REQUEST_MAGIC into request_flag and its current CAN
+ *   alias into cached_alias.  After the reset the bootloader checks
+ *   request_flag; if it matches it clears the flag and enters firmware-
+ *   update mode using the cached alias.  A 32-bit magic value (not a
+ *   single bit) makes a random power-on match statistically negligible.
  *
  * @author Jim Kueneman
  * @date 25 Mar 2026
@@ -76,38 +65,27 @@ extern "C" {
 /* Magic value                                                             */
 /* ====================================================================== */
 
-/** Written to bootloader_request_flag by the application before reset. */
+/** Written to request_flag by the application before reset. */
 #define BOOTLOADER_REQUEST_MAGIC  0xB00710ADUL
 
 /* ====================================================================== */
-/* VIVT type                                                               */
+/* Shared RAM struct                                                       */
 /* ====================================================================== */
-
-typedef void (*bootloader_isr_handler_t)(void);
 
 /**
- * Virtual Interrupt Vector Table.
- * The application fills in these function pointers during its startup.
- * Each bootloader ISR stub calls through here when the pointer is non-NULL.
- * NULL means the redirect is not yet set up -- no separate flag needed.
+ * Bootloader/application handshake data.
+ *
+ * Wrapping the fields in a struct prevents the linker from reordering
+ * them independently between the bootloader and application builds.
  */
 typedef struct {
-    bootloader_isr_handler_t oscillatorfail_handler;
-    bootloader_isr_handler_t addresserror_handler;
-    bootloader_isr_handler_t stackerror_handler;
-    bootloader_isr_handler_t matherror_handler;
-    bootloader_isr_handler_t dmacerror_handler;
-    bootloader_isr_handler_t timer_2_handler;
-    bootloader_isr_handler_t can1_handler;
-} vivt_jumptable_t;
 
-/* ====================================================================== */
-/* Shared RAM variable declarations                                        */
-/* ====================================================================== */
+    volatile uint32_t request_flag;
+    volatile uint16_t cached_alias;
 
-extern volatile uint16_t          bootloader_cached_alias;
-extern volatile uint32_t          bootloader_request_flag;
-extern volatile vivt_jumptable_t  bootloader_vivt_jumptable;
+} bootloader_shared_ram_t;
+
+extern bootloader_shared_ram_t bootloader_shared_ram;
 
 #ifdef __cplusplus
 }

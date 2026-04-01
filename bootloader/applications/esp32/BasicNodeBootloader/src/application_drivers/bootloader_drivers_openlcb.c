@@ -42,15 +42,16 @@
  *   bootloader performs the actual partition switch.
  *
  * Shared RAM:
- *   bootloader_request_flag and bootloader_cached_alias are placed in RTC
+ *   bootloader_shared_ram.request_flag and bootloader_shared_ram.cached_alias are placed in RTC
  *   slow memory using RTC_NOINIT_ATTR.  This region survives both software
  *   reset and deep sleep, giving the same magic-value handshake behaviour as
- *   the .noinit section on STM32 and Cortex-M targets.
+ *   the .noinit section on STM32 and Cortex-M targets.  Definitions live in
+ *   ../../shared/bootloader_shared_ram.c (compiled into both projects).
  *
- *   TODO: move these definitions into a shared/ folder (shared between the
- *   bootloader project and the application project) once the BasicNode
- *   application side is implemented, following the same pattern as the STM32
- *   port.
+ * Flash reads:
+ *   The inactive OTA partition is NOT memory-mapped by the ESP32 MMU --
+ *   only the running partition is.  All flash reads use esp_partition_read()
+ *   with a partition-relative offset, not memcpy().
  *
  * @author Jim Kueneman
  * @date 25 Mar 2026
@@ -59,10 +60,11 @@
 #include <string.h>
 
 #include "Arduino.h"
-#include "esp_attr.h"
 #include "esp_system.h"
 #include "esp_partition.h"
 #include "esp_ota_ops.h"
+#include "nvs_flash.h"
+#include "nvs.h"
 #include "driver/gpio.h"
 #include "driver/twai.h"
 
@@ -71,30 +73,37 @@
 #include "../openlcb_c_lib_bootloader/crc/bootloader_crc.h"
 
 /* ====================================================================== */
-/* Shared RTC RAM -- survives software reset and deep sleep               */
-/* ====================================================================== */
-
-/*
- * bootloader_request_flag and bootloader_cached_alias are declared extern in
- * bootloader_shared_ram.h and DEFINED here with RTC_NOINIT_ATTR so they
- * survive esp_restart().  Both the bootloader and the application project
- * compile this file; the ESP-IDF linker script already provides the
- * rtc_noinit segment so no linker script changes are needed.
- *
- * See ../../shared/bootloader_shared_ram.c for platform porting notes.
- */
-RTC_NOINIT_ATTR volatile uint32_t bootloader_request_flag;
-RTC_NOINIT_ATTR volatile uint16_t bootloader_cached_alias;
-
-/* ====================================================================== */
 /* OTA partition cache                                                     */
 /* ====================================================================== */
 
 /*
  * Resolved once by get_flash_boundaries() and reused by every subsequent
  * flash call.  NULL until get_flash_boundaries() has been called.
+ *
+ * _ensure_ota_partition() provides lazy initialisation for code paths
+ * that run before get_flash_boundaries() (e.g. finalize_flash on cold boot).
  */
 static const esp_partition_t *_ota_partition = NULL;
+
+static void _ensure_ota_partition(void) {
+
+    if (_ota_partition == NULL) {
+
+        _ota_partition = esp_ota_get_next_update_partition(NULL);
+
+    }
+
+}
+
+    /**
+     *     Converts a library-facing mapped address to a partition-relative
+     *     byte offset suitable for esp_partition_read/write/erase.
+     */
+static uint32_t _mapped_to_offset(uint32_t mapped_addr) {
+
+    return mapped_addr - ESP32_FLASH_MMAP_BASE - _ota_partition->address;
+
+}
 
 /* ====================================================================== */
 /* Lifecycle                                                               */
@@ -103,16 +112,16 @@ static const esp_partition_t *_ota_partition = NULL;
 void BootloaderDriversOpenlcb_initialize_hardware(bootloader_request_t request) {
 
     /* Centralized .noinit shared RAM cleanup.
-     * bootloader_request_flag was already consumed by is_bootloader_requested()
+     * bootloader_shared_ram.request_flag was already consumed by is_bootloader_requested()
      * before this function runs; clear it unconditionally as belt-and-suspenders.
-     * bootloader_cached_alias is only meaningful on app drop-back -- the library
+     * bootloader_shared_ram.cached_alias is only meaningful on app drop-back -- the library
      * CAN state machine reads it via get_cached_alias() during INIT_PICK_ALIAS
      * and clears it after pickup.  On any other reset path it is stale garbage. */
-    bootloader_request_flag = 0;
+    bootloader_shared_ram.request_flag = 0;
 
     if (request != BOOTLOADER_REQUESTED_BY_APP) {
 
-        bootloader_cached_alias = 0;
+        bootloader_shared_ram.cached_alias = 0;
 
     }
 
@@ -159,7 +168,7 @@ bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void) {
      * (PIP reports Firmware Upgrade Active) and the CT can proceed
      * directly to data transfer without sending Freeze again.
      */
-    if (bootloader_request_flag == BOOTLOADER_REQUEST_MAGIC) {
+    if (bootloader_shared_ram.request_flag == BOOTLOADER_REQUEST_MAGIC) {
 
         /* Flag is cleared centrally by initialize_hardware(). */
         return BOOTLOADER_REQUESTED_BY_APP;
@@ -196,17 +205,21 @@ void BootloaderDriversOpenlcb_jump_to_application(void) {
     /*
      * On ESP32 there is no bare-metal vector-table jump.  The ROM
      * second-stage bootloader selects the active OTA partition on every
-     * reset.  finalize_flash() must have already called
-     * esp_ota_set_boot_partition() to point at the newly written image.
-     * All we do here is trigger the reset.
+     * reset.
      *
-     * TODO: For the cold-boot path (no update requested, jump straight to
-     * the existing application), esp_ota_set_boot_partition() should be
-     * called here with the already-valid application partition before
-     * restarting.  This requires resolving which slot holds the valid app,
-     * which depends on the partition layout agreed between the bootloader
-     * and application projects.
+     * For BOTH the cold-boot path (valid app, no update requested) and
+     * the post-update path, we must tell the ROM bootloader which
+     * partition to boot.  _ota_partition points to the "next update"
+     * partition (the one the bootloader would write to), which IS the
+     * application partition when the bootloader itself is the running
+     * image.
+     *
+     * If finalize_flash() already called esp_ota_set_boot_partition(),
+     * calling it again is harmless (idempotent).
      */
+    _ensure_ota_partition();
+
+    esp_ota_set_boot_partition(_ota_partition);
     esp_restart();
 
     while (1) { }  /* unreachable -- silence compiler */
@@ -307,11 +320,57 @@ uint16_t BootloaderDriversOpenlcb_write_flash_bytes(uint32_t address, const uint
 
 uint16_t BootloaderDriversOpenlcb_finalize_flash(compute_checksum_func_t compute_checksum_helper) {
 
+    _ensure_ota_partition();
+
 #ifndef NO_CHECKSUM
 
-    /* TODO: implement checksum verification using compute_checksum_helper
-     * once the post-link tool populates app_header in the firmware image. */
-    (void) compute_checksum_helper;
+    /*
+     * Read the app header from the freshly written flash image.
+     * The inactive partition is not memory-mapped, so use
+     * esp_partition_read() with a partition-relative offset.
+     */
+    bootloader_app_header_t header;
+    uint32_t flash_min = ESP32_FLASH_MMAP_BASE + _ota_partition->address;
+
+    esp_partition_read(_ota_partition, APP_HEADER_OFFSET,
+                       &header, sizeof(header));
+
+    /* Validate app_size is within partition bounds. */
+    if (header.app_size > _ota_partition->size) { return ERROR_PERMANENT; }
+
+    /* Pre-checksum: partition start to app_header. */
+    uint32_t pre_size = APP_HEADER_OFFSET;
+
+    uint32_t checksum[BOOTLOADER_CHECKSUM_COUNT];
+    memset(checksum, 0, sizeof(checksum));
+    compute_checksum_helper(flash_min, pre_size, checksum);
+
+    if (memcmp(header.checksum_pre, checksum, sizeof(checksum)) != 0) {
+
+        return ERROR_PERMANENT;
+
+    }
+
+    /* Post-checksum: after app_header to end of image. */
+    uint32_t post_start = flash_min + APP_HEADER_OFFSET +
+                          (uint32_t) sizeof(bootloader_app_header_t);
+    uint32_t post_size = 0;
+
+    if ((pre_size + (uint32_t) sizeof(bootloader_app_header_t)) < header.app_size) {
+
+        post_size = header.app_size - pre_size -
+                    (uint32_t) sizeof(bootloader_app_header_t);
+
+    }
+
+    memset(checksum, 0, sizeof(checksum));
+    compute_checksum_helper(post_start, post_size, checksum);
+
+    if (memcmp(header.checksum_post, checksum, sizeof(checksum)) != 0) {
+
+        return ERROR_PERMANENT;
+
+    }
 
 #else
 
@@ -336,14 +395,15 @@ uint16_t BootloaderDriversOpenlcb_finalize_flash(compute_checksum_func_t compute
 void BootloaderDriversOpenlcb_read_flash_bytes(uint32_t flash_addr, void *dest_ram, uint32_t size_bytes) {
 
     /*
-     * ESP32 flash is memory-mapped (read-only) via the MMU into the DROM
-     * window at ESP32_FLASH_MMAP_BASE.  The CPU can read it with a normal
-     * load instruction, so a plain memcpy() is sufficient.
-     *
-     * This is identical to the STM32 Von Neumann approach.  On a Harvard
-     * architecture (dsPIC33), TBLRD instructions would be needed instead.
+     * The bootloader reads the INACTIVE OTA partition, which is NOT
+     * memory-mapped by the ESP32 MMU (only the running partition is).
+     * Use esp_partition_read() with a partition-relative offset.
      */
-    memcpy(dest_ram, (const void *)(uintptr_t) flash_addr, size_bytes);
+    _ensure_ota_partition();
+
+    uint32_t part_offset = _mapped_to_offset(flash_addr);
+
+    esp_partition_read(_ota_partition, part_offset, dest_ram, size_bytes);
 
 }
 
@@ -351,19 +411,87 @@ void BootloaderDriversOpenlcb_read_flash_bytes(uint32_t flash_addr, void *dest_r
 /* Checksum                                                                */
 /* ====================================================================== */
 
+/*
+ * Local CRC-16-IBM nibble tables -- duplicated from bootloader_crc.c so
+ * the chunk-based compute_checksum can run incrementally without changing
+ * the core library API.
+ */
+static const uint16_t _CRC16_IBM_HI[16] = {
+
+    0x0000, 0xCC01, 0xD801, 0x1400, 0xF001, 0x3C00, 0x2800, 0xE401,
+    0xA001, 0x6C00, 0x7800, 0xB401, 0x5000, 0x9C01, 0x8801, 0x4400,
+
+};
+
+static const uint16_t _CRC16_IBM_LO[16] = {
+
+    0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241,
+    0xC601, 0x06C0, 0x0780, 0xC741, 0x0500, 0xC5C1, 0xC481, 0x0440,
+
+};
+
+static void _crc16_ibm_add(uint16_t *state, uint8_t data) {
+
+    *state ^= data;
+    *state = (*state >> 8) ^ _CRC16_IBM_LO[*state & 0x0F] ^
+            _CRC16_IBM_HI[(*state >> 4) & 0x0F];
+
+}
+
+#define CHECKSUM_CHUNK_SIZE 256U
+
 void BootloaderDriversOpenlcb_compute_checksum(uint32_t flash_addr, uint32_t size, uint32_t *checksum) {
 
     /*
-     * Flash is memory-mapped and CPU-readable, so the block CRC function
-     * can operate directly on the mapped pointer -- no byte-by-byte
-     * table-read loop is needed (contrast with the dsPIC33 Harvard port).
+     * The inactive OTA partition is not memory-mapped, so we read flash
+     * in fixed-size chunks via esp_partition_read() and feed each byte
+     * into three incremental CRC-16-IBM accumulators (all, odd, even).
+     * This keeps stack usage bounded to CHECKSUM_CHUNK_SIZE bytes
+     * regardless of image size.
      */
-    uint16_t crc3[3];
-    BootloaderCrc_crc3_crc16_ibm((const void *)(uintptr_t) flash_addr, size, crc3);
+    _ensure_ota_partition();
 
-    checksum[0] = (uint32_t) crc3[0];
-    checksum[1] = (uint32_t) crc3[1];
-    checksum[2] = (uint32_t) crc3[2];
+    uint16_t state_all  = 0x0000;
+    uint16_t state_odd  = 0x0000;
+    uint16_t state_even = 0x0000;
+
+    uint32_t part_offset  = _mapped_to_offset(flash_addr);
+    uint32_t remaining    = size;
+    uint32_t byte_counter = 1;
+    uint8_t  chunk[CHECKSUM_CHUNK_SIZE];
+
+    while (remaining > 0) {
+
+        uint32_t to_read = (remaining < CHECKSUM_CHUNK_SIZE) ? remaining : CHECKSUM_CHUNK_SIZE;
+
+        esp_partition_read(_ota_partition, part_offset, chunk, to_read);
+
+        for (uint32_t i = 0; i < to_read; i++) {
+
+            _crc16_ibm_add(&state_all, chunk[i]);
+
+            if (byte_counter & 1) {
+
+                _crc16_ibm_add(&state_odd, chunk[i]);
+
+            } else {
+
+                _crc16_ibm_add(&state_even, chunk[i]);
+
+            }
+
+            byte_counter++;
+
+        }
+
+        part_offset += to_read;
+        remaining   -= to_read;
+
+    }
+
+    checksum[0] = (uint32_t) state_all;
+    checksum[1] = (uint32_t) state_odd;
+    checksum[2] = (uint32_t) state_even;
     checksum[3] = 0;
 
 }
@@ -390,9 +518,33 @@ uint8_t BootloaderDriversOpenlcb_get_100ms_timer_tick(void) {
 
 uint64_t BootloaderDriversOpenlcb_get_persistent_node_id(void) {
 
-    /* TODO: Read from NVS once production programming is in place.
-     * Hardcoded for bringup. */
-    return 0x050101012201ULL;
+    /*
+     * Read the 48-bit node ID from NVS.  The application is responsible
+     * for writing this value during production programming (namespace
+     * "openlcb", key "node_id", stored as uint64_t).
+     *
+     * Falls back to a hardcoded default if NVS has not been programmed.
+     */
+    nvs_flash_init();
+
+    nvs_handle_t handle;
+    uint64_t node_id = 0x050101012201ULL;  /* fallback */
+
+    if (nvs_open("openlcb", NVS_READONLY, &handle) == ESP_OK) {
+
+        uint64_t stored;
+
+        if (nvs_get_u64(handle, "node_id", &stored) == ESP_OK) {
+
+            node_id = stored;
+
+        }
+
+        nvs_close(handle);
+
+    }
+
+    return node_id;
 
 }
 

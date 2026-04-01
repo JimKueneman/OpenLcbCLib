@@ -102,15 +102,21 @@ extern "C" {
     /* ================================================================== */
 
     /*
-     * TODO: Determine a safe offset within the OTA partition image for the
-     * bootloader_app_header struct that does not conflict with the ESP32
-     * image header (esp_image_header_t + segment headers occupy the first
-     * ~0x18 bytes of the partition).
+     * Byte offset within the firmware.bin where the 36-byte
+     * bootloader_app_header_t struct is embedded.
      *
-     * Set to 0x20 for bringup.  Checksum verification is currently stubbed
-     * out in finalize_flash() so this value is not yet used for validation.
+     * ESP-IDF image layout:
+     *   0x00   esp_image_header_t          (24 bytes)
+     *   0x18   esp_image_segment_header_t  (8 bytes)
+     *   0x20   esp_app_desc_t              (256 bytes, ends at 0x11F)
+     *   0x120  .rodata_custom_desc         <-- app_header lives here
+     *
+     * The application's app_header.c places the struct into the
+     * .rodata_custom_desc linker section.  The post-link tool
+     * (hex2bin.py --arch esp32) patches the CRC fields at this offset
+     * and recomputes the ESP-IDF image checksum and SHA256 hash.
      */
-    #define APP_HEADER_OFFSET          0x00000020UL
+    #define APP_HEADER_OFFSET          0x00000120UL
 
     /* ================================================================== */
     /* Board pin assignments -- ESP32 DevKit V1                            */
@@ -142,14 +148,12 @@ extern "C" {
     extern bootloader_request_t BootloaderDriversOpenlcb_is_bootloader_requested(void);
 
         /**
-         *     Sets the inactive OTA partition as the next boot target and
+         *     Sets the application OTA partition as the next boot target and
          *     calls esp_restart().  Does not return.
          *
-         *     Note: on ESP32 there is no bare-metal vector-table jump.  The
-         *     ROM second-stage bootloader performs the actual partition switch
-         *     on the next reset.  finalize_flash() must be called before
-         *     jump_to_application() so that esp_ota_set_boot_partition() has
-         *     already been issued.
+         *     Works for both cold-boot (valid app, no update) and post-update
+         *     paths.  The ROM second-stage bootloader performs the actual
+         *     partition switch on the next reset.
          */
     extern void BootloaderDriversOpenlcb_jump_to_application(void);
 
@@ -210,12 +214,10 @@ extern "C" {
     extern uint16_t BootloaderDriversOpenlcb_write_flash_bytes(uint32_t address, const uint8_t *data, uint32_t size_bytes);
 
         /**
-         *     Called after all firmware data has been written.  Calls
-         *     esp_ota_set_boot_partition() to make the update partition the
-         *     next boot target.
-         *
-         *     TODO: add checksum verification via compute_checksum_helper once
-         *     the post-link tool populates app_header in the firmware image.
+         *     Called after all firmware data has been written.  Verifies
+         *     the triple-CRC checksum embedded at APP_HEADER_OFFSET, then
+         *     calls esp_ota_set_boot_partition() to make the update
+         *     partition the next boot target.
          *
          *     @return 0 on success, ERROR_PERMANENT on failure
          */
@@ -226,9 +228,9 @@ extern "C" {
     /* ================================================================== */
 
         /**
-         *     Reads bytes from the memory-mapped flash window using memcpy.
-         *     ESP32 flash is Von Neumann (data-readable via DROM mapping), so
-         *     no special table-read instructions are needed.
+         *     Reads bytes from the inactive OTA partition via
+         *     esp_partition_read().  The inactive partition is NOT
+         *     memory-mapped, so memcpy cannot be used.
          *
          *     @param flash_addr  mapped address of the first byte to read
          *     @param dest_ram    destination RAM buffer
@@ -242,12 +244,12 @@ extern "C" {
 
         /**
          *     Computes a triple-CRC16-IBM checksum over a flash region.
-         *     Uses BootloaderCrc_crc3_crc16_ibm() directly (memcpy-readable
-         *     DROM mapping -- no special table reads needed on ESP32).
+         *     Reads the inactive partition in chunks via esp_partition_read()
+         *     and accumulates CRCs incrementally.
          *
-         *     @param data      mapped start address of the flash region
-         *     @param size      number of bytes in the region
-         *     @param checksum  output: four uint32_t values (three CRCs + zero pad)
+         *     @param flash_addr  mapped start address of the flash region
+         *     @param size        number of bytes in the region
+         *     @param checksum    output: four uint32_t values (three CRCs + zero pad)
          */
     extern void BootloaderDriversOpenlcb_compute_checksum(uint32_t flash_addr, uint32_t size, uint32_t *checksum);
 
@@ -269,8 +271,8 @@ extern "C" {
 
         /**
          *     Returns the 48-bit OpenLCB node ID for this board.
-         *
-         *     TODO: read from NVS once production programming is in place.
+         *     Reads from NVS (namespace "openlcb", key "node_id").
+         *     Falls back to a hardcoded default if NVS is not programmed.
          *
          *     @return node ID (upper 16 bits zero)
          */

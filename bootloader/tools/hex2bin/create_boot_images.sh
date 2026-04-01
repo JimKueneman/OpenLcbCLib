@@ -25,6 +25,7 @@ APPS_DIR="${SCRIPT_DIR}/../../applications"
 # STM32 F407       | Release    | stm32_cubeide/stm32f407_discovery/BasicNode/Release/BasicNode.hex
 # dsPIC 33EP512    | Production | dspic/BasicNode.X/dist/default/production/BasicNode.X.production.hex
 # MSPM0 G3507      | Debug      | ti_theia/mspm03507_launchpad/BasicNode/Debug/BasicNode.out (ELF -> hex)
+# ESP32            | Debug      | esp32/BasicNode/.pio/build/esp32dev/firmware.bin (raw binary)
 # -----------------------------------------------------------------------
 
 # TI CCS hex output drops zero-filled regions, which corrupts the app_header.
@@ -112,6 +113,21 @@ HEX="${APPS_DIR}/ti_theia/mspm03507_launchpad/BasicNode/Debug/BasicNode.objcopy.
 BIN="$(dirname "${ELF}")/BasicNode.mspm0.debug.boot.bin"
 if elf_to_hex "${ELF}" "${HEX}"; then
     convert flat 0x00003C00 0xC0 "${HEX}" "${BIN}"
+fi
+
+# -- ESP32 Debug --
+ESP32_BIN="${APPS_DIR}/esp32/BasicNode/.pio/build/esp32dev/firmware.bin"
+ESP32_OUT="$(dirname "${ESP32_BIN}")/BasicNode.esp32.debug.boot.bin"
+if [ -f "${ESP32_BIN}" ]; then
+    echo "  BUILD ${ESP32_OUT}"
+    python3 "${HEX2BIN}" \
+        --input-format bin \
+        --arch esp32 \
+        --app-header-offset 0x120 \
+        "${ESP32_BIN}" \
+        "${ESP32_OUT}"
+else
+    echo "  SKIP  ${ESP32_BIN} (not found)"
 fi
 
 echo ""

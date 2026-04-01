@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-hex2bin.py -- Convert Intel HEX to a flat binary for bootloading.
+hex2bin.py -- Convert Intel HEX or raw binary to a bootloader image.
 
 Overview
 --------
-This script reads an Intel HEX file (.hex) produced by a compiler toolchain
-and outputs a flat binary (.bin) suitable for uploading to an OpenLCB
-standalone bootloader.  It optionally computes and patches triple CRC-16-IBM
-checksums into the bootloader_app_header_t struct embedded in the binary.
+This script reads an Intel HEX file (.hex) or a raw binary file (.bin)
+produced by a compiler toolchain and outputs a flat binary (.bin) suitable
+for uploading to an OpenLCB standalone bootloader.  It optionally computes
+and patches triple CRC-16-IBM checksums into the bootloader_app_header_t
+struct embedded in the binary.
 
 The output .bin contains only the application region (no skip bytes needed).
 The bootloader's firmware-space upload expects binary bytes starting at offset
@@ -19,9 +20,17 @@ Two architecture modes control how addresses are translated between the Intel
 HEX file, the binary image, and the target's flash hardware.
 
   --arch flat  (default)
-      For Von Neumann targets (ARM, ESP32, RISC-V, etc.) where the program
+      For Von Neumann targets (ARM, RISC-V, etc.) where the program
       counter address equals the byte address.  One binary byte per flash
       byte.  --start and --end are byte addresses used directly.
+
+  --arch esp32
+      For ESP32 targets using ESP-IDF OTA partition images.  Multiplier is 1
+      (byte-addressable).  After patching the app_header CRC fields, the
+      script recomputes the ESP-IDF trailing XOR checksum byte and the
+      SHA256 hash (if present, indicated by byte 0x17 in the image header).
+      Typically used with --input-format bin since PlatformIO/ESP-IDF
+      produces raw .bin files, not Intel HEX.
 
   --arch dspic
       For dsPIC/PIC24 Harvard-architecture targets where each instruction is
@@ -110,9 +119,14 @@ Usage Examples
 
     # Without checksum (legacy/debug)
     python3 hex2bin.py --arch dspic --start 0x4000 --no-checksum app.hex app.bin
+
+    # ESP32 raw binary input (PlatformIO .bin)
+    python3 hex2bin.py --input-format bin --arch esp32 \\
+        --app-header-offset 0x120 firmware.bin firmware.boot.bin
 """
 
 import argparse
+import hashlib
 import struct
 import sys
 
@@ -243,7 +257,12 @@ ARCH_DEFS = {
     'flat': {
         'multiplier': 1,
         'default_start': None,   # must be provided by user
-        'description': 'Byte-addressable (ARM, ESP32, RISC-V, etc.)',
+        'description': 'Byte-addressable (ARM, RISC-V, etc.)',
+    },
+    'esp32': {
+        'multiplier': 1,
+        'default_start': None,
+        'description': 'ESP32 (OTA image, XOR checksum + SHA256 fixup)',
     },
 }
 
@@ -394,6 +413,157 @@ def _dspic_fix_phantom_bytes(data):
 
 
 # =============================================================================
+# ESP-IDF image fixup
+#
+# ESP32 firmware.bin images have a trailing XOR checksum byte and an optional
+# SHA256 hash.  After patching the app_header CRC fields (which live inside
+# the DROM segment), both must be recomputed.
+#
+# Image layout:
+#   [0x00]  esp_image_header_t           (24 bytes)
+#           byte[0x17] = append_digest   (1 = SHA256 appended)
+#   [0x18]  segments: [8-byte header + data] x segment_count
+#   [...]   zero-padding so (position + 1) aligns to 16 bytes
+#           XOR checksum byte            (last byte of padded block)
+#   [...]   SHA256 hash                  (32 bytes, only if append_digest == 1)
+#
+# XOR checksum algorithm:
+#   Seed = 0xEF.  XOR every byte of every segment's data (not headers).
+#   Equivalent to XORing all bytes from byte 0 through the checksum byte,
+#   because the header bytes XOR in and out deterministically.  But we use
+#   the segment-walk approach to match the ROM bootloader exactly.
+# =============================================================================
+
+ESP_IMAGE_HEADER_MAGIC = 0xE9
+ESP_CHECKSUM_SEED = 0xEF
+ESP_IMAGE_HEADER_SIZE = 24
+ESP_SEGMENT_HEADER_SIZE = 8
+ESP_SHA256_SIZE = 32
+
+
+def _esp32_segment_data_end(buf):
+    """Return the byte offset just past the last segment's data.
+
+    This is the boundary between deterministic image content (headers +
+    segment data) and derived trailing metadata (checksum padding,
+    checksum byte, optional SHA256 hash).
+
+    The bootloader's app_size must equal this value so that CRC
+    computation covers exactly the same range on the host (hex2bin)
+    and on the target (finalize_flash).  The trailing checksum byte
+    and SHA256 hash are excluded because they depend on the CRC
+    values stored in the app_header -- including them would create
+    a circular dependency.
+
+    Args:
+        buf: The ESP-IDF firmware image (bytes or bytearray).
+
+    Returns:
+        int -- byte offset one past the last segment data byte.
+
+    Raises:
+        SystemExit on invalid image structure.
+    """
+    if len(buf) < ESP_IMAGE_HEADER_SIZE:
+        print("ERROR: image too small for ESP-IDF header", file=sys.stderr)
+        sys.exit(1)
+
+    if buf[0] != ESP_IMAGE_HEADER_MAGIC:
+        print(f"ERROR: bad ESP-IDF magic byte 0x{buf[0]:02X} "
+              f"(expected 0x{ESP_IMAGE_HEADER_MAGIC:02X})", file=sys.stderr)
+        sys.exit(1)
+
+    segment_count = buf[1]
+    offset = ESP_IMAGE_HEADER_SIZE
+
+    for seg_idx in range(segment_count):
+        if offset + ESP_SEGMENT_HEADER_SIZE > len(buf):
+            print(f"ERROR: segment {seg_idx} header truncated at offset "
+                  f"0x{offset:X}", file=sys.stderr)
+            sys.exit(1)
+
+        seg_data_len = struct.unpack_from('<I', buf, offset + 4)[0]
+        offset += ESP_SEGMENT_HEADER_SIZE
+
+        if offset + seg_data_len > len(buf):
+            print(f"ERROR: segment {seg_idx} data truncated "
+                  f"(need {seg_data_len} bytes at 0x{offset:X}, "
+                  f"have {len(buf) - offset})", file=sys.stderr)
+            sys.exit(1)
+
+        offset += seg_data_len
+
+    return offset
+
+
+def _esp32_fixup_image(buf):
+    """Recompute ESP-IDF XOR checksum and SHA256 after patching.
+
+    Args:
+        buf: Mutable bytearray of the complete firmware.bin image.
+
+    Returns:
+        bytes -- the fixed-up image (may be same length or differ if
+        SHA256 presence changed, which should not happen in practice).
+
+    Raises:
+        SystemExit on invalid image format.
+    """
+    if len(buf) < ESP_IMAGE_HEADER_SIZE:
+        print("ERROR: image too small for ESP-IDF header", file=sys.stderr)
+        sys.exit(1)
+
+    if buf[0] != ESP_IMAGE_HEADER_MAGIC:
+        print(f"ERROR: bad ESP-IDF magic byte 0x{buf[0]:02X} "
+              f"(expected 0x{ESP_IMAGE_HEADER_MAGIC:02X})", file=sys.stderr)
+        sys.exit(1)
+
+    segment_count = buf[1]
+    has_sha256 = (buf[0x17] == 1)
+
+    # Strip the old SHA256 if present -- we will recompute it.
+    if has_sha256:
+        image_body = bytearray(buf[:-ESP_SHA256_SIZE])
+    else:
+        image_body = bytearray(buf)
+
+    # Walk segments to compute XOR checksum over segment data only.
+    checksum = ESP_CHECKSUM_SEED
+    offset = ESP_IMAGE_HEADER_SIZE
+
+    for seg_idx in range(segment_count):
+        if offset + ESP_SEGMENT_HEADER_SIZE > len(image_body):
+            print(f"ERROR: segment {seg_idx} header truncated at offset "
+                  f"0x{offset:X}", file=sys.stderr)
+            sys.exit(1)
+
+        seg_data_len = struct.unpack_from('<I', image_body, offset + 4)[0]
+        offset += ESP_SEGMENT_HEADER_SIZE
+
+        if offset + seg_data_len > len(image_body):
+            print(f"ERROR: segment {seg_idx} data truncated "
+                  f"(need {seg_data_len} bytes at 0x{offset:X}, "
+                  f"have {len(image_body) - offset})", file=sys.stderr)
+            sys.exit(1)
+
+        for i in range(offset, offset + seg_data_len):
+            checksum ^= image_body[i]
+
+        offset += seg_data_len
+
+    # The checksum byte is the last byte of image_body (after 16-byte
+    # aligned padding).
+    image_body[-1] = checksum & 0xFF
+
+    # Recompute SHA256 if the original image had it.
+    if has_sha256:
+        sha = hashlib.sha256(bytes(image_body)).digest()
+        return bytes(image_body) + sha
+    else:
+        return bytes(image_body)
+
+
+# =============================================================================
 # Main
 # =============================================================================
 
@@ -401,11 +571,15 @@ def main():
     arch_list = ', '.join(f"'{k}'" for k in ARCH_DEFS)
 
     parser = argparse.ArgumentParser(
-        description='Convert Intel HEX to flat binary for bootloading.',
+        description='Convert Intel HEX or raw binary to a bootloader image.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=f'Supported architectures: {arch_list}')
-    parser.add_argument('input', help='Input Intel HEX file (.hex)')
+    parser.add_argument('input', help='Input file (.hex or .bin)')
     parser.add_argument('output', help='Output binary file (.bin)')
+    parser.add_argument('--input-format', choices=['hex', 'bin'],
+                        default='hex',
+                        help="Input file format: 'hex' (Intel HEX, default) "
+                             "or 'bin' (raw binary)")
     parser.add_argument('--arch', choices=ARCH_DEFS.keys(), default='flat',
                         help="Target architecture (default: 'flat')")
     parser.add_argument('--start', type=lambda x: int(x, 0), default=None,
@@ -437,48 +611,75 @@ def main():
     arch = ARCH_DEFS[args.arch]
     mult = arch['multiplier']
 
-    # -- Resolve start address (PC -> hex-file byte address) -----------------
-
-    if args.start is not None:
-        start_pc = args.start
-    elif arch['default_start'] is not None:
-        start_pc = arch['default_start']
-    else:
-        print("ERROR: --start is required for --arch flat", file=sys.stderr)
-        sys.exit(1)
-
-    start_hex = start_pc * mult
-
-    # -- Parse hex file ------------------------------------------------------
-
-    data = parse_hex(args.input)
-
-    if not data:
-        print("ERROR: no data records found in hex file", file=sys.stderr)
-        sys.exit(1)
-
-    # -- Resolve end address (PC -> hex-file byte address) -------------------
+    # -- Read the input file -------------------------------------------------
     #
-    # If --end is not given, auto-detect from the highest hex address that
-    # is at or above start_hex, then round up to an 8-byte boundary.  The
-    # 8-byte rounding ensures the binary length is aligned to the largest
-    # common flash write granularity (dsPIC WriteDoubleWord24 = 8 image
-    # bytes, STM32 doubleword = 8 bytes).
+    # Two input modes:
+    #   hex -- Parse Intel HEX, extract the address range into a flat binary.
+    #   bin -- Read the raw binary directly.  The file IS the flat binary;
+    #          --start, --end, and --arch are irrelevant.
 
-    if args.end is not None:
-        end_hex = args.end * mult
-    else:
-        addrs_in_range = [a for a in data if a >= start_hex]
-        if not addrs_in_range:
-            print(f"ERROR: no data at or above start address "
-                  f"0x{start_hex:X} (PC 0x{start_pc:X})", file=sys.stderr)
+    if args.input_format == 'bin':
+        # Raw binary input.  The file contents are the flat image starting
+        # at partition offset 0.  No address translation needed.
+        with open(args.input, 'rb') as f:
+            buf = f.read()
+
+        if not buf:
+            print("ERROR: input binary file is empty", file=sys.stderr)
             sys.exit(1)
-        end_hex = max(addrs_in_range) + 1
-        end_hex = (end_hex + 7) & ~7
 
-    # -- Extract the binary --------------------------------------------------
+        # For summary output: fake start/end so the report section works.
+        start_pc = 0
+        start_hex = 0
+        end_hex = len(buf)
 
-    buf = hex_to_bin(data, start_hex, end_hex, args.fill)
+    else:
+        # Intel HEX input (original path).
+
+        # -- Resolve start address (PC -> hex-file byte address) -------------
+
+        if args.start is not None:
+            start_pc = args.start
+        elif arch['default_start'] is not None:
+            start_pc = arch['default_start']
+        else:
+            print("ERROR: --start is required for --arch flat with hex input",
+                  file=sys.stderr)
+            sys.exit(1)
+
+        start_hex = start_pc * mult
+
+        # -- Parse hex file --------------------------------------------------
+
+        data = parse_hex(args.input)
+
+        if not data:
+            print("ERROR: no data records found in hex file", file=sys.stderr)
+            sys.exit(1)
+
+        # -- Resolve end address (PC -> hex-file byte address) ---------------
+        #
+        # If --end is not given, auto-detect from the highest hex address
+        # that is at or above start_hex, then round up to an 8-byte
+        # boundary.  The 8-byte rounding ensures the binary length is
+        # aligned to the largest common flash write granularity (dsPIC
+        # WriteDoubleWord24 = 8 image bytes, STM32 doubleword = 8 bytes).
+
+        if args.end is not None:
+            end_hex = args.end * mult
+        else:
+            addrs_in_range = [a for a in data if a >= start_hex]
+            if not addrs_in_range:
+                print(f"ERROR: no data at or above start address "
+                      f"0x{start_hex:X} (PC 0x{start_pc:X})",
+                      file=sys.stderr)
+                sys.exit(1)
+            end_hex = max(addrs_in_range) + 1
+            end_hex = (end_hex + 7) & ~7
+
+        # -- Extract the binary ----------------------------------------------
+
+        buf = hex_to_bin(data, start_hex, end_hex, args.fill)
 
     # -- Trim trailing fill bytes --------------------------------------------
     #
@@ -538,7 +739,16 @@ def main():
         # The total image size written into the header.  The bootloader's
         # finalize_flash() uses this to determine the extent of the post-
         # header CRC region.
-        app_size = len(buf)
+        #
+        # For ESP32, app_size is the end of segment data (before checksum
+        # padding, checksum byte, and optional SHA256 hash).  Including the
+        # trailing metadata would create a circular dependency: the checksum
+        # byte depends on the CRC values in the header, and the CRC would
+        # depend on the checksum byte.
+        if args.arch == 'esp32':
+            app_size = _esp32_segment_data_end(buf)
+        else:
+            app_size = len(buf)
 
         # Choose the byte stream for CRC computation.
         #
@@ -549,8 +759,8 @@ def main():
         #   instruction through CRC (3 data + phantom 0x00), so we must
         #   match that here.
         #
-        # flat:  use the binary as-is.  Flash is memory-mapped; CRC of the
-        #   binary bytes matches CRC of the flash contents exactly.
+        # flat / esp32: use the binary as-is.  Flash is memory-mapped; CRC
+        #   of the binary bytes matches CRC of the flash contents exactly.
         if args.arch == 'dspic':
             crc_buf = _dspic_fix_phantom_bytes(buf)
         else:
@@ -560,8 +770,11 @@ def main():
         pre_data = crc_buf[:hdr_off]
         pre_crc = crc3_crc16_ibm(pre_data)
 
-        # Post-header region: binary[hdr_off + 36 .. end)
-        post_data = crc_buf[hdr_off + APP_HEADER_SIZE:]
+        # Post-header region: binary[hdr_off + 36 .. app_size)
+        # For flat/dspic, app_size == len(crc_buf) so this is the full tail.
+        # For esp32, app_size stops at segment data end (before checksum
+        # padding and SHA256) to avoid the circular dependency.
+        post_data = crc_buf[hdr_off + APP_HEADER_SIZE:app_size]
         post_crc = crc3_crc16_ibm(post_data)
 
         # Pack the 36-byte header struct (little-endian):
@@ -575,8 +788,14 @@ def main():
 
         # Patch the header into the binary.
         buf[hdr_off:hdr_off + APP_HEADER_SIZE] = header
-        buf = bytes(buf)
         patched = True
+
+        # ESP32: recompute the ESP-IDF XOR checksum byte and SHA256 hash
+        # that were invalidated by patching segment data.
+        if args.arch == 'esp32':
+            buf = bytearray(_esp32_fixup_image(buf))
+        else:
+            buf = bytes(buf)
 
     # -- Write the output binary ---------------------------------------------
 
@@ -585,13 +804,17 @@ def main():
 
     # -- Summary output ------------------------------------------------------
 
-    end_pc = end_hex // mult
     full_size = end_hex - start_hex
     print(f"Converted {args.input} -> {args.output}")
-    print(f"  Architecture: {args.arch} ({arch['description']})")
-    print(f"  PC range: 0x{start_pc:06X} .. 0x{end_pc:06X}")
-    if mult > 1:
-        print(f"  Hex address range: 0x{start_hex:06X} .. 0x{end_hex:06X}")
+    if args.input_format == 'bin':
+        print(f"  Input format: raw binary")
+    else:
+        end_pc = end_hex // mult
+        print(f"  Architecture: {args.arch} ({arch['description']})")
+        print(f"  PC range: 0x{start_pc:06X} .. 0x{end_pc:06X}")
+        if mult > 1:
+            print(f"  Hex address range: 0x{start_hex:06X} .. "
+                  f"0x{end_hex:06X}")
     print(f"  Output size: {len(buf)} bytes ({len(buf):#x})")
     if args.trim and len(buf) < full_size:
         print(f"  Trimmed from {full_size} bytes ({full_size:#x})")
@@ -601,6 +824,10 @@ def main():
         print(f"  App size: {app_size} bytes ({app_size:#x})")
         if args.arch == 'dspic':
             print(f"  Phantom byte correction: applied (dsPIC mode)")
+        if args.arch == 'esp32':
+            print(f"  ESP-IDF image fixup: XOR checksum"
+                  + (" + SHA256" if buf[0x17] == 1 else "")
+                  + " recomputed")
         print(f"  Pre-checksum:  [0x{pre_crc[0]:04X}, 0x{pre_crc[1]:04X}, "
               f"0x{pre_crc[2]:04X}, 0x0000]")
         print(f"  Post-checksum: [0x{post_crc[0]:04X}, 0x{post_crc[1]:04X}, "
