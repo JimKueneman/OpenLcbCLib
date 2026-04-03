@@ -713,23 +713,24 @@ TEST(CanRxStatemachine, stream_frame_additional)
     can_msg_t msg;
     CanUtilities_clear_can_message(&msg);
     
-    // Stream frame structure:
+    // Stream frame structure (per StreamTransportS spec section 8.1):
+    // CAN header: 0x1Fdd,dsss where dd,d = dest alias, sss = source alias
     // 1. Bit 27 set (CAN_OPENLCB_MSG) to pass is_openlcb_message check
     // 2. Frame type 0x07 (CAN_FRAME_TYPE_STREAM)
-    // 3. MASK_CAN_DEST_ADDRESS_PRESENT flag set
-    // 4. Destination alias in payload[0-1] (high nibble of [0] + [1])
-    msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_STREAM | 
-                     MASK_CAN_DEST_ADDRESS_PRESENT | 0x0AAA;
-    
-    // Destination alias 0x0BBB in payload: [0] = 0x0B, [1] = 0xBB
-    msg.payload[0] = 0x0B;  // High nibble of dest alias
-    msg.payload[1] = 0xBB;  // Low byte of dest alias
-    msg.payload[2] = 0x01;  // Stream data
-    msg.payload[3] = 0x02;
-    msg.payload[4] = 0x03;
-    msg.payload[5] = 0x04;
-    msg.payload[6] = 0x05;
-    msg.payload[7] = 0x06;
+    // 3. Destination alias in identifier bits 12-23 (same as datagrams)
+    // Dest alias 0x0BBB in bits 12-23, source alias 0x0AAA in bits 0-11
+    msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_STREAM |
+                     (0x0BBB << 12) | 0x0AAA;
+
+    // payload[0] = Destination Stream ID, payload[1-7] = stream data
+    msg.payload[0] = 0x01;  // Destination Stream ID
+    msg.payload[1] = 0x02;  // Stream data
+    msg.payload[2] = 0x03;
+    msg.payload[3] = 0x04;
+    msg.payload[4] = 0x05;
+    msg.payload[5] = 0x06;
+    msg.payload[6] = 0x07;
+    msg.payload[7] = 0x08;
     msg.payload_count = 8;
     
     CanRxStatemachine_incoming_can_driver_callback(&msg);
@@ -970,14 +971,13 @@ TEST(CanRxStatemachine, stream_unknown_destination)
     can_msg_t msg;
     CanUtilities_clear_can_message(&msg);
     
-    // Stream frame to unknown destination 0x0FFF
+    // Stream frame to unknown destination 0x0FFF in identifier bits 12-23
     msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_STREAM |
-                     MASK_CAN_DEST_ADDRESS_PRESENT | 0x0AAA;
-    
-    // Unknown destination alias 0x0FFF in payload
-    msg.payload[0] = 0x0F;
-    msg.payload[1] = 0xFF;
-    msg.payload[2] = 0x01;
+                     (0x0FFF << 12) | 0x0AAA;
+
+    msg.payload[0] = 0x01;  // Destination Stream ID
+    msg.payload[1] = 0x02;  // Stream data
+    msg.payload[2] = 0x03;
     msg.payload_count = 8;
     
     CanRxStatemachine_incoming_can_driver_callback(&msg);
@@ -1637,11 +1637,10 @@ TEST(CanRxStatemachine, null_handlers_stream_frame)
     can_msg_t msg;
     CanUtilities_clear_can_message(&msg);
     
-    // Stream frame with NULL handler
+    // Stream frame with NULL handler - dest alias 0x0BBB in identifier bits 12-23
     msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_STREAM |
-                     MASK_CAN_DEST_ADDRESS_PRESENT | 0x0AAA;
-    msg.payload[0] = 0x0B;
-    msg.payload[1] = 0xBB;
+                     (0x0BBB << 12) | 0x0AAA;
+    msg.payload[0] = 0x01;  // Destination Stream ID
     msg.payload_count = 8;
     
     CanRxStatemachine_incoming_can_driver_callback(&msg);

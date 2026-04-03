@@ -652,11 +652,12 @@ static void _build_main_statemachine(void) {
 #endif
 
 #ifdef OPENLCB_COMPILE_STREAM
-    _main_sm.stream_initiate_request = &ProtocolStreamHandler_initiate_request;
-    _main_sm.stream_initiate_reply   = &ProtocolStreamHandler_initiate_reply;
-    _main_sm.stream_send_data        = &ProtocolStreamHandler_data_send;
-    _main_sm.stream_data_proceed     = &ProtocolStreamHandler_data_proceed;
-    _main_sm.stream_data_complete    = &ProtocolStreamHandler_data_complete;
+    _main_sm.stream_initiate_request        = &ProtocolStreamHandler_initiate_request;
+    _main_sm.stream_initiate_reply          = &ProtocolStreamHandler_initiate_reply;
+    _main_sm.stream_send_data               = &ProtocolStreamHandler_data_send;
+    _main_sm.stream_data_proceed            = &ProtocolStreamHandler_data_proceed;
+    _main_sm.stream_data_complete           = &ProtocolStreamHandler_data_complete;
+    _main_sm.stream_terminate_due_to_error  = &ProtocolStreamHandler_handle_terminate_due_to_error;
 #endif
 
 }

@@ -202,6 +202,14 @@ void *thread_function_can(void *arg) {
 
                         OpenLcbGridConnect_to_can_msg(&gridconnect_buffer, &can_message);
                         CanRxStatemachine_incoming_can_driver_callback(&can_message);
+
+                        // Yield the mutex after each complete frame so the
+                        // main loop can drain the FIFO and free buffers.
+                        // Without this, a TCP burst (many frames in one
+                        // read()) would exhaust the buffer pool.
+                        pthread_mutex_unlock(&can_mutex);
+                        usleep(500);
+                        pthread_mutex_lock(&can_mutex);
                     }
                 }
 

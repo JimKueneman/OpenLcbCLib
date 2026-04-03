@@ -210,7 +210,8 @@ const node_parameters_t compliance_basic_params = {
         PSI_ABBREVIATED_DEFAULT_CDI |
         PSI_SIMPLE_NODE_INFORMATION |
         PSI_CONFIGURATION_DESCRIPTION_INFO |
-        PSI_FIRMWARE_UPGRADE
+        PSI_FIRMWARE_UPGRADE |
+        PSI_STREAM
     ),
 
     // 3-4. consumer_count_autocreate / producer_count_autocreate

@@ -625,17 +625,17 @@ TEST(CanTxStatemachine, send_openlcb_message)
         EXPECT_TRUE(_is_can_tx_buffer_empty_called);
         
         // ====================================================================
-        // Test 5: Stream Frame
+        // Test 5: Stream Data Send Frame
         // ====================================================================
-        // Stream messages use special routing
-        // Should route to stream handler
+        // Only MTI_STREAM_SEND uses stream frame routing (spec section 8.1).
+        // All other stream MTIs use normal addressed message framing (spec section 8.2).
         _reset_variables();
-        
+
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
                                                0xBBB, 0x060504030201,
-                                               MTI_STREAM_PROCEED);
+                                               MTI_STREAM_SEND);
         openlcb_msg->payload_count = 8;
-        
+
         EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
         EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
         EXPECT_FALSE(_handle_addressed_msg_frame_called);
@@ -671,12 +671,12 @@ TEST(CanTxStatemachine, send_openlcb_message)
         // Verifies error handling
         _reset_variables();
         _fail_handle_stream_frame = true;
-        
+
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
                                                0xBBB, 0x060504030201,
-                                               MTI_STREAM_PROCEED);
+                                               MTI_STREAM_SEND);
         openlcb_msg->payload_count = 8;
-        
+
         EXPECT_FALSE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
         EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
         EXPECT_FALSE(_handle_addressed_msg_frame_called);
@@ -758,10 +758,13 @@ TEST(CanTxStatemachine, send_openlcb_message_not_invalid_transmits)
  ******************************************************************************/
 
 /**
- * Test: Stream MTI variants
- * Verifies all stream-related MTIs route to stream handler
+ * Test: Stream control MTI variants route to addressed message handler
  *
- * Stream MTIs tested:
+ * Per spec section 8.2, all stream messages other than Stream Data Send
+ * are sent as standard OpenLCB addressed messages. Only MTI_STREAM_SEND
+ * uses the dedicated stream frame format (Frame Type 7).
+ *
+ * Stream control MTIs tested:
  * - MTI_STREAM_INIT_REQUEST - Request stream initialization
  * - MTI_STREAM_INIT_REPLY - Reply to stream init
  * - MTI_STREAM_COMPLETE - Stream complete notification
@@ -774,7 +777,7 @@ TEST(CanTxStatemachine, stream_mti_variants)
     openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(STREAM);
     ASSERT_NE(openlcb_msg, nullptr);
 
-    // Test MTI_STREAM_INIT_REQUEST
+    // Test MTI_STREAM_INIT_REQUEST - addressed message framing
     _reset_variables();
     OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
                                            0xBBB, 0x060504030201,
@@ -782,11 +785,11 @@ TEST(CanTxStatemachine, stream_mti_variants)
     openlcb_msg->payload_count = 8;
 
     EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-    EXPECT_TRUE(_handle_stream_frame_called);
-    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+    EXPECT_TRUE(_handle_addressed_msg_frame_called);
     EXPECT_FALSE(_handle_datagram_frame_called);
 
-    // Test MTI_STREAM_INIT_REPLY
+    // Test MTI_STREAM_INIT_REPLY - addressed message framing
     _reset_variables();
     OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
                                            0xBBB, 0x060504030201,
@@ -794,11 +797,11 @@ TEST(CanTxStatemachine, stream_mti_variants)
     openlcb_msg->payload_count = 8;
 
     EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-    EXPECT_TRUE(_handle_stream_frame_called);
-    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+    EXPECT_TRUE(_handle_addressed_msg_frame_called);
     EXPECT_FALSE(_handle_datagram_frame_called);
 
-    // Test MTI_STREAM_COMPLETE
+    // Test MTI_STREAM_COMPLETE - addressed message framing
     _reset_variables();
     OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
                                            0xBBB, 0x060504030201,
@@ -806,8 +809,8 @@ TEST(CanTxStatemachine, stream_mti_variants)
     openlcb_msg->payload_count = 8;
 
     EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
-    EXPECT_TRUE(_handle_stream_frame_called);
-    EXPECT_FALSE(_handle_addressed_msg_frame_called);
+    EXPECT_FALSE(_handle_stream_frame_called);
+    EXPECT_TRUE(_handle_addressed_msg_frame_called);
     EXPECT_FALSE(_handle_datagram_frame_called);
 
     OpenLcbBufferStore_free_buffer(openlcb_msg);
@@ -1052,7 +1055,7 @@ TEST(CanTxStatemachine, maximum_payload_sizes)
 
     OpenLcbUtilities_load_openlcb_message(stream_msg, 0xAAA, 0x010203040506,
                                            0xBBB, 0x060504030201,
-                                           MTI_STREAM_PROCEED);
+                                           MTI_STREAM_SEND);
     stream_msg->payload_count = LEN_MESSAGE_BYTES_STREAM;
 
     for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)

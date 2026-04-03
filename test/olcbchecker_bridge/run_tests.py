@@ -142,6 +142,13 @@ if "trains" in run_sections:
     logger.info("=== FDI ===")
     total += min(control_fdi.checkAll(), 1)
 
+# ---- Stream Transport -------------------------------------------------------
+
+if "core" in run_sections:
+    import control_stream
+    logger.info("=== Stream Transport ===")
+    total += min(control_stream.checkAll(), 1)
+
 # ---- Add new protocol sections here ----------------------------------------
 # if "traction_proxy" in run_sections:
 #     import control_tractionproxy

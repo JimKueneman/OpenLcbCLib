@@ -48,6 +48,7 @@
 #include "application_callbacks/callbacks_events.h"
 #include "application_callbacks/callbacks_broadcast_time.h"
 #include "application_callbacks/callbacks_train.h"
+#include "application_callbacks/callbacks_stream.h"
 
 #include "openlcb_user_config.h"
 #include "application_drivers/osx_drivers.h"
@@ -128,6 +129,13 @@ static const openlcb_config_t openlcb_config = {
 
     // Train search callbacks
     .on_train_search_no_match            = &CallbacksTrain_on_search_no_match,
+
+    // Stream transport callbacks
+    .on_stream_initiate_request  = &CallbacksStream_on_initiate_request,
+    .on_stream_initiate_reply    = NULL,
+    .on_stream_data_received     = NULL,
+    .on_stream_data_proceed      = NULL,
+    .on_stream_complete          = NULL,
 };
 
 

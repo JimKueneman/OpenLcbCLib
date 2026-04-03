@@ -178,10 +178,7 @@ static bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *wor
 
                 break;
 
-            case MTI_STREAM_COMPLETE:
-            case MTI_STREAM_INIT_REPLY:
-            case MTI_STREAM_INIT_REQUEST:
-            case MTI_STREAM_PROCEED:
+            case MTI_STREAM_SEND:
 
                 return _interface->handle_stream_frame(openlcb_msg, worker_can_msg, payload_index);
 

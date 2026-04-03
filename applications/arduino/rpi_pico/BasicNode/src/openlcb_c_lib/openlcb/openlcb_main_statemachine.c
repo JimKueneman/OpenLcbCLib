@@ -684,6 +684,16 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
             }
 
+#ifdef OPENLCB_COMPILE_STREAM
+
+            if (_interface->stream_terminate_due_to_error) {
+
+                _interface->stream_terminate_due_to_error(statemachine_info);
+
+            }
+
+#endif /* OPENLCB_COMPILE_STREAM */
+
             break;
 
         case MTI_CONSUMER_IDENTIFY:

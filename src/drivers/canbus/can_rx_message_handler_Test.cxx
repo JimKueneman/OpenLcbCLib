@@ -699,20 +699,39 @@ TEST(CanRxMessageHandler, stream_frame)
 {
     _global_initialize();
     _global_reset_variables();
-    
+
     can_msg_t can_msg;
-    
+    openlcb_msg_t *openlcb_msg;
+
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
-    
-    CanUtilities_load_can_message(&can_msg, 0x19F48000 | SOURCE_ALIAS, 8,
-                                   NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
-                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06);
-    
-    CanRxMessageHandler_stream_frame(&can_msg, 2, BASIC);
-    
-    EXPECT_TRUE(true);
-    
+
+    // Stream Data Send: dest alias in identifier bits 12-23 (spec section 8.1)
+    // payload[0] = Destination Stream ID, payload[1-7] = stream data
+    CanUtilities_load_can_message(&can_msg,
+                                   RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_STREAM | (NODE_ALIAS_1 << 12) | SOURCE_ALIAS,
+                                   8,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+
+    CanRxMessageHandler_stream_frame(&can_msg, 0, BASIC);
+
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
+
+    openlcb_msg = OpenLcbBufferFifo_pop();
+    EXPECT_NE(openlcb_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+
+        EXPECT_EQ(openlcb_msg->source_alias, SOURCE_ALIAS);
+        EXPECT_EQ(openlcb_msg->payload_count, 8);
+        EXPECT_EQ(*openlcb_msg->payload[0], 0x01);
+        EXPECT_EQ(*openlcb_msg->payload[7], 0x08);
+
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+    }
+
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
 }

@@ -19,6 +19,7 @@
 #define OPENLCB_COMPILE_BROADCAST_TIME
 #define OPENLCB_COMPILE_TRAIN
 #define OPENLCB_COMPILE_TRAIN_SEARCH
+#define OPENLCB_COMPILE_STREAM
 
 // =============================================================================
 // Core Message Buffer Pool
@@ -27,7 +28,7 @@
 #define USER_DEFINED_BASIC_BUFFER_DEPTH              117 // must be >= 1; enforced by compiler
 #define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4   // must be >= 1; enforced by compiler
 #define USER_DEFINED_SNIP_BUFFER_DEPTH               4   // must be >= 1; enforced by compiler
-#define USER_DEFINED_STREAM_BUFFER_DEPTH             1   // must be >= 1; enforced by compiler
+#define USER_DEFINED_STREAM_BUFFER_DEPTH             2   // must be >= 1; enforced by compiler
 // Maximum bytes in a single stream data frame (future use).
 #define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 

@@ -363,9 +363,49 @@ void CanRxMessageHandler_can_legacy_snip(can_msg_t *can_msg, uint8_t offset, pay
 
 }
 
-    /** @brief Stream frame handler — reserved for future use, not yet implemented. */
+    /**
+     * @brief Handles a CAN stream data frame (frame type 7, identifier 0x1F_DDD_SSS).
+     *
+     * @details Each CAN stream frame is self-contained: DID in byte 0,
+     * up to 7 payload bytes in bytes 1-7.  The entire CAN payload is
+     * copied into a fresh OpenLCB message with MTI_STREAM_SEND and
+     * pushed to the FIFO for the main statemachine to dispatch.
+     *
+     * @verbatim
+     * @param can_msg   Received CAN frame.
+     * @param offset    Byte offset where payload starts (OFFSET_DEST_ID_IN_IDENTIFIER for stream frames).
+     * @param data_type Buffer pool to allocate from (BASIC is sufficient).
+     * @endverbatim
+     */
 void CanRxMessageHandler_stream_frame(can_msg_t *can_msg, uint8_t offset, payload_type_enum data_type) {
 
+    openlcb_msg_t *target_openlcb_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
+
+    if (!target_openlcb_msg) {
+
+        return;
+
+    }
+
+    uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+    uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
+
+    OpenLcbUtilities_load_openlcb_message(
+            target_openlcb_msg,
+            source_alias,
+            0,
+            dest_alias,
+            0,
+            mti);
+
+    // Copy the entire CAN payload (DID + data bytes) starting at offset 0
+    CanUtilities_append_can_payload_to_openlcb_payload(
+            target_openlcb_msg,
+            can_msg,
+            0);
+
+    OpenLcbBufferFifo_push(target_openlcb_msg);
 
 }
 

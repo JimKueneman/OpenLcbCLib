@@ -351,7 +351,6 @@ uint16_t CanUtilities_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
     case OPENLCB_MESSAGE_STANDARD_FRAME_TYPE:
-    case CAN_FRAME_TYPE_STREAM:
 
         if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
 
@@ -361,6 +360,7 @@ uint16_t CanUtilities_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
 
         break;
 
+    case CAN_FRAME_TYPE_STREAM:
     case CAN_FRAME_TYPE_DATAGRAM_ONLY:
     case CAN_FRAME_TYPE_DATAGRAM_FIRST:
     case CAN_FRAME_TYPE_DATAGRAM_MIDDLE:
@@ -400,7 +400,6 @@ uint16_t CanUtilities_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
     case OPENLCB_MESSAGE_STANDARD_FRAME_TYPE:
-    case CAN_FRAME_TYPE_STREAM:
 
         mti = (can_msg->identifier >> 12) & 0x0FFF;
 
@@ -416,6 +415,10 @@ uint16_t CanUtilities_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
         }
 
         return mti;
+
+    case CAN_FRAME_TYPE_STREAM:
+
+        return MTI_STREAM_SEND;
 
     case CAN_FRAME_TYPE_DATAGRAM_ONLY:
     case CAN_FRAME_TYPE_DATAGRAM_FIRST:

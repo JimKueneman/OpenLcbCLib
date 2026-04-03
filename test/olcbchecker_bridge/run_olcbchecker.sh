@@ -25,6 +25,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CHECKER_DIR="/Users/jimkueneman/Documents/OlcbChecker"
 BRIDGE_PORT=12021
 NODE_ID="05.07.01.01.00.33"
+PYTHON="${PYTHON:-/opt/homebrew/bin/python3.13}"
 
 # ComplianceTestNode paths
 COMPLIANCE_BUILD_DIR="/tmp/compliance_build"
@@ -192,7 +193,7 @@ fi
 # ============================================================================
 
 echo "=== Start bridge server ==="
-python3 "$SCRIPT_DIR/bridge_server.py" --port "$BRIDGE_PORT" $VERBOSE &
+$PYTHON "$SCRIPT_DIR/bridge_server.py" --port "$BRIDGE_PORT" $VERBOSE &
 BRIDGE_PID=$!
 sleep 1
 if ! kill -0 "$BRIDGE_PID" 2>/dev/null; then
@@ -248,7 +249,7 @@ run_protocol_test() {
     local rc=0
     RUN_SECTIONS="$test_section" \
     SINGLE_SCRIPT="$SINGLE_SCRIPT" \
-    python3 "$SCRIPT_DIR/run_tests.py" \
+    $PYTHON "$SCRIPT_DIR/run_tests.py" \
         -a "127.0.0.1:$BRIDGE_PORT" \
         -t "$NODE_ID" \
         $CHECKER_FLAGS \
