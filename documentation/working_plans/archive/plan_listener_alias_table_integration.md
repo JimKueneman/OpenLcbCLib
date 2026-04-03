@@ -8,15 +8,15 @@
   - DI pointers on interface_can_rx_message_handler_t: listener_set_alias,
     listener_clear_alias_by_alias, listener_flush_aliases (wired in
     _build_rx_message_handler() in can_config.c under #ifdef OPENLCB_COMPILE_TRAIN).
-  - AMD handler: ListenerAliasTable_set_alias() called and
+  - AMD handler: AliasMappingListener_set_alias() called and
     _release_held_messages_for_listener() helper present (can_rx_message_handler.c).
   - AMR handler: listener_clear_alias_by_alias DI call present.
   - TX alias resolution: nullable listener_find_by_node_id DI call present in
     can_tx_statemachine.c lines 149-165.
-  - ListenerAliasTable_initialize() called from CanConfig_initialize() in
+  - AliasMappingListener_initialize() called from CanConfig_initialize() in
     can_config.c (line 303) under #ifdef OPENLCB_COMPILE_TRAIN. [Fixed 2026-03-15]
   - _build_tx_statemachine() in can_config.c wires
-    _tx_sm.listener_find_by_node_id = &ListenerAliasTable_find_by_node_id
+    _tx_sm.listener_find_by_node_id = &AliasMappingListener_find_by_node_id
     under #ifdef OPENLCB_COMPILE_TRAIN (line 205). [Fixed 2026-03-15]
     Consist forwarding is now functional.
 
@@ -126,7 +126,7 @@ CAN RX Statemachine
   │      ├── Is this a Train Listener Attach? ──► YES:
   │      │                                          │
   │      │                                          ├── Extract listener node_id from payload
-  │      │                                          ├── ListenerAliasTable_register(node_id)
+  │      │                                          ├── AliasMappingListener_register(node_id)
   │      │                                          ├── Is alias already resolved (non-zero)?
   │      │                                          │     YES: Release from LIST → push to FIFO (normal)
   │      │                                          │     NO:  Keep in LIST (state.inprocess = true)
@@ -140,7 +140,7 @@ CAN RX Statemachine
   ▼
 AMD frame arrives
   │
-  ├── ListenerAliasTable_set_alias(node_id, alias)        ◄── IMPLEMENTED
+  ├── AliasMappingListener_set_alias(node_id, alias)        ◄── IMPLEMENTED
   ├── Scan LIST for held messages matching this node_id    ◄── IMPLEMENTED
   │     For each match:
   │       ├── state.inprocess = false
@@ -168,7 +168,7 @@ AMR frame arrives
 TX path
   │
   ├── If dest_alias == 0 && dest_id != 0:               ◄── IMPLEMENTED
-  │     Look up ListenerAliasTable_find_by_node_id(dest_id)
+  │     Look up AliasMappingListener_find_by_node_id(dest_id)
   │     If alias resolved: fill in dest_alias, transmit
   │     If not resolved: drop message (return true to clear it)
   │
@@ -194,7 +194,7 @@ TX path
 
 **File**: `src/drivers/canbus/can_config.c`
 
-**What**: Call `ListenerAliasTable_initialize()` at startup. Wire the DI function
+**What**: Call `AliasMappingListener_initialize()` at startup. Wire the DI function
 pointers for both `interface_can_rx_message_handler_t` and
 `interface_can_tx_statemachine_t`.
 
@@ -204,18 +204,18 @@ pointers for both `interface_can_rx_message_handler_t` and
 #include "alias_mapping_listener.h"
 
 // In CanConfig_initialize(), after AliasMappings_initialize():
-ListenerAliasTable_initialize();
+AliasMappingListener_initialize();
 ```
 
 Wire DI pointers (gated on train feature flag):
 ```c
 // In interface_can_rx_message_handler_t setup:
-.listener_register = ListenerAliasTable_register,
-.listener_set_alias = ListenerAliasTable_set_alias,
-.listener_clear_alias_by_alias = ListenerAliasTable_clear_alias_by_alias,
+.listener_register = AliasMappingListener_register,
+.listener_set_alias = AliasMappingListener_set_alias,
+.listener_clear_alias_by_alias = AliasMappingListener_clear_alias_by_alias,
 
 // In interface_can_tx_statemachine_t setup:
-.listener_find_by_node_id = ListenerAliasTable_find_by_node_id,
+.listener_find_by_node_id = AliasMappingListener_find_by_node_id,
 ```
 
 ---
@@ -342,7 +342,7 @@ existing BufferList scrub and FIFO invalidation.
 **Decision**: Use lazy cleanup. No reference counting. Stale entries are harmless
 — the alias stays valid (or gets updated by AMD/AMR). The table is sized for
 worst case (`USER_DEFINED_MAX_LISTENERS_PER_TRAIN * USER_DEFINED_TRAIN_NODE_COUNT`).
-`ListenerAliasTable_unregister()` exists but won't be called in this integration.
+`AliasMappingListener_unregister()` exists but won't be called in this integration.
 
 ---
 
@@ -416,7 +416,7 @@ Verifying
 (entry stays Registered — future AMD re-populates alias)
 ```
 
-**New function**: `ListenerAliasTable_check_verifications(uint8_t current_tick)`
+**New function**: `AliasMappingListener_check_verifications(uint8_t current_tick)`
 
 - Returns `node_id_t` — the node_id to probe (caller builds targeted AME)
 - Returns 0 if nothing to do this cycle
@@ -428,14 +428,14 @@ Verifying
 
 **Modifications to existing functions**:
 
-- `ListenerAliasTable_set_alias()`: Also clear `verify_pending = 0` (AMD arrived = verified)
-- `ListenerAliasTable_clear_alias_by_alias()`: Also clear `verify_pending = 0`
-- `ListenerAliasTable_flush_aliases()`: Also clear `verify_pending = 0` on all entries
+- `AliasMappingListener_set_alias()`: Also clear `verify_pending = 0` (AMD arrived = verified)
+- `AliasMappingListener_clear_alias_by_alias()`: Also clear `verify_pending = 0`
+- `AliasMappingListener_flush_aliases()`: Also clear `verify_pending = 0` on all entries
 
 **Caller integration** (`can_main_statemachine.c` main loop):
 
 ```c
-node_id_t probe_id = ListenerAliasTable_check_verifications(current_tick);
+node_id_t probe_id = AliasMappingListener_check_verifications(current_tick);
 
 if (probe_id != 0) {
 
@@ -517,16 +517,16 @@ if (probe_id != 0) {
    callback could keep this knowledge out of the CAN layer.
 
 2. **Global AME handling**: Should the AME handler call
-   `ListenerAliasTable_flush_aliases()` when a global AME (empty payload) is
+   `AliasMappingListener_flush_aliases()` when a global AME (empty payload) is
    received? This would ensure stale aliases are not served during the
    re-population window. Incoming AMD replies will re-populate via
-   `ListenerAliasTable_set_alias()`.
+   `AliasMappingListener_set_alias()`.
 
 ## Pickup Checklist (Remaining Work)
 
 When resuming this plan, implement in this order:
 
-1. **Step 1**: Wire DI pointers in `can_config.c` and call `ListenerAliasTable_initialize()`
+1. **Step 1**: Wire DI pointers in `can_config.c` and call `AliasMappingListener_initialize()`
 2. **Step 2**: Implement hold-until-AMD in `last_frame()` (`_check_hold_for_alias_resolution()` and `_queue_targeted_ame()`)
 3. **Step 7**: Implement periodic verification (struct changes, `check_verifications()`, caller integration)
 4. **Global AME**: Decide and implement `flush_aliases` call in AME handler

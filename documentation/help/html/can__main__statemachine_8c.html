@@ -319,7 +319,7 @@ Functions</h2></td></tr>
 
 <p>Probes one listener alias for staleness and queues an AME if due. </p>
 <p>Algorithm:</p><ol type="1">
-<li>Call <a class="el" href="alias__mapping__listener_8c.html#ac1e5ca2ca0ce988c7c8ebf76fd23cda9" title="Probes one listener entry for alias staleness (round-robin).">ListenerAliasTable_check_one_verification()</a> with current tick</li>
+<li>Call <a class="el" href="alias__mapping__listener_8c.html#ac1e5ca2ca0ce988c7c8ebf76fd23cda9" title="Probes one listener entry for alias staleness (round-robin).">AliasMappingListener_check_one_verification()</a> with current tick</li>
 <li>If non-zero node_id returned: get first node's alias, allocate a CAN buffer (with lock/unlock), build targeted AME, push to CAN FIFO (with lock/unlock)</li>
 <li>Return true if an AME was queued, false otherwise</li>
 </ol>

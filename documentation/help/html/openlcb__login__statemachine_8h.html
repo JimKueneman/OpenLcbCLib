@@ -111,7 +111,7 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a3f2b3309b14784eba7f14e9e87a0fe09" id="r_a3f2b3309b14784eba7f14e9e87a0fe09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f2b3309b14784eba7f14e9e87a0fe09">OpenLcbLoginStateMachine_initialize</a> (const <a class="el" href="structinterface__openlcb__login__state__machine__t.html">interface_openlcb_login_state_machine_t</a> *interface_openlcb_login_state_machine)</td></tr>
-<tr class="memdesc:a3f2b3309b14784eba7f14e9e87a0fe09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface. Call once at startup after <a class="el" href="openlcb__login__statemachine__handler_8c.html#a0240f7d8fb35fff420fcf60de82cb4ba" title="Stores the callback interface. Call once at startup.">OpenLcbLoginMessageHandler_initialize()</a>.  <br /></td></tr>
+<tr class="memdesc:a3f2b3309b14784eba7f14e9e87a0fe09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface. Call once at startup after <a class="el" href="openlcb__login__statemachine__handler_8c.html#a0240f7d8fb35fff420fcf60de82cb4ba" title="Stores the callback interface. Call once at startup.">OpenLcbLoginStatemachineHandler_initialize()</a>.  <br /></td></tr>
 <tr class="separator:a3f2b3309b14784eba7f14e9e87a0fe09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48302fcd398ed4abdc719d2c883b382d" id="r_a48302fcd398ed4abdc719d2c883b382d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48302fcd398ed4abdc719d2c883b382d">OpenLcbLoginMainStatemachine_run</a> (void)</td></tr>
 <tr class="memdesc:a48302fcd398ed4abdc719d2c883b382d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs one non-blocking step of login processing. Call from main loop.  <br /></td></tr>
@@ -171,14 +171,14 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Stores the callback interface. Call once at startup after <a class="el" href="openlcb__login__statemachine__handler_8c.html#a0240f7d8fb35fff420fcf60de82cb4ba" title="Stores the callback interface. Call once at startup.">OpenLcbLoginMessageHandler_initialize()</a>. </p>
+<p>Stores the callback interface. Call once at startup after <a class="el" href="openlcb__login__statemachine__handler_8c.html#a0240f7d8fb35fff420fcf60de82cb4ba" title="Stores the callback interface. Call once at startup.">OpenLcbLoginStatemachineHandler_initialize()</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">interface_openlcb_login_state_machine</td><td>Must remain valid for application lifetime.</td></tr>
   </table>
   </dd>
 </dl>
-<p>Stores the callback interface. Call once at startup after <a class="el" href="openlcb__login__statemachine__handler_8c.html#a0240f7d8fb35fff420fcf60de82cb4ba" title="Stores the callback interface. Call once at startup.">OpenLcbLoginMessageHandler_initialize()</a>.</p>
+<p>Stores the callback interface. Call once at startup after <a class="el" href="openlcb__login__statemachine__handler_8c.html#a0240f7d8fb35fff420fcf60de82cb4ba" title="Stores the callback interface. Call once at startup.">OpenLcbLoginStatemachineHandler_initialize()</a>.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Store interface pointer</li>
 <li>Link outgoing message buffer pointers in state machine info</li>

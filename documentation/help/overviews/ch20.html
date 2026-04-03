@@ -129,31 +129,31 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><code>ListenerAliasTable_initialize()</code></td>
+                    <td><code>AliasMappingListener_initialize()</code></td>
                     <td>Zeros all entries. Call once at startup.</td>
                 </tr>
                 <tr>
-                    <td><code>ListenerAliasTable_register(node_id)</code></td>
+                    <td><code>AliasMappingListener_register(node_id)</code></td>
                     <td>Registers a listener Node ID with <code>alias = 0</code>. If already registered, returns the existing entry without modification. Returns NULL if the table is full or node_id is invalid.</td>
                 </tr>
                 <tr>
-                    <td><code>ListenerAliasTable_unregister(node_id)</code></td>
+                    <td><code>AliasMappingListener_unregister(node_id)</code></td>
                     <td>Removes the entry matching node_id. Clears both <code>node_id</code> and <code>alias</code> fields. Safe to call with a node_id that is not registered.</td>
                 </tr>
                 <tr>
-                    <td><code>ListenerAliasTable_set_alias(node_id, alias)</code></td>
+                    <td><code>AliasMappingListener_set_alias(node_id, alias)</code></td>
                     <td>Stores a resolved alias for a registered listener Node ID. Called when an AMD frame arrives. If node_id is not in the table, this is a no-op.</td>
                 </tr>
                 <tr>
-                    <td><code>ListenerAliasTable_find_by_node_id(node_id)</code></td>
+                    <td><code>AliasMappingListener_find_by_node_id(node_id)</code></td>
                     <td>Primary TX-path query. Returns the entry for the given Node ID. Caller checks <code>entry->alias != 0</code> to confirm the alias has been resolved.</td>
                 </tr>
                 <tr>
-                    <td><code>ListenerAliasTable_flush_aliases()</code></td>
+                    <td><code>AliasMappingListener_flush_aliases()</code></td>
                     <td>Zeros all alias fields but preserves registered node_ids. Called on global AME (empty payload) receipt.</td>
                 </tr>
                 <tr>
-                    <td><code>ListenerAliasTable_clear_alias_by_alias(alias)</code></td>
+                    <td><code>AliasMappingListener_clear_alias_by_alias(alias)</code></td>
                     <td>Zeros the alias field for the entry matching a specific alias value. Called when an AMR frame is received.</td>
                 </tr>
             </tbody>
@@ -171,18 +171,18 @@ sequenceDiagram
     participant Remote as Remote Listener Node
 
     App->>Train: Attach listener (Node ID = 0x050101012345)
-    Train->>LT: ListenerAliasTable_register(0x050101012345)
+    Train->>LT: AliasMappingListener_register(0x050101012345)
     Note over LT: Entry created: node_id=0x050101012345, alias=0
 
     Train->>CAN: Send AME frame with Node ID 0x050101012345
     CAN->>Remote: AME received
     Remote->>CAN: Reply with AMD (alias=0x2AB, Node ID=0x050101012345)
 
-    CAN->>LT: ListenerAliasTable_set_alias(0x050101012345, 0x2AB)
+    CAN->>LT: AliasMappingListener_set_alias(0x050101012345, 0x2AB)
     Note over LT: Entry updated: node_id=0x050101012345, alias=0x2AB
 
     Note over Train: TX path can now resolve alias for listener
-    Train->>LT: ListenerAliasTable_find_by_node_id(0x050101012345)
+    Train->>LT: AliasMappingListener_find_by_node_id(0x050101012345)
     Note over Train: alias=0x2AB, send forwarded command
         </div>
 
@@ -217,12 +217,12 @@ sequenceDiagram
 
         <ol>
             <li>Get the listener Node ID from the train's listener list.</li>
-            <li>Call <code>ListenerAliasTable_find_by_node_id(node_id)</code>.</li>
+            <li>Call <code>AliasMappingListener_find_by_node_id(node_id)</code>.</li>
             <li>If the returned entry has <code>alias != 0</code>, use that alias as the destination alias in the CAN frame header.</li>
             <li>If <code>alias == 0</code>, the alias is not yet resolved -- the message must be held until an AMD resolves it.</li>
         </ol>
 
-        <p>The TX state machine interface includes an optional <code>listener_find_by_node_id</code> function pointer, wired to <code>ListenerAliasTable_find_by_node_id()</code> by <code>can_config.c</code>.</p>
+        <p>The TX state machine interface includes an optional <code>listener_find_by_node_id</code> function pointer, wired to <code>AliasMappingListener_find_by_node_id()</code> by <code>can_config.c</code>.</p>
 
         <h2>20.8 Thread Safety</h2>
         <p>The listener alias table is written by the CAN RX interrupt (when AMD arrives and <code>set_alias()</code> is called) and read by the CAN TX main thread (during alias resolution). The <code>lock_shared_resources</code> / <code>unlock_shared_resources</code> mechanism must protect concurrent accesses, as described in <a href="ch06.html">Chapter 6</a>.</p>

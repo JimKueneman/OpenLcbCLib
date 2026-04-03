@@ -1417,8 +1417,8 @@ Wired conditionally in `can_config.c`:
 
 ```c
 #ifdef OPENLCB_COMPILE_TRAIN
-    _main_sm.listener_flush_aliases = &ListenerAliasTable_flush_aliases;
-    _main_sm.listener_set_alias = &ListenerAliasTable_set_alias;
+    _main_sm.listener_flush_aliases = &AliasMappingListener_flush_aliases;
+    _main_sm.listener_set_alias = &AliasMappingListener_set_alias;
 #endif
 ```
 

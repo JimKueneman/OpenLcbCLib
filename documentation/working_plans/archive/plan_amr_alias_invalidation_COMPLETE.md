@@ -467,5 +467,5 @@ This plan is **independent** of the listener alias table integration
 (`plan_listener_alias_table_integration.md`).  The AMR defense here is a
 general-purpose mechanism that protects all message types.  When the listener
 plan is also implemented, the AMR handler will additionally call
-`ListenerAliasTable_clear_alias_by_alias(alias)` — but that is additive and
+`AliasMappingListener_clear_alias_by_alias(alias)` — but that is additive and
 does not conflict with the scrubs defined here.

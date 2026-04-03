@@ -1,7 +1,7 @@
 <!--
   ============================================================
   STATUS: IMPLEMENTED
-  The global `_global_100ms_tick` counter lives in `openlcb_config.c`, `OpenLcb_100ms_timer_tick()` is a single increment, and `_run_periodic_services()` passes the tick to all module timer functions with the correct `uint8_t current_tick` signature.
+  The global `_global_100ms_tick` counter lives in `openlcb_config.c`, `OpenLcbConfig_100ms_timer_tick()` is a single increment, and `_run_periodic_services()` passes the tick to all module timer functions with the correct `uint8_t current_tick` signature.
   ============================================================
 -->
 
@@ -9,7 +9,7 @@
 
 ## 1. Summary
 
-**Problem:** `OpenLcb_100ms_timer_tick()` runs from the timer interrupt and currently does
+**Problem:** `OpenLcbConfig_100ms_timer_tick()` runs from the timer interrupt and currently does
 heavy work:
 
 1. **`OpenLcbNode_100ms_timer_tick()`** — iterates ALL allocated nodes and increments
@@ -31,7 +31,7 @@ heavy work:
 
 **Fix:** Replace all per-item increment loops and work with a single global atomic clock.
 The timer interrupt does ONE thing: increment `volatile uint8_t _global_100ms_tick`. All real
-work moves to the main loop via `OpenLcb_run()`.
+work moves to the main loop via `OpenLcbConfig_run()`.
 
 ### Design Principles
 
@@ -39,7 +39,7 @@ work moves to the main loop via `OpenLcb_run()`.
 Timer interrupt context:
     _global_100ms_tick++        ← single atomic byte, can never stall
 
-Main loop context (OpenLcb_run):
+Main loop context (OpenLcbConfig_run):
     tick = _global_100ms_tick   ← read once
     pass tick down to each module as a parameter
     modules compute elapsed time via subtraction: (tick - snapshot)
@@ -47,7 +47,7 @@ Main loop context (OpenLcb_run):
 ```
 
 **No module coupling:** `_global_100ms_tick` is private to `openlcb_config.c`. Modules
-never call `OpenLcb_get_global_100ms_tick()` directly. Instead:
+never call `OpenLcbConfig_get_global_100ms_tick()` directly. Instead:
 - Main-loop modules receive `uint8_t current_tick` as a **function parameter**
 - The login statemachine receives the tick through `can_statemachine_info_t`
 - The Rx handler (Item 7) receives the tick through a `get_current_tick` **interface
@@ -82,8 +82,8 @@ themselves. Every other context only reads the counter.
 
 | File | Change |
 |------|--------|
-| `src/openlcb/openlcb_config.c` | Add `volatile uint8_t _global_100ms_tick`; reduce `OpenLcb_100ms_timer_tick()` to single increment; read tick once in `OpenLcb_run()` and pass to `_run_periodic_services(tick)` |
-| `src/openlcb/openlcb_config.h` | Declare `OpenLcb_get_global_100ms_tick()` (used only by wiring code, not by modules) |
+| `src/openlcb/openlcb_config.c` | Add `volatile uint8_t _global_100ms_tick`; reduce `OpenLcbConfig_100ms_timer_tick()` to single increment; read tick once in `OpenLcbConfig_run()` and pass to `_run_periodic_services(tick)` |
+| `src/openlcb/openlcb_config.h` | Declare `OpenLcbConfig_get_global_100ms_tick()` (used only by wiring code, not by modules) |
 | `src/openlcb/openlcb_node.c` | Remove per-node `timerticks++` loop; change `OpenLcbNode_100ms_timer_tick(uint8_t current_tick)` signature |
 | `src/openlcb/openlcb_node.h` | Update function declaration with `uint8_t current_tick` parameter |
 | `src/drivers/canbus/can_types.h` | Add `uint8_t current_tick` to `can_statemachine_info_t` |
@@ -97,7 +97,7 @@ themselves. Every other context only reads the counter.
 | `src/openlcb/protocol_datagram_handler.h` | Update function declaration |
 | `src/drivers/canbus/can_rx_message_handler.h` | Add `uint8_t (*get_current_tick)(void)` to Rx handler interface |
 | `src/drivers/canbus/can_rx_message_handler.c` | Use `_interface->get_current_tick()` to stamp FIRST frames (Item 7) |
-| `src/drivers/canbus/can_config.c` | Wire `get_current_tick` to `OpenLcb_get_global_100ms_tick` |
+| `src/drivers/canbus/can_config.c` | Wire `get_current_tick` to `OpenLcbConfig_get_global_100ms_tick` |
 
 **Note:** Application copies in `applications/` are updated automatically via the
 project's copy shell script and should NOT be edited manually.
@@ -146,7 +146,7 @@ static volatile uint8_t _global_100ms_tick = 0;
 Add a getter (used only by wiring code — `openlcb_config.c` and `can_config.c`):
 
 ```c
-uint8_t OpenLcb_get_global_100ms_tick(void) {
+uint8_t OpenLcbConfig_get_global_100ms_tick(void) {
 
     return _global_100ms_tick;
 
@@ -166,15 +166,15 @@ In `openlcb_config.h`, declare:
      *
      * @return Current tick count (wraps at 255).
      */
-extern uint8_t OpenLcb_get_global_100ms_tick(void);
+extern uint8_t OpenLcbConfig_get_global_100ms_tick(void);
 ```
 
 ### Step 2. Reduce the timer interrupt to one line
 
-Replace the current `OpenLcb_100ms_timer_tick()`:
+Replace the current `OpenLcbConfig_100ms_timer_tick()`:
 
 ```c
-void OpenLcb_100ms_timer_tick(void) {
+void OpenLcbConfig_100ms_timer_tick(void) {
 
     _global_100ms_tick++;
 
@@ -183,7 +183,7 @@ void OpenLcb_100ms_timer_tick(void) {
 
 ### Step 3. Move periodic service into the main loop
 
-Add a new internal function and call it from `OpenLcb_run()`:
+Add a new internal function and call it from `OpenLcbConfig_run()`:
 
 ```c
     /**
@@ -214,10 +214,10 @@ static void _run_periodic_services(void) {
 }
 ```
 
-And modify `OpenLcb_run()`:
+And modify `OpenLcbConfig_run()`:
 
 ```c
-void OpenLcb_run(void) {
+void OpenLcbConfig_run(void) {
 
     CanMainStateMachine_run();
     OpenLcbLoginMainStatemachine_run();
@@ -278,12 +278,12 @@ typedef struct {
 In `can_main_statemachine.c`, before calling the login statemachine, set the tick:
 
 ```c
-    _can_statemachine_info.current_tick = OpenLcb_get_global_100ms_tick();
+    _can_statemachine_info.current_tick = OpenLcbConfig_get_global_100ms_tick();
     _interface->login_statemachine_run(&_can_statemachine_info);
 ```
 
 **Note:** `can_main_statemachine.c` is wiring-level code (it already includes openlcb_config
-headers indirectly). Alternatively, the tick can be passed from `OpenLcb_run()` through the
+headers indirectly). Alternatively, the tick can be passed from `OpenLcbConfig_run()` through the
 `CanMainStateMachine_run()` interface. The exact wiring path depends on the existing include
 structure — the goal is that `can_login_message_handler.c` (the leaf module) never includes
 `openlcb_config.h`.
@@ -336,7 +336,7 @@ uint8_t (*get_current_tick)(void);
 In `can_config.c`, wire it:
 
 ```c
-    _rx_handler.get_current_tick = &OpenLcb_get_global_100ms_tick;
+    _rx_handler.get_current_tick = &OpenLcbConfig_get_global_100ms_tick;
 ```
 
 Then in `can_rx_message_handler.c`, FIRST frame stamping (Item 7) becomes:
@@ -510,7 +510,7 @@ void ProtocolDatagramHandler_100ms_timer_tick(uint8_t current_tick) {
 
 Several application driver files call `OpenLcbNode_100ms_timer_tick()` and
 `ProtocolDatagramHandler_100ms_timer_tick()` directly from their hardware timer ISR. After
-this refactor, these calls must be replaced with `OpenLcb_100ms_timer_tick()` only.
+this refactor, these calls must be replaced with `OpenLcbConfig_100ms_timer_tick()` only.
 
 **Affected application driver call sites:**
 - `esp32_drivers.c:64-65` — direct calls to Node + Datagram timer ticks
@@ -519,7 +519,7 @@ this refactor, these calls must be replaced with `OpenLcb_100ms_timer_tick()` on
 - `stm32_driverlib_drivers.c:130-131` — direct calls to Node + Datagram timer ticks
 - `drivers.c:242-243` (dsPIC) — direct calls to Node + Datagram timer ticks
 
-These should all be replaced with a single `OpenLcb_100ms_timer_tick()` call.
+These should all be replaced with a single `OpenLcbConfig_100ms_timer_tick()` call.
 
 ## 4. Test Changes
 
@@ -552,13 +552,13 @@ cd ~/Documents/OpenLcbCLib/test && rm -rf build && mkdir build && cd build && cm
 | **Timer interrupt stalling on CAN send** | **ELIMINATED** | Timer interrupt no longer sends messages. Heartbeat request and broadcast time callbacks now run from main loop where blocking on a full transmit buffer is safe. |
 | **Non-atomic `uint16_t` increment on 8-bit PIC** | **ELIMINATED** | Timer interrupt no longer increments per-node `uint16_t timerticks`. Only increments a single `volatile uint8_t`. |
 | **Application callbacks from interrupt context** | **ELIMINATED** | `on_heartbeat_timeout`, `on_time_changed`, and `on_100ms_timer_tick` all now fire from main loop context. No reentrancy risk. |
-| **Module coupling to openlcb_config** | **ELIMINATED** | No module calls `OpenLcb_get_global_100ms_tick()` directly. The tick is passed as a function parameter or through interface function pointers. Only wiring code (openlcb_config.c, can_config.c) reads the global clock. |
+| **Module coupling to openlcb_config** | **ELIMINATED** | No module calls `OpenLcbConfig_get_global_100ms_tick()` directly. The tick is passed as a function parameter or through interface function pointers. Only wiring code (openlcb_config.c, can_config.c) reads the global clock. |
 | **Timer tick jitter / missed ticks** | LOW | If the main loop is slow, periodic services may not run for several 100ms periods. The `ticks_elapsed` pattern handles this correctly — it processes the accumulated elapsed time in a single pass. No ticks are lost, though timing precision degrades to main-loop granularity. |
 | **Heartbeat halfway detection across multiple ticks** | LOW | If multiple ticks elapse between polls, the halfway point could be crossed without exact detection. The implementation checks whether the halfway point was within the elapsed interval. Alternatively, a `heartbeat_request_sent` flag simplifies this. |
 | **Broadcast time accumulator overflow** | VERY LOW | If many ticks elapse at once, `100 * abs_rate * ticks_elapsed` could overflow `uint32_t` for very high rates and long gaps. In practice, `ticks_elapsed` is small (main loop runs in microseconds) and rates are typically 1-16x. |
 | **`uint8_t` wrap-around** | NONE | Unsigned subtraction handles wrap correctly. Max measurable duration is 255 ticks (25.5 seconds). All library timeouts are well within range. |
 | **`on_100ms_timer_tick` callback timing change** | LOW | Application callback previously fired exactly once per 100ms from interrupt context. Now fires from main loop, gated by tick check. Timing precision depends on main-loop speed — in practice much faster than 100ms. |
-| **Application driver files need manual update** | MEDIUM | Five platform-specific driver files call individual timer tick functions directly from their ISR. These must be changed to `OpenLcb_100ms_timer_tick()` only. Failure to update will cause compile errors (function signatures changed), which is actually a good thing — it forces the update. |
+| **Application driver files need manual update** | MEDIUM | Five platform-specific driver files call individual timer tick functions directly from their ISR. These must be changed to `OpenLcbConfig_100ms_timer_tick()` only. Failure to update will cause compile errors (function signatures changed), which is actually a good thing — it forces the update. |
 | **Existing tests depend on per-node timerticks increment** | MEDIUM | Tests that call `OpenLcbNode_100ms_timer_tick()` and check `node->timerticks` will fail. Tests must be updated for new signature and behavior. |
 | **node->timerticks field type mismatch** | VERY LOW | `node->timerticks` is `uint16_t` but global clock is `uint8_t`. The snapshot uses only 8 bits; the upper byte is unused. A future cleanup could shrink to `uint8_t`. |
 | **Heartbeat timeout > 25.5 seconds** | NONE | The heartbeat still uses its own `heartbeat_counter_100ms` (uint32_t) decrementing counter. The global clock only gates WHEN the decrement runs. Long-duration countdown is in the counter itself, unaffected by the 8-bit clock. |
@@ -583,7 +583,7 @@ Implementation order:
 |------|------|
 | Add global clock to openlcb_config | 5 min |
 | Reduce timer interrupt to single increment | 5 min |
-| Add `_run_periodic_services()` in `OpenLcb_run()` | 5 min |
+| Add `_run_periodic_services()` in `OpenLcbConfig_run()` | 5 min |
 | Convert `OpenLcbNode_100ms_timer_tick(tick)` | 10 min |
 | Add `current_tick` to `can_statemachine_info_t` | 5 min |
 | Convert login 200ms wait | 10 min |
@@ -654,4 +654,4 @@ can_main_statemachine.c   ← sets current_tick in can_statemachine_info_t
     └─ struct ────→ can_login_message_handler: info->current_tick
 ```
 
-No module includes `openlcb_config.h`. No module calls `OpenLcb_get_global_100ms_tick()`.
+No module includes `openlcb_config.h`. No module calls `OpenLcbConfig_get_global_100ms_tick()`.

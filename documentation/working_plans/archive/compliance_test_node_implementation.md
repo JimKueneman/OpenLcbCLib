@@ -94,7 +94,7 @@ Rather than a hardcoded enum/switch, each protocol mode is described by a `proto
 
 #include "src/openlcb/openlcb_types.h"
 
-// Setup function signature: called after OpenLcb_create_node() to
+// Setup function signature: called after OpenLcbConfig_create_node() to
 // register protocol-specific event ranges, handlers, etc.
 typedef void (*protocol_setup_fn)(openlcb_node_t *node);
 
@@ -280,14 +280,14 @@ int main(int argc, char *argv[]) {
     OSxDrivers_setup();
     OSxCanDriver_setup();
     CanConfig_initialize(&can_config);
-    OpenLcb_initialize(&openlcb_config);
+    OpenLcbConfig_initialize(&openlcb_config);
 
     // 3. Wait for threads to connect
     while (!(OSxDrivers_100ms_is_connected() && OSxCanDriver_is_connected()))
         sleep(2);
 
     // 4. Create node with the selected mode's parameters
-    openlcb_node_t *node = OpenLcb_create_node(nodeid, mode->params);
+    openlcb_node_t *node = OpenLcbConfig_create_node(nodeid, mode->params);
 
     // 5. Run protocol-specific setup (if any)
     if (mode->setup)
@@ -296,7 +296,7 @@ int main(int argc, char *argv[]) {
     // 6. Main loop (lazy sleep pattern)
     int idle_count = 0;
     while (1) {
-        OpenLcb_run();
+        OpenLcbConfig_run();
         if (OSxCanDriver_data_was_received())
             idle_count = 0;
         else

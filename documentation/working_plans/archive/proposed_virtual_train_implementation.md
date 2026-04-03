@@ -415,11 +415,11 @@ externally received global AME:
     }
 ```
 
-`ListenerAliasTable_flush_aliases()` zeros the alias field on every listener
+`AliasMappingListener_flush_aliases()` zeros the alias field on every listener
 table entry, leaving node_ids intact (`alias_mapping_listener.c` lines 250-259):
 
 ```c
-void ListenerAliasTable_flush_aliases(void) {
+void AliasMappingListener_flush_aliases(void) {
 
     for (int i = 0; i < LISTENER_ALIAS_TABLE_DEPTH; i++) {
 
@@ -582,11 +582,11 @@ Add two OPTIONAL interface pointers and one new public function:
 
 ```c
         /** @brief OPTIONAL. Flush all cached listener aliases. NULL if unused.
-         *  Typical: ListenerAliasTable_flush_aliases. */
+         *  Typical: AliasMappingListener_flush_aliases. */
         void (*listener_flush_aliases)(void);
 
         /** @brief OPTIONAL. Store a resolved alias for a listener Node ID. NULL if unused.
-         *  Typical: ListenerAliasTable_set_alias. */
+         *  Typical: AliasMappingListener_set_alias. */
         void (*listener_set_alias)(node_id_t node_id, uint16_t alias);
 ```
 
@@ -719,8 +719,8 @@ Wire the new interface pointers (inside `_build_main_statemachine()`):
 ```c
     // Listener alias management (OPTIONAL — NULL if OPENLCB_COMPILE_TRAIN not defined)
 #ifdef OPENLCB_COMPILE_TRAIN
-    _main_sm.listener_flush_aliases = &ListenerAliasTable_flush_aliases;
-    _main_sm.listener_set_alias = &ListenerAliasTable_set_alias;
+    _main_sm.listener_flush_aliases = &AliasMappingListener_flush_aliases;
+    _main_sm.listener_set_alias = &AliasMappingListener_set_alias;
 #endif
 ```
 

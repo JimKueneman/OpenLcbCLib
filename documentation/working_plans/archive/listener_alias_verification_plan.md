@@ -1,7 +1,7 @@
 <!--
   ============================================================
   STATUS: IMPLEMENTED
-  `verify_ticks` and `verify_pending` fields are in `listener_alias_entry_t`; `ListenerAliasTable_check_one_verification()` and `CanMainStatemachine_handle_listener_verification()` are wired into the CAN state machine loop.
+  `verify_ticks` and `verify_pending` fields are in `listener_alias_entry_t`; `AliasMappingListener_check_one_verification()` and `CanMainStatemachine_handle_listener_verification()` are wired into the CAN state machine loop.
   ============================================================
 -->
 
@@ -40,7 +40,7 @@ prober:
 `USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL`).  This spreads AME traffic
 across time — no burst of AMEs at once.
 
-**AMD response handling** is already wired: `ListenerAliasTable_set_alias()`
+**AMD response handling** is already wired: `AliasMappingListener_set_alias()`
 is called from `CanRxMessageHandler_amd_frame()`.  We only need to clear
 `verify_pending` when set_alias is called.
 
@@ -51,7 +51,7 @@ is called from `CanRxMessageHandler_amd_frame()`.  We only need to clear
 | File | Change |
 |------|--------|
 | `can_types.h` | Add `verify_ticks`, `verify_pending` to `listener_alias_entry_t` |
-| `alias_mapping_listener.h` | Declare `ListenerAliasTable_check_one_verification()` |
+| `alias_mapping_listener.h` | Declare `AliasMappingListener_check_one_verification()` |
 | `alias_mapping_listener.c` | Implement prober + static cursor; update `initialize`, `set_alias`, `clear_alias_by_alias`, `flush_aliases`, `unregister` to clear new fields |
 | `templates/openlcb_user_config.h` | Add `USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL`, `USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS`, `USER_DEFINED_LISTENER_VERIFY_TIMEOUT_TICKS` |
 | `can_main_statemachine.h` | Add `handle_listener_verification` to interface struct |
@@ -140,7 +140,7 @@ static uint16_t _verify_cursor = 0;
 static uint8_t _verify_last_tick = 0;
 ```
 
-### New function: `ListenerAliasTable_check_one_verification()`
+### New function: `AliasMappingListener_check_one_verification()`
 
 ```c
     /**
@@ -167,7 +167,7 @@ static uint8_t _verify_last_tick = 0;
      * @return The @ref node_id_t to probe (caller builds and queues targeted
      *         AME), or 0 if nothing to do this tick.
      */
-node_id_t ListenerAliasTable_check_one_verification(uint8_t current_tick) {
+node_id_t AliasMappingListener_check_one_verification(uint8_t current_tick) {
 
     // Rate-limit: at most one probe per PROBE_TICK_INTERVAL
     uint8_t elapsed = (uint8_t)(current_tick - _verify_last_tick);
@@ -256,11 +256,11 @@ node_id_t ListenerAliasTable_check_one_verification(uint8_t current_tick) {
 All changes below add one or two lines to existing functions.  The function
 signatures are unchanged.
 
-### `ListenerAliasTable_initialize()` — Startup
+### `AliasMappingListener_initialize()` — Startup
 
 **WAS:**
 ```c
-void ListenerAliasTable_initialize(void) {
+void AliasMappingListener_initialize(void) {
 
     for (int i = 0; i < LISTENER_ALIAS_TABLE_DEPTH; i++) {
 
@@ -274,7 +274,7 @@ void ListenerAliasTable_initialize(void) {
 
 **IS:**
 ```c
-void ListenerAliasTable_initialize(void) {
+void AliasMappingListener_initialize(void) {
 
     for (int i = 0; i < LISTENER_ALIAS_TABLE_DEPTH; i++) {
 
@@ -291,7 +291,7 @@ void ListenerAliasTable_initialize(void) {
 }
 ```
 
-### `ListenerAliasTable_register()` — Listener attached
+### `AliasMappingListener_register()` — Listener attached
 
 **WAS** (inside first-empty-slot block):
 ```c
@@ -317,7 +317,7 @@ void ListenerAliasTable_initialize(void) {
         }
 ```
 
-### `ListenerAliasTable_set_alias()` — AMD arrived, entry confirmed
+### `AliasMappingListener_set_alias()` — AMD arrived, entry confirmed
 
 **WAS** (inside matching-node_id block):
 ```c
@@ -346,7 +346,7 @@ last AME send time (stored in `verify_ticks`).  This is correct — the AMD
 reply confirms the alias is alive, and the reprobing clock starts from when
 the AME was sent.  No signature change needed.
 
-### `ListenerAliasTable_unregister()` — Listener detached
+### `AliasMappingListener_unregister()` — Listener detached
 
 **WAS** (inside matching-node_id block):
 ```c
@@ -372,11 +372,11 @@ the AME was sent.  No signature change needed.
         }
 ```
 
-### `ListenerAliasTable_flush_aliases()` — Global AME received
+### `AliasMappingListener_flush_aliases()` — Global AME received
 
 **WAS:**
 ```c
-void ListenerAliasTable_flush_aliases(void) {
+void AliasMappingListener_flush_aliases(void) {
 
     for (int i = 0; i < LISTENER_ALIAS_TABLE_DEPTH; i++) {
 
@@ -389,7 +389,7 @@ void ListenerAliasTable_flush_aliases(void) {
 
 **IS:**
 ```c
-void ListenerAliasTable_flush_aliases(void) {
+void AliasMappingListener_flush_aliases(void) {
 
     for (int i = 0; i < LISTENER_ALIAS_TABLE_DEPTH; i++) {
 
@@ -401,7 +401,7 @@ void ListenerAliasTable_flush_aliases(void) {
 }
 ```
 
-### `ListenerAliasTable_clear_alias_by_alias()` — AMR received
+### `AliasMappingListener_clear_alias_by_alias()` — AMR received
 
 **WAS** (inside matching-alias block):
 ```c
@@ -430,7 +430,7 @@ void ListenerAliasTable_flush_aliases(void) {
 
 **File:** `alias_mapping_listener.h`
 
-Add declaration after `ListenerAliasTable_clear_alias_by_alias`:
+Add declaration after `AliasMappingListener_clear_alias_by_alias`:
 
 ```c
         /**
@@ -449,7 +449,7 @@ Add declaration after `ListenerAliasTable_clear_alias_by_alias`:
          *
          * @return @ref node_id_t to probe (caller queues targeted AME), or 0.
          */
-    extern node_id_t ListenerAliasTable_check_one_verification(uint8_t current_tick);
+    extern node_id_t AliasMappingListener_check_one_verification(uint8_t current_tick);
 ```
 
 ---
@@ -486,7 +486,7 @@ Add new function (before `run()`), include `alias_mapping_listener.h` at top:
      * @brief Probes one listener alias for staleness and queues an AME if due.
      *
      * @details Algorithm:
-     * -# Call ListenerAliasTable_check_one_verification() with current tick
+     * -# Call AliasMappingListener_check_one_verification() with current tick
      * -# If non-zero node_id returned: get first node's alias, allocate a CAN
      *    buffer (with lock/unlock), build targeted AME, push to CAN FIFO
      *    (with lock/unlock)
@@ -497,7 +497,7 @@ Add new function (before `run()`), include `alias_mapping_listener.h` at top:
 bool CanMainStatemachine_handle_listener_verification(void) {
 
     node_id_t probe_id =
-            ListenerAliasTable_check_one_verification(_interface->get_current_tick());
+            AliasMappingListener_check_one_verification(_interface->get_current_tick());
 
     if (probe_id != 0) {
 

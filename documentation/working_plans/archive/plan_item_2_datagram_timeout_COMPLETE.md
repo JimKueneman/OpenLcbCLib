@@ -61,7 +61,7 @@ This means:
 - **Main loop context:** Receives tick as parameter, reads per-buffer `timerticks`, frees
   under lock. Lock disables interrupts, preventing races with Rx buffer allocation.
 - **No module coupling:** `protocol_datagram_handler.c` does NOT include `openlcb_config.h`
-  and does NOT call `OpenLcb_get_global_100ms_tick()`. The tick arrives as a function
+  and does NOT call `OpenLcbConfig_get_global_100ms_tick()`. The tick arrives as a function
   parameter or through `statemachine_info->current_tick`.
 
 ## 2. Files to Modify
@@ -417,7 +417,7 @@ cd ~/Documents/OpenLcbCLib/test && rm -rf build && mkdir build && cd build && cm
 |------|-------|------------|
 | timerticks snapshot wrap-around | NONE | Subtraction with mask: `(current - snapshot) & 0x1F` handles wrap correctly for durations up to 31 ticks (~3.1 seconds). Timeout threshold is 30, well within range. |
 | Timer/main-loop race | NONE | Timer only increments `volatile uint8_t _global_100ms_tick`. Main loop reads it once and passes the value as a parameter. Per-buffer fields are read under lock. Lock disables interrupts. |
-| No module coupling | NONE | `protocol_datagram_handler.c` does not include `openlcb_config.h` and does not call `OpenLcb_get_global_100ms_tick()`. The tick arrives as a function parameter (`current_tick`) for periodic services and through `statemachine_info->current_tick` for message dispatch handlers. This follows the dependency-injection pattern from `plan_global_clock_refactor.md`. |
+| No module coupling | NONE | `protocol_datagram_handler.c` does not include `openlcb_config.h` and does not call `OpenLcbConfig_get_global_100ms_tick()`. The tick arrives as a function parameter (`current_tick`) for periodic services and through `statemachine_info->current_tick` for message dispatch handlers. This follows the dependency-injection pattern from `plan_global_clock_refactor.md`. |
 | Retry count overflow | VERY LOW | 3 bits hold 0-7. Max retries is 3. Even if somehow called more, 7 is the ceiling. |
 | Existing tests | LOW | Existing `_100ms_timer_tick` test calls the function with no nodes -- still passes (now a no-op). Existing rejection tests will need updated assertions for the new timerticks bit layout. |
 | No struct changes needed | NONE | Reuses existing `openlcb_msg_t.timerticks`. Zero impact on struct layouts. |

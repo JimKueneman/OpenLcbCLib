@@ -262,7 +262,7 @@ Data Fields</h2></td></tr>
 
 <p>OPTIONAL. Register a listener Node ID in the alias table. </p>
 <p>Called when a Train Listener Attach command is detected. NULL = listener alias feature not linked in.</p>
-<dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_register. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Typical: AliasMappingListener_register. </dd></dl>
 
 </div>
 </div>
@@ -280,7 +280,7 @@ Data Fields</h2></td></tr>
 
 <p>OPTIONAL. Store a resolved alias for a registered listener. </p>
 <p>Called when an AMD frame arrives. No-op if the node_id is not a registered listener. NULL = feature not linked in.</p>
-<dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_set_alias. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Typical: AliasMappingListener_set_alias. </dd></dl>
 
 </div>
 </div>
@@ -298,7 +298,7 @@ Data Fields</h2></td></tr>
 
 <p>OPTIONAL. Clear a listener entry by alias (AMR cleanup). </p>
 <p>Called when an AMR frame arrives so future TX-path lookups return alias == 0 instead of a stale alias. NULL = feature not linked in.</p>
-<dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_clear_alias_by_alias. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Typical: AliasMappingListener_clear_alias_by_alias. </dd></dl>
 
 </div>
 </div>
@@ -316,7 +316,7 @@ Data Fields</h2></td></tr>
 
 <p>OPTIONAL. Flush all cached listener aliases (global AME). </p>
 <p>Called when a global AME (empty payload) is received per CanFrameTransferS Section 6.2.3. Zeros all alias fields but preserves registered node_ids. The AMD replies triggered by the global AME will re-populate aliases via set_alias. NULL = feature not linked in.</p>
-<dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_flush_aliases. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Typical: AliasMappingListener_flush_aliases. </dd></dl>
 
 </div>
 </div>

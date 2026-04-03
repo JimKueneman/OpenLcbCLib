@@ -9,7 +9,7 @@
 
   The listener alias table module IS implemented in alias_mapping_listener.h/c
   (not listener_alias_table.h/c as the plan named it), with all required functions:
-  ListenerAliasTable_initialize(), register(), unregister(), set_alias(),
+  AliasMappingListener_initialize(), register(), unregister(), set_alias(),
   find_by_node_id(), flush_aliases(), clear_alias_by_alias().
 
   The alias resolution IS in can_tx_statemachine.c via the nullable DI pointer
@@ -17,11 +17,11 @@
 
   Two wiring steps that were previously missing in can_config.c have been fixed:
 
-  1. ListenerAliasTable_initialize() is now called from CanConfig_initialize()
+  1. AliasMappingListener_initialize() is now called from CanConfig_initialize()
      after AliasMappings_initialize(), guarded by #ifdef OPENLCB_COMPILE_TRAIN.
 
   2. _build_tx_statemachine() now wires _tx_sm.listener_find_by_node_id to
-     &ListenerAliasTable_find_by_node_id under #ifdef OPENLCB_COMPILE_TRAIN.
+     &AliasMappingListener_find_by_node_id under #ifdef OPENLCB_COMPILE_TRAIN.
      The TX alias resolution branch is now active; consist-forwarded messages
      will resolve correctly at runtime.
 
@@ -170,13 +170,13 @@ Table depth is computed, not user-defined:
 
 | Function | Purpose |
 |----------|---------|
-| `ListenerAliasTable_initialize()` | Zero all entries |
-| `ListenerAliasTable_register(node_id)` | Add node_id with alias=0 (first-fit empty slot). Returns pointer or NULL if full. |
-| `ListenerAliasTable_unregister(node_id)` | Remove entry (listener detached) |
-| `ListenerAliasTable_set_alias(node_id, alias)` | Called when AMD arrives — stores alias for matching node_id |
-| `ListenerAliasTable_find_by_node_id(node_id)` | **Primary TX-path query** — returns entry (caller checks alias != 0) |
-| `ListenerAliasTable_flush_aliases()` | Zero all alias fields but preserve node_ids (for global AME) |
-| `ListenerAliasTable_clear_alias_by_alias(alias)` | Zero alias field for entry matching this alias (for AMR) |
+| `AliasMappingListener_initialize()` | Zero all entries |
+| `AliasMappingListener_register(node_id)` | Add node_id with alias=0 (first-fit empty slot). Returns pointer or NULL if full. |
+| `AliasMappingListener_unregister(node_id)` | Remove entry (listener detached) |
+| `AliasMappingListener_set_alias(node_id, alias)` | Called when AMD arrives — stores alias for matching node_id |
+| `AliasMappingListener_find_by_node_id(node_id)` | **Primary TX-path query** — returns entry (caller checks alias != 0) |
+| `AliasMappingListener_flush_aliases()` | Zero all alias fields but preserve node_ids (for global AME) |
+| `AliasMappingListener_clear_alias_by_alias(alias)` | Zero alias field for entry matching this alias (for AMR) |
 
 Implementation: static array of `listener_alias_entry_t[LISTENER_ALIAS_TABLE_DEPTH]`.
 Linear scan. Validates node_id non-zero, alias range 0x001-0xFFF.
@@ -198,10 +198,10 @@ Add to `protocol_train_handler.h` interface:
 ```
 
 Wire in `openlcb_config.c` to a function that:
-1. Calls `ListenerAliasTable_register(listener_node_id)`.
+1. Calls `AliasMappingListener_register(listener_node_id)`.
 2. Calls a CAN-layer function to send the targeted AME.
 
-The CAN-layer function `ListenerAliasTable_send_ame(node_id)` uses the existing buffer
+The CAN-layer function `AliasMappingListener_send_ame(node_id)` uses the existing buffer
 allocation + FIFO push pattern.
 
 Similarly, add:
@@ -218,7 +218,7 @@ In `CanRxMessageHandler_amd_frame()`, after `_check_for_duplicate_alias()`:
 ```c
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     node_id_t node_id = CanUtilities_extract_can_payload_as_node_id(can_msg);
-    ListenerAliasTable_set_alias(node_id, source_alias);
+    AliasMappingListener_set_alias(node_id, source_alias);
 ```
 
 This is a no-op if the node_id isn't in the table (not one of our listeners). Only entries
@@ -231,7 +231,7 @@ we care about get populated.
 In `CanRxMessageHandler_amr_frame()`, after `_check_for_duplicate_alias()`:
 ```c
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    ListenerAliasTable_clear_alias_by_alias(source_alias);
+    AliasMappingListener_clear_alias_by_alias(source_alias);
 ```
 
 When that node re-claims an alias and sends AMD, `A4` repopulates the entry.
@@ -244,7 +244,7 @@ In `CanRxMessageHandler_ame_frame()`, at the top of the global query path (the
 `can_msg->payload_count == 0` branch, after existing AMD response loop):
 
 ```c
-    ListenerAliasTable_flush_aliases();
+    AliasMappingListener_flush_aliases();
 ```
 
 This zeros all alias fields but preserves node_ids. The AMD replies triggered by the global
@@ -259,7 +259,7 @@ At the top of `CanTxStatemachine_send_openlcb_message()`, before any frame const
 ```c
     if (openlcb_msg->dest_alias == 0 && openlcb_msg->dest_id != 0) {
 
-        listener_alias_entry_t *entry = ListenerAliasTable_find_by_node_id(openlcb_msg->dest_id);
+        listener_alias_entry_t *entry = AliasMappingListener_find_by_node_id(openlcb_msg->dest_id);
 
         if (entry && entry->alias != 0) {
 
@@ -286,7 +286,7 @@ retries. The AMD reply will arrive and populate the table before the next retry 
 
 In `CanConfig_initialize()`, after `AliasMappings_initialize()`:
 ```c
-    ListenerAliasTable_initialize();
+    AliasMappingListener_initialize();
 ```
 
 ### A9. Tests for Listener Alias Table
@@ -558,10 +558,10 @@ In the `#ifdef OPENLCB_COMPILE_TRAIN` section:
   and pushes to the OpenLCB FIFO.
 
 - Wire `on_listener_alias_needed` to a function that calls
-  `ListenerAliasTable_register(node_id)` and then `ListenerAliasTable_send_ame(node_id)`.
+  `AliasMappingListener_register(node_id)` and then `AliasMappingListener_send_ame(node_id)`.
 
 - Wire `on_listener_alias_released` to a function that calls
-  `ListenerAliasTable_unregister(node_id)`.
+  `AliasMappingListener_unregister(node_id)`.
 
 ### B9. Tests for forwarding
 
@@ -592,7 +592,7 @@ In the `#ifdef OPENLCB_COMPILE_TRAIN` section:
 | `src/drivers/canbus/can_rx_message_handler.c` | Add table population in `amd_frame()`, alias clear in `amr_frame()`, flush in `ame_frame()` global path |
 | `src/drivers/canbus/can_rx_message_handler_Test.cxx` | Add AMD/AMR/global-AME alias table tests |
 | `src/drivers/canbus/can_tx_statemachine.c` | Add dest_alias resolution at entry point |
-| `src/drivers/canbus/can_config.c` | Add `ListenerAliasTable_initialize()` call |
+| `src/drivers/canbus/can_config.c` | Add `AliasMappingListener_initialize()` call |
 | `src/openlcb/openlcb_defines.h` | Add `TRAIN_P_BIT` define |
 | `src/openlcb/protocol_train_handler.h` | Add `send_train_command`, `on_listener_alias_needed`, `on_listener_alias_released` to interface |
 | `src/openlcb/protocol_train_handler.c` | Add forwarding helpers (speed, function, estop), P bit masking in dispatch, source-skip logic, call alias callbacks from listener attach/detach |

@@ -227,8 +227,8 @@
 - Table size: `USER_DEFINED_MAX_LISTENERS_PER_TRAIN * USER_DEFINED_TRAIN_NODE_COUNT`
 - **Purpose differs from global table:** maps remote listener Node IDs to their CAN aliases so consist commands can be forwarded
 - Population flow: Train Listener Attach arrives -> register Node ID with alias=0 -> send AME query -> AMD arrives -> alias resolved -> held messages released
-- `ListenerAliasTable_flush_aliases()`: clears all aliases but preserves Node IDs (on global AME)
-- `ListenerAliasTable_clear_alias_by_alias()`: clears one alias (on AMR)
+- `AliasMappingListener_flush_aliases()`: clears all aliases but preserves Node IDs (on global AME)
+- `AliasMappingListener_clear_alias_by_alias()`: clears one alias (on AMR)
 - How the TX path uses this table to resolve destination aliases for consist command forwarding
 - Can be NULL in the callback interface if consist feature is not needed
 

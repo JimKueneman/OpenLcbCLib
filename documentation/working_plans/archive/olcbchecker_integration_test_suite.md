@@ -398,7 +398,7 @@ expects to see (a fresh stream of CID frames on an existing connection).
 
 Actually, `OpenLcbNode_reset_state()` DOES cause the node to re-run the full
 CID/RID/AMD login sequence over the existing TCP connection. The node goes back
-to `RUNSTATE_INIT` and the main loop (`OpenLcb_run()`) drives it through alias
+to `RUNSTATE_INIT` and the main loop (`OpenLcbConfig_run()`) drives it through alias
 reservation again. So the CID frames WILL appear on the wire. The question is
 timing: the bridge needs to trigger the reset at the right moment.
 

@@ -24,7 +24,7 @@ allocates buffers in the list.
 
 The Rx handler accesses the global 100ms tick counter through its interface function pointer
 `_interface->get_current_tick()`. It never includes `openlcb_config.h` and never calls
-`OpenLcb_get_global_100ms_tick()` directly. The wiring code (`can_config.c`) connects the
+`OpenLcbConfig_get_global_100ms_tick()` directly. The wiring code (`can_config.c`) connects the
 function pointer to the getter. This follows the library's dependency-injection pattern.
 
 The main-loop safety-net scan function `OpenLcbBufferList_check_timeouts(uint8_t current_tick)`
@@ -72,7 +72,7 @@ project's copy shell script and should NOT be edited manually.
 
 This plan depends on the global 100ms tick counter from `plan_global_clock_refactor.md`.
 That plan adds `volatile uint8_t _global_100ms_tick` to `openlcb_config.c`, exposes
-`OpenLcb_get_global_100ms_tick()` for wiring code only, and wires the
+`OpenLcbConfig_get_global_100ms_tick()` for wiring code only, and wires the
 `_interface->get_current_tick()` function pointer into the Rx handler interface. The global
 clock refactor must be implemented first (or concurrently). The full 8 bits wrap at 255;
 subtraction handles wrap correctly for durations up to 127 ticks (~12.7 seconds).
@@ -227,7 +227,7 @@ In `openlcb_buffer_list.h`:
 
 In `can_main_statemachine.c` (or the higher-level run loop), call under lock. The tick
 is obtained through the main loop's parameter chain — the caller passes it down rather
-than calling `OpenLcb_get_global_100ms_tick()` directly from this module:
+than calling `OpenLcbConfig_get_global_100ms_tick()` directly from this module:
 
 ```c
     _interface->lock_shared_resources();
@@ -351,11 +351,11 @@ cd ~/Documents/OpenLcbCLib/test && rm -rf build && mkdir build && cd build && cm
 
 - Requires the global 100ms tick counter from `plan_global_clock_refactor.md`. That plan
   adds `volatile uint8_t _global_100ms_tick` to `openlcb_config.c`, exposes
-  `OpenLcb_get_global_100ms_tick()` for wiring code only, and wires the
+  `OpenLcbConfig_get_global_100ms_tick()` for wiring code only, and wires the
   `_interface->get_current_tick()` function pointer into the Rx handler interface.
 - If the global clock refactor has not been implemented yet, it should be done first
   as a prerequisite.
 - `can_rx_message_handler.c` never includes `openlcb_config.h` — it accesses the tick
   only through `_interface->get_current_tick()`.
-- `openlcb_buffer_list.c` never calls `OpenLcb_get_global_100ms_tick()` directly — it
+- `openlcb_buffer_list.c` never calls `OpenLcbConfig_get_global_100ms_tick()` directly — it
   receives `current_tick` as a function parameter from the caller.

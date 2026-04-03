@@ -234,7 +234,7 @@ Data Fields</h2></td></tr>
 
 <p>OPTIONAL. Resolve a listener Node ID to its CAN alias. </p>
 <p>Called by the TX path when dest_alias == 0 and dest_id != 0 (forwarded consist commands). Returns a pointer to the listener table entry so the caller can read entry-&gt;alias. NULL pointer = feature not linked in; NULL return = node_id not found in table.</p>
-<dl class="section note"><dt>Note</dt><dd>Typical: ListenerAliasTable_find_by_node_id. May be NULL. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Typical: AliasMappingListener_find_by_node_id. May be NULL. </dd></dl>
 
 </div>
 </div>
