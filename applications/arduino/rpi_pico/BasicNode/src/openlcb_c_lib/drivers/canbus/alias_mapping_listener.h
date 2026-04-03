@@ -40,6 +40,8 @@
  * @date 8 Mar 2026
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __DRIVERS_CANBUS_ALIAS_MAPPING_LISTENER__
 #define __DRIVERS_CANBUS_ALIAS_MAPPING_LISTENER__
 
@@ -58,7 +60,7 @@ extern "C" {
          *
          * @details Must be called once at startup before any listener operations.
          */
-    extern void ListenerAliasTable_initialize(void);
+    extern void AliasMappingListener_initialize(void);
 
         /**
          * @brief Registers a listener Node ID in the table with alias = 0.
@@ -71,7 +73,7 @@ extern "C" {
          *
          * @return Pointer to the @ref listener_alias_entry_t, or NULL if full or invalid.
          */
-    extern listener_alias_entry_t *ListenerAliasTable_register(node_id_t node_id);
+    extern listener_alias_entry_t *AliasMappingListener_register(node_id_t node_id);
 
         /**
          * @brief Removes the entry matching node_id from the table.
@@ -81,7 +83,7 @@ extern "C" {
          *
          * @param node_id  48-bit OpenLCB Node ID to remove.
          */
-    extern void ListenerAliasTable_unregister(node_id_t node_id);
+    extern void AliasMappingListener_unregister(node_id_t node_id);
 
         /**
          * @brief Stores a resolved alias for a registered listener Node ID.
@@ -92,7 +94,7 @@ extern "C" {
          * @param node_id  48-bit OpenLCB Node ID from the AMD payload.
          * @param alias    12-bit CAN alias from the AMD source.
          */
-    extern void ListenerAliasTable_set_alias(node_id_t node_id, uint16_t alias);
+    extern void AliasMappingListener_set_alias(node_id_t node_id, uint16_t alias);
 
         /**
          * @brief Finds the table entry for a given listener Node ID.
@@ -104,27 +106,27 @@ extern "C" {
          *
          * @return Pointer to the @ref listener_alias_entry_t, or NULL if not found.
          */
-    extern listener_alias_entry_t *ListenerAliasTable_find_by_node_id(node_id_t node_id);
+    extern listener_alias_entry_t *AliasMappingListener_find_by_node_id(node_id_t node_id);
 
         /**
          * @brief Zeros all alias fields but preserves registered node_ids.
          *
          * @details Called when a global AME (empty payload) is received per
          * CanFrameTransferS. The AMD replies triggered by the global AME will
-         * re-populate the aliases via ListenerAliasTable_set_alias().
+         * re-populate the aliases via AliasMappingListener_set_alias().
          */
-    extern void ListenerAliasTable_flush_aliases(void);
+    extern void AliasMappingListener_flush_aliases(void);
 
         /**
          * @brief Zeros the alias field for the entry matching a specific alias value.
          *
          * @details Called when an AMR frame is received — the node owning that
          * alias is releasing it. When the node re-claims an alias and sends AMD,
-         * ListenerAliasTable_set_alias() will re-populate.
+         * AliasMappingListener_set_alias() will re-populate.
          *
          * @param alias  12-bit CAN alias being released.
          */
-    extern void ListenerAliasTable_clear_alias_by_alias(uint16_t alias);
+    extern void AliasMappingListener_clear_alias_by_alias(uint16_t alias);
 
         /**
          * @brief Probes one listener entry for alias staleness (round-robin).
@@ -142,7 +144,7 @@ extern "C" {
          *
          * @return @ref node_id_t to probe (caller queues targeted AME), or 0.
          */
-    extern node_id_t ListenerAliasTable_check_one_verification(uint8_t current_tick);
+    extern node_id_t AliasMappingListener_check_one_verification(uint8_t current_tick);
 
 #ifdef __cplusplus
 }

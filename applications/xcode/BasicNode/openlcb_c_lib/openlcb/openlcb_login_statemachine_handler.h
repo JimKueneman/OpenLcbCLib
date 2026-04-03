@@ -39,7 +39,7 @@
 // This is a guard condition so that contents of this file are not included
 // more than once.
 #ifndef __OPENLCB_OPENLCB_LOGIN_STATEMACHINE_HANDLER__
-#define    __OPENLCB_OPENLCB_LOGIN_STATEMACHINE_HANDLER__
+#define __OPENLCB_OPENLCB_LOGIN_STATEMACHINE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -58,7 +58,7 @@ typedef struct {
 } interface_openlcb_login_message_handler_t;
 
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -67,7 +67,7 @@ extern "C" {
          *
          * @param interface  Pointer to @ref interface_openlcb_login_message_handler_t.  Must remain valid for application lifetime.
          */
-    extern void OpenLcbLoginMessageHandler_initialize(const interface_openlcb_login_message_handler_t *interface);
+    extern void OpenLcbLoginStatemachineHandler_initialize(const interface_openlcb_login_message_handler_t *interface);
 
         /**
          * @brief Builds the Initialization Complete message and transitions to producer
@@ -75,7 +75,7 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_login_statemachine_info_t context.
          */
-    extern void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_statemachine_info_t *statemachine_info);
+    extern void OpenLcbLoginStatemachineHandler_load_initialization_complete(openlcb_login_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Builds one Producer Identified message; sets enumerate flag if more remain.
@@ -84,7 +84,7 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_login_statemachine_info_t context.
          */
-    extern void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_info_t *statemachine_info);
+    extern void OpenLcbLoginStatemachineHandler_load_producer_event(openlcb_login_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Builds one Consumer Identified message; sets enumerate flag if more remain.
@@ -94,11 +94,11 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_login_statemachine_info_t context.
          */
-    extern void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_info_t *statemachine_info);
+    extern void OpenLcbLoginStatemachineHandler_load_consumer_event(openlcb_login_statemachine_info_t *statemachine_info);
 
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif    /* __OPENLCB_OPENLCB_LOGIN_STATEMACHINE_HANDLER__ */
+#endif /* __OPENLCB_OPENLCB_LOGIN_STATEMACHINE_HANDLER__ */

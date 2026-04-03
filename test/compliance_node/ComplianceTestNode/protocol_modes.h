@@ -43,7 +43,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    // Setup function signature: called after OpenLcb_create_node() to
+    // Setup function signature: called after OpenLcbConfig_create_node() to
     // register protocol-specific event ranges, handlers, etc.
     typedef void (*protocol_setup_fn)(openlcb_node_t *node);
 

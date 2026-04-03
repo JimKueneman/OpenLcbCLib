@@ -100,7 +100,7 @@ TEST(EventsOnlyCompile, initialize_and_teardown) {
 
     };
 
-    OpenLcb_initialize(&config);
+    OpenLcbConfig_initialize(&config);
 
     SUCCEED();
 

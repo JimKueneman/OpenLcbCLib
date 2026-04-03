@@ -96,7 +96,7 @@ static bool _has_reserved_values(const uint8_t *digits, uint8_t flags) {
      * @param interface  Populated callback table (may be NULL).
      * @endverbatim
      */
-void ProtocolTrainSearch_initialize(const interface_protocol_train_search_handler_t *interface) {
+void ProtocolTrainSearchHandler_initialize(const interface_protocol_train_search_handler_t *interface) {
 
     _interface = interface;
 
@@ -392,7 +392,7 @@ static bool _does_train_match(
      * @param event_id           Full 64-bit event_id_t containing encoded search query.
      * @endverbatim
      */
-void ProtocolTrainSearch_handle_search_event(
+void ProtocolTrainSearchHandler_handle_search_event(
         openlcb_statemachine_info_t *statemachine_info,
         event_id_t event_id) {
 
@@ -411,8 +411,8 @@ void ProtocolTrainSearch_handle_search_event(
 
     // Decode the search query
     uint8_t digits[6];
-    ProtocolTrainSearch_extract_digits(event_id, digits);
-    uint8_t flags = ProtocolTrainSearch_extract_flags(event_id);
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits);
+    uint8_t flags = ProtocolTrainSearchHandler_extract_flags(event_id);
 
     // Reject searches with reserved nibbles or flag bits
     if (_has_reserved_values(digits, flags)) {
@@ -421,7 +421,7 @@ void ProtocolTrainSearch_handle_search_event(
 
     }
 
-    uint16_t search_address = ProtocolTrainSearch_digits_to_address(digits);
+    uint16_t search_address = ProtocolTrainSearchHandler_digits_to_address(digits);
 
     // Check if this train matches
     if (!_does_train_match(train_state, digits, search_address, flags)) {
@@ -466,7 +466,7 @@ void ProtocolTrainSearch_handle_search_event(
      * @param event_id           Full 64-bit event_id_t containing encoded search query.
      * @endverbatim
      */
-void ProtocolTrainSearch_handle_search_no_match(
+void ProtocolTrainSearchHandler_handle_search_no_match(
         openlcb_statemachine_info_t *statemachine_info,
         event_id_t event_id) {
 
@@ -477,8 +477,8 @@ void ProtocolTrainSearch_handle_search_no_match(
     }
 
     uint8_t digits[6];
-    ProtocolTrainSearch_extract_digits(event_id, digits);
-    uint8_t flags = ProtocolTrainSearch_extract_flags(event_id);
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits);
+    uint8_t flags = ProtocolTrainSearchHandler_extract_flags(event_id);
 
     // Reject searches with reserved nibbles or flag bits
     if (_has_reserved_values(digits, flags)) {
@@ -499,7 +499,7 @@ void ProtocolTrainSearch_handle_search_no_match(
 
     }
 
-    uint16_t search_address = ProtocolTrainSearch_digits_to_address(digits);
+    uint16_t search_address = ProtocolTrainSearchHandler_digits_to_address(digits);
 
     openlcb_node_t *new_node = _interface->on_search_no_match(search_address, flags);
 
@@ -531,14 +531,14 @@ void ProtocolTrainSearch_handle_search_no_match(
 // =============================================================================
 
     /** @brief Returns true if the event ID belongs to the train search space. */
-bool ProtocolTrainSearch_is_search_event(event_id_t event_id) {
+bool ProtocolTrainSearchHandler_is_search_event(event_id_t event_id) {
 
     return (event_id & TRAIN_SEARCH_MASK) == EVENT_TRAIN_SEARCH_SPACE;
 
 }
 
     /** @brief Extracts 6 search-query nibbles from a train search event ID into digits[]. */
-void ProtocolTrainSearch_extract_digits(event_id_t event_id, uint8_t *digits) {
+void ProtocolTrainSearchHandler_extract_digits(event_id_t event_id, uint8_t *digits) {
 
     if (!digits) {
 
@@ -563,14 +563,14 @@ void ProtocolTrainSearch_extract_digits(event_id_t event_id, uint8_t *digits) {
 }
 
     /** @brief Extracts the flags byte (byte 7) from a train search event ID. */
-uint8_t ProtocolTrainSearch_extract_flags(event_id_t event_id) {
+uint8_t ProtocolTrainSearchHandler_extract_flags(event_id_t event_id) {
 
     return (uint8_t)(event_id & 0xFF);
 
 }
 
     /** @brief Converts a 6-nibble digit array to a numeric DCC address, skipping leading 0xF nibbles. */
-uint16_t ProtocolTrainSearch_digits_to_address(const uint8_t *digits) {
+uint16_t ProtocolTrainSearchHandler_digits_to_address(const uint8_t *digits) {
 
     if (!digits) {
 
@@ -595,7 +595,7 @@ uint16_t ProtocolTrainSearch_digits_to_address(const uint8_t *digits) {
 }
 
     /** @brief Creates a train search event ID from a DCC address and flags byte. */
-event_id_t ProtocolTrainSearch_create_event_id(uint16_t address, uint8_t flags) {
+event_id_t ProtocolTrainSearchHandler_create_event_id(uint16_t address, uint8_t flags) {
 
     // Encode address as decimal digits into 6 nibbles, right-justified, padded with 0xF
     uint8_t digits[6];

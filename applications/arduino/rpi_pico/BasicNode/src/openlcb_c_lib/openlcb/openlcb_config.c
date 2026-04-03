@@ -166,7 +166,7 @@ static volatile uint8_t _global_100ms_tick = 0;
      *
      * @return Current tick count (wraps at 255).
      */
-uint8_t OpenLcb_get_global_100ms_tick(void) {
+uint8_t OpenLcbConfig_get_global_100ms_tick(void) {
 
     return _global_100ms_tick;
 
@@ -347,10 +347,10 @@ static void _build_login_statemachine(void) {
     _login_sm.openlcb_node_get_next           = &OpenLcbNode_get_next;
     _login_sm.openlcb_node_get_count          = &OpenLcbNode_get_count;
     _login_sm.process_main_statemachine       = &OpenLcbMainStatemachine_process_main_statemachine;
-    _login_sm.load_initialization_complete    = &OpenLcbLoginMessageHandler_load_initialization_complete;
-    _login_sm.load_producer_events            = &OpenLcbLoginMessageHandler_load_producer_event;
-    _login_sm.load_consumer_events            = &OpenLcbLoginMessageHandler_load_consumer_event;
-    _login_sm.process_login_statemachine      = &OpenLcbLoginStateMachine_process;
+    _login_sm.load_initialization_complete    = &OpenLcbLoginStatemachineHandler_load_initialization_complete;
+    _login_sm.load_producer_events            = &OpenLcbLoginStatemachineHandler_load_producer_event;
+    _login_sm.load_consumer_events            = &OpenLcbLoginStatemachineHandler_load_consumer_event;
+    _login_sm.process_login_statemachine      = &OpenLcbLoginStatemachine_process;
     _login_sm.handle_outgoing_openlcb_message = &OpenLcbLoginStatemachine_handle_outgoing_openlcb_message;
     _login_sm.handle_try_reenumerate          = &OpenLcbLoginStatemachine_handle_try_reenumerate;
     _login_sm.handle_try_enumerate_first_node = &OpenLcbLoginStatemachine_handle_try_enumerate_first_node;
@@ -571,7 +571,7 @@ static void _build_main_statemachine(void) {
     _main_sm.send_openlcb_msg        = &CanTxStatemachine_send_openlcb_message;
 
     // Clock access (injected to maintain decoupling)
-    _main_sm.get_current_tick = &OpenLcb_get_global_100ms_tick;
+    _main_sm.get_current_tick = &OpenLcbConfig_get_global_100ms_tick;
 
     // Library-internal wiring -- always the same
     _main_sm.openlcb_node_get_first    = &OpenLcbNode_get_first;
@@ -627,8 +627,8 @@ static void _build_main_statemachine(void) {
 #endif
 
 #ifdef OPENLCB_COMPILE_BROADCAST_TIME
-    _main_sm.broadcast_time_event_handler = &ProtocolBroadcastTime_handle_time_event;
-    _main_sm.is_broadcast_time_event      = &ProtocolBroadcastTime_is_time_event;
+    _main_sm.broadcast_time_event_handler = &ProtocolBroadcastTimeHandler_handle_time_event;
+    _main_sm.is_broadcast_time_event      = &ProtocolBroadcastTimeHandler_is_time_event;
 #endif
 
 #ifdef OPENLCB_COMPILE_DATAGRAMS
@@ -646,9 +646,9 @@ static void _build_main_statemachine(void) {
 #endif
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
-    _main_sm.train_search_event_handler    = &ProtocolTrainSearch_handle_search_event;
-    _main_sm.train_search_no_match_handler = &ProtocolTrainSearch_handle_search_no_match;
-    _main_sm.is_train_search_event         = &ProtocolTrainSearch_is_search_event;
+    _main_sm.train_search_event_handler    = &ProtocolTrainSearchHandler_handle_search_event;
+    _main_sm.train_search_no_match_handler = &ProtocolTrainSearchHandler_handle_search_no_match;
+    _main_sm.is_train_search_event         = &ProtocolTrainSearchHandler_is_search_event;
 #endif
 
 #ifdef OPENLCB_COMPILE_STREAM
@@ -691,7 +691,7 @@ static void _build_application(void) {
     * @param config Pointer to the @ref openlcb_config_t to use
     * @endverbatim
     */
-void OpenLcb_initialize(const openlcb_config_t *config) {
+void OpenLcbConfig_initialize(const openlcb_config_t *config) {
 
     _config = config;
 
@@ -764,7 +764,7 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
     ProtocolMessageNetwork_initialize(&_msg_network);
 
 #ifdef OPENLCB_COMPILE_BROADCAST_TIME
-    ProtocolBroadcastTime_initialize(&_broadcast_time);
+    ProtocolBroadcastTimeHandler_initialize(&_broadcast_time);
     OpenLcbApplicationBroadcastTime_initialize(&_app_broadcast_time);
 #endif
 
@@ -774,7 +774,7 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
 #endif
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
-    ProtocolTrainSearch_initialize(&_train_search);
+    ProtocolTrainSearchHandler_initialize(&_train_search);
 #endif
 
 #ifdef OPENLCB_COMPILE_STREAM
@@ -783,8 +783,8 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
 
     OpenLcbNode_initialize(&_node);
 
-    OpenLcbLoginMessageHandler_initialize(&_login_msg);
-    OpenLcbLoginStateMachine_initialize(&_login_sm);
+    OpenLcbLoginStatemachineHandler_initialize(&_login_msg);
+    OpenLcbLoginStatemachine_initialize(&_login_sm);
     OpenLcbMainStatemachine_initialize(&_main_sm);
 
     OpenLcbApplication_initialize(&_app);
@@ -801,7 +801,7 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
     *
     * @return Pointer to the allocated @ref openlcb_node_t, or NULL if no slots available
     */
-openlcb_node_t *OpenLcb_create_node(node_id_t node_id, const node_parameters_t *parameters) {
+openlcb_node_t *OpenLcbConfig_create_node(node_id_t node_id, const node_parameters_t *parameters) {
 
     return OpenLcbNode_allocate(node_id, parameters);
 
@@ -836,10 +836,10 @@ static void _run_periodic_services(void) {
 }
 
     /** @brief Runs one iteration of all state machines and periodic services. */
-void OpenLcb_run(void) {
+void OpenLcbConfig_run(void) {
 
-    CanMainStateMachine_run();
-    OpenLcbLoginMainStatemachine_run();
+    CanMainStatemachine_run();
+    OpenLcbLoginStatemachine_run();
     OpenLcbMainStatemachine_run();
 
     _run_periodic_services();
@@ -848,7 +848,7 @@ void OpenLcb_run(void) {
 
     /** @brief Increments the global 100ms tick counter. This is the ONLY action
      *  performed by the timer interrupt — all real work runs in the main loop. */
-void OpenLcb_100ms_timer_tick(void) {
+void OpenLcbConfig_100ms_timer_tick(void) {
 
     _global_100ms_tick++;
 

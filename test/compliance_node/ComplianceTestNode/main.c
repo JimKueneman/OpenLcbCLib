@@ -48,7 +48,9 @@
 #include "application_callbacks/callbacks_events.h"
 #include "application_callbacks/callbacks_broadcast_time.h"
 #include "application_callbacks/callbacks_train.h"
+#ifdef OPENLCB_COMPILE_STREAM
 #include "application_callbacks/callbacks_stream.h"
+#endif
 
 #include "openlcb_user_config.h"
 #include "application_drivers/osx_drivers.h"
@@ -130,12 +132,14 @@ static const openlcb_config_t openlcb_config = {
     // Train search callbacks
     .on_train_search_no_match            = &CallbacksTrain_on_search_no_match,
 
+#ifdef OPENLCB_COMPILE_STREAM
     // Stream transport callbacks
     .on_stream_initiate_request  = &CallbacksStream_on_initiate_request,
     .on_stream_initiate_reply    = NULL,
     .on_stream_data_received     = NULL,
     .on_stream_data_proceed      = NULL,
     .on_stream_complete          = NULL,
+#endif
 };
 
 
@@ -173,14 +177,20 @@ int main(int argc, char *argv[]) {
 
     }
 
-    printf("ComplianceTestNode: mode=%s nodeid=0x%012llX\n", active_mode->name, nodeid);
+#ifdef OPENLCB_COMPILE_STREAM
+    printf("ComplianceTestNode: mode=%s stream=on nodeid=0x%012llX\n",
+           active_mode->name, nodeid);
+#else
+    printf("ComplianceTestNode: mode=%s stream=off nodeid=0x%012llX\n",
+           active_mode->name, nodeid);
+#endif
 
     // Set the active mode so the login dispatcher can route to it
     CallbacksOlcb_set_active_mode(active_mode);
 
     // 2. Initialize drivers and library
     CanConfig_initialize(&can_config);
-    OpenLcb_initialize(&openlcb_config);
+    OpenLcbConfig_initialize(&openlcb_config);
 
     OSxDrivers_setup();
     OSxCanDriver_setup();
@@ -195,7 +205,7 @@ int main(int argc, char *argv[]) {
     }
 
     // 4. Create node with the selected mode's parameters
-    openlcb_node_t *node = OpenLcb_create_node(nodeid, active_mode->params);
+    openlcb_node_t *node = OpenLcbConfig_create_node(nodeid, active_mode->params);
     printf("Node Allocated.....\n");
 
     // 5. Run protocol-specific setup (if any)
@@ -213,7 +223,7 @@ int main(int argc, char *argv[]) {
 
     while (1) {
 
-        OpenLcb_run();
+        OpenLcbConfig_run();
 
         if (OSxCanDriver_data_was_received())
             idle_count = 0;

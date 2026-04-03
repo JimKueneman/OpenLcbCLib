@@ -44,8 +44,10 @@
  * @see protocol_train_handler.h
  */
 
-#ifndef __OPENLCB_APPLICATION_TRAIN__
-#define __OPENLCB_APPLICATION_TRAIN__
+// This is a guard condition so that contents of this file are not included
+// more than once.
+#ifndef __OPENLCB_OPENLCB_APPLICATION_TRAIN__
+#define __OPENLCB_OPENLCB_APPLICATION_TRAIN__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -72,7 +74,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
         /**
          * @brief Initialises the train module and stores the callback interface.
@@ -103,7 +105,7 @@ extern "C" {
          *
          * @warning Returns NULL if the pool is full (USER_DEFINED_TRAIN_NODE_COUNT slots used).
          */
-    extern train_state_t* OpenLcbApplicationTrain_setup(openlcb_node_t *openlcb_node);
+    extern train_state_t *OpenLcbApplicationTrain_setup(openlcb_node_t *openlcb_node);
 
         /**
          * @brief Returns the train state for a node.
@@ -113,7 +115,7 @@ extern "C" {
          * @return Pointer to the @ref train_state_t, or NULL if the node pointer is NULL
          *         or the node has no train state assigned.
          */
-    extern train_state_t* OpenLcbApplicationTrain_get_state(openlcb_node_t *openlcb_node);
+    extern train_state_t *OpenLcbApplicationTrain_get_state(openlcb_node_t *openlcb_node);
 
         /**
          * @brief Decrements the heartbeat countdown for all active train nodes.
@@ -283,6 +285,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
-#endif /* __OPENLCB_APPLICATION_TRAIN__ */
+#endif /* __OPENLCB_OPENLCB_APPLICATION_TRAIN__ */

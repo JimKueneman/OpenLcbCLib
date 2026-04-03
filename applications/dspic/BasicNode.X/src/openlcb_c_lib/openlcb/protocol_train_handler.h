@@ -47,6 +47,8 @@
  * @see openlcb_application_train.h - Layer 2 state and API
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_TRAIN_HANDLER__
 #define __OPENLCB_PROTOCOL_TRAIN_HANDLER__
 
@@ -145,7 +147,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
         /**
          * @brief Initializes the Train Control Protocol handler.
@@ -204,6 +206,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* __OPENLCB_PROTOCOL_TRAIN_HANDLER__ */

@@ -345,7 +345,7 @@ static node_parameters_t _test_node_parameters_digit_start = {
 
 static void _global_initialize(void) {
 
-    ProtocolTrainSearch_initialize(&_interface_all);
+    ProtocolTrainSearchHandler_initialize(&_interface_all);
     ProtocolTrainHandler_initialize(&_interface_train);
     OpenLcbApplicationTrain_initialize(&_interface_app_train);
     OpenLcbNode_initialize(&_interface_openlcb_node);
@@ -357,7 +357,7 @@ static void _global_initialize(void) {
 
 static void _global_initialize_with_no_match(void) {
 
-    ProtocolTrainSearch_initialize(&_interface_with_no_match);
+    ProtocolTrainSearchHandler_initialize(&_interface_with_no_match);
     ProtocolTrainHandler_initialize(&_interface_train);
     OpenLcbApplicationTrain_initialize(&_interface_app_train);
     OpenLcbNode_initialize(&_interface_openlcb_node);
@@ -369,7 +369,7 @@ static void _global_initialize_with_no_match(void) {
 
 static void _global_initialize_with_nulls(void) {
 
-    ProtocolTrainSearch_initialize(&_interface_nulls);
+    ProtocolTrainSearchHandler_initialize(&_interface_nulls);
     ProtocolTrainHandler_initialize(&_interface_train);
     OpenLcbApplicationTrain_initialize(&_interface_app_train);
     OpenLcbNode_initialize(&_interface_openlcb_node);
@@ -429,7 +429,7 @@ TEST(TrainSearch, is_train_search_event_valid)
 
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0x00000300ULL;
 
-    EXPECT_TRUE(ProtocolTrainSearch_is_search_event(event_id));
+    EXPECT_TRUE(ProtocolTrainSearchHandler_is_search_event(event_id));
 
 }
 
@@ -439,7 +439,7 @@ TEST(TrainSearch, is_train_search_event_with_flags)
     // Address 1234 with DCC flag
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFFF12348ULL;
 
-    EXPECT_TRUE(ProtocolTrainSearch_is_search_event(event_id));
+    EXPECT_TRUE(ProtocolTrainSearchHandler_is_search_event(event_id));
 
 }
 
@@ -448,7 +448,7 @@ TEST(TrainSearch, is_train_search_event_broadcast_time_false)
 
     event_id_t event_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000ULL;
 
-    EXPECT_FALSE(ProtocolTrainSearch_is_search_event(event_id));
+    EXPECT_FALSE(ProtocolTrainSearchHandler_is_search_event(event_id));
 
 }
 
@@ -457,7 +457,7 @@ TEST(TrainSearch, is_train_search_event_random_false)
 
     event_id_t event_id = 0x0505050505050000ULL;
 
-    EXPECT_FALSE(ProtocolTrainSearch_is_search_event(event_id));
+    EXPECT_FALSE(ProtocolTrainSearchHandler_is_search_event(event_id));
 
 }
 
@@ -466,7 +466,7 @@ TEST(TrainSearch, is_train_search_event_zero_false)
 
     event_id_t event_id = 0x0000000000000000ULL;
 
-    EXPECT_FALSE(ProtocolTrainSearch_is_search_event(event_id));
+    EXPECT_FALSE(ProtocolTrainSearchHandler_is_search_event(event_id));
 
 }
 
@@ -482,7 +482,7 @@ TEST(TrainSearch, extract_digits_address_3)
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFFFFF300ULL;
     uint8_t digits[6];
 
-    ProtocolTrainSearch_extract_digits(event_id, digits);
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits);
 
     EXPECT_EQ(digits[0], 0x0F);
     EXPECT_EQ(digits[1], 0x0F);
@@ -500,7 +500,7 @@ TEST(TrainSearch, extract_digits_address_1234)
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFF123400ULL;
     uint8_t digits[6];
 
-    ProtocolTrainSearch_extract_digits(event_id, digits);
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits);
 
     EXPECT_EQ(digits[0], 0x0F);
     EXPECT_EQ(digits[1], 0x0F);
@@ -518,7 +518,7 @@ TEST(TrainSearch, extract_digits_all_empty)
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFFFFFF00ULL;
     uint8_t digits[6];
 
-    ProtocolTrainSearch_extract_digits(event_id, digits);
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits);
 
     for (int i = 0; i < 6; i++) {
 
@@ -535,7 +535,7 @@ TEST(TrainSearch, extract_digits_address_9999)
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFF999900ULL;
     uint8_t digits[6];
 
-    ProtocolTrainSearch_extract_digits(event_id, digits);
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits);
 
     EXPECT_EQ(digits[0], 0x0F);
     EXPECT_EQ(digits[1], 0x0F);
@@ -556,7 +556,7 @@ TEST(TrainSearch, digits_to_address_3)
 
     uint8_t digits[] = {0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x03};
 
-    EXPECT_EQ(ProtocolTrainSearch_digits_to_address(digits), 3);
+    EXPECT_EQ(ProtocolTrainSearchHandler_digits_to_address(digits), 3);
 
 }
 
@@ -565,7 +565,7 @@ TEST(TrainSearch, digits_to_address_1234)
 
     uint8_t digits[] = {0x0F, 0x0F, 0x01, 0x02, 0x03, 0x04};
 
-    EXPECT_EQ(ProtocolTrainSearch_digits_to_address(digits), 1234);
+    EXPECT_EQ(ProtocolTrainSearchHandler_digits_to_address(digits), 1234);
 
 }
 
@@ -574,7 +574,7 @@ TEST(TrainSearch, digits_to_address_all_empty)
 
     uint8_t digits[] = {0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F};
 
-    EXPECT_EQ(ProtocolTrainSearch_digits_to_address(digits), 0);
+    EXPECT_EQ(ProtocolTrainSearchHandler_digits_to_address(digits), 0);
 
 }
 
@@ -584,7 +584,7 @@ TEST(TrainSearch, digits_to_address_leading_zeros)
     // 003 = {F,F,F,0,0,3}
     uint8_t digits[] = {0x0F, 0x0F, 0x0F, 0x00, 0x00, 0x03};
 
-    EXPECT_EQ(ProtocolTrainSearch_digits_to_address(digits), 3);
+    EXPECT_EQ(ProtocolTrainSearchHandler_digits_to_address(digits), 3);
 
 }
 
@@ -593,7 +593,7 @@ TEST(TrainSearch, digits_to_address_9999)
 
     uint8_t digits[] = {0x0F, 0x0F, 0x09, 0x09, 0x09, 0x09};
 
-    EXPECT_EQ(ProtocolTrainSearch_digits_to_address(digits), 9999);
+    EXPECT_EQ(ProtocolTrainSearchHandler_digits_to_address(digits), 9999);
 
 }
 
@@ -606,7 +606,7 @@ TEST(TrainSearch, extract_flags_allocate)
 {
 
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFFFFF380ULL;
-    uint8_t flags = ProtocolTrainSearch_extract_flags(event_id);
+    uint8_t flags = ProtocolTrainSearchHandler_extract_flags(event_id);
 
     EXPECT_EQ(flags & TRAIN_SEARCH_FLAG_ALLOCATE, TRAIN_SEARCH_FLAG_ALLOCATE);
 
@@ -616,7 +616,7 @@ TEST(TrainSearch, extract_flags_exact)
 {
 
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFFFFF340ULL;
-    uint8_t flags = ProtocolTrainSearch_extract_flags(event_id);
+    uint8_t flags = ProtocolTrainSearchHandler_extract_flags(event_id);
 
     EXPECT_EQ(flags & TRAIN_SEARCH_FLAG_EXACT, TRAIN_SEARCH_FLAG_EXACT);
 
@@ -626,7 +626,7 @@ TEST(TrainSearch, extract_flags_address_only)
 {
 
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFFFFF320ULL;
-    uint8_t flags = ProtocolTrainSearch_extract_flags(event_id);
+    uint8_t flags = ProtocolTrainSearchHandler_extract_flags(event_id);
 
     EXPECT_EQ(flags & TRAIN_SEARCH_FLAG_ADDRESS_ONLY, TRAIN_SEARCH_FLAG_ADDRESS_ONLY);
 
@@ -636,7 +636,7 @@ TEST(TrainSearch, extract_flags_dcc)
 {
 
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFFFFF308ULL;
-    uint8_t flags = ProtocolTrainSearch_extract_flags(event_id);
+    uint8_t flags = ProtocolTrainSearchHandler_extract_flags(event_id);
 
     EXPECT_EQ(flags & TRAIN_SEARCH_FLAG_DCC, TRAIN_SEARCH_FLAG_DCC);
 
@@ -646,7 +646,7 @@ TEST(TrainSearch, extract_flags_dcc_long_addr)
 {
 
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFFFFF30CULL;
-    uint8_t flags = ProtocolTrainSearch_extract_flags(event_id);
+    uint8_t flags = ProtocolTrainSearchHandler_extract_flags(event_id);
 
     EXPECT_EQ(flags & TRAIN_SEARCH_FLAG_DCC, TRAIN_SEARCH_FLAG_DCC);
     EXPECT_EQ(flags & TRAIN_SEARCH_FLAG_LONG_ADDR, TRAIN_SEARCH_FLAG_LONG_ADDR);
@@ -658,7 +658,7 @@ TEST(TrainSearch, extract_flags_speed_steps_128)
 
     // Speed steps 128 = 0x03 in bits 1-0
     event_id_t event_id = EVENT_TRAIN_SEARCH_SPACE | 0xFFFFF30BULL;
-    uint8_t flags = ProtocolTrainSearch_extract_flags(event_id);
+    uint8_t flags = ProtocolTrainSearchHandler_extract_flags(event_id);
 
     EXPECT_EQ(flags & TRAIN_SEARCH_SPEED_STEP_MASK, 0x03);
 
@@ -672,14 +672,14 @@ TEST(TrainSearch, extract_flags_speed_steps_128)
 TEST(TrainSearch, create_event_id_address_3)
 {
 
-    event_id_t event_id = ProtocolTrainSearch_create_event_id(3, 0x00);
+    event_id_t event_id = ProtocolTrainSearchHandler_create_event_id(3, 0x00);
 
-    EXPECT_TRUE(ProtocolTrainSearch_is_search_event(event_id));
+    EXPECT_TRUE(ProtocolTrainSearchHandler_is_search_event(event_id));
 
     uint8_t digits[6];
-    ProtocolTrainSearch_extract_digits(event_id, digits);
-    EXPECT_EQ(ProtocolTrainSearch_digits_to_address(digits), 3);
-    EXPECT_EQ(ProtocolTrainSearch_extract_flags(event_id), 0x00);
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits);
+    EXPECT_EQ(ProtocolTrainSearchHandler_digits_to_address(digits), 3);
+    EXPECT_EQ(ProtocolTrainSearchHandler_extract_flags(event_id), 0x00);
 
 }
 
@@ -687,14 +687,14 @@ TEST(TrainSearch, create_event_id_address_1234_dcc_long)
 {
 
     uint8_t flags = TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR;
-    event_id_t event_id = ProtocolTrainSearch_create_event_id(1234, flags);
+    event_id_t event_id = ProtocolTrainSearchHandler_create_event_id(1234, flags);
 
-    EXPECT_TRUE(ProtocolTrainSearch_is_search_event(event_id));
+    EXPECT_TRUE(ProtocolTrainSearchHandler_is_search_event(event_id));
 
     uint8_t digits[6];
-    ProtocolTrainSearch_extract_digits(event_id, digits);
-    EXPECT_EQ(ProtocolTrainSearch_digits_to_address(digits), 1234);
-    EXPECT_EQ(ProtocolTrainSearch_extract_flags(event_id), flags);
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits);
+    EXPECT_EQ(ProtocolTrainSearchHandler_digits_to_address(digits), 1234);
+    EXPECT_EQ(ProtocolTrainSearchHandler_extract_flags(event_id), flags);
 
 }
 
@@ -704,26 +704,26 @@ TEST(TrainSearch, create_event_id_roundtrip)
     // Create, extract, compare
     uint16_t address = 567;
     uint8_t flags = TRAIN_SEARCH_FLAG_DCC | 0x03;
-    event_id_t event_id = ProtocolTrainSearch_create_event_id(address, flags);
+    event_id_t event_id = ProtocolTrainSearchHandler_create_event_id(address, flags);
 
     uint8_t digits[6];
-    ProtocolTrainSearch_extract_digits(event_id, digits);
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits);
 
-    EXPECT_EQ(ProtocolTrainSearch_digits_to_address(digits), 567);
-    EXPECT_EQ(ProtocolTrainSearch_extract_flags(event_id), flags);
+    EXPECT_EQ(ProtocolTrainSearchHandler_digits_to_address(digits), 567);
+    EXPECT_EQ(ProtocolTrainSearchHandler_extract_flags(event_id), flags);
 
 }
 
 TEST(TrainSearch, create_event_id_address_zero)
 {
 
-    event_id_t event_id = ProtocolTrainSearch_create_event_id(0, 0x00);
+    event_id_t event_id = ProtocolTrainSearchHandler_create_event_id(0, 0x00);
 
-    EXPECT_TRUE(ProtocolTrainSearch_is_search_event(event_id));
+    EXPECT_TRUE(ProtocolTrainSearchHandler_is_search_event(event_id));
 
     uint8_t digits[6];
-    ProtocolTrainSearch_extract_digits(event_id, digits);
-    EXPECT_EQ(ProtocolTrainSearch_digits_to_address(digits), 0);
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits);
+    EXPECT_EQ(ProtocolTrainSearchHandler_digits_to_address(digits), 0);
 
 }
 
@@ -747,10 +747,10 @@ TEST(TrainSearch, handler_exact_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 1234, DCC long (address >= 128 implies long)
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             1234, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Should match — outgoing valid
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -773,10 +773,10 @@ TEST(TrainSearch, handler_no_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 5678 — different from node's 1234
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             5678, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Should NOT match — outgoing not valid
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -798,9 +798,9 @@ TEST(TrainSearch, handler_dcc_protocol_any_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 42 with protocol=any (flags=0x00)
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(42, 0x00);
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(42, 0x00);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Should match — protocol=any matches everything
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -823,9 +823,9 @@ TEST(TrainSearch, handler_non_train_node_skipped)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(3, 0x00);
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(3, 0x00);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Non-train node — should be skipped, no reply
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -852,10 +852,10 @@ TEST(TrainSearch, handler_reply_contains_train_address)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             1234, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
@@ -864,7 +864,7 @@ TEST(TrainSearch, handler_reply_contains_train_address)
             sm.outgoing_msg_info.msg_ptr);
 
     // Reply should be a train search event
-    EXPECT_TRUE(ProtocolTrainSearch_is_search_event(reply_event));
+    EXPECT_TRUE(ProtocolTrainSearchHandler_is_search_event(reply_event));
 
     // Reply should echo the search event ID
     EXPECT_EQ(reply_event, search_event);
@@ -885,10 +885,10 @@ TEST(TrainSearch, handler_reply_long_address_flag)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             5000, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
@@ -913,9 +913,9 @@ TEST(TrainSearch, handler_reply_source_is_train_node)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(3, 0x00);
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(3, 0x00);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
@@ -945,9 +945,9 @@ TEST(TrainSearch, handler_callback_fires_on_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     uint8_t flags = TRAIN_SEARCH_FLAG_DCC;
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(42, flags);
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(42, flags);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_EQ(_search_matched_count, 1);
     EXPECT_EQ(_search_matched_node, node);
@@ -970,9 +970,9 @@ TEST(TrainSearch, handler_callback_not_fired_on_no_match)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(99, 0x00);
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(99, 0x00);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_EQ(_search_matched_count, 0);
 
@@ -992,10 +992,10 @@ TEST(TrainSearch, handler_null_callbacks_no_crash)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(42, 0x00);
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(42, 0x00);
 
     // Should not crash with NULL callbacks
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Reply should still be generated
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -1025,10 +1025,10 @@ TEST(TrainSearch, handler_prefix_match_no_exact_flag)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "12" without EXACT — should prefix-match train 1234
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             12, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
@@ -1049,10 +1049,10 @@ TEST(TrainSearch, handler_prefix_no_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "13" without EXACT — does NOT prefix-match train 1234
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             13, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
 
@@ -1073,10 +1073,10 @@ TEST(TrainSearch, handler_exact_flag_rejects_prefix)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "12" WITH EXACT — must NOT match train 1234
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             12, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_EXACT);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
 
@@ -1097,10 +1097,10 @@ TEST(TrainSearch, handler_exact_flag_full_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "1234" WITH EXACT — should match train 1234 (long address)
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             1234, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_EXACT);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
@@ -1127,10 +1127,10 @@ TEST(TrainSearch, handler_name_match_when_address_only_clear)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "1234" without ADDRESS_ONLY — should match name "Loco 1234 Express"
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             1234, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
@@ -1152,10 +1152,10 @@ TEST(TrainSearch, handler_name_match_blocked_by_address_only)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "1234" WITH ADDRESS_ONLY — name match blocked, address 5000 != 1234
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             1234, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_ADDRESS_ONLY);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
 
@@ -1177,10 +1177,10 @@ TEST(TrainSearch, handler_name_prefix_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "12" without EXACT or ADDRESS_ONLY — prefix matches "1234" in name
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             12, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
@@ -1202,10 +1202,10 @@ TEST(TrainSearch, handler_name_exact_rejects_prefix)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "12" WITH EXACT — "12" is not exact match of "1234" in name
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             12, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_EXACT);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
 
@@ -1227,10 +1227,10 @@ TEST(TrainSearch, handler_name_exact_full_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "1234" WITH EXACT — exact match of "1234" in name
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             1234, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_EXACT);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
@@ -1257,10 +1257,10 @@ TEST(TrainSearch, handler_disambig_short_search_matches_short_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 42, DCC flag set, no LONG_ADDR flag
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Short search + short train — should match
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -1283,10 +1283,10 @@ TEST(TrainSearch, handler_disambig_short_search_rejects_long_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 42, DCC flag set, no LONG_ADDR flag
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Short search + long train — should reject
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1309,10 +1309,10 @@ TEST(TrainSearch, handler_disambig_high_search_matches_long_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 200, DCC flag set, no LONG_ADDR flag
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // High search + long train — should match
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -1335,10 +1335,10 @@ TEST(TrainSearch, handler_disambig_high_search_rejects_short_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 200, DCC flag set, no LONG_ADDR flag
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // High search + short train — should reject
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1361,10 +1361,10 @@ TEST(TrainSearch, handler_disambig_boundary_128_rejects_short_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 128, DCC flag set, no LONG_ADDR flag
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             128, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Address 128 is >= TRAIN_MAX_DCC_SHORT_ADDRESS, short train — should reject
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1387,10 +1387,10 @@ TEST(TrainSearch, handler_disambig_boundary_127_allows_short_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 127, DCC flag set, no LONG_ADDR flag
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             127, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Address 127 is < TRAIN_MAX_DCC_SHORT_ADDRESS, short train — should match
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -1413,10 +1413,10 @@ TEST(TrainSearch, handler_disambig_boundary_128_allows_long_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 128, DCC flag set, no LONG_ADDR flag
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             128, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Address 128 is >= TRAIN_MAX_DCC_SHORT_ADDRESS, long train — should match
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -1439,10 +1439,10 @@ TEST(TrainSearch, handler_disambig_allocate_bypasses_high_search_short_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 200, DCC + ALLOCATE flags
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // ALLOCATE bypasses disambiguation — should match
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -1465,10 +1465,10 @@ TEST(TrainSearch, handler_disambig_allocate_bypasses_short_search_long_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 42, DCC + ALLOCATE flags
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // ALLOCATE bypasses disambiguation — should match
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -1491,10 +1491,10 @@ TEST(TrainSearch, handler_disambig_explicit_long_flag_matches_long_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 5000, DCC + LONG_ADDR flags
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             5000, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Explicit LONG_ADDR + long train — should match
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -1517,10 +1517,10 @@ TEST(TrainSearch, handler_disambig_explicit_long_flag_rejects_short_train)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 42, DCC + LONG_ADDR flags
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Explicit LONG_ADDR + short train — should reject
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1543,9 +1543,9 @@ TEST(TrainSearch, handler_disambig_non_dcc_search_ignores_address_type)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 200, no DCC flag — protocol=any
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(200, 0x00);
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(200, 0x00);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Non-DCC ignores address type — should match
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -1555,12 +1555,12 @@ TEST(TrainSearch, handler_disambig_non_dcc_search_ignores_address_type)
 
 // ============================================================================
 // SECTION 12: HANDLER -- No-Match Callback Tests
-// @details Tests for ProtocolTrainSearch_handle_search_no_match()
+// @details Tests for ProtocolTrainSearchHandler_handle_search_no_match()
 // ============================================================================
 
 // ============================================================================
 // TEST: No-match handler invokes callback when ALLOCATE flag set
-// @coverage ProtocolTrainSearch_handle_search_no_match()
+// @coverage ProtocolTrainSearchHandler_handle_search_no_match()
 // ============================================================================
 
 TEST(TrainSearch, no_match_allocate_flag_set)
@@ -1577,12 +1577,12 @@ TEST(TrainSearch, no_match_allocate_flag_set)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search with ALLOCATE flag
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
 
     _no_match_return_node = NULL;  // application returns NULL (no allocation)
 
-    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
 
     // Callback must be invoked
     EXPECT_EQ(_no_match_count, 1);
@@ -1596,7 +1596,7 @@ TEST(TrainSearch, no_match_allocate_flag_set)
 
 // ============================================================================
 // TEST: No-match handler does NOT invoke callback without ALLOCATE flag
-// @coverage ProtocolTrainSearch_handle_search_no_match()
+// @coverage ProtocolTrainSearchHandler_handle_search_no_match()
 // ============================================================================
 
 TEST(TrainSearch, no_match_allocate_flag_clear)
@@ -1613,10 +1613,10 @@ TEST(TrainSearch, no_match_allocate_flag_clear)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search WITHOUT ALLOCATE flag
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC);
 
-    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
 
     // Callback must NOT be invoked
     EXPECT_EQ(_no_match_count, 0);
@@ -1626,7 +1626,7 @@ TEST(TrainSearch, no_match_allocate_flag_clear)
 
 // ============================================================================
 // TEST: No-match handler graceful with NULL interface
-// @coverage ProtocolTrainSearch_handle_search_no_match()
+// @coverage ProtocolTrainSearchHandler_handle_search_no_match()
 // ============================================================================
 
 TEST(TrainSearch, no_match_null_interface)
@@ -1646,11 +1646,11 @@ TEST(TrainSearch, no_match_null_interface)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search with ALLOCATE flag but NULL interface callback
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
 
     // Must not crash
-    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
 
     EXPECT_EQ(_no_match_count, 0);
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1659,7 +1659,7 @@ TEST(TrainSearch, no_match_null_interface)
 
 // ============================================================================
 // TEST: No-match handler loads reply when callback returns valid node
-// @coverage ProtocolTrainSearch_handle_search_no_match()
+// @coverage ProtocolTrainSearchHandler_handle_search_no_match()
 // ============================================================================
 
 TEST(TrainSearch, no_match_returns_node_with_train_state)
@@ -1684,10 +1684,10 @@ TEST(TrainSearch, no_match_returns_node_with_train_state)
     // Set up callback to return the new node
     _no_match_return_node = new_node;
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_ALLOCATE);
 
-    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
 
     // Callback invoked
     EXPECT_EQ(_no_match_count, 1);
@@ -1702,7 +1702,7 @@ TEST(TrainSearch, no_match_returns_node_with_train_state)
 
 // ============================================================================
 // TEST: No-match handler does not load reply when callback returns NULL
-// @coverage ProtocolTrainSearch_handle_search_no_match()
+// @coverage ProtocolTrainSearchHandler_handle_search_no_match()
 // ============================================================================
 
 TEST(TrainSearch, no_match_returns_null)
@@ -1720,10 +1720,10 @@ TEST(TrainSearch, no_match_returns_null)
 
     _no_match_return_node = NULL;
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
 
-    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
 
     // Callback invoked but returned NULL
     EXPECT_EQ(_no_match_count, 1);
@@ -1762,7 +1762,7 @@ TEST(TrainSearch, address_match_all_f_digits_returns_no_match)
             | 0xFFFFFF00ULL
             | (uint64_t) TRAIN_SEARCH_FLAG_ADDRESS_ONLY;
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // All-0xF digits means zero valid search digits — no address match
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1791,10 +1791,10 @@ TEST(TrainSearch, prefix_more_search_digits_than_train_no_match)
 
     // Search for "12345" (5 digits) in prefix mode on 1-digit train address
     // Use no DCC flag to bypass DCC disambiguation; ADDRESS_ONLY to skip name matching
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             12345, TRAIN_SEARCH_FLAG_ADDRESS_ONLY);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // More search digits than train digits — no match
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1822,10 +1822,10 @@ TEST(TrainSearch, name_match_empty_name_returns_no_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 42 — won't match address 9999, will try name match
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Empty name — name match returns false, no overall match
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1863,10 +1863,10 @@ TEST(TrainSearch, name_match_digit_mid_run_skipped)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "2" — should not match (2 is mid-run in "12", not start)
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             2, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // "2" doesn't start any digit run — no match
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1897,10 +1897,10 @@ TEST(TrainSearch, name_match_non_digit_separator_in_name)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "123" in prefix mode — should match "1-2-3" in name
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             123, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Name match succeeds — digits skip over separators
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -1930,10 +1930,10 @@ TEST(TrainSearch, name_match_digit_mismatch_during_run)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "139" — matches "1", "3" but then "5" != "9" => mismatch
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             139, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Mismatch during name matching — no match
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1963,10 +1963,10 @@ TEST(TrainSearch, name_match_partial_sequence_not_complete)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "56" — partial match "5" only, sequence incomplete
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             56, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Partial sequence — no match
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -1995,10 +1995,10 @@ TEST(TrainSearch, name_match_exact_trailing_digit_fails)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "123" WITH EXACT — run "1234" has trailing digit '4'
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             123, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_EXACT);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // "123" is prefix of "1234", but exact mode rejects it
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -2028,10 +2028,10 @@ TEST(TrainSearch, name_match_exact_run_ends_at_name_end)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "42" WITH EXACT — matches run "42" at end of name
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_EXACT);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // "42" exactly matches run at end of name
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -2060,10 +2060,10 @@ TEST(TrainSearch, train_match_null_parameters_no_name_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for address 42 — won't match 9999, name match skipped (params NULL)
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // NULL parameters — no name match possible
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -2072,7 +2072,7 @@ TEST(TrainSearch, train_match_null_parameters_no_name_match)
 
 // ============================================================================
 // TEST: handle_search_event with NULL statemachine_info (line 362)
-// @coverage ProtocolTrainSearch_handle_search_event — statemachine_info == NULL
+// @coverage ProtocolTrainSearchHandler_handle_search_event — statemachine_info == NULL
 // ============================================================================
 
 TEST(TrainSearch, handle_search_event_null_statemachine_info)
@@ -2080,11 +2080,11 @@ TEST(TrainSearch, handle_search_event_null_statemachine_info)
 
     _global_initialize();
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC);
 
     // Must not crash
-    ProtocolTrainSearch_handle_search_event(NULL, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(NULL, search_event);
 
     // No crash = success; no way to check output since statemachine is NULL
     EXPECT_EQ(_search_matched_count, 0);
@@ -2093,7 +2093,7 @@ TEST(TrainSearch, handle_search_event_null_statemachine_info)
 
 // ============================================================================
 // TEST: handle_search_event with NULL openlcb_node (line 362)
-// @coverage ProtocolTrainSearch_handle_search_event — statemachine_info->openlcb_node == NULL
+// @coverage ProtocolTrainSearchHandler_handle_search_event — statemachine_info->openlcb_node == NULL
 // ============================================================================
 
 TEST(TrainSearch, handle_search_event_null_openlcb_node)
@@ -2112,11 +2112,11 @@ TEST(TrainSearch, handle_search_event_null_openlcb_node)
     sm.outgoing_msg_info.enumerate = false;
     sm.outgoing_msg_info.valid = false;
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC);
 
     // Must not crash
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
 
@@ -2124,14 +2124,14 @@ TEST(TrainSearch, handle_search_event_null_openlcb_node)
 
 // ============================================================================
 // TEST: handle_search_event with NULL interface pointer (line 416)
-// @coverage ProtocolTrainSearch_handle_search_event — _interface == NULL
+// @coverage ProtocolTrainSearchHandler_handle_search_event — _interface == NULL
 // ============================================================================
 
 TEST(TrainSearch, handle_search_event_null_interface_pointer)
 {
 
     // Initialize with NULL interface pointer (not null callbacks — null pointer)
-    ProtocolTrainSearch_initialize(NULL);
+    ProtocolTrainSearchHandler_initialize(NULL);
     ProtocolTrainHandler_initialize(&_interface_train);
     OpenLcbApplicationTrain_initialize(&_interface_app_train);
     OpenLcbNode_initialize(&_interface_openlcb_node);
@@ -2148,10 +2148,10 @@ TEST(TrainSearch, handle_search_event_null_interface_pointer)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(42, 0x00);
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(42, 0x00);
 
     // Should match and generate reply but skip callback since _interface is NULL
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
     EXPECT_EQ(_search_matched_count, 0);
@@ -2160,7 +2160,7 @@ TEST(TrainSearch, handle_search_event_null_interface_pointer)
 
 // ============================================================================
 // TEST: handle_search_no_match with NULL statemachine_info (line 442)
-// @coverage ProtocolTrainSearch_handle_search_no_match — statemachine_info == NULL
+// @coverage ProtocolTrainSearchHandler_handle_search_no_match — statemachine_info == NULL
 // ============================================================================
 
 TEST(TrainSearch, handle_search_no_match_null_statemachine_info)
@@ -2168,11 +2168,11 @@ TEST(TrainSearch, handle_search_no_match_null_statemachine_info)
 
     _global_initialize_with_no_match();
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
 
     // Must not crash
-    ProtocolTrainSearch_handle_search_no_match(NULL, search_event);
+    ProtocolTrainSearchHandler_handle_search_no_match(NULL, search_event);
 
     EXPECT_EQ(_no_match_count, 0);
 
@@ -2180,14 +2180,14 @@ TEST(TrainSearch, handle_search_no_match_null_statemachine_info)
 
 // ============================================================================
 // TEST: handle_search_no_match with NULL interface pointer (line 456)
-// @coverage ProtocolTrainSearch_handle_search_no_match — _interface == NULL
+// @coverage ProtocolTrainSearchHandler_handle_search_no_match — _interface == NULL
 // ============================================================================
 
 TEST(TrainSearch, handle_search_no_match_null_interface_pointer)
 {
 
     // Initialize with NULL interface pointer
-    ProtocolTrainSearch_initialize(NULL);
+    ProtocolTrainSearchHandler_initialize(NULL);
     ProtocolTrainHandler_initialize(&_interface_train);
     OpenLcbApplicationTrain_initialize(&_interface_app_train);
     OpenLcbNode_initialize(&_interface_openlcb_node);
@@ -2203,11 +2203,11 @@ TEST(TrainSearch, handle_search_no_match_null_interface_pointer)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
 
     // Must not crash — _interface is NULL
-    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
 
     EXPECT_EQ(_no_match_count, 0);
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -2216,7 +2216,7 @@ TEST(TrainSearch, handle_search_no_match_null_interface_pointer)
 
 // ============================================================================
 // TEST: No-match returns node with train_state == NULL (line 468)
-// @coverage ProtocolTrainSearch_handle_search_no_match — new_node->train_state == NULL
+// @coverage ProtocolTrainSearchHandler_handle_search_no_match — new_node->train_state == NULL
 // ============================================================================
 
 TEST(TrainSearch, no_match_returns_node_with_null_train_state)
@@ -2242,10 +2242,10 @@ TEST(TrainSearch, no_match_returns_node_with_null_train_state)
     // Callback will return a node with NULL train_state
     _no_match_return_node = new_node;
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
 
-    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
 
     // Callback invoked
     EXPECT_EQ(_no_match_count, 1);
@@ -2257,7 +2257,7 @@ TEST(TrainSearch, no_match_returns_node_with_null_train_state)
 
 // ============================================================================
 // TEST: No-match returns node with short address (line 472 FALSE branch)
-// @coverage ProtocolTrainSearch_handle_search_no_match — is_long_address == false
+// @coverage ProtocolTrainSearchHandler_handle_search_no_match — is_long_address == false
 // ============================================================================
 
 TEST(TrainSearch, no_match_returns_node_with_short_address)
@@ -2282,10 +2282,10 @@ TEST(TrainSearch, no_match_returns_node_with_short_address)
     // Callback returns node with short address
     _no_match_return_node = new_node;
 
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
 
-    ProtocolTrainSearch_handle_search_no_match(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
 
     // Callback invoked
     EXPECT_EQ(_no_match_count, 1);
@@ -2323,10 +2323,10 @@ TEST(TrainSearch, name_match_digit_at_position_zero)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "5" — should match name "5Train" at p=0
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             5, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // "5" matches digit at start of name
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -2355,10 +2355,10 @@ TEST(TrainSearch, address_match_train_address_zero)
 
     // Search for address 1 — forces _does_address_match to be called with train_address=0
     // This exercises the temp == 0 TRUE branch at line 76
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             1, TRAIN_SEARCH_FLAG_ADDRESS_ONLY);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // Address 0 != 1 → no match (but line 76 was exercised)
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -2387,10 +2387,10 @@ TEST(TrainSearch, train_match_null_owner_node_skips_name_match)
     _setup_statemachine(&sm, node, incoming, outgoing);
 
     // Search for "42" — address 9999 won't match, name match blocked by NULL owner_node
-    event_id_t search_event = ProtocolTrainSearch_create_event_id(
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             42, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
 
-    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+    ProtocolTrainSearchHandler_handle_search_event(&sm, search_event);
 
     // No match — address mismatch and name match skipped
     EXPECT_FALSE(sm.outgoing_msg_info.valid);

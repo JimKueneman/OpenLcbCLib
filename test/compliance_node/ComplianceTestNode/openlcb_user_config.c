@@ -108,7 +108,7 @@
         .description = "Firmware update address space" \
     }
 
-#define COMMON_CONFIG_OPTIONS \
+#define COMMON_CONFIG_OPTIONS_NO_STREAM \
     .configuration_options = { \
         .write_under_mask_supported = true, \
         .unaligned_reads_supported = true, \
@@ -117,6 +117,20 @@
         .read_from_user_space_0xfb_supported = true, \
         .write_to_user_space_0xfb_supported = true, \
         .stream_read_write_supported = false, \
+        .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, \
+        .low_address_space = CONFIG_MEM_SPACE_FIRMWARE, \
+        .description = "These are options that defined the memory space capabilities" \
+    }
+
+#define COMMON_CONFIG_OPTIONS_STREAM \
+    .configuration_options = { \
+        .write_under_mask_supported = true, \
+        .unaligned_reads_supported = true, \
+        .unaligned_writes_supported = true, \
+        .read_from_manufacturer_space_0xfc_supported = true, \
+        .read_from_user_space_0xfb_supported = true, \
+        .write_to_user_space_0xfb_supported = true, \
+        .stream_read_write_supported = true, \
         .high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, \
         .low_address_space = CONFIG_MEM_SPACE_FIRMWARE, \
         .description = "These are options that defined the memory space capabilities" \
@@ -210,8 +224,10 @@ const node_parameters_t compliance_basic_params = {
         PSI_ABBREVIATED_DEFAULT_CDI |
         PSI_SIMPLE_NODE_INFORMATION |
         PSI_CONFIGURATION_DESCRIPTION_INFO |
-        PSI_FIRMWARE_UPGRADE |
-        PSI_STREAM
+        PSI_FIRMWARE_UPGRADE
+#ifdef OPENLCB_COMPILE_STREAM
+        | PSI_STREAM
+#endif
     ),
 
     // 3-4. consumer_count_autocreate / producer_count_autocreate
@@ -220,7 +236,11 @@ const node_parameters_t compliance_basic_params = {
     .producer_count_autocreate = 0,
 
     // 5. configuration_options
-    COMMON_CONFIG_OPTIONS,
+#ifdef OPENLCB_COMPILE_STREAM
+    COMMON_CONFIG_OPTIONS_STREAM,
+#else
+    COMMON_CONFIG_OPTIONS_NO_STREAM,
+#endif
     // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
@@ -267,7 +287,7 @@ const node_parameters_t compliance_broadcast_time_consumer_params = {
     .producer_count_autocreate = 0,
 
     // 5. configuration_options
-    COMMON_CONFIG_OPTIONS,
+    COMMON_CONFIG_OPTIONS_NO_STREAM,
     // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
@@ -314,7 +334,7 @@ const node_parameters_t compliance_broadcast_time_producer_params = {
     .producer_count_autocreate = 0,
 
     // 5. configuration_options
-    COMMON_CONFIG_OPTIONS,
+    COMMON_CONFIG_OPTIONS_NO_STREAM,
     // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
@@ -364,7 +384,7 @@ const node_parameters_t compliance_train_params = {
     .producer_count_autocreate = 0,
 
     // 5. configuration_options
-    COMMON_CONFIG_OPTIONS,
+    COMMON_CONFIG_OPTIONS_NO_STREAM,
     // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
@@ -422,7 +442,7 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .producer_count_autocreate = 0,
 
     // 5. configuration_options
-    COMMON_CONFIG_OPTIONS,
+    COMMON_CONFIG_OPTIONS_NO_STREAM,
     // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 

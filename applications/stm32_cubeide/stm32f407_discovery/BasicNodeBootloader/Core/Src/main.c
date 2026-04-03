@@ -189,11 +189,11 @@ int main(void)
   STM32_DriverLibDrivers_initialize(&htim7);
 
   CanConfig_initialize(&can_config);
-  OpenLcb_initialize(&openlcb_config);
+  OpenLcbConfig_initialize(&openlcb_config);
 
   CallbacksOlcb_initialize();
 
-  OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
+  OpenLcbConfig_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
   /* USER CODE END 2 */
 
@@ -209,7 +209,7 @@ int main(void)
 
     HAL_GPIO_TogglePin(MAIN_LOOP_GREEN_LED_GPIO_Port, MAIN_LOOP_GREEN_LED_Pin);
 
-    OpenLcb_run();
+    OpenLcbConfig_run();
   }
   /* USER CODE END 3 */
 }

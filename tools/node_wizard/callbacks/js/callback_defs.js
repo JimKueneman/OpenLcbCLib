@@ -643,7 +643,7 @@ const CALLBACK_GROUPS = {
                 returnType: 'openlcb_node_t*',
                 params: 'uint16_t search_address, uint8_t flags',
                 description: 'No train matched the search. Return a new train node, or NULL to ignore',
-                detail: 'Fires when a throttle searches for a train address and no existing train node matches. Return a pointer to a newly created train node (using OpenLcb_create_node) to dynamically create trains on demand, or return NULL to ignore the search. This enables command stations to create train nodes automatically when a throttle dials up a new address. The library will register the new node on the CAN network and send the appropriate search response if you return non-NULL.',
+                detail: 'Fires when a throttle searches for a train address and no existing train node matches. Return a pointer to a newly created train node (using OpenLcbConfig_create_node) to dynamically create trains on demand, or return NULL to ignore the search. This enables command stations to create train nodes automatically when a throttle dials up a new address. The library will register the new node on the CAN network and send the appropriate search response if you return non-NULL.',
                 required: false,
                 configField: 'on_train_search_no_match',
                 section: 'Train Search'

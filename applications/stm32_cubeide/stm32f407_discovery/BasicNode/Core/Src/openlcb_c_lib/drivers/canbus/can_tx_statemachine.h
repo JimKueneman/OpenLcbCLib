@@ -30,6 +30,8 @@
  * @date 4 Mar 2026
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __DRIVERS_CANBUS_CAN_TX_STATEMACHINE__
 #define __DRIVERS_CANBUS_CAN_TX_STATEMACHINE__
 
@@ -79,7 +81,7 @@ extern "C" {
          * entry so the caller can read entry->alias. NULL pointer = feature not
          * linked in; NULL return = node_id not found in table.
          *
-         * @note Typical: ListenerAliasTable_find_by_node_id. May be NULL.
+         * @note Typical: AliasMappingListener_find_by_node_id. May be NULL.
          */
         listener_alias_entry_t *(*listener_find_by_node_id)(node_id_t node_id);
 
@@ -92,7 +94,7 @@ extern "C" {
          * Attach Reply being transmitted. Adds the node_id to the listener
          * alias table so periodic verification can resolve its alias.
          *
-         * @note Typical: ListenerAliasTable_register. May be NULL.
+         * @note Typical: AliasMappingListener_register. May be NULL.
          */
         listener_alias_entry_t *(*listener_register)(node_id_t node_id);
 
@@ -103,7 +105,7 @@ extern "C" {
          * Detach Reply being transmitted. Removes the node_id from the listener
          * alias table.
          *
-         * @note Typical: ListenerAliasTable_unregister. May be NULL.
+         * @note Typical: AliasMappingListener_unregister. May be NULL.
          */
         void (*listener_unregister)(node_id_t node_id);
 

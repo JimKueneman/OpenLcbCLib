@@ -187,7 +187,7 @@ const PLATFORM_DEFS = {
                 '',
                 'static void IRAM_ATTR _timer_isr(void) {',
                 '',
-                '    OpenLcb_100ms_timer_tick();',
+                '    OpenLcbConfig_100ms_timer_tick();',
                 '}'
             ].join('\n'),
 
@@ -360,7 +360,7 @@ const PLATFORM_DEFS = {
                 '',
                 'static void IRAM_ATTR _timer_isr(void) {',
                 '',
-                '    OpenLcb_100ms_timer_tick();',
+                '    OpenLcbConfig_100ms_timer_tick();',
                 '}'
             ].join('\n'),
 
@@ -527,7 +527,7 @@ const PLATFORM_DEFS = {
                 '',
                 'static void _handle_timer_tick(void) {',
                 '',
-                '    OpenLcb_100ms_timer_tick();',
+                '    OpenLcbConfig_100ms_timer_tick();',
                 '}',
                 '',
                 'static bool _timer_callback(__unused struct repeating_timer *t) {',
@@ -747,7 +747,7 @@ const PLATFORM_DEFS = {
                 '',
                 '    if (htim == _htim) {',
                 '',
-                '        OpenLcb_100ms_timer_tick();',
+                '        OpenLcbConfig_100ms_timer_tick();',
                 '    }',
                 '}'
             ].join('\n'),
@@ -927,7 +927,7 @@ const PLATFORM_DEFS = {
                 '// SysTick handler — fires every 100 ms (configured in SysConfig)',
                 'void SysTick_Handler(void) {',
                 '',
-                '    OpenLcb_100ms_timer_tick();',
+                '    OpenLcbConfig_100ms_timer_tick();',
                 '}'
             ].join('\n'),
 

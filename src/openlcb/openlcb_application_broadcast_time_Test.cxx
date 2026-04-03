@@ -318,7 +318,7 @@ static void _full_initialize(void) {
     OpenLcbNode_initialize(&_test_node_interface);
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
-    ProtocolBroadcastTime_initialize(&_test_handler_interface);
+    ProtocolBroadcastTimeHandler_initialize(&_test_handler_interface);
     OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
 
 }
@@ -1091,7 +1091,7 @@ TEST(BroadcastTimeApp, send_report_time)
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_time(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1139,7 +1139,7 @@ TEST(BroadcastTimeApp, send_report_date)
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_date(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, false);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, false);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1174,7 +1174,7 @@ TEST(BroadcastTimeApp, send_report_year)
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_year(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, false);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, false);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1208,7 +1208,7 @@ TEST(BroadcastTimeApp, send_report_rate)
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_rate(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1242,7 +1242,7 @@ TEST(BroadcastTimeApp, send_start)
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_start(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1276,7 +1276,7 @@ TEST(BroadcastTimeApp, send_stop)
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_stop(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1310,7 +1310,7 @@ TEST(BroadcastTimeApp, send_date_rollover)
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_date_rollover(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1349,7 +1349,7 @@ TEST(BroadcastTimeApp, send_query)
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_QUERY);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_QUERY);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1401,7 +1401,7 @@ TEST(BroadcastTimeApp, send_set_time)
         node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, true);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, true);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1419,7 +1419,7 @@ TEST(BroadcastTimeApp, send_set_date)
         node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, true);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, true);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1437,7 +1437,7 @@ TEST(BroadcastTimeApp, send_set_year)
         node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, true);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, true);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1455,7 +1455,7 @@ TEST(BroadcastTimeApp, send_set_rate)
         node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, true);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, true);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1473,7 +1473,7 @@ TEST(BroadcastTimeApp, send_command_start)
         node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1491,7 +1491,7 @@ TEST(BroadcastTimeApp, send_command_stop)
         node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
-    event_id_t expected = ProtocolBroadcastTime_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
+    event_id_t expected = ProtocolBroadcastTimeHandler_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
@@ -1529,42 +1529,42 @@ TEST(BroadcastTimeApp, send_query_reply_running_clock_full_sequence)
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 1);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
-    event_id_t expected_start = ProtocolBroadcastTime_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    event_id_t expected_start = ProtocolBroadcastTimeHandler_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     EXPECT_EQ(last_sent_event_id, expected_start);
 
     // State 1: Rate (Producer Identified Set)
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 2);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
-    event_id_t expected_rate = ProtocolBroadcastTime_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
+    event_id_t expected_rate = ProtocolBroadcastTimeHandler_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
     EXPECT_EQ(last_sent_event_id, expected_rate);
 
     // State 2: Year (Producer Identified Set)
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 3);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
-    event_id_t expected_year = ProtocolBroadcastTime_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, false);
+    event_id_t expected_year = ProtocolBroadcastTimeHandler_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, false);
     EXPECT_EQ(last_sent_event_id, expected_year);
 
     // State 3: Date (Producer Identified Set)
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 4);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
-    event_id_t expected_date = ProtocolBroadcastTime_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, false);
+    event_id_t expected_date = ProtocolBroadcastTimeHandler_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, false);
     EXPECT_EQ(last_sent_event_id, expected_date);
 
     // State 4: Time (Producer Identified Set)
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 5);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
-    event_id_t expected_time = ProtocolBroadcastTime_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
+    event_id_t expected_time = ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
     EXPECT_EQ(last_sent_event_id, expected_time);
 
     // State 5: Next minute (PC Event Report) -> returns true (done)
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 6);
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
-    event_id_t expected_next = ProtocolBroadcastTime_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31, false);
+    event_id_t expected_next = ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31, false);
     EXPECT_EQ(last_sent_event_id, expected_next);
 
 }
@@ -1593,13 +1593,13 @@ TEST(BroadcastTimeApp, send_query_reply_success_at_state_0_advances)
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 1);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
-    event_id_t expected_start = ProtocolBroadcastTime_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    event_id_t expected_start = ProtocolBroadcastTimeHandler_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     EXPECT_EQ(last_sent_event_id, expected_start);
 
     // Next call should be state 1 (Rate), proving state advanced
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 2);
-    event_id_t expected_rate = ProtocolBroadcastTime_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
+    event_id_t expected_rate = ProtocolBroadcastTimeHandler_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
     EXPECT_EQ(last_sent_event_id, expected_rate);
 
     // Drive to completion to reset state
@@ -1634,7 +1634,7 @@ TEST(BroadcastTimeApp, send_query_reply_stopped_clock_sends_stop_event)
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 1));
     EXPECT_EQ(send_count, 1);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
-    event_id_t expected_stop = ProtocolBroadcastTime_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
+    event_id_t expected_stop = ProtocolBroadcastTimeHandler_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
     EXPECT_EQ(last_sent_event_id, expected_stop);
 
     // Drive to completion to reset state
@@ -1711,13 +1711,13 @@ TEST(BroadcastTimeApp, send_query_reply_fail_retries_same_state)
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 1);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
-    event_id_t expected_start = ProtocolBroadcastTime_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    event_id_t expected_start = ProtocolBroadcastTimeHandler_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     EXPECT_EQ(last_sent_event_id, expected_start);
 
     // Next call is state 1 (Rate), confirming failure did not advance state
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 2);
-    event_id_t expected_rate = ProtocolBroadcastTime_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0004, false);
+    event_id_t expected_rate = ProtocolBroadcastTimeHandler_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0004, false);
     EXPECT_EQ(last_sent_event_id, expected_rate);
 
     // Drive to completion to reset state
@@ -1779,7 +1779,7 @@ TEST(BroadcastTimeApp, time_tick_null_interface_no_crash)
     OpenLcbNode_initialize(&_test_node_interface);
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
-    ProtocolBroadcastTime_initialize(NULL);
+    ProtocolBroadcastTimeHandler_initialize(NULL);
     OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_null_callback_interface);
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
@@ -2310,7 +2310,7 @@ TEST(BroadcastTimeApp, time_tick_backward_null_interface_no_crash)
     OpenLcbNode_initialize(&_test_node_interface);
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
-    ProtocolBroadcastTime_initialize(NULL);
+    ProtocolBroadcastTimeHandler_initialize(NULL);
     OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_null_callback_interface);
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
@@ -2424,7 +2424,7 @@ TEST(BroadcastTimeApp, send_query_reply_can_run_twice_consecutively)
     EXPECT_EQ(send_count, 6);
 
     // Second sequence should have sent the updated next_minute
-    event_id_t expected_next = ProtocolBroadcastTime_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32, false);
+    event_id_t expected_next = ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32, false);
     EXPECT_EQ(last_sent_event_id, expected_next);
 
 }
@@ -2681,7 +2681,7 @@ TEST(BroadcastTimeApp, forward_advance_null_interface_pointer)
     OpenLcbNode_initialize(&_test_node_interface);
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
-    ProtocolBroadcastTime_initialize(NULL);
+    ProtocolBroadcastTimeHandler_initialize(NULL);
     OpenLcbApplicationBroadcastTime_initialize(NULL);  // _interface itself is NULL
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
@@ -2724,7 +2724,7 @@ TEST(BroadcastTimeApp, backward_advance_null_interface_pointer)
     OpenLcbNode_initialize(&_test_node_interface);
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
-    ProtocolBroadcastTime_initialize(NULL);
+    ProtocolBroadcastTimeHandler_initialize(NULL);
     OpenLcbApplicationBroadcastTime_initialize(NULL);  // _interface itself is NULL
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
@@ -3867,9 +3867,9 @@ TEST(BroadcastTimeApp, make_clock_id_round_trips_with_extract)
     event_id_t clock_id = OpenLcbApplicationBroadcastTime_make_clock_id(unique_id);
 
     // Create a time event from this clock_id and extract the clock_id back
-    event_id_t time_event = ProtocolBroadcastTime_create_time_event_id(
+    event_id_t time_event = ProtocolBroadcastTimeHandler_create_time_event_id(
         clock_id, 10, 30, false);
-    uint64_t extracted = ProtocolBroadcastTime_extract_clock_id(time_event);
+    uint64_t extracted = ProtocolBroadcastTimeHandler_extract_clock_id(time_event);
 
     EXPECT_EQ(extracted, clock_id);
 

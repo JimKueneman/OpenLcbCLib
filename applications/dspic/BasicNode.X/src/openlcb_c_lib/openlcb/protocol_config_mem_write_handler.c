@@ -57,7 +57,7 @@
 
 
     /** @brief Stored callback interface pointer; set by _initialize(). */
-static interface_protocol_config_mem_write_handler_t* _interface;
+static interface_protocol_config_mem_write_handler_t *_interface;
 
     /**
      * @brief Stores the callback interface.  Call once at startup.

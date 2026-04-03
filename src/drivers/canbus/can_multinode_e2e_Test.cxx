@@ -209,10 +209,10 @@ static const interface_can_rx_message_handler_t _can_rx_msg_interface = {
     .get_current_tick                        = &_can_e2e_get_tick,
 
     // Listener alias management — wired unconditionally (no OPENLCB_COMPILE_TRAIN guard)
-    .listener_register          = &ListenerAliasTable_register,
-    .listener_set_alias         = &ListenerAliasTable_set_alias,
-    .listener_clear_alias_by_alias = &ListenerAliasTable_clear_alias_by_alias,
-    .listener_flush_aliases     = &ListenerAliasTable_flush_aliases,
+    .listener_register          = &AliasMappingListener_register,
+    .listener_set_alias         = &AliasMappingListener_set_alias,
+    .listener_clear_alias_by_alias = &AliasMappingListener_clear_alias_by_alias,
+    .listener_flush_aliases     = &AliasMappingListener_flush_aliases,
 
 };
 
@@ -231,7 +231,7 @@ static const interface_can_main_statemachine_t _can_main_interface = {
     .openlcb_node_get_next      = &OpenLcbNode_get_next,
     .openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias,
 
-    .login_statemachine_run              = &CanLoginStateMachine_run,
+    .login_statemachine_run              = &CanLoginStatemachine_run,
     .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
     .alias_mapping_unregister            = &AliasMappings_unregister,
 
@@ -245,8 +245,8 @@ static const interface_can_main_statemachine_t _can_main_interface = {
     .handle_listener_verification      = &CanMainStatemachine_handle_listener_verification,
 
     // Listener alias management for self-originated global AME
-    .listener_flush_aliases = &ListenerAliasTable_flush_aliases,
-    .listener_set_alias     = &ListenerAliasTable_set_alias,
+    .listener_flush_aliases = &AliasMappingListener_flush_aliases,
+    .listener_set_alias     = &AliasMappingListener_set_alias,
 
 };
 
@@ -269,14 +269,14 @@ static void _can_e2e_init(void) {
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
     AliasMappings_initialize();
-    ListenerAliasTable_initialize();
+    AliasMappingListener_initialize();
     OpenLcbBufferStore_initialize();
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();
     OpenLcbNode_initialize(&interface_openlcb_node);
 
     CanLoginMessageHandler_initialize(&_can_login_msg_interface);
-    CanLoginStateMachine_initialize(&_can_login_sm_interface);
+    CanLoginStatemachine_initialize(&_can_login_sm_interface);
     CanRxMessageHandler_initialize(&_can_rx_msg_interface);
     CanMainStatemachine_initialize(&_can_main_interface);
 
@@ -328,7 +328,7 @@ TEST(CanMultinodeE2E, two_nodes_login_with_distinct_aliases)
 
     for (int i = 0; i < 2000; i++) {
 
-        CanMainStateMachine_run();
+        CanMainStatemachine_run();
 
         if (_all_nodes_can_login_complete()) { break; }
 
@@ -339,7 +339,7 @@ TEST(CanMultinodeE2E, two_nodes_login_with_distinct_aliases)
     // more run() cycle to actually send it to the wire.
     for (int i = 0; i < 50; i++) {
 
-        CanMainStateMachine_run();
+        CanMainStatemachine_run();
 
     }
 
@@ -396,7 +396,7 @@ TEST(CanMultinodeE2E, incoming_global_ame_repopulates_local_listener_aliases)
 
     for (int i = 0; i < 2000; i++) {
 
-        CanMainStateMachine_run();
+        CanMainStatemachine_run();
 
         if (_all_nodes_can_login_complete()) { break; }
 
@@ -407,14 +407,14 @@ TEST(CanMultinodeE2E, incoming_global_ame_repopulates_local_listener_aliases)
     ASSERT_NE(nodeB->alias, 0);
 
     // Register both nodes as listeners and populate their aliases
-    ListenerAliasTable_register(nodeA->id);
-    ListenerAliasTable_set_alias(nodeA->id, nodeA->alias);
-    ListenerAliasTable_register(nodeB->id);
-    ListenerAliasTable_set_alias(nodeB->id, nodeB->alias);
+    AliasMappingListener_register(nodeA->id);
+    AliasMappingListener_set_alias(nodeA->id, nodeA->alias);
+    AliasMappingListener_register(nodeB->id);
+    AliasMappingListener_set_alias(nodeB->id, nodeB->alias);
 
     // Confirm pre-condition: both aliases are populated
-    listener_alias_entry_t *entryA = ListenerAliasTable_find_by_node_id(nodeA->id);
-    listener_alias_entry_t *entryB = ListenerAliasTable_find_by_node_id(nodeB->id);
+    listener_alias_entry_t *entryA = AliasMappingListener_find_by_node_id(nodeA->id);
+    listener_alias_entry_t *entryB = AliasMappingListener_find_by_node_id(nodeB->id);
     ASSERT_NE(entryA, nullptr);
     ASSERT_NE(entryB, nullptr);
     ASSERT_NE(entryA->alias, 0);
@@ -443,7 +443,7 @@ TEST(CanMultinodeE2E, incoming_global_ame_repopulates_local_listener_aliases)
     // Drain the CAN outgoing FIFO so they appear in the wire log
     for (int i = 0; i < 100; i++) {
 
-        CanMainStateMachine_run();
+        CanMainStatemachine_run();
 
     }
 
@@ -481,7 +481,7 @@ TEST(CanMultinodeE2E, self_originated_global_ame_repopulates_listener_and_queues
 
     for (int i = 0; i < 2000; i++) {
 
-        CanMainStateMachine_run();
+        CanMainStatemachine_run();
 
         if (_all_nodes_can_login_complete()) { break; }
 
@@ -492,13 +492,13 @@ TEST(CanMultinodeE2E, self_originated_global_ame_repopulates_listener_and_queues
     ASSERT_NE(nodeB->alias, 0);
 
     // Register both nodes as listeners and populate their aliases
-    ListenerAliasTable_register(nodeA->id);
-    ListenerAliasTable_set_alias(nodeA->id, nodeA->alias);
-    ListenerAliasTable_register(nodeB->id);
-    ListenerAliasTable_set_alias(nodeB->id, nodeB->alias);
+    AliasMappingListener_register(nodeA->id);
+    AliasMappingListener_set_alias(nodeA->id, nodeA->alias);
+    AliasMappingListener_register(nodeB->id);
+    AliasMappingListener_set_alias(nodeB->id, nodeB->alias);
 
-    listener_alias_entry_t *entryA = ListenerAliasTable_find_by_node_id(nodeA->id);
-    listener_alias_entry_t *entryB = ListenerAliasTable_find_by_node_id(nodeB->id);
+    listener_alias_entry_t *entryA = AliasMappingListener_find_by_node_id(nodeA->id);
+    listener_alias_entry_t *entryB = AliasMappingListener_find_by_node_id(nodeB->id);
     ASSERT_NE(entryA, nullptr);
     ASSERT_NE(entryB, nullptr);
 
@@ -517,7 +517,7 @@ TEST(CanMultinodeE2E, self_originated_global_ame_repopulates_listener_and_queues
     // Drain the CAN outgoing FIFO
     for (int i = 0; i < 200; i++) {
 
-        CanMainStateMachine_run();
+        CanMainStatemachine_run();
 
     }
 

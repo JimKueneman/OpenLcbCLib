@@ -40,8 +40,10 @@
  * @date 28 Feb 2026
  */
 
-#ifndef __OPENLCB_APPLICATION_BROADCAST_TIME__
-#define __OPENLCB_APPLICATION_BROADCAST_TIME__
+// This is a guard condition so that contents of this file are not included
+// more than once.
+#ifndef __OPENLCB_OPENLCB_APPLICATION_BROADCAST_TIME__
+#define __OPENLCB_OPENLCB_APPLICATION_BROADCAST_TIME__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -85,7 +87,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
         /**
          * @brief Initialises the broadcast time module and stores the callback interface.
@@ -116,7 +118,7 @@ extern "C" {
          *
          * @warning Returns NULL if no free clock slots are available.
          */
-    extern broadcast_clock_state_t* OpenLcbApplicationBroadcastTime_setup_consumer(openlcb_node_t *openlcb_node, event_id_t clock_id);
+    extern broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_setup_consumer(openlcb_node_t *openlcb_node, event_id_t clock_id);
 
         /**
          * @brief Allocates a clock slot as a producer and registers event ranges on the node.
@@ -134,7 +136,7 @@ extern "C" {
          *
          * @warning Returns NULL if no free clock slots are available.
          */
-    extern broadcast_clock_state_t* OpenLcbApplicationBroadcastTime_setup_producer(openlcb_node_t *openlcb_node, event_id_t clock_id);
+    extern broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_setup_producer(openlcb_node_t *openlcb_node, event_id_t clock_id);
 
         /**
          * @brief Returns the state for a registered clock.
@@ -143,7 +145,7 @@ extern "C" {
          *
          * @return Pointer to the @ref broadcast_clock_state_t, or NULL if not found.
          */
-    extern broadcast_clock_state_t* OpenLcbApplicationBroadcastTime_get_clock(event_id_t clock_id);
+    extern broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_get_clock(event_id_t clock_id);
 
         /**
          * @brief Returns whether the given clock is registered as a consumer.
@@ -448,6 +450,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
-#endif /* __OPENLCB_APPLICATION_BROADCAST_TIME__ */
+#endif /* __OPENLCB_OPENLCB_APPLICATION_BROADCAST_TIME__ */

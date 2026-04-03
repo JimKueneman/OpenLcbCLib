@@ -165,7 +165,7 @@ static void _sniff_listener_config_reply(openlcb_msg_t *msg) {
      *
      * @return true if a frame was transmitted, false on hardware failure.
      */
-static bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *worker_can_msg, uint16_t *payload_index) {
+static bool _transmit_openlcb_message(openlcb_msg_t *openlcb_msg, can_msg_t *worker_can_msg, uint16_t *payload_index) {
 
 
     if (OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg)) {
@@ -222,7 +222,7 @@ static bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *wor
      *
      * @warning Blocks until the entire multi-frame message is sent.
      */
-bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
+bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t *openlcb_msg) {
 
     if (openlcb_msg->state.invalid) {
 
@@ -285,7 +285,7 @@ bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
 }
 
     /** @brief Transmits a pre-built raw @ref can_msg_t via the hardware handler. */
-bool CanTxStatemachine_send_can_message(can_msg_t* can_msg) {
+bool CanTxStatemachine_send_can_message(can_msg_t *can_msg) {
 
     return _interface->handle_can_frame(can_msg);
 

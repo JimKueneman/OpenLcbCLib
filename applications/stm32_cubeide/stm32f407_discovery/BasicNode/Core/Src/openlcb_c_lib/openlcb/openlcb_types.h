@@ -80,8 +80,8 @@
   #include "openlcb_user_config.h"
 #endif
 
-#ifdef	__cplusplus
-  extern "C" {
+#ifdef __cplusplus
+extern "C" {
 #endif /* __cplusplus */
 
     /**
@@ -606,7 +606,7 @@
         uint8_t low_address_space;
         char description[LEN_CONFIG_MEM_OPTIONS_DESCRIPTION];
 
-    } user_configuration_options;
+    } user_configuration_options_t;
 
         /** @brief Properties of a single configuration memory address space. */
     typedef struct {
@@ -633,7 +633,7 @@
         uint64_t protocol_support;              /**< Protocol Support Indicator bits */
         uint8_t consumer_count_autocreate;
         uint8_t producer_count_autocreate;
-        user_configuration_options configuration_options;
+        user_configuration_options_t configuration_options;
         user_address_space_info_t address_space_configuration_definition; /**< Space 0xFF */
         user_address_space_info_t address_space_all;                     /**< Space 0xFE */
         user_address_space_info_t address_space_config_memory;           /**< Space 0xFD */

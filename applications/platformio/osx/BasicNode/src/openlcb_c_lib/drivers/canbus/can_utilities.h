@@ -32,6 +32,8 @@
  * @date 4 Mar 2026
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __DRIVERS_CANBUS_CAN_UTILITIES__
 #define __DRIVERS_CANBUS_CAN_UTILITIES__
 

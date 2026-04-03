@@ -92,13 +92,6 @@ cp ../../src/drivers/canbus/*.h ../../../NmraLccProjects/RPiPico/src/drivers/can
 cp ../../src/utilities/*.c ../../../NmraLccProjects/RPiPico/src/utilities/
 cp ../../src/utilities/*.h ../../../NmraLccProjects/RPiPico/src/utilities/
 
-echo "Updating: NmraLccProjects/RPiPico_Train"
-cp ../../src/openlcb/*.c ../../../NmraLccProjects/RPiPico_Train/src/openlcb/
-cp ../../src/openlcb/*.h ../../../NmraLccProjects/RPiPico_Train/src/openlcb/
-cp ../../src/drivers/canbus/*.c ../../../NmraLccProjects/RPiPico_Train/src/drivers/canbus/
-cp ../../src/drivers/canbus/*.h ../../../NmraLccProjects/RPiPico_Train/src/drivers/canbus/
-cp ../../src/utilities/*.c ../../../NmraLccProjects/RPiPico_Train/src/utilities/
-cp ../../src/utilities/*.h ../../../NmraLccProjects/RPiPico_Train/src/utilities/
 
 echo "Updating: LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon"
 cp ../../src/openlcb/*.c "../../../LCC Projects/TurnoutBoss2_Firmware/TurnoutBossCommon/openlcb/"

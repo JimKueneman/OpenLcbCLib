@@ -35,6 +35,8 @@
  * @date 03 Apr 2026
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_STREAM_HANDLER__
 #define __OPENLCB_PROTOCOL_STREAM_HANDLER__
 
@@ -53,7 +55,6 @@
 typedef enum {
 
     STREAM_STATE_CLOSED,
-    STREAM_STATE_ANNOUNCED,
     STREAM_STATE_INITIATED,
     STREAM_STATE_OPEN
 
@@ -83,6 +84,9 @@ typedef struct {
         /** @brief Node ID of the remote end of the stream. */
     node_id_t remote_node_id;
 
+        /** @brief CAN alias of the remote end (0 on non-CAN transports). */
+    uint16_t remote_alias;
+
         /** @brief Negotiated max buffer size (bytes per window). */
     uint16_t max_buffer_size;
 
@@ -97,6 +101,9 @@ typedef struct {
 
         /** @brief Optional 6-byte Stream Content UID (zero if not provided). */
     uint8_t content_uid[6];
+
+        /** @brief Optional application context pointer for Layer 2 dispatch. */
+    void *context;
 
 } stream_state_t;
 
@@ -113,8 +120,9 @@ typedef struct {
      */
 typedef struct {
 
-        /** @brief Stream Initiate Request received (this node is destination).  Optional. */
-    void (*on_initiate_request)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+        /** @brief Stream Initiate Request received (this node is destination).  Optional.
+         *  Return true to accept the stream, false to reject with permanent error. */
+    bool (*on_initiate_request)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
 
         /** @brief Stream Initiate Reply received (this node is source).  Optional. */
     void (*on_initiate_reply)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
@@ -131,8 +139,7 @@ typedef struct {
 } interface_protocol_stream_handler_t;
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
         /**
@@ -203,6 +210,95 @@ extern "C"
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
     extern void ProtocolStreamHandler_handle_terminate_due_to_error(openlcb_statemachine_info_t *statemachine_info);
+
+    // ---- Source-side outbound API ----
+
+        /**
+         * @brief Opens an outbound stream where this node is the source.
+         *
+         * @details Allocates a stream slot, assigns a SID, and sends
+         * Stream Initiate Request to the destination.  Returns NULL if the
+         * stream table is full.  The caller waits for on_initiate_reply.
+         *
+         * @param statemachine_info         Pointer to @ref openlcb_statemachine_info_t context.
+         * @param dest_alias                CAN alias of the destination (0 on non-CAN).
+         * @param dest_id                   Node ID of the destination.
+         * @param proposed_buffer_size      Proposed max buffer size.
+         * @param suggested_dest_stream_id  Suggested DID (0xFF if no preference).
+         * @param content_uid               Optional 6-byte Content UID (NULL to omit).
+         *
+         * @return Pointer to allocated stream_state_t, or NULL if table full.
+         */
+    extern stream_state_t *ProtocolStreamHandler_initiate_outbound(
+            openlcb_statemachine_info_t *statemachine_info,
+            uint16_t dest_alias,
+            node_id_t dest_id,
+            uint16_t proposed_buffer_size,
+            uint8_t suggested_dest_stream_id,
+            const uint8_t *content_uid);
+
+        /**
+         * @brief Sends data on an open stream where this node is the source.
+         *
+         * @details Returns false if the stream is not open, this node is not
+         * the source, or data_len exceeds bytes_remaining.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         * @param stream             Pointer to the stream state entry.
+         * @param data               Pointer to data bytes to send.
+         * @param data_len           Number of data bytes.
+         *
+         * @return true if data was sent, false on precondition failure.
+         */
+    extern bool ProtocolStreamHandler_send_data(
+            openlcb_statemachine_info_t *statemachine_info,
+            stream_state_t *stream,
+            const uint8_t *data,
+            uint16_t data_len);
+
+        /**
+         * @brief Sends Stream Data Complete and frees the stream slot.
+         *
+         * @details Either side (source or destination) may call this.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         * @param stream             Pointer to the stream state entry.
+         */
+    extern void ProtocolStreamHandler_send_complete(
+            openlcb_statemachine_info_t *statemachine_info,
+            stream_state_t *stream);
+
+        /**
+         * @brief Sends Terminate Due To Error to abort a stream and frees the slot.
+         *
+         * @details Rejected MTI is chosen by role: source sends MTI_STREAM_PROCEED,
+         * destination sends MTI_STREAM_SEND.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         * @param stream             Pointer to the stream state entry.
+         * @param error_code         Error code for the TDE payload.
+         */
+    extern void ProtocolStreamHandler_send_terminate(
+            openlcb_statemachine_info_t *statemachine_info,
+            stream_state_t *stream,
+            uint16_t error_code);
+
+        /**
+         * @brief Sends an early Stream Data Proceed to allow double-buffering.
+         *
+         * @details Per StreamTransportS Section 7.3, the destination may send
+         * one advance Proceed before the full buffer window is consumed.
+         * Only valid when this node is the destination (is_source == false)
+         * and the stream is OPEN.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         * @param stream             Pointer to the stream state entry.
+         *
+         * @return true if Proceed was sent, false if precondition failed.
+         */
+    extern bool ProtocolStreamHandler_send_early_proceed(
+            openlcb_statemachine_info_t *statemachine_info,
+            stream_state_t *stream);
 
 #ifdef __cplusplus
 }

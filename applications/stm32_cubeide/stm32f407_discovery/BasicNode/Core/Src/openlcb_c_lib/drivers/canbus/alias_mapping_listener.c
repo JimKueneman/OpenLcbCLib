@@ -58,7 +58,7 @@ static uint8_t _verify_last_tick = 0;
 static uint16_t _verify_counter = 0;
 
     /** @brief Zeros all entries in the listener alias table and resets the prober cursor. */
-void ListenerAliasTable_initialize(void) {
+void AliasMappingListener_initialize(void) {
 
     for (int i = 0; i < LISTENER_ALIAS_TABLE_DEPTH; i++) {
 
@@ -90,7 +90,7 @@ void ListenerAliasTable_initialize(void) {
      *
      * @return Pointer to the @ref listener_alias_entry_t, or NULL if full or invalid.
      */
-listener_alias_entry_t *ListenerAliasTable_register(node_id_t node_id) {
+listener_alias_entry_t *AliasMappingListener_register(node_id_t node_id) {
 
     if (node_id == 0) {
 
@@ -139,7 +139,7 @@ listener_alias_entry_t *ListenerAliasTable_register(node_id_t node_id) {
      * @param node_id  48-bit OpenLCB Node ID to remove.
      * @endverbatim
      */
-void ListenerAliasTable_unregister(node_id_t node_id) {
+void AliasMappingListener_unregister(node_id_t node_id) {
 
     if (node_id == 0) {
 
@@ -176,7 +176,7 @@ void ListenerAliasTable_unregister(node_id_t node_id) {
      * @param alias    12-bit CAN alias from the AMD source.
      * @endverbatim
      */
-void ListenerAliasTable_set_alias(node_id_t node_id, uint16_t alias) {
+void AliasMappingListener_set_alias(node_id_t node_id, uint16_t alias) {
 
     if (alias == 0 || alias > 0xFFF) {
 
@@ -218,7 +218,7 @@ void ListenerAliasTable_set_alias(node_id_t node_id, uint16_t alias) {
      *
      * @return Pointer to the @ref listener_alias_entry_t, or NULL if not found.
      */
-listener_alias_entry_t *ListenerAliasTable_find_by_node_id(node_id_t node_id) {
+listener_alias_entry_t *AliasMappingListener_find_by_node_id(node_id_t node_id) {
 
     if (node_id == 0) {
 
@@ -247,7 +247,7 @@ listener_alias_entry_t *ListenerAliasTable_find_by_node_id(node_id_t node_id) {
      * -# Iterate all LISTENER_ALIAS_TABLE_DEPTH entries
      * -# Set alias = 0 on each; leave node_id untouched
      */
-void ListenerAliasTable_flush_aliases(void) {
+void AliasMappingListener_flush_aliases(void) {
 
     for (int i = 0; i < LISTENER_ALIAS_TABLE_DEPTH; i++) {
 
@@ -270,7 +270,7 @@ void ListenerAliasTable_flush_aliases(void) {
      * @param alias  12-bit CAN alias being released.
      * @endverbatim
      */
-void ListenerAliasTable_clear_alias_by_alias(uint16_t alias) {
+void AliasMappingListener_clear_alias_by_alias(uint16_t alias) {
 
     if (alias == 0) {
 
@@ -316,7 +316,7 @@ void ListenerAliasTable_clear_alias_by_alias(uint16_t alias) {
      * @return The @ref node_id_t to probe (caller builds and queues targeted
      *         AME), or 0 if nothing to do this tick.
      */
-node_id_t ListenerAliasTable_check_one_verification(uint8_t current_tick) {
+node_id_t AliasMappingListener_check_one_verification(uint8_t current_tick) {
 
     // Rate-limit: at most one probe per PROBE_TICK_INTERVAL
     uint8_t elapsed = (uint8_t) (current_tick - _verify_last_tick);
@@ -334,7 +334,7 @@ node_id_t ListenerAliasTable_check_one_verification(uint8_t current_tick) {
     for (int scanned = 0; scanned < LISTENER_ALIAS_TABLE_DEPTH; scanned++) {
 
         _verify_cursor = (_verify_cursor + 1) % LISTENER_ALIAS_TABLE_DEPTH;
-        listener_alias_entry_t* entry = &_table[_verify_cursor];
+        listener_alias_entry_t *entry = &_table[_verify_cursor];
 
         if (entry->node_id == 0) {
 

@@ -36,8 +36,10 @@
  * @date 4 Mar 2026
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_SNIP__
-#define    __OPENLCB_PROTOCOL_SNIP__
+#define __OPENLCB_PROTOCOL_SNIP__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -48,11 +50,11 @@
 typedef struct {
 
         /** @brief Read from config memory (ACDI User space) for user name/description.  REQUIRED. */
-   uint16_t(*config_memory_read)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+   uint16_t(*config_memory_read)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
 } interface_openlcb_protocol_snip_t;
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -94,7 +96,7 @@ extern "C" {
          * @param requested_bytes  Maximum bytes to copy.
          * @return Bytes actually written.
          */
-    extern uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes);
 
         /**
          * @brief Copies manufacturer name string (null-terminated).
@@ -105,7 +107,7 @@ extern "C" {
          * @param requested_bytes  Maximum bytes to copy.
          * @return Bytes actually written.
          */
-    extern uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_name(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes);
 
         /**
          * @brief Copies model string (null-terminated).
@@ -116,7 +118,7 @@ extern "C" {
          * @param requested_bytes  Maximum bytes to copy.
          * @return Bytes actually written.
          */
-    extern uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_model(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes);
 
         /**
          * @brief Copies hardware version string (null-terminated).
@@ -127,7 +129,7 @@ extern "C" {
          * @param requested_bytes  Maximum bytes to copy.
          * @return Bytes actually written.
          */
-    extern uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes);
 
         /**
          * @brief Copies software version string (null-terminated).
@@ -138,7 +140,7 @@ extern "C" {
          * @param requested_bytes  Maximum bytes to copy.
          * @return Bytes actually written.
          */
-    extern uint16_t ProtocolSnip_load_software_version(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_software_version(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes);
 
         /**
          * @brief Copies user version ID byte (1 byte).
@@ -149,7 +151,7 @@ extern "C" {
          * @param requested_bytes  Maximum bytes to copy.
          * @return Bytes actually written.
          */
-    extern uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes);
 
         /**
          * @brief Reads user name from config memory (null-terminated, max 63 bytes).
@@ -160,7 +162,7 @@ extern "C" {
          * @param requested_bytes  Maximum bytes to copy.
          * @return Bytes actually written.
          */
-    extern uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_user_name(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes);
 
         /**
          * @brief Reads user description from config memory (null-terminated, max 64 bytes).
@@ -171,7 +173,7 @@ extern "C" {
          * @param requested_bytes  Maximum bytes to copy.
          * @return Bytes actually written.
          */
-    extern uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_user_description(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes);
 
         /**
          * @brief Validates a SNIP reply: correct MTI, valid length, exactly 6 null terminators.
@@ -179,11 +181,11 @@ extern "C" {
          * @param snip_reply_msg  Pointer to @ref openlcb_msg_t message to validate.
          * @return true if the message is a well-formed SNIP reply.
          */
-    extern bool ProtocolSnip_validate_snip_reply(openlcb_msg_t* snip_reply_msg);
+    extern bool ProtocolSnip_validate_snip_reply(openlcb_msg_t *snip_reply_msg);
 
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif    /* __OPENLCB_PROTOCOL_SNIP__ */
+#endif /* __OPENLCB_PROTOCOL_SNIP__ */

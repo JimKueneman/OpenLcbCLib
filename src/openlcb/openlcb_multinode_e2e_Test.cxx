@@ -436,9 +436,9 @@ static const interface_openlcb_login_state_machine_t _e2e_login_interface = {
     .openlcb_node_get_next   = &OpenLcbNode_get_next,
     .openlcb_node_get_count  = &OpenLcbNode_get_count,
 
-    .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
-    .load_producer_events         = &OpenLcbLoginMessageHandler_load_producer_event,
-    .load_consumer_events         = &OpenLcbLoginMessageHandler_load_consumer_event,
+    .load_initialization_complete = &OpenLcbLoginStatemachineHandler_load_initialization_complete,
+    .load_producer_events         = &OpenLcbLoginStatemachineHandler_load_producer_event,
+    .load_consumer_events         = &OpenLcbLoginStatemachineHandler_load_consumer_event,
 
     // Sibling dispatch wired to the real main statemachine via our logging wrapper
     .process_main_statemachine = &_e2e_process_main_statemachine,
@@ -446,7 +446,7 @@ static const interface_openlcb_login_state_machine_t _e2e_login_interface = {
     .on_login_complete = NULL,
 
     // Real internal handlers
-    .process_login_statemachine        = &OpenLcbLoginStateMachine_process,
+    .process_login_statemachine        = &OpenLcbLoginStatemachine_process,
     .handle_outgoing_openlcb_message   =
             &OpenLcbLoginStatemachine_handle_outgoing_openlcb_message,
     .handle_try_reenumerate            = &OpenLcbLoginStatemachine_handle_try_reenumerate,
@@ -502,8 +502,8 @@ static void _e2e_init_with_login(void) {
     OpenLcbBufferFifo_initialize();
     OpenLcbNode_initialize(&interface_openlcb_node);
     ProtocolDatagramHandler_initialize(&_e2e_datagram_interface);
-    OpenLcbLoginMessageHandler_initialize(&_e2e_login_msg_interface);
-    OpenLcbLoginStateMachine_initialize(&_e2e_login_interface);
+    OpenLcbLoginStatemachineHandler_initialize(&_e2e_login_msg_interface);
+    OpenLcbLoginStatemachine_initialize(&_e2e_login_interface);
     OpenLcbMainStatemachine_initialize(&_e2e_main_interface);
 
 }
@@ -553,7 +553,7 @@ TEST(OpenLcbMultinodeE2E, login_sibling_dispatch_reaches_real_main_handler)
     for (int i = 0; i < 50; i++) {
 
         if (nodeA->state.run_state == RUNSTATE_RUN) { break; }
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -772,7 +772,7 @@ TEST(OpenLcbMultinodeE2E, login_and_main_statemachines_concurrent_no_interferenc
     // Lockstep: login statemachine then main statemachine
     for (int i = 0; i < 500; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
         OpenLcbMainStatemachine_run();
 
         if (_e2e_all_nodes_in_run_state()) { break; }

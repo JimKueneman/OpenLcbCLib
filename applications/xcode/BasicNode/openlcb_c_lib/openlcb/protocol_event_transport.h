@@ -41,6 +41,8 @@
  *        blocked so there is not a race on the incoming message buffer.
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_EVENT_TRANSPORT__
 #define __OPENLCB_PROTOCOL_EVENT_TRANSPORT__
 
@@ -101,8 +103,7 @@ typedef struct
 } interface_openlcb_protocol_event_transport_t;
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
         /**

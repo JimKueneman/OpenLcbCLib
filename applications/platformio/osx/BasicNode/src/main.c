@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
   OSxCanDriver_initialize();
 
   CanConfig_initialize(&can_config);
-  OpenLcb_initialize(&openlcb_config);
+  OpenLcbConfig_initialize(&openlcb_config);
 
   printf("Waiting for CAN and 100ms Timer Drivers to connect\n");
 
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     printf("NodeID: %12llX\n", nodeid);
   }
 
-  openlcb_node_t *node = OpenLcb_create_node(nodeid, &OpenLcbUserConfig_node_parameters);
+  openlcb_node_t *node = OpenLcbConfig_create_node(nodeid, &OpenLcbUserConfig_node_parameters);
   printf("Allocated.....\n");
 
   int idle_count = 0;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
   while (1)
   {
 
-    OpenLcb_run();
+    OpenLcbConfig_run();
 
     if (OSxCanDriver_data_was_received())
         idle_count = 0;

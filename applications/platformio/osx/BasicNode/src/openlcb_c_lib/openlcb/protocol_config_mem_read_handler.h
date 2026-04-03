@@ -36,8 +36,10 @@
      * @date 9 Mar 2026
      */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_CONFIG_MEM_READ_HANDLER__
-#define    __OPENLCB_PROTOCOL_CONFIG_MEM_READ_HANDLER__
+#define __OPENLCB_PROTOCOL_CONFIG_MEM_READ_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -58,54 +60,54 @@ typedef struct {
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
 
         /** @brief Read bytes from config memory into buffer.  Returns bytes read.  REQUIRED. */
-    uint16_t(*config_memory_read)(openlcb_node_t* openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    uint16_t(*config_memory_read)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
     // ---- Optional SNIP field loaders (needed only for ACDI 0xFC / 0xFB spaces) ----
 
         /** @brief Load mfg version ID into payload.  Optional (for 0xFC). */
-    uint16_t(*snip_load_manufacturer_version_id)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_manufacturer_version_id)(openlcb_node_t *openlcb_node, openlcb_msg_t *worker_msg, uint16_t payload_index, uint16_t requested_bytes);
         /** @brief Load mfg name into payload.  Optional (for 0xFC). */
-    uint16_t(*snip_load_name)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_name)(openlcb_node_t *openlcb_node, openlcb_msg_t *worker_msg, uint16_t payload_index, uint16_t requested_bytes);
         /** @brief Load model into payload.  Optional (for 0xFC). */
-    uint16_t(*snip_load_model)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_model)(openlcb_node_t *openlcb_node, openlcb_msg_t *worker_msg, uint16_t payload_index, uint16_t requested_bytes);
         /** @brief Load HW version into payload.  Optional (for 0xFC). */
-    uint16_t(*snip_load_hardware_version)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_hardware_version)(openlcb_node_t *openlcb_node, openlcb_msg_t *worker_msg, uint16_t payload_index, uint16_t requested_bytes);
         /** @brief Load SW version into payload.  Optional (for 0xFC). */
-    uint16_t(*snip_load_software_version)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_software_version)(openlcb_node_t *openlcb_node, openlcb_msg_t *worker_msg, uint16_t payload_index, uint16_t requested_bytes);
         /** @brief Load user version ID into payload.  Optional (for 0xFB). */
-    uint16_t(*snip_load_user_version_id)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_user_version_id)(openlcb_node_t *openlcb_node, openlcb_msg_t *worker_msg, uint16_t payload_index, uint16_t requested_bytes);
         /** @brief Load user name into payload.  Optional (for 0xFB). */
-    uint16_t(*snip_load_user_name)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_user_name)(openlcb_node_t *openlcb_node, openlcb_msg_t *worker_msg, uint16_t payload_index, uint16_t requested_bytes);
         /** @brief Load user description into payload.  Optional (for 0xFB). */
-    uint16_t(*snip_load_user_description)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_user_description)(openlcb_node_t *openlcb_node, openlcb_msg_t *worker_msg, uint16_t payload_index, uint16_t requested_bytes);
 
     // ---- Optional per-space read request overrides ----
 
         /** @brief Custom CDI (0xFF) read handler.  Optional. */
-    void (*read_request_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*read_request_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
         /** @brief Custom All (0xFE) read handler.  Optional. */
-    void (*read_request_all)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*read_request_all)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
         /** @brief Custom Config (0xFD) read handler.  Optional. */
-    void (*read_request_config_mem)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*read_request_config_mem)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
         /** @brief Custom ACDI-Mfg (0xFC) read handler.  Optional. */
-    void (*read_request_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*read_request_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
         /** @brief Custom ACDI-User (0xFB) read handler.  Optional. */
-    void (*read_request_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*read_request_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
         /** @brief Custom Train FDI (0xFA) read handler.  Optional. */
-    void (*read_request_train_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*read_request_train_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
         /** @brief Custom Train Fn Config (0xF9) read handler.  Optional. */
-    void (*read_request_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*read_request_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
 
         /** @brief Override reply delay (return N means 2^N seconds).  Optional (default 0). */
-    uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
 
         /** @brief Optional — Returns train state for the given node (DI for train module). */
-    train_state_t* (*get_train_state)(openlcb_node_t *openlcb_node);
+    train_state_t *(*get_train_state)(openlcb_node_t *openlcb_node);
 
 } interface_protocol_config_mem_read_handler_t;
 
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -246,8 +248,8 @@ extern "C" {
     extern void ProtocolConfigMemReadHandler_read_reply_reject_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
 
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif    /* __OPENLCB_PROTOCOL_CONFIG_MEM_READ_HANDLER__ */
+#endif /* __OPENLCB_PROTOCOL_CONFIG_MEM_READ_HANDLER__ */

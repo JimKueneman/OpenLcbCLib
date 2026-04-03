@@ -68,6 +68,9 @@ static stream_state_t _stream_table[USER_DEFINED_MAX_STREAM_COUNT];
     /** @brief Next Destination Stream ID to assign (monotonic, wraps at 0xFE). */
 static uint8_t _next_dest_stream_id = 0;
 
+    /** @brief Next Source Stream ID to assign (monotonic, wraps at 0xFE). */
+static uint8_t _next_source_stream_id = 0;
+
 // =============================================================================
 // Internal helpers
 // =============================================================================
@@ -270,6 +273,183 @@ static void _load_data_proceed(
 
 }
 
+    /**
+     * @brief Assigns the next available Source Stream ID.
+     *
+     * @details Algorithm:
+     * -# Return current _next_source_stream_id
+     * -# Increment and wrap at 0xFE (skip 0xFF which is reserved)
+     *
+     * @return A SID value in the range [0..254].
+     */
+static uint8_t _assign_source_stream_id(void) {
+
+    uint8_t id = _next_source_stream_id;
+
+    _next_source_stream_id++;
+
+    if (_next_source_stream_id >= STREAM_ID_RESERVED) {
+
+        _next_source_stream_id = 0;
+
+    }
+
+    return id;
+
+}
+
+    /**
+     * @brief Loads a Stream Initiate Request into the outgoing message.
+     *
+     * @details Algorithm:
+     * -# Load message header with MTI_STREAM_INIT_REQUEST
+     * -# Clear payload
+     * -# Set bytes 0-1 to proposed_buffer_size (big-endian)
+     * -# Set bytes 2-3 to flags (0x0000)
+     * -# Set byte 4 to source_stream_id
+     * -# Set byte 5 to suggested_dest_stream_id
+     * -# Set payload_count to 6
+     * -# Mark outgoing as valid
+     *
+     * @verbatim
+     * @param statemachine_info         Pointer to openlcb_statemachine_info_t context.
+     * @param proposed_buffer_size      Proposed max buffer size.
+     * @param source_stream_id          SID assigned by this (source) node.
+     * @param suggested_dest_stream_id  Suggested DID (0xFF if no preference).
+     * @param dest_alias                CAN alias of the destination node.
+     * @param dest_id                   Node ID of the destination node.
+     * @param content_uid               Optional 6-byte Content UID (NULL to omit).
+     * @endverbatim
+     */
+static void _load_initiate_request(
+            openlcb_statemachine_info_t *statemachine_info,
+            uint16_t proposed_buffer_size,
+            uint8_t source_stream_id,
+            uint8_t suggested_dest_stream_id,
+            uint16_t dest_alias,
+            node_id_t dest_id,
+            const uint8_t *content_uid) {
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            dest_alias,
+            dest_id,
+            MTI_STREAM_INIT_REQUEST);
+
+    OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
+
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, proposed_buffer_size, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x0000, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, source_stream_id, 4);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, suggested_dest_stream_id, 5);
+
+    if (content_uid) {
+
+        for (int i = 0; i < 6; i++) {
+
+            OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, content_uid[i], 6 + i);
+
+        }
+
+        statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 12;
+
+    } else {
+
+        statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
+
+    }
+
+    statemachine_info->outgoing_msg_info.valid = true;
+
+}
+
+    /**
+     * @brief Loads a Stream Data Send message into the outgoing slot.
+     *
+     * @details Payload: byte 0 = Destination Stream ID, bytes 1+ = data.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param stream             Pointer to the stream state entry.
+     * @param data               Pointer to data bytes to send.
+     * @param data_len           Number of data bytes.
+     * @endverbatim
+     */
+static void _load_data_send(
+            openlcb_statemachine_info_t *statemachine_info,
+            stream_state_t *stream,
+            const uint8_t *data,
+            uint16_t data_len) {
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            stream->remote_alias,
+            stream->remote_node_id,
+            MTI_STREAM_SEND);
+
+    OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, stream->dest_stream_id, 0);
+
+    for (uint16_t i = 0; i < data_len; i++) {
+
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, data[i], 1 + i);
+
+    }
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 1 + data_len;
+    statemachine_info->outgoing_msg_info.valid = true;
+
+}
+
+    /**
+     * @brief Loads a Stream Data Complete message into the outgoing slot.
+     *
+     * @details Payload: byte 0 = SID, byte 1 = DID, bytes 2-3 = flags (0),
+     * bytes 4-7 = total bytes transferred mod 2^32 (per spec Section 5.5).
+     * Either side can send.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param stream             Pointer to the stream state entry.
+     * @endverbatim
+     */
+static void _load_data_complete(
+            openlcb_statemachine_info_t *statemachine_info,
+            stream_state_t *stream) {
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            stream->remote_alias,
+            stream->remote_node_id,
+            MTI_STREAM_COMPLETE);
+
+    OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, stream->source_stream_id, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, stream->dest_stream_id, 1);
+
+    // Optional flags (bytes 2-3)
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x0000, 2);
+
+    // Total bytes transferred mod 2^32 (bytes 4-7)
+    uint32_t total = stream->bytes_transferred;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((total >> 24) & 0xFF), 4);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((total >> 16) & 0xFF), 5);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((total >> 8) & 0xFF), 6);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (total & 0xFF), 7);
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+    statemachine_info->outgoing_msg_info.valid = true;
+
+}
+
 // =============================================================================
 // Public API
 // =============================================================================
@@ -296,6 +476,7 @@ void ProtocolStreamHandler_initialize(const interface_protocol_stream_handler_t 
     memset(_stream_table, 0, sizeof(_stream_table));
 
     _next_dest_stream_id = 0;
+    _next_source_stream_id = 0;
 
 }
 
@@ -346,6 +527,7 @@ void ProtocolStreamHandler_initiate_request(openlcb_statemachine_info_t *statema
     stream->source_stream_id = source_stream_id;
     stream->dest_stream_id = _assign_dest_stream_id();
     stream->remote_node_id = incoming->source_id;
+    stream->remote_alias = incoming->source_alias;
     stream->is_source = false;
     stream->bytes_transferred = 0;
 
@@ -374,18 +556,29 @@ void ProtocolStreamHandler_initiate_request(openlcb_statemachine_info_t *statema
 
     }
 
-    // Notify application
-    _interface->on_initiate_request(statemachine_info, stream);
+    // Notify application -- callback returns true to accept, false to reject
+    bool accepted = _interface->on_initiate_request(statemachine_info, stream);
 
-    // Send accept reply
-    stream->state = STREAM_STATE_OPEN;
+    if (accepted) {
 
-    _load_initiate_reply(
-            statemachine_info,
-            stream->max_buffer_size,
-            STREAM_REPLY_ACCEPT,
-            stream->source_stream_id,
-            stream->dest_stream_id);
+        stream->state = STREAM_STATE_OPEN;
+
+        _load_initiate_reply(
+                statemachine_info,
+                stream->max_buffer_size,
+                STREAM_REPLY_ACCEPT,
+                stream->source_stream_id,
+                stream->dest_stream_id);
+
+    } else {
+
+        uint8_t sid = stream->source_stream_id;
+
+        _free_stream(stream);
+
+        _load_initiate_reply(statemachine_info, 0, ERROR_PERMANENT_STREAMS_NOT_SUPPORTED, sid, 0);
+
+    }
 
 }
 
@@ -632,6 +825,224 @@ void ProtocolStreamHandler_handle_terminate_due_to_error(openlcb_statemachine_in
         _free_stream(&_stream_table[i]);
 
     }
+
+}
+
+    /**
+     * @brief Opens an outbound stream where this node is the source.
+     *
+     * @details Algorithm:
+     * -# Allocate a stream state entry; return NULL if table full
+     * -# Assign a SID, populate state with is_source=true, INITIATED
+     * -# Send Stream Initiate Request to the destination
+     * -# Return pointer to stream state entry
+     *
+     * The caller waits for on_initiate_reply to learn accept/reject.
+     *
+     * @verbatim
+     * @param statemachine_info         Pointer to openlcb_statemachine_info_t context.
+     * @param dest_alias                CAN alias of the destination node.
+     * @param dest_id                   Node ID of the destination node.
+     * @param proposed_buffer_size      Proposed max buffer size.
+     * @param suggested_dest_stream_id  Suggested DID (0xFF if no preference).
+     * @endverbatim
+     *
+     * @return Pointer to allocated stream_state_t, or NULL if table full.
+     */
+stream_state_t *ProtocolStreamHandler_initiate_outbound(
+            openlcb_statemachine_info_t *statemachine_info,
+            uint16_t dest_alias,
+            node_id_t dest_id,
+            uint16_t proposed_buffer_size,
+            uint8_t suggested_dest_stream_id,
+            const uint8_t *content_uid) {
+
+    stream_state_t *stream = _allocate_stream();
+
+    if (!stream) { return NULL; }
+
+    stream->state = STREAM_STATE_INITIATED;
+    stream->source_stream_id = _assign_source_stream_id();
+    stream->dest_stream_id = 0;
+    stream->remote_node_id = dest_id;
+    stream->remote_alias = dest_alias;
+    stream->is_source = true;
+    stream->max_buffer_size = proposed_buffer_size;
+    stream->bytes_transferred = 0;
+    stream->bytes_remaining = 0;
+    stream->context = NULL;
+
+    if (content_uid) {
+
+        for (int i = 0; i < 6; i++) {
+
+            stream->content_uid[i] = content_uid[i];
+
+        }
+
+    }
+
+    _load_initiate_request(
+            statemachine_info,
+            proposed_buffer_size,
+            stream->source_stream_id,
+            suggested_dest_stream_id,
+            dest_alias,
+            dest_id,
+            content_uid);
+
+    return stream;
+
+}
+
+    /**
+     * @brief Sends data on an open stream where this node is the source.
+     *
+     * @details Algorithm:
+     * -# Validate stream is non-NULL, OPEN, and is_source
+     * -# Validate data_len fits within bytes_remaining
+     * -# Build and send Stream Data Send message
+     * -# Update bytes_transferred and bytes_remaining
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param stream             Pointer to the stream state entry.
+     * @param data               Pointer to data bytes to send.
+     * @param data_len           Number of data bytes.
+     * @endverbatim
+     *
+     * @return true if data was sent, false if precondition failed.
+     */
+bool ProtocolStreamHandler_send_data(
+            openlcb_statemachine_info_t *statemachine_info,
+            stream_state_t *stream,
+            const uint8_t *data,
+            uint16_t data_len) {
+
+    if (!stream) { return false; }
+
+    if (stream->state != STREAM_STATE_OPEN) { return false; }
+
+    if (!stream->is_source) { return false; }
+
+    if (data_len > stream->bytes_remaining) { return false; }
+
+    _load_data_send(statemachine_info, stream, data, data_len);
+
+    stream->bytes_transferred += data_len;
+    stream->bytes_remaining -= data_len;
+
+    return true;
+
+}
+
+    /**
+     * @brief Sends Stream Data Complete and frees the stream slot.
+     *
+     * @details Either the source or destination may call this to close
+     * the stream normally.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param stream             Pointer to the stream state entry.
+     * @endverbatim
+     */
+void ProtocolStreamHandler_send_complete(
+            openlcb_statemachine_info_t *statemachine_info,
+            stream_state_t *stream) {
+
+    if (!stream) { return; }
+
+    _load_data_complete(statemachine_info, stream);
+
+    _free_stream(stream);
+
+}
+
+    /**
+     * @brief Sends Terminate Due To Error to abort a stream and frees the slot.
+     *
+     * @details The rejected MTI is chosen automatically based on the role:
+     * - Source sends TDE with rejected_mti = MTI_STREAM_PROCEED
+     * - Destination sends TDE with rejected_mti = MTI_STREAM_SEND
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param stream             Pointer to the stream state entry.
+     * @param error_code         Error code for bytes 0-1 of the TDE payload.
+     * @endverbatim
+     */
+void ProtocolStreamHandler_send_terminate(
+            openlcb_statemachine_info_t *statemachine_info,
+            stream_state_t *stream,
+            uint16_t error_code) {
+
+    if (!stream) { return; }
+
+    uint16_t rejected_mti = stream->is_source ? MTI_STREAM_PROCEED : MTI_STREAM_SEND;
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            stream->remote_alias,
+            stream->remote_node_id,
+            MTI_TERMINATE_DUE_TO_ERROR);
+
+    OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
+
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, error_code, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, rejected_mti, 2);
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 4;
+    statemachine_info->outgoing_msg_info.valid = true;
+
+    _free_stream(stream);
+
+}
+
+    /**
+     * @brief Sends an early Stream Data Proceed to allow double-buffering.
+     *
+     * @details Per StreamTransportS Section 7.3, the destination may send one
+     * advance Proceed before the full buffer window is consumed.  This extends
+     * the source's send window by max_buffer_size.  Only valid when this node
+     * is the destination and the stream is OPEN.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param stream             Pointer to the stream state entry.
+     * @endverbatim
+     *
+     * @return true if Proceed was sent, false if precondition failed.
+     */
+bool ProtocolStreamHandler_send_early_proceed(
+            openlcb_statemachine_info_t *statemachine_info,
+            stream_state_t *stream) {
+
+    if (!stream) { return false; }
+
+    if (stream->state != STREAM_STATE_OPEN) { return false; }
+
+    if (stream->is_source) { return false; }
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            stream->remote_alias,
+            stream->remote_node_id,
+            MTI_STREAM_PROCEED);
+
+    OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, stream->source_stream_id, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, stream->dest_stream_id, 1);
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 2;
+    statemachine_info->outgoing_msg_info.valid = true;
+
+    return true;
 
 }
 

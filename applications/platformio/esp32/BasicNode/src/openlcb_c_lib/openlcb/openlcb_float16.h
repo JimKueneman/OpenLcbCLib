@@ -35,14 +35,16 @@
  * @date 28 Feb 2026
  */
 
-#ifndef __OPENLCB_FLOAT16__
-#define __OPENLCB_FLOAT16__
+// This is a guard condition so that contents of this file are not included
+// more than once.
+#ifndef __OPENLCB_OPENLCB_FLOAT16__
+#define __OPENLCB_OPENLCB_FLOAT16__
 
 #include <stdbool.h>
 #include <stdint.h>
 
-#ifdef	__cplusplus
-  extern "C" {
+#ifdef __cplusplus
+extern "C" {
 #endif /* __cplusplus */
 
 /** @brief float16 value representing positive zero (forward, stopped). */
@@ -142,4 +144,4 @@
 }
 #endif /* __cplusplus */
 
-#endif /* __OPENLCB_FLOAT16__ */
+#endif /* __OPENLCB_OPENLCB_FLOAT16__ */

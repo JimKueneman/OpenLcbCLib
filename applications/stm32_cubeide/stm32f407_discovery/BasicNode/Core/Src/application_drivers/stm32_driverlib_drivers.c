@@ -122,6 +122,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if (htim == _htim7)
 	{
 
-		OpenLcb_100ms_timer_tick();
+		OpenLcbConfig_100ms_timer_tick();
 	}
 }

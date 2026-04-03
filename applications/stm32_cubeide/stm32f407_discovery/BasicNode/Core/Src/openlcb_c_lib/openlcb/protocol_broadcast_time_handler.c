@@ -62,7 +62,7 @@ static const interface_openlcb_protocol_broadcast_time_handler_t *_interface;
      * @param interface_openlcb_protocol_broadcast_time_handler  Populated callback table.
      * @endverbatim
      */
-void ProtocolBroadcastTime_initialize(const interface_openlcb_protocol_broadcast_time_handler_t *interface_openlcb_protocol_broadcast_time_handler) {
+void ProtocolBroadcastTimeHandler_initialize(const interface_openlcb_protocol_broadcast_time_handler_t *interface_openlcb_protocol_broadcast_time_handler) {
 
     _interface = interface_openlcb_protocol_broadcast_time_handler;
 
@@ -74,7 +74,7 @@ static void _handle_report_time(openlcb_node_t *node, broadcast_clock_state_t *c
     uint8_t hour;
     uint8_t minute;
 
-    if (ProtocolBroadcastTime_extract_time(event_id, &hour, &minute)) {
+    if (ProtocolBroadcastTimeHandler_extract_time(event_id, &hour, &minute)) {
 
         clock->time.hour = hour;
         clock->time.minute = minute;
@@ -98,7 +98,7 @@ static void _handle_report_date(openlcb_node_t *node, broadcast_clock_state_t *c
     uint8_t month;
     uint8_t day;
 
-    if (ProtocolBroadcastTime_extract_date(event_id, &month, &day)) {
+    if (ProtocolBroadcastTimeHandler_extract_date(event_id, &month, &day)) {
 
         clock->date.month = month;
         clock->date.day = day;
@@ -120,7 +120,7 @@ static void _handle_report_year(openlcb_node_t *node, broadcast_clock_state_t *c
 
     uint16_t year;
 
-    if (ProtocolBroadcastTime_extract_year(event_id, &year)) {
+    if (ProtocolBroadcastTimeHandler_extract_year(event_id, &year)) {
 
         clock->year.year = year;
         clock->year.valid = 1;
@@ -141,7 +141,7 @@ static void _handle_report_rate(openlcb_node_t *node, broadcast_clock_state_t *c
 
     int16_t rate;
 
-    if (ProtocolBroadcastTime_extract_rate(event_id, &rate)) {
+    if (ProtocolBroadcastTimeHandler_extract_rate(event_id, &rate)) {
 
         clock->rate.rate = rate;
         clock->rate.valid = 1;
@@ -210,7 +210,7 @@ static void _handle_date_rollover(openlcb_node_t *node, broadcast_clock_state_t 
      * @param event_id           Full 64-bit event_id_t containing encoded time data.
      * @endverbatim
      */
-void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
+void ProtocolBroadcastTimeHandler_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
 
     broadcast_time_event_type_enum event_type;
     openlcb_node_t *node;
@@ -237,7 +237,7 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
 
     }
 
-    clock_id = ProtocolBroadcastTime_extract_clock_id(event_id);
+    clock_id = ProtocolBroadcastTimeHandler_extract_clock_id(event_id);
     clock = OpenLcbApplicationBroadcastTime_get_clock(clock_id);
 
     if (!clock) {
@@ -246,7 +246,7 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
 
     }
 
-    event_type = ProtocolBroadcastTime_get_event_type(event_id);
+    event_type = ProtocolBroadcastTimeHandler_get_event_type(event_id);
 
     switch (event_type) {
 
@@ -353,7 +353,7 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
 // =============================================================================
 
     /** @brief Returns true if the event ID belongs to the broadcast time event space. */
-bool ProtocolBroadcastTime_is_time_event(event_id_t event_id) {
+bool ProtocolBroadcastTimeHandler_is_time_event(event_id_t event_id) {
 
     uint64_t clock_id;
 
@@ -389,14 +389,14 @@ bool ProtocolBroadcastTime_is_time_event(event_id_t event_id) {
 }
 
     /** @brief Extracts the 48-bit clock ID (upper 6 bytes) from a broadcast time event ID. */
-uint64_t ProtocolBroadcastTime_extract_clock_id(event_id_t event_id) {
+uint64_t ProtocolBroadcastTimeHandler_extract_clock_id(event_id_t event_id) {
 
     return event_id & BROADCAST_TIME_MASK_CLOCK_ID;
 
 }
 
     /** @brief Returns the @ref broadcast_time_event_type_enum for a broadcast time event ID. */
-broadcast_time_event_type_enum ProtocolBroadcastTime_get_event_type(event_id_t event_id) {
+broadcast_time_event_type_enum ProtocolBroadcastTimeHandler_get_event_type(event_id_t event_id) {
 
     uint16_t command_data;
 
@@ -487,7 +487,7 @@ broadcast_time_event_type_enum ProtocolBroadcastTime_get_event_type(event_id_t e
 }
 
     /** @brief Extracts hour and minute from a broadcast time event ID. Returns false if out of range. */
-bool ProtocolBroadcastTime_extract_time(event_id_t event_id, uint8_t *hour, uint8_t *minute) {
+bool ProtocolBroadcastTimeHandler_extract_time(event_id_t event_id, uint8_t *hour, uint8_t *minute) {
 
     uint16_t command_data;
     uint8_t h;
@@ -525,7 +525,7 @@ bool ProtocolBroadcastTime_extract_time(event_id_t event_id, uint8_t *hour, uint
 }
 
     /** @brief Extracts month and day from a broadcast time event ID. Returns false if out of range. */
-bool ProtocolBroadcastTime_extract_date(event_id_t event_id, uint8_t *month, uint8_t *day) {
+bool ProtocolBroadcastTimeHandler_extract_date(event_id_t event_id, uint8_t *month, uint8_t *day) {
 
     uint16_t command_data;
     uint8_t mon;
@@ -565,7 +565,7 @@ bool ProtocolBroadcastTime_extract_date(event_id_t event_id, uint8_t *month, uin
 }
 
     /** @brief Extracts year from a broadcast time event ID. Returns false if out of range. */
-bool ProtocolBroadcastTime_extract_year(event_id_t event_id, uint16_t *year) {
+bool ProtocolBroadcastTimeHandler_extract_year(event_id_t event_id, uint16_t *year) {
 
     uint16_t command_data;
     uint16_t y;
@@ -605,7 +605,7 @@ bool ProtocolBroadcastTime_extract_year(event_id_t event_id, uint16_t *year) {
      *
      * @details Rate format is 10.2 fixed point. Sign-extends bit 11 for negative rates.
      */
-bool ProtocolBroadcastTime_extract_rate(event_id_t event_id, int16_t *rate) {
+bool ProtocolBroadcastTimeHandler_extract_rate(event_id_t event_id, int16_t *rate) {
 
     uint16_t command_data;
     uint16_t raw_rate;
@@ -644,7 +644,7 @@ bool ProtocolBroadcastTime_extract_rate(event_id_t event_id, int16_t *rate) {
 }
 
     /** @brief Creates a Report/Set Time event ID from clock_id, hour, minute. */
-event_id_t ProtocolBroadcastTime_create_time_event_id(uint64_t clock_id, uint8_t hour, uint8_t minute, bool is_set) {
+event_id_t ProtocolBroadcastTimeHandler_create_time_event_id(uint64_t clock_id, uint8_t hour, uint8_t minute, bool is_set) {
 
     uint16_t command_data;
 
@@ -661,7 +661,7 @@ event_id_t ProtocolBroadcastTime_create_time_event_id(uint64_t clock_id, uint8_t
 }
 
     /** @brief Creates a Report/Set Date event ID from clock_id, month, day. */
-event_id_t ProtocolBroadcastTime_create_date_event_id(uint64_t clock_id, uint8_t month, uint8_t day, bool is_set) {
+event_id_t ProtocolBroadcastTimeHandler_create_date_event_id(uint64_t clock_id, uint8_t month, uint8_t day, bool is_set) {
 
     uint16_t command_data;
 
@@ -678,7 +678,7 @@ event_id_t ProtocolBroadcastTime_create_date_event_id(uint64_t clock_id, uint8_t
 }
 
     /** @brief Creates a Report/Set Year event ID from clock_id, year. */
-event_id_t ProtocolBroadcastTime_create_year_event_id(uint64_t clock_id, uint16_t year, bool is_set) {
+event_id_t ProtocolBroadcastTimeHandler_create_year_event_id(uint64_t clock_id, uint16_t year, bool is_set) {
 
     uint16_t command_data;
 
@@ -695,7 +695,7 @@ event_id_t ProtocolBroadcastTime_create_year_event_id(uint64_t clock_id, uint16_
 }
 
     /** @brief Creates a Report/Set Rate event ID from clock_id, rate. */
-event_id_t ProtocolBroadcastTime_create_rate_event_id(uint64_t clock_id, int16_t rate, bool is_set) {
+event_id_t ProtocolBroadcastTimeHandler_create_rate_event_id(uint64_t clock_id, int16_t rate, bool is_set) {
 
     uint16_t command_data;
 
@@ -712,7 +712,7 @@ event_id_t ProtocolBroadcastTime_create_rate_event_id(uint64_t clock_id, int16_t
 }
 
     /** @brief Creates a command event ID (Query, Start, Stop, Date Rollover) for the given clock. */
-event_id_t ProtocolBroadcastTime_create_command_event_id(uint64_t clock_id, broadcast_time_event_type_enum command) {
+event_id_t ProtocolBroadcastTimeHandler_create_command_event_id(uint64_t clock_id, broadcast_time_event_type_enum command) {
 
     uint16_t command_data;
 

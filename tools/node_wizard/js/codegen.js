@@ -799,7 +799,7 @@ function generateC(s) {
      *   present, read_only, low_address_valid, address_space,
      *   highest_address, low_address, description
      *
-     * Within user_configuration_options:
+     * Within user_configuration_options_t:
      *   write_under_mask_supported, unaligned_reads_supported,
      *   unaligned_writes_supported, read_from_manufacturer_space_0xfc_supported,
      *   read_from_user_space_0xfb_supported, write_to_user_space_0xfb_supported,
@@ -917,7 +917,7 @@ function generateC(s) {
     L.push('    .producer_count_autocreate = 0,');
     L.push('');
 
-    /* ---- 5. .configuration_options (user_configuration_options) ---- */
+    /* ---- 5. .configuration_options (user_configuration_options_t) ---- */
     var lowAddrSpace;
 
     if (isBootloader) {
@@ -1170,11 +1170,11 @@ function generateMain(s) {
     L.push(' *     reboot, and the 100ms timer are critical for basic operation.');
     L.push(' *  3. Implement any callback stubs in application_callbacks/.');
     if (hasNodeId) {
-    L.push(' *  4. Build and flash. The main loop calls OpenLcb_run() which');
+    L.push(' *  4. Build and flash. The main loop calls OpenLcbConfig_run() which');
     L.push(' *     handles all protocol processing automatically.');
     } else {
     L.push(' *  4. Set your unique Node ID in the NODE_ID define below.');
-    L.push(' *  5. Build and flash. The main loop calls OpenLcb_run() which');
+    L.push(' *  5. Build and flash. The main loop calls OpenLcbConfig_run() which');
     L.push(' *     handles all protocol processing automatically.');
     }
     L.push(' *');
@@ -1540,11 +1540,11 @@ function generateMain(s) {
     L.push('');
     L.push('int main(void) {');
     L.push('');
-    L.push('    // Initialize CAN transport (must be before OpenLcb_initialize)');
+    L.push('    // Initialize CAN transport (must be before OpenLcbConfig_initialize)');
     L.push('    CanConfig_initialize(&can_config);');
     L.push('');
     L.push('    // Initialize the OpenLCB stack');
-    L.push('    OpenLcb_initialize(&openlcb_config);');
+    L.push('    OpenLcbConfig_initialize(&openlcb_config);');
     L.push('');
     L.push('    // Initialize platform drivers');
 
@@ -1558,7 +1558,7 @@ function generateMain(s) {
 
     L.push('');
     L.push('    // Create the node');
-    L.push('    node = OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);');
+    L.push('    node = OpenLcbConfig_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);');
     L.push('');
 
     if (broadcastOn) {
@@ -1587,7 +1587,7 @@ function generateMain(s) {
     L.push('    // Main loop');
     L.push('    while (1) {');
     L.push('');
-    L.push('        OpenLcb_run();');
+    L.push('        OpenLcbConfig_run();');
     L.push('');
     L.push('    }');
     L.push('');

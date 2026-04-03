@@ -76,10 +76,13 @@ static stream_state_t *_last_stream = NULL;
 // MOCK CALLBACKS
 // ============================================================================
 
-static void _mock_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
+static bool _mock_accept_initiate = true;
+
+static bool _mock_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     _initiate_request_called++;
     _last_stream = stream;
+    return _mock_accept_initiate;
 
 }
 
@@ -173,6 +176,7 @@ static void _reset_mock_counters(void) {
     _data_proceed_called = 0;
     _complete_called = 0;
     _last_stream = NULL;
+    _mock_accept_initiate = true;
 
 }
 
@@ -1804,5 +1808,924 @@ TEST(ProtocolStreamHandler, tde_wrong_node_ignored) {
     ProtocolStreamHandler_handle_terminate_due_to_error(&info_tde);
 
     EXPECT_EQ(_complete_called, 0);
+
+}
+
+// ============================================================================
+// SECTION 7: OUTBOUND STREAM INITIATION
+// ============================================================================
+
+// Helper: build an initiate reply from SOURCE back to DEST
+static void _load_initiate_reply_msg(openlcb_msg_t *msg, uint16_t buffer_size,
+                                     uint16_t flags, uint8_t sid, uint8_t did) {
+
+    OpenLcbUtilities_load_openlcb_message(msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_INIT_REPLY);
+    OpenLcbUtilities_clear_openlcb_message_payload(msg);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(msg, buffer_size, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(msg, flags, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, sid, 4);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, did, 5);
+    msg->payload_count = 6;
+
+}
+
+// Helper: open an outbound stream and accept it, returns the stream pointer
+static stream_state_t *_open_outbound_stream(openlcb_node_t *node,
+                                             uint16_t buffer_size,
+                                             openlcb_msg_t *outgoing) {
+
+    openlcb_msg_t *dummy_incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_init = _build_statemachine_info(node, dummy_incoming, outgoing);
+
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(
+            &info_init, SOURCE_ALIAS, SOURCE_ID, buffer_size, 0xFF, NULL);
+
+    if (!stream) { return NULL; }
+
+    uint8_t sid = stream->source_stream_id;
+
+    // Feed accept reply
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_reply = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_reply = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_reply_msg(incoming_reply, buffer_size, STREAM_REPLY_ACCEPT, sid, 0x50);
+    openlcb_statemachine_info_t info_reply = _build_statemachine_info(node, incoming_reply, outgoing_reply);
+    ProtocolStreamHandler_initiate_reply(&info_reply);
+
+    return stream;
+
+}
+
+// ============================================================================
+// TEST: initiate_outbound allocates as source
+// ============================================================================
+
+TEST(ProtocolStreamHandler, initiate_outbound_allocates_as_source) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(
+            &info, SOURCE_ALIAS, SOURCE_ID, 256, 0xFF, NULL);
+
+    EXPECT_NE(stream, nullptr);
+    EXPECT_EQ(stream->is_source, true);
+    EXPECT_EQ(stream->state, STREAM_STATE_INITIATED);
+    EXPECT_EQ(stream->remote_node_id, SOURCE_ID);
+    EXPECT_EQ(stream->remote_alias, SOURCE_ALIAS);
+    EXPECT_EQ(stream->max_buffer_size, 256);
+    EXPECT_EQ(stream->bytes_remaining, 0);
+    EXPECT_EQ(stream->bytes_transferred, 0);
+    EXPECT_EQ(stream->dest_stream_id, 0);
+
+}
+
+// ============================================================================
+// TEST: initiate_outbound sends Stream Initiate Request
+// ============================================================================
+
+TEST(ProtocolStreamHandler, initiate_outbound_sends_initiate_request) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(
+            &info, SOURCE_ALIAS, SOURCE_ID, 256, 0xFF, NULL);
+
+    EXPECT_EQ(info.outgoing_msg_info.valid, true);
+    EXPECT_EQ(outgoing->mti, MTI_STREAM_INIT_REQUEST);
+    EXPECT_EQ(outgoing->dest_id, SOURCE_ID);
+    EXPECT_EQ(outgoing->dest_alias, SOURCE_ALIAS);
+
+    uint16_t proposed = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 0);
+    EXPECT_EQ(proposed, 256);
+
+    uint8_t sid = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 4);
+    EXPECT_EQ(sid, stream->source_stream_id);
+
+    uint8_t suggested_did = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 5);
+    EXPECT_EQ(suggested_did, 0xFF);
+
+}
+
+// ============================================================================
+// TEST: initiate_outbound table full returns NULL
+// ============================================================================
+
+TEST(ProtocolStreamHandler, initiate_outbound_table_full_returns_null) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    // Fill the table (USER_DEFINED_MAX_STREAM_COUNT = 1)
+    openlcb_msg_t *incoming1 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing1 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info1 = _build_statemachine_info(node, incoming1, outgoing1);
+    stream_state_t *s1 = ProtocolStreamHandler_initiate_outbound(
+            &info1, SOURCE_ALIAS, SOURCE_ID, 128, 0xFF, NULL);
+    EXPECT_NE(s1, nullptr);
+
+    // Second allocation should fail
+    openlcb_msg_t *incoming2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info2 = _build_statemachine_info(node, incoming2, outgoing2);
+    stream_state_t *s2 = ProtocolStreamHandler_initiate_outbound(
+            &info2, SOURCE_ALIAS, SOURCE_ID, 128, 0xFF, NULL);
+    EXPECT_EQ(s2, nullptr);
+
+}
+
+// ============================================================================
+// TEST: initiate_outbound then accept reply transitions to OPEN
+// ============================================================================
+
+TEST(ProtocolStreamHandler, initiate_outbound_then_reply_accept) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(
+            &info, SOURCE_ALIAS, SOURCE_ID, 256, 0xFF, NULL);
+    uint8_t sid = stream->source_stream_id;
+
+    // Feed accept reply with negotiated buffer=128, DID=0x50
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_reply = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_reply = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_reply_msg(incoming_reply, 128, STREAM_REPLY_ACCEPT, sid, 0x50);
+    openlcb_statemachine_info_t info_reply = _build_statemachine_info(node, incoming_reply, outgoing_reply);
+
+    ProtocolStreamHandler_initiate_reply(&info_reply);
+
+    EXPECT_EQ(_initiate_reply_called, 1);
+    EXPECT_EQ(stream->state, STREAM_STATE_OPEN);
+    EXPECT_EQ(stream->dest_stream_id, 0x50);
+    EXPECT_EQ(stream->max_buffer_size, 128);
+    EXPECT_EQ(stream->bytes_remaining, 128);
+
+}
+
+// ============================================================================
+// TEST: initiate_outbound then reject reply frees slot
+// ============================================================================
+
+TEST(ProtocolStreamHandler, initiate_outbound_then_reply_reject) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(
+            &info, SOURCE_ALIAS, SOURCE_ID, 256, 0xFF, NULL);
+    uint8_t sid = stream->source_stream_id;
+
+    // Feed reject reply (buffer=0, error code in flags)
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_reply = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_reply = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_reply_msg(incoming_reply, 0, 0x1000, sid, 0x00);
+    openlcb_statemachine_info_t info_reply = _build_statemachine_info(node, incoming_reply, outgoing_reply);
+
+    ProtocolStreamHandler_initiate_reply(&info_reply);
+
+    EXPECT_EQ(_initiate_reply_called, 1);
+    EXPECT_EQ(stream->state, STREAM_STATE_CLOSED);
+
+}
+
+// ============================================================================
+// SECTION 8: SEND DATA
+// ============================================================================
+
+// ============================================================================
+// TEST: send_data basic
+// ============================================================================
+
+TEST(ProtocolStreamHandler, send_data_basic) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *outgoing_init = OpenLcbBufferStore_allocate_buffer(BASIC);
+    stream_state_t *stream = _open_outbound_stream(node, 128, outgoing_init);
+    ASSERT_NE(stream, nullptr);
+    EXPECT_EQ(stream->state, STREAM_STATE_OPEN);
+
+    // Send 4 bytes of data
+    openlcb_msg_t *incoming_send = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_send = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_send = _build_statemachine_info(node, incoming_send, outgoing_send);
+
+    uint8_t data[] = { 0xAA, 0xBB, 0xCC, 0xDD };
+    bool ok = ProtocolStreamHandler_send_data(&info_send, stream, data, 4);
+
+    EXPECT_EQ(ok, true);
+    EXPECT_EQ(info_send.outgoing_msg_info.valid, true);
+    EXPECT_EQ(outgoing_send->mti, MTI_STREAM_SEND);
+    EXPECT_EQ(outgoing_send->payload_count, 5);
+
+    // Byte 0 = DID
+    uint8_t did = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_send, 0);
+    EXPECT_EQ(did, stream->dest_stream_id);
+
+    // Bytes 1-4 = data
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_send, 1), 0xAA);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_send, 2), 0xBB);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_send, 3), 0xCC);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_send, 4), 0xDD);
+
+    EXPECT_EQ(stream->bytes_transferred, 4);
+    EXPECT_EQ(stream->bytes_remaining, 124);
+
+}
+
+// ============================================================================
+// TEST: send_data respects flow control window
+// ============================================================================
+
+TEST(ProtocolStreamHandler, send_data_respects_window) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *outgoing_init = OpenLcbBufferStore_allocate_buffer(BASIC);
+    stream_state_t *stream = _open_outbound_stream(node, 8, outgoing_init);
+    ASSERT_NE(stream, nullptr);
+    EXPECT_EQ(stream->bytes_remaining, 8);
+
+    // Send exactly 8 bytes to exhaust window
+    openlcb_msg_t *incoming_s = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_s = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_s = _build_statemachine_info(node, incoming_s, outgoing_s);
+
+    uint8_t data[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+    bool ok = ProtocolStreamHandler_send_data(&info_s, stream, data, 8);
+    EXPECT_EQ(ok, true);
+    EXPECT_EQ(stream->bytes_remaining, 0);
+
+    // Next send should fail -- window exhausted
+    openlcb_msg_t *incoming_s2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_s2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_s2 = _build_statemachine_info(node, incoming_s2, outgoing_s2);
+
+    uint8_t more[] = { 9 };
+    bool ok2 = ProtocolStreamHandler_send_data(&info_s2, stream, more, 1);
+    EXPECT_EQ(ok2, false);
+
+}
+
+// ============================================================================
+// TEST: send_data wrong role rejected
+// ============================================================================
+
+TEST(ProtocolStreamHandler, send_data_wrong_role_rejected) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    // Open as destination (incoming initiate request)
+    openlcb_msg_t *incoming_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming_req, 128, 0xA0);
+    openlcb_statemachine_info_t info_req = _build_statemachine_info(node, incoming_req, outgoing_req);
+    ProtocolStreamHandler_initiate_request(&info_req);
+    EXPECT_EQ(_last_stream->is_source, false);
+
+    // Try to send data -- should fail (we are destination)
+    openlcb_msg_t *incoming_s = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_s = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_s = _build_statemachine_info(node, incoming_s, outgoing_s);
+
+    uint8_t data[] = { 0x01 };
+    bool ok = ProtocolStreamHandler_send_data(&info_s, _last_stream, data, 1);
+    EXPECT_EQ(ok, false);
+
+}
+
+// ============================================================================
+// TEST: send_data not open rejected
+// ============================================================================
+
+TEST(ProtocolStreamHandler, send_data_not_open_rejected) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    // Initiate outbound -- state is INITIATED, not OPEN
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(
+            &info, SOURCE_ALIAS, SOURCE_ID, 128, 0xFF, NULL);
+    EXPECT_EQ(stream->state, STREAM_STATE_INITIATED);
+
+    openlcb_msg_t *incoming_s = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_s = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_s = _build_statemachine_info(node, incoming_s, outgoing_s);
+
+    uint8_t data[] = { 0x01 };
+    bool ok = ProtocolStreamHandler_send_data(&info_s, stream, data, 1);
+    EXPECT_EQ(ok, false);
+
+}
+
+// ============================================================================
+// SECTION 9: SEND COMPLETE
+// ============================================================================
+
+// ============================================================================
+// TEST: send_complete as source
+// ============================================================================
+
+TEST(ProtocolStreamHandler, send_complete_source) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *outgoing_init = OpenLcbBufferStore_allocate_buffer(BASIC);
+    stream_state_t *stream = _open_outbound_stream(node, 128, outgoing_init);
+    ASSERT_NE(stream, nullptr);
+
+    uint8_t sid = stream->source_stream_id;
+    uint8_t did = stream->dest_stream_id;
+
+    openlcb_msg_t *incoming_c = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_c = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_c = _build_statemachine_info(node, incoming_c, outgoing_c);
+
+    ProtocolStreamHandler_send_complete(&info_c, stream);
+
+    EXPECT_EQ(info_c.outgoing_msg_info.valid, true);
+    EXPECT_EQ(outgoing_c->mti, MTI_STREAM_COMPLETE);
+    EXPECT_EQ(outgoing_c->dest_id, SOURCE_ID);
+    EXPECT_EQ(outgoing_c->dest_alias, SOURCE_ALIAS);
+    EXPECT_EQ(outgoing_c->payload_count, 8);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 0), sid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 1), did);
+    // Bytes 2-3: flags (0x0000)
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_c, 2), 0x0000);
+    EXPECT_EQ(stream->state, STREAM_STATE_CLOSED);
+
+}
+
+// ============================================================================
+// TEST: send_complete as destination
+// ============================================================================
+
+TEST(ProtocolStreamHandler, send_complete_destination) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    // Open as destination
+    openlcb_msg_t *incoming_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming_req, 128, 0xB0);
+    openlcb_statemachine_info_t info_req = _build_statemachine_info(node, incoming_req, outgoing_req);
+    ProtocolStreamHandler_initiate_request(&info_req);
+
+    stream_state_t *stream = _last_stream;
+    uint8_t sid = stream->source_stream_id;
+    uint8_t did = stream->dest_stream_id;
+
+    openlcb_msg_t *incoming_c = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_c = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_c = _build_statemachine_info(node, incoming_c, outgoing_c);
+
+    ProtocolStreamHandler_send_complete(&info_c, stream);
+
+    EXPECT_EQ(info_c.outgoing_msg_info.valid, true);
+    EXPECT_EQ(outgoing_c->mti, MTI_STREAM_COMPLETE);
+    EXPECT_EQ(outgoing_c->payload_count, 8);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 0), sid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 1), did);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_c, 2), 0x0000);
+    EXPECT_EQ(stream->state, STREAM_STATE_CLOSED);
+
+}
+
+// ============================================================================
+// SECTION 10: SEND TERMINATE
+// ============================================================================
+
+// ============================================================================
+// TEST: send_terminate as destination
+// ============================================================================
+
+TEST(ProtocolStreamHandler, send_terminate_as_destination) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    // Open as destination
+    openlcb_msg_t *incoming_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming_req, 128, 0xC0);
+    openlcb_statemachine_info_t info_req = _build_statemachine_info(node, incoming_req, outgoing_req);
+    ProtocolStreamHandler_initiate_request(&info_req);
+
+    stream_state_t *stream = _last_stream;
+
+    openlcb_msg_t *incoming_t = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_t = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_t = _build_statemachine_info(node, incoming_t, outgoing_t);
+
+    ProtocolStreamHandler_send_terminate(&info_t, stream, 0x1000);
+
+    EXPECT_EQ(info_t.outgoing_msg_info.valid, true);
+    EXPECT_EQ(outgoing_t->mti, MTI_TERMINATE_DUE_TO_ERROR);
+    EXPECT_EQ(outgoing_t->dest_id, SOURCE_ID);
+    EXPECT_EQ(outgoing_t->payload_count, 4);
+
+    uint16_t error_code = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_t, 0);
+    EXPECT_EQ(error_code, 0x1000);
+
+    uint16_t rejected_mti = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_t, 2);
+    EXPECT_EQ(rejected_mti, MTI_STREAM_SEND);
+
+    EXPECT_EQ(stream->state, STREAM_STATE_CLOSED);
+
+}
+
+// ============================================================================
+// TEST: send_terminate as source
+// ============================================================================
+
+TEST(ProtocolStreamHandler, send_terminate_as_source) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *outgoing_init = OpenLcbBufferStore_allocate_buffer(BASIC);
+    stream_state_t *stream = _open_outbound_stream(node, 128, outgoing_init);
+    ASSERT_NE(stream, nullptr);
+
+    openlcb_msg_t *incoming_t = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_t = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_t = _build_statemachine_info(node, incoming_t, outgoing_t);
+
+    ProtocolStreamHandler_send_terminate(&info_t, stream, 0x2000);
+
+    EXPECT_EQ(info_t.outgoing_msg_info.valid, true);
+    EXPECT_EQ(outgoing_t->mti, MTI_TERMINATE_DUE_TO_ERROR);
+    EXPECT_EQ(outgoing_t->payload_count, 4);
+
+    uint16_t error_code = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_t, 0);
+    EXPECT_EQ(error_code, 0x2000);
+
+    uint16_t rejected_mti = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_t, 2);
+    EXPECT_EQ(rejected_mti, MTI_STREAM_PROCEED);
+
+    EXPECT_EQ(stream->state, STREAM_STATE_CLOSED);
+
+}
+
+// ============================================================================
+// SECTION 11: FULL OUTBOUND LIFECYCLE
+// ============================================================================
+
+TEST(ProtocolStreamHandler, outbound_full_lifecycle) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    // Open outbound stream with buffer=16
+    openlcb_msg_t *outgoing_init = OpenLcbBufferStore_allocate_buffer(BASIC);
+    stream_state_t *stream = _open_outbound_stream(node, 16, outgoing_init);
+    ASSERT_NE(stream, nullptr);
+    EXPECT_EQ(stream->state, STREAM_STATE_OPEN);
+    EXPECT_EQ(stream->bytes_remaining, 16);
+
+    // Send 16 bytes (full window)
+    openlcb_msg_t *incoming_s1 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_s1 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_s1 = _build_statemachine_info(node, incoming_s1, outgoing_s1);
+
+    uint8_t data1[16];
+    for (int i = 0; i < 16; i++) { data1[i] = (uint8_t)i; }
+
+    bool ok1 = ProtocolStreamHandler_send_data(&info_s1, stream, data1, 16);
+    EXPECT_EQ(ok1, true);
+    EXPECT_EQ(stream->bytes_remaining, 0);
+    EXPECT_EQ(stream->bytes_transferred, 16);
+
+    // Feed Data Proceed to extend window
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_p = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_p = OpenLcbBufferStore_allocate_buffer(BASIC);
+    OpenLcbUtilities_load_openlcb_message(incoming_p, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_PROCEED);
+    OpenLcbUtilities_clear_openlcb_message_payload(incoming_p);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming_p, stream->source_stream_id, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming_p, stream->dest_stream_id, 1);
+    incoming_p->payload_count = 2;
+    openlcb_statemachine_info_t info_p = _build_statemachine_info(node, incoming_p, outgoing_p);
+
+    ProtocolStreamHandler_data_proceed(&info_p);
+
+    EXPECT_EQ(_data_proceed_called, 1);
+    EXPECT_EQ(stream->bytes_remaining, 16);
+
+    // Send 8 more bytes
+    openlcb_msg_t *incoming_s2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_s2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_s2 = _build_statemachine_info(node, incoming_s2, outgoing_s2);
+
+    uint8_t data2[8] = { 0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7 };
+    bool ok2 = ProtocolStreamHandler_send_data(&info_s2, stream, data2, 8);
+    EXPECT_EQ(ok2, true);
+    EXPECT_EQ(stream->bytes_transferred, 24);
+    EXPECT_EQ(stream->bytes_remaining, 8);
+
+    // Send complete
+    openlcb_msg_t *incoming_c = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_c = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_c = _build_statemachine_info(node, incoming_c, outgoing_c);
+
+    ProtocolStreamHandler_send_complete(&info_c, stream);
+
+    EXPECT_EQ(outgoing_c->mti, MTI_STREAM_COMPLETE);
+    EXPECT_EQ(stream->state, STREAM_STATE_CLOSED);
+
+}
+
+// ============================================================================
+// SECTION 12: REMOTE ALIAS STORAGE
+// ============================================================================
+
+// ============================================================================
+// TEST: remote_alias stored on inbound (destination role)
+// ============================================================================
+
+TEST(ProtocolStreamHandler, remote_alias_stored_on_inbound) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming, 128, 0xD0);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    ProtocolStreamHandler_initiate_request(&info);
+
+    EXPECT_EQ(_last_stream->remote_alias, SOURCE_ALIAS);
+    EXPECT_EQ(_last_stream->remote_node_id, SOURCE_ID);
+
+}
+
+// ============================================================================
+// TEST: remote_alias stored on outbound (source role)
+// ============================================================================
+
+TEST(ProtocolStreamHandler, remote_alias_stored_on_outbound) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(
+            &info, SOURCE_ALIAS, SOURCE_ID, 128, 0xFF, NULL);
+
+    EXPECT_EQ(stream->remote_alias, SOURCE_ALIAS);
+    EXPECT_EQ(stream->remote_node_id, SOURCE_ID);
+
+}
+
+// ============================================================================
+// SECTION 13: APPLICATION VETO ON INITIATE REQUEST
+// ============================================================================
+
+// ============================================================================
+// TEST: callback returns false rejects the stream
+// ============================================================================
+
+TEST(ProtocolStreamHandler, initiate_request_veto_rejects) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    _mock_accept_initiate = false;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming, 256, 0xE0);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    ProtocolStreamHandler_initiate_request(&info);
+
+    EXPECT_EQ(_initiate_request_called, 1);
+    EXPECT_EQ(info.outgoing_msg_info.valid, true);
+    EXPECT_EQ(outgoing->mti, MTI_STREAM_INIT_REPLY);
+
+    uint16_t buf_size = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 0);
+    EXPECT_EQ(buf_size, 0);
+
+    uint16_t reply_flags = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 2);
+    EXPECT_EQ(reply_flags, ERROR_PERMANENT_STREAMS_NOT_SUPPORTED);
+
+    uint8_t reply_sid = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 4);
+    EXPECT_EQ(reply_sid, 0xE0);
+
+}
+
+// ============================================================================
+// TEST: callback returns true still accepts the stream
+// ============================================================================
+
+TEST(ProtocolStreamHandler, initiate_request_accept_via_callback) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    _mock_accept_initiate = true;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming, 256, 0xE1);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    ProtocolStreamHandler_initiate_request(&info);
+
+    EXPECT_EQ(_initiate_request_called, 1);
+
+    uint16_t reply_flags = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 2);
+    EXPECT_EQ(reply_flags, STREAM_REPLY_ACCEPT);
+
+    EXPECT_NE(_last_stream, nullptr);
+    EXPECT_EQ(_last_stream->state, STREAM_STATE_OPEN);
+
+}
+
+// ============================================================================
+// SECTION 14: CONTENT UID IN OUTBOUND INITIATE
+// ============================================================================
+
+// ============================================================================
+// TEST: outbound initiate with content UID sends 12-byte form
+// ============================================================================
+
+TEST(ProtocolStreamHandler, initiate_outbound_with_content_uid) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    uint8_t uid[6] = { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(
+            &info, SOURCE_ALIAS, SOURCE_ID, 256, 0xFF, uid);
+
+    EXPECT_NE(stream, nullptr);
+    EXPECT_EQ(info.outgoing_msg_info.valid, true);
+    EXPECT_EQ(outgoing->mti, MTI_STREAM_INIT_REQUEST);
+    EXPECT_EQ(outgoing->payload_count, 12);
+
+    // Bytes 6-11: Content UID
+    for (int i = 0; i < 6; i++) {
+
+        EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 6 + i), uid[i]);
+
+    }
+
+    // Content UID stored in stream state
+    for (int i = 0; i < 6; i++) {
+
+        EXPECT_EQ(stream->content_uid[i], uid[i]);
+
+    }
+
+}
+
+// ============================================================================
+// TEST: outbound initiate without content UID sends 6-byte form
+// ============================================================================
+
+TEST(ProtocolStreamHandler, initiate_outbound_without_content_uid) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(
+            &info, SOURCE_ALIAS, SOURCE_ID, 256, 0xFF, NULL);
+
+    EXPECT_NE(stream, nullptr);
+    EXPECT_EQ(outgoing->payload_count, 6);
+
+}
+
+// ============================================================================
+// SECTION 15: TOTAL BYTES IN STREAM DATA COMPLETE
+// ============================================================================
+
+// ============================================================================
+// TEST: send_complete includes total bytes transferred
+// ============================================================================
+
+TEST(ProtocolStreamHandler, send_complete_includes_total_bytes) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *outgoing_init = OpenLcbBufferStore_allocate_buffer(BASIC);
+    stream_state_t *stream = _open_outbound_stream(node, 128, outgoing_init);
+    ASSERT_NE(stream, nullptr);
+
+    // Send 24 bytes of data
+    openlcb_msg_t *incoming_s = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_s = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_s = _build_statemachine_info(node, incoming_s, outgoing_s);
+
+    uint8_t data[24];
+    for (int i = 0; i < 24; i++) { data[i] = (uint8_t) i; }
+
+    ProtocolStreamHandler_send_data(&info_s, stream, data, 24);
+    EXPECT_EQ(stream->bytes_transferred, 24);
+
+    // Send complete
+    openlcb_msg_t *incoming_c = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_c = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_c = _build_statemachine_info(node, incoming_c, outgoing_c);
+
+    ProtocolStreamHandler_send_complete(&info_c, stream);
+
+    EXPECT_EQ(outgoing_c->payload_count, 8);
+
+    // Bytes 4-7: total bytes = 24 (big-endian)
+    uint8_t b4 = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 4);
+    uint8_t b5 = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 5);
+    uint8_t b6 = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 6);
+    uint8_t b7 = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 7);
+
+    uint32_t total = ((uint32_t) b4 << 24) | ((uint32_t) b5 << 16) | ((uint32_t) b6 << 8) | b7;
+    EXPECT_EQ(total, 24);
+
+}
+
+// ============================================================================
+// SECTION 16: EARLY PROCEED
+// ============================================================================
+
+// ============================================================================
+// TEST: early proceed sends Proceed as destination
+// ============================================================================
+
+TEST(ProtocolStreamHandler, early_proceed_as_destination) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    // Open as destination
+    openlcb_msg_t *incoming_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming_req, 128, 0xF0);
+    openlcb_statemachine_info_t info_req = _build_statemachine_info(node, incoming_req, outgoing_req);
+    ProtocolStreamHandler_initiate_request(&info_req);
+
+    stream_state_t *stream = _last_stream;
+    ASSERT_NE(stream, nullptr);
+    EXPECT_EQ(stream->state, STREAM_STATE_OPEN);
+
+    openlcb_msg_t *incoming_p = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_p = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_p = _build_statemachine_info(node, incoming_p, outgoing_p);
+
+    bool ok = ProtocolStreamHandler_send_early_proceed(&info_p, stream);
+
+    EXPECT_EQ(ok, true);
+    EXPECT_EQ(info_p.outgoing_msg_info.valid, true);
+    EXPECT_EQ(outgoing_p->mti, MTI_STREAM_PROCEED);
+    EXPECT_EQ(outgoing_p->payload_count, 2);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_p, 0), stream->source_stream_id);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_p, 1), stream->dest_stream_id);
+    EXPECT_EQ(outgoing_p->dest_alias, SOURCE_ALIAS);
+    EXPECT_EQ(outgoing_p->dest_id, SOURCE_ID);
+
+}
+
+// ============================================================================
+// TEST: early proceed rejected as source
+// ============================================================================
+
+TEST(ProtocolStreamHandler, early_proceed_rejected_as_source) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *outgoing_init = OpenLcbBufferStore_allocate_buffer(BASIC);
+    stream_state_t *stream = _open_outbound_stream(node, 128, outgoing_init);
+    ASSERT_NE(stream, nullptr);
+    EXPECT_EQ(stream->is_source, true);
+
+    openlcb_msg_t *incoming_p = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_p = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_p = _build_statemachine_info(node, incoming_p, outgoing_p);
+
+    bool ok = ProtocolStreamHandler_send_early_proceed(&info_p, stream);
+
+    EXPECT_EQ(ok, false);
+    EXPECT_EQ(info_p.outgoing_msg_info.valid, false);
+
+}
+
+// ============================================================================
+// SECTION 17: CONTEXT POINTER
+// ============================================================================
+
+// ============================================================================
+// TEST: context pointer defaults to NULL and can be set
+// ============================================================================
+
+TEST(ProtocolStreamHandler, context_pointer) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(
+            &info, SOURCE_ALIAS, SOURCE_ID, 128, 0xFF, NULL);
+
+    EXPECT_NE(stream, nullptr);
+    EXPECT_EQ(stream->context, nullptr);
+
+    // Application can set context
+    int dummy_context = 42;
+    stream->context = &dummy_context;
+    EXPECT_EQ(stream->context, &dummy_context);
 
 }

@@ -52,9 +52,9 @@ MODES=(
 # ============================================================================
 
 VERBOSE=""
-SKIP_BUILD=false
 AUTO_REBOOT=false
 FORCE_WRITES=false
+ENABLE_STREAM=false
 MODE_LIST="core"
 SINGLE_SCRIPT=""
 
@@ -66,14 +66,14 @@ while [ $i -lt ${#ARGS[@]} ]; do
         --verbose|-v)
             VERBOSE="--verbose"
             ;;
-        --skip-build)
-            SKIP_BUILD=true
-            ;;
         --auto-reboot|-r)
             AUTO_REBOOT=true
             ;;
         --force-writes|-w)
             FORCE_WRITES=true
+            ;;
+        --stream)
+            ENABLE_STREAM=true
             ;;
         --mode|-m)
             i=$((i + 1))
@@ -91,8 +91,8 @@ while [ $i -lt ${#ARGS[@]} ]; do
             echo "  -s, --single SCRIPT    Run a single check or control script (use -m to set the node mode)"
             echo "  -r, --auto-reboot      Pass --auto-reboot to OlcbChecker (programmatic restart)"
             echo "  -w, --force-writes     Enable tests that write to config memory (0xFD)"
+            echo "  --stream               Enable stream transport (adds PSI_STREAM to PIP and Config Options)"
             echo "  -v, --verbose          Show GridConnect traffic in bridge"
-            echo "  --skip-build           Skip xcodebuild step"
             echo "  --help, -h             Show this help"
             exit 0
             ;;
@@ -169,22 +169,25 @@ trap cleanup EXIT
 # Build
 # ============================================================================
 
-echo "=== ComplianceTestNode ==="
-
-if [ "$SKIP_BUILD" = false ]; then
-    echo "=== Build ComplianceTestNode ==="
-    xcodebuild -project "$COMPLIANCE_XCODE_PROJECT" \
-               -scheme ComplianceTestNode \
-               -configuration Debug \
-               -derivedDataPath "$COMPLIANCE_BUILD_DIR" \
-               clean build 2>&1 | tail -30
-    echo "  Build complete."
+echo "=== Build ComplianceTestNode ==="
+STREAM_DEFINE=""
+if [ "$ENABLE_STREAM" = true ]; then
+    STREAM_DEFINE="OPENLCB_COMPILE_STREAM=1"
+    echo "  Stream support: ON"
+else
+    echo "  Stream support: OFF"
 fi
+xcodebuild -project "$COMPLIANCE_XCODE_PROJECT" \
+           -scheme ComplianceTestNode \
+           -configuration Debug \
+           -derivedDataPath "$COMPLIANCE_BUILD_DIR" \
+           GCC_PREPROCESSOR_DEFINITIONS='$(inherited) '"$STREAM_DEFINE" \
+           clean build 2>&1 | tail -30
+echo "  Build complete."
 
 BINARY="$COMPLIANCE_BUILD_DIR/Build/Products/Debug/ComplianceTestNode"
 if [ ! -f "$BINARY" ]; then
-    echo "ERROR: Binary not found at $BINARY"
-    echo "  Run without --skip-build first."
+    echo "ERROR: Build failed - binary not found at $BINARY"
     exit 1
 fi
 
@@ -223,6 +226,10 @@ run_protocol_test() {
     local node_flag="$1"
     local test_section="$2"
     local label="$3"
+
+    if [ "$ENABLE_STREAM" = true ]; then
+        label="$label (stream)"
+    fi
 
     echo ""
     echo "=========================================="

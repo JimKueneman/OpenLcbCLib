@@ -35,9 +35,15 @@
 
 #include "callbacks_stream.h"
 
-void CallbacksStream_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
+#ifdef OPENLCB_COMPILE_STREAM
+
+bool CallbacksStream_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     (void) statemachine_info;
     (void) stream;
 
+    return true;
+
 }
+
+#endif /* OPENLCB_COMPILE_STREAM */

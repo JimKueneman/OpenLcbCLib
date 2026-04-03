@@ -384,7 +384,7 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .handle_try_enumerate_first_node = &_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &_handle_try_enumerate_next_node,
     .handle_listener_verification = &_handle_listener_verification,
-    .listener_check_one_verification = &ListenerAliasTable_check_one_verification,
+    .listener_check_one_verification = &AliasMappingListener_check_one_verification,
     .listener_flush_aliases = &_mock_listener_flush_aliases,
     .listener_set_alias = &_mock_listener_set_alias
 };
@@ -428,7 +428,7 @@ void setup_test(void)
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
     AliasMappings_initialize();
-    ListenerAliasTable_initialize();
+    AliasMappingListener_initialize();
     OpenLcbBufferStore_initialize();
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();
@@ -490,7 +490,7 @@ TEST(CanMainStatemachine, get_statemachine_info)
     setup_test();
     reset_test_variables();
     
-    can_statemachine_info_t *info = CanMainStateMachine_get_can_statemachine_info();
+    can_statemachine_info_t *info = CanMainStatemachine_get_can_statemachine_info();
     
     EXPECT_NE(info, nullptr);
     EXPECT_NE(info->login_outgoing_can_msg, nullptr);
@@ -528,7 +528,7 @@ TEST(CanMainStatemachine, handle_outgoing_can_message)
     
     // First run - transmission fails
     send_can_message_enabled = false;
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     EXPECT_TRUE(lock_shared_resources_called);
     EXPECT_TRUE(unlock_shared_resources_called);
@@ -546,7 +546,7 @@ TEST(CanMainStatemachine, handle_outgoing_can_message)
     // Second run - transmission succeeds for first message
     send_can_message_enabled = true;
     reset_test_variables();
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     EXPECT_TRUE(lock_shared_resources_called);
     EXPECT_TRUE(unlock_shared_resources_called);
@@ -556,7 +556,7 @@ TEST(CanMainStatemachine, handle_outgoing_can_message)
     
     // Third run - transmission succeeds for second message
     reset_test_variables();
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     EXPECT_TRUE(send_can_message_called);
     EXPECT_TRUE(compare_can_msg(&send_can_msg, 0x19170AAA, 0, nullptr));
@@ -596,7 +596,7 @@ TEST(CanMainStatemachine, duplicate_alias)
     alias_mapping->is_permitted = true;
     AliasMappings_set_has_duplicate_alias_flag();
     
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     EXPECT_TRUE(lock_shared_resources_called);
     EXPECT_TRUE(unlock_shared_resources_called);
@@ -632,7 +632,7 @@ TEST(CanMainStatemachine, duplicate_alias)
     alias_mapping->is_permitted = true;
     AliasMappings_set_has_duplicate_alias_flag();
     
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     EXPECT_TRUE(handle_duplicate_aliases_called);
     
@@ -669,7 +669,7 @@ TEST(CanMainStatemachine, duplicate_alias_fail_to_find_mapping)
     // Force node lookup to fail
     node_find_node_by_alias_fail = true;
     
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     EXPECT_TRUE(handle_duplicate_aliases_called);
     
@@ -696,7 +696,7 @@ TEST(CanMainStatemachine, handle_login_outgoing_can_message)
     setup_test();
     reset_test_variables();
     
-    can_statemachine_info_t *info = CanMainStateMachine_get_can_statemachine_info();
+    can_statemachine_info_t *info = CanMainStatemachine_get_can_statemachine_info();
     
     // Setup login message
     info->login_outgoing_can_msg_valid = true;
@@ -705,7 +705,7 @@ TEST(CanMainStatemachine, handle_login_outgoing_can_message)
     
     send_can_message_enabled = true;
     
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     EXPECT_TRUE(lock_shared_resources_called);
     EXPECT_TRUE(unlock_shared_resources_called);
@@ -729,7 +729,7 @@ TEST(CanMainStatemachine, handle_login_outgoing_can_message_with_tx_fail)
     setup_test();
     reset_test_variables();
     
-    can_statemachine_info_t *info = CanMainStateMachine_get_can_statemachine_info();
+    can_statemachine_info_t *info = CanMainStatemachine_get_can_statemachine_info();
     
     info->login_outgoing_can_msg_valid = true;
     CanUtilities_load_can_message(info->login_outgoing_can_msg, 
@@ -738,7 +738,7 @@ TEST(CanMainStatemachine, handle_login_outgoing_can_message_with_tx_fail)
     // Simulate transmission failure
     send_can_message_enabled = false;
     
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     EXPECT_TRUE(handle_login_outgoing_can_message_called);
     EXPECT_TRUE(send_can_message_called);
@@ -771,7 +771,7 @@ TEST(CanMainStatemachine, enumerate_first_node)
     openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
     node1->state.run_state = RUNSTATE_INIT;
     
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_TRUE(login_statemachine_run_called);
@@ -801,12 +801,12 @@ TEST(CanMainStatemachine, enumerate_next_node)
     node2->state.run_state = RUNSTATE_INIT;
     
     // First run - enumerate first node
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     
     // Second run - enumerate next node
     reset_test_variables();
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     EXPECT_TRUE(handle_try_enumerate_next_node_called);
 }
 
@@ -851,7 +851,7 @@ TEST(CanMainStatemachine, priority_order)
     CanUtilities_load_can_message(msg, 0x19490AAA, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     CanBufferFifo_push(msg);
     
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     // Only duplicate aliases should be handled (stops after first handler)
     EXPECT_TRUE(handle_duplicate_aliases_called);
@@ -878,7 +878,7 @@ TEST(CanMainStatemachine, empty_run)
     setup_test();
     reset_test_variables();
     
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     // These handlers are always checked
     EXPECT_TRUE(handle_duplicate_aliases_called);
@@ -914,7 +914,7 @@ TEST(CanMainStatemachine, resource_locking)
     setup_test();
     reset_test_variables();
     
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     
     // Verify lock/unlock are always paired
     EXPECT_TRUE(lock_shared_resources_called);
@@ -942,16 +942,16 @@ TEST(CanMainStatemachine, enumerate_first_node_already_enumerating)
     node1->state.run_state = RUNSTATE_INIT;
 
     // First run - sets openlcb_node
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
 
     // Get the info to verify node is set
-    can_statemachine_info_t *info = CanMainStateMachine_get_can_statemachine_info();
+    can_statemachine_info_t *info = CanMainStatemachine_get_can_statemachine_info();
     EXPECT_NE(info->openlcb_node, nullptr);
 
     // Second run - enumerate_first should return false (already have a node)
     reset_test_variables();
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
 
     // enumerate_first was called but returned false (already enumerating)
     // So enumerate_next gets called instead
@@ -983,13 +983,13 @@ TEST(CanMainStatemachine, enumerate_next_node_already_initialized)
     node2->state.run_state = RUNSTATE_RUN; // Already initialized
 
     // First run - enumerate first node
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_TRUE(login_statemachine_run_called);
 
     // Second run - enumerate next node (which is already initialized)
     reset_test_variables();
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
 
     EXPECT_TRUE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(node_get_next_called);
@@ -1017,7 +1017,7 @@ TEST(CanMainStatemachine, enumerate_first_node_already_initialized)
     openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
     node1->state.run_state = RUNSTATE_RUN; // Already initialized
 
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
 
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_TRUE(node_get_first_called);
@@ -1048,7 +1048,7 @@ TEST(CanMainStatemachine, outgoing_message_retained_on_failure)
 
     // First run with TX disabled (will fail)
     send_can_message_enabled = false;
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
 
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_TRUE(send_can_message_called);
@@ -1057,13 +1057,13 @@ TEST(CanMainStatemachine, outgoing_message_retained_on_failure)
     EXPECT_EQ(CanBufferStore_messages_allocated(), 1);
 
     // Get state machine info
-    can_statemachine_info_t *info = CanMainStateMachine_get_can_statemachine_info();
+    can_statemachine_info_t *info = CanMainStatemachine_get_can_statemachine_info();
     EXPECT_NE(info->outgoing_can_msg, nullptr); // Message retained for retry
 
     // Second run with TX enabled (should succeed)
     reset_test_variables();
     send_can_message_enabled = true;
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
 
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_TRUE(send_can_message_called);
@@ -1109,9 +1109,9 @@ TEST(CanMainStatemachine, outgoing_message_retained_on_failure)
  * 
  * Coverage by Function:
  * =====================
- * - CanMainStateMachine_initialize: 100%
- * - CanMainStateMachine_run: 98%
- * - CanMainStateMachine_get_can_statemachine_info: 100%
+ * - CanMainStatemachine_initialize: 100%
+ * - CanMainStatemachine_run: 98%
+ * - CanMainStatemachine_get_can_statemachine_info: 100%
  * - _handle_duplicate_aliases: 100%
  * - _handle_outgoing_can_message: 100%
  * - _handle_login_outgoing_can_message: 100%
@@ -1163,7 +1163,7 @@ static void _advance_listener_prober(uint16_t count) {
 
     for (uint16_t i = 0; i < count; i++) {
 
-        ListenerAliasTable_check_one_verification((uint8_t) (i + 1));
+        AliasMappingListener_check_one_verification((uint8_t) (i + 1));
 
     }
 
@@ -1194,8 +1194,8 @@ TEST(CanMainStatemachine, listener_verification_queues_ame)
     reset_test_variables();
 
     // Register and resolve a listener (stamps verify_ticks = 0)
-    ListenerAliasTable_register(LISTENER_NODE_ID);
-    ListenerAliasTable_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
+    AliasMappingListener_register(LISTENER_NODE_ID);
+    AliasMappingListener_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
 
     // Advance counter to PROBE_INTERVAL - 1 so the NEXT call will trigger.
     // Each call increments counter and checks the entry; age < interval so
@@ -1240,8 +1240,8 @@ TEST(CanMainStatemachine, listener_verification_no_node_returns_false)
     reset_test_variables();
 
     // Register, resolve, advance to INTERVAL-1 so next call triggers
-    ListenerAliasTable_register(LISTENER_NODE_ID);
-    ListenerAliasTable_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
+    AliasMappingListener_register(LISTENER_NODE_ID);
+    AliasMappingListener_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
     _advance_listener_prober(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS - 1);
 
     // Do NOT allocate any nodes — get_first will return NULL
@@ -1266,8 +1266,8 @@ TEST(CanMainStatemachine, listener_verification_node_alias_zero_returns_false)
     reset_test_variables();
 
     // Register, resolve, advance to INTERVAL-1 so next call triggers
-    ListenerAliasTable_register(LISTENER_NODE_ID);
-    ListenerAliasTable_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
+    AliasMappingListener_register(LISTENER_NODE_ID);
+    AliasMappingListener_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
     _advance_listener_prober(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS - 1);
 
     // Allocate a node but leave alias as 0 (not yet logged in)
@@ -1292,8 +1292,8 @@ TEST(CanMainStatemachine, listener_verification_buffer_alloc_fail_returns_false)
     reset_test_variables();
 
     // Register, resolve, advance to INTERVAL-1 so next call triggers
-    ListenerAliasTable_register(LISTENER_NODE_ID);
-    ListenerAliasTable_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
+    AliasMappingListener_register(LISTENER_NODE_ID);
+    AliasMappingListener_set_alias(LISTENER_NODE_ID, LISTENER_ALIAS);
     _advance_listener_prober(USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS - 1);
 
     // Allocate a node with valid alias
@@ -1319,7 +1319,7 @@ TEST(CanMainStatemachine, run_calls_listener_verification)
     setup_test();
     reset_test_variables();
 
-    CanMainStateMachine_run();
+    CanMainStatemachine_run();
 
     EXPECT_TRUE(handle_listener_verification_called);
 }

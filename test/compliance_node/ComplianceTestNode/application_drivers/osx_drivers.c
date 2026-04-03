@@ -77,7 +77,7 @@ void *thread_function_timer(void *arg) {
         mach_wait_until(deadline);
         deadline += interval_mach;
 
-        OpenLcb_100ms_timer_tick();
+        OpenLcbConfig_100ms_timer_tick();
 
     }
 

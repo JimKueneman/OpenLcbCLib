@@ -89,7 +89,7 @@ void CanRxMessageHandler_initialize(const interface_can_rx_message_handler_t *in
      */
 static void _load_reject_message(uint16_t source_alias, uint16_t dest_alias, uint16_t mti, uint16_t error_code) {
 
-    openlcb_msg_t * target_openlcb_msg = _interface->openlcb_buffer_store_allocate_buffer(BASIC);
+    openlcb_msg_t *target_openlcb_msg = _interface->openlcb_buffer_store_allocate_buffer(BASIC);
 
     if (target_openlcb_msg) {
 
@@ -267,7 +267,7 @@ void CanRxMessageHandler_last_frame(can_msg_t *can_msg, uint8_t offset) {
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
-    openlcb_msg_t * target_openlcb_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t *target_openlcb_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!target_openlcb_msg) {
 

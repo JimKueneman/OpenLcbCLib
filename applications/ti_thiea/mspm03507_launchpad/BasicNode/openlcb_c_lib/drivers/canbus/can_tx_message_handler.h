@@ -30,6 +30,8 @@
  * @date 4 Mar 2026
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__
 #define __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__
 
@@ -142,15 +144,17 @@ extern "C" {
     extern bool CanTxMessageHandler_datagram_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
 
         /**
-         * @brief Placeholder for stream protocol transmit (not yet implemented).
+         * @brief Transmits one CAN frame for a Stream Data Send message.
          *
-         * @param openlcb_msg          Source stream message.
+         * @details Uses Frame Type 7 per StreamTransportS Section 8.1.
+         * Byte 0 = Destination Stream ID, bytes 1-7 = stream payload.
+         * On success, advances *openlcb_start_index by the number of bytes sent.
+         *
+         * @param openlcb_msg          Source stream message (byte 0 = DID, rest = data).
          * @param can_msg_worker       Scratch CAN frame buffer.
-         * @param openlcb_start_index  Current payload position.
+         * @param openlcb_start_index  Current payload position; updated on success.
          *
-         * @return Always true (no-op placeholder).
-         *
-         * @warning Do not use in production until implemented.
+         * @return true if the frame was transmitted, false on hardware failure.
          */
     extern bool CanTxMessageHandler_stream_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
 

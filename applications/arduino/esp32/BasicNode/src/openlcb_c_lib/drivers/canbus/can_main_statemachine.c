@@ -174,7 +174,7 @@ static bool _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info)
 }
 
     /** @brief Returns a pointer to the internal state machine context (for testing/debugging). */
-can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void) {
+can_statemachine_info_t *CanMainStatemachine_get_can_statemachine_info(void) {
 
     return (&_can_statemachine_info);
 
@@ -373,12 +373,12 @@ bool CanMainStatemachine_handle_listener_verification(void) {
     if (probe_id != 0) {
 
         // Use first node's alias as AME source
-        openlcb_node_t* node = _interface->openlcb_node_get_first(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
+        openlcb_node_t *node = _interface->openlcb_node_get_first(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
 
         if (node && node->alias != 0) {
 
             _interface->lock_shared_resources();
-            can_msg_t* ame = CanBufferStore_allocate_buffer();
+            can_msg_t *ame = CanBufferStore_allocate_buffer();
             _interface->unlock_shared_resources();
 
             if (ame) {
@@ -490,7 +490,7 @@ void CanMainStatemachine_send_global_alias_enquiry(void) {
      * chain. Priority: duplicate aliases -> outgoing CAN frame ->
      * login frame -> enumerate first node -> enumerate next node.
      */
-void CanMainStateMachine_run(void) {
+void CanMainStatemachine_run(void) {
 
     _interface->lock_shared_resources();
     OpenLcbBufferList_check_timeouts(_interface->get_current_tick());

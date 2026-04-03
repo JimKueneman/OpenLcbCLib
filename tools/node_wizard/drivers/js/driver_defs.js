@@ -80,7 +80,7 @@ const DRIVER_GROUPS = {
                 returnType: 'void',
                 params: 'void',
                 description: 'Initialize platform hardware',
-                detail: 'Initialize platform-specific peripherals that the library depends on: start the 100 ms repeating timer that calls OpenLcb_100ms_timer_tick(), set up I2C/SPI buses for external storage (EEPROM, FRAM, Flash), and configure any GPIO pins needed for status LEDs or other indicators. Called once during startup after CAN setup.',
+                detail: 'Initialize platform-specific peripherals that the library depends on: start the 100 ms repeating timer that calls OpenLcbConfig_100ms_timer_tick(), set up I2C/SPI buses for external storage (EEPROM, FRAM, Flash), and configure any GPIO pins needed for status LEDs or other indicators. Called once during startup after CAN setup.',
                 required: true
             },
 

@@ -39,7 +39,7 @@
 // This is a guard condition so that contents of this file are not included
 // more than once.
 #ifndef __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__
-#define    __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__
+#define __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__
 
 #include "openlcb_types.h"
 
@@ -99,17 +99,17 @@ typedef struct {
 } interface_openlcb_login_state_machine_t;
 
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
         /**
          * @brief Stores the callback interface.  Call once at startup after
-         *        OpenLcbLoginMessageHandler_initialize().
+         *        OpenLcbLoginStatemachineHandler_initialize().
          *
          * @param interface_openlcb_login_state_machine  Must remain valid for application lifetime.
          */
-    extern void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine);
+    extern void OpenLcbLoginStatemachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine);
 
         /**
          * @brief Runs one non-blocking step of login processing.  Call from main loop.
@@ -117,14 +117,14 @@ extern "C" {
          * @details Tries to send a pending message, re-enumerate if flagged, or advance
          *          to the next node needing login.  Nodes already in RUNSTATE_RUN are skipped.
          */
-    extern void OpenLcbLoginMainStatemachine_run(void);
+    extern void OpenLcbLoginStatemachine_run(void);
 
         /**
          * @brief Dispatches to the handler matching node->run_state.  Exposed for unit testing.
          *
          * @param openlcb_statemachine_info  Pointer to @ref openlcb_login_statemachine_info_t context.
          */
-    extern void OpenLcbLoginStateMachine_process(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
+    extern void OpenLcbLoginStatemachine_process(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
 
         /** @brief Tries to send the pending message; returns true if one was pending.  Exposed for unit testing. */
     extern bool OpenLcbLoginStatemachine_handle_outgoing_openlcb_message(void);
@@ -141,8 +141,8 @@ extern "C" {
         /** @brief Returns pointer to internal static state machine info.  For unit testing only — do not modify. */
     extern openlcb_login_statemachine_info_t *OpenLcbLoginStatemachine_get_statemachine_info(void);
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif    /* __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__ */
+#endif /* __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__ */

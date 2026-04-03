@@ -158,7 +158,7 @@ static uint8_t _get_listener_count(train_state_t *state) {
 }
 
     /** @brief Return listener entry at index, or NULL if out of range. */
-static train_listener_entry_t* _get_listener_by_index(train_state_t *state, uint8_t index) {
+static train_listener_entry_t *_get_listener_by_index(train_state_t *state, uint8_t index) {
 
     if (!state || index >= state->listener_count) {
 

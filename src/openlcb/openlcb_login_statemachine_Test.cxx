@@ -38,13 +38,13 @@
 * - State machine info accessor
 *
 * Coverage Analysis:
-* - OpenLcbLoginStateMachine_initialize: 100%
-* - OpenLcbLoginStateMachine_process: 100%
+* - OpenLcbLoginStatemachine_initialize: 100%
+* - OpenLcbLoginStatemachine_process: 100%
 * - OpenLcbLoginStatemachine_handle_outgoing_openlcb_message: 100%
 * - OpenLcbLoginStatemachine_handle_try_reenumerate: 100%
 * - OpenLcbLoginStatemachine_handle_try_enumerate_first_node: 100%
 * - OpenLcbLoginStatemachine_handle_try_enumerate_next_node: 100%
-* - OpenLcbLoginMainStatemachine_run: 100%
+* - OpenLcbLoginStatemachine_run: 100%
 * - OpenLcbLoginStatemachine_get_statemachine_info: 100%
 *
 * @author Jim Kueneman
@@ -455,7 +455,7 @@ void _reset_variables(void)
  */
 void _global_initialize(void)
 {
-    OpenLcbLoginStateMachine_initialize(&interface_openlcb_login_state_machine);
+    OpenLcbLoginStatemachine_initialize(&interface_openlcb_login_state_machine);
     OpenLcbNode_initialize(&interface_openlcb_node);
     OpenLcbBufferStore_initialize();
 }
@@ -501,7 +501,7 @@ TEST(OpenLcbLoginStateMachine, process_initialization_complete)
     statemachine_info->openlcb_node = node_1;
 
     // Call process function
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
 
     // Verify correct handler was called
     EXPECT_EQ(called_function_ptr, &_load_initialization_complete);
@@ -524,7 +524,7 @@ TEST(OpenLcbLoginStateMachine, process_producer_events)
     statemachine_info->openlcb_node = node_1;
 
     // Call process function
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
 
     // Verify correct handler was called
     EXPECT_EQ(called_function_ptr, &_load_producer_events);
@@ -547,7 +547,7 @@ TEST(OpenLcbLoginStateMachine, process_consumer_events)
     statemachine_info->openlcb_node = node_1;
 
     // Call process function
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
 
     // Verify correct handler was called
     EXPECT_EQ(called_function_ptr, &_load_consumer_events);
@@ -570,7 +570,7 @@ TEST(OpenLcbLoginStateMachine, process_run_state_no_dispatch)
     statemachine_info->openlcb_node = node_1;
 
     // Call process function
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
 
     // Verify NO handler was called (node already in RUN state)
     EXPECT_EQ(called_function_ptr, nullptr);
@@ -962,7 +962,7 @@ TEST(OpenLcbLoginStateMachine, run_priority_outgoing_message)
     fail_handle_try_enumerate_first_node = true;
     fail_handle_try_enumerate_next_node = true;
 
-    OpenLcbLoginMainStatemachine_run();
+    OpenLcbLoginStatemachine_run();
 
     // Verify only outgoing message handler was called
     EXPECT_EQ(called_function_ptr, &_handle_outgoing_openlcb_message);
@@ -987,7 +987,7 @@ TEST(OpenLcbLoginStateMachine, run_priority_reenumerate)
     fail_handle_try_enumerate_first_node = true;
     fail_handle_try_enumerate_next_node = true;
 
-    OpenLcbLoginMainStatemachine_run();
+    OpenLcbLoginStatemachine_run();
 
     // Verify outgoing message and re-enumerate were called
     EXPECT_EQ(called_function_ptr, (void *)((uint64_t)&_handle_outgoing_openlcb_message + (uint64_t)&_handle_try_reenumerate));
@@ -1012,7 +1012,7 @@ TEST(OpenLcbLoginStateMachine, run_priority_first_node)
     // Make last handler fail
     fail_handle_try_enumerate_next_node = true;
 
-    OpenLcbLoginMainStatemachine_run();
+    OpenLcbLoginStatemachine_run();
 
     // Verify first three handlers were called
     EXPECT_EQ(called_function_ptr, (void *)((uint64_t)&_handle_outgoing_openlcb_message + (uint64_t)&_handle_try_reenumerate + (uint64_t)&_handle_try_enumerate_first_node));
@@ -1035,7 +1035,7 @@ TEST(OpenLcbLoginStateMachine, run_priority_next_node)
     // Make next node enumerate succeed
     fail_handle_try_enumerate_next_node = false;
 
-    OpenLcbLoginMainStatemachine_run();
+    OpenLcbLoginStatemachine_run();
 
     // Verify all four handlers were called
     EXPECT_EQ(called_function_ptr, (void *)((uint64_t)&_handle_outgoing_openlcb_message + (uint64_t)&_handle_try_reenumerate + (uint64_t)&_handle_try_enumerate_first_node + (uint64_t)&_handle_try_enumerate_next_node));
@@ -1056,7 +1056,7 @@ TEST(OpenLcbLoginStateMachine, run_all_handlers_fail)
     fail_handle_try_enumerate_first_node = true;
     fail_handle_try_enumerate_next_node = true;
 
-    OpenLcbLoginMainStatemachine_run();
+    OpenLcbLoginStatemachine_run();
 
     // Verify all handlers were attempted
     EXPECT_EQ(called_function_ptr, (void *)((uint64_t)&_handle_outgoing_openlcb_message + (uint64_t)&_handle_try_reenumerate + (uint64_t)&_handle_try_enumerate_first_node + (uint64_t)&_handle_try_enumerate_next_node));
@@ -1105,25 +1105,25 @@ TEST(OpenLcbLoginStateMachine, process_state_sequence)
     // Test RUNSTATE_LOAD_INITIALIZATION_COMPLETE
     _reset_variables();
     node_1->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
     EXPECT_EQ(called_function_ptr, &_load_initialization_complete);
 
     // Test RUNSTATE_LOAD_PRODUCER_EVENTS
     _reset_variables();
     node_1->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
     EXPECT_EQ(called_function_ptr, &_load_producer_events);
 
     // Test RUNSTATE_LOAD_CONSUMER_EVENTS
     _reset_variables();
     node_1->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
     EXPECT_EQ(called_function_ptr, &_load_consumer_events);
 
     // Test RUNSTATE_RUN (no dispatch)
     _reset_variables();
     node_1->state.run_state = RUNSTATE_RUN;
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
     EXPECT_EQ(called_function_ptr, nullptr);
 }
 
@@ -1292,7 +1292,7 @@ TEST(OpenLcbLoginStateMachine, complete_login_sequence)
     EXPECT_EQ(statemachine_info->openlcb_node, node_1);
     
     // The process_login_statemachine was called, which would call
-    // OpenLcbLoginStateMachine_process in real code, which dispatches
+    // OpenLcbLoginStatemachine_process in real code, which dispatches
     // based on run_state to the appropriate handler
     
     // In real operation, handlers would:
@@ -1359,19 +1359,19 @@ TEST(OpenLcbLoginStateMachine, multiple_nodes_sequential)
     // Process node 1
     _reset_variables();
     statemachine_info->openlcb_node = node_1;
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
     EXPECT_EQ(called_function_ptr, &_load_initialization_complete);
     
     // Process node 2
     _reset_variables();
     statemachine_info->openlcb_node = node_2;
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
     EXPECT_EQ(called_function_ptr, &_load_producer_events);
     
     // Process node 3
     _reset_variables();
     statemachine_info->openlcb_node = node_3;
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
     EXPECT_EQ(called_function_ptr, &_load_consumer_events);
 }
 
@@ -1422,7 +1422,7 @@ TEST(OpenLcbLoginStateMachine, process_login_complete_null_callback)
     statemachine_info->openlcb_node = node_1;
 
     // Interface has on_login_complete = NULL, so should skip callback and transition to RUN
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
 
     // Verify NO handler was called (callback is NULL)
     EXPECT_EQ(called_function_ptr, nullptr);
@@ -1440,7 +1440,7 @@ TEST(OpenLcbLoginStateMachine, process_login_complete_callback_returns_true)
     _reset_variables();
 
     // Use interface with on_login_complete set
-    OpenLcbLoginStateMachine_initialize(&interface_with_login_complete);
+    OpenLcbLoginStatemachine_initialize(&interface_with_login_complete);
     OpenLcbNode_initialize(&interface_openlcb_node);
     OpenLcbBufferStore_initialize();
 
@@ -1454,7 +1454,7 @@ TEST(OpenLcbLoginStateMachine, process_login_complete_callback_returns_true)
     // Callback returns true -> should transition to RUNSTATE_RUN
     login_complete_return_value = true;
 
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
 
     // Verify on_login_complete was called
     EXPECT_EQ(called_function_ptr, &_on_login_complete);
@@ -1472,7 +1472,7 @@ TEST(OpenLcbLoginStateMachine, process_login_complete_callback_returns_false)
     _reset_variables();
 
     // Use interface with on_login_complete set
-    OpenLcbLoginStateMachine_initialize(&interface_with_login_complete);
+    OpenLcbLoginStatemachine_initialize(&interface_with_login_complete);
     OpenLcbNode_initialize(&interface_openlcb_node);
     OpenLcbBufferStore_initialize();
 
@@ -1486,7 +1486,7 @@ TEST(OpenLcbLoginStateMachine, process_login_complete_callback_returns_false)
     // Callback returns false -> should stay in LOGIN_COMPLETE (retry later)
     login_complete_return_value = false;
 
-    OpenLcbLoginStateMachine_process(statemachine_info);
+    OpenLcbLoginStatemachine_process(statemachine_info);
 
     // Verify on_login_complete was called
     EXPECT_EQ(called_function_ptr, &_on_login_complete);
@@ -1655,7 +1655,7 @@ const interface_openlcb_login_state_machine_t interface_sibling_dispatch = {
     .load_consumer_events = &_sibling_load_consumer_events,
     .process_main_statemachine = &_tracking_process_main_statemachine,
     .openlcb_node_get_count = &OpenLcbNode_get_count,
-    .process_login_statemachine = &OpenLcbLoginStateMachine_process,
+    .process_login_statemachine = &OpenLcbLoginStatemachine_process,
 
     .handle_outgoing_openlcb_message = &OpenLcbLoginStatemachine_handle_outgoing_openlcb_message,
     .handle_try_reenumerate = &OpenLcbLoginStatemachine_handle_try_reenumerate,
@@ -1693,7 +1693,7 @@ void _sibling_test_initialize(void)
     _reset_sibling_tracking();
     OpenLcbNode_initialize(&interface_openlcb_node);
     OpenLcbBufferStore_initialize();
-    OpenLcbLoginStateMachine_initialize(&interface_sibling_dispatch);
+    OpenLcbLoginStatemachine_initialize(&interface_sibling_dispatch);
 
     // Ensure leftover state from previous tests is cleared
     openlcb_login_statemachine_info_t *info = OpenLcbLoginStatemachine_get_statemachine_info();
@@ -1718,7 +1718,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_single_node_no_dispatch)
     // Run until Init Complete is sent and slot cleared
     for (int i = 0; i < 20; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -1750,7 +1750,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_two_nodes_init_complete)
     // Run enough cycles to send Init Complete + sibling dispatch
     for (int i = 0; i < 20; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -1792,7 +1792,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_three_nodes)
 
     for (int i = 0; i < 30; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -1826,7 +1826,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_mixed_run_states)
 
     for (int i = 0; i < 30; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -1876,7 +1876,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_enumerate_10_events)
     // Be generous with cycles
     for (int i = 0; i < 200; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -1927,7 +1927,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_50_nodes_stress)
     // Be very generous with cycles
     for (int i = 0; i < 500; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -1978,7 +1978,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_50_nodes_with_events_stress)
     // 7 × 51 = 357 + reenumerate + login_complete + enum = ~400
     for (int i = 0; i < 1000; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -2022,7 +2022,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_loopback_flag_lifecycle)
     // Run through the full cycle
     for (int i = 0; i < 30; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -2078,7 +2078,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_zero_pool_allocations_50_nodes)
     // = 7 messages, each dispatched to 50 siblings
     for (int i = 0; i < 1000; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -2137,7 +2137,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_handler_produces_response)
 
     for (int i = 0; i < 50; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -2178,7 +2178,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_response_send_fails_then_retries
 
     for (int i = 0; i < 50; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -2212,7 +2212,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_handler_sets_enumerate)
 
     for (int i = 0; i < 50; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -2246,7 +2246,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_response_and_enumerate)
 
     for (int i = 0; i < 50; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -2281,7 +2281,7 @@ TEST(OpenLcbLoginStateMachine, handle_outgoing_send_fails_keeps_valid_for_retry)
 
     for (int i = 0; i < 50; i++) {
 
-        OpenLcbLoginMainStatemachine_run();
+        OpenLcbLoginStatemachine_run();
 
     }
 
@@ -2317,10 +2317,10 @@ TEST(OpenLcbLoginStateMachine, run_loop_skips_outgoing_during_sibling_dispatch)
     node_c->state.run_state = RUNSTATE_RUN;
 
     // Step 1: First _run() call enumerates first node, sets up Init Complete
-    OpenLcbLoginMainStatemachine_run();
+    OpenLcbLoginStatemachine_run();
 
     // Step 2: Second _run() call sends Init Complete to wire and starts sibling dispatch
-    OpenLcbLoginMainStatemachine_run();
+    OpenLcbLoginStatemachine_run();
     EXPECT_EQ(send_call_count, 1);
 
     // Step 3: Subsequent _run() calls should be in sibling dispatch.
@@ -2330,9 +2330,9 @@ TEST(OpenLcbLoginStateMachine, run_loop_skips_outgoing_during_sibling_dispatch)
     EXPECT_TRUE(info->outgoing_msg_info.valid);
 
     // Run a few more cycles — sibling dispatch processes nodes
-    OpenLcbLoginMainStatemachine_run();
-    OpenLcbLoginMainStatemachine_run();
-    OpenLcbLoginMainStatemachine_run();
+    OpenLcbLoginStatemachine_run();
+    OpenLcbLoginStatemachine_run();
+    OpenLcbLoginStatemachine_run();
 
     // Sibling dispatch happened
     EXPECT_GE(sibling_dispatch_call_count, 1);

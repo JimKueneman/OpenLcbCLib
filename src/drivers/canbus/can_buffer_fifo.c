@@ -53,7 +53,7 @@ typedef struct {
 } can_fifo_t;
 
 /** @brief Single global FIFO instance. */
-static can_fifo_t can_msg_buffer_fifo;
+static can_fifo_t _can_msg_buffer_fifo;
 
     /**
      * @brief Clears all FIFO slots and resets head and tail to zero.
@@ -66,12 +66,12 @@ void CanBufferFifo_initialize(void) {
 
     for (int i = 0; i < LEN_CAN_FIFO_BUFFER; i++) {
 
-        can_msg_buffer_fifo.list[i] = NULL;
+        _can_msg_buffer_fifo.list[i] = NULL;
 
     }
 
-    can_msg_buffer_fifo.head = 0;
-    can_msg_buffer_fifo.tail = 0;
+    _can_msg_buffer_fifo.head = 0;
+    _can_msg_buffer_fifo.tail = 0;
 
 }
 
@@ -91,7 +91,7 @@ void CanBufferFifo_initialize(void) {
      */
 bool CanBufferFifo_push(can_msg_t *new_msg) {
 
-    uint16_t next = can_msg_buffer_fifo.head + 1;
+    uint16_t next = _can_msg_buffer_fifo.head + 1;
 
     if (next >= LEN_CAN_FIFO_BUFFER) {
 
@@ -99,10 +99,10 @@ bool CanBufferFifo_push(can_msg_t *new_msg) {
 
     }
 
-    if (next != can_msg_buffer_fifo.tail) {
+    if (next != _can_msg_buffer_fifo.tail) {
 
-        can_msg_buffer_fifo.list[can_msg_buffer_fifo.head] = new_msg;
-        can_msg_buffer_fifo.head = next;
+        _can_msg_buffer_fifo.list[_can_msg_buffer_fifo.head] = new_msg;
+        _can_msg_buffer_fifo.head = next;
 
         return true;
 
@@ -124,15 +124,15 @@ bool CanBufferFifo_push(can_msg_t *new_msg) {
      */
 can_msg_t *CanBufferFifo_pop(void) {
 
-    if (can_msg_buffer_fifo.head != can_msg_buffer_fifo.tail) {
+    if (_can_msg_buffer_fifo.head != _can_msg_buffer_fifo.tail) {
 
-        can_msg_t *msg = can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail];
-        can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail] = NULL;
-        can_msg_buffer_fifo.tail++;
+        can_msg_t *msg = _can_msg_buffer_fifo.list[_can_msg_buffer_fifo.tail];
+        _can_msg_buffer_fifo.list[_can_msg_buffer_fifo.tail] = NULL;
+        _can_msg_buffer_fifo.tail++;
 
-        if (can_msg_buffer_fifo.tail >= LEN_CAN_FIFO_BUFFER) {
+        if (_can_msg_buffer_fifo.tail >= LEN_CAN_FIFO_BUFFER) {
 
-            can_msg_buffer_fifo.tail = 0;
+            _can_msg_buffer_fifo.tail = 0;
 
         }
 
@@ -147,7 +147,7 @@ can_msg_t *CanBufferFifo_pop(void) {
     /** @brief Returns non-zero if the FIFO is empty, zero if messages are present. */
 uint8_t CanBufferFifo_is_empty(void) {
 
-    return can_msg_buffer_fifo.head == can_msg_buffer_fifo.tail;
+    return _can_msg_buffer_fifo.head == _can_msg_buffer_fifo.tail;
 
 }
 
@@ -160,13 +160,13 @@ uint8_t CanBufferFifo_is_empty(void) {
      */
 uint16_t CanBufferFifo_get_allocated_count(void) {
 
-    if (can_msg_buffer_fifo.tail > can_msg_buffer_fifo.head) {
+    if (_can_msg_buffer_fifo.tail > _can_msg_buffer_fifo.head) {
 
-        return (can_msg_buffer_fifo.head + (LEN_CAN_FIFO_BUFFER - can_msg_buffer_fifo.tail));
+        return (_can_msg_buffer_fifo.head + (LEN_CAN_FIFO_BUFFER - _can_msg_buffer_fifo.tail));
 
     } else {
 
-        return (can_msg_buffer_fifo.head - can_msg_buffer_fifo.tail);
+        return (_can_msg_buffer_fifo.head - _can_msg_buffer_fifo.tail);
 
     }
 

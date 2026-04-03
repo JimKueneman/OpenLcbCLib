@@ -35,7 +35,7 @@
 * - Re-enumeration control for multi-message sequences
 *
 * Architecture Overview:
-* The state machine uses a polling architecture where OpenLcbLoginMainStatemachine_run()
+* The state machine uses a polling architecture where OpenLcbLoginStatemachine_run()
 * is called repeatedly from the main application loop. Each call performs one atomic
 * operation and returns immediately, maintaining a non-blocking design.
 *
@@ -113,7 +113,7 @@ static bool _sibling_dispatch_active;
     * @param interface_openlcb_login_state_machine Pointer to interface structure
     * @endverbatim
     */
-void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine) {
+void OpenLcbLoginStatemachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine) {
 
     _interface = interface_openlcb_login_state_machine;
 
@@ -160,7 +160,7 @@ void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_mac
     * @param openlcb_statemachine_info Pointer to state machine info with node and message buffer
     * @endverbatim
     */
-void OpenLcbLoginStateMachine_process(openlcb_login_statemachine_info_t *openlcb_statemachine_info) {
+void OpenLcbLoginStatemachine_process(openlcb_login_statemachine_info_t *openlcb_statemachine_info) {
 
     switch (openlcb_statemachine_info->openlcb_node->state.run_state) {
 
@@ -511,7 +511,7 @@ bool OpenLcbLoginStatemachine_handle_try_enumerate_next_node(void) {
     * -# Advance to next node
     * Each step returns immediately after one operation.
     */
-void OpenLcbLoginMainStatemachine_run(void) {
+void OpenLcbLoginStatemachine_run(void) {
 
     // ── Priority 1: Send pending login outgoing message ─────────────
     // If valid and NOT in sibling dispatch, try to send to wire.

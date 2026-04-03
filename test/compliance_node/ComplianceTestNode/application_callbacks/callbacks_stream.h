@@ -35,6 +35,8 @@
 #ifndef __CALLBACKS_STREAM__
 #define __CALLBACKS_STREAM__
 
+#ifdef OPENLCB_COMPILE_STREAM
+
 #include "../openlcb_c_lib/openlcb/openlcb_types.h"
 #include "../openlcb_c_lib/openlcb/protocol_stream_handler.h"
 
@@ -43,10 +45,12 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void CallbacksStream_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+    extern bool CallbacksStream_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+
+#endif /* OPENLCB_COMPILE_STREAM */
 
 #endif /* __CALLBACKS_STREAM__ */

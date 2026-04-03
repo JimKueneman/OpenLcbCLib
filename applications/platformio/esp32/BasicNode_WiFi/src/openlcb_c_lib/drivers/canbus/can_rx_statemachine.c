@@ -72,6 +72,7 @@ void CanRxStatemachine_initialize(const interface_can_rx_statemachine_t *interfa
 static uint16_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
 
     return (can_msg->identifier >> 12) & 0x0FFF;
+
 }
 
     /**
@@ -89,7 +90,7 @@ static uint16_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
      * @param can_mti 12-bit CAN MTI extracted from the identifier.
      * @endverbatim
      */
-static void _handle_openlcb_msg_can_frame_addressed(can_msg_t* can_msg, uint16_t can_mti) {
+static void _handle_openlcb_msg_can_frame_addressed(can_msg_t *can_msg, uint16_t can_mti) {
 
     // Handle addressed message, note this assumes the message has already been tested be for one of our nodes
 
@@ -185,7 +186,7 @@ static void _handle_openlcb_msg_can_frame_addressed(can_msg_t* can_msg, uint16_t
      * @param can_mti 12-bit CAN MTI.
      * @endverbatim
      */
-static void _handle_openlcb_msg_can_frame_unaddressed(can_msg_t* can_msg, uint16_t can_mti) {
+static void _handle_openlcb_msg_can_frame_unaddressed(can_msg_t *can_msg, uint16_t can_mti) {
 
     switch (can_mti) {
 
@@ -202,6 +203,7 @@ static void _handle_openlcb_msg_can_frame_unaddressed(can_msg_t* can_msg, uint16
             }
 
             break;
+
         }
 
         case CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE:
@@ -214,6 +216,7 @@ static void _handle_openlcb_msg_can_frame_unaddressed(can_msg_t* can_msg, uint16
             }
 
             break;
+
         }
 
         case CAN_MTI_PCER_WITH_PAYLOAD_LAST:
@@ -226,6 +229,7 @@ static void _handle_openlcb_msg_can_frame_unaddressed(can_msg_t* can_msg, uint16
             }
 
             break;
+
         }
 
         default:
@@ -256,17 +260,41 @@ static void _handle_openlcb_msg_can_frame_unaddressed(can_msg_t* can_msg, uint16
      * @param can_msg Received OpenLCB CAN frame.
      * @endverbatim
      */
-static void _handle_can_type_frame(can_msg_t* can_msg) {
+static void _handle_can_type_frame(can_msg_t *can_msg) {
 
     // Raw CAN messages coming in from the wire that are CAN interpretations of OpenLcb defined messages
 
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
-    case OPENLCB_MESSAGE_STANDARD_FRAME_TYPE: // It is a global or addressed message type
+        case OPENLCB_MESSAGE_STANDARD_FRAME_TYPE: // It is a global or addressed message type
 
-        if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
+            if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
 
-            // If it is a message targeting a destination node make sure it is for one of our nodes
+                // If it is a message targeting a destination node make sure it is for one of our nodes
+
+                if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
+
+                    break;
+
+                }
+
+                // Addressed message for one of our nodes
+
+                _handle_openlcb_msg_can_frame_addressed(can_msg, _extract_can_mti_from_can_identifier(can_msg));
+
+            } else {
+
+                // Global message just handle it
+
+                _handle_openlcb_msg_can_frame_unaddressed(can_msg, _extract_can_mti_from_can_identifier(can_msg));
+
+            }
+
+            break;
+
+        case CAN_FRAME_TYPE_DATAGRAM_ONLY:
+
+            // If it is a datagram make sure it is for one of our nodes
 
             if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
 
@@ -274,134 +302,110 @@ static void _handle_can_type_frame(can_msg_t* can_msg) {
 
             }
 
-            // Addressed message for one of our nodes
+            // Datagram message for one of our nodes
 
-            _handle_openlcb_msg_can_frame_addressed(can_msg, _extract_can_mti_from_can_identifier(can_msg));
+            if (_interface->handle_single_frame) {
 
-        } else {
+                _interface->handle_single_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, BASIC);
 
-            // Global message just handle it
-
-            _handle_openlcb_msg_can_frame_unaddressed(can_msg, _extract_can_mti_from_can_identifier(can_msg));
-
-        }
-
-        break;
-
-    case CAN_FRAME_TYPE_DATAGRAM_ONLY:
-
-        // If it is a datagram make sure it is for one of our nodes
-
-        if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
+            }
 
             break;
 
-        }
+        case CAN_FRAME_TYPE_DATAGRAM_FIRST:
 
-        // Datagram message for one of our nodes
+            // If it is a datagram make sure it is for one of our nodes
 
-        if (_interface->handle_single_frame) {
+            if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
 
-            _interface->handle_single_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, BASIC);
+                break;
 
-        }
+            }
 
-        break;
+            // Datagram message for one of our nodes
 
-    case CAN_FRAME_TYPE_DATAGRAM_FIRST:
+            if (_interface->handle_first_frame) {
 
-        // If it is a datagram make sure it is for one of our nodes
+                _interface->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, DATAGRAM);
 
-        if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
-
-            break;
-
-        }
-
-        // Datagram message for one of our nodes
-
-        if (_interface->handle_first_frame) {
-
-            _interface->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, DATAGRAM);
-
-        }
-
-        break;
-
-    case CAN_FRAME_TYPE_DATAGRAM_MIDDLE:
-
-        // If it is a datagram make sure it is for one of our nodes
-
-        if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
+            }
 
             break;
 
-        }
+        case CAN_FRAME_TYPE_DATAGRAM_MIDDLE:
 
-        // Datagram message for one of our nodes
+            // If it is a datagram make sure it is for one of our nodes
 
-        if (_interface->handle_middle_frame) {
+            if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
 
-            _interface->handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
+                break;
 
-        }
+            }
 
-        break;
+            // Datagram message for one of our nodes
 
-    case CAN_FRAME_TYPE_DATAGRAM_FINAL:
+            if (_interface->handle_middle_frame) {
 
-        // If it is a datagram make sure it is for one of our nodes
+                _interface->handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
 
-        if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
-
-            break;
-
-        }
-
-        // Datagram message for one of our nodes
-
-        if (_interface->handle_last_frame) {
-
-            _interface->handle_last_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
-
-        }
-
-        break;
-
-    case CAN_FRAME_TYPE_RESERVED:
-
-        break;
-
-    case CAN_FRAME_TYPE_STREAM:
-
-        // If it is a stream message make sure it is for one of our nodes
-
-        if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
+            }
 
             break;
 
-        }
+        case CAN_FRAME_TYPE_DATAGRAM_FINAL:
 
-        // Stream message for one of our nodes
+            // If it is a datagram make sure it is for one of our nodes
 
-        if (_interface->handle_stream_frame) {
+            if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
 
-            _interface->handle_stream_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, STREAM);
+                break;
 
-        }
+            }
 
-        break;
+            // Datagram message for one of our nodes
 
-    default:
+            if (_interface->handle_last_frame) {
 
-        break;
+                _interface->handle_last_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
+
+            }
+
+            break;
+
+        case CAN_FRAME_TYPE_RESERVED:
+
+            break;
+
+        case CAN_FRAME_TYPE_STREAM:
+
+            // If it is a stream message make sure it is for one of our nodes
+
+            if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
+
+                break;
+
+            }
+
+            // Stream message for one of our nodes
+
+            if (_interface->handle_stream_frame) {
+
+                _interface->handle_stream_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, STREAM);
+
+            }
+
+            break;
+
+        default:
+
+            break;
 
     }
 
 }
 
     /** @brief Dispatches a CAN control frame with a variable field (RID, AMD, AME, AMR, Error). */
-static void _handle_can_control_frame_variable_field(can_msg_t* can_msg) {
+static void _handle_can_control_frame_variable_field(can_msg_t *can_msg) {
 
     switch (can_msg->identifier & MASK_CAN_VARIABLE_FIELD) {
 
@@ -468,7 +472,7 @@ static void _handle_can_control_frame_variable_field(can_msg_t* can_msg) {
 }
 
     /** @brief Dispatches a CAN control frame carrying a CID sequence number (CID7..CID1). */
-static void _handle_can_control_frame_sequence_number(can_msg_t* can_msg) {
+static void _handle_can_control_frame_sequence_number(can_msg_t *can_msg) {
 
     switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
 
@@ -506,7 +510,7 @@ static void _handle_can_control_frame_sequence_number(can_msg_t* can_msg) {
      * @param can_msg Received CAN control frame.
      * @endverbatim
      */
-static void _handle_can_control_frame(can_msg_t* can_msg) {
+static void _handle_can_control_frame(can_msg_t *can_msg) {
 
     switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
 
@@ -526,7 +530,7 @@ static void _handle_can_control_frame(can_msg_t* can_msg) {
 
 }
 
-void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
+void CanRxStatemachine_incoming_can_driver_callback(can_msg_t *can_msg) {
 
     // This is called directly from the incoming CAN receiver as raw Openlcb CAN messages
 

@@ -105,7 +105,7 @@ void *thread_function_timer(void *arg)
     while (1)
     {
 
-        OpenLcb_100ms_timer_tick();
+        OpenLcbConfig_100ms_timer_tick();
 
         usleep(100000);
     }

@@ -76,42 +76,42 @@ void CanTxMessageHandler_initialize(const interface_can_tx_message_handler_t *in
 // ---- CAN identifier builders ----
 
     /** @brief Builds the 29-bit identifier for a datagram-only (single-frame) CAN frame. */
-static uint32_t _construct_identifier_datagram_only_frame(openlcb_msg_t* openlcb_msg) {
+static uint32_t _construct_identifier_datagram_only_frame(openlcb_msg_t *openlcb_msg) {
 
     return (_OPENLCB_MESSAGE_DATAGRAM_ONLY | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
 }
 
     /** @brief Builds the 29-bit identifier for the first frame of a multi-frame datagram. */
-static uint32_t _construct_identifier_datagram_first_frame(openlcb_msg_t* openlcb_msg) {
+static uint32_t _construct_identifier_datagram_first_frame(openlcb_msg_t *openlcb_msg) {
 
     return (_OPENLCB_MESSAGE_DATAGRAM_FIRST_FRAME | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
 }
 
     /** @brief Builds the 29-bit identifier for a middle frame of a multi-frame datagram. */
-static uint32_t _construct_identifier_datagram_middle_frame(openlcb_msg_t* openlcb_msg) {
+static uint32_t _construct_identifier_datagram_middle_frame(openlcb_msg_t *openlcb_msg) {
 
     return (_OPENLCB_MESSAGE_DATAGRAM_MIDDLE_FRAME | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
 }
 
     /** @brief Builds the 29-bit identifier for the last frame of a multi-frame datagram. */
-static uint32_t _construct_identifier_datagram_last_frame(openlcb_msg_t* openlcb_msg) {
+static uint32_t _construct_identifier_datagram_last_frame(openlcb_msg_t *openlcb_msg) {
 
     return (_OPENLCB_MESSAGE_DATAGRAM_LAST_FRAME | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
 }
 
     /** @brief Builds the 29-bit identifier for a global (unaddressed) OpenLCB standard frame. */
-static uint32_t _construct_unaddressed_message_identifier(openlcb_msg_t* openlcb_msg) {
+static uint32_t _construct_unaddressed_message_identifier(openlcb_msg_t *openlcb_msg) {
 
     return (_OPENLCB_MESSAGE_STANDARD_FRAME | ((uint32_t) (openlcb_msg->mti & 0x0FFF) << 12) | openlcb_msg->source_alias);
 
 }
 
     /** @brief Builds the 29-bit identifier for an addressed OpenLCB standard frame (dest alias goes in payload). */
-static uint32_t _construct_addressed_message_identifier(openlcb_msg_t* openlcb_msg) {
+static uint32_t _construct_addressed_message_identifier(openlcb_msg_t *openlcb_msg) {
 
     return (_OPENLCB_MESSAGE_STANDARD_FRAME | ((uint32_t) (openlcb_msg->mti & 0x0FFF) << 12) | openlcb_msg->source_alias);
 
@@ -128,7 +128,7 @@ static uint32_t _construct_addressed_message_identifier(openlcb_msg_t* openlcb_m
      *
      * @return true on success, false on hardware error.
      */
-static bool _transmit_can_frame(can_msg_t* can_msg) {
+static bool _transmit_can_frame(can_msg_t *can_msg) {
 
     bool result = _interface->transmit_can_frame(can_msg);
 
@@ -145,7 +145,7 @@ static bool _transmit_can_frame(can_msg_t* can_msg) {
 // ---- Datagram frame type helpers ----
 
     /** @brief Sets datagram-only identifier and transmits. */
-static bool _datagram_only_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
+static bool _datagram_only_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker) {
 
     can_msg_worker->identifier = _construct_identifier_datagram_only_frame(openlcb_msg);
     return _transmit_can_frame(can_msg_worker);
@@ -153,7 +153,7 @@ static bool _datagram_only_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_
 }
 
     /** @brief Sets datagram-first identifier and transmits. */
-static bool _datagram_first_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
+static bool _datagram_first_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker) {
 
     can_msg_worker->identifier = _construct_identifier_datagram_first_frame(openlcb_msg);
     return _transmit_can_frame(can_msg_worker);
@@ -161,7 +161,7 @@ static bool _datagram_first_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg
 }
 
     /** @brief Sets datagram-middle identifier and transmits. */
-static bool _datagram_middle_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
+static bool _datagram_middle_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker) {
 
     can_msg_worker->identifier = _construct_identifier_datagram_middle_frame(openlcb_msg);
     return _transmit_can_frame(can_msg_worker);
@@ -169,7 +169,7 @@ static bool _datagram_middle_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_ms
 }
 
     /** @brief Sets datagram-last identifier and transmits. */
-static bool _datagram_last_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
+static bool _datagram_last_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker) {
 
     can_msg_worker->identifier = _construct_identifier_datagram_last_frame(openlcb_msg);
     return _transmit_can_frame(can_msg_worker);
@@ -179,7 +179,7 @@ static bool _datagram_last_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_
 // ---- Addressed frame framing-bit helpers ----
 
     /** @brief Sets MULTIFRAME_ONLY framing bits and transmits. */
-static bool _addressed_message_only_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
+static bool _addressed_message_only_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg) {
 
     OpenLcbUtilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_ONLY);
     return _transmit_can_frame(can_msg);
@@ -187,7 +187,7 @@ static bool _addressed_message_only_frame(openlcb_msg_t* openlcb_msg, can_msg_t*
 }
 
     /** @brief Sets MULTIFRAME_FIRST framing bits and transmits. */
-static bool _addressed_message_first_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
+static bool _addressed_message_first_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg) {
 
     OpenLcbUtilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_FIRST);
     return _transmit_can_frame(can_msg);
@@ -195,7 +195,7 @@ static bool _addressed_message_first_frame(openlcb_msg_t* openlcb_msg, can_msg_t
 }
 
     /** @brief Sets MULTIFRAME_MIDDLE framing bits and transmits. */
-static bool _addressed_message_middle_frame(can_msg_t* can_msg) {
+static bool _addressed_message_middle_frame(can_msg_t *can_msg) {
 
     OpenLcbUtilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_MIDDLE);
     return _transmit_can_frame(can_msg);
@@ -203,7 +203,7 @@ static bool _addressed_message_middle_frame(can_msg_t* can_msg) {
 }
 
     /** @brief Sets MULTIFRAME_FINAL framing bits and transmits. */
-static bool _addressed_message_last_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
+static bool _addressed_message_last_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg) {
 
     OpenLcbUtilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_FINAL);
     return _transmit_can_frame(can_msg);
@@ -211,7 +211,7 @@ static bool _addressed_message_last_frame(openlcb_msg_t* openlcb_msg, can_msg_t*
 }
 
     /** @brief Writes the 12-bit destination alias into payload bytes 0 (high nibble) and 1 (low byte). */
-static void _load_destination_address_in_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
+static void _load_destination_address_in_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg) {
 
     can_msg->payload[0] = (openlcb_msg->dest_alias >> 8) & 0xFF; // Setup the first two CAN data bytes with the destination address
     can_msg->payload[1] = openlcb_msg->dest_alias & 0xFF;
@@ -239,7 +239,7 @@ static void _load_destination_address_in_payload(openlcb_msg_t* openlcb_msg, can
      *
      * @warning Index is unchanged on failure — caller must retry.
      */
-bool CanTxMessageHandler_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
+bool CanTxMessageHandler_datagram_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index) {
 
     bool result = false;
     uint8_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
@@ -290,7 +290,7 @@ bool CanTxMessageHandler_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* c
      *
      * @return true if transmitted, false on hardware failure or oversized payload.
      */
-bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
+bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index) {
 
     bool result = false;
 
@@ -340,7 +340,7 @@ bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_m
      *
      * @warning Index is unchanged on failure — caller must retry.
      */
-bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
+bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index) {
 
     _load_destination_address_in_payload(openlcb_msg, can_msg_worker);
 
@@ -377,15 +377,49 @@ bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg
 
 }
 
-    /** @brief Stream transmit handler — not yet implemented, returns true as placeholder. */
-bool CanTxMessageHandler_stream_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
+    /**
+     * @brief Transmits one CAN frame for a Stream Data Send message.
+     *
+     * @details Per StreamTransportS Section 8.1, stream data uses Frame Type 7
+     * with CAN identifier format 0x1Fdd,dsss (dest alias + source alias).
+     * Byte 0 of CAN payload = Destination Stream ID, bytes 1-7 = stream data.
+     * The OpenLCB message payload has the same layout: byte 0 = DID, rest = data.
+     *
+     * Algorithm:
+     * -# Build CAN identifier with CAN_FRAME_TYPE_STREAM, dest alias, source alias
+     * -# Copy up to 8 bytes from openlcb_msg payload starting at *openlcb_start_index
+     * -# Transmit the frame
+     * -# On success, advance *openlcb_start_index
+     *
+     * @verbatim
+     * @param openlcb_msg          Source stream message (byte 0 = DID, rest = data).
+     * @param can_msg_worker       Scratch CAN frame buffer.
+     * @param openlcb_start_index  Current payload position; updated on success.
+     * @endverbatim
+     *
+     * @return true if the frame was transmitted, false on hardware failure.
+     */
+bool CanTxMessageHandler_stream_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index) {
 
-    // ToDo: implement streams
-    return true;
+    can_msg_worker->identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_STREAM |
+                                 ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias;
+
+    uint8_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
+
+    bool result = _transmit_can_frame(can_msg_worker);
+
+    if (result) {
+
+        *openlcb_start_index = *openlcb_start_index + len_msg_frame;
+
+    }
+
+    return result;
+
 }
 
     /** @brief Transmits a pre-built raw @ref can_msg_t directly to the hardware. */
-bool CanTxMessageHandler_can_frame(can_msg_t* can_msg) {
+bool CanTxMessageHandler_can_frame(can_msg_t *can_msg) {
 
     return _transmit_can_frame(can_msg);
 

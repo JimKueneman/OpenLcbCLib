@@ -1468,35 +1468,35 @@ TEST(OpenLcbUtilities, payload_type_to_len_all_types)
 TEST(OpenLcbUtilities, broadcast_time_is_default_fast_clock)
 {
 
-    EXPECT_TRUE(ProtocolBroadcastTime_is_time_event(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000));
-    EXPECT_TRUE(ProtocolBroadcastTime_is_time_event(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E));
-    EXPECT_TRUE(ProtocolBroadcastTime_is_time_event(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xFFFF));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_is_time_event(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_is_time_event(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_is_time_event(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xFFFF));
 
 }
 
 TEST(OpenLcbUtilities, broadcast_time_is_realtime_clock)
 {
 
-    EXPECT_TRUE(ProtocolBroadcastTime_is_time_event(BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0x0000));
-    EXPECT_TRUE(ProtocolBroadcastTime_is_time_event(BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0xABCD));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_is_time_event(BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0x0000));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_is_time_event(BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0xABCD));
 
 }
 
 TEST(OpenLcbUtilities, broadcast_time_is_alternate_clocks)
 {
 
-    EXPECT_TRUE(ProtocolBroadcastTime_is_time_event(BROADCAST_TIME_ID_ALTERNATE_CLOCK_1 | 0x0000));
-    EXPECT_TRUE(ProtocolBroadcastTime_is_time_event(BROADCAST_TIME_ID_ALTERNATE_CLOCK_2 | 0x0000));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_is_time_event(BROADCAST_TIME_ID_ALTERNATE_CLOCK_1 | 0x0000));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_is_time_event(BROADCAST_TIME_ID_ALTERNATE_CLOCK_2 | 0x0000));
 
 }
 
 TEST(OpenLcbUtilities, broadcast_time_is_not_clock_event)
 {
 
-    EXPECT_FALSE(ProtocolBroadcastTime_is_time_event(0x0000000000000000ULL));
-    EXPECT_FALSE(ProtocolBroadcastTime_is_time_event(0x0505050505050000ULL));
-    EXPECT_FALSE(ProtocolBroadcastTime_is_time_event(0xFFFFFFFFFFFF0000ULL));
-    EXPECT_FALSE(ProtocolBroadcastTime_is_time_event(0x0102030405060000ULL));
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_is_time_event(0x0000000000000000ULL));
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_is_time_event(0x0505050505050000ULL));
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_is_time_event(0xFFFFFFFFFFFF0000ULL));
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_is_time_event(0x0102030405060000ULL));
 
 }
 
@@ -1505,16 +1505,16 @@ TEST(OpenLcbUtilities, broadcast_time_is_not_clock_event)
 TEST(OpenLcbUtilities, broadcast_time_extract_clock_id)
 {
 
-    EXPECT_EQ(ProtocolBroadcastTime_extract_clock_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x1234),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_extract_clock_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x1234),
               BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_EQ(ProtocolBroadcastTime_extract_clock_id(BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0xABCD),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_extract_clock_id(BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0xABCD),
               BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK);
 
-    EXPECT_EQ(ProtocolBroadcastTime_extract_clock_id(BROADCAST_TIME_ID_ALTERNATE_CLOCK_1 | 0x0000),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_extract_clock_id(BROADCAST_TIME_ID_ALTERNATE_CLOCK_1 | 0x0000),
               BROADCAST_TIME_ID_ALTERNATE_CLOCK_1);
 
-    EXPECT_EQ(ProtocolBroadcastTime_extract_clock_id(BROADCAST_TIME_ID_ALTERNATE_CLOCK_2 | 0xFFFF),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_extract_clock_id(BROADCAST_TIME_ID_ALTERNATE_CLOCK_2 | 0xFFFF),
               BROADCAST_TIME_ID_ALTERNATE_CLOCK_2);
 
 }
@@ -1525,15 +1525,15 @@ TEST(OpenLcbUtilities, broadcast_time_event_type_report_time)
 {
 
     // 0x0000 = midnight
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000),
               BROADCAST_TIME_EVENT_REPORT_TIME);
 
     // 0x173B = 23:59
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x173B),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x173B),
               BROADCAST_TIME_EVENT_REPORT_TIME);
 
     // 0x17FF = upper boundary
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x17FF),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x17FF),
               BROADCAST_TIME_EVENT_REPORT_TIME);
 
 }
@@ -1542,11 +1542,11 @@ TEST(OpenLcbUtilities, broadcast_time_event_type_report_date)
 {
 
     // 0x2101 = Jan 1
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101),
               BROADCAST_TIME_EVENT_REPORT_DATE);
 
     // 0x2C1F = Dec 31
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2C1F),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2C1F),
               BROADCAST_TIME_EVENT_REPORT_DATE);
 
 }
@@ -1555,11 +1555,11 @@ TEST(OpenLcbUtilities, broadcast_time_event_type_report_year)
 {
 
     // 0x3000 = year 0
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3000),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3000),
               BROADCAST_TIME_EVENT_REPORT_YEAR);
 
     // 0x3FFF = year 4095
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3FFF),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3FFF),
               BROADCAST_TIME_EVENT_REPORT_YEAR);
 
 }
@@ -1568,11 +1568,11 @@ TEST(OpenLcbUtilities, broadcast_time_event_type_report_rate)
 {
 
     // 0x4000 = rate 0
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4000),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4000),
               BROADCAST_TIME_EVENT_REPORT_RATE);
 
     // 0x4FFF = upper boundary
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4FFF),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4FFF),
               BROADCAST_TIME_EVENT_REPORT_RATE);
 
 }
@@ -1581,11 +1581,11 @@ TEST(OpenLcbUtilities, broadcast_time_event_type_set_time)
 {
 
     // 0x8000 = set midnight
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x8000),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x8000),
               BROADCAST_TIME_EVENT_SET_TIME);
 
     // 0x97FF = upper boundary
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x97FF),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x97FF),
               BROADCAST_TIME_EVENT_SET_TIME);
 
 }
@@ -1593,10 +1593,10 @@ TEST(OpenLcbUtilities, broadcast_time_event_type_set_time)
 TEST(OpenLcbUtilities, broadcast_time_event_type_set_date)
 {
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xA101),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xA101),
               BROADCAST_TIME_EVENT_SET_DATE);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xACFF),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xACFF),
               BROADCAST_TIME_EVENT_SET_DATE);
 
 }
@@ -1604,10 +1604,10 @@ TEST(OpenLcbUtilities, broadcast_time_event_type_set_date)
 TEST(OpenLcbUtilities, broadcast_time_event_type_set_year)
 {
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xB000),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xB000),
               BROADCAST_TIME_EVENT_SET_YEAR);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xBFFF),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xBFFF),
               BROADCAST_TIME_EVENT_SET_YEAR);
 
 }
@@ -1615,10 +1615,10 @@ TEST(OpenLcbUtilities, broadcast_time_event_type_set_year)
 TEST(OpenLcbUtilities, broadcast_time_event_type_set_rate)
 {
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xC000),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xC000),
               BROADCAST_TIME_EVENT_SET_RATE);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xCFFF),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xCFFF),
               BROADCAST_TIME_EVENT_SET_RATE);
 
 }
@@ -1626,16 +1626,16 @@ TEST(OpenLcbUtilities, broadcast_time_event_type_set_rate)
 TEST(OpenLcbUtilities, broadcast_time_event_type_commands)
 {
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_QUERY),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_QUERY),
               BROADCAST_TIME_EVENT_QUERY);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_STOP),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_STOP),
               BROADCAST_TIME_EVENT_STOP);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_START),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_START),
               BROADCAST_TIME_EVENT_START);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_DATE_ROLLOVER),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_DATE_ROLLOVER),
               BROADCAST_TIME_EVENT_DATE_ROLLOVER);
 
 }
@@ -1644,14 +1644,14 @@ TEST(OpenLcbUtilities, broadcast_time_event_type_unknown)
 {
 
     // Value in gap between report rate and set time
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x5000),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x5000),
               BROADCAST_TIME_EVENT_UNKNOWN);
 
     // Value in gap between report and set ranges
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x6000),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x6000),
               BROADCAST_TIME_EVENT_UNKNOWN);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x7FFF),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x7FFF),
               BROADCAST_TIME_EVENT_UNKNOWN);
 
 }
@@ -1663,7 +1663,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_time_midnight)
 
     uint8_t hour, minute;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_time(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_time(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000, &hour, &minute));
     EXPECT_EQ(hour, 0);
     EXPECT_EQ(minute, 0);
@@ -1675,7 +1675,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_time_23_59)
 
     uint8_t hour, minute;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_time(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_time(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x173B, &hour, &minute));
     EXPECT_EQ(hour, 23);
     EXPECT_EQ(minute, 59);
@@ -1688,7 +1688,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_time_from_set)
     uint8_t hour, minute;
 
     // Set Time for 14:30 = 0x8000 + 0x0E1E = 0x8E1E
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_time(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_time(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x8E1E, &hour, &minute));
     EXPECT_EQ(hour, 14);
     EXPECT_EQ(minute, 30);
@@ -1700,7 +1700,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_time_null_hour)
 
     uint8_t minute;
 
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_time(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_time(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000, NULL, &minute));
 
 }
@@ -1710,7 +1710,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_time_null_minute)
 
     uint8_t hour;
 
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_time(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_time(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000, &hour, NULL));
 
 }
@@ -1721,7 +1721,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_time_invalid_hour)
     uint8_t hour, minute;
 
     // hour=24 is invalid -> 0x1800
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_time(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_time(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x1800, &hour, &minute));
 
 }
@@ -1732,7 +1732,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_time_invalid_minute)
     uint8_t hour, minute;
 
     // minute=60 is invalid -> 0x003C
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_time(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_time(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x003C, &hour, &minute));
 
 }
@@ -1744,7 +1744,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_date_jan_1)
 
     uint8_t month, day;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_date(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_date(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101, &month, &day));
     EXPECT_EQ(month, 1);
     EXPECT_EQ(day, 1);
@@ -1756,7 +1756,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_date_dec_31)
 
     uint8_t month, day;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_date(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_date(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2C1F, &month, &day));
     EXPECT_EQ(month, 12);
     EXPECT_EQ(day, 31);
@@ -1769,7 +1769,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_date_from_set)
     uint8_t month, day;
 
     // Set Date for Jun 15 = 0x8000 + 0x260F = 0xA60F
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_date(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_date(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xA60F, &month, &day));
     EXPECT_EQ(month, 6);
     EXPECT_EQ(day, 15);
@@ -1781,7 +1781,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_date_null_month)
 
     uint8_t day;
 
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_date(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_date(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101, NULL, &day));
 
 }
@@ -1791,7 +1791,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_date_null_day)
 
     uint8_t month;
 
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_date(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_date(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101, &month, NULL));
 
 }
@@ -1802,7 +1802,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_date_invalid_month_zero)
     uint8_t month, day;
 
     // month=0 -> upper byte 0x20, which means month = 0x20 - 0x20 = 0 (invalid)
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_date(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_date(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2001, &month, &day));
 
 }
@@ -1813,7 +1813,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_date_invalid_month_13)
     uint8_t month, day;
 
     // month=13 -> upper byte 0x2D
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_date(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_date(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2D01, &month, &day));
 
 }
@@ -1824,7 +1824,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_date_invalid_day_zero)
     uint8_t month, day;
 
     // day=0 -> 0x2100
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_date(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_date(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2100, &month, &day));
 
 }
@@ -1836,7 +1836,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_year_zero)
 
     uint16_t year;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_year(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_year(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3000, &year));
     EXPECT_EQ(year, 0);
 
@@ -1847,7 +1847,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_year_2026)
 
     uint16_t year;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_year(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_year(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x37EA, &year));
     EXPECT_EQ(year, 2026);
 
@@ -1858,7 +1858,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_year_4095)
 
     uint16_t year;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_year(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_year(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3FFF, &year));
     EXPECT_EQ(year, 4095);
 
@@ -1870,7 +1870,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_year_from_set)
     uint16_t year;
 
     // Set Year 2026 = 0x8000 + 0x37EA = 0xB7EA
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_year(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_year(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xB7EA, &year));
     EXPECT_EQ(year, 2026);
 
@@ -1879,7 +1879,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_year_from_set)
 TEST(OpenLcbUtilities, broadcast_time_extract_year_null)
 {
 
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_year(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_year(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x37EA, NULL));
 
 }
@@ -1891,7 +1891,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_rate_zero)
 
     int16_t rate;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_rate(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_rate(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4000, &rate));
     EXPECT_EQ(rate, 0);
 
@@ -1903,7 +1903,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_rate_positive)
     int16_t rate;
 
     // Rate 4.00 = 0x0010
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_rate(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_rate(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4010, &rate));
     EXPECT_EQ(rate, 0x0010);
 
@@ -1915,7 +1915,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_rate_negative)
     int16_t rate;
 
     // -1.00 = 12-bit 0xFFC, event = 0x4FFC
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_rate(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_rate(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4FFC, &rate));
     EXPECT_EQ(rate, (int16_t) 0xFFFC);
 
@@ -1927,7 +1927,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_rate_max_positive)
     int16_t rate;
 
     // Max positive 12-bit = 0x7FF
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_rate(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_rate(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x47FF, &rate));
     EXPECT_EQ(rate, 0x07FF);
 
@@ -1939,7 +1939,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_rate_max_negative)
     int16_t rate;
 
     // Min 12-bit = 0x800 -> sign extended = 0xF800
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_rate(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_rate(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4800, &rate));
     EXPECT_EQ(rate, (int16_t) 0xF800);
 
@@ -1951,7 +1951,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_rate_from_set)
     int16_t rate;
 
     // Set Rate 4.00 = 0xC010
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_rate(
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_rate(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xC010, &rate));
     EXPECT_EQ(rate, 0x0010);
 
@@ -1960,7 +1960,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_rate_from_set)
 TEST(OpenLcbUtilities, broadcast_time_extract_rate_null)
 {
 
-    EXPECT_FALSE(ProtocolBroadcastTime_extract_rate(
+    EXPECT_FALSE(ProtocolBroadcastTimeHandler_extract_rate(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4004, NULL));
 
 }
@@ -1970,7 +1970,7 @@ TEST(OpenLcbUtilities, broadcast_time_extract_rate_null)
 TEST(OpenLcbUtilities, broadcast_time_create_time_report)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_time_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_time_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E);
@@ -1980,7 +1980,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_time_report)
 TEST(OpenLcbUtilities, broadcast_time_create_time_set)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_time_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_time_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, true);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x8E1E);
@@ -1990,7 +1990,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_time_set)
 TEST(OpenLcbUtilities, broadcast_time_create_time_midnight)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_time_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_time_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 0, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000);
@@ -2000,7 +2000,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_time_midnight)
 TEST(OpenLcbUtilities, broadcast_time_create_time_23_59)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_time_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_time_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 23, 59, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x173B);
@@ -2010,15 +2010,15 @@ TEST(OpenLcbUtilities, broadcast_time_create_time_23_59)
 TEST(OpenLcbUtilities, broadcast_time_create_time_different_clock)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_time_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_time_event_id(
         BROADCAST_TIME_ID_ALTERNATE_CLOCK_2, 12, 0, false);
 
-    EXPECT_EQ(ProtocolBroadcastTime_extract_clock_id(event_id),
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_extract_clock_id(event_id),
               BROADCAST_TIME_ID_ALTERNATE_CLOCK_2);
 
     uint8_t hour, minute;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_time(event_id, &hour, &minute));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_time(event_id, &hour, &minute));
     EXPECT_EQ(hour, 12);
     EXPECT_EQ(minute, 0);
 
@@ -2029,7 +2029,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_time_different_clock)
 TEST(OpenLcbUtilities, broadcast_time_create_date_report)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_date_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_date_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x260F);
@@ -2039,7 +2039,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_date_report)
 TEST(OpenLcbUtilities, broadcast_time_create_date_set)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_date_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_date_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, true);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xA60F);
@@ -2049,7 +2049,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_date_set)
 TEST(OpenLcbUtilities, broadcast_time_create_date_jan_1)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_date_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_date_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 1, 1, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101);
@@ -2059,7 +2059,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_date_jan_1)
 TEST(OpenLcbUtilities, broadcast_time_create_date_dec_31)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_date_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_date_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 12, 31, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2C1F);
@@ -2071,7 +2071,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_date_dec_31)
 TEST(OpenLcbUtilities, broadcast_time_create_year_report)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_year_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_year_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x37EA);
@@ -2081,7 +2081,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_year_report)
 TEST(OpenLcbUtilities, broadcast_time_create_year_set)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_year_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_year_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, true);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xB7EA);
@@ -2091,7 +2091,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_year_set)
 TEST(OpenLcbUtilities, broadcast_time_create_year_zero)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_year_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_year_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3000);
@@ -2101,7 +2101,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_year_zero)
 TEST(OpenLcbUtilities, broadcast_time_create_year_4095)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_year_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_year_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 4095, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3FFF);
@@ -2113,7 +2113,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_year_4095)
 TEST(OpenLcbUtilities, broadcast_time_create_rate_report_positive)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_rate_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4010);
@@ -2123,7 +2123,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_rate_report_positive)
 TEST(OpenLcbUtilities, broadcast_time_create_rate_set_positive)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_rate_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, true);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xC010);
@@ -2133,7 +2133,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_rate_set_positive)
 TEST(OpenLcbUtilities, broadcast_time_create_rate_negative)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_rate_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, (int16_t) 0xFFFC, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4FFC);
@@ -2143,7 +2143,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_rate_negative)
 TEST(OpenLcbUtilities, broadcast_time_create_rate_zero)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_rate_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, false);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4000);
@@ -2155,7 +2155,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_rate_zero)
 TEST(OpenLcbUtilities, broadcast_time_create_command_query)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_command_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_QUERY);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_QUERY);
@@ -2165,7 +2165,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_command_query)
 TEST(OpenLcbUtilities, broadcast_time_create_command_stop)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_command_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_STOP);
@@ -2175,7 +2175,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_command_stop)
 TEST(OpenLcbUtilities, broadcast_time_create_command_start)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_command_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_START);
@@ -2185,7 +2185,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_command_start)
 TEST(OpenLcbUtilities, broadcast_time_create_command_date_rollover)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_command_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_DATE_ROLLOVER);
@@ -2195,7 +2195,7 @@ TEST(OpenLcbUtilities, broadcast_time_create_command_date_rollover)
 TEST(OpenLcbUtilities, broadcast_time_create_command_invalid_defaults_zero)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_command_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_REPORT_TIME);
 
     EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000);
@@ -2207,14 +2207,14 @@ TEST(OpenLcbUtilities, broadcast_time_create_command_invalid_defaults_zero)
 TEST(OpenLcbUtilities, broadcast_time_roundtrip_time)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_time_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_time_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 23, 59, false);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_TIME);
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_TIME);
 
     uint8_t hour, minute;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_time(event_id, &hour, &minute));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_time(event_id, &hour, &minute));
     EXPECT_EQ(hour, 23);
     EXPECT_EQ(minute, 59);
 
@@ -2223,14 +2223,14 @@ TEST(OpenLcbUtilities, broadcast_time_roundtrip_time)
 TEST(OpenLcbUtilities, broadcast_time_roundtrip_date)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_date_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_date_event_id(
         BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK, 12, 25, false);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_DATE);
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_DATE);
 
     uint8_t month, day;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_date(event_id, &month, &day));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_date(event_id, &month, &day));
     EXPECT_EQ(month, 12);
     EXPECT_EQ(day, 25);
 
@@ -2239,14 +2239,14 @@ TEST(OpenLcbUtilities, broadcast_time_roundtrip_date)
 TEST(OpenLcbUtilities, broadcast_time_roundtrip_year)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_year_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_year_event_id(
         BROADCAST_TIME_ID_ALTERNATE_CLOCK_1, 1955, false);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_YEAR);
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_YEAR);
 
     uint16_t year;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_year(event_id, &year));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_year(event_id, &year));
     EXPECT_EQ(year, 1955);
 
 }
@@ -2254,14 +2254,14 @@ TEST(OpenLcbUtilities, broadcast_time_roundtrip_year)
 TEST(OpenLcbUtilities, broadcast_time_roundtrip_rate_positive)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_rate_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0028, false);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_RATE);
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_RATE);
 
     int16_t rate;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_rate(event_id, &rate));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_rate(event_id, &rate));
     EXPECT_EQ(rate, 0x0028);
 
 }
@@ -2269,14 +2269,14 @@ TEST(OpenLcbUtilities, broadcast_time_roundtrip_rate_positive)
 TEST(OpenLcbUtilities, broadcast_time_roundtrip_rate_negative)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_rate_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, (int16_t) 0xFFF0, false);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_RATE);
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_RATE);
 
     int16_t rate;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_rate(event_id, &rate));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_rate(event_id, &rate));
     EXPECT_EQ(rate, (int16_t) 0xFFF0);
 
 }
@@ -2284,15 +2284,15 @@ TEST(OpenLcbUtilities, broadcast_time_roundtrip_rate_negative)
 TEST(OpenLcbUtilities, broadcast_time_roundtrip_set_time)
 {
 
-    event_id_t event_id = ProtocolBroadcastTime_create_time_event_id(
+    event_id_t event_id = ProtocolBroadcastTimeHandler_create_time_event_id(
         BROADCAST_TIME_ID_ALTERNATE_CLOCK_2, 8, 15, true);
 
-    EXPECT_EQ(ProtocolBroadcastTime_get_event_type(event_id), BROADCAST_TIME_EVENT_SET_TIME);
-    EXPECT_EQ(ProtocolBroadcastTime_extract_clock_id(event_id), BROADCAST_TIME_ID_ALTERNATE_CLOCK_2);
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(event_id), BROADCAST_TIME_EVENT_SET_TIME);
+    EXPECT_EQ(ProtocolBroadcastTimeHandler_extract_clock_id(event_id), BROADCAST_TIME_ID_ALTERNATE_CLOCK_2);
 
     uint8_t hour, minute;
 
-    EXPECT_TRUE(ProtocolBroadcastTime_extract_time(event_id, &hour, &minute));
+    EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_time(event_id, &hour, &minute));
     EXPECT_EQ(hour, 8);
     EXPECT_EQ(minute, 15);
 
@@ -2310,15 +2310,15 @@ TEST(OpenLcbUtilities, broadcast_time_roundtrip_all_clocks)
 
     for (int i = 0; i < 4; i++) {
 
-        event_id_t event_id = ProtocolBroadcastTime_create_time_event_id(clocks[i], 12, 0, false);
+        event_id_t event_id = ProtocolBroadcastTimeHandler_create_time_event_id(clocks[i], 12, 0, false);
 
-        EXPECT_TRUE(ProtocolBroadcastTime_is_time_event(event_id));
-        EXPECT_EQ(ProtocolBroadcastTime_extract_clock_id(event_id), clocks[i]);
-        EXPECT_EQ(ProtocolBroadcastTime_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_TIME);
+        EXPECT_TRUE(ProtocolBroadcastTimeHandler_is_time_event(event_id));
+        EXPECT_EQ(ProtocolBroadcastTimeHandler_extract_clock_id(event_id), clocks[i]);
+        EXPECT_EQ(ProtocolBroadcastTimeHandler_get_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_TIME);
 
         uint8_t hour, minute;
 
-        EXPECT_TRUE(ProtocolBroadcastTime_extract_time(event_id, &hour, &minute));
+        EXPECT_TRUE(ProtocolBroadcastTimeHandler_extract_time(event_id, &hour, &minute));
         EXPECT_EQ(hour, 12);
         EXPECT_EQ(minute, 0);
 

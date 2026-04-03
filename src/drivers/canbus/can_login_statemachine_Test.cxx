@@ -237,7 +237,7 @@ void setup_test(void)
     OpenLcbBufferList_initialize();
     OpenLcbNode_initialize(&interface_openlcb_node);
     
-    CanLoginStateMachine_initialize(&interface_can_login_state_machine);
+    CanLoginStatemachine_initialize(&interface_can_login_state_machine);
 }
 
 /**
@@ -304,7 +304,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_INIT
     info.openlcb_node->state.run_state = RUNSTATE_INIT;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_TRUE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -320,7 +320,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_GENERATE_SEED
     info.openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_TRUE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -336,7 +336,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_GENERATE_ALIAS
     info.openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_TRUE(_state_generate_alias_called);
@@ -352,7 +352,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_LOAD_CHECK_ID_07
     info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_07;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -368,7 +368,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_LOAD_CHECK_ID_06
     info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_06;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -384,7 +384,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_LOAD_CHECK_ID_05
     info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_05;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -400,7 +400,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_LOAD_CHECK_ID_04
     info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_04;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -416,7 +416,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_WAIT_200ms
     info.openlcb_node->state.run_state = RUNSTATE_WAIT_200ms;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -432,7 +432,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_LOAD_RESERVE_ID
     info.openlcb_node->state.run_state = RUNSTATE_LOAD_RESERVE_ID;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -448,7 +448,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_LOAD_ALIAS_MAP_DEFINITION
     info.openlcb_node->state.run_state = RUNSTATE_LOAD_ALIAS_MAP_DEFINITION;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -464,7 +464,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_LOAD_INITIALIZATION_COMPLETE - no handler
     info.openlcb_node->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -479,7 +479,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_LOAD_PRODUCER_EVENTS - no handler
     info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -494,7 +494,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_RUN - no handler
     info.openlcb_node->state.run_state = RUNSTATE_RUN;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -509,7 +509,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test RUNSTATE_LOAD_CONSUMER_EVENTS - no handler
     info.openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -524,7 +524,7 @@ TEST(CanLoginStateMachine, run)
     
     // Test invalid state (31) - no handler should be called
     info.openlcb_node->state.run_state = 31;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_FALSE(_state_init_called);
     EXPECT_FALSE(_state_generate_seed_called);
     EXPECT_FALSE(_state_generate_alias_called);
@@ -558,17 +558,17 @@ TEST(CanLoginStateMachine, sequential_states)
     
     // Simulate full login sequence
     info.openlcb_node->state.run_state = RUNSTATE_INIT;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_TRUE(_state_init_called);
     reset_state_flags();
     
     info.openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_TRUE(_state_generate_seed_called);
     reset_state_flags();
     
     info.openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
-    CanLoginStateMachine_run(&info);
+    CanLoginStatemachine_run(&info);
     EXPECT_TRUE(_state_generate_alias_called);
     reset_state_flags();
     
@@ -578,7 +578,7 @@ TEST(CanLoginStateMachine, sequential_states)
          state++)
     {
         info.openlcb_node->state.run_state = state;
-        CanLoginStateMachine_run(&info);
+        CanLoginStatemachine_run(&info);
         reset_state_flags();
     }
 }
@@ -594,7 +594,7 @@ TEST(CanLoginStateMachine, null_info_pointer)
     
     // Should not crash - implementation should check for NULL
     // (This test documents expected behavior - may need to add NULL check)
-    // CanLoginStateMachine_run(nullptr);
+    // CanLoginStatemachine_run(nullptr);
 }
 
 /*******************************************************************************

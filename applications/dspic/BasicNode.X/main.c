@@ -156,18 +156,18 @@ int main(void)
     BasicNodeDrivers_initialize();
 
     CanConfig_initialize(&can_config);
-    OpenLcb_initialize(&openlcb_config);
+    OpenLcbConfig_initialize(&openlcb_config);
 
     printf("MCU Initialized\n");
 
-    OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
+    OpenLcbConfig_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
     printf("Node Allocated\n");
 
     while (1)
     {
 
-        OpenLcb_run();
+        OpenLcbConfig_run();
 
     }
 

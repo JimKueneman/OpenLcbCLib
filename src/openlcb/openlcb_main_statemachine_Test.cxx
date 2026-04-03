@@ -392,9 +392,9 @@ void _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statema
 // Mock Protocol Handlers - Broadcast Time
 // ============================================================================
 
-void _ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id)
+void _ProtocolBroadcastTimeHandler_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id)
 {
-    _update_called_function_ptr((void *)&_ProtocolBroadcastTime_handle_time_event);
+    _update_called_function_ptr((void *)&_ProtocolBroadcastTimeHandler_handle_time_event);
     broadcast_time_handler_called = true;
 }
 
@@ -829,7 +829,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .stream_data_complete = &_ProtocolStream_data_complete,
 
     // Optional - Broadcast Time
-    .broadcast_time_event_handler = &_ProtocolBroadcastTime_handle_time_event,
+    .broadcast_time_event_handler = &_ProtocolBroadcastTimeHandler_handle_time_event,
 
     // Optional - Train Search & Emergency
     .train_search_event_handler = &_mock_train_search_event_handler,
@@ -837,8 +837,8 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .train_emergency_event_handler = &_mock_train_emergency_event_handler,
 
     // Event Classification Filters
-    .is_broadcast_time_event = &ProtocolBroadcastTime_is_time_event,
-    .is_train_search_event = &ProtocolTrainSearch_is_search_event,
+    .is_broadcast_time_event = &ProtocolBroadcastTimeHandler_is_time_event,
+    .is_train_search_event = &ProtocolTrainSearchHandler_is_search_event,
     .is_emergency_event = &ProtocolTrainHandler_is_emergency_event
 };
 

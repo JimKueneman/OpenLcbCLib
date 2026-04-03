@@ -61,12 +61,12 @@ void setup()
     Esp32Drivers_initialize();
 
     CanConfig_initialize(&can_config);
-    OpenLcb_initialize(&openlcb_config);
+    OpenLcbConfig_initialize(&openlcb_config);
 
     CallbacksOlcb_initialize();
 
     Serial.println("Creating Node.....");
-    OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
+    OpenLcbConfig_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
     Serial.println("Logging into Network..");
     WiFiTools_log_events(true);
@@ -84,7 +84,7 @@ void loop()
         if (WiFiTools_is_connected_to_server())
         {
 
-            OpenLcb_run();
+            OpenLcbConfig_run();
         } else {
 
             delayMicroseconds(SERVER_CONNECT_RETRY_TIME_MICROSECONDS);

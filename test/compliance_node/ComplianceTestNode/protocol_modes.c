@@ -55,7 +55,7 @@
 static openlcb_node_t *virtual_train_pool[VIRTUAL_TRAIN_COUNT];
 
 // =============================================================================
-// Setup functions — called after OpenLcb_create_node()
+// Setup functions — called after OpenLcbConfig_create_node()
 // =============================================================================
 
 static void setup_basic(openlcb_node_t *node) {
@@ -91,7 +91,7 @@ static void setup_train(openlcb_node_t *node) {
     // Pre-allocate virtual train nodes for dynamic search allocation
     for (int i = 0; i < VIRTUAL_TRAIN_COUNT; i++) {
         node_id_t virtual_id = node->id + 1 + i;
-        virtual_train_pool[i] = OpenLcb_create_node(virtual_id, node->parameters);
+        virtual_train_pool[i] = OpenLcbConfig_create_node(virtual_id, node->parameters);
         if (virtual_train_pool[i]) {
             OpenLcbApplicationTrain_setup(virtual_train_pool[i]);
             // Leave dcc_address at 0 — assigned on search allocation
@@ -165,5 +165,6 @@ void ProtocolModes_print_usage(void) {
     for (int i = 0; protocol_modes[i].flag != NULL; i++) {
         printf("  %-30s  %s\n", protocol_modes[i].flag, protocol_modes[i].name);
     }
-    printf("\nDefault: %s\n", protocol_modes[0].name);
+    printf("\nStream support is controlled at compile time via -DOPENLCB_COMPILE_STREAM\n");
+    printf("Default: %s\n", protocol_modes[0].name);
 }

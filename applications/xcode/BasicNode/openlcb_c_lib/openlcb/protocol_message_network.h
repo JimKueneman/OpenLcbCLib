@@ -37,8 +37,10 @@
 * @see MessageNetworkS.pdf
 */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_MESSAGE_NETWORK__
-#define    __OPENLCB_PROTOCOL_MESSAGE_NETWORK__
+#define __OPENLCB_PROTOCOL_MESSAGE_NETWORK__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -68,7 +70,7 @@ typedef struct {
 
 } interface_openlcb_protocol_message_network_t;
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -152,9 +154,9 @@ extern "C" {
          */
     extern void ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_statemachine_info_t *statemachine_info);
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
 
-#endif    /* __OPENLCB_PROTOCOL_MESSAGE_NETWORK__ */
+#endif /* __OPENLCB_PROTOCOL_MESSAGE_NETWORK__ */

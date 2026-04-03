@@ -87,17 +87,17 @@ void setup()
   Esp32Drivers_initialize();
 
   CanConfig_initialize(&can_config);
-  OpenLcb_initialize(&openlcb_config);
+  OpenLcbConfig_initialize(&openlcb_config);
 
   CallbacksOlcb_initialize();
 
   Serial.println("Creating Node.....");
 
-  OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
+  OpenLcbConfig_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 }
 
 void loop()
 {
   // put your main code here, to run repeatedly
-  OpenLcb_run();
+  OpenLcbConfig_run();
 }

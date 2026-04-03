@@ -58,7 +58,7 @@ void IRAM_ATTR Timer0_ISR()
 {
   _is_100ms_timer_running = true;
 
-  OpenLcb_100ms_timer_tick();
+  OpenLcbConfig_100ms_timer_tick();
 }
 
 bool Esp32Drivers_100ms_running()

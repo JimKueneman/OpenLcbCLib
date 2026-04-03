@@ -28,13 +28,13 @@
  * @brief Test suite for openlcb_config.c — library initialization and wiring.
  *
  * @details Exercises the public API of openlcb_config.c to achieve 100% line
- * coverage of every _build_* function (via OpenLcb_initialize with all features
- * compiled in), _run_periodic_services (via OpenLcb_run), and each public
+ * coverage of every _build_* function (via OpenLcbConfig_initialize with all features
+ * compiled in), _run_periodic_services (via OpenLcbConfig_run), and each public
  * function.
  *
- * Because CanMainStateMachine_run() dereferences its interface immediately,
+ * Because CanMainStatemachine_run() dereferences its interface immediately,
  * CanMainStatemachine_initialize() must be called with a mock interface before
- * OpenLcb_run() is safe. _global_initialize() handles both.
+ * OpenLcbConfig_run() is safe. _global_initialize() handles both.
  *
  * Test Categories:
  *   1. Initialization (2 tests)
@@ -43,11 +43,11 @@
  *   4. Run (1 test)
  *
  * Coverage:
- *   - OpenLcb_initialize:            100%
- *   - OpenLcb_create_node:           100%
- *   - OpenLcb_100ms_timer_tick:      100%
- *   - OpenLcb_get_global_100ms_tick: 100%
- *   - OpenLcb_run:                   100%
+ *   - OpenLcbConfig_initialize:            100%
+ *   - OpenLcbConfig_create_node:           100%
+ *   - OpenLcbConfig_100ms_timer_tick:      100%
+ *   - OpenLcbConfig_get_global_100ms_tick: 100%
+ *   - OpenLcbConfig_run:                   100%
  *   - _run_periodic_services:        100%
  *   - All _build_* functions:        100%
  *
@@ -191,7 +191,7 @@ static const node_parameters_t _node_params = {
 static void _global_initialize(void) {
 
     CanMainStatemachine_initialize(&_can_interface);
-    OpenLcb_initialize(&_config);
+    OpenLcbConfig_initialize(&_config);
 
 }
 
@@ -209,7 +209,7 @@ TEST(OpenLcbConfig, initialize_does_not_crash) {
 TEST(OpenLcbConfig, get_tick_returns_valid_uint8) {
 
     _global_initialize();
-    uint8_t tick = OpenLcb_get_global_100ms_tick();
+    uint8_t tick = OpenLcbConfig_get_global_100ms_tick();
     EXPECT_LE(tick, 255u);
 
 }
@@ -221,7 +221,7 @@ TEST(OpenLcbConfig, get_tick_returns_valid_uint8) {
 TEST(OpenLcbConfig, create_node_returns_valid_node) {
 
     _global_initialize();
-    openlcb_node_t *node = OpenLcb_create_node(0x050101010101ULL, &_node_params);
+    openlcb_node_t *node = OpenLcbConfig_create_node(0x050101010101ULL, &_node_params);
     EXPECT_NE(node, nullptr);
 
 }
@@ -232,11 +232,11 @@ TEST(OpenLcbConfig, create_node_exhausted_returns_null) {
 
     for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
-        OpenLcb_create_node(0x050101010100ULL + i, &_node_params);
+        OpenLcbConfig_create_node(0x050101010100ULL + i, &_node_params);
 
     }
 
-    openlcb_node_t *overflow = OpenLcb_create_node(0x050101010200ULL, &_node_params);
+    openlcb_node_t *overflow = OpenLcbConfig_create_node(0x050101010200ULL, &_node_params);
     EXPECT_EQ(overflow, nullptr);
 
 }
@@ -248,24 +248,24 @@ TEST(OpenLcbConfig, create_node_exhausted_returns_null) {
 TEST(OpenLcbConfig, timer_tick_increments_counter) {
 
     _global_initialize();
-    uint8_t before = OpenLcb_get_global_100ms_tick();
-    OpenLcb_100ms_timer_tick();
-    EXPECT_EQ(OpenLcb_get_global_100ms_tick(), (uint8_t)(before + 1));
+    uint8_t before = OpenLcbConfig_get_global_100ms_tick();
+    OpenLcbConfig_100ms_timer_tick();
+    EXPECT_EQ(OpenLcbConfig_get_global_100ms_tick(), (uint8_t)(before + 1));
 
 }
 
 TEST(OpenLcbConfig, timer_tick_wraps_at_256) {
 
     _global_initialize();
-    uint8_t start = OpenLcb_get_global_100ms_tick();
+    uint8_t start = OpenLcbConfig_get_global_100ms_tick();
 
     for (int i = 0; i < 256; i++) {
 
-        OpenLcb_100ms_timer_tick();
+        OpenLcbConfig_100ms_timer_tick();
 
     }
 
-    EXPECT_EQ(OpenLcb_get_global_100ms_tick(), start);
+    EXPECT_EQ(OpenLcbConfig_get_global_100ms_tick(), start);
 
 }
 
@@ -276,7 +276,7 @@ TEST(OpenLcbConfig, timer_tick_wraps_at_256) {
 TEST(OpenLcbConfig, run_does_not_crash) {
 
     _global_initialize();
-    OpenLcb_run();
+    OpenLcbConfig_run();
     SUCCEED();
 
 }

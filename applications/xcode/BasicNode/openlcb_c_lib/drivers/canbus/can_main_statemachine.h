@@ -25,7 +25,7 @@
  *
  * @details Coordinates duplicate alias detection, outgoing message transmission, login
  * sequencing, and round-robin node enumeration across all virtual nodes.
- * Non-blocking: call CanMainStateMachine_run() as fast as possible in the main loop.
+ * Non-blocking: call CanMainStatemachine_run() as fast as possible in the main loop.
  *
  * @author Jim Kueneman
  * @date 8 Mar 2026
@@ -49,7 +49,7 @@ extern "C" {
      * @brief Dependency-injection interface for the CAN main state machine.
      *
      * @details All pointers are REQUIRED (must not be NULL).
-     * Each call to CanMainStateMachine_run() processes one operation in priority order:
+     * Each call to CanMainStatemachine_run() processes one operation in priority order:
      * duplicate aliases → outgoing CAN message → login message → first node → next node.
      *
      * @see CanMainStatemachine_initialize
@@ -74,7 +74,7 @@ extern "C" {
         /** @brief REQUIRED. Find a node by its 12-bit CAN alias. Typical: OpenLcbNode_find_by_alias. */
         openlcb_node_t *(*openlcb_node_find_by_alias)(uint16_t alias);
 
-        /** @brief REQUIRED. Advance the login state machine one step. Typical: CanLoginStateMachine_run. */
+        /** @brief REQUIRED. Advance the login state machine one step. Typical: CanLoginStatemachine_run. */
         void (*login_statemachine_run)(can_statemachine_info_t *can_statemachine_info);
 
         /** @brief REQUIRED. Return pointer to the alias mapping table. Typical: AliasMappings_get_alias_mapping_info. */
@@ -83,7 +83,7 @@ extern "C" {
         /** @brief REQUIRED. Remove an alias from the mapping table. Typical: AliasMappings_unregister. */
         void (*alias_mapping_unregister)(uint16_t alias);
 
-        /** @brief REQUIRED. Return the current value of the global 100ms tick counter. Typical: OpenLcb_get_global_100ms_tick. */
+        /** @brief REQUIRED. Return the current value of the global 100ms tick counter. Typical: OpenLcbConfig_get_global_100ms_tick. */
         uint8_t (*get_current_tick)(void);
 
         /** @brief REQUIRED. Scan and resolve all duplicate aliases. Typical: CanMainStatemachine_handle_duplicate_aliases. */
@@ -104,13 +104,13 @@ extern "C" {
         /** @brief OPTIONAL. Probe one listener alias for staleness. NULL if unused. Typical: CanMainStatemachine_handle_listener_verification. */
         bool (*handle_listener_verification)(void);
 
-        /** @brief OPTIONAL. Check one listener entry for alias staleness (round-robin). NULL if train support not compiled. Typical: ListenerAliasTable_check_one_verification. */
+        /** @brief OPTIONAL. Check one listener entry for alias staleness (round-robin). NULL if train support not compiled. Typical: AliasMappingListener_check_one_verification. */
         node_id_t (*listener_check_one_verification)(uint8_t current_tick);
 
-        /** @brief OPTIONAL. Flush all cached listener aliases. NULL if train support not compiled. Typical: ListenerAliasTable_flush_aliases. */
+        /** @brief OPTIONAL. Flush all cached listener aliases. NULL if train support not compiled. Typical: AliasMappingListener_flush_aliases. */
         void (*listener_flush_aliases)(void);
 
-        /** @brief OPTIONAL. Set alias for a node_id in the listener table. NULL if train support not compiled. Typical: ListenerAliasTable_set_alias. */
+        /** @brief OPTIONAL. Set alias for a node_id in the listener table. NULL if train support not compiled. Typical: AliasMappingListener_set_alias. */
         void (*listener_set_alias)(node_id_t node_id, uint16_t alias);
 
     } interface_can_main_statemachine_t;
@@ -120,7 +120,7 @@ extern "C" {
      * @brief Registers the dependency-injection interface and prepares internal buffers.
      *
      * @details Must be called once at startup, after CanBufferStore_initialize(),
-     * CanBufferFifo_initialize(), and CanLoginStateMachine_initialize(), and before
+     * CanBufferFifo_initialize(), and CanLoginStatemachine_initialize(), and before
      * CAN reception begins.
      *
      * @param interface_can_main_statemachine Pointer to a fully populated
@@ -129,7 +129,7 @@ extern "C" {
      *
      * @warning NOT thread-safe - call during single-threaded initialization only.
      *
-     * @see CanMainStateMachine_run
+     * @see CanMainStatemachine_run
      */
     extern void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine);
 
@@ -145,7 +145,7 @@ extern "C" {
      *
      * @see CanMainStatemachine_initialize - must be called first
      */
-    extern void CanMainStateMachine_run(void);
+    extern void CanMainStatemachine_run(void);
 
 
     /**
@@ -158,7 +158,7 @@ extern "C" {
      * @warning Do not modify the returned structure.
      * @warning NOT thread-safe.
      */
-    extern can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void);
+    extern can_statemachine_info_t *CanMainStatemachine_get_can_statemachine_info(void);
 
 
     /**

@@ -38,8 +38,10 @@
      * @see MemoryConfigurationS.pdf
      */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_CONFIG_MEM_WRITE_HANDLER__
-#define    __OPENLCB_PROTOCOL_CONFIG_MEM_WRITE_HANDLER__
+#define __OPENLCB_PROTOCOL_CONFIG_MEM_WRITE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -64,44 +66,44 @@ typedef struct {
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
 
         /** @brief REQUIRED — Write bytes to config memory; returns bytes written. */
-    uint16_t(*config_memory_write) (openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    uint16_t(*config_memory_write) (openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
         /** @brief OPTIONAL — Read bytes from config memory; needed for write-under-mask read-modify-write. */
-    uint16_t(*config_memory_read) (openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    uint16_t(*config_memory_read) (openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
     // ---- Optional per-space write handlers ----
 
         /** @brief Optional — CDI (0xFF) write handler (normally read-only). */
-    void (*write_request_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    void (*write_request_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
         /** @brief Optional — All (0xFE) write handler. */
-    void (*write_request_all)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    void (*write_request_all)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
         /** @brief Optional — Config (0xFD) write handler. */
-    void (*write_request_config_mem)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    void (*write_request_config_mem)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
         /** @brief Optional — ACDI-Mfg (0xFC) write handler (normally read-only). */
-    void (*write_request_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    void (*write_request_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
         /** @brief Optional — ACDI-User (0xFB) write handler. */
-    void (*write_request_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    void (*write_request_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
         /** @brief Optional — Train FDI (0xFA) write handler (normally read-only). */
-    void (*write_request_train_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    void (*write_request_train_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
         /** @brief Optional — Train Fn Config (0xF9) write handler. */
-    void (*write_request_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    void (*write_request_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
         /** @brief Optional — Firmware (0xEF) write handler (receives write_result completion callback). */
-    void (*write_request_firmware)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info, write_result_t write_result);
+    void (*write_request_firmware)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result);
 
     // ---- Optional extras ----
 
         /** @brief Optional — Override reply delay (return N → 2^N seconds).  Default 0. */
-    uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
         /** @brief Optional — Notifier fired when a train function changes via 0xF9 write. */
     void (*on_function_changed)(openlcb_node_t *openlcb_node, uint32_t fn_address, uint16_t fn_value);
 
         /** @brief Optional — Returns train state for the given node (DI for train module). */
-    train_state_t* (*get_train_state)(openlcb_node_t *openlcb_node);
+    train_state_t *(*get_train_state)(openlcb_node_t *openlcb_node);
 
 } interface_protocol_config_mem_write_handler_t;
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -283,8 +285,8 @@ extern "C" {
     extern void ProtocolConfigMemWriteHandler_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
 
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif    /* __OPENLCB_PROTOCOL_CONFIG_MEM_WRITE_HANDLER__ */
+#endif /* __OPENLCB_PROTOCOL_CONFIG_MEM_WRITE_HANDLER__ */

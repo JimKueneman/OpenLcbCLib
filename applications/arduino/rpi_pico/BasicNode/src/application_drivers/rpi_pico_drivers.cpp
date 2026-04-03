@@ -56,7 +56,7 @@ struct repeating_timer timer;
 
 bool timer_task_or_interrupt(__unused struct repeating_timer *timer) {
 
-  OpenLcb_100ms_timer_tick();
+  OpenLcbConfig_100ms_timer_tick();
 
   return true;
 }

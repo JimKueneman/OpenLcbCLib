@@ -87,13 +87,13 @@ int main(void)
   TI_DriverLibDrivers_initialize();
 
   CanConfig_initialize(&can_config);
-  OpenLcb_initialize(&openlcb_config);
+  OpenLcbConfig_initialize(&openlcb_config);
 
   CallbacksOlcb_initialize();
 
   printf("Booted\n");
 
-  OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
+  OpenLcbConfig_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
   while (1)
   {
@@ -102,6 +102,6 @@ int main(void)
 
   //   delay_cycles(DELAY_TIME);
 
-    OpenLcb_run();
+    OpenLcbConfig_run();
   }
 }

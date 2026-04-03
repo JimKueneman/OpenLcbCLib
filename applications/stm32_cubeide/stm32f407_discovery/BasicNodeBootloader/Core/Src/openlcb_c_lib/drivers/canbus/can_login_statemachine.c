@@ -53,7 +53,7 @@
 static interface_can_login_state_machine_t *_interface;
 
     /** @brief Stores the dependency-injection interface pointer. */
-void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine) {
+void CanLoginStatemachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine) {
 
     _interface = (interface_can_login_state_machine_t *) interface_can_login_state_machine;
 
@@ -66,7 +66,7 @@ void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *
      * @param can_statemachine_info State machine context (node + login frame buffer).
      * @endverbatim
      */
-void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginStatemachine_run(can_statemachine_info_t *can_statemachine_info) {
 
     switch (can_statemachine_info->openlcb_node->state.run_state) {
 

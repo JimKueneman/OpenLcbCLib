@@ -43,6 +43,8 @@
  * @see openlcb_utilities.h - General message utility functions
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_TRAIN_SEARCH_HANDLER__
 #define __OPENLCB_PROTOCOL_TRAIN_SEARCH_HANDLER__
 
@@ -69,14 +71,14 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
         /**
          * @brief Initializes the Train Search Protocol handler.
          *
          * @param interface  Pointer to @ref interface_protocol_train_search_handler_t callbacks (may be NULL).
          */
-    extern void ProtocolTrainSearch_initialize(const interface_protocol_train_search_handler_t *interface);
+    extern void ProtocolTrainSearchHandler_initialize(const interface_protocol_train_search_handler_t *interface);
 
         /**
          * @brief Handles incoming train search events.
@@ -88,7 +90,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
          */
-    extern void ProtocolTrainSearch_handle_search_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+    extern void ProtocolTrainSearchHandler_handle_search_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
         /**
          * @brief Handles the no-match case after full train search enumeration.
@@ -99,7 +101,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
          */
-    extern void ProtocolTrainSearch_handle_search_no_match(
+    extern void ProtocolTrainSearchHandler_handle_search_no_match(
             openlcb_statemachine_info_t *statemachine_info,
             event_id_t event_id);
 
@@ -118,7 +120,7 @@ extern "C" {
          *
          * @return true if the event ID is a train search event.
          */
-    extern bool ProtocolTrainSearch_is_search_event(event_id_t event_id);
+    extern bool ProtocolTrainSearchHandler_is_search_event(event_id_t event_id);
 
         /**
          * @brief Extracts 6 search-query nibbles from a train search event ID into digits[].
@@ -126,7 +128,7 @@ extern "C" {
          * @param event_id Train search @ref event_id_t to decode.
          * @param digits   Pointer to a 6-element uint8_t array that receives the nibble values.
          */
-    extern void ProtocolTrainSearch_extract_digits(event_id_t event_id, uint8_t *digits);
+    extern void ProtocolTrainSearchHandler_extract_digits(event_id_t event_id, uint8_t *digits);
 
         /**
          * @brief Extracts the flags byte (byte 7) from a train search event ID.
@@ -135,7 +137,7 @@ extern "C" {
          *
          * @return Flags byte from the lowest byte of the event ID.
          */
-    extern uint8_t ProtocolTrainSearch_extract_flags(event_id_t event_id);
+    extern uint8_t ProtocolTrainSearchHandler_extract_flags(event_id_t event_id);
 
         /**
          * @brief Converts a 6-nibble digit array to a numeric DCC address, skipping leading 0xF nibbles.
@@ -144,7 +146,7 @@ extern "C" {
          *
          * @return Numeric DCC address decoded from the digit array.
          */
-    extern uint16_t ProtocolTrainSearch_digits_to_address(const uint8_t *digits);
+    extern uint16_t ProtocolTrainSearchHandler_digits_to_address(const uint8_t *digits);
 
         /**
          * @brief Creates a train search event ID from a DCC address and flags byte.
@@ -154,10 +156,10 @@ extern "C" {
          *
          * @return Encoded @ref event_id_t for the train search query.
          */
-    extern event_id_t ProtocolTrainSearch_create_event_id(uint16_t address, uint8_t flags);
+    extern event_id_t ProtocolTrainSearchHandler_create_event_id(uint16_t address, uint8_t flags);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* __OPENLCB_PROTOCOL_TRAIN_SEARCH_HANDLER__ */

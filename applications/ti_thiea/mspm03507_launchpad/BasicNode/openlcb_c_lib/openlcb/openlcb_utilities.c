@@ -85,7 +85,7 @@ uint16_t OpenLcbUtilities_payload_type_to_len(payload_type_enum payload_type) {
 }
 
     /** @brief Returns the byte offset into global config memory where this node's space begins. */
-uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node_t* openlcb_node) {
+uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node_t *openlcb_node) {
 
     uint32_t offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address;
 
@@ -100,7 +100,7 @@ uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node_t
 }
 
     /** @brief Loads message header fields and clears the payload to zeros. */
-void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti) {
+void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t *openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti) {
 
     openlcb_msg->dest_alias = dest_alias;
     openlcb_msg->dest_id = dest_id;
@@ -114,20 +114,20 @@ void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t 
 
     for (int i = 0; i < data_count; i++) {
 
-    *openlcb_msg->payload[i] = 0x00;
+        *openlcb_msg->payload[i] = 0x00;
 
     }
 
 }
 
     /** @brief Zeros all payload bytes and resets payload_count. Header preserved. */
-void OpenLcbUtilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg) {
+void OpenLcbUtilities_clear_openlcb_message_payload(openlcb_msg_t *openlcb_msg) {
 
     uint16_t data_len = OpenLcbUtilities_payload_type_to_len(openlcb_msg->payload_type);
 
     for (int i = 0; i < data_len; i++) {
 
-    *openlcb_msg->payload[i] = 0;
+        *openlcb_msg->payload[i] = 0;
 
     }
 
@@ -157,11 +157,11 @@ void OpenLcbUtilities_clear_openlcb_message(openlcb_msg_t *openlcb_msg) {
 // =============================================================================
 
     /** @brief Copies an 8-byte event ID to payload at offset 0. */
-void OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, event_id_t event_id) {
+void OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg_t *openlcb_msg, event_id_t event_id) {
 
     for (int i = 7; i >= 0; i--) {
 
-    *openlcb_msg->payload[i] = event_id & 0xFF;
+        *openlcb_msg->payload[i] = event_id & 0xFF;
         openlcb_msg->payload_count++;
         event_id = event_id >> 8;
 
@@ -172,7 +172,7 @@ void OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_ms
 }
 
     /** @brief Copies one byte to payload at the given offset. */
-void OpenLcbUtilities_copy_byte_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint8_t byte, uint16_t offset) {
+void OpenLcbUtilities_copy_byte_to_openlcb_payload(openlcb_msg_t *openlcb_msg, uint8_t byte, uint16_t offset) {
 
     *openlcb_msg->payload[offset] = byte;
 
@@ -181,7 +181,7 @@ void OpenLcbUtilities_copy_byte_to_openlcb_payload(openlcb_msg_t* openlcb_msg, u
 }
 
     /** @brief Copies a 16-bit word (big-endian) to payload at the given offset. */
-void OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_t word, uint16_t offset) {
+void OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t word, uint16_t offset) {
 
     *openlcb_msg->payload[0 + offset] = (uint8_t) ((word >> 8) & 0xFF);
     *openlcb_msg->payload[1 + offset] = (uint8_t) (word & 0xFF);
@@ -191,7 +191,7 @@ void OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg_t* openlcb_msg, u
 }
 
     /** @brief Copies a 32-bit doubleword (big-endian) to payload at the given offset. */
-void OpenLcbUtilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint32_t doubleword, uint16_t offset) {
+void OpenLcbUtilities_copy_dword_to_openlcb_payload(openlcb_msg_t *openlcb_msg, uint32_t doubleword, uint16_t offset) {
 
     *openlcb_msg->payload[0 + offset] = (uint8_t) ((doubleword >> 24) & 0xFF);
     *openlcb_msg->payload[1 + offset] = (uint8_t) ((doubleword >> 16) & 0xFF);
@@ -208,7 +208,7 @@ void OpenLcbUtilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, 
      * @details Truncates if payload space is insufficient but always adds a
      * null terminator.
      */
-uint16_t OpenLcbUtilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const char string[], uint16_t offset) {
+uint16_t OpenLcbUtilities_copy_string_to_openlcb_payload(openlcb_msg_t *openlcb_msg, const char string[], uint16_t offset) {
 
     uint16_t counter = 0;
     uint16_t payload_len = 0;
@@ -219,7 +219,7 @@ uint16_t OpenLcbUtilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_
 
         if ((counter + offset) < payload_len - 1) {
 
-    *openlcb_msg->payload[counter + offset] = (uint8_t) string[counter];
+            *openlcb_msg->payload[counter + offset] = (uint8_t) string[counter];
             openlcb_msg->payload_count++;
             counter++;
 
@@ -240,7 +240,7 @@ uint16_t OpenLcbUtilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_
 }
 
     /** @brief Copies a byte array into the payload. May copy fewer bytes if payload space is exhausted. */
-uint16_t OpenLcbUtilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const uint8_t byte_array[], uint16_t offset, uint16_t requested_bytes) {
+uint16_t OpenLcbUtilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t *openlcb_msg, const uint8_t byte_array[], uint16_t offset, uint16_t requested_bytes) {
 
     uint16_t counter = 0;
     uint16_t payload_len = 0;
@@ -251,7 +251,7 @@ uint16_t OpenLcbUtilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* open
 
         if ((i + offset) < payload_len) {
 
-    *openlcb_msg->payload[i + offset] = byte_array[i];
+            *openlcb_msg->payload[i + offset] = byte_array[i];
             openlcb_msg->payload_count++;
             counter++;
 
@@ -268,11 +268,11 @@ uint16_t OpenLcbUtilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* open
 }
 
     /** @brief Copies a 6-byte node ID (big-endian) to payload at the given offset. */
-void OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_id_t node_id, uint16_t offset) {
+void OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg_t *openlcb_msg, node_id_t node_id, uint16_t offset) {
 
     for (int i = 5; i >= 0; i--) {
 
-    *openlcb_msg->payload[(uint16_t) i + offset] = node_id & 0xFF;
+        *openlcb_msg->payload[(uint16_t) i + offset] = node_id & 0xFF;
         openlcb_msg->payload_count++;
         node_id = node_id >> 8;
 
@@ -285,7 +285,7 @@ void OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg
 // =============================================================================
 
     /** @brief Extracts a 6-byte node ID from payload at the given offset. */
-node_id_t OpenLcbUtilities_extract_node_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_t offset) {
+node_id_t OpenLcbUtilities_extract_node_id_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t offset) {
 
     return (
             ((uint64_t) * openlcb_msg->payload[0 + offset] << 40) |
@@ -299,7 +299,7 @@ node_id_t OpenLcbUtilities_extract_node_id_from_openlcb_payload(openlcb_msg_t* o
 }
 
     /** @brief Extracts an 8-byte event ID from payload at offset 0. */
-event_id_t OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg) {
+event_id_t OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg_t *openlcb_msg) {
 
     return (
             ((uint64_t) * openlcb_msg->payload[0] << 56) |
@@ -315,14 +315,14 @@ event_id_t OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg_t*
 }
 
     /** @brief Extracts one byte from payload at the given offset. */
-uint8_t OpenLcbUtilities_extract_byte_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_t offset) {
+uint8_t OpenLcbUtilities_extract_byte_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t offset) {
 
     return (*openlcb_msg->payload[offset]);
 
 }
 
     /** @brief Extracts a 16-bit word (big-endian) from payload at the given offset. */
-uint16_t OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_t offset) {
+uint16_t OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t offset) {
 
     return (
             ((uint16_t) * openlcb_msg->payload[0 + offset] << 8) |
@@ -332,7 +332,7 @@ uint16_t OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg_t* openl
 }
 
     /** @brief Extracts a 32-bit doubleword (big-endian) from payload at the given offset. */
-uint32_t OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_t offset) {
+uint32_t OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t offset) {
 
     return (
             ((uint32_t) * openlcb_msg->payload[0 + offset] << 24) |
@@ -348,7 +348,7 @@ uint32_t OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg_t* open
 // =============================================================================
 
     /** @brief Sets the multi-frame control flag in the upper nibble of target, preserving the lower nibble. */
-void OpenLcbUtilities_set_multi_frame_flag(uint8_t* target, uint8_t flag) {
+void OpenLcbUtilities_set_multi_frame_flag(uint8_t *target, uint8_t flag) {
 
     *target = *target & 0x0F;
 
@@ -357,14 +357,14 @@ void OpenLcbUtilities_set_multi_frame_flag(uint8_t* target, uint8_t flag) {
 }
 
     /** @brief Returns true if the MTI has the destination-address-present bit set. */
-bool OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg_t* openlcb_msg) {
+bool OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg_t *openlcb_msg) {
 
     return ((openlcb_msg->mti & MASK_DEST_ADDRESS_PRESENT) == MASK_DEST_ADDRESS_PRESENT);
 
 }
 
     /** @brief Returns the count of null bytes (0x00) in the payload. Used for SNIP validation. */
-uint8_t OpenLcbUtilities_count_nulls_in_openlcb_payload(openlcb_msg_t* openlcb_msg) {
+uint8_t OpenLcbUtilities_count_nulls_in_openlcb_payload(openlcb_msg_t *openlcb_msg) {
 
     uint8_t count = 0;
 
@@ -383,7 +383,7 @@ uint8_t OpenLcbUtilities_count_nulls_in_openlcb_payload(openlcb_msg_t* openlcb_m
 }
 
     /** @brief Returns true if the message destination matches this node's alias or ID. */
-bool OpenLcbUtilities_is_addressed_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+bool OpenLcbUtilities_is_addressed_message_for_node(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg) {
 
     if ((openlcb_node->alias == openlcb_msg->dest_alias) || (openlcb_node->id == openlcb_msg->dest_id)) {
 
@@ -402,7 +402,7 @@ bool OpenLcbUtilities_is_addressed_message_for_node(openlcb_node_t* openlcb_node
 // =============================================================================
 
     /** @brief Searches the node's producer list for a matching event ID. */
-bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, event_id_t event_id, uint16_t *event_index) {
+bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t *openlcb_node, event_id_t event_id, uint16_t *event_index) {
 
     for (int i = 0; i < openlcb_node->producers.count; i++) {
 
@@ -421,7 +421,7 @@ bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb
 }
 
     /** @brief Searches the node's consumer list for a matching event ID. */
-bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, event_id_t event_id, uint16_t* event_index) {
+bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t *openlcb_node, event_id_t event_id, uint16_t *event_index) {
 
     for (int i = 0; i < openlcb_node->consumers.count; i++) {
 
@@ -482,7 +482,6 @@ void OpenLcbUtilities_copy_node_id_to_config_mem_buffer(configuration_memory_buf
     /** @brief Copies an 8-byte event ID into a config memory buffer at the given index. */
 void OpenLcbUtilities_copy_event_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, event_id_t event_id, uint8_t index) {
 
-
     for (int i = 7; i >= 0; i--) {
 
         (*buffer)[i + index] = event_id & 0xFF;
@@ -494,7 +493,6 @@ void OpenLcbUtilities_copy_event_id_to_config_mem_buffer(configuration_memory_bu
 
     /** @brief Extracts an 8-byte event ID from a config memory buffer at the given index. */
 event_id_t OpenLcbUtilities_copy_config_mem_buffer_to_event_id(configuration_memory_buffer_t *buffer, uint8_t index) {
-
 
     event_id_t retval = 0L;
 

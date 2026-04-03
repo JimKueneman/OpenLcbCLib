@@ -554,20 +554,17 @@ void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info
     */
 void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info_t *statemachine_info) {
 
-
     if (!statemachine_info) {
 
         return;
 
     }
 
-
     if (!_interface->does_node_process_msg(statemachine_info)) {
 
         return;
 
     }
-
 
     switch (statemachine_info->incoming_msg_info.msg_ptr->mti) {
 

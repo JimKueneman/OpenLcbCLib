@@ -88,7 +88,7 @@ void ProtocolSnip_initialize(const interface_openlcb_protocol_snip_t *interface_
      * @param max_str_len      Buffer size limit (includes null).
      * @param byte_count       Max bytes the caller wants written.
      */
-static void _process_snip_string(openlcb_msg_t* outgoing_msg, uint16_t *payload_offset, const char *str, uint16_t max_str_len, uint16_t byte_count) {
+static void _process_snip_string(openlcb_msg_t *outgoing_msg, uint16_t *payload_offset, const char *str, uint16_t max_str_len, uint16_t byte_count) {
 
     bool result_is_null_terminated = false;
     uint16_t string_length = strlen(str);
@@ -137,7 +137,7 @@ static void _process_snip_string(openlcb_msg_t* outgoing_msg, uint16_t *payload_
      *
      * @return Updated offset.
      */
-static uint16_t _process_snip_version(openlcb_msg_t* outgoing_msg, uint16_t *payload_data_offset, const uint8_t version) {
+static uint16_t _process_snip_version(openlcb_msg_t *outgoing_msg, uint16_t *payload_data_offset, const uint8_t version) {
 
     *outgoing_msg->payload[*payload_data_offset] = version;
     outgoing_msg->payload_count++;
@@ -148,7 +148,7 @@ static uint16_t _process_snip_version(openlcb_msg_t* outgoing_msg, uint16_t *pay
 }
 
     /** @brief Copy mfg version byte into payload.  Returns updated offset. */
-uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     if (requested_bytes > 0) {
 
@@ -161,7 +161,7 @@ uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node,
 }
 
     /** @brief Copy manufacturer name string into payload.  Returns updated offset. */
-uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_name(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     _process_snip_string(outgoing_msg, &offset, openlcb_node->parameters->snip.name, LEN_SNIP_NAME_BUFFER, requested_bytes);
 
@@ -170,7 +170,7 @@ uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* out
 }
 
     /** @brief Copy model string into payload.  Returns updated offset. */
-uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_model(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     _process_snip_string(outgoing_msg, &offset, openlcb_node->parameters->snip.model, LEN_SNIP_MODEL_BUFFER, requested_bytes);
 
@@ -179,7 +179,7 @@ uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* ou
 }
 
     /** @brief Copy hardware version string into payload.  Returns updated offset. */
-uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     _process_snip_string(outgoing_msg, &offset, openlcb_node->parameters->snip.hardware_version, LEN_SNIP_HARDWARE_VERSION_BUFFER, requested_bytes);
 
@@ -188,7 +188,7 @@ uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlc
 }
 
     /** @brief Copy software version string into payload.  Returns updated offset. */
-uint16_t ProtocolSnip_load_software_version(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_software_version(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     _process_snip_string(outgoing_msg, &offset, openlcb_node->parameters->snip.software_version, LEN_SNIP_SOFTWARE_VERSION_BUFFER, requested_bytes);
 
@@ -197,7 +197,7 @@ uint16_t ProtocolSnip_load_software_version(openlcb_node_t* openlcb_node, openlc
 }
 
     /** @brief Copy user version byte into payload.  Returns updated offset. */
-uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     if (requested_bytes > 0) {
 
@@ -226,7 +226,7 @@ uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t* openlcb_node, openlcb
      *
      * @return Updated offset.
      */
-uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_user_name(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
 
     configuration_memory_buffer_t configuration_memory_buffer;
@@ -271,7 +271,7 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
      *
      * @return Updated offset.
      */
-uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_user_description(openlcb_node_t *openlcb_node, openlcb_msg_t *outgoing_msg, uint16_t offset, uint16_t requested_bytes) {
 
     configuration_memory_buffer_t configuration_memory_buffer;
     uint32_t data_address = CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET; // User Name is by default the first 63 Bytes in the Configuration Space and Description next 64 bytes
@@ -395,7 +395,7 @@ void ProtocolSnip_handle_simple_node_info_reply(openlcb_statemachine_info_t *sta
      *
      * @return true if the message is a well-formed SNIP reply.
      */
-bool ProtocolSnip_validate_snip_reply(openlcb_msg_t* snip_reply_msg) {
+bool ProtocolSnip_validate_snip_reply(openlcb_msg_t *snip_reply_msg) {
 
     if (snip_reply_msg->payload_count > LEN_MESSAGE_BYTES_SNIP) {
 

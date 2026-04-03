@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
   printf("Initializing...\n");
 
   CanConfig_initialize(&can_config);
-  OpenLcb_initialize(&openlcb_config);
+  OpenLcbConfig_initialize(&openlcb_config);
 
   CallbacksOlcb_initialize();
 
@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
     sleep(2);
   }
 
-  node = OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
+  node = OpenLcbConfig_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
   printf("Node Allocated.....\n");
 
   OpenLcbApplicationBroadcastTime_setup_consumer(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
   while (1)
   {
 
-    OpenLcb_run();
+    OpenLcbConfig_run();
 
     if (OSxCanDriver_data_was_received())
         idle_count = 0;

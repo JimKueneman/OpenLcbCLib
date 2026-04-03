@@ -36,6 +36,8 @@
  * @see openlcb_config.h - OpenLCB protocol layer configuration
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __DRIVERS_CANBUS_CAN_CONFIG__
 #define __DRIVERS_CANBUS_CAN_CONFIG__
 
@@ -99,7 +101,7 @@ extern "C" {
         /**
          * @brief Initializes the CAN bus transport layer.
          *
-         * @details Must be called BEFORE OpenLcb_initialize().
+         * @details Must be called BEFORE OpenLcbConfig_initialize().
          *
          * @param config  Pointer to @ref can_config_t configuration. Must remain
          *                valid for the lifetime of the application.

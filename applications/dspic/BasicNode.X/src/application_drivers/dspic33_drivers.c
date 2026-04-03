@@ -155,7 +155,7 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
 
-    OpenLcb_100ms_timer_tick();
+    OpenLcbConfig_100ms_timer_tick();
 
 }
 

@@ -19,7 +19,8 @@
 #define OPENLCB_COMPILE_BROADCAST_TIME
 #define OPENLCB_COMPILE_TRAIN
 #define OPENLCB_COMPILE_TRAIN_SEARCH
-#define OPENLCB_COMPILE_STREAM
+// OPENLCB_COMPILE_STREAM is defined via compiler flag (-DOPENLCB_COMPILE_STREAM)
+// when --stream is passed to run_olcbchecker.sh
 
 // =============================================================================
 // Core Message Buffer Pool

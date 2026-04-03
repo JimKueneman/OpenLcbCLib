@@ -134,13 +134,13 @@ static void _build_rx_message_handler(void) {
     _rx_msg.alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id;
     _rx_msg.alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info;
     _rx_msg.alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag;
-    _rx_msg.get_current_tick = &OpenLcb_get_global_100ms_tick;
+    _rx_msg.get_current_tick = &OpenLcbConfig_get_global_100ms_tick;
 
     // Listener alias management (OPTIONAL — NULL if OPENLCB_COMPILE_TRAIN not defined)
 #ifdef OPENLCB_COMPILE_TRAIN
-    _rx_msg.listener_set_alias = &ListenerAliasTable_set_alias;
-    _rx_msg.listener_clear_alias_by_alias = &ListenerAliasTable_clear_alias_by_alias;
-    _rx_msg.listener_flush_aliases = &ListenerAliasTable_flush_aliases;
+    _rx_msg.listener_set_alias = &AliasMappingListener_set_alias;
+    _rx_msg.listener_clear_alias_by_alias = &AliasMappingListener_clear_alias_by_alias;
+    _rx_msg.listener_flush_aliases = &AliasMappingListener_flush_aliases;
 #endif
 
 }
@@ -202,12 +202,12 @@ static void _build_tx_statemachine(void) {
 
     // Listener alias resolution for consist forwarding (OPTIONAL — NULL if not compiled)
 #ifdef OPENLCB_COMPILE_TRAIN
-    _tx_sm.listener_find_by_node_id = &ListenerAliasTable_find_by_node_id;
+    _tx_sm.listener_find_by_node_id = &AliasMappingListener_find_by_node_id;
 
     // Listener alias table registration — TX path sniffs outgoing Listener
     // Config Reply messages and registers/unregisters listener node_ids.
-    _tx_sm.listener_register         = &ListenerAliasTable_register;
-    _tx_sm.listener_unregister       = &ListenerAliasTable_unregister;
+    _tx_sm.listener_register         = &AliasMappingListener_register;
+    _tx_sm.listener_unregister       = &AliasMappingListener_unregister;
     _tx_sm.lock_shared_resources     = _config->lock_shared_resources;
     _tx_sm.unlock_shared_resources   = _config->unlock_shared_resources;
 #endif
@@ -228,12 +228,12 @@ static void _build_main_statemachine(void) {
     _main_sm.openlcb_node_get_first = &OpenLcbNode_get_first;
     _main_sm.openlcb_node_get_next  = &OpenLcbNode_get_next;
     _main_sm.openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias;
-    _main_sm.login_statemachine_run = &CanLoginStateMachine_run;
+    _main_sm.login_statemachine_run = &CanLoginStatemachine_run;
     _main_sm.alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info;
     _main_sm.alias_mapping_unregister = &AliasMappings_unregister;
 
     // Clock access (injected to maintain decoupling)
-    _main_sm.get_current_tick = &OpenLcb_get_global_100ms_tick;
+    _main_sm.get_current_tick = &OpenLcbConfig_get_global_100ms_tick;
 
     // Internal handlers (exposed for testability)
     _main_sm.handle_duplicate_aliases = &CanMainStatemachine_handle_duplicate_aliases;
@@ -246,9 +246,9 @@ static void _build_main_statemachine(void) {
     // (OPTIONAL — NULL if OPENLCB_COMPILE_TRAIN not defined)
 #ifdef OPENLCB_COMPILE_TRAIN
     _main_sm.handle_listener_verification = &CanMainStatemachine_handle_listener_verification;
-    _main_sm.listener_check_one_verification = &ListenerAliasTable_check_one_verification;
-    _main_sm.listener_flush_aliases = &ListenerAliasTable_flush_aliases;
-    _main_sm.listener_set_alias = &ListenerAliasTable_set_alias;
+    _main_sm.listener_check_one_verification = &AliasMappingListener_check_one_verification;
+    _main_sm.listener_flush_aliases = &AliasMappingListener_flush_aliases;
+    _main_sm.listener_set_alias = &AliasMappingListener_set_alias;
 #endif
 
 }
@@ -300,13 +300,13 @@ void CanConfig_initialize(const can_config_t *config) {
     CanTxStatemachine_initialize(&_tx_sm);
 
     CanLoginMessageHandler_initialize(&_login_msg);
-    CanLoginStateMachine_initialize(&_login_sm);
+    CanLoginStatemachine_initialize(&_login_sm);
     CanMainStatemachine_initialize(&_main_sm);
 
     AliasMappings_initialize();
 
 #ifdef OPENLCB_COMPILE_TRAIN
-    ListenerAliasTable_initialize();
+    AliasMappingListener_initialize();
 #endif
 
 }

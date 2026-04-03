@@ -30,6 +30,8 @@
  * @date 4 Mar 2026
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __DRIVERS_CANBUS_CAN_RX_MESSAGE_HANDLER__
 #define __DRIVERS_CANBUS_CAN_RX_MESSAGE_HANDLER__
 
@@ -82,7 +84,7 @@ extern "C" {
          * @details Called when a Train Listener Attach command is detected.
          * NULL = listener alias feature not linked in.
          *
-         * @note Typical: ListenerAliasTable_register.
+         * @note Typical: AliasMappingListener_register.
          */
         listener_alias_entry_t *(*listener_register)(node_id_t node_id);
 
@@ -92,7 +94,7 @@ extern "C" {
          * @details Called when an AMD frame arrives.  No-op if the node_id is
          * not a registered listener.  NULL = feature not linked in.
          *
-         * @note Typical: ListenerAliasTable_set_alias.
+         * @note Typical: AliasMappingListener_set_alias.
          */
         void (*listener_set_alias)(node_id_t node_id, uint16_t alias);
 
@@ -103,7 +105,7 @@ extern "C" {
          * return alias == 0 instead of a stale alias.  NULL = feature not
          * linked in.
          *
-         * @note Typical: ListenerAliasTable_clear_alias_by_alias.
+         * @note Typical: AliasMappingListener_clear_alias_by_alias.
          */
         void (*listener_clear_alias_by_alias)(uint16_t alias);
 
@@ -116,7 +118,7 @@ extern "C" {
          * global AME will re-populate aliases via set_alias.
          * NULL = feature not linked in.
          *
-         * @note Typical: ListenerAliasTable_flush_aliases.
+         * @note Typical: AliasMappingListener_flush_aliases.
          */
         void (*listener_flush_aliases)(void);
 
