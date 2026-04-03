@@ -149,7 +149,17 @@
 #pragma message "OpenLcbCLib: TRAIN_SEARCH = OFF"
 #endif
 
+#ifdef OPENLCB_COMPILE_STREAM
+#pragma message "OpenLcbCLib: STREAM = ON"
+#else
+#pragma message "OpenLcbCLib: STREAM = OFF"
+#endif
+
 #endif /* OPENLCB_COMPILE_VERBOSE */
+
+#ifdef OPENLCB_COMPILE_STREAM
+#include "protocol_stream_handler.h"
+#endif
 
     /**
      * @brief User configuration for OpenLcbCLib.
@@ -486,6 +496,29 @@ typedef struct {
     openlcb_node_t* (*on_train_search_no_match)(uint16_t search_address, uint8_t flags);
 
 #endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
+
+#ifdef OPENLCB_COMPILE_STREAM
+
+    // =========================================================================
+    // OPTIONAL: Stream Transport Callbacks (requires STREAM)
+    // =========================================================================
+
+        /** @brief Stream Initiate Request received (this node is destination).  Optional. */
+    void (*on_stream_initiate_request)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+
+        /** @brief Stream Initiate Reply received (this node is source).  Optional. */
+    void (*on_stream_initiate_reply)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+
+        /** @brief Stream data received.  Optional. */
+    void (*on_stream_data_received)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+
+        /** @brief Stream Data Proceed received (flow control ack).  Optional. */
+    void (*on_stream_data_proceed)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+
+        /** @brief Stream completed or closed.  Optional. */
+    void (*on_stream_complete)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+
+#endif /* OPENLCB_COMPILE_STREAM */
 
 } openlcb_config_t;
 

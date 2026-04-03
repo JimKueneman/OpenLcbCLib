@@ -79,6 +79,10 @@
 #include "protocol_train_search_handler.h"
 #endif
 
+#ifdef OPENLCB_COMPILE_STREAM
+#include "protocol_stream_handler.h"
+#endif
+
 // CAN transport
 #include "../drivers/canbus/can_tx_statemachine.h"
 #include "../drivers/canbus/can_main_statemachine.h"
@@ -119,6 +123,10 @@ static interface_openlcb_application_train_t _app_train;
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
 static interface_protocol_train_search_handler_t _train_search;
+#endif
+
+#ifdef OPENLCB_COMPILE_STREAM
+static interface_protocol_stream_handler_t _stream_handler;
 #endif
 
 static const openlcb_config_t *_config;
@@ -286,6 +294,23 @@ static void _build_train_search_handler(void) {
 }
 
 #endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
+
+#ifdef OPENLCB_COMPILE_STREAM
+
+    /** @brief Wires user stream callbacks into the stream handler interface struct. */
+static void _build_stream_handler(void) {
+
+    memset(&_stream_handler, 0, sizeof(_stream_handler));
+
+    _stream_handler.on_initiate_request = _config->on_stream_initiate_request;
+    _stream_handler.on_initiate_reply   = _config->on_stream_initiate_reply;
+    _stream_handler.on_data_received    = _config->on_stream_data_received;
+    _stream_handler.on_data_proceed     = _config->on_stream_data_proceed;
+    _stream_handler.on_complete         = _config->on_stream_complete;
+
+}
+
+#endif /* OPENLCB_COMPILE_STREAM */
 
     /** @brief Wires the user 100ms timer callback into the node interface struct. */
 static void _build_node(void) {
@@ -626,6 +651,14 @@ static void _build_main_statemachine(void) {
     _main_sm.is_train_search_event         = &ProtocolTrainSearch_is_search_event;
 #endif
 
+#ifdef OPENLCB_COMPILE_STREAM
+    _main_sm.stream_initiate_request = &ProtocolStreamHandler_initiate_request;
+    _main_sm.stream_initiate_reply   = &ProtocolStreamHandler_initiate_reply;
+    _main_sm.stream_send_data        = &ProtocolStreamHandler_data_send;
+    _main_sm.stream_data_proceed     = &ProtocolStreamHandler_data_proceed;
+    _main_sm.stream_data_complete    = &ProtocolStreamHandler_data_complete;
+#endif
+
 }
 
     /** @brief Wires the CAN send function and config memory callbacks into the application interface. */
@@ -702,6 +735,10 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
     _build_train_search_handler();
 #endif
 
+#ifdef OPENLCB_COMPILE_STREAM
+    _build_stream_handler();
+#endif
+
     _build_main_statemachine();
 
     // 3. Initialize modules in dependency order
@@ -737,6 +774,10 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
     ProtocolTrainSearch_initialize(&_train_search);
+#endif
+
+#ifdef OPENLCB_COMPILE_STREAM
+    ProtocolStreamHandler_initialize(&_stream_handler);
 #endif
 
     OpenLcbNode_initialize(&_node);
