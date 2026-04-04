@@ -115,6 +115,12 @@ Macros</h2></td></tr>
 <tr class="memitem:ga01ad88eb7e44516ef02476336750ce80" id="r_ga01ad88eb7e44516ef02476336750ce80"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga01ad88eb7e44516ef02476336750ce80">MTI_STREAM_COMPLETE</a>&#160;&#160;&#160;0x08A8</td></tr>
 <tr class="memdesc:ga01ad88eb7e44516ef02476336750ce80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream completed successfully.  <br /></td></tr>
 <tr class="separator:ga01ad88eb7e44516ef02476336750ce80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab5472fb9e28ed57d148a4fffc1cd727b" id="r_gab5472fb9e28ed57d148a4fffc1cd727b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gab5472fb9e28ed57d148a4fffc1cd727b">STREAM_REPLY_ACCEPT</a>&#160;&#160;&#160;0x8000</td></tr>
+<tr class="memdesc:gab5472fb9e28ed57d148a4fffc1cd727b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream Initiate Reply accept flag (bytes 2-3)  <br /></td></tr>
+<tr class="separator:gab5472fb9e28ed57d148a4fffc1cd727b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa0a932a184ddbdb26af60874052c71e9" id="r_gaa0a932a184ddbdb26af60874052c71e9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaa0a932a184ddbdb26af60874052c71e9">STREAM_ID_RESERVED</a>&#160;&#160;&#160;0xFF</td></tr>
+<tr class="memdesc:gaa0a932a184ddbdb26af60874052c71e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved Stream ID value &ndash; must never be sent.  <br /></td></tr>
+<tr class="separator:gaa0a932a184ddbdb26af60874052c71e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Bulk data streaming with flow control. </p>
@@ -212,6 +218,38 @@ Macros</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Stream completed successfully. </p>
+
+</div>
+</div>
+<a id="gab5472fb9e28ed57d148a4fffc1cd727b" name="gab5472fb9e28ed57d148a4fffc1cd727b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab5472fb9e28ed57d148a4fffc1cd727b">&#9670;&#160;</a></span>STREAM_REPLY_ACCEPT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define STREAM_REPLY_ACCEPT&#160;&#160;&#160;0x8000</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stream Initiate Reply accept flag (bytes 2-3) </p>
+
+</div>
+</div>
+<a id="gaa0a932a184ddbdb26af60874052c71e9" name="gaa0a932a184ddbdb26af60874052c71e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa0a932a184ddbdb26af60874052c71e9">&#9670;&#160;</a></span>STREAM_ID_RESERVED</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define STREAM_ID_RESERVED&#160;&#160;&#160;0xFF</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reserved Stream ID value &ndash; must never be sent. </p>
 
 </div>
 </div>

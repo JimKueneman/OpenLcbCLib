@@ -110,12 +110,12 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a2837c06613e89097db3602bf773332a8" id="r_a2837c06613e89097db3602bf773332a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize</a> (const <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> *interface_can_login_state_machine)</td></tr>
-<tr class="memdesc:a2837c06613e89097db3602bf773332a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers the dependency-injection interface for this module.  <br /></td></tr>
-<tr class="separator:a2837c06613e89097db3602bf773332a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19d57826974209f27f8883a2fa443aae" id="r_a19d57826974209f27f8883a2fa443aae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19d57826974209f27f8883a2fa443aae">CanLoginStateMachine_run</a> (<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:a19d57826974209f27f8883a2fa443aae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatches to the handler for the node's current run_state.  <br /></td></tr>
-<tr class="separator:a19d57826974209f27f8883a2fa443aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a4e0ab7e981d8767482060271bc89a2" id="r_a9a4e0ab7e981d8767482060271bc89a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a4e0ab7e981d8767482060271bc89a2">CanLoginStatemachine_initialize</a> (const <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> *interface_can_login_state_machine)</td></tr>
+<tr class="memdesc:a9a4e0ab7e981d8767482060271bc89a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers the dependency-injection interface for this module.  <br /></td></tr>
+<tr class="separator:a9a4e0ab7e981d8767482060271bc89a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac776d0b07e75698f8a5dd4e6e0808a6c" id="r_ac776d0b07e75698f8a5dd4e6e0808a6c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac776d0b07e75698f8a5dd4e6e0808a6c">CanLoginStatemachine_run</a> (<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:ac776d0b07e75698f8a5dd4e6e0808a6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispatches to the handler for the node's current run_state.  <br /></td></tr>
+<tr class="separator:ac776d0b07e75698f8a5dd4e6e0808a6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dispatcher for the 10-state CAN alias allocation login sequence. </p>
@@ -128,8 +128,8 @@ Functions</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a2837c06613e89097db3602bf773332a8" name="a2837c06613e89097db3602bf773332a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2837c06613e89097db3602bf773332a8">&#9670;&#160;</a></span>CanLoginStateMachine_initialize()</h2>
+<a id="a9a4e0ab7e981d8767482060271bc89a2" name="a9a4e0ab7e981d8767482060271bc89a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a4e0ab7e981d8767482060271bc89a2">&#9670;&#160;</a></span>CanLoginStatemachine_initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -138,7 +138,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void CanLoginStateMachine_initialize </td>
+          <td class="memname">void CanLoginStatemachine_initialize </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface_can_login_state_machine</em></span></td><td>)</td>
           <td></td>
@@ -161,13 +161,13 @@ Functions</h2></td></tr>
 <dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe - call during single-threaded initialization only.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a5c515891dde09e1d2376e0d0ecc392ec" title="Stores the interface pointer for use by all state handlers.">CanLoginMessageHandler_initialize</a> - initialize first </dd>
 <dd>
-<a class="el" href="#a19d57826974209f27f8883a2fa443aae" title="Dispatches to the handler for the node&#39;s current run_state.">CanLoginStateMachine_run</a></dd></dl>
+<a class="el" href="#ac776d0b07e75698f8a5dd4e6e0808a6c" title="Dispatches to the handler for the node&#39;s current run_state.">CanLoginStatemachine_run</a></dd></dl>
 <p>Registers the dependency-injection interface for this module. </p>
 
 </div>
 </div>
-<a id="a19d57826974209f27f8883a2fa443aae" name="a19d57826974209f27f8883a2fa443aae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19d57826974209f27f8883a2fa443aae">&#9670;&#160;</a></span>CanLoginStateMachine_run()</h2>
+<a id="ac776d0b07e75698f8a5dd4e6e0808a6c" name="ac776d0b07e75698f8a5dd4e6e0808a6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac776d0b07e75698f8a5dd4e6e0808a6c">&#9670;&#160;</a></span>CanLoginStatemachine_run()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -176,7 +176,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void CanLoginStateMachine_run </td>
+          <td class="memname">void CanLoginStatemachine_run </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_info</em></span></td><td>)</td>
           <td></td>

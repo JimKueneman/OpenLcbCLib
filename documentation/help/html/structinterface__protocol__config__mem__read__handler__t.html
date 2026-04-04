@@ -154,6 +154,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ae34ac57960a8202d10d1c22dc66b61ea" id="r_ae34ac57960a8202d10d1c22dc66b61ea"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae34ac57960a8202d10d1c22dc66b61ea">delayed_reply_time</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
 <tr class="memdesc:ae34ac57960a8202d10d1c22dc66b61ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Override reply delay (return N means 2^N seconds). Optional (default 0).  <br /></td></tr>
 <tr class="separator:ae34ac57960a8202d10d1c22dc66b61ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af777915e82cc62643931b644f3c8f959" id="r_af777915e82cc62643931b644f3c8f959"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af777915e82cc62643931b644f3c8f959">get_train_state</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:af777915e82cc62643931b644f3c8f959"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Returns train state for the given node (DI for train module).  <br /></td></tr>
+<tr class="separator:af777915e82cc62643931b644f3c8f959"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Callback interface for config memory reads. Datagram ACK and config_memory_read are REQUIRED; SNIP loaders and per-space handlers are optional. </p>
@@ -459,6 +462,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Override reply delay (return N means 2^N seconds). Optional (default 0). </p>
+
+</div>
+</div>
+<a id="af777915e82cc62643931b644f3c8f959" name="af777915e82cc62643931b644f3c8f959"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af777915e82cc62643931b644f3c8f959">&#9670;&#160;</a></span>get_train_state</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *(* get_train_state) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional — Returns train state for the given node (DI for train module). </p>
 
 </div>
 </div>

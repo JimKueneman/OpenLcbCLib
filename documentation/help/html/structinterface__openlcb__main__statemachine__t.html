@@ -268,6 +268,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ac7e86830e537ac54f7579f3d163184de" id="r_ac7e86830e537ac54f7579f3d163184de"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7e86830e537ac54f7579f3d163184de">stream_data_complete</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:ac7e86830e537ac54f7579f3d163184de"><td class="mdescLeft">&#160;</td><td class="mdescRight">MTI 0x08A8 — Stream Data Complete (received). Optional.  <br /></td></tr>
 <tr class="separator:ac7e86830e537ac54f7579f3d163184de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d5391806a5fba09b91e40000a8143f5" id="r_a4d5391806a5fba09b91e40000a8143f5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d5391806a5fba09b91e40000a8143f5">stream_terminate_due_to_error</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a4d5391806a5fba09b91e40000a8143f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate Due To Error with stream MTI. Optional.  <br /></td></tr>
+<tr class="separator:a4d5391806a5fba09b91e40000a8143f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae61e602b483057fc92d4c8e0dac986e9" id="r_ae61e602b483057fc92d4c8e0dac986e9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae61e602b483057fc92d4c8e0dac986e9">broadcast_time_event_handler</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
 <tr class="memdesc:ae61e602b483057fc92d4c8e0dac986e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called by the event transport handler for broadcast time Event IDs. Optional.  <br /></td></tr>
 <tr class="separator:ae61e602b483057fc92d4c8e0dac986e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -280,6 +283,15 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a6a474a3e9d15636a9f87744476d62128" id="r_a6a474a3e9d15636a9f87744476d62128"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a474a3e9d15636a9f87744476d62128">train_emergency_event_handler</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
 <tr class="memdesc:a6a474a3e9d15636a9f87744476d62128"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called for well-known emergency events; dispatched to every train node. Optional.  <br /></td></tr>
 <tr class="separator:a6a474a3e9d15636a9f87744476d62128"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55ce8b53fc60e69fcf7012317a771608" id="r_a55ce8b53fc60e69fcf7012317a771608"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55ce8b53fc60e69fcf7012317a771608">is_broadcast_time_event</a> )(<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a55ce8b53fc60e69fcf7012317a771608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test whether an event ID falls in the broadcast time range.  <br /></td></tr>
+<tr class="separator:a55ce8b53fc60e69fcf7012317a771608"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb40f6cfa60b50fa3b0a8f3db524ffc5" id="r_aeb40f6cfa60b50fa3b0a8f3db524ffc5"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb40f6cfa60b50fa3b0a8f3db524ffc5">is_train_search_event</a> )(<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:aeb40f6cfa60b50fa3b0a8f3db524ffc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test whether an event ID is a train search request.  <br /></td></tr>
+<tr class="separator:aeb40f6cfa60b50fa3b0a8f3db524ffc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2f18a7bdd2ce99e25d227ac920d2cc0" id="r_ad2f18a7bdd2ce99e25d227ac920d2cc0"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2f18a7bdd2ce99e25d227ac920d2cc0">is_emergency_event</a> )(<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:ad2f18a7bdd2ce99e25d227ac920d2cc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test whether an event ID is a well-known emergency event.  <br /></td></tr>
+<tr class="separator:ad2f18a7bdd2ce99e25d227ac920d2cc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dependency-injection interface for the main state machine. Required pointers must be non-NULL; optional ones may be NULL (causes automatic Interaction Rejected). Internal pointers are exposed for unit testing. </p>
@@ -1196,6 +1208,22 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
+<a id="a4d5391806a5fba09b91e40000a8143f5" name="a4d5391806a5fba09b91e40000a8143f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d5391806a5fba09b91e40000a8143f5">&#9670;&#160;</a></span>stream_terminate_due_to_error</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* stream_terminate_due_to_error) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Terminate Due To Error with stream MTI. Optional. </p>
+
+</div>
+</div>
 <a id="ae61e602b483057fc92d4c8e0dac986e9" name="ae61e602b483057fc92d4c8e0dac986e9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae61e602b483057fc92d4c8e0dac986e9">&#9670;&#160;</a></span>broadcast_time_event_handler</h2>
 
@@ -1257,6 +1285,78 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Called for well-known emergency events; dispatched to every train node. Optional. </p>
+
+</div>
+</div>
+<a id="a55ce8b53fc60e69fcf7012317a771608" name="a55ce8b53fc60e69fcf7012317a771608"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55ce8b53fc60e69fcf7012317a771608">&#9670;&#160;</a></span>is_broadcast_time_event</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* is_broadcast_time_event) (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test whether an event ID falls in the broadcast time range. </p>
+<p>When non-NULL the main state machine calls this filter in the MTI_PRODUCER_IDENTIFIED_SET and MTI_PC_EVENT_REPORT paths to decide whether to route the event to <a class="el" href="#ae61e602b483057fc92d4c8e0dac986e9">broadcast_time_event_handler</a>. When NULL the broadcast-time intercept is skipped entirely.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>The 64-bit event identifier to classify. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if <code>event_id</code> is a broadcast time event. </dd></dl>
+
+</div>
+</div>
+<a id="aeb40f6cfa60b50fa3b0a8f3db524ffc5" name="aeb40f6cfa60b50fa3b0a8f3db524ffc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb40f6cfa60b50fa3b0a8f3db524ffc5">&#9670;&#160;</a></span>is_train_search_event</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* is_train_search_event) (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test whether an event ID is a train search request. </p>
+<p>When non-NULL the main state machine calls this filter in the MTI_PRODUCER_IDENTIFY path to decide whether to route the event to <a class="el" href="#ad91e972b5485893674763f527790e3d6">train_search_event_handler</a>. When NULL the train-search intercept is skipped entirely.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>The 64-bit event identifier to classify. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if <code>event_id</code> is a train search event. </dd></dl>
+
+</div>
+</div>
+<a id="ad2f18a7bdd2ce99e25d227ac920d2cc0" name="ad2f18a7bdd2ce99e25d227ac920d2cc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2f18a7bdd2ce99e25d227ac920d2cc0">&#9670;&#160;</a></span>is_emergency_event</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* is_emergency_event) (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test whether an event ID is a well-known emergency event. </p>
+<p>When non-NULL the main state machine calls this filter in the MTI_PC_EVENT_REPORT path to decide whether to route the event to <a class="el" href="#a6a474a3e9d15636a9f87744476d62128">train_emergency_event_handler</a>. When NULL the emergency intercept is skipped entirely.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>The 64-bit event identifier to classify. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if <code>event_id</code> is an emergency event. </dd></dl>
 
 </div>
 </div>

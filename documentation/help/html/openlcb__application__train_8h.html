@@ -208,14 +208,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Must be called before <a class="el" href="openlcb__application__train_8c.html#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>.</dd></dl>
-<p>Algorithm:</p><ol type="1">
-<li>Zero the train state pool.</li>
-<li>Reset _train_pool_count to 0.</li>
-<li>Store the interface pointer.</li>
-</ol>
-<pre class="fragment">* @param interface  Pointer to a interface_openlcb_application_train_t.
-* </pre><dl class="section warning"><dt>Warning</dt><dd>Must be called before any other function in this module. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Must be called before <a class="el" href="#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>. </dd></dl>
 
 </div>
 </div>
@@ -252,18 +245,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a>, or NULL if the node pointer is NULL or the pool is exhausted.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if the pool is full (USER_DEFINED_TRAIN_NODE_COUNT slots used).</dd></dl>
-<p>Algorithm:</p><ol type="1">
-<li>Return NULL if openlcb_node is NULL.</li>
-<li>If the node already has train_state set, return the existing pointer.</li>
-<li>Return NULL if the pool is exhausted.</li>
-<li>Take the next pool slot, zero it, and store a pointer in openlcb_node-&gt;train_state.</li>
-<li>Set state-&gt;owner_node back to the node.</li>
-<li>Register the standard train event IDs: Train producer, Emergency Off/Stop consumers, Clear Emergency Off/Stop consumers.</li>
-<li>Return the new state pointer.</li>
-</ol>
-<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t to configure as a train.
-* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the train_state_t, or NULL if the node is NULL or the pool is full. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if the pool is full (USER_DEFINED_TRAIN_NODE_COUNT slots used). </dd></dl>
 
 </div>
 </div>
@@ -297,13 +279,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a>, or NULL if the node pointer is NULL or the node has no train state assigned.</dd></dl>
-<p>Algorithm:</p><ol type="1">
-<li>Return NULL if openlcb_node is NULL.</li>
-<li>Return openlcb_node-&gt;train_state.</li>
-</ol>
-<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t.
-* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the train_state_t, or NULL. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the <a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a>, or NULL if the node pointer is NULL or the node has no train state assigned. </dd></dl>
 
 </div>
 </div>
@@ -338,19 +314,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Nodes with heartbeat_timeout_s == 0 are skipped.</dd></dl>
-<p>Algorithm:</p><ol type="1">
-<li>Compute ticks elapsed since last call via subtraction.</li>
-<li>Skip if no time has elapsed (deduplication).</li>
-<li>For each pool slot with heartbeat_timeout_s &gt; 0:<ul>
-<li>Decrement heartbeat_counter_100ms by ticks_elapsed (saturate at 0).</li>
-<li>At the halfway point, call _send_heartbeat_request() to ping the controller.</li>
-<li>At zero, set estop_active = true, zero set_speed preserving direction, forward Set Speed 0 to listeners, and fire on_heartbeat_timeout.</li>
-</ul>
-</li>
-</ol>
-<pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.
-* </pre> 
+<dl class="section note"><dt>Note</dt><dd>Nodes with heartbeat_timeout_s == 0 are skipped. </dd></dl>
+
 </div>
 </div>
 <a id="aa2ea614a130a09e5c05db52f8b80ee2c" name="aa2ea614a130a09e5c05db52f8b80ee2c"></a>
@@ -397,21 +362,11 @@ Functions</h2></td></tr>
     <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending (throttle) <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
     <tr><td class="paramname">train_alias</td><td>12-bit CAN alias of the target train node. </td></tr>
     <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
-    <tr><td class="paramname">speed</td><td>16-bit speed/direction value in OpenLCB float16 format.</td></tr>
+    <tr><td class="paramname">speed</td><td>16-bit speed/direction value in OpenLCB float16 format. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Algorithm:</p><ol type="1">
-<li>Call _prepare_train_command(); return if it fails.</li>
-<li>Set payload byte 0 to TRAIN_SET_SPEED_DIRECTION.</li>
-<li>Set payload bytes 1-2 to the 16-bit speed value.</li>
-<li>Call send_openlcb_msg().</li>
-</ol>
-<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
-* @param train_alias     12-bit CAN alias of the target train node.
-* @param train_node_id   48-bit node_id_t of the target train node.
-* @param speed           16-bit speed/direction in OpenLCB float16 format.
-* </pre> 
+
 </div>
 </div>
 <a id="adbca9d4e243681fe6cfb4bb42d1356bb" name="adbca9d4e243681fe6cfb4bb42d1356bb"></a>
@@ -464,23 +419,11 @@ Functions</h2></td></tr>
     <tr><td class="paramname">train_alias</td><td>12-bit CAN alias of the target train node. </td></tr>
     <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
     <tr><td class="paramname">fn_address</td><td>24-bit function address. </td></tr>
-    <tr><td class="paramname">fn_value</td><td>16-bit function value (0 = off, non-zero = on or analog value).</td></tr>
+    <tr><td class="paramname">fn_value</td><td>16-bit function value (0 = off, non-zero = on or analog value). </td></tr>
   </table>
   </dd>
 </dl>
-<p>Algorithm:</p><ol type="1">
-<li>Call _prepare_train_command(); return if it fails.</li>
-<li>Set payload byte 0 to TRAIN_SET_FUNCTION.</li>
-<li>Set payload bytes 1-3 to the 24-bit function address.</li>
-<li>Set payload bytes 4-5 to the 16-bit function value.</li>
-<li>Call send_openlcb_msg().</li>
-</ol>
-<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
-* @param train_alias     12-bit CAN alias of the target train node.
-* @param train_node_id   48-bit node_id_t of the target train node.
-* @param fn_address      24-bit function address.
-* @param fn_value        16-bit function value.
-* </pre> 
+
 </div>
 </div>
 <a id="ae28cbf0e74ed088d497149828ed2bdf9" name="ae28cbf0e74ed088d497149828ed2bdf9"></a>
@@ -521,19 +464,11 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
     <tr><td class="paramname">train_alias</td><td>12-bit CAN alias of the target train node. </td></tr>
-    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node.</td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Algorithm:</p><ol type="1">
-<li>Call _prepare_train_command(); return if it fails.</li>
-<li>Set payload byte 0 to TRAIN_EMERGENCY_STOP.</li>
-<li>Call send_openlcb_msg().</li>
-</ol>
-<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
-* @param train_alias     12-bit CAN alias of the target train node.
-* @param train_node_id   48-bit node_id_t of the target train node.
-* </pre> 
+
 </div>
 </div>
 <a id="a5ffb6ee29660d1a3552fb58c075419ef" name="a5ffb6ee29660d1a3552fb58c075419ef"></a>
@@ -574,19 +509,11 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
     <tr><td class="paramname">train_alias</td><td>12-bit CAN alias of the target train node. </td></tr>
-    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node.</td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Algorithm:</p><ol type="1">
-<li>Call _prepare_train_command(); return if it fails.</li>
-<li>Set payload byte 0 to TRAIN_QUERY_SPEEDS.</li>
-<li>Call send_openlcb_msg().</li>
-</ol>
-<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
-* @param train_alias     12-bit CAN alias of the target train node.
-* @param train_node_id   48-bit node_id_t of the target train node.
-* </pre> 
+
 </div>
 </div>
 <a id="add7a896376cc925dede8e1e0b3d5a1ff" name="add7a896376cc925dede8e1e0b3d5a1ff"></a>
@@ -633,21 +560,11 @@ Functions</h2></td></tr>
     <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
     <tr><td class="paramname">train_alias</td><td>12-bit CAN alias of the target train node. </td></tr>
     <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
-    <tr><td class="paramname">fn_address</td><td>24-bit function address to query.</td></tr>
+    <tr><td class="paramname">fn_address</td><td>24-bit function address to query. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Algorithm:</p><ol type="1">
-<li>Call _prepare_train_command(); return if it fails.</li>
-<li>Set payload byte 0 to TRAIN_QUERY_FUNCTION.</li>
-<li>Set payload bytes 1-3 to the 24-bit function address.</li>
-<li>Call send_openlcb_msg().</li>
-</ol>
-<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
-* @param train_alias     12-bit CAN alias of the target train node.
-* @param train_node_id   48-bit node_id_t of the target train node.
-* @param fn_address      24-bit function address to query.
-* </pre> 
+
 </div>
 </div>
 <a id="a67eac38d54fca53b7f14027414011f75" name="a67eac38d54fca53b7f14027414011f75"></a>
@@ -688,20 +605,11 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending (throttle) <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
     <tr><td class="paramname">train_alias</td><td>12-bit CAN alias of the target train node. </td></tr>
-    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node.</td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Algorithm:</p><ol type="1">
-<li>Call _prepare_train_command(); return if it fails.</li>
-<li>Set payload byte 0 to TRAIN_CONTROLLER_CONFIG, byte 1 to TRAIN_CONTROLLER_ASSIGN.</li>
-<li>Set payload bytes 2-7 to openlcb_node-&gt;id (the throttle's Node ID).</li>
-<li>Call send_openlcb_msg().</li>
-</ol>
-<pre class="fragment">* @param openlcb_node    Pointer to the sending (throttle) openlcb_node_t.
-* @param train_alias     12-bit CAN alias of the target train node.
-* @param train_node_id   48-bit node_id_t of the target train node.
-* </pre> 
+
 </div>
 </div>
 <a id="a9a8a1b9b2d04c96b0568f3982b90a3d3" name="a9a8a1b9b2d04c96b0568f3982b90a3d3"></a>
@@ -742,20 +650,11 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending (throttle) <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
     <tr><td class="paramname">train_alias</td><td>12-bit CAN alias of the target train node. </td></tr>
-    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node.</td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Algorithm:</p><ol type="1">
-<li>Call _prepare_train_command(); return if it fails.</li>
-<li>Set payload byte 0 to TRAIN_CONTROLLER_CONFIG, byte 1 to TRAIN_CONTROLLER_RELEASE.</li>
-<li>Set payload bytes 2-7 to openlcb_node-&gt;id (the throttle's Node ID).</li>
-<li>Call send_openlcb_msg().</li>
-</ol>
-<pre class="fragment">* @param openlcb_node    Pointer to the sending (throttle) openlcb_node_t.
-* @param train_alias     12-bit CAN alias of the target train node.
-* @param train_node_id   48-bit node_id_t of the target train node.
-* </pre> 
+
 </div>
 </div>
 <a id="aad7cde2a61d7d926c68b035d6ce43ef3" name="aad7cde2a61d7d926c68b035d6ce43ef3"></a>
@@ -796,20 +695,11 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
     <tr><td class="paramname">train_alias</td><td>12-bit CAN alias of the target train node. </td></tr>
-    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node.</td></tr>
+    <tr><td class="paramname">train_node_id</td><td>48-bit <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> of the target train node. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Sends a NOOP (no-operation) management command to a train node.</p>
-<p>Algorithm:</p><ol type="1">
-<li>Call _prepare_train_command(); return if it fails.</li>
-<li>Set payload byte 0 to TRAIN_MANAGEMENT, byte 1 to TRAIN_MGMT_NOOP.</li>
-<li>Call send_openlcb_msg().</li>
-</ol>
-<pre class="fragment">* @param openlcb_node    Pointer to the sending openlcb_node_t.
-* @param train_alias     12-bit CAN alias of the target train node.
-* @param train_node_id   48-bit node_id_t of the target train node.
-* </pre> 
+
 </div>
 </div>
 <a id="ae832540d79d7e9d0af6850868abd8231" name="ae832540d79d7e9d0af6850868abd8231"></a>
@@ -853,15 +743,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Silently ignored if the node pointer or train_state pointer is NULL.</dd></dl>
-<p>Algorithm:</p><ol type="1">
-<li>Return if openlcb_node or train_state is NULL.</li>
-<li>Store dcc_address and is_long_address in the train state.</li>
-</ol>
-<pre class="fragment">* @param openlcb_node    Pointer to the openlcb_node_t.
-* @param dcc_address     DCC address value.
-* @param is_long_address true for long addressing, false for short.
-* </pre> 
+<dl class="section note"><dt>Note</dt><dd>Silently ignored if the node pointer or train_state pointer is NULL. </dd></dl>
+
 </div>
 </div>
 <a id="ac2b6f8b225806a8b1204aba8678217a1" name="ac2b6f8b225806a8b1204aba8678217a1"></a>
@@ -894,13 +777,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>DCC address, or 0 if the node has no train state.</dd></dl>
-<p>Algorithm:</p><ol type="1">
-<li>Return 0 if openlcb_node or train_state is NULL.</li>
-<li>Return train_state-&gt;dcc_address.</li>
-</ol>
-<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t.
-* </pre><dl class="section return"><dt>Returns</dt><dd>DCC address, or 0 if the node has no train state. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>DCC address, or 0 if the node has no train state. </dd></dl>
 
 </div>
 </div>
@@ -934,13 +811,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true for long addressing, false if short or node has no train state.</dd></dl>
-<p>Algorithm:</p><ol type="1">
-<li>Return false if openlcb_node or train_state is NULL.</li>
-<li>Return train_state-&gt;is_long_address.</li>
-</ol>
-<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t.
-* </pre><dl class="section return"><dt>Returns</dt><dd>true for long addressing, false otherwise. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true for long addressing, false if short or node has no train state. </dd></dl>
 
 </div>
 </div>
@@ -979,14 +850,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Silently ignored if the node pointer or train_state pointer is NULL.</dd></dl>
-<p>Algorithm:</p><ol type="1">
-<li>Return if openlcb_node or train_state is NULL.</li>
-<li>Store speed_steps in train_state-&gt;speed_steps.</li>
-</ol>
-<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t.
-* @param speed_steps   Speed-step count (14, 28, or 128).
-* </pre> 
+<dl class="section note"><dt>Note</dt><dd>Silently ignored if the node pointer or train_state pointer is NULL. </dd></dl>
+
 </div>
 </div>
 <a id="a975fa0984828245d2dd93e179b6135b5" name="a975fa0984828245d2dd93e179b6135b5"></a>
@@ -1019,13 +884,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Speed-step count (14, 28, or 128), or 0 if the node has no train state.</dd></dl>
-<p>Algorithm:</p><ol type="1">
-<li>Return 0 if openlcb_node or train_state is NULL.</li>
-<li>Return train_state-&gt;speed_steps.</li>
-</ol>
-<pre class="fragment">* @param openlcb_node  Pointer to the openlcb_node_t.
-* </pre><dl class="section return"><dt>Returns</dt><dd>Speed-step count, or 0 if the node has no train state. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Speed-step count (14, 28, or 128), or 0 if the node has no train state. </dd></dl>
 
 </div>
 </div>

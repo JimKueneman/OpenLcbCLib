@@ -16,7 +16,7 @@ var searchData=
   ['defines_13',['Train Control Protocol Defines',['../group__train__protocol.html',1,'']]],
   ['definitions_14',['Payload Buffer Type Definitions',['../group__payload__buffer__types.html',1,'']]],
   ['delayed_5freply_5ftime_15',['delayed_reply_time',['../structinterface__protocol__config__mem__read__handler__t.html#ae34ac57960a8202d10d1c22dc66b61ea',1,'interface_protocol_config_mem_read_handler_t::delayed_reply_time'],['../structinterface__protocol__config__mem__write__handler__t.html#a82baac869860da64982f0bde9385d3bb',1,'interface_protocol_config_mem_write_handler_t::delayed_reply_time']]],
-  ['description_16',['description',['../structuser__configuration__options.html#a7ea2ee712eca413ca3fb86f74681b42f',1,'user_configuration_options::description'],['../structuser__address__space__info__t.html#a87f1fc05a7d011eaafd300bbd65914cc',1,'user_address_space_info_t::description']]],
+  ['description_16',['description',['../structuser__configuration__options__t.html#a7ea2ee712eca413ca3fb86f74681b42f',1,'user_configuration_options_t::description'],['../structuser__address__space__info__t.html#a87f1fc05a7d011eaafd300bbd65914cc',1,'user_address_space_info_t::description']]],
   ['dest_5falias_17',['dest_alias',['../structopenlcb__msg__t.html#ae67a608ce7f99b360ab8849e4b69bb5f',1,'openlcb_msg_t']]],
   ['dest_5fid_18',['dest_id',['../structopenlcb__msg__t.html#a6dea5e89b11b80be90d2377b7a7a1b51',1,'openlcb_msg_t']]],
   ['documentation_19',['OpenLcbCLib Documentation',['../index.html',1,'']]],

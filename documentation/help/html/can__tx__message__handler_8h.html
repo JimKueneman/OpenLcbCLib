@@ -123,7 +123,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:aa9223150ff58342659336a51f75caf5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits one CAN frame for a datagram <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> (up to 72 bytes total).  <br /></td></tr>
 <tr class="separator:aa9223150ff58342659336a51f75caf5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a156df311b2fa14eea4912334cda0ca78" id="r_a156df311b2fa14eea4912334cda0ca78"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a156df311b2fa14eea4912334cda0ca78">CanTxMessageHandler_stream_frame</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
-<tr class="memdesc:a156df311b2fa14eea4912334cda0ca78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Placeholder for stream protocol transmit (not yet implemented).  <br /></td></tr>
+<tr class="memdesc:a156df311b2fa14eea4912334cda0ca78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits one CAN frame for a Stream Data Send message.  <br /></td></tr>
 <tr class="separator:a156df311b2fa14eea4912334cda0ca78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa99ced3d0e3dc246de366c88031b6596" id="r_aa99ced3d0e3dc246de366c88031b6596"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa99ced3d0e3dc246de366c88031b6596">CanTxMessageHandler_can_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
 <tr class="memdesc:aa99ced3d0e3dc246de366c88031b6596"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits a pre-built raw <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> directly to the hardware.  <br /></td></tr>
@@ -138,7 +138,7 @@ Functions</h2></td></tr>
 </dd></dl>
 <p>Handles fragmentation and framing-bit encoding for addressed, unaddressed, datagram, stream, and raw CAN frame types per the OpenLCB CAN Frame Transfer Standard.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>04 Apr 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a4bde37fc36f08ccbbb7dd4a9a17b2713" name="a4bde37fc36f08ccbbb7dd4a9a17b2713"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4bde37fc36f08ccbbb7dd4a9a17b2713">&#9670;&#160;</a></span>CanTxMessageHandler_initialize()</h2>
@@ -388,18 +388,30 @@ transmit_can_frame must not be NULL.</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Placeholder for stream protocol transmit (not yet implemented). </p>
+<p>Transmits one CAN frame for a Stream Data Send message. </p>
+<p>Per StreamTransportS Section 8.1, every CAN stream data frame carries the Destination Stream ID (DID) in byte 0 and up to 7 bytes of payload in bytes 1-7. The DID is always read from openlcb_msg payload[0] and inserted into each CAN frame. On success, advances *openlcb_start_index.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_msg</td><td>Source stream message. </td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Source stream message (byte 0 = DID, rest = data). </td></tr>
     <tr><td class="paramname">can_msg_worker</td><td>Scratch CAN frame buffer. </td></tr>
-    <tr><td class="paramname">openlcb_start_index</td><td>Current payload position.</td></tr>
+    <tr><td class="paramname">openlcb_start_index</td><td>Current payload position; updated on success.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Always true (no-op placeholder).</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Do not use in production until implemented.</dd></dl>
-<p>Placeholder for stream protocol transmit (not yet implemented). </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the frame was transmitted, false on hardware failure.</dd></dl>
+<p>Per StreamTransportS Section 8.1, each CAN stream data frame must carry the Destination Stream ID (DID) in byte 0 and up to 7 bytes of payload in bytes 1-7. The DID is always read from openlcb_msg payload[0].</p>
+<p>The OpenLCB message layout is: payload[0] = DID, payload[1..N] = data. The CAN identifier format is 0x1Fdd,dsss (Frame Type 7 + dest alias + source alias).</p>
+<p>Algorithm:</p><ol type="1">
+<li>Build CAN identifier with CAN_FRAME_TYPE_STREAM, dest alias, source alias</li>
+<li>Place DID (payload[0]) into can byte 0</li>
+<li>Copy up to 7 data bytes from the data portion of the payload</li>
+<li>Transmit the frame</li>
+<li>On success, advance *openlcb_start_index</li>
+</ol>
+<pre class="fragment">* @param openlcb_msg          Source stream message (byte 0 = DID, rest = data).
+* @param can_msg_worker       Scratch CAN frame buffer.
+* @param openlcb_start_index  Current payload position; updated on success.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if the frame was transmitted, false on hardware failure. </dd></dl>
 
 </div>
 </div>

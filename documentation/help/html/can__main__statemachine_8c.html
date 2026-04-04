@@ -104,9 +104,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a360ebdb7ef110fdd62097a5fc56310f1" id="r_a360ebdb7ef110fdd62097a5fc56310f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize</a> (const <a class="el" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a> *interface_can_main_statemachine)</td></tr>
 <tr class="memdesc:a360ebdb7ef110fdd62097a5fc56310f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN main state machine.  <br /></td></tr>
 <tr class="separator:a360ebdb7ef110fdd62097a5fc56310f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a514df581e108e12f527d4de248458357" id="r_a514df581e108e12f527d4de248458357"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a514df581e108e12f527d4de248458357">CanMainStateMachine_get_can_statemachine_info</a> (void)</td></tr>
-<tr class="memdesc:a514df581e108e12f527d4de248458357"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the internal state machine context (for testing/debugging).  <br /></td></tr>
-<tr class="separator:a514df581e108e12f527d4de248458357"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55967aac65e2f0b1d32100dce40ce014" id="r_a55967aac65e2f0b1d32100dce40ce014"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55967aac65e2f0b1d32100dce40ce014">CanMainStatemachine_get_can_statemachine_info</a> (void)</td></tr>
+<tr class="memdesc:a55967aac65e2f0b1d32100dce40ce014"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the internal state machine context (for testing/debugging).  <br /></td></tr>
+<tr class="separator:a55967aac65e2f0b1d32100dce40ce014"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c7be0999c73da181407f0ce473b4574" id="r_a4c7be0999c73da181407f0ce473b4574"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4c7be0999c73da181407f0ce473b4574">CanMainStatemachine_handle_duplicate_aliases</a> (void)</td></tr>
 <tr class="memdesc:a4c7be0999c73da181407f0ce473b4574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for the has_duplicate_alias flag; resolves any duplicates found.  <br /></td></tr>
 <tr class="separator:a4c7be0999c73da181407f0ce473b4574"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,9 +128,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a1b717bd6be71184d3841ebd3e42435f6" id="r_a1b717bd6be71184d3841ebd3e42435f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b717bd6be71184d3841ebd3e42435f6">CanMainStatemachine_send_global_alias_enquiry</a> (void)</td></tr>
 <tr class="memdesc:a1b717bd6be71184d3841ebd3e42435f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a global AME and repopulates listener entries for local virtual nodes.  <br /></td></tr>
 <tr class="separator:a1b717bd6be71184d3841ebd3e42435f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bdef5a88eff72849f2506381fe1742f" id="r_a9bdef5a88eff72849f2506381fe1742f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9bdef5a88eff72849f2506381fe1742f">CanMainStateMachine_run</a> (void)</td></tr>
-<tr class="memdesc:a9bdef5a88eff72849f2506381fe1742f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes one cooperative iteration of the main CAN state machine.  <br /></td></tr>
-<tr class="separator:a9bdef5a88eff72849f2506381fe1742f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfa48a07eb45fb1a3edb21c0d355ea8f" id="r_abfa48a07eb45fb1a3edb21c0d355ea8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfa48a07eb45fb1a3edb21c0d355ea8f">CanMainStatemachine_run</a> (void)</td></tr>
+<tr class="memdesc:abfa48a07eb45fb1a3edb21c0d355ea8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes one cooperative iteration of the main CAN state machine.  <br /></td></tr>
+<tr class="separator:abfa48a07eb45fb1a3edb21c0d355ea8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of the main CAN state machine dispatcher. </p>
@@ -168,14 +168,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a514df581e108e12f527d4de248458357" name="a514df581e108e12f527d4de248458357"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a514df581e108e12f527d4de248458357">&#9670;&#160;</a></span>CanMainStateMachine_get_can_statemachine_info()</h2>
+<a id="a55967aac65e2f0b1d32100dce40ce014" name="a55967aac65e2f0b1d32100dce40ce014"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55967aac65e2f0b1d32100dce40ce014">&#9670;&#160;</a></span>CanMainStatemachine_get_can_statemachine_info()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> * CanMainStateMachine_get_can_statemachine_info </td>
+          <td class="memname"><a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> * CanMainStatemachine_get_can_statemachine_info </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -319,10 +319,11 @@ Functions</h2></td></tr>
 
 <p>Probes one listener alias for staleness and queues an AME if due. </p>
 <p>Algorithm:</p><ol type="1">
-<li>Call <a class="el" href="alias__mapping__listener_8c.html#ac1e5ca2ca0ce988c7c8ebf76fd23cda9" title="Probes one listener entry for alias staleness (round-robin).">AliasMappingListener_check_one_verification()</a> with current tick</li>
+<li>Call _interface-&gt;listener_check_one_verification() with current tick</li>
 <li>If non-zero node_id returned: get first node's alias, allocate a CAN buffer (with lock/unlock), build targeted AME, push to CAN FIFO (with lock/unlock)</li>
 <li>Return true if an AME was queued, false otherwise</li>
 </ol>
+<p>No-ops if listener_check_one_verification is NULL (train support not wired).</p>
 <dl class="section return"><dt>Returns</dt><dd>true if a probe AME was queued, false if nothing to do. </dd></dl>
 
 </div>
@@ -355,14 +356,14 @@ NOT thread-safe. </dd></dl>
 
 </div>
 </div>
-<a id="a9bdef5a88eff72849f2506381fe1742f" name="a9bdef5a88eff72849f2506381fe1742f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9bdef5a88eff72849f2506381fe1742f">&#9670;&#160;</a></span>CanMainStateMachine_run()</h2>
+<a id="abfa48a07eb45fb1a3edb21c0d355ea8f" name="abfa48a07eb45fb1a3edb21c0d355ea8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfa48a07eb45fb1a3edb21c0d355ea8f">&#9670;&#160;</a></span>CanMainStatemachine_run()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void CanMainStateMachine_run </td>
+          <td class="memname">void CanMainStatemachine_run </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>

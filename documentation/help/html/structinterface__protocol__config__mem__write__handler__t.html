@@ -130,15 +130,18 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a35e20af9d55c24371e5aeba556b27c31" id="r_a35e20af9d55c24371e5aeba556b27c31"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35e20af9d55c24371e5aeba556b27c31">write_request_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
 <tr class="memdesc:a35e20af9d55c24371e5aeba556b27c31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Train Fn Config (0xF9) write handler.  <br /></td></tr>
 <tr class="separator:a35e20af9d55c24371e5aeba556b27c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae390d0c064a37e0b04339a43150fbf97" id="r_ae390d0c064a37e0b04339a43150fbf97"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae390d0c064a37e0b04339a43150fbf97">write_request_firmware</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:ae390d0c064a37e0b04339a43150fbf97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Firmware (0xEF) write handler.  <br /></td></tr>
-<tr class="separator:ae390d0c064a37e0b04339a43150fbf97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51fe5c8fc50ff2d5adb0789bc626a74b" id="r_a51fe5c8fc50ff2d5adb0789bc626a74b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51fe5c8fc50ff2d5adb0789bc626a74b">write_request_firmware</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info, <a class="el" href="openlcb__types_8h.html#a217935f55ce99fe0af81c36639afd651">write_result_t</a> write_result)</td></tr>
+<tr class="memdesc:a51fe5c8fc50ff2d5adb0789bc626a74b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Firmware (0xEF) write handler (receives write_result completion callback).  <br /></td></tr>
+<tr class="separator:a51fe5c8fc50ff2d5adb0789bc626a74b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82baac869860da64982f0bde9385d3bb" id="r_a82baac869860da64982f0bde9385d3bb"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82baac869860da64982f0bde9385d3bb">delayed_reply_time</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
 <tr class="memdesc:a82baac869860da64982f0bde9385d3bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Override reply delay (return N → 2^N seconds). Default 0.  <br /></td></tr>
 <tr class="separator:a82baac869860da64982f0bde9385d3bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a317d544123df617738d3d60062331418" id="r_a317d544123df617738d3d60062331418"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a317d544123df617738d3d60062331418">on_function_changed</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td></tr>
 <tr class="memdesc:a317d544123df617738d3d60062331418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Notifier fired when a train function changes via 0xF9 write.  <br /></td></tr>
 <tr class="separator:a317d544123df617738d3d60062331418"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af777915e82cc62643931b644f3c8f959" id="r_af777915e82cc62643931b644f3c8f959"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af777915e82cc62643931b644f3c8f959">get_train_state</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:af777915e82cc62643931b644f3c8f959"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Returns train state for the given node (DI for train module).  <br /></td></tr>
+<tr class="separator:af777915e82cc62643931b644f3c8f959"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Callback interface for memory-config write operations. </p>
@@ -320,19 +323,19 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="ae390d0c064a37e0b04339a43150fbf97" name="ae390d0c064a37e0b04339a43150fbf97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae390d0c064a37e0b04339a43150fbf97">&#9670;&#160;</a></span>write_request_firmware</h2>
+<a id="a51fe5c8fc50ff2d5adb0789bc626a74b" name="a51fe5c8fc50ff2d5adb0789bc626a74b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51fe5c8fc50ff2d5adb0789bc626a74b">&#9670;&#160;</a></span>write_request_firmware</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* write_request_firmware) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+          <td class="memname">void(* write_request_firmware) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info, <a class="el" href="openlcb__types_8h.html#a217935f55ce99fe0af81c36639afd651">write_result_t</a> write_result)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional — Firmware (0xEF) write handler. </p>
+<p>Optional — Firmware (0xEF) write handler (receives write_result completion callback). </p>
 
 </div>
 </div>
@@ -365,6 +368,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Optional — Notifier fired when a train function changes via 0xF9 write. </p>
+
+</div>
+</div>
+<a id="af777915e82cc62643931b644f3c8f959" name="af777915e82cc62643931b644f3c8f959"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af777915e82cc62643931b644f3c8f959">&#9670;&#160;</a></span>get_train_state</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *(* get_train_state) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional — Returns train state for the given node (DI for train module). </p>
 
 </div>
 </div>

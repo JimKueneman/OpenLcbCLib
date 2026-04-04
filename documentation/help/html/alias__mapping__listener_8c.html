@@ -101,30 +101,30 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a34815306ff8eb6c29f92168b68c0cdc8" id="r_a34815306ff8eb6c29f92168b68c0cdc8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a34815306ff8eb6c29f92168b68c0cdc8">AliasMappingListener_initialize</a> (void)</td></tr>
-<tr class="memdesc:a34815306ff8eb6c29f92168b68c0cdc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros all entries in the listener alias table and resets the prober cursor.  <br /></td></tr>
-<tr class="separator:a34815306ff8eb6c29f92168b68c0cdc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1dd4277f9776f44a19b56516416d807" id="r_ad1dd4277f9776f44a19b56516416d807"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1dd4277f9776f44a19b56516416d807">AliasMappingListener_register</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
-<tr class="memdesc:ad1dd4277f9776f44a19b56516416d807"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a listener Node ID in the table with alias = 0.  <br /></td></tr>
-<tr class="separator:ad1dd4277f9776f44a19b56516416d807"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c8502085ee00bcad7855a039eb757bb" id="r_a3c8502085ee00bcad7855a039eb757bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c8502085ee00bcad7855a039eb757bb">AliasMappingListener_unregister</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
-<tr class="memdesc:a3c8502085ee00bcad7855a039eb757bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the entry matching node_id from the table.  <br /></td></tr>
-<tr class="separator:a3c8502085ee00bcad7855a039eb757bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c000c7eb8c21a1edd8a071b3d6fdc7b" id="r_a1c000c7eb8c21a1edd8a071b3d6fdc7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c000c7eb8c21a1edd8a071b3d6fdc7b">AliasMappingListener_set_alias</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint16_t alias)</td></tr>
-<tr class="memdesc:a1c000c7eb8c21a1edd8a071b3d6fdc7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores a resolved alias for a registered listener Node ID.  <br /></td></tr>
-<tr class="separator:a1c000c7eb8c21a1edd8a071b3d6fdc7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13234f989c2fc5ce899ed48044d603ac" id="r_a13234f989c2fc5ce899ed48044d603ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13234f989c2fc5ce899ed48044d603ac">AliasMappingListener_find_by_node_id</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
-<tr class="memdesc:a13234f989c2fc5ce899ed48044d603ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the table entry for a given listener Node ID.  <br /></td></tr>
-<tr class="separator:a13234f989c2fc5ce899ed48044d603ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a9144ed450cc79586368edb2d993f61" id="r_a7a9144ed450cc79586368edb2d993f61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a9144ed450cc79586368edb2d993f61">AliasMappingListener_flush_aliases</a> (void)</td></tr>
-<tr class="memdesc:a7a9144ed450cc79586368edb2d993f61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros all alias fields but preserves registered node_ids.  <br /></td></tr>
-<tr class="separator:a7a9144ed450cc79586368edb2d993f61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14fb563e821dd3b4e1d3a211cc44b570" id="r_a14fb563e821dd3b4e1d3a211cc44b570"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14fb563e821dd3b4e1d3a211cc44b570">AliasMappingListener_clear_alias_by_alias</a> (uint16_t alias)</td></tr>
-<tr class="memdesc:a14fb563e821dd3b4e1d3a211cc44b570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros the alias field for the entry matching a specific alias value.  <br /></td></tr>
-<tr class="separator:a14fb563e821dd3b4e1d3a211cc44b570"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1e5ca2ca0ce988c7c8ebf76fd23cda9" id="r_ac1e5ca2ca0ce988c7c8ebf76fd23cda9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1e5ca2ca0ce988c7c8ebf76fd23cda9">AliasMappingListener_check_one_verification</a> (uint8_t current_tick)</td></tr>
-<tr class="memdesc:ac1e5ca2ca0ce988c7c8ebf76fd23cda9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Probes one listener entry for alias staleness (round-robin).  <br /></td></tr>
-<tr class="separator:ac1e5ca2ca0ce988c7c8ebf76fd23cda9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26dc7bd513a49682af4ba67182654f05" id="r_a26dc7bd513a49682af4ba67182654f05"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26dc7bd513a49682af4ba67182654f05">AliasMappingListener_initialize</a> (void)</td></tr>
+<tr class="memdesc:a26dc7bd513a49682af4ba67182654f05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros all entries in the listener alias table and resets the prober cursor.  <br /></td></tr>
+<tr class="separator:a26dc7bd513a49682af4ba67182654f05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fcd0fed7527a79bb6c6327ea46b008e" id="r_a5fcd0fed7527a79bb6c6327ea46b008e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5fcd0fed7527a79bb6c6327ea46b008e">AliasMappingListener_register</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memdesc:a5fcd0fed7527a79bb6c6327ea46b008e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a listener Node ID in the table with alias = 0.  <br /></td></tr>
+<tr class="separator:a5fcd0fed7527a79bb6c6327ea46b008e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5658e49eaec355027abdc3549716c8b4" id="r_a5658e49eaec355027abdc3549716c8b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5658e49eaec355027abdc3549716c8b4">AliasMappingListener_unregister</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memdesc:a5658e49eaec355027abdc3549716c8b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the entry matching node_id from the table.  <br /></td></tr>
+<tr class="separator:a5658e49eaec355027abdc3549716c8b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08c064414191082068d60287b7cc02b0" id="r_a08c064414191082068d60287b7cc02b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a08c064414191082068d60287b7cc02b0">AliasMappingListener_set_alias</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint16_t alias)</td></tr>
+<tr class="memdesc:a08c064414191082068d60287b7cc02b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores a resolved alias for a registered listener Node ID.  <br /></td></tr>
+<tr class="separator:a08c064414191082068d60287b7cc02b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46a42e5d34315b97954d7fe503761b5a" id="r_a46a42e5d34315b97954d7fe503761b5a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46a42e5d34315b97954d7fe503761b5a">AliasMappingListener_find_by_node_id</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memdesc:a46a42e5d34315b97954d7fe503761b5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the table entry for a given listener Node ID.  <br /></td></tr>
+<tr class="separator:a46a42e5d34315b97954d7fe503761b5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84577523aa75ac0e50b6b23b52e72a34" id="r_a84577523aa75ac0e50b6b23b52e72a34"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a84577523aa75ac0e50b6b23b52e72a34">AliasMappingListener_flush_aliases</a> (void)</td></tr>
+<tr class="memdesc:a84577523aa75ac0e50b6b23b52e72a34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros all alias fields but preserves registered node_ids.  <br /></td></tr>
+<tr class="separator:a84577523aa75ac0e50b6b23b52e72a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab28d33e057356d087836e12d937a4332" id="r_ab28d33e057356d087836e12d937a4332"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab28d33e057356d087836e12d937a4332">AliasMappingListener_clear_alias_by_alias</a> (uint16_t alias)</td></tr>
+<tr class="memdesc:ab28d33e057356d087836e12d937a4332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros the alias field for the entry matching a specific alias value.  <br /></td></tr>
+<tr class="separator:ab28d33e057356d087836e12d937a4332"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c7a36ecead83e5813def924d0c0493b" id="r_a8c7a36ecead83e5813def924d0c0493b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8c7a36ecead83e5813def924d0c0493b">AliasMappingListener_check_one_verification</a> (uint8_t current_tick)</td></tr>
+<tr class="memdesc:a8c7a36ecead83e5813def924d0c0493b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Probes one listener entry for alias staleness (round-robin).  <br /></td></tr>
+<tr class="separator:a8c7a36ecead83e5813def924d0c0493b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>On-demand alias resolution table for consist listener nodes. </p>
@@ -139,8 +139,8 @@ Functions</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>8 Mar 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a34815306ff8eb6c29f92168b68c0cdc8" name="a34815306ff8eb6c29f92168b68c0cdc8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a34815306ff8eb6c29f92168b68c0cdc8">&#9670;&#160;</a></span>AliasMappingListener_initialize()</h2>
+<a id="a26dc7bd513a49682af4ba67182654f05" name="a26dc7bd513a49682af4ba67182654f05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26dc7bd513a49682af4ba67182654f05">&#9670;&#160;</a></span>AliasMappingListener_initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -159,8 +159,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad1dd4277f9776f44a19b56516416d807" name="ad1dd4277f9776f44a19b56516416d807"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad1dd4277f9776f44a19b56516416d807">&#9670;&#160;</a></span>AliasMappingListener_register()</h2>
+<a id="a5fcd0fed7527a79bb6c6327ea46b008e" name="a5fcd0fed7527a79bb6c6327ea46b008e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fcd0fed7527a79bb6c6327ea46b008e">&#9670;&#160;</a></span>AliasMappingListener_register()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -186,8 +186,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a3c8502085ee00bcad7855a039eb757bb" name="a3c8502085ee00bcad7855a039eb757bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c8502085ee00bcad7855a039eb757bb">&#9670;&#160;</a></span>AliasMappingListener_unregister()</h2>
+<a id="a5658e49eaec355027abdc3549716c8b4" name="a5658e49eaec355027abdc3549716c8b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5658e49eaec355027abdc3549716c8b4">&#9670;&#160;</a></span>AliasMappingListener_unregister()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -210,8 +210,8 @@ Functions</h2></td></tr>
 * </pre> 
 </div>
 </div>
-<a id="a1c000c7eb8c21a1edd8a071b3d6fdc7b" name="a1c000c7eb8c21a1edd8a071b3d6fdc7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c000c7eb8c21a1edd8a071b3d6fdc7b">&#9670;&#160;</a></span>AliasMappingListener_set_alias()</h2>
+<a id="a08c064414191082068d60287b7cc02b0" name="a08c064414191082068d60287b7cc02b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08c064414191082068d60287b7cc02b0">&#9670;&#160;</a></span>AliasMappingListener_set_alias()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -240,8 +240,8 @@ Functions</h2></td></tr>
 * </pre> 
 </div>
 </div>
-<a id="a13234f989c2fc5ce899ed48044d603ac" name="a13234f989c2fc5ce899ed48044d603ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13234f989c2fc5ce899ed48044d603ac">&#9670;&#160;</a></span>AliasMappingListener_find_by_node_id()</h2>
+<a id="a46a42e5d34315b97954d7fe503761b5a" name="a46a42e5d34315b97954d7fe503761b5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46a42e5d34315b97954d7fe503761b5a">&#9670;&#160;</a></span>AliasMappingListener_find_by_node_id()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -265,8 +265,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a7a9144ed450cc79586368edb2d993f61" name="a7a9144ed450cc79586368edb2d993f61"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7a9144ed450cc79586368edb2d993f61">&#9670;&#160;</a></span>AliasMappingListener_flush_aliases()</h2>
+<a id="a84577523aa75ac0e50b6b23b52e72a34" name="a84577523aa75ac0e50b6b23b52e72a34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84577523aa75ac0e50b6b23b52e72a34">&#9670;&#160;</a></span>AliasMappingListener_flush_aliases()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -288,8 +288,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a14fb563e821dd3b4e1d3a211cc44b570" name="a14fb563e821dd3b4e1d3a211cc44b570"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14fb563e821dd3b4e1d3a211cc44b570">&#9670;&#160;</a></span>AliasMappingListener_clear_alias_by_alias()</h2>
+<a id="ab28d33e057356d087836e12d937a4332" name="ab28d33e057356d087836e12d937a4332"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab28d33e057356d087836e12d937a4332">&#9670;&#160;</a></span>AliasMappingListener_clear_alias_by_alias()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -313,8 +313,8 @@ Functions</h2></td></tr>
 * </pre> 
 </div>
 </div>
-<a id="ac1e5ca2ca0ce988c7c8ebf76fd23cda9" name="ac1e5ca2ca0ce988c7c8ebf76fd23cda9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac1e5ca2ca0ce988c7c8ebf76fd23cda9">&#9670;&#160;</a></span>AliasMappingListener_check_one_verification()</h2>
+<a id="a8c7a36ecead83e5813def924d0c0493b" name="a8c7a36ecead83e5813def924d0c0493b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c7a36ecead83e5813def924d0c0493b">&#9670;&#160;</a></span>AliasMappingListener_check_one_verification()</h2>
 
 <div class="memitem">
 <div class="memproto">

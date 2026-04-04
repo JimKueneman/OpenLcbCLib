@@ -41,8 +41,9 @@ var searchData=
   ['stream_5fdata_5fproceed_38',['stream_data_proceed',['../structinterface__openlcb__main__statemachine__t.html#ad4ef6bef2fc0ccee1b337b55aec77abd',1,'interface_openlcb_main_statemachine_t']]],
   ['stream_5finitiate_5freply_39',['stream_initiate_reply',['../structinterface__openlcb__main__statemachine__t.html#a191486f83109c1e0fd90ac3aad413c2e',1,'interface_openlcb_main_statemachine_t']]],
   ['stream_5finitiate_5frequest_40',['stream_initiate_request',['../structinterface__openlcb__main__statemachine__t.html#a344d21148e7e4aea207e7f2499de359e',1,'interface_openlcb_main_statemachine_t']]],
-  ['stream_5fread_5fwrite_5fsupported_41',['stream_read_write_supported',['../structuser__configuration__options.html#ab2b7e8d91f3d7ee3e9186f21cea2c192',1,'user_configuration_options']]],
+  ['stream_5fread_5fwrite_5fsupported_41',['stream_read_write_supported',['../structuser__configuration__options__t.html#ab2b7e8d91f3d7ee3e9186f21cea2c192',1,'user_configuration_options_t']]],
   ['stream_5fsend_5fdata_42',['stream_send_data',['../structinterface__openlcb__main__statemachine__t.html#a317047b3f7f1050dd011108a4a3322eb',1,'interface_openlcb_main_statemachine_t']]],
-  ['sync_5fdelay_5fticks_43',['sync_delay_ticks',['../structbroadcast__clock__t.html#a941dc519e9181ae3a95e805c3ba4964a',1,'broadcast_clock_t']]],
-  ['sync_5fpending_44',['sync_pending',['../structbroadcast__clock__t.html#ad0a652fa7b44b382c8d995523b74325e',1,'broadcast_clock_t']]]
+  ['stream_5fterminate_5fdue_5fto_5ferror_43',['stream_terminate_due_to_error',['../structinterface__openlcb__main__statemachine__t.html#a4d5391806a5fba09b91e40000a8143f5',1,'interface_openlcb_main_statemachine_t']]],
+  ['sync_5fdelay_5fticks_44',['sync_delay_ticks',['../structbroadcast__clock__t.html#a941dc519e9181ae3a95e805c3ba4964a',1,'broadcast_clock_t']]],
+  ['sync_5fpending_45',['sync_pending',['../structbroadcast__clock__t.html#ad0a652fa7b44b382c8d995523b74325e',1,'broadcast_clock_t']]]
 ];

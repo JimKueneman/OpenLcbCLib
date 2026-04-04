@@ -122,6 +122,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ac4a34f4e0ee27e144f7057ef13cbf4c7" id="r_ac4a34f4e0ee27e144f7057ef13cbf4c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4a34f4e0ee27e144f7057ef13cbf4c7">ProtocolTrainHandler_handle_emergency_event</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
 <tr class="memdesc:ac4a34f4e0ee27e144f7057ef13cbf4c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a global or addressed emergency event for a train node.  <br /></td></tr>
 <tr class="separator:ac4a34f4e0ee27e144f7057ef13cbf4c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b2de30cde742a185ed054f2020c9efd" id="r_a4b2de30cde742a185ed054f2020c9efd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b2de30cde742a185ed054f2020c9efd">ProtocolTrainHandler_is_emergency_event</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a4b2de30cde742a185ed054f2020c9efd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the event ID is one of the 4 well-known emergency events.  <br /></td></tr>
+<tr class="separator:a4b2de30cde742a185ed054f2020c9efd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Train Control Protocol message handler (Layer 1) </p>
@@ -140,7 +143,7 @@ Functions</h2></td></tr>
 <p>Throttle-side callbacks are all notifiers that fire when a reply is received.</p>
 <p>Called from the main statemachine when a train protocol message is received.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>9 Mar 2026</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>20 Mar 2026</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__application__train_8h.html" title="Application-level Train Control Protocol module.">openlcb_application_train.h</a> - Layer 2 state and API </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a8910429fd811c07e7ff663cedfabc411" name="a8910429fd811c07e7ff663cedfabc411"></a>
@@ -280,6 +283,40 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a4b2de30cde742a185ed054f2020c9efd" name="a4b2de30cde742a185ed054f2020c9efd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b2de30cde742a185ed054f2020c9efd">&#9670;&#160;</a></span>ProtocolTrainHandler_is_emergency_event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ProtocolTrainHandler_is_emergency_event </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns true if the event ID is one of the 4 well-known emergency events. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the event ID matches a well-known emergency event. </dd></dl>
 
 </div>
 </div>

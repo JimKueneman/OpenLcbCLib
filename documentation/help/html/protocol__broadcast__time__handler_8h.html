@@ -110,12 +110,48 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae10dd7b8798b7f1d7805c8e5863b3e2a" id="r_ae10dd7b8798b7f1d7805c8e5863b3e2a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae10dd7b8798b7f1d7805c8e5863b3e2a">ProtocolBroadcastTime_initialize</a> (const <a class="el" href="structinterface__openlcb__protocol__broadcast__time__handler__t.html">interface_openlcb_protocol_broadcast_time_handler_t</a> *interface_openlcb_protocol_broadcast_time_handler)</td></tr>
-<tr class="memdesc:ae10dd7b8798b7f1d7805c8e5863b3e2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the Broadcast Time Protocol handler.  <br /></td></tr>
-<tr class="separator:ae10dd7b8798b7f1d7805c8e5863b3e2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56545d916bd644bc5b3e8c8a6f86ef53" id="r_a56545d916bd644bc5b3e8c8a6f86ef53"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56545d916bd644bc5b3e8c8a6f86ef53">ProtocolBroadcastTime_handle_time_event</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
-<tr class="memdesc:a56545d916bd644bc5b3e8c8a6f86ef53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming broadcast time events.  <br /></td></tr>
-<tr class="separator:a56545d916bd644bc5b3e8c8a6f86ef53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a802e50b3de842f8890e13f54c283f465" id="r_a802e50b3de842f8890e13f54c283f465"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a802e50b3de842f8890e13f54c283f465">ProtocolBroadcastTimeHandler_initialize</a> (const <a class="el" href="structinterface__openlcb__protocol__broadcast__time__handler__t.html">interface_openlcb_protocol_broadcast_time_handler_t</a> *interface_openlcb_protocol_broadcast_time_handler)</td></tr>
+<tr class="memdesc:a802e50b3de842f8890e13f54c283f465"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the Broadcast Time Protocol handler.  <br /></td></tr>
+<tr class="separator:a802e50b3de842f8890e13f54c283f465"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bd1b6bb4a819938221d5ff72f1ad362" id="r_a2bd1b6bb4a819938221d5ff72f1ad362"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2bd1b6bb4a819938221d5ff72f1ad362">ProtocolBroadcastTimeHandler_handle_time_event</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a2bd1b6bb4a819938221d5ff72f1ad362"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming broadcast time events.  <br /></td></tr>
+<tr class="separator:a2bd1b6bb4a819938221d5ff72f1ad362"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a153ed5b06858a0a9d0f56d65fb3031d4" id="r_a153ed5b06858a0a9d0f56d65fb3031d4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a153ed5b06858a0a9d0f56d65fb3031d4">ProtocolBroadcastTimeHandler_is_time_event</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a153ed5b06858a0a9d0f56d65fb3031d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the event ID belongs to the broadcast time event space.  <br /></td></tr>
+<tr class="separator:a153ed5b06858a0a9d0f56d65fb3031d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36af048d00562d9bd8b706c2bfde0fe0" id="r_a36af048d00562d9bd8b706c2bfde0fe0"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36af048d00562d9bd8b706c2bfde0fe0">ProtocolBroadcastTimeHandler_extract_clock_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a36af048d00562d9bd8b706c2bfde0fe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the 48-bit clock ID (upper 6 bytes) from a broadcast time event ID.  <br /></td></tr>
+<tr class="separator:a36af048d00562d9bd8b706c2bfde0fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef7f035aac4dac489d52964cb308e23c" id="r_aef7f035aac4dac489d52964cb308e23c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef7f035aac4dac489d52964cb308e23c">ProtocolBroadcastTimeHandler_get_event_type</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:aef7f035aac4dac489d52964cb308e23c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> for a broadcast time event ID.  <br /></td></tr>
+<tr class="separator:aef7f035aac4dac489d52964cb308e23c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36bf49543e22a8054dd6358ff780893e" id="r_a36bf49543e22a8054dd6358ff780893e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36bf49543e22a8054dd6358ff780893e">ProtocolBroadcastTimeHandler_extract_time</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint8_t *hour, uint8_t *minute)</td></tr>
+<tr class="memdesc:a36bf49543e22a8054dd6358ff780893e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts hour and minute from a broadcast time event ID.  <br /></td></tr>
+<tr class="separator:a36bf49543e22a8054dd6358ff780893e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad93a978b33fdda8110d947512161be56" id="r_ad93a978b33fdda8110d947512161be56"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad93a978b33fdda8110d947512161be56">ProtocolBroadcastTimeHandler_extract_date</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint8_t *month, uint8_t *day)</td></tr>
+<tr class="memdesc:ad93a978b33fdda8110d947512161be56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts month and day from a broadcast time event ID.  <br /></td></tr>
+<tr class="separator:ad93a978b33fdda8110d947512161be56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86aec772491f61b1cb8bb1d026de7923" id="r_a86aec772491f61b1cb8bb1d026de7923"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86aec772491f61b1cb8bb1d026de7923">ProtocolBroadcastTimeHandler_extract_year</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t *year)</td></tr>
+<tr class="memdesc:a86aec772491f61b1cb8bb1d026de7923"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts year from a broadcast time event ID.  <br /></td></tr>
+<tr class="separator:a86aec772491f61b1cb8bb1d026de7923"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1971a66fed8d6f67f03c9d7b5384f81" id="r_ae1971a66fed8d6f67f03c9d7b5384f81"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1971a66fed8d6f67f03c9d7b5384f81">ProtocolBroadcastTimeHandler_extract_rate</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, int16_t *rate)</td></tr>
+<tr class="memdesc:ae1971a66fed8d6f67f03c9d7b5384f81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the 12-bit signed fixed-point rate from a broadcast time event ID.  <br /></td></tr>
+<tr class="separator:ae1971a66fed8d6f67f03c9d7b5384f81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95a0df3611d477f195d7b6f0b42bb475" id="r_a95a0df3611d477f195d7b6f0b42bb475"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95a0df3611d477f195d7b6f0b42bb475">ProtocolBroadcastTimeHandler_create_time_event_id</a> (uint64_t clock_id, uint8_t hour, uint8_t minute, bool is_set)</td></tr>
+<tr class="memdesc:a95a0df3611d477f195d7b6f0b42bb475"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a Report/Set Time event ID from clock_id, hour, minute.  <br /></td></tr>
+<tr class="separator:a95a0df3611d477f195d7b6f0b42bb475"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a083417c960bafe1c9a34b0591645e98d" id="r_a083417c960bafe1c9a34b0591645e98d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a083417c960bafe1c9a34b0591645e98d">ProtocolBroadcastTimeHandler_create_date_event_id</a> (uint64_t clock_id, uint8_t month, uint8_t day, bool is_set)</td></tr>
+<tr class="memdesc:a083417c960bafe1c9a34b0591645e98d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a Report/Set Date event ID from clock_id, month, day.  <br /></td></tr>
+<tr class="separator:a083417c960bafe1c9a34b0591645e98d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67f580b17130d3cdb4eda2c29a127066" id="r_a67f580b17130d3cdb4eda2c29a127066"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67f580b17130d3cdb4eda2c29a127066">ProtocolBroadcastTimeHandler_create_year_event_id</a> (uint64_t clock_id, uint16_t year, bool is_set)</td></tr>
+<tr class="memdesc:a67f580b17130d3cdb4eda2c29a127066"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a Report/Set Year event ID from clock_id, year.  <br /></td></tr>
+<tr class="separator:a67f580b17130d3cdb4eda2c29a127066"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b78af21f7dd8aff7674d8723bc719e4" id="r_a1b78af21f7dd8aff7674d8723bc719e4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b78af21f7dd8aff7674d8723bc719e4">ProtocolBroadcastTimeHandler_create_rate_event_id</a> (uint64_t clock_id, int16_t rate, bool is_set)</td></tr>
+<tr class="memdesc:a1b78af21f7dd8aff7674d8723bc719e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a Report/Set Rate event ID from clock_id, rate.  <br /></td></tr>
+<tr class="separator:a1b78af21f7dd8aff7674d8723bc719e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeda92c7f3cbfda935245d6d645d8d991" id="r_aeda92c7f3cbfda935245d6d645d8d991"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeda92c7f3cbfda935245d6d645d8d991">ProtocolBroadcastTimeHandler_create_command_event_id</a> (uint64_t clock_id, <a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> command)</td></tr>
+<tr class="memdesc:aeda92c7f3cbfda935245d6d645d8d991"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a command event ID (Query, Start, Stop, Date Rollover) for the given clock.  <br /></td></tr>
+<tr class="separator:aeda92c7f3cbfda935245d6d645d8d991"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Broadcast Time Protocol message handler. </p>
@@ -129,13 +165,13 @@ Functions</h2></td></tr>
 <p>Handles incoming broadcast time Event IDs from the network. Decodes time/date/year/rate/command data and updates the singleton clock state in openlcb_application_broadcast_time module.</p>
 <p>Called from the main statemachine when a broadcast time event is detected. Only processes events for node index 0 (broadcast time events are global).</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>20 Mar 2026</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__application__broadcast__time_8h.html" title="Application-level Broadcast Time Protocol module.">openlcb_application_broadcast_time.h</a> - Singleton clock state and API </dd>
 <dd>
-<a class="el" href="openlcb__utilities_8h.html" title="Common utility functions for OpenLCB message and buffer manipulation.">openlcb_utilities.h</a> - Event ID encoding/decoding functions </dd></dl>
+<a class="el" href="openlcb__utilities_8h.html" title="Common utility functions for OpenLCB message and buffer manipulation.">openlcb_utilities.h</a> - General message utility functions </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ae10dd7b8798b7f1d7805c8e5863b3e2a" name="ae10dd7b8798b7f1d7805c8e5863b3e2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae10dd7b8798b7f1d7805c8e5863b3e2a">&#9670;&#160;</a></span>ProtocolBroadcastTime_initialize()</h2>
+<a id="a802e50b3de842f8890e13f54c283f465" name="a802e50b3de842f8890e13f54c283f465"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a802e50b3de842f8890e13f54c283f465">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -144,7 +180,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ProtocolBroadcastTime_initialize </td>
+          <td class="memname">void ProtocolBroadcastTimeHandler_initialize </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structinterface__openlcb__protocol__broadcast__time__handler__t.html">interface_openlcb_protocol_broadcast_time_handler_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface_openlcb_protocol_broadcast_time_handler</em></span></td><td>)</td>
           <td></td>
@@ -167,8 +203,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a56545d916bd644bc5b3e8c8a6f86ef53" name="a56545d916bd644bc5b3e8c8a6f86ef53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56545d916bd644bc5b3e8c8a6f86ef53">&#9670;&#160;</a></span>ProtocolBroadcastTime_handle_time_event()</h2>
+<a id="a2bd1b6bb4a819938221d5ff72f1ad362" name="a2bd1b6bb4a819938221d5ff72f1ad362"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bd1b6bb4a819938221d5ff72f1ad362">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_handle_time_event()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -177,7 +213,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ProtocolBroadcastTime_handle_time_event </td>
+          <td class="memname">void ProtocolBroadcastTimeHandler_handle_time_event </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
         </tr>
@@ -203,6 +239,507 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a153ed5b06858a0a9d0f56d65fb3031d4" name="a153ed5b06858a0a9d0f56d65fb3031d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a153ed5b06858a0a9d0f56d65fb3031d4">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_is_time_event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ProtocolBroadcastTimeHandler_is_time_event </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns true if the event ID belongs to the broadcast time event space. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the event ID is a broadcast time event. </dd></dl>
+
+</div>
+</div>
+<a id="a36af048d00562d9bd8b706c2bfde0fe0" name="a36af048d00562d9bd8b706c2bfde0fe0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36af048d00562d9bd8b706c2bfde0fe0">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_extract_clock_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t ProtocolBroadcastTimeHandler_extract_clock_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Extracts the 48-bit clock ID (upper 6 bytes) from a broadcast time event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>Broadcast time <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to extract from.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>48-bit clock identifier masked from the event ID. </dd></dl>
+
+</div>
+</div>
+<a id="aef7f035aac4dac489d52964cb308e23c" name="aef7f035aac4dac489d52964cb308e23c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef7f035aac4dac489d52964cb308e23c">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_get_event_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> ProtocolBroadcastTimeHandler_get_event_type </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the <a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> for a broadcast time event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>Broadcast time <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to classify.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The <a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> indicating the event type. </dd></dl>
+
+</div>
+</div>
+<a id="a36bf49543e22a8054dd6358ff780893e" name="a36bf49543e22a8054dd6358ff780893e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36bf49543e22a8054dd6358ff780893e">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_extract_time()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ProtocolBroadcastTimeHandler_extract_time </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>minute</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Extracts hour and minute from a broadcast time event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>Broadcast time event ID </td></tr>
+    <tr><td class="paramname">hour</td><td>Receives hour (0-23) </td></tr>
+    <tr><td class="paramname">minute</td><td>Receives minute (0-59)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if values are valid, false if out of range. </dd></dl>
+
+</div>
+</div>
+<a id="ad93a978b33fdda8110d947512161be56" name="ad93a978b33fdda8110d947512161be56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad93a978b33fdda8110d947512161be56">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_extract_date()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ProtocolBroadcastTimeHandler_extract_date </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>month</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>day</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Extracts month and day from a broadcast time event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>Broadcast time event ID </td></tr>
+    <tr><td class="paramname">month</td><td>Receives month (1-12) </td></tr>
+    <tr><td class="paramname">day</td><td>Receives day (1-31)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if values are valid, false if out of range. </dd></dl>
+
+</div>
+</div>
+<a id="a86aec772491f61b1cb8bb1d026de7923" name="a86aec772491f61b1cb8bb1d026de7923"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86aec772491f61b1cb8bb1d026de7923">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_extract_year()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ProtocolBroadcastTimeHandler_extract_year </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>year</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Extracts year from a broadcast time event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>Broadcast time event ID </td></tr>
+    <tr><td class="paramname">year</td><td>Receives year (0-4095)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if extraction successful. </dd></dl>
+
+</div>
+</div>
+<a id="ae1971a66fed8d6f67f03c9d7b5384f81" name="ae1971a66fed8d6f67f03c9d7b5384f81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1971a66fed8d6f67f03c9d7b5384f81">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_extract_rate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ProtocolBroadcastTimeHandler_extract_rate </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int16_t *</td>          <td class="paramname"><span class="paramname"><em>rate</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Extracts the 12-bit signed fixed-point rate from a broadcast time event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>Broadcast time event ID </td></tr>
+    <tr><td class="paramname">rate</td><td>Receives rate (10.2 fixed point, e.g. 0x0004 = 1.00)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if extraction successful. </dd></dl>
+
+</div>
+</div>
+<a id="a95a0df3611d477f195d7b6f0b42bb475" name="a95a0df3611d477f195d7b6f0b42bb475"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95a0df3611d477f195d7b6f0b42bb475">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_create_time_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> ProtocolBroadcastTimeHandler_create_time_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>minute</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>is_set</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a Report/Set Time event ID from clock_id, hour, minute. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier. </td></tr>
+    <tr><td class="paramname">hour</td><td>Hour value (0-23). </td></tr>
+    <tr><td class="paramname">minute</td><td>Minute value (0-59). </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for a Set command, false for a Report.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the time event. </dd></dl>
+
+</div>
+</div>
+<a id="a083417c960bafe1c9a34b0591645e98d" name="a083417c960bafe1c9a34b0591645e98d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a083417c960bafe1c9a34b0591645e98d">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_create_date_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> ProtocolBroadcastTimeHandler_create_date_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>month</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>day</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>is_set</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a Report/Set Date event ID from clock_id, month, day. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier. </td></tr>
+    <tr><td class="paramname">month</td><td>Month value (1-12). </td></tr>
+    <tr><td class="paramname">day</td><td>Day value (1-31). </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for a Set command, false for a Report.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the date event. </dd></dl>
+
+</div>
+</div>
+<a id="a67f580b17130d3cdb4eda2c29a127066" name="a67f580b17130d3cdb4eda2c29a127066"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67f580b17130d3cdb4eda2c29a127066">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_create_year_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> ProtocolBroadcastTimeHandler_create_year_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>year</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>is_set</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a Report/Set Year event ID from clock_id, year. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier. </td></tr>
+    <tr><td class="paramname">year</td><td>Year value (0-4095). </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for a Set command, false for a Report.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the year event. </dd></dl>
+
+</div>
+</div>
+<a id="a1b78af21f7dd8aff7674d8723bc719e4" name="a1b78af21f7dd8aff7674d8723bc719e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b78af21f7dd8aff7674d8723bc719e4">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_create_rate_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> ProtocolBroadcastTimeHandler_create_rate_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int16_t</td>          <td class="paramname"><span class="paramname"><em>rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>is_set</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a Report/Set Rate event ID from clock_id, rate. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier. </td></tr>
+    <tr><td class="paramname">rate</td><td>12-bit signed fixed-point rate (10.2 format). </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for a Set command, false for a Report.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the rate event. </dd></dl>
+
+</div>
+</div>
+<a id="aeda92c7f3cbfda935245d6d645d8d991" name="aeda92c7f3cbfda935245d6d645d8d991"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeda92c7f3cbfda935245d6d645d8d991">&#9670;&#160;</a></span>ProtocolBroadcastTimeHandler_create_command_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> ProtocolBroadcastTimeHandler_create_command_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a></td>          <td class="paramname"><span class="paramname"><em>command</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a command event ID (Query, Start, Stop, Date Rollover) for the given clock. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier. </td></tr>
+    <tr><td class="paramname">command</td><td><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> specifying the command type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Encoded <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for the command event. </dd></dl>
 
 </div>
 </div>

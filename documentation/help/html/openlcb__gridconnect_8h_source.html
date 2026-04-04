@@ -94,57 +94,58 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 <a href="openlcb__gridconnect_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#ifndef __OPENLCB_OPENLCB_GRIDCONNECT__</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#define __OPENLCB_OPENLCB_GRIDCONNECT__</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &quot;<a class="code" href="can__types_8h.html">../drivers/canbus/can_types.h</a>&quot;</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">// This is a guard condition so that contents of this file are not included</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">// more than once.</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#ifndef __OPENLCB_OPENLCB_GRIDCONNECT__</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#define __OPENLCB_OPENLCB_GRIDCONNECT__</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#ab27ebc3b11ce279634207f5e87802baa">   47</a></span><span class="preprocessor">#define GRIDCONNECT_STATE_SYNC_START 0</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#ac84c417874c93be1f4705edab8b64ef3">   50</a></span><span class="preprocessor">#define GRIDCONNECT_STATE_SYNC_FIND_HEADER 2</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a2a5df639f462bb080f9f0b9d78f58053">   53</a></span><span class="preprocessor">#define GRIDCONNECT_STATE_SYNC_FIND_DATA 4</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a6160fa1964be3dc636b75d9452972698">   56</a></span><span class="preprocessor">#define GRIDCONNECT_IDENTIFIER_START_POS 2</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a668709c8b569b81e7cf67e1003068f6c">   59</a></span><span class="preprocessor">#define GRIDCONNECT_IDENTIFIER_LEN 8</span></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a8516cac8ab902efec96643928a98206e">   62</a></span><span class="preprocessor">#define GRIDCONNECT_NORMAL_FLAG_POS 10</span></div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#ab9e2e0278b2f4f98f3131760fa56774b">   65</a></span><span class="preprocessor">#define GRIDCONNECT_DATA_START_POS 11</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a427e2eb39119b277fd341b5ce31b8994">   68</a></span><span class="preprocessor">#define GRIDCONNECT_HEADER_LEN 12</span></div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a0df94e1fa5b7636c274a09ee613dc890">   71</a></span><span class="preprocessor">#define MAX_GRID_CONNECT_LEN 29</span></div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">   74</a></span><span class="keyword">typedef</span> uint8_t <a class="code hl_typedef" href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a>[<a class="code hl_define" href="openlcb__gridconnect_8h.html#a0df94e1fa5b7636c274a09ee613dc890">MAX_GRID_CONNECT_LEN</a>];</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>{</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="openlcb__gridconnect_8h.html#a82a8ee605795f44a733eeef5552fc746">OpenLcbGridConnect_copy_out_gridconnect_when_done</a>(uint8_t next_byte, <a class="code hl_typedef" href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect_buffer);</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="openlcb__gridconnect_8h.html#ac3e0b7b9ac71d9305e9481a35be9c452">OpenLcbGridConnect_to_can_msg</a>(<a class="code hl_typedef" href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect_buffer, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="openlcb__gridconnect_8h.html#adde8b0f53e353940974e4624ed1b32c2">OpenLcbGridConnect_from_can_msg</a>(<a class="code hl_typedef" href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect_buffer, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>}</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span><span class="preprocessor">#endif </span><span class="comment">/* __OPENLCB_OPENLCB_GRIDCONNECT__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &quot;<a class="code" href="can__types_8h.html">../drivers/canbus/can_types.h</a>&quot;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#ab27ebc3b11ce279634207f5e87802baa">   49</a></span><span class="preprocessor">#define GRIDCONNECT_STATE_SYNC_START 0</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#ac84c417874c93be1f4705edab8b64ef3">   52</a></span><span class="preprocessor">#define GRIDCONNECT_STATE_SYNC_FIND_HEADER 2</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a2a5df639f462bb080f9f0b9d78f58053">   55</a></span><span class="preprocessor">#define GRIDCONNECT_STATE_SYNC_FIND_DATA 4</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a6160fa1964be3dc636b75d9452972698">   58</a></span><span class="preprocessor">#define GRIDCONNECT_IDENTIFIER_START_POS 2</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a668709c8b569b81e7cf67e1003068f6c">   61</a></span><span class="preprocessor">#define GRIDCONNECT_IDENTIFIER_LEN 8</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a8516cac8ab902efec96643928a98206e">   64</a></span><span class="preprocessor">#define GRIDCONNECT_NORMAL_FLAG_POS 10</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#ab9e2e0278b2f4f98f3131760fa56774b">   67</a></span><span class="preprocessor">#define GRIDCONNECT_DATA_START_POS 11</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a427e2eb39119b277fd341b5ce31b8994">   70</a></span><span class="preprocessor">#define GRIDCONNECT_HEADER_LEN 12</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a0df94e1fa5b7636c274a09ee613dc890">   73</a></span><span class="preprocessor">#define MAX_GRID_CONNECT_LEN 29</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">   76</a></span><span class="keyword">typedef</span> uint8_t <a class="code hl_typedef" href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a>[<a class="code hl_define" href="openlcb__gridconnect_8h.html#a0df94e1fa5b7636c274a09ee613dc890">MAX_GRID_CONNECT_LEN</a>];</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="openlcb__gridconnect_8h.html#a82a8ee605795f44a733eeef5552fc746">OpenLcbGridConnect_copy_out_gridconnect_when_done</a>(uint8_t next_byte, <a class="code hl_typedef" href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect_buffer);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="openlcb__gridconnect_8h.html#ac3e0b7b9ac71d9305e9481a35be9c452">OpenLcbGridConnect_to_can_msg</a>(<a class="code hl_typedef" href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect_buffer, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="openlcb__gridconnect_8h.html#adde8b0f53e353940974e4624ed1b32c2">OpenLcbGridConnect_from_can_msg</a>(<a class="code hl_typedef" href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect_buffer, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>}</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span><span class="preprocessor">#endif </span><span class="comment">/* __OPENLCB_OPENLCB_GRIDCONNECT__ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="acan__types_8h_html"><div class="ttname"><a href="can__types_8h.html">can_types.h</a></div><div class="ttdoc">Type definitions and constants for the CAN transport layer.</div></div>
-<div class="ttc" id="aopenlcb__gridconnect_8h_html_a0df94e1fa5b7636c274a09ee613dc890"><div class="ttname"><a href="openlcb__gridconnect_8h.html#a0df94e1fa5b7636c274a09ee613dc890">MAX_GRID_CONNECT_LEN</a></div><div class="ttdeci">#define MAX_GRID_CONNECT_LEN</div><div class="ttdoc">Max GridConnect string length: :X(8)N(16); + NUL = 29 bytes.</div><div class="ttdef"><b>Definition</b> openlcb_gridconnect.h:71</div></div>
-<div class="ttc" id="aopenlcb__gridconnect_8h_html_a4c98183f234e8c8860bc48872c2c01b8"><div class="ttname"><a href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a></div><div class="ttdeci">uint8_t gridconnect_buffer_t[MAX_GRID_CONNECT_LEN]</div><div class="ttdoc">Type definition for GridConnect message buffer.</div><div class="ttdef"><b>Definition</b> openlcb_gridconnect.h:74</div></div>
+<div class="ttc" id="aopenlcb__gridconnect_8h_html_a0df94e1fa5b7636c274a09ee613dc890"><div class="ttname"><a href="openlcb__gridconnect_8h.html#a0df94e1fa5b7636c274a09ee613dc890">MAX_GRID_CONNECT_LEN</a></div><div class="ttdeci">#define MAX_GRID_CONNECT_LEN</div><div class="ttdoc">Max GridConnect string length: :X(8)N(16); + NUL = 29 bytes.</div><div class="ttdef"><b>Definition</b> openlcb_gridconnect.h:73</div></div>
+<div class="ttc" id="aopenlcb__gridconnect_8h_html_a4c98183f234e8c8860bc48872c2c01b8"><div class="ttname"><a href="openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a></div><div class="ttdeci">uint8_t gridconnect_buffer_t[MAX_GRID_CONNECT_LEN]</div><div class="ttdoc">Type definition for GridConnect message buffer.</div><div class="ttdef"><b>Definition</b> openlcb_gridconnect.h:76</div></div>
 <div class="ttc" id="aopenlcb__gridconnect_8h_html_a82a8ee605795f44a733eeef5552fc746"><div class="ttname"><a href="openlcb__gridconnect_8h.html#a82a8ee605795f44a733eeef5552fc746">OpenLcbGridConnect_copy_out_gridconnect_when_done</a></div><div class="ttdeci">bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *gridconnect_buffer)</div><div class="ttdoc">Feeds one byte into the streaming GridConnect parser.</div><div class="ttdef"><b>Definition</b> openlcb_gridconnect.c:121</div></div>
 <div class="ttc" id="aopenlcb__gridconnect_8h_html_ac3e0b7b9ac71d9305e9481a35be9c452"><div class="ttname"><a href="openlcb__gridconnect_8h.html#ac3e0b7b9ac71d9305e9481a35be9c452">OpenLcbGridConnect_to_can_msg</a></div><div class="ttdeci">void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect_buffer, can_msg_t *can_msg)</div><div class="ttdoc">Converts a validated GridConnect string to a can_msg_t.</div><div class="ttdef"><b>Definition</b> openlcb_gridconnect.c:266</div></div>
 <div class="ttc" id="aopenlcb__gridconnect_8h_html_adde8b0f53e353940974e4624ed1b32c2"><div class="ttname"><a href="openlcb__gridconnect_8h.html#adde8b0f53e353940974e4624ed1b32c2">OpenLcbGridConnect_from_can_msg</a></div><div class="ttdeci">void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect_buffer, can_msg_t *can_msg)</div><div class="ttdoc">Converts a can_msg_t to a null-terminated GridConnect string.</div><div class="ttdef"><b>Definition</b> openlcb_gridconnect.c:341</div></div>
-<div class="ttc" id="astructcan__msg__struct_html"><div class="ttname"><a href="structcan__msg__struct.html">can_msg_struct</a></div><div class="ttdef"><b>Definition</b> can_types.h:132</div></div>
+<div class="ttc" id="astructcan__msg__struct_html"><div class="ttname"><a href="structcan__msg__struct.html">can_msg_struct</a></div><div class="ttdef"><b>Definition</b> can_types.h:144</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!doctype html>
 <html>

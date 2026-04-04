@@ -38,12 +38,15 @@ var searchData=
   ['interface_5fprotocol_5ftrain_5fsearch_5fhandler_5ft_35',['interface_protocol_train_search_handler_t',['../structinterface__protocol__train__search__handler__t.html',1,'']]],
   ['invalid_36',['invalid',['../structopenlcb__msg__state__t.html#a287d7f5cafc29863a809d81fc80d55b3',1,'openlcb_msg_state_t']]],
   ['is_5fallocated_37',['is_allocated',['../structbroadcast__clock__t.html#a46e75766403b17e73e356109aee081c7',1,'broadcast_clock_t']]],
-  ['is_5fconsumer_38',['is_consumer',['../structbroadcast__clock__t.html#a5d71a55f741db3daa42ad443b6a0c4fd',1,'broadcast_clock_t']]],
-  ['is_5fduplicate_39',['is_duplicate',['../structalias__mapping__struct.html#a70cebb5663459ea9444b61f00f1e3998',1,'alias_mapping_struct']]],
-  ['is_5flong_5faddress_40',['is_long_address',['../structtrain__state___t_a_g.html#a9231569054cae5f2bd081aaf0978b75e',1,'train_state_TAG']]],
-  ['is_5fpermitted_41',['is_permitted',['../structalias__mapping__struct.html#a1c19fd4ba1ee0bc1f0d7def30ede49a2',1,'alias_mapping_struct']]],
-  ['is_5fproducer_42',['is_producer',['../structbroadcast__clock__t.html#ad6dd46df120573b4540c49bfc3e67895',1,'broadcast_clock_t']]],
-  ['is_5frunning_43',['is_running',['../structbroadcast__clock__state__t.html#a95cbd6b99430748422cc048b4f29dc52',1,'broadcast_clock_state_t']]],
-  ['is_5ftx_5fbuffer_5fclear_44',['is_tx_buffer_clear',['../structcan__config__t.html#a600ed23c9d8e12fbcbb70a922e21be15',1,'can_config_t']]],
-  ['is_5ftx_5fbuffer_5fempty_45',['is_tx_buffer_empty',['../structinterface__can__tx__statemachine__t.html#a2e9d4e2d961ae1797f5a9877b4771b15',1,'interface_can_tx_statemachine_t']]]
+  ['is_5fbroadcast_5ftime_5fevent_38',['is_broadcast_time_event',['../structinterface__openlcb__main__statemachine__t.html#a55ce8b53fc60e69fcf7012317a771608',1,'interface_openlcb_main_statemachine_t']]],
+  ['is_5fconsumer_39',['is_consumer',['../structbroadcast__clock__t.html#a5d71a55f741db3daa42ad443b6a0c4fd',1,'broadcast_clock_t']]],
+  ['is_5fduplicate_40',['is_duplicate',['../structalias__mapping__struct.html#a70cebb5663459ea9444b61f00f1e3998',1,'alias_mapping_struct']]],
+  ['is_5femergency_5fevent_41',['is_emergency_event',['../structinterface__openlcb__main__statemachine__t.html#ad2f18a7bdd2ce99e25d227ac920d2cc0',1,'interface_openlcb_main_statemachine_t']]],
+  ['is_5flong_5faddress_42',['is_long_address',['../structtrain__state___t_a_g.html#a9231569054cae5f2bd081aaf0978b75e',1,'train_state_TAG']]],
+  ['is_5fpermitted_43',['is_permitted',['../structalias__mapping__struct.html#a1c19fd4ba1ee0bc1f0d7def30ede49a2',1,'alias_mapping_struct']]],
+  ['is_5fproducer_44',['is_producer',['../structbroadcast__clock__t.html#ad6dd46df120573b4540c49bfc3e67895',1,'broadcast_clock_t']]],
+  ['is_5frunning_45',['is_running',['../structbroadcast__clock__state__t.html#a95cbd6b99430748422cc048b4f29dc52',1,'broadcast_clock_state_t']]],
+  ['is_5ftrain_5fsearch_5fevent_46',['is_train_search_event',['../structinterface__openlcb__main__statemachine__t.html#aeb40f6cfa60b50fa3b0a8f3db524ffc5',1,'interface_openlcb_main_statemachine_t']]],
+  ['is_5ftx_5fbuffer_5fclear_47',['is_tx_buffer_clear',['../structcan__config__t.html#a600ed23c9d8e12fbcbb70a922e21be15',1,'can_config_t']]],
+  ['is_5ftx_5fbuffer_5fempty_48',['is_tx_buffer_empty',['../structinterface__can__tx__statemachine__t.html#a2e9d4e2d961ae1797f5a9877b4771b15',1,'interface_can_tx_statemachine_t']]]
 ];

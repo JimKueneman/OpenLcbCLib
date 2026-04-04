@@ -483,8 +483,12 @@ Only correct for MTI_SIMPLE_NODE_INFO_REPLY without framing bits.</dd></dl>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Empty body - reserved for future use.</dd></dl>
-<p>Handles stream protocol CAN frames (placeholder, not yet implemented). </p>
-
+<p>Handles stream protocol CAN frames (placeholder, not yet implemented).</p>
+<p>Each CAN stream frame is self-contained: DID in byte 0, up to 7 payload bytes in bytes 1-7. The entire CAN payload is copied into a fresh OpenLCB message with MTI_STREAM_SEND and pushed to the FIFO for the main statemachine to dispatch.</p>
+<pre class="fragment">* @param can_msg   Received CAN frame.
+* @param offset    Byte offset where payload starts (OFFSET_DEST_ID_IN_IDENTIFIER for stream frames).
+* @param data_type Buffer pool to allocate from (BASIC is sufficient).
+* </pre> 
 </div>
 </div>
 <a id="af5ab163a26257b020cff610f592a13d4" name="af5ab163a26257b020cff610f592a13d4"></a>

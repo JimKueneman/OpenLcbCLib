@@ -145,8 +145,8 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__snip__struct__t.html">user_snip_struct_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP identification strings (manufacturer + user version byte).  <a href="structuser__snip__struct__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__configuration__options.html">user_configuration_options</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Capability flags returned by Get Configuration Options command.  <a href="structuser__configuration__options.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__configuration__options__t.html">user_configuration_options_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Capability flags returned by Get Configuration Options command.  <a href="structuser__configuration__options__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__address__space__info__t.html">user_address_space_info_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Properties of a single configuration memory address space.  <a href="structuser__address__space__info__t.html#details">More...</a><br /></td></tr>
@@ -214,9 +214,6 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ga0d663b83bcdf006041e64b5a981dc597" id="r_ga0d663b83bcdf006041e64b5a981dc597"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga0d663b83bcdf006041e64b5a981dc597">USER_DEFINED_FDI_LENGTH</a>&#160;&#160;&#160;1</td></tr>
-<tr class="memdesc:ga0d663b83bcdf006041e64b5a981dc597"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of BASIC message buffers (16 bytes each) in the pool.  <br /></td></tr>
-<tr class="separator:ga0d663b83bcdf006041e64b5a981dc597"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga37cd38742a23b040e5cd7f3483bef546" id="r_ga37cd38742a23b040e5cd7f3483bef546"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga37cd38742a23b040e5cd7f3483bef546">LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</a>&#160;&#160;&#160;(64 - 1)</td></tr>
 <tr class="memdesc:ga37cd38742a23b040e5cd7f3483bef546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum description length for Configuration Options reply.  <br /></td></tr>
 <tr class="separator:ga37cd38742a23b040e5cd7f3483bef546"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -364,6 +361,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a193afa69c1ca562e8b89db07771a9c0c" id="r_a193afa69c1ca562e8b89db07771a9c0c"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structconfig__mem__write__request__info___t_a_g.html">config_mem_write_request_info_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a></td></tr>
 <tr class="memdesc:a193afa69c1ca562e8b89db07771a9c0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request info for a configuration memory write operation.  <br /></td></tr>
 <tr class="separator:a193afa69c1ca562e8b89db07771a9c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a217935f55ce99fe0af81c36639afd651" id="r_a217935f55ce99fe0af81c36639afd651"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a217935f55ce99fe0af81c36639afd651">write_result_t</a>) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info, bool success)</td></tr>
+<tr class="memdesc:a217935f55ce99fe0af81c36639afd651"><td class="mdescLeft">&#160;</td><td class="mdescRight">Completion callback for firmware write operations.  <br /></td></tr>
+<tr class="separator:a217935f55ce99fe0af81c36639afd651"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -580,7 +580,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Mutable runtime state for a single train node. </p>
-<p>Allocated from a static pool by <a class="el" href="openlcb__application__train_8c.html#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>. </p>
+<p>Allocated from a static pool by <a class="el" href="openlcb__application__train_8h.html#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>. </p>
 
 </div>
 </div>
@@ -710,6 +710,31 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Request info for a configuration memory write operation. </p>
+
+</div>
+</div>
+<a id="a217935f55ce99fe0af81c36639afd651" name="a217935f55ce99fe0af81c36639afd651"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a217935f55ce99fe0af81c36639afd651">&#9670;&#160;</a></span>write_result_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* write_result_t) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info, bool success)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Completion callback for firmware write operations. </p>
+<p>Passed to the user's firmware_write callback so application code can signal success or failure without knowing the reply datagram internals. The library implementation loads the appropriate Write Reply OK or Write Reply Fail datagram and marks the outgoing message valid.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Context. </td></tr>
+    <tr><td class="paramname">config_mem_write_request_info</td><td>Write request context. </td></tr>
+    <tr><td class="paramname">success</td><td>true = write OK, false = write failed. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -30,7 +30,7 @@ var searchData=
   ['head_27',['head',['../structopenlcb__msg__fifo__t.html#ae0411d119b6e19281b04bbe57cc854bc',1,'openlcb_msg_fifo_t::head'],['../structcan__fifo__t.html#ae0411d119b6e19281b04bbe57cc854bc',1,'can_fifo_t::head']]],
   ['heartbeat_5fcounter_5f100ms_28',['heartbeat_counter_100ms',['../structtrain__state___t_a_g.html#a6be5fe961070849385d7332511c0a593',1,'train_state_TAG']]],
   ['heartbeat_5ftimeout_5fs_29',['heartbeat_timeout_s',['../structtrain__state___t_a_g.html#a6d36649f103c206a5a45f7fdcf545fbf',1,'train_state_TAG']]],
-  ['high_5faddress_5fspace_30',['high_address_space',['../structuser__configuration__options.html#a0e54d692a173be72009d55754ecfa014',1,'user_configuration_options']]],
+  ['high_5faddress_5fspace_30',['high_address_space',['../structuser__configuration__options__t.html#a0e54d692a173be72009d55754ecfa014',1,'user_configuration_options_t']]],
   ['highest_5faddress_31',['highest_address',['../structuser__address__space__info__t.html#adb178df9ed04db445f6dc329f3db915e',1,'user_address_space_info_t']]],
   ['hour_32',['hour',['../structbroadcast__time__t.html#ae5af4ff48939d13d480f87e56a9385d6',1,'broadcast_time_t']]]
 ];

@@ -116,7 +116,7 @@ Data Fields</h2></td></tr>
 <tr class="memdesc:afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Find a node by its 12-bit CAN alias. Typical: OpenLcbNode_find_by_alias.  <br /></td></tr>
 <tr class="separator:afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac202b101b9553f768970f16f84691cdd" id="r_ac202b101b9553f768970f16f84691cdd"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac202b101b9553f768970f16f84691cdd">login_statemachine_run</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:ac202b101b9553f768970f16f84691cdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Advance the login state machine one step. Typical: CanLoginStateMachine_run.  <br /></td></tr>
+<tr class="memdesc:ac202b101b9553f768970f16f84691cdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Advance the login state machine one step. Typical: CanLoginStatemachine_run.  <br /></td></tr>
 <tr class="separator:ac202b101b9553f768970f16f84691cdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11d6f4e079fa28cc00a01cdc38e526f6" id="r_a11d6f4e079fa28cc00a01cdc38e526f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a6f5fe2a96f016592936919dc52552b60">alias_mapping_info_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11d6f4e079fa28cc00a01cdc38e526f6">alias_mapping_get_alias_mapping_info</a> )(void)</td></tr>
 <tr class="memdesc:a11d6f4e079fa28cc00a01cdc38e526f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Return pointer to the alias mapping table. Typical: AliasMappings_get_alias_mapping_info.  <br /></td></tr>
@@ -125,7 +125,7 @@ Data Fields</h2></td></tr>
 <tr class="memdesc:ad579e2c105067c9311bb173b30cd9130"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Remove an alias from the mapping table. Typical: AliasMappings_unregister.  <br /></td></tr>
 <tr class="separator:ad579e2c105067c9311bb173b30cd9130"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab317b73b50825b5354cf9024a035f37a" id="r_ab317b73b50825b5354cf9024a035f37a"><td class="memItemLeft" align="right" valign="top">uint8_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab317b73b50825b5354cf9024a035f37a">get_current_tick</a> )(void)</td></tr>
-<tr class="memdesc:ab317b73b50825b5354cf9024a035f37a"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Return the current value of the global 100ms tick counter. Typical: OpenLcb_get_global_100ms_tick.  <br /></td></tr>
+<tr class="memdesc:ab317b73b50825b5354cf9024a035f37a"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Return the current value of the global 100ms tick counter. Typical: OpenLcbConfig_get_global_100ms_tick.  <br /></td></tr>
 <tr class="separator:ab317b73b50825b5354cf9024a035f37a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdd549c43e6e2393090daf202ee785cf" id="r_acdd549c43e6e2393090daf202ee785cf"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acdd549c43e6e2393090daf202ee785cf">handle_duplicate_aliases</a> )(void)</td></tr>
 <tr class="memdesc:acdd549c43e6e2393090daf202ee785cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Scan and resolve all duplicate aliases. Typical: CanMainStatemachine_handle_duplicate_aliases.  <br /></td></tr>
@@ -145,6 +145,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:aa88737a3369ad39fe19f646b5ecc031f" id="r_aa88737a3369ad39fe19f646b5ecc031f"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa88737a3369ad39fe19f646b5ecc031f">handle_listener_verification</a> )(void)</td></tr>
 <tr class="memdesc:aa88737a3369ad39fe19f646b5ecc031f"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Probe one listener alias for staleness. NULL if unused. Typical: CanMainStatemachine_handle_listener_verification.  <br /></td></tr>
 <tr class="separator:aa88737a3369ad39fe19f646b5ecc031f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab035ef34f2770f2ed207dbb1e4453ce0" id="r_ab035ef34f2770f2ed207dbb1e4453ce0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab035ef34f2770f2ed207dbb1e4453ce0">listener_check_one_verification</a> )(uint8_t current_tick)</td></tr>
+<tr class="memdesc:ab035ef34f2770f2ed207dbb1e4453ce0"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Check one listener entry for alias staleness (round-robin). NULL if train support not compiled. Typical: AliasMappingListener_check_one_verification.  <br /></td></tr>
+<tr class="separator:ab035ef34f2770f2ed207dbb1e4453ce0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a564ee86223e7b5b37868ce0a85350b59" id="r_a564ee86223e7b5b37868ce0a85350b59"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a564ee86223e7b5b37868ce0a85350b59">listener_flush_aliases</a> )(void)</td></tr>
 <tr class="memdesc:a564ee86223e7b5b37868ce0a85350b59"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Flush all cached listener aliases. NULL if train support not compiled. Typical: AliasMappingListener_flush_aliases.  <br /></td></tr>
 <tr class="separator:a564ee86223e7b5b37868ce0a85350b59"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,7 +157,7 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dependency-injection interface for the CAN main state machine. </p>
-<p>All pointers are REQUIRED (must not be NULL). Each call to <a class="el" href="can__main__statemachine_8c.html#a9bdef5a88eff72849f2506381fe1742f" title="Executes one cooperative iteration of the main CAN state machine.">CanMainStateMachine_run()</a> processes one operation in priority order: duplicate aliases → outgoing CAN message → login message → first node → next node.</p>
+<p>All pointers are REQUIRED (must not be NULL). Each call to <a class="el" href="can__main__statemachine_8c.html#abfa48a07eb45fb1a3edb21c0d355ea8f" title="Executes one cooperative iteration of the main CAN state machine.">CanMainStatemachine_run()</a> processes one operation in priority order: duplicate aliases → outgoing CAN message → login message → first node → next node.</p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN main state machine.">CanMainStatemachine_initialize</a> </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
@@ -265,7 +268,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>REQUIRED. Advance the login state machine one step. Typical: CanLoginStateMachine_run. </p>
+<p>REQUIRED. Advance the login state machine one step. Typical: CanLoginStatemachine_run. </p>
 
 </div>
 </div>
@@ -313,7 +316,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>REQUIRED. Return the current value of the global 100ms tick counter. Typical: OpenLcb_get_global_100ms_tick. </p>
+<p>REQUIRED. Return the current value of the global 100ms tick counter. Typical: OpenLcbConfig_get_global_100ms_tick. </p>
 
 </div>
 </div>
@@ -410,6 +413,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>OPTIONAL. Probe one listener alias for staleness. NULL if unused. Typical: CanMainStatemachine_handle_listener_verification. </p>
+
+</div>
+</div>
+<a id="ab035ef34f2770f2ed207dbb1e4453ce0" name="ab035ef34f2770f2ed207dbb1e4453ce0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab035ef34f2770f2ed207dbb1e4453ce0">&#9670;&#160;</a></span>listener_check_one_verification</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>(* listener_check_one_verification) (uint8_t current_tick)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Check one listener entry for alias staleness (round-robin). NULL if train support not compiled. Typical: AliasMappingListener_check_one_verification. </p>
 
 </div>
 </div>

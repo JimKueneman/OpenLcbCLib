@@ -118,7 +118,7 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>User configuration for OpenLcbCLib. </p>
-<p>Populate this struct with hardware driver functions and optional application callbacks, then pass it to <a class="el" href="openlcb__config_8c.html#acc5207f2b2fb16cc8ef8cbacac9f71ca" title="Initializes the entire OpenLCB stack from the user configuration.">OpenLcb_initialize()</a>. Required fields are marked REQUIRED and must be non-NULL.</p>
+<p>Populate this struct with hardware driver functions and optional application callbacks, then pass it to <a class="el" href="openlcb__config_8c.html#a0a8853350c1554368da8ea6158ec3e44" title="Initializes the entire OpenLCB stack from the user configuration.">OpenLcbConfig_initialize()</a>. Required fields are marked REQUIRED and must be non-NULL.</p>
 <div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> <a class="code hl_struct" href="structopenlcb__config__t.html">openlcb_config_t</a> my_config = {</div>
 <div class="line">    .lock_shared_resources   = &amp;MyDriver_lock,</div>
 <div class="line">    .unlock_shared_resources = &amp;MyDriver_unlock,</div>
@@ -128,9 +128,9 @@ Data Fields</h2></td></tr>
 <div class="line">    .on_login_complete       = &amp;my_login_handler,</div>
 <div class="line">    .on_consumed_event_pcer  = &amp;my_event_handler,</div>
 <div class="line">};</div>
-<div class="line"><a class="code hl_function" href="openlcb__config_8h.html#acc5207f2b2fb16cc8ef8cbacac9f71ca">OpenLcb_initialize</a>(&amp;my_config);</div>
-<div class="ttc" id="aopenlcb__config_8h_html_acc5207f2b2fb16cc8ef8cbacac9f71ca"><div class="ttname"><a href="openlcb__config_8h.html#acc5207f2b2fb16cc8ef8cbacac9f71ca">OpenLcb_initialize</a></div><div class="ttdeci">void OpenLcb_initialize(const openlcb_config_t *config)</div><div class="ttdoc">Initializes the entire OpenLCB stack with one call.</div><div class="ttdef"><b>Definition</b> openlcb_config.c:639</div></div>
-<div class="ttc" id="astructopenlcb__config__t_html"><div class="ttname"><a href="structopenlcb__config__t.html">openlcb_config_t</a></div><div class="ttdoc">User configuration for OpenLcbCLib.</div><div class="ttdef"><b>Definition</b> openlcb_config.h:174</div></div>
+<div class="line"><a class="code hl_function" href="openlcb__config_8h.html#a0a8853350c1554368da8ea6158ec3e44">OpenLcbConfig_initialize</a>(&amp;my_config);</div>
+<div class="ttc" id="aopenlcb__config_8h_html_a0a8853350c1554368da8ea6158ec3e44"><div class="ttname"><a href="openlcb__config_8h.html#a0a8853350c1554368da8ea6158ec3e44">OpenLcbConfig_initialize</a></div><div class="ttdeci">void OpenLcbConfig_initialize(const openlcb_config_t *config)</div><div class="ttdoc">Initializes the entire OpenLCB stack with one call.</div><div class="ttdef"><b>Definition</b> openlcb_config.c:1187</div></div>
+<div class="ttc" id="astructopenlcb__config__t_html"><div class="ttname"><a href="structopenlcb__config__t.html">openlcb_config_t</a></div><div class="ttdoc">User configuration for OpenLcbCLib.</div><div class="ttdef"><b>Definition</b> openlcb_config.h:191</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>

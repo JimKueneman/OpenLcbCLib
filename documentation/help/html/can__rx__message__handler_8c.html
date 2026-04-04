@@ -127,7 +127,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:acb044ac13496dded9928edbdd6fa8927"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles legacy SNIP messages that lack standard multi-frame framing bits.  <br /></td></tr>
 <tr class="separator:acb044ac13496dded9928edbdd6fa8927"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d39c6d3d8fa18b4db3a844222f8d721" id="r_a9d39c6d3d8fa18b4db3a844222f8d721"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d39c6d3d8fa18b4db3a844222f8d721">CanRxMessageHandler_stream_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint8_t offset, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td></tr>
-<tr class="memdesc:a9d39c6d3d8fa18b4db3a844222f8d721"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream frame handler — reserved for future use, not yet implemented.  <br /></td></tr>
+<tr class="memdesc:a9d39c6d3d8fa18b4db3a844222f8d721"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a CAN stream data frame (frame type 7, identifier 0x1F_DDD_SSS).  <br /></td></tr>
 <tr class="separator:a9d39c6d3d8fa18b4db3a844222f8d721"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa958ec2e603dabb8eed0c6c0e0bacc94" id="r_aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa958ec2e603dabb8eed0c6c0e0bacc94">CanRxMessageHandler_cid_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
 <tr class="memdesc:aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles CID frames per CanFrameTransferS §6.2.5.  <br /></td></tr>
@@ -411,9 +411,13 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Stream frame handler — reserved for future use, not yet implemented. </p>
-<p>Handles stream protocol CAN frames (placeholder, not yet implemented). </p>
-
+<p>Handles a CAN stream data frame (frame type 7, identifier 0x1F_DDD_SSS). </p>
+<p>Handles stream protocol CAN frames (placeholder, not yet implemented).</p>
+<p>Each CAN stream frame is self-contained: DID in byte 0, up to 7 payload bytes in bytes 1-7. The entire CAN payload is copied into a fresh OpenLCB message with MTI_STREAM_SEND and pushed to the FIFO for the main statemachine to dispatch.</p>
+<pre class="fragment">* @param can_msg   Received CAN frame.
+* @param offset    Byte offset where payload starts (OFFSET_DEST_ID_IN_IDENTIFIER for stream frames).
+* @param data_type Buffer pool to allocate from (BASIC is sufficient).
+* </pre> 
 </div>
 </div>
 <a id="aa958ec2e603dabb8eed0c6c0e0bacc94" name="aa958ec2e603dabb8eed0c6c0e0bacc94"></a>

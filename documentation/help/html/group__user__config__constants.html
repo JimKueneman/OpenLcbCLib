@@ -86,47 +86,14 @@ $(function(){ initResizable(false); });
 </div>
 
 <div class="header">
-  <div class="summary">
-<a href="#define-members">Macros</a>  </div>
   <div class="headertitle"><div class="title">User-Configurable Constants</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Compile-time buffer depths, node limits, and event counts.  
-<a href="#details">More...</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:ga0d663b83bcdf006041e64b5a981dc597" id="r_ga0d663b83bcdf006041e64b5a981dc597"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga0d663b83bcdf006041e64b5a981dc597">USER_DEFINED_FDI_LENGTH</a>&#160;&#160;&#160;1</td></tr>
-<tr class="memdesc:ga0d663b83bcdf006041e64b5a981dc597"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of BASIC message buffers (16 bytes each) in the pool.  <br /></td></tr>
-<tr class="separator:ga0d663b83bcdf006041e64b5a981dc597"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+</p>
 <p>Compile-time buffer depths, node limits, and event counts. </p>
 <p>All values must be defined in openlcb_user_config.h. Total buffer count must not exceed 65535 (buffer indices are uint16_t). </p>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="ga0d663b83bcdf006041e64b5a981dc597" name="ga0d663b83bcdf006041e64b5a981dc597"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0d663b83bcdf006041e64b5a981dc597">&#9670;&#160;</a></span>USER_DEFINED_FDI_LENGTH</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_FDI_LENGTH&#160;&#160;&#160;1</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Number of BASIC message buffers (16 bytes each) in the pool. </p>
-<p>Number of DATAGRAM message buffers (72 bytes each) in the pool</p>
-<p>Number of SNIP message buffers (256 bytes each) in the pool</p>
-<p>Number of STREAM message buffers (512 bytes each) in the pool</p>
-<p>Maximum number of virtual nodes that can be allocated</p>
-<p>Size of CDI buffer in bytes</p>
-<p>Size of FDI buffer in bytes. Equals USER_DEFINED_FDI_LENGTH when OPENLCB_COMPILE_TRAIN is defined; collapses to 1 byte otherwise to save RAM. </p>
-
-</div>
-</div>
 </div><!-- contents -->
 <!doctype html>
 <html>
