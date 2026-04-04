@@ -178,8 +178,8 @@ int main(int argc, char *argv[]) {
     }
 
 #ifdef OPENLCB_COMPILE_STREAM
-    printf("ComplianceTestNode: mode=%s stream=on nodeid=0x%012llX\n",
-           active_mode->name, nodeid);
+    printf("ComplianceTestNode: mode=%s stream=on(%d) nodeid=0x%012llX\n",
+           active_mode->name, USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS, nodeid);
 #else
     printf("ComplianceTestNode: mode=%s stream=off nodeid=0x%012llX\n",
            active_mode->name, nodeid);

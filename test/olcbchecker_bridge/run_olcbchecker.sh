@@ -55,6 +55,7 @@ VERBOSE=""
 AUTO_REBOOT=false
 FORCE_WRITES=false
 ENABLE_STREAM=false
+STREAM_COUNT=1
 MODE_LIST="core"
 SINGLE_SCRIPT=""
 
@@ -74,6 +75,14 @@ while [ $i -lt ${#ARGS[@]} ]; do
             ;;
         --stream)
             ENABLE_STREAM=true
+            # Check if next arg is a number (stream count)
+            if [ $((i + 1)) -lt ${#ARGS[@]} ]; then
+                next="${ARGS[$((i + 1))]}"
+                if [[ "$next" =~ ^[0-9]+$ ]]; then
+                    STREAM_COUNT="$next"
+                    i=$((i + 1))
+                fi
+            fi
             ;;
         --mode|-m)
             i=$((i + 1))
@@ -91,7 +100,7 @@ while [ $i -lt ${#ARGS[@]} ]; do
             echo "  -s, --single SCRIPT    Run a single check or control script (use -m to set the node mode)"
             echo "  -r, --auto-reboot      Pass --auto-reboot to OlcbChecker (programmatic restart)"
             echo "  -w, --force-writes     Enable tests that write to config memory (0xFD)"
-            echo "  --stream               Enable stream transport (adds PSI_STREAM to PIP and Config Options)"
+            echo "  --stream [N]           Enable stream transport with N concurrent streams (default: 1)"
             echo "  -v, --verbose          Show GridConnect traffic in bridge"
             echo "  --help, -h             Show this help"
             exit 0
@@ -172,8 +181,8 @@ trap cleanup EXIT
 echo "=== Build ComplianceTestNode ==="
 STREAM_DEFINE=""
 if [ "$ENABLE_STREAM" = true ]; then
-    STREAM_DEFINE="OPENLCB_COMPILE_STREAM=1"
-    echo "  Stream support: ON"
+    STREAM_DEFINE="OPENLCB_COMPILE_STREAM=1 USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS=$STREAM_COUNT"
+    echo "  Stream support: ON (max concurrent: $STREAM_COUNT)"
 else
     echo "  Stream support: OFF"
 fi
@@ -228,7 +237,7 @@ run_protocol_test() {
     local label="$3"
 
     if [ "$ENABLE_STREAM" = true ]; then
-        label="$label (stream)"
+        label="$label (stream x$STREAM_COUNT)"
     fi
 
     echo ""
@@ -251,7 +260,7 @@ run_protocol_test() {
         return
     fi
 
-    echo "  ComplianceTestNode running (PID $NODE_PID) mode=$node_flag"
+    echo "  ComplianceTestNode running (PID $NODE_PID) mode=$label"
 
     local rc=0
     RUN_SECTIONS="$test_section" \

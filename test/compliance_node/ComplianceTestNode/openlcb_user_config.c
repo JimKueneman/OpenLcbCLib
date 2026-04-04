@@ -279,6 +279,9 @@ const node_parameters_t compliance_broadcast_time_consumer_params = {
         PSI_SIMPLE_NODE_INFORMATION |
         PSI_CONFIGURATION_DESCRIPTION_INFO |
         PSI_FIRMWARE_UPGRADE
+#ifdef OPENLCB_COMPILE_STREAM
+        | PSI_STREAM
+#endif
     ),
 
     // 3-4. consumer_count_autocreate / producer_count_autocreate
@@ -287,7 +290,11 @@ const node_parameters_t compliance_broadcast_time_consumer_params = {
     .producer_count_autocreate = 0,
 
     // 5. configuration_options
+#ifdef OPENLCB_COMPILE_STREAM
+    COMMON_CONFIG_OPTIONS_STREAM,
+#else
     COMMON_CONFIG_OPTIONS_NO_STREAM,
+#endif
     // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
@@ -326,6 +333,9 @@ const node_parameters_t compliance_broadcast_time_producer_params = {
         PSI_SIMPLE_NODE_INFORMATION |
         PSI_CONFIGURATION_DESCRIPTION_INFO |
         PSI_FIRMWARE_UPGRADE
+#ifdef OPENLCB_COMPILE_STREAM
+        | PSI_STREAM
+#endif
     ),
 
     // 3-4. consumer_count_autocreate / producer_count_autocreate
@@ -334,7 +344,11 @@ const node_parameters_t compliance_broadcast_time_producer_params = {
     .producer_count_autocreate = 0,
 
     // 5. configuration_options
+#ifdef OPENLCB_COMPILE_STREAM
+    COMMON_CONFIG_OPTIONS_STREAM,
+#else
     COMMON_CONFIG_OPTIONS_NO_STREAM,
+#endif
     // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
@@ -376,6 +390,9 @@ const node_parameters_t compliance_train_params = {
         PSI_TRAIN_CONTROL |
         PSI_FUNCTION_DESCRIPTION |
         PSI_FUNCTION_CONFIGURATION
+#ifdef OPENLCB_COMPILE_STREAM
+        | PSI_STREAM
+#endif
     ),
 
     // 3-4. consumer_count_autocreate / producer_count_autocreate
@@ -384,7 +401,11 @@ const node_parameters_t compliance_train_params = {
     .producer_count_autocreate = 0,
 
     // 5. configuration_options
+#ifdef OPENLCB_COMPILE_STREAM
+    COMMON_CONFIG_OPTIONS_STREAM,
+#else
     COMMON_CONFIG_OPTIONS_NO_STREAM,
+#endif
     // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
@@ -434,6 +455,9 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
         PSI_SIMPLE_NODE_INFORMATION |
         PSI_CONFIGURATION_DESCRIPTION_INFO |
         PSI_FIRMWARE_UPGRADE
+#ifdef OPENLCB_COMPILE_STREAM
+        | PSI_STREAM
+#endif
     ),
 
     // 3-4. consumer_count_autocreate / producer_count_autocreate
@@ -442,7 +466,11 @@ const node_parameters_t OpenLcbUserConfig_node_parameters = {
     .producer_count_autocreate = 0,
 
     // 5. configuration_options
+#ifdef OPENLCB_COMPILE_STREAM
+    COMMON_CONFIG_OPTIONS_STREAM,
+#else
     COMMON_CONFIG_OPTIONS_NO_STREAM,
+#endif
     // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
     COMMON_ADDRESS_SPACES,
 
