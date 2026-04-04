@@ -276,6 +276,9 @@ typedef struct {
     // Firmware Upgrade Callbacks (requires FIRMWARE)
     // =========================================================================
 
+        /** @brief Tear down all peripherals and core state before handing off to the other binary. */
+    void (*cleanup_before_handoff)(void);
+
         /**
          * @brief Freeze the node for firmware upgrade. REQUIRED when FIRMWARE enabled.
          *

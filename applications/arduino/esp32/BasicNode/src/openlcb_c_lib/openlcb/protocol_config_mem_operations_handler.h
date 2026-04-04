@@ -90,6 +90,9 @@ typedef struct {
         /** @brief Optional — Handle Get Unique ID reply. */
     void (*operations_request_get_unique_id_reply)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
+        /** @brief Optional — Tear down peripherals before freeze or reboot. Called automatically by the library before dispatching freeze or reboot if not NULL. */
+    void (*cleanup_before_handoff)(void);
+
         /** @brief Optional — Handle Freeze command. */
     void (*operations_request_freeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 

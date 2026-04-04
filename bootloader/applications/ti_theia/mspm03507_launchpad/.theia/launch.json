@@ -1,0 +1,58 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "BasicNodeBootloader",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "BasicNodeBootloader",
+                "resourceId": "/BasicNodeBootloader"
+            },
+            "connections": [
+                {
+                    "name": "Texas Instruments XDS110 USB Debug Probe",
+                    "cores": [
+                        {
+                            "name": "CORTEX_M0P",
+                            "debuggerSettings": {
+                                "data": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n<PropertyValues/>\n"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "BasicNode",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "BasicNode",
+                "resourceId": "/BasicNode"
+            },
+            "connections": [
+                {
+                    "name": "Texas Instruments XDS110 USB Debug Probe",
+                    "cores": [
+                        {
+                            "name": "CORTEX_M0P",
+                            "debuggerSettings": {
+                                "data": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n<PropertyValues/>\n"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "gpio_toggle_output",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "gpio_toggle_output",
+                "resourceId": "/gpio_toggle_output"
+            }
+        }
+    ]
+}

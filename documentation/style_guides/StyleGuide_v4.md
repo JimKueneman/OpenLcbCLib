@@ -38,8 +38,9 @@ Do not break a line prematurely if the content fits within 160 characters. Use t
 
 Any function that has a large number or long identifier names shall be split up using these rules:
 
-1) If the line is longer than 160 characters (converting tabs equivalent number of space in the count) do the following
-2) Break the parameter list up with a parameter on each line (a parameter may be the return from another function recursively in which the same rule applies).  The indentation shall be as follows:
+1) If the line for a statement is less or equal to 180 the statement shall be left on one line
+2) If the line is longer than 180 characters (converting tabs equivalent number of space in the count) do the following
+  -Break the parameter list up with a parameter on each line (a parameter may be the return from another function recursively in which the same rule applies).  The indentation shall be as follows:
 
 ~~~
 
@@ -56,7 +57,7 @@ OpenLcbUtilities_load_openlcb_message(
             
 ~~~
 
-The indentation shall be 3 times the normal indentation value.  If the resulting line is still longer than max limit above allow it.
+- The indentation shall be 3 times the normal indentation value.  If the resulting line is still longer than max limit above allow it.
 
 3) For logical operator lines the same applies of the max line length above.  The line shall be broken up into multiple lines at the operator as in the example:
 
@@ -287,6 +288,8 @@ Any `openlcb_msg_t` declared on the stack must be zero-initialized at the point 
 During style review, verify that no stack-allocated `openlcb_msg_t` is declared without `= {0}`.
 
 ### Functions and Variable Formats and Naming
+
+All variable and function names SHALL not be named short historical C name such as i, x, src.  The names shall contain a context for what the variable function does and be limited to 20 characters.
 
 ~~~
 

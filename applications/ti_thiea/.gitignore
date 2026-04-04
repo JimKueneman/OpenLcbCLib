@@ -1,5 +1,0 @@
-# TI Theia build artifacts and IDE metadata
-**/Debug/
-**/.clangd/
-**/.settings/
-**/.theia/
