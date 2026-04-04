@@ -441,7 +441,7 @@ the python-openlcb library instead.
    from the 100ms timer or from the main loop checking for active streams
    with bytes_remaining > 0). This needs investigation during implementation.
 
-2. **Stream table slot contention**: With USER_DEFINED_MAX_STREAM_COUNT
+2. **Stream table slot contention**: With USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS
    defaulting to 1, a config-mem stream transfer blocks all other stream
    usage. Acceptable for typical embedded nodes. Nodes that need concurrent
    streams should increase the count.

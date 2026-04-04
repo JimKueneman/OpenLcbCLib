@@ -150,7 +150,7 @@ Follows the existing two-layer pattern:
 ### Stream State Table
 
 A fixed-size array of stream_state_t entries (configurable via
-USER_DEFINED_MAX_STREAM_COUNT, default 1).  Each entry tracks:
+USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS, default 1).  Each entry tracks:
 
 ```c
 typedef struct {

@@ -63,8 +63,8 @@ static uint8_t _read_buffer[LEN_MESSAGE_BYTES_STREAM];
 **File:** `protocol_stream_handler.c` (lines 53-55)
 
 ```c
-#ifndef USER_DEFINED_MAX_STREAM_COUNT
-#define USER_DEFINED_MAX_STREAM_COUNT 1
+#ifndef USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS
+#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS 1
 #endif
 ```
 
@@ -72,7 +72,7 @@ static uint8_t _read_buffer[LEN_MESSAGE_BYTES_STREAM];
 - Defaults to 1 stream maximum
 - **NOT defined in any `openlcb_user_config.h`** - all use default
 - Must be increased to support concurrent config-mem streams
-- Recommendation: User can define `USER_DEFINED_MAX_STREAM_COUNT` in their config
+- Recommendation: User can define `USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS` in their config
 
 ---
 
@@ -284,12 +284,12 @@ void ProtocolConfigMemStreamHandler_check_timeouts(uint8_t current_tick) {
 ### Stream Table (Already Supports Pooling)
 
 ```c
-static stream_state_t _stream_table[USER_DEFINED_MAX_STREAM_COUNT];
+static stream_state_t _stream_table[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
 ```
 
 - Already dimensioned by user configuration
 - Config-mem handler sets `stream->context` to claim ownership
-- Default USER_DEFINED_MAX_STREAM_COUNT = 1
+- Default USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS = 1
 
 ### Stream ID Counters (Global, Shared)
 
@@ -310,10 +310,10 @@ static uint8_t _next_source_stream_id = 0;
 
 | Item | File | Type | Count | Notes |
 |------|------|------|-------|-------|
-| `config_mem_stream_context_t` | config_mem_handler.c | Struct | USER_DEFINED_MAX_STREAM_COUNT | Per-operation state |
-| `openlcb_worker_message_t` | config_mem_handler.c | Buffer | USER_DEFINED_MAX_STREAM_COUNT | Outgoing message |
-| `openlcb_statemachine_info_t` | config_mem_handler.c | Struct | USER_DEFINED_MAX_STREAM_COUNT | Pump context |
-| `uint8_t[]` read_buffer | config_mem_handler.c | Array | USER_DEFINED_MAX_STREAM_COUNT | Data staging (or stack) |
+| `config_mem_stream_context_t` | config_mem_handler.c | Struct | USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS | Per-operation state |
+| `openlcb_worker_message_t` | config_mem_handler.c | Buffer | USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS | Outgoing message |
+| `openlcb_statemachine_info_t` | config_mem_handler.c | Struct | USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS | Pump context |
+| `uint8_t[]` read_buffer | config_mem_handler.c | Array | USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS | Data staging (or stack) |
 
 ### Items NOT to Pool
 
@@ -333,15 +333,15 @@ static uint8_t _next_source_stream_id = 0;
 Define pooled arrays at module scope:
 
 ```c
-static config_mem_stream_context_t _context_pool[USER_DEFINED_MAX_STREAM_COUNT];
-static openlcb_worker_message_t _pump_outgoing_msg_pool[USER_DEFINED_MAX_STREAM_COUNT];
-static openlcb_statemachine_info_t _pump_sm_info_pool[USER_DEFINED_MAX_STREAM_COUNT];
-static uint8_t _read_buffer_pool[USER_DEFINED_MAX_STREAM_COUNT][LEN_MESSAGE_BYTES_STREAM];
+static config_mem_stream_context_t _context_pool[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
+static openlcb_worker_message_t _pump_outgoing_msg_pool[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
+static openlcb_statemachine_info_t _pump_sm_info_pool[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
+static uint8_t _read_buffer_pool[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS][LEN_MESSAGE_BYTES_STREAM];
 ```
 
 Initialize each in `ProtocolConfigMemStreamHandler_initialize()`:
 ```c
-for (int i = 0; i < USER_DEFINED_MAX_STREAM_COUNT; i++) {
+for (int i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
     memset(&_context_pool[i], 0, sizeof(config_mem_stream_context_t));
     _context_pool[i].phase = CONFIG_MEM_STREAM_PHASE_IDLE;
     
@@ -360,7 +360,7 @@ for (int i = 0; i < USER_DEFINED_MAX_STREAM_COUNT; i++) {
 
 ```c
 void ProtocolConfigMemStreamHandler_run(void) {
-    for (int i = 0; i < USER_DEFINED_MAX_STREAM_COUNT; i++) {
+    for (int i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
         _context = &_context_pool[i];  // Select context for this iteration
         _pump_sm_info = &_pump_sm_info_pool[i];
         
@@ -386,7 +386,7 @@ void ProtocolConfigMemStreamHandler_run(void) {
 
 ```c
 bool ProtocolConfigMemStreamHandler_on_initiate_request(...) {
-    for (int i = 0; i < USER_DEFINED_MAX_STREAM_COUNT; i++) {
+    for (int i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
         if (_context_pool[i].phase == CONFIG_MEM_STREAM_PHASE_WRITE_WAIT_STREAM_INITIATE &&
                 stream->remote_alias == _context_pool[i].remote_alias) {
             
@@ -419,7 +419,7 @@ static config_mem_stream_context_t _context;
 
 With pooling:
 ```c
-static config_mem_stream_context_t _context_pool[USER_DEFINED_MAX_STREAM_COUNT];
+static config_mem_stream_context_t _context_pool[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
 // Option 1: Iterator with pointer
 config_mem_stream_context_t *_current_context = &_context_pool[i];
 
@@ -460,7 +460,7 @@ Three choices:
 3. **Two concurrent writes:** Different remote nodes, verify data correctness
 4. **Read + Write overlapping:** One node reading while another writing, verify isolation
 5. **Timeout handling:** Ensure one timeout doesn't affect other streams
-6. **Context exhaustion:** USER_DEFINED_MAX_STREAM_COUNT = 2, send 3 requests, verify rejection
+6. **Context exhaustion:** USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS = 2, send 3 requests, verify rejection
 
 ### Edge Cases
 
@@ -478,11 +478,11 @@ Three choices:
 |------|---------|
 | `protocol_config_mem_stream_handler.c` | Pool static buffers, add loop iteration, refactor pump and callbacks |
 | `protocol_config_mem_stream_handler.h` | Possibly define pool size constant |
-| `openlcb_user_config.h` (template) | Document USER_DEFINED_MAX_STREAM_COUNT |
+| `openlcb_user_config.h` (template) | Document USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS |
 
 ### Files NOT Requiring Changes
 
-- `protocol_stream_handler.c/.h` - already supports pooling via USER_DEFINED_MAX_STREAM_COUNT
+- `protocol_stream_handler.c/.h` - already supports pooling via USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS
 - `can_tx_message_handler.c` - stateless
 - Other modules - only interact via callbacks
 
@@ -490,13 +490,13 @@ Three choices:
 
 ## 15. Backward Compatibility
 
-**Concern:** Default USER_DEFINED_MAX_STREAM_COUNT = 1 preserves single-stream behavior
+**Concern:** Default USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS = 1 preserves single-stream behavior
 
 **Solution:** Add to `openlcb_user_config.h` template:
 ```c
 /** Maximum concurrent config-mem streams (1 = single-threaded, no concurrency) */
-#ifndef USER_DEFINED_MAX_STREAM_COUNT
-#define USER_DEFINED_MAX_STREAM_COUNT 1
+#ifndef USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS
+#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS 1
 #endif
 ```
 
@@ -508,7 +508,7 @@ Users wishing concurrent streams increase this value in their config.
 
 ### With Pooling
 
-- **Pump loop:** O(N) per iteration where N = USER_DEFINED_MAX_STREAM_COUNT
+- **Pump loop:** O(N) per iteration where N = USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS
 - **Callbacks:** O(N) to find matching context (linear search through pool)
 - **Memory:** +N × (sizeof(context) + sizeof(outgoing_msg) + sizeof(sm_info) + LEN_MESSAGE_BYTES_STREAM)
 
@@ -525,7 +525,7 @@ Users wishing concurrent streams increase this value in their config.
 | Aspect | Details |
 |--------|---------|
 | **Static State to Pool** | `_context`, `_pump_outgoing_msg`, `_pump_sm_info`, `_read_buffer` |
-| **Pool Size** | `USER_DEFINED_MAX_STREAM_COUNT` (default 1) |
+| **Pool Size** | `USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS` (default 1) |
 | **Ownership Check** | `stream->context` pointer comparison |
 | **Pump Loop** | Iterate all pooled contexts each loop |
 | **Callbacks** | Search pool to find correct context |
