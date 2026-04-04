@@ -32,7 +32,7 @@
  * All application callbacks are optional (NULL = reject or ignore).
  *
  * @author Jim Kueneman
- * @date 03 Apr 2026
+ * @date 04 Apr 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -68,7 +68,7 @@ typedef enum {
      * @brief Tracks the state of a single open stream.
      *
      * @details One entry per concurrent stream.  The table is a fixed-size
-     * array dimensioned by USER_DEFINED_MAX_STREAM_COUNT.
+     * array dimensioned by USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS.
      */
 typedef struct {
 
@@ -227,7 +227,7 @@ extern "C" {
          * @param suggested_dest_stream_id  Suggested DID (0xFF if no preference).
          * @param content_uid               Optional 6-byte Content UID (NULL to omit).
          *
-         * @return Pointer to allocated stream_state_t, or NULL if table full.
+         * @return Pointer to allocated @ref stream_state_t, or NULL if table full.
          */
     extern stream_state_t *ProtocolStreamHandler_initiate_outbound(
             openlcb_statemachine_info_t *statemachine_info,

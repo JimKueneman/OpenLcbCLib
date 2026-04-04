@@ -31,7 +31,7 @@
  * multi-key enumeration, alias/ID lookup, and auto-generated event IDs.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 04 Apr 2026
  */
 
 #include "openlcb_node.h"
@@ -46,16 +46,16 @@
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
 
-/** @brief Bit shift to convert a 48-bit node ID into a 64-bit event ID base. */
+    /** @brief Bit shift to convert a 48-bit node ID into a 64-bit event ID base. */
 #define OPENLCB_EVENT_ID_OFFSET 16
 
-/** @brief Pool of all node structures. */
+    /** @brief Pool of all node structures. */
 static openlcb_nodes_t _openlcb_nodes;
 
-/** @brief Per-key enumeration indices for independent node iteration. */
+    /** @brief Per-key enumeration indices for independent node iteration. */
 static uint8_t _node_enum_index_array[MAX_NODE_ENUM_KEY_VALUES];
 
-/** @brief Stored interface pointer for optional application callbacks. */
+    /** @brief Stored interface pointer for optional application callbacks. */
 static const interface_openlcb_node_t *_interface;
 
     /** @brief Tracks the last tick value to ensure the app callback fires at most once per tick. */
@@ -69,9 +69,7 @@ static uint8_t _last_app_callback_tick = 0;
      * -# Clear all consumer and producer event entries and range entries
      * -# Stop any running enumerations
      *
-     * @verbatim
-     * @param openlcb_node Pointer to @ref openlcb_node_t to clear
-     * @endverbatim
+     * @param openlcb_node Pointer to openlcb_node_t to clear.
      */
 static void _clear_node(openlcb_node_t *openlcb_node) {
 
@@ -91,6 +89,7 @@ static void _clear_node(openlcb_node_t *openlcb_node) {
     openlcb_node->index = 0;
 
     openlcb_node->last_received_datagram = NULL;
+    openlcb_node->train_state = NULL;
 
     openlcb_node->consumers.count = 0;
     for (int i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++) {
@@ -126,7 +125,6 @@ static void _clear_node(openlcb_node_t *openlcb_node) {
 
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->consumers.enumerator.running = false;
-
 
 }
 
@@ -273,9 +271,7 @@ bool OpenLcbNode_is_last(uint8_t key) {
      * -# For each producer to auto-create, assign base + index (bounded by USER_DEFINED_PRODUCER_COUNT)
      * -# Clear consumer and producer enumeration states
      *
-     * @verbatim
-     * @param openlcb_node Pointer to @ref openlcb_node_t to generate event IDs for
-     * @endverbatim
+     * @param openlcb_node Pointer to openlcb_node_t to generate event IDs for.
      */
 static void _generate_event_ids(openlcb_node_t *openlcb_node) {
 

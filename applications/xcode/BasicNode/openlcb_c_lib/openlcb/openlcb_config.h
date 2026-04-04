@@ -32,7 +32,7 @@
  * to bring up the entire stack.
  *
  * @author Jim Kueneman
- * @date 6 Mar 2026
+ * @date 04 Apr 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -161,6 +161,11 @@
 
 #ifdef OPENLCB_COMPILE_STREAM
 #include "protocol_stream_handler.h"
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#ifndef OPENLCB_COMPILE_BOOTLOADER
+#include "protocol_config_mem_stream_handler.h"
+#endif /* OPENLCB_COMPILE_BOOTLOADER */
+#endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
 #endif
 
     /**

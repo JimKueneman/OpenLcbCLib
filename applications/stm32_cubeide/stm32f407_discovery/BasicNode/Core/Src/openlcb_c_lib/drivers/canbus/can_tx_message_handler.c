@@ -31,7 +31,7 @@
  * framing-bit encoding per the OpenLCB CAN Frame Transfer Standard.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 04 Apr 2026
  */
 
 #include "can_tx_message_handler.h"
@@ -48,22 +48,22 @@
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_utilities.h"
 
-/** @brief Pre-built upper bits for a datagram-only (single-frame) CAN identifier. */
+    /** @brief Pre-built upper bits for a datagram-only (single-frame) CAN identifier. */
 static const uint32_t _OPENLCB_MESSAGE_DATAGRAM_ONLY = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_ONLY;
 
-/** @brief Pre-built upper bits for the first frame of a multi-frame datagram. */
+    /** @brief Pre-built upper bits for the first frame of a multi-frame datagram. */
 static const uint32_t _OPENLCB_MESSAGE_DATAGRAM_FIRST_FRAME = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_FIRST;
 
-/** @brief Pre-built upper bits for a middle frame of a multi-frame datagram. */
+    /** @brief Pre-built upper bits for a middle frame of a multi-frame datagram. */
 static const uint32_t _OPENLCB_MESSAGE_DATAGRAM_MIDDLE_FRAME = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_MIDDLE;
 
-/** @brief Pre-built upper bits for the last frame of a multi-frame datagram. */
+    /** @brief Pre-built upper bits for the last frame of a multi-frame datagram. */
 static const uint32_t _OPENLCB_MESSAGE_DATAGRAM_LAST_FRAME = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_FINAL;
 
-/** @brief Pre-built upper bits for a standard OpenLCB message CAN identifier. */
+    /** @brief Pre-built upper bits for a standard OpenLCB message CAN identifier. */
 static const uint32_t _OPENLCB_MESSAGE_STANDARD_FRAME = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE;
 
-/** @brief Saved pointer to the dependency-injected transmit message handler interface. */
+    /** @brief Saved pointer to the dependency-injected transmit message handler interface. */
 static interface_can_tx_message_handler_t *_interface;
 
     /** @brief Stores the dependency-injection interface pointer. */
@@ -122,9 +122,7 @@ static uint32_t _construct_addressed_message_identifier(openlcb_msg_t *openlcb_m
     /**
      * @brief Calls the hardware transmit function and invokes the optional on_transmit callback.
      *
-     * @verbatim
      * @param can_msg Fully-constructed CAN frame to send.
-     * @endverbatim
      *
      * @return true on success, false on hardware error.
      */
@@ -344,7 +342,6 @@ bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg
 
     _load_destination_address_in_payload(openlcb_msg, can_msg_worker);
 
-
     can_msg_worker->identifier = _construct_addressed_message_identifier(openlcb_msg);
     uint8_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITH_DEST_ADDRESS);
     bool result = false;
@@ -380,14 +377,19 @@ bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg
     /**
      * @brief Transmits one CAN frame for a Stream Data Send message.
      *
-     * @details Per StreamTransportS Section 8.1, stream data uses Frame Type 7
-     * with CAN identifier format 0x1Fdd,dsss (dest alias + source alias).
-     * Byte 0 of CAN payload = Destination Stream ID, bytes 1-7 = stream data.
-     * The OpenLCB message payload has the same layout: byte 0 = DID, rest = data.
+     * @details Per StreamTransportS Section 8.1, each CAN stream data frame
+     * must carry the Destination Stream ID (DID) in byte 0 and up to 7 bytes
+     * of payload in bytes 1-7.  The DID is always read from openlcb_msg
+     * payload[0].
+     *
+     * The OpenLCB message layout is: payload[0] = DID, payload[1..N] = data.
+     * The CAN identifier format is 0x1Fdd,dsss (Frame Type 7 + dest alias +
+     * source alias).
      *
      * Algorithm:
      * -# Build CAN identifier with CAN_FRAME_TYPE_STREAM, dest alias, source alias
-     * -# Copy up to 8 bytes from openlcb_msg payload starting at *openlcb_start_index
+     * -# Place DID (payload[0]) into can byte 0
+     * -# Copy up to 7 data bytes from the data portion of the payload
      * -# Transmit the frame
      * -# On success, advance *openlcb_start_index
      *
@@ -404,13 +406,48 @@ bool CanTxMessageHandler_stream_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can
     can_msg_worker->identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_STREAM |
                                  ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias;
 
-    uint8_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
+    // Byte 0 of every CAN stream frame is the DID (openlcb payload[0])
+    can_msg_worker->payload[0] = *openlcb_msg->payload[0];
+
+    // Data bytes start at payload[1] in the OpenLCB message.
+    // On the first call (index == 0), skip the DID byte and read from payload[1].
+    // On subsequent calls, the DID was already accounted for in the first
+    // frame's index advance, so read directly from payload[index].
+    uint16_t data_source = (*openlcb_start_index == 0) ? 1 : *openlcb_start_index;
+
+    uint8_t data_count = 0;
+
+    for (uint8_t i = 1; i < LEN_CAN_BYTE_ARRAY; i++) {
+
+        if (data_source >= openlcb_msg->payload_count) {
+
+            break;
+
+        }
+
+        can_msg_worker->payload[i] = *openlcb_msg->payload[data_source];
+        data_source++;
+        data_count++;
+
+    }
+
+    can_msg_worker->payload_count = 1 + data_count;
 
     bool result = _transmit_can_frame(can_msg_worker);
 
     if (result) {
 
-        *openlcb_start_index = *openlcb_start_index + len_msg_frame;
+        // First call: advance past the DID byte + data bytes consumed.
+        // Subsequent calls: advance by data bytes only.
+        if (*openlcb_start_index == 0) {
+
+            *openlcb_start_index = 1 + data_count;
+
+        } else {
+
+            *openlcb_start_index = *openlcb_start_index + data_count;
+
+        }
 
     }
 

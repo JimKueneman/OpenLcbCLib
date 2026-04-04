@@ -19,24 +19,20 @@
  *    #define OPENLCB_COMPILE_EVENTS
  *    #define OPENLCB_COMPILE_DATAGRAMS
  *    #define OPENLCB_COMPILE_MEMORY_CONFIGURATION
- *    #define OPENLCB_COMPILE_FIRMWARE
  *
  *  Train command station:
  *    #define OPENLCB_COMPILE_EVENTS
  *    #define OPENLCB_COMPILE_DATAGRAMS
  *    #define OPENLCB_COMPILE_MEMORY_CONFIGURATION
- *    #define OPENLCB_COMPILE_FIRMWARE
  *    #define OPENLCB_COMPILE_TRAIN
  *    #define OPENLCB_COMPILE_TRAIN_SEARCH
  *
- *  Full-featured node (everything):
- *    #define OPENLCB_COMPILE_EVENTS
- *    #define OPENLCB_COMPILE_DATAGRAMS
- *    #define OPENLCB_COMPILE_MEMORY_CONFIGURATION
- *    #define OPENLCB_COMPILE_FIRMWARE
- *    #define OPENLCB_COMPILE_BROADCAST_TIME
- *    #define OPENLCB_COMPILE_TRAIN
- *    #define OPENLCB_COMPILE_TRAIN_SEARCH
+ *  --- Optional Add-on Protocols ---
+ *  Add these to any recipe above as needed:
+ *
+ *    #define OPENLCB_COMPILE_FIRMWARE          // firmware upgrade support
+ *    #define OPENLCB_COMPILE_STREAM            // stream transport for large transfers
+ *    #define OPENLCB_COMPILE_BROADCAST_TIME    // clock synchronization
  *
  *  Minimal bootloader (firmware upgrade only):
  *    Use templates/bootloader/openlcb_user_config.h instead
@@ -73,14 +69,26 @@
 //   BASIC    (16 bytes each)  -- most OpenLCB messages fit in this size
 //   DATAGRAM (72 bytes each)  -- datagram protocol messages
 //   SNIP     (256 bytes each) -- SNIP replies and Events with Payload
-//   STREAM   (USER_DEFINED_STREAM_BUFFER_LEN bytes each) -- stream data transfer (future use)
+//   STREAM   (USER_DEFINED_STREAM_BUFFER_LEN bytes each) -- stream data transfer
 
 #define USER_DEFINED_BASIC_BUFFER_DEPTH              16     // must be >= 1; enforced by compiler
 #define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4      // must be >= 1; enforced by compiler
 #define USER_DEFINED_SNIP_BUFFER_DEPTH               4      // must be >= 1; enforced by compiler
 #define USER_DEFINED_STREAM_BUFFER_DEPTH             1      // must be >= 1; enforced by compiler
-// Maximum bytes in a single stream data frame (future use).
-#define USER_DEFINED_STREAM_BUFFER_LEN               1    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
+
+// =============================================================================
+// Stream Transport (requires OPENLCB_COMPILE_STREAM)
+// =============================================================================
+// STREAM_BUFFER_LEN is the maximum bytes per stream data frame this node can
+// accept.  The spec uses a 2-byte field so the protocol max is 65535.  During
+// negotiation the smaller of the two nodes' buffer sizes wins.
+//
+// MAX_CONCURRENT_ACTIVE_STREAMS controls how many streams can be open at the
+// same time across all nodes.  Each active stream uses a small state struct,
+// not a full payload buffer.  The expensive RAM is governed by
+// STREAM_BUFFER_DEPTH in the buffer pool above.
+#define USER_DEFINED_STREAM_BUFFER_LEN               1      // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
+#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   1      // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Virtual Node Allocation

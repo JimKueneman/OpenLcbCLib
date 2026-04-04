@@ -27,7 +27,7 @@
  * datagram, stream, and raw CAN frame types per the OpenLCB CAN Frame Transfer Standard.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 04 Apr 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -146,9 +146,11 @@ extern "C" {
         /**
          * @brief Transmits one CAN frame for a Stream Data Send message.
          *
-         * @details Uses Frame Type 7 per StreamTransportS Section 8.1.
-         * Byte 0 = Destination Stream ID, bytes 1-7 = stream payload.
-         * On success, advances *openlcb_start_index by the number of bytes sent.
+         * @details Per StreamTransportS Section 8.1, every CAN stream data
+         * frame carries the Destination Stream ID (DID) in byte 0 and up to
+         * 7 bytes of payload in bytes 1-7.  The DID is always read from
+         * openlcb_msg payload[0] and inserted into each CAN frame.
+         * On success, advances *openlcb_start_index.
          *
          * @param openlcb_msg          Source stream message (byte 0 = DID, rest = data).
          * @param can_msg_worker       Scratch CAN frame buffer.

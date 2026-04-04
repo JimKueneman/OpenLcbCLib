@@ -32,7 +32,7 @@
  * Module_initialize() functions in the correct order.
  *
  * @author Jim Kueneman
- * @date 20 Mar 2026
+ * @date 04 Apr 2026
  */
 
 #include "openlcb_config.h"
@@ -81,6 +81,11 @@
 
 #ifdef OPENLCB_COMPILE_STREAM
 #include "protocol_stream_handler.h"
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#ifndef OPENLCB_COMPILE_BOOTLOADER
+#include "protocol_config_mem_stream_handler.h"
+#endif
+#endif
 #endif
 
 // CAN transport
@@ -127,6 +132,11 @@ static interface_protocol_train_search_handler_t _train_search;
 
 #ifdef OPENLCB_COMPILE_STREAM
 static interface_protocol_stream_handler_t _stream_handler;
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#ifndef OPENLCB_COMPILE_BOOTLOADER
+static interface_protocol_config_mem_stream_handler_t _config_mem_stream;
+#endif
+#endif
 #endif
 
 static const openlcb_config_t *_config;
@@ -297,10 +307,24 @@ static void _build_train_search_handler(void) {
 
 #ifdef OPENLCB_COMPILE_STREAM
 
-    /** @brief Wires user stream callbacks into the stream handler interface struct. */
+    /** @brief Wires stream handler callbacks.
+     *
+     * When config-mem-stream is active, the router callbacks intercept
+     * stream events and forward non-config-mem streams to the user.
+     * Otherwise, user callbacks are wired directly. */
 static void _build_stream_handler(void) {
 
     memset(&_stream_handler, 0, sizeof(_stream_handler));
+
+#if defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION) && !defined(OPENLCB_COMPILE_BOOTLOADER)
+
+    _stream_handler.on_initiate_request = &ProtocolConfigMemStreamHandler_on_initiate_request;
+    _stream_handler.on_initiate_reply   = &ProtocolConfigMemStreamHandler_on_initiate_reply;
+    _stream_handler.on_data_received    = &ProtocolConfigMemStreamHandler_on_data_received;
+    _stream_handler.on_data_proceed     = &ProtocolConfigMemStreamHandler_on_data_proceed;
+    _stream_handler.on_complete         = &ProtocolConfigMemStreamHandler_on_complete;
+
+#else
 
     _stream_handler.on_initiate_request = _config->on_stream_initiate_request;
     _stream_handler.on_initiate_reply   = _config->on_stream_initiate_reply;
@@ -308,7 +332,433 @@ static void _build_stream_handler(void) {
     _stream_handler.on_data_proceed     = _config->on_stream_data_proceed;
     _stream_handler.on_complete         = _config->on_stream_complete;
 
+#endif
+
 }
+
+#if defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION) && !defined(OPENLCB_COMPILE_BOOTLOADER)
+
+// ---- Per-space stream read-request callbacks ----
+
+    /** @brief Stream read from CDI (0xFF): copy from node->parameters->cdi[]. */
+static uint16_t _stream_read_request_config_definition_info(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    if (!node->parameters->cdi) {
+
+        return 0;
+
+    }
+
+    memcpy(buffer, &node->parameters->cdi[address], count);
+
+    return count;
+
+}
+
+    /** @brief Stream read from All (0xFE): same layout as CDI. */
+static uint16_t _stream_read_request_all(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    if (!node->parameters->cdi) {
+
+        return 0;
+
+    }
+
+    memcpy(buffer, &node->parameters->cdi[address], count);
+
+    return count;
+
+}
+
+    /** @brief Stream read from Config Memory (0xFD): delegate to user callback. */
+static uint16_t _stream_read_request_configuration_memory(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    if (!_config->config_mem_read) {
+
+        return 0;
+
+    }
+
+    return _config->config_mem_read(node, address, count, (configuration_memory_buffer_t *) buffer);
+
+}
+
+    /**
+     * @brief Stream read from ACDI Manufacturer (0xFC): flat sequential reader.
+     *
+     * @details The 0xFC space is a flat image of the manufacturer SNIP fields:
+     * - 0x00: mfg_version (1 byte)
+     * - 0x01-0x29: name (41 bytes)
+     * - 0x2A-0x52: model (41 bytes)
+     * - 0x53-0x67: hardware_version (21 bytes)
+     * - 0x68-0x7C: software_version (21 bytes)
+     *
+     * Reads an arbitrary byte range across field boundaries.
+     */
+typedef struct {
+
+    uint32_t start;
+    uint16_t len;
+    const void *data;
+
+} _config_field_t;
+
+static uint16_t _read_field_array(const _config_field_t *fields,
+        uint16_t num_fields, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    uint16_t filled = 0;
+
+    for (uint16_t i = 0; i < num_fields && filled < count; i++) {
+
+        uint32_t field_end = fields[i].start + fields[i].len;
+
+        if (address + filled >= field_end) {
+
+            continue;
+
+        }
+
+        if (address + filled < fields[i].start) {
+
+            uint32_t gap = fields[i].start - (address + filled);
+
+            if (gap > (uint32_t) (count - filled)) {
+
+                gap = count - filled;
+
+            }
+
+            memset(&buffer[filled], 0, gap);
+            filled += (uint16_t) gap;
+
+            if (filled >= count) {
+
+                break;
+
+            }
+
+        }
+
+        uint32_t offset_in_field = (address + filled) - fields[i].start;
+        uint32_t avail = fields[i].len - offset_in_field;
+        uint16_t to_copy = (uint16_t) ((avail < (uint32_t) (count - filled)) ? avail : (count - filled));
+
+        memcpy(&buffer[filled], (const uint8_t *) fields[i].data + offset_in_field, to_copy);
+        filled += to_copy;
+
+    }
+
+    return filled;
+
+}
+
+static uint16_t _stream_read_request_acdi_manufacturer(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    const _config_field_t fields[] = {
+
+        { CONFIG_MEM_ACDI_MANUFACTURER_VERSION_ADDRESS, CONFIG_MEM_ACDI_VERSION_LEN,
+          &node->parameters->snip.mfg_version },
+        { CONFIG_MEM_ACDI_MANUFACTURER_ADDRESS, CONFIG_MEM_ACDI_MANUFACTURER_LEN,
+          node->parameters->snip.name },
+        { CONFIG_MEM_ACDI_MODEL_ADDRESS, CONFIG_MEM_ACDI_MODEL_LEN,
+          node->parameters->snip.model },
+        { CONFIG_MEM_ACDI_HARDWARE_VERSION_ADDRESS, CONFIG_MEM_ACDI_HARDWARE_VERSION_LEN,
+          node->parameters->snip.hardware_version },
+        { CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS, CONFIG_MEM_ACDI_SOFTWARE_VERSION_LEN,
+          node->parameters->snip.software_version },
+
+    };
+
+    uint16_t num_fields = sizeof(fields) / sizeof(fields[0]);
+
+    return _read_field_array(fields, num_fields, address, count, buffer);
+
+}
+
+    /**
+     * @brief Stream read from ACDI User (0xFB): flat sequential reader.
+     *
+     * @details The 0xFB space layout:
+     * - 0x00: user_version (1 byte)
+     * - 0x01-0x3F: user_name (63 bytes, from config memory)
+     * - 0x40-0x7F: user_description (64 bytes, from config memory)
+     *
+     * User name and description are stored in configuration memory (0xFD space)
+     * starting at CONFIG_MEM_CONFIG_USER_NAME_OFFSET.
+     */
+static uint16_t _stream_read_request_acdi_user(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    uint16_t filled = 0;
+
+    while (filled < count) {
+
+        uint32_t pos = address + filled;
+
+        if (pos == CONFIG_MEM_ACDI_USER_VERSION_ADDRESS) {
+
+            buffer[filled] = node->parameters->snip.user_version;
+            filled++;
+
+        } else if (pos >= CONFIG_MEM_ACDI_USER_NAME_ADDRESS &&  // GCOV_EXCL_BR_LINE
+                pos < CONFIG_MEM_ACDI_USER_NAME_ADDRESS + CONFIG_MEM_ACDI_USER_NAME_LEN) {
+
+            if (!_config->config_mem_read) {
+
+                buffer[filled] = 0;
+                filled++;
+                continue;
+
+            }
+
+            uint32_t offset_in_name = pos - CONFIG_MEM_ACDI_USER_NAME_ADDRESS;
+            uint16_t name_avail = (uint16_t) (CONFIG_MEM_ACDI_USER_NAME_LEN - offset_in_name);
+            uint16_t to_read = (uint16_t) ((name_avail < (count - filled)) ? name_avail : (count - filled));
+
+            uint32_t config_addr = CONFIG_MEM_CONFIG_USER_NAME_OFFSET + offset_in_name;
+
+            if (node->parameters->address_space_config_memory.low_address_valid) {
+
+                config_addr += node->parameters->address_space_config_memory.low_address;
+
+            }
+
+            uint16_t actual = _config->config_mem_read(
+                    node, config_addr, to_read, (configuration_memory_buffer_t *) &buffer[filled]);
+
+            filled += actual;
+
+            if (actual < to_read) {
+
+                break;
+
+            }
+
+        } else if (pos >= CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS &&  // GCOV_EXCL_BR_LINE
+                pos < CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS + CONFIG_MEM_ACDI_USER_DESCRIPTION_LEN) {
+
+            if (!_config->config_mem_read) {
+
+                buffer[filled] = 0;
+                filled++;
+                continue;
+
+            }
+
+            uint32_t offset_in_desc = pos - CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS;
+            uint16_t desc_avail = (uint16_t) (CONFIG_MEM_ACDI_USER_DESCRIPTION_LEN - offset_in_desc);
+            uint16_t to_read = (uint16_t) ((desc_avail < (count - filled)) ? desc_avail : (count - filled));
+
+            uint32_t config_addr = CONFIG_MEM_CONFIG_USER_DESCRIPTION_OFFSET + offset_in_desc;
+
+            if (node->parameters->address_space_config_memory.low_address_valid) {
+
+                config_addr += node->parameters->address_space_config_memory.low_address;
+
+            }
+
+            uint16_t actual = _config->config_mem_read(
+                    node, config_addr, to_read, (configuration_memory_buffer_t *) &buffer[filled]);
+
+            filled += actual;
+
+            if (actual < to_read) {
+
+                break;
+
+            }
+
+        } else {
+
+            break;
+
+        }
+
+    }
+
+    return filled;
+
+}
+
+#ifdef OPENLCB_COMPILE_TRAIN
+
+    /** @brief Stream read from Train FDI (0xFA): copy from node->parameters->fdi[]. */
+static uint16_t _stream_read_request_train_function_definition_info(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    if (!node->parameters->fdi) {
+
+        return 0;
+
+    }
+
+    memcpy(buffer, &node->parameters->fdi[address], count);
+
+    return count;
+
+}
+
+    /**
+     * @brief Stream read from Train Fn Config (0xF9): map flat byte address to functions[].
+     *
+     * @details Each 16-bit function value occupies 2 bytes big-endian:
+     * address/2 = fn_index, address%2 selects high/low byte.
+     */
+static uint16_t _stream_read_request_train_function_config_memory(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    if (!state) {
+
+        return 0;
+
+    }
+
+    for (uint16_t i = 0; i < count; i++) {
+
+        uint32_t pos = address + i;
+        uint16_t fn_index = (uint16_t) (pos / 2);
+        uint8_t byte_sel = (uint8_t) (pos % 2);
+
+        if (fn_index < USER_DEFINED_MAX_TRAIN_FUNCTIONS) {
+
+            buffer[i] = (byte_sel == 0)
+                    ? (uint8_t) (state->functions[fn_index] >> 8)
+                    : (uint8_t) (state->functions[fn_index] & 0xFF);
+
+        } else {
+
+            buffer[i] = 0;
+
+        }
+
+    }
+
+    return count;
+
+}
+
+#endif /* OPENLCB_COMPILE_TRAIN */
+
+    /** @brief Stream write to Config Memory (0xFD): delegates to user config_mem_write. */
+static uint16_t _stream_write_request_configuration_memory(
+        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+
+    return _config->config_mem_write(node, address, count, (configuration_memory_buffer_t *) buffer);
+
+}
+
+    /** @brief Stream write to ACDI User (0xFB): delegates to user config_mem_write with low_address offset. */
+static uint16_t _stream_write_request_acdi_user(
+        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+
+    uint32_t config_address = address + node->parameters->address_space_acdi_user.low_address;
+
+    return _config->config_mem_write(node, config_address, count, (configuration_memory_buffer_t *) buffer);
+
+}
+
+#ifdef OPENLCB_COMPILE_TRAIN
+
+    /**
+     * @brief Stream write to Train Fn Config (0xF9): map flat byte address to functions[].
+     *
+     * @details Each 16-bit function value occupies 2 bytes big-endian:
+     * address/2 = fn_index, address%2 selects high/low byte.
+     */
+static uint16_t _stream_write_request_train_function_config_memory(
+        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    if (!state) {
+
+        return 0;
+
+    }
+
+    for (uint16_t i = 0; i < count; i++) {
+
+        uint32_t pos = address + i;
+        uint16_t fn_index = (uint16_t) (pos / 2);
+        uint8_t byte_sel = (uint8_t) (pos % 2);
+
+        if (fn_index < USER_DEFINED_MAX_TRAIN_FUNCTIONS) {
+
+            if (byte_sel == 0) {
+
+                state->functions[fn_index] =
+                        (state->functions[fn_index] & 0x00FF) | ((uint16_t) buffer[i] << 8);
+
+            } else {
+
+                state->functions[fn_index] =
+                        (state->functions[fn_index] & 0xFF00) | buffer[i];
+
+            }
+
+        }
+
+    }
+
+    return count;
+
+}
+
+#endif /* OPENLCB_COMPILE_TRAIN */
+
+    /** @brief Wires the config-mem-stream handler DI interface. */
+static void _build_config_mem_stream_handler(void) {
+
+    memset(&_config_mem_stream, 0, sizeof(_config_mem_stream));
+
+    _config_mem_stream.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
+
+    _config_mem_stream.load_datagram_received_ok_message =
+            &ProtocolDatagramHandler_load_datagram_received_ok_message;
+    _config_mem_stream.load_datagram_received_rejected_message =
+            &ProtocolDatagramHandler_load_datagram_rejected_message;
+
+    _config_mem_stream.stream_initiate_outbound = &ProtocolStreamHandler_initiate_outbound;
+    _config_mem_stream.stream_send_data         = &ProtocolStreamHandler_send_data;
+    _config_mem_stream.stream_send_complete     = &ProtocolStreamHandler_send_complete;
+    _config_mem_stream.stream_send_terminate    = &ProtocolStreamHandler_send_terminate;
+
+    // Per-space read request callbacks
+    _config_mem_stream.read_request_config_definition_info  = &_stream_read_request_config_definition_info;
+    _config_mem_stream.read_request_all                     = &_stream_read_request_all;
+    _config_mem_stream.read_request_configuration_memory    = &_stream_read_request_configuration_memory;
+    _config_mem_stream.read_request_acdi_manufacturer       = &_stream_read_request_acdi_manufacturer;
+    _config_mem_stream.read_request_acdi_user               = &_stream_read_request_acdi_user;
+
+#ifdef OPENLCB_COMPILE_TRAIN
+    _config_mem_stream.read_request_train_function_definition_info = &_stream_read_request_train_function_definition_info;
+    _config_mem_stream.read_request_train_function_config_memory   = &_stream_read_request_train_function_config_memory;
+#endif
+
+    // Per-space write request callbacks
+    _config_mem_stream.write_request_configuration_memory = &_stream_write_request_configuration_memory;
+    _config_mem_stream.write_request_acdi_user            = &_stream_write_request_acdi_user;
+
+#ifdef OPENLCB_COMPILE_TRAIN
+    _config_mem_stream.write_request_train_function_config_memory = &_stream_write_request_train_function_config_memory;
+#endif
+
+    // User stream callbacks
+    _config_mem_stream.user_on_initiate_request = _config->on_stream_initiate_request;
+    _config_mem_stream.user_on_initiate_reply   = _config->on_stream_initiate_reply;
+    _config_mem_stream.user_on_data_received    = _config->on_stream_data_received;
+    _config_mem_stream.user_on_data_proceed     = _config->on_stream_data_proceed;
+    _config_mem_stream.user_on_complete         = _config->on_stream_complete;
+
+}
+
+#endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION && !OPENLCB_COMPILE_BOOTLOADER */
 
 #endif /* OPENLCB_COMPILE_STREAM */
 
@@ -550,11 +1000,62 @@ static void _build_datagram_handler(void) {
     _datagram.memory_write_under_mask_space_train_function_definition_info = &ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_definition_info;
     _datagram.memory_write_under_mask_space_train_function_config_memory = &ProtocolConfigMemWriteHandler_write_under_mask_space_train_function_config_memory;
     _datagram.memory_write_under_mask_space_firmware_upgrade             = &ProtocolConfigMemWriteHandler_write_under_mask_space_firmware;
+
+    // Stream-transport read handlers
+#ifdef OPENLCB_COMPILE_STREAM
+    _datagram.memory_read_stream_space_config_description_info =
+            &ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_info;
+    _datagram.memory_read_stream_space_all =
+            &ProtocolConfigMemStreamHandler_handle_read_stream_space_all;
+    _datagram.memory_read_stream_space_configuration_memory =
+            &ProtocolConfigMemStreamHandler_handle_read_stream_space_configuration_memory;
+    _datagram.memory_read_stream_space_acdi_manufacturer =
+            &ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_manufacturer;
+    _datagram.memory_read_stream_space_acdi_user =
+            &ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_user;
+
+#ifdef OPENLCB_COMPILE_TRAIN
+    _datagram.memory_read_stream_space_train_function_definition_info =
+            &ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_definition_info;
+    _datagram.memory_read_stream_space_train_function_config_memory =
+            &ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_config_memory;
+#endif /* OPENLCB_COMPILE_TRAIN */
+
+#ifdef OPENLCB_COMPILE_FIRMWARE
+    // Firmware stream read intentionally not wired -- firmware space is write-only for upgrades
+#endif /* OPENLCB_COMPILE_FIRMWARE */
+
+    // Stream-transport write handlers
+    _datagram.memory_write_stream_space_config_description_info =
+            &ProtocolConfigMemStreamHandler_handle_write_stream_space_config_description_info;
+    _datagram.memory_write_stream_space_all =
+            &ProtocolConfigMemStreamHandler_handle_write_stream_space_all;
+    _datagram.memory_write_stream_space_configuration_memory =
+            &ProtocolConfigMemStreamHandler_handle_write_stream_space_configuration_memory;
+    _datagram.memory_write_stream_space_acdi_manufacturer =
+            &ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_manufacturer;
+    _datagram.memory_write_stream_space_acdi_user =
+            &ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_user;
+
+#ifdef OPENLCB_COMPILE_TRAIN
+    _datagram.memory_write_stream_space_train_function_definition_info =
+            &ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_definition_info;
+    _datagram.memory_write_stream_space_train_function_config_memory =
+            &ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_config_memory;
+#endif /* OPENLCB_COMPILE_TRAIN */
+
+#ifdef OPENLCB_COMPILE_FIRMWARE
+    _datagram.memory_write_stream_space_firmware_upgrade =
+            &ProtocolConfigMemStreamHandler_handle_write_stream_space_firmware;
+#endif /* OPENLCB_COMPILE_FIRMWARE */
+
+#endif /* OPENLCB_COMPILE_STREAM */
+
 #endif /* OPENLCB_COMPILE_BOOTLOADER */
 
 #endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
 
-    // All remaining fields stay NULL (stream ops, reply handlers, etc.)
+    // All remaining fields stay NULL (unimplemented stream spaces, reply handlers, etc.)
 
 }
 
@@ -738,6 +1239,9 @@ void OpenLcbConfig_initialize(const openlcb_config_t *config) {
 
 #ifdef OPENLCB_COMPILE_STREAM
     _build_stream_handler();
+#if defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION) && !defined(OPENLCB_COMPILE_BOOTLOADER)
+    _build_config_mem_stream_handler();
+#endif
 #endif
 
     _build_main_statemachine();
@@ -779,6 +1283,9 @@ void OpenLcbConfig_initialize(const openlcb_config_t *config) {
 
 #ifdef OPENLCB_COMPILE_STREAM
     ProtocolStreamHandler_initialize(&_stream_handler);
+#if defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION) && !defined(OPENLCB_COMPILE_BOOTLOADER)
+    ProtocolConfigMemStreamHandler_initialize(&_config_mem_stream);
+#endif
 #endif
 
     OpenLcbNode_initialize(&_node);
@@ -825,6 +1332,12 @@ static void _run_periodic_services(void) {
     ProtocolDatagramHandler_check_timeouts(tick);
 #endif
 
+#ifdef OPENLCB_COMPILE_STREAM
+#if defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION) && !defined(OPENLCB_COMPILE_BOOTLOADER)
+    ProtocolConfigMemStreamHandler_check_timeouts(tick);
+#endif
+#endif
+
 #ifdef OPENLCB_COMPILE_BROADCAST_TIME
     OpenLcbApplicationBroadcastTime_100ms_time_tick(tick);
 #endif
@@ -842,6 +1355,12 @@ void OpenLcbConfig_run(void) {
     OpenLcbLoginStatemachine_run();
     OpenLcbMainStatemachine_run();
 
+#ifdef OPENLCB_COMPILE_STREAM
+#if defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION) && !defined(OPENLCB_COMPILE_BOOTLOADER)
+    ProtocolConfigMemStreamHandler_run();
+#endif
+#endif
+
     _run_periodic_services();
 
 }
@@ -853,3 +1372,98 @@ void OpenLcbConfig_100ms_timer_tick(void) {
     _global_100ms_tick++;
 
 }
+
+// =============================================================================
+// GTEST access wrappers -- expose static callbacks for unit-test coverage
+// =============================================================================
+
+#ifdef GTEST
+#if defined(OPENLCB_COMPILE_STREAM) && defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION) && !defined(OPENLCB_COMPILE_BOOTLOADER)
+
+uint16_t OpenLcbConfigTest_stream_read_request_config_definition_info(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    return _stream_read_request_config_definition_info(node, address, count, buffer);
+
+}
+
+uint16_t OpenLcbConfigTest_stream_read_request_all(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    return _stream_read_request_all(node, address, count, buffer);
+
+}
+
+uint16_t OpenLcbConfigTest_stream_read_request_configuration_memory(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    return _stream_read_request_configuration_memory(node, address, count, buffer);
+
+}
+
+uint16_t OpenLcbConfigTest_read_field_array(const _config_field_t *fields,
+        uint16_t num_fields, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    return _read_field_array(fields, num_fields, address, count, buffer);
+
+}
+
+uint16_t OpenLcbConfigTest_stream_read_request_acdi_manufacturer(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    return _stream_read_request_acdi_manufacturer(node, address, count, buffer);
+
+}
+
+uint16_t OpenLcbConfigTest_stream_read_request_acdi_user(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    return _stream_read_request_acdi_user(node, address, count, buffer);
+
+}
+
+#ifdef OPENLCB_COMPILE_TRAIN
+
+uint16_t OpenLcbConfigTest_stream_read_request_train_function_definition_info(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    return _stream_read_request_train_function_definition_info(node, address, count, buffer);
+
+}
+
+uint16_t OpenLcbConfigTest_stream_read_request_train_function_config_memory(
+        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+
+    return _stream_read_request_train_function_config_memory(node, address, count, buffer);
+
+}
+
+#endif /* OPENLCB_COMPILE_TRAIN */
+
+uint16_t OpenLcbConfigTest_stream_write_request_configuration_memory(
+        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+
+    return _stream_write_request_configuration_memory(node, address, count, buffer);
+
+}
+
+uint16_t OpenLcbConfigTest_stream_write_request_acdi_user(
+        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+
+    return _stream_write_request_acdi_user(node, address, count, buffer);
+
+}
+
+#ifdef OPENLCB_COMPILE_TRAIN
+
+uint16_t OpenLcbConfigTest_stream_write_request_train_function_config_memory(
+        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+
+    return _stream_write_request_train_function_config_memory(node, address, count, buffer);
+
+}
+
+#endif /* OPENLCB_COMPILE_TRAIN */
+
+#endif /* OPENLCB_COMPILE_STREAM && OPENLCB_COMPILE_MEMORY_CONFIGURATION && !OPENLCB_COMPILE_BOOTLOADER */
+#endif /* GTEST */

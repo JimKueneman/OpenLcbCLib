@@ -231,19 +231,22 @@ bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t *openlcb_msg) {
     }
 
     // Resolve listener alias via DI if needed (forwarded consist commands)
-    if (openlcb_msg->dest_alias == 0 && openlcb_msg->dest_id != 0
-            && _interface->listener_find_by_node_id) {
+    if (openlcb_msg->dest_alias == 0) {
 
-        listener_alias_entry_t *entry =
-                _interface->listener_find_by_node_id(openlcb_msg->dest_id);
+        if (openlcb_msg->dest_id != 0 && _interface->listener_find_by_node_id) {
 
-        if (entry && entry->alias != 0) {
+            listener_alias_entry_t *entry =
+                    _interface->listener_find_by_node_id(openlcb_msg->dest_id);
 
-            openlcb_msg->dest_alias = entry->alias;
+            if (entry && entry->alias != 0) {
 
-        } else {
+                openlcb_msg->dest_alias = entry->alias;
 
-            return true;  // alias unresolvable — drop message, don't retry
+            } else {
+
+                return true;  // alias unresolvable — drop message, don't retry
+
+            }
 
         }
 

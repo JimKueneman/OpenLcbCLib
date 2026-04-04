@@ -33,7 +33,7 @@
  * All application interaction is through optional DI callbacks.
  *
  * @author Jim Kueneman
- * @date 03 Apr 2026
+ * @date 04 Apr 2026
  */
 
 #include "protocol_stream_handler.h"
@@ -51,10 +51,6 @@
 #include "openlcb_defines.h"
 #include "openlcb_utilities.h"
 
-#ifndef USER_DEFINED_MAX_STREAM_COUNT
-#define USER_DEFINED_MAX_STREAM_COUNT 1
-#endif
-
 // =============================================================================
 // Static state
 // =============================================================================
@@ -63,7 +59,7 @@
 static const interface_protocol_stream_handler_t *_interface;
 
     /** @brief Fixed-size stream state table. */
-static stream_state_t _stream_table[USER_DEFINED_MAX_STREAM_COUNT];
+static stream_state_t _stream_table[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
 
     /** @brief Next Destination Stream ID to assign (monotonic, wraps at 0xFE). */
 static uint8_t _next_dest_stream_id = 0;
@@ -83,17 +79,15 @@ static uint8_t _next_source_stream_id = 0;
      * -# Match on remote_node_id and the appropriate stream ID
      * -# Return pointer to matching entry or NULL if not found
      *
-     * @verbatim
      * @param remote_node_id  Node ID of the remote end.
      * @param stream_id       Stream ID to match (SID or DID depending on role).
      * @param match_source_id If true, match source_stream_id; if false, match dest_stream_id.
-     * @endverbatim
      *
      * @return Pointer to matching entry, or NULL if not found.
      */
 static stream_state_t *_find_stream(node_id_t remote_node_id, uint8_t stream_id, bool match_source_id) {
 
-    for (int i = 0; i < USER_DEFINED_MAX_STREAM_COUNT; i++) {
+    for (int i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
 
         if (_stream_table[i].state == STREAM_STATE_CLOSED) {
 
@@ -135,7 +129,7 @@ static stream_state_t *_find_stream(node_id_t remote_node_id, uint8_t stream_id,
      */
 static stream_state_t *_allocate_stream(void) {
 
-    for (int i = 0; i < USER_DEFINED_MAX_STREAM_COUNT; i++) {
+    for (int i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
 
         if (_stream_table[i].state == STREAM_STATE_CLOSED) {
 
@@ -156,9 +150,7 @@ static stream_state_t *_allocate_stream(void) {
      * @details Algorithm:
      * -# Set state to CLOSED
      *
-     * @verbatim
      * @param stream  Pointer to stream_state_t entry to free.
-     * @endverbatim
      */
 static void _free_stream(stream_state_t *stream) {
 
@@ -204,13 +196,11 @@ static uint8_t _assign_dest_stream_id(void) {
      * -# Set payload_count to 6
      * -# Mark outgoing as valid
      *
-     * @verbatim
      * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
      * @param max_buffer_size    Negotiated buffer size (0 if reject).
      * @param flags_or_error     Accept (0x8000) or error code (0x1xxx, 0x2xxx).
      * @param source_stream_id   SID from the request.
      * @param dest_stream_id     DID assigned by this node.
-     * @endverbatim
      */
 static void _load_initiate_reply(
             openlcb_statemachine_info_t *statemachine_info,
@@ -246,10 +236,8 @@ static void _load_initiate_reply(
      * telling the source it may send the next window.  Payload is 2 bytes:
      * SID (byte 0) and DID (byte 1).
      *
-     * @verbatim
      * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
      * @param stream             Pointer to the stream state entry.
-     * @endverbatim
      */
 static void _load_data_proceed(
             openlcb_statemachine_info_t *statemachine_info,
@@ -311,7 +299,6 @@ static uint8_t _assign_source_stream_id(void) {
      * -# Set payload_count to 6
      * -# Mark outgoing as valid
      *
-     * @verbatim
      * @param statemachine_info         Pointer to openlcb_statemachine_info_t context.
      * @param proposed_buffer_size      Proposed max buffer size.
      * @param source_stream_id          SID assigned by this (source) node.
@@ -319,7 +306,6 @@ static uint8_t _assign_source_stream_id(void) {
      * @param dest_alias                CAN alias of the destination node.
      * @param dest_id                   Node ID of the destination node.
      * @param content_uid               Optional 6-byte Content UID (NULL to omit).
-     * @endverbatim
      */
 static void _load_initiate_request(
             openlcb_statemachine_info_t *statemachine_info,
@@ -343,9 +329,11 @@ static void _load_initiate_request(
     OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, proposed_buffer_size, 0);
     OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x0000, 2);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, source_stream_id, 4);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, suggested_dest_stream_id, 5);
 
     if (content_uid) {
+
+        // 12-byte form: SID + DID + UID (DID byte required for UID offset alignment)
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, suggested_dest_stream_id, 5);
 
         for (int i = 0; i < 6; i++) {
 
@@ -355,9 +343,17 @@ static void _load_initiate_request(
 
         statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 12;
 
-    } else {
+    } else if (suggested_dest_stream_id != STREAM_ID_RESERVED) {
+
+        // 6-byte form: SID + DID, no UID
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, suggested_dest_stream_id, 5);
 
         statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
+
+    } else {
+
+        // 5-byte form: SID only, no DID, no UID
+        statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 5;
 
     }
 
@@ -370,12 +366,10 @@ static void _load_initiate_request(
      *
      * @details Payload: byte 0 = Destination Stream ID, bytes 1+ = data.
      *
-     * @verbatim
      * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
      * @param stream             Pointer to the stream state entry.
      * @param data               Pointer to data bytes to send.
      * @param data_len           Number of data bytes.
-     * @endverbatim
      */
 static void _load_data_send(
             openlcb_statemachine_info_t *statemachine_info,
@@ -409,14 +403,12 @@ static void _load_data_send(
     /**
      * @brief Loads a Stream Data Complete message into the outgoing slot.
      *
-     * @details Payload: byte 0 = SID, byte 1 = DID, bytes 2-3 = flags (0),
-     * bytes 4-7 = total bytes transferred mod 2^32 (per spec Section 5.5).
-     * Either side can send.
+     * @details 2-byte form (SID + DID) when no data transferred, or
+     * 7-byte form (SID + DID + flags(2) + count(3) mod 2^24) when data
+     * was transferred.  Either side can send.
      *
-     * @verbatim
      * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
      * @param stream             Pointer to the stream state entry.
-     * @endverbatim
      */
 static void _load_data_complete(
             openlcb_statemachine_info_t *statemachine_info,
@@ -435,17 +427,24 @@ static void _load_data_complete(
     OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, stream->source_stream_id, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, stream->dest_stream_id, 1);
 
-    // Optional flags (bytes 2-3)
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x0000, 2);
+    if (stream->bytes_transferred > 0) {
 
-    // Total bytes transferred mod 2^32 (bytes 4-7)
-    uint32_t total = stream->bytes_transferred;
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((total >> 24) & 0xFF), 4);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((total >> 16) & 0xFF), 5);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((total >> 8) & 0xFF), 6);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (total & 0xFF), 7);
+        // 7-byte form: SID + DID + flags(2) + count(3) mod 2^24
+        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x0000, 2);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+        uint32_t total = stream->bytes_transferred;
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((total >> 16) & 0xFF), 4);
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) ((total >> 8) & 0xFF), 5);
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (total & 0xFF), 6);
+
+        statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 7;
+
+    } else {
+
+        // 2-byte form: SID + DID only
+        statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 2;
+
+    }
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
@@ -621,15 +620,21 @@ void ProtocolStreamHandler_initiate_reply(openlcb_statemachine_info_t *statemach
         stream->max_buffer_size = negotiated_buffer_size;
         stream->bytes_remaining = negotiated_buffer_size;
 
+        if (_interface->on_initiate_reply) {
+
+            _interface->on_initiate_reply(statemachine_info, stream);
+
+        }
+
     } else {
 
+        if (_interface->on_initiate_reply) {
+
+            _interface->on_initiate_reply(statemachine_info, stream);
+
+        }
+
         _free_stream(stream);
-
-    }
-
-    if (_interface->on_initiate_reply) {
-
-        _interface->on_initiate_reply(statemachine_info, stream);
 
     }
 
@@ -810,7 +815,7 @@ void ProtocolStreamHandler_handle_terminate_due_to_error(openlcb_statemachine_in
     if ((rejected_mti != MTI_STREAM_SEND) && (rejected_mti != MTI_STREAM_PROCEED)) { return; }
 
     // Close all streams with this remote node
-    for (int i = 0; i < USER_DEFINED_MAX_STREAM_COUNT; i++) {
+    for (int i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
 
         if (_stream_table[i].state == STREAM_STATE_CLOSED) { continue; }
 
