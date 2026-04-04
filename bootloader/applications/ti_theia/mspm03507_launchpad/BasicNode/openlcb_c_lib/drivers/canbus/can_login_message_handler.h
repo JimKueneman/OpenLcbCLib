@@ -30,6 +30,8 @@
  * @date 4 Mar 2026
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __DRIVERS_CANBUS_CAN_LOGIN_MESSAGE_HANDLER__
 #define __DRIVERS_CANBUS_CAN_LOGIN_MESSAGE_HANDLER__
 
@@ -72,7 +74,7 @@ extern "C" {
          *
          * @warning NOT thread-safe - call during single-threaded initialization only.
          *
-         * @see CanLoginStateMachine_initialize
+         * @see CanLoginStatemachine_initialize
          */
     extern void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface);
 

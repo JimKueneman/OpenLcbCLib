@@ -165,7 +165,7 @@ static void _sniff_listener_config_reply(openlcb_msg_t *msg) {
      *
      * @return true if a frame was transmitted, false on hardware failure.
      */
-static bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *worker_can_msg, uint16_t *payload_index) {
+static bool _transmit_openlcb_message(openlcb_msg_t *openlcb_msg, can_msg_t *worker_can_msg, uint16_t *payload_index) {
 
 
     if (OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg)) {
@@ -178,10 +178,7 @@ static bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *wor
 
                 break;
 
-            case MTI_STREAM_COMPLETE:
-            case MTI_STREAM_INIT_REPLY:
-            case MTI_STREAM_INIT_REQUEST:
-            case MTI_STREAM_PROCEED:
+            case MTI_STREAM_SEND:
 
                 return _interface->handle_stream_frame(openlcb_msg, worker_can_msg, payload_index);
 
@@ -225,7 +222,7 @@ static bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *wor
      *
      * @warning Blocks until the entire multi-frame message is sent.
      */
-bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
+bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t *openlcb_msg) {
 
     if (openlcb_msg->state.invalid) {
 
@@ -234,19 +231,22 @@ bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
     }
 
     // Resolve listener alias via DI if needed (forwarded consist commands)
-    if (openlcb_msg->dest_alias == 0 && openlcb_msg->dest_id != 0
-            && _interface->listener_find_by_node_id) {
+    if (openlcb_msg->dest_alias == 0) {
 
-        listener_alias_entry_t *entry =
-                _interface->listener_find_by_node_id(openlcb_msg->dest_id);
+        if (openlcb_msg->dest_id != 0 && _interface->listener_find_by_node_id) {
 
-        if (entry && entry->alias != 0) {
+            listener_alias_entry_t *entry =
+                    _interface->listener_find_by_node_id(openlcb_msg->dest_id);
 
-            openlcb_msg->dest_alias = entry->alias;
+            if (entry && entry->alias != 0) {
 
-        } else {
+                openlcb_msg->dest_alias = entry->alias;
 
-            return true;  // alias unresolvable — drop message, don't retry
+            } else {
+
+                return true;  // alias unresolvable — drop message, don't retry
+
+            }
 
         }
 
@@ -288,7 +288,7 @@ bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
 }
 
     /** @brief Transmits a pre-built raw @ref can_msg_t via the hardware handler. */
-bool CanTxStatemachine_send_can_message(can_msg_t* can_msg) {
+bool CanTxStatemachine_send_can_message(can_msg_t *can_msg) {
 
     return _interface->handle_can_frame(can_msg);
 

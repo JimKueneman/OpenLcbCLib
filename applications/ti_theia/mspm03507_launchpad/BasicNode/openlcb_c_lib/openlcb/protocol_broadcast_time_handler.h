@@ -41,6 +41,8 @@
  * @see openlcb_utilities.h - General message utility functions
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_BROADCAST_TIME_HANDLER__
 #define __OPENLCB_PROTOCOL_BROADCAST_TIME_HANDLER__
 
@@ -76,14 +78,14 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
         /**
          * @brief Initializes the Broadcast Time Protocol handler.
          *
          * @param interface_openlcb_protocol_broadcast_time_handler  Pointer to @ref interface_openlcb_protocol_broadcast_time_handler_t (must remain valid for application lifetime).
          */
-    extern void ProtocolBroadcastTime_initialize(const interface_openlcb_protocol_broadcast_time_handler_t *interface_openlcb_protocol_broadcast_time_handler);
+    extern void ProtocolBroadcastTimeHandler_initialize(const interface_openlcb_protocol_broadcast_time_handler_t *interface_openlcb_protocol_broadcast_time_handler);
 
         /**
          * @brief Handles incoming broadcast time events.
@@ -95,7 +97,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param event_id           Full 64-bit @ref event_id_t containing encoded time data.
          */
-    extern void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+    extern void ProtocolBroadcastTimeHandler_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
     // =========================================================================
     // Broadcast Time Event ID Utilities
@@ -112,7 +114,7 @@ extern "C" {
          *
          * @return true if the event ID is a broadcast time event.
          */
-    extern bool ProtocolBroadcastTime_is_time_event(event_id_t event_id);
+    extern bool ProtocolBroadcastTimeHandler_is_time_event(event_id_t event_id);
 
         /**
          * @brief Extracts the 48-bit clock ID (upper 6 bytes) from a broadcast time event ID.
@@ -121,7 +123,7 @@ extern "C" {
          *
          * @return 48-bit clock identifier masked from the event ID.
          */
-    extern uint64_t ProtocolBroadcastTime_extract_clock_id(event_id_t event_id);
+    extern uint64_t ProtocolBroadcastTimeHandler_extract_clock_id(event_id_t event_id);
 
         /**
          * @brief Returns the @ref broadcast_time_event_type_enum for a broadcast time event ID.
@@ -130,7 +132,7 @@ extern "C" {
          *
          * @return The @ref broadcast_time_event_type_enum indicating the event type.
          */
-    extern broadcast_time_event_type_enum ProtocolBroadcastTime_get_event_type(event_id_t event_id);
+    extern broadcast_time_event_type_enum ProtocolBroadcastTimeHandler_get_event_type(event_id_t event_id);
 
         /**
          * @brief Extracts hour and minute from a broadcast time event ID.
@@ -141,7 +143,7 @@ extern "C" {
          *
          * @return true if values are valid, false if out of range.
          */
-    extern bool ProtocolBroadcastTime_extract_time(event_id_t event_id, uint8_t *hour, uint8_t *minute);
+    extern bool ProtocolBroadcastTimeHandler_extract_time(event_id_t event_id, uint8_t *hour, uint8_t *minute);
 
         /**
          * @brief Extracts month and day from a broadcast time event ID.
@@ -152,7 +154,7 @@ extern "C" {
          *
          * @return true if values are valid, false if out of range.
          */
-    extern bool ProtocolBroadcastTime_extract_date(event_id_t event_id, uint8_t *month, uint8_t *day);
+    extern bool ProtocolBroadcastTimeHandler_extract_date(event_id_t event_id, uint8_t *month, uint8_t *day);
 
         /**
          * @brief Extracts year from a broadcast time event ID.
@@ -162,7 +164,7 @@ extern "C" {
          *
          * @return true if extraction successful.
          */
-    extern bool ProtocolBroadcastTime_extract_year(event_id_t event_id, uint16_t *year);
+    extern bool ProtocolBroadcastTimeHandler_extract_year(event_id_t event_id, uint16_t *year);
 
         /**
          * @brief Extracts the 12-bit signed fixed-point rate from a broadcast time event ID.
@@ -172,7 +174,7 @@ extern "C" {
          *
          * @return true if extraction successful.
          */
-    extern bool ProtocolBroadcastTime_extract_rate(event_id_t event_id, int16_t *rate);
+    extern bool ProtocolBroadcastTimeHandler_extract_rate(event_id_t event_id, int16_t *rate);
 
         /**
          * @brief Creates a Report/Set Time event ID from clock_id, hour, minute.
@@ -184,7 +186,7 @@ extern "C" {
          *
          * @return Encoded @ref event_id_t for the time event.
          */
-    extern event_id_t ProtocolBroadcastTime_create_time_event_id(uint64_t clock_id, uint8_t hour, uint8_t minute, bool is_set);
+    extern event_id_t ProtocolBroadcastTimeHandler_create_time_event_id(uint64_t clock_id, uint8_t hour, uint8_t minute, bool is_set);
 
         /**
          * @brief Creates a Report/Set Date event ID from clock_id, month, day.
@@ -196,7 +198,7 @@ extern "C" {
          *
          * @return Encoded @ref event_id_t for the date event.
          */
-    extern event_id_t ProtocolBroadcastTime_create_date_event_id(uint64_t clock_id, uint8_t month, uint8_t day, bool is_set);
+    extern event_id_t ProtocolBroadcastTimeHandler_create_date_event_id(uint64_t clock_id, uint8_t month, uint8_t day, bool is_set);
 
         /**
          * @brief Creates a Report/Set Year event ID from clock_id, year.
@@ -207,7 +209,7 @@ extern "C" {
          *
          * @return Encoded @ref event_id_t for the year event.
          */
-    extern event_id_t ProtocolBroadcastTime_create_year_event_id(uint64_t clock_id, uint16_t year, bool is_set);
+    extern event_id_t ProtocolBroadcastTimeHandler_create_year_event_id(uint64_t clock_id, uint16_t year, bool is_set);
 
         /**
          * @brief Creates a Report/Set Rate event ID from clock_id, rate.
@@ -218,7 +220,7 @@ extern "C" {
          *
          * @return Encoded @ref event_id_t for the rate event.
          */
-    extern event_id_t ProtocolBroadcastTime_create_rate_event_id(uint64_t clock_id, int16_t rate, bool is_set);
+    extern event_id_t ProtocolBroadcastTimeHandler_create_rate_event_id(uint64_t clock_id, int16_t rate, bool is_set);
 
         /**
          * @brief Creates a command event ID (Query, Start, Stop, Date Rollover) for the given clock.
@@ -228,10 +230,10 @@ extern "C" {
          *
          * @return Encoded @ref event_id_t for the command event.
          */
-    extern event_id_t ProtocolBroadcastTime_create_command_event_id(uint64_t clock_id, broadcast_time_event_type_enum command);
+    extern event_id_t ProtocolBroadcastTimeHandler_create_command_event_id(uint64_t clock_id, broadcast_time_event_type_enum command);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* __OPENLCB_PROTOCOL_BROADCAST_TIME_HANDLER__ */

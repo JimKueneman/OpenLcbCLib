@@ -51,8 +51,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#ifdef	__cplusplus
-  extern "C" {
+#ifdef __cplusplus
+extern "C" {
 #endif /* __cplusplus */
 
 /**
@@ -308,6 +308,12 @@
 
     /** @brief Stream completed successfully */
 #define MTI_STREAM_COMPLETE 0x08A8
+
+    /** @brief Stream Initiate Reply accept flag (bytes 2-3) */
+#define STREAM_REPLY_ACCEPT 0x8000
+
+    /** @brief Reserved Stream ID value -- must never be sent */
+#define STREAM_ID_RESERVED 0xFF
 
     /** @} */ // end of mti_stream
 
@@ -661,6 +667,9 @@
 
     /** @brief Permanent error base code */
 #define ERROR_PERMANENT 0x1000
+
+    /** @brief Permanent: Streams not supported by this node */
+#define ERROR_PERMANENT_STREAMS_NOT_SUPPORTED 0x1010
 
     /** @brief Permanent: Unknown or unsupported address space (0x1080 | 0x0001) */
 #define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN 0x1081

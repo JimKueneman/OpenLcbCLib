@@ -125,6 +125,19 @@ extern "C" {
 #error "USER_DEFINED_STREAM_BUFFER_DEPTH must be >= 1 to avoid a zero-length array"
 #endif
 
+    /** @brief Maximum bytes in a single stream data frame */
+#ifndef USER_DEFINED_STREAM_BUFFER_LEN
+#define USER_DEFINED_STREAM_BUFFER_LEN               256
+#endif
+
+    /** @brief Maximum concurrent active streams across all nodes */
+#ifndef USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS
+#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   1
+#endif
+#if USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS < 1
+#error "USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS must be >= 1 to avoid a zero-length array"
+#endif
+
     /** @brief Maximum number of virtual nodes that can be allocated */
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
 #error "USER_DEFINED_NODE_BUFFER_DEPTH must be defined in openlcb_user_config.h"

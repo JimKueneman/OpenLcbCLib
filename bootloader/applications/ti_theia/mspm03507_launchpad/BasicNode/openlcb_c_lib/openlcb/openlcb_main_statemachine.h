@@ -273,6 +273,9 @@ typedef struct {
         /** @brief MTI 0x08A8 — Stream Data Complete (received).  Optional. */
     void (*stream_data_complete)(openlcb_statemachine_info_t *statemachine_info);
 
+        /** @brief Terminate Due To Error with stream MTI.  Optional. */
+    void (*stream_terminate_due_to_error)(openlcb_statemachine_info_t *statemachine_info);
+
     // =========================================================================
     // Optional Broadcast Time Handler (NULL = not implemented)
     // =========================================================================

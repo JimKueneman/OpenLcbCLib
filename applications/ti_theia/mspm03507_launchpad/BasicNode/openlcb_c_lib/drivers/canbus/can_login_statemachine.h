@@ -31,6 +31,8 @@
  * @date 4 Mar 2026
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __DRIVERS_CANBUS_CAN_LOGIN_STATEMACHINE__
 #define __DRIVERS_CANBUS_CAN_LOGIN_STATEMACHINE__
 
@@ -44,7 +46,7 @@
      * All pointers are REQUIRED (must not be NULL).
      * Typical implementations are the CanLoginMessageHandler_state_* functions.
      *
-     * @see CanLoginStateMachine_initialize
+     * @see CanLoginStatemachine_initialize
      * @see can_login_message_handler.h
      */
 typedef struct {
@@ -76,9 +78,9 @@ extern "C" {
          * @warning NOT thread-safe - call during single-threaded initialization only.
          *
          * @see CanLoginMessageHandler_initialize - initialize first
-         * @see CanLoginStateMachine_run
+         * @see CanLoginStatemachine_run
          */
-    extern void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
+    extern void CanLoginStatemachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
 
         /**
          * @brief Dispatches to the handler for the node's current run_state.
@@ -94,7 +96,7 @@ extern "C" {
          * @see CanLoginMessageHandler_state_init - entry point
          * @see CanLoginMessageHandler_state_load_amd - final state
          */
-    extern void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info);
+    extern void CanLoginStatemachine_run(can_statemachine_info_t *can_statemachine_info);
 
 #ifdef __cplusplus
 }

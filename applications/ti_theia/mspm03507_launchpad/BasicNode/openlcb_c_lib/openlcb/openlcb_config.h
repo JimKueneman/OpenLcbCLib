@@ -28,13 +28,15 @@
  * @brief User-facing configuration struct and initialization API for OpenLcbCLib.
  *
  * @details Users populate one @ref openlcb_config_t struct with hardware driver
- * functions and optional application callbacks, then call OpenLcb_initialize()
+ * functions and optional application callbacks, then call OpenLcbConfig_initialize()
  * to bring up the entire stack.
  *
  * @author Jim Kueneman
- * @date 6 Mar 2026
+ * @date 04 Apr 2026
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_CONFIG__
 #define __OPENLCB_CONFIG__
 
@@ -149,13 +151,28 @@
 #pragma message "OpenLcbCLib: TRAIN_SEARCH = OFF"
 #endif
 
+#ifdef OPENLCB_COMPILE_STREAM
+#pragma message "OpenLcbCLib: STREAM = ON"
+#else
+#pragma message "OpenLcbCLib: STREAM = OFF"
+#endif
+
 #endif /* OPENLCB_COMPILE_VERBOSE */
+
+#ifdef OPENLCB_COMPILE_STREAM
+#include "protocol_stream_handler.h"
+#ifdef OPENLCB_COMPILE_MEMORY_CONFIGURATION
+#ifndef OPENLCB_COMPILE_BOOTLOADER
+#include "protocol_config_mem_stream_handler.h"
+#endif /* OPENLCB_COMPILE_BOOTLOADER */
+#endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
+#endif
 
     /**
      * @brief User configuration for OpenLcbCLib.
      *
      * @details Populate this struct with hardware driver functions and optional
-     * application callbacks, then pass it to OpenLcb_initialize(). Required
+     * application callbacks, then pass it to OpenLcbConfig_initialize(). Required
      * fields are marked REQUIRED and must be non-NULL.
      *
      * @code
@@ -168,7 +185,7 @@
      *     .on_login_complete       = &my_login_handler,
      *     .on_consumed_event_pcer  = &my_event_handler,
      * };
-     * OpenLcb_initialize(&my_config);
+     * OpenLcbConfig_initialize(&my_config);
      * @endcode
      */
 typedef struct {
@@ -490,35 +507,59 @@ typedef struct {
 
 #endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
 
+#ifdef OPENLCB_COMPILE_STREAM
+
+    // =========================================================================
+    // OPTIONAL: Stream Transport Callbacks (requires STREAM)
+    // =========================================================================
+
+        /** @brief Stream Initiate Request received (this node is destination).  Optional.
+         *  Return true to accept the stream, false to reject with permanent error. */
+    bool (*on_stream_initiate_request)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+
+        /** @brief Stream Initiate Reply received (this node is source).  Optional. */
+    void (*on_stream_initiate_reply)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+
+        /** @brief Stream data received.  Optional. */
+    void (*on_stream_data_received)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+
+        /** @brief Stream Data Proceed received (flow control ack).  Optional. */
+    void (*on_stream_data_proceed)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+
+        /** @brief Stream completed or closed.  Optional. */
+    void (*on_stream_complete)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
+
+#endif /* OPENLCB_COMPILE_STREAM */
+
 } openlcb_config_t;
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
     /**
      * @brief Initializes the entire OpenLCB stack with one call.
      *
      * @details Initializes all buffer infrastructure, builds internal interface
      * structs from the user config, and starts only the protocol modules selected
-     * by OPENLCB_COMPILE_* defines.  After this returns, call OpenLcb_create_node()
-     * to allocate nodes, then call OpenLcb_run() in your main loop.
+     * by OPENLCB_COMPILE_* defines.  After this returns, call OpenLcbConfig_create_node()
+     * to allocate nodes, then call OpenLcbConfig_run() in your main loop.
      *
      * @param config  Pointer to the @ref openlcb_config_t to use.  Must remain valid
      *                for the lifetime of the application (use static or global storage).
      *
      * @warning All required function pointers in the config struct must be non-NULL.
      */
-extern void OpenLcb_initialize(const openlcb_config_t *config);
+extern void OpenLcbConfig_initialize(const openlcb_config_t *config);
 
     /**
      * @brief Increments the global 100ms tick counter.
      *
      * @details Call from a 100ms hardware timer interrupt or periodic task.
      * This is the ONLY action performed by the timer context -- all real
-     * protocol work runs in the main loop via OpenLcb_run().
+     * protocol work runs in the main loop via OpenLcbConfig_run().
      */
-extern void OpenLcb_100ms_timer_tick(void);
+extern void OpenLcbConfig_100ms_timer_tick(void);
 
     /**
      * @brief Returns the current value of the global 100ms tick counter.
@@ -530,7 +571,7 @@ extern void OpenLcb_100ms_timer_tick(void);
      *
      * @return Current tick count (wraps at 255).
      */
-extern uint8_t OpenLcb_get_global_100ms_tick(void);
+extern uint8_t OpenLcbConfig_get_global_100ms_tick(void);
 
     /**
      * @brief Allocates and registers a new node on the OpenLCB network.
@@ -540,7 +581,7 @@ extern uint8_t OpenLcb_get_global_100ms_tick(void);
      *
      * @return Pointer to the allocated @ref openlcb_node_t, or NULL if no slots available.
      */
-extern openlcb_node_t *OpenLcb_create_node(node_id_t node_id, const node_parameters_t *parameters);
+extern openlcb_node_t *OpenLcbConfig_create_node(node_id_t node_id, const node_parameters_t *parameters);
 
     /**
      * @brief Runs one iteration of all state machines.
@@ -548,10 +589,10 @@ extern openlcb_node_t *OpenLcb_create_node(node_id_t node_id, const node_paramet
      * @details Call as fast as possible in your main loop.  Non-blocking —
      * returns after processing one operation per call.
      */
-extern void OpenLcb_run(void);
+extern void OpenLcbConfig_run(void);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
 #endif /* __OPENLCB_CONFIG__ */

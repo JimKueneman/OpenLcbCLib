@@ -56,7 +56,7 @@
 
 
     /** @brief Stored callback interface pointer; set by _initialize(). */
-static interface_protocol_config_mem_operations_handler_t* _interface;
+static interface_protocol_config_mem_operations_handler_t *_interface;
 
     /**
      * @brief Stores the callback interface.  Call once at startup.
@@ -88,7 +88,7 @@ void ProtocolConfigMemOperationsHandler_initialize(const interface_protocol_conf
      *
      * @return Pointer to user_address_space_info_t, or NULL.
      */
-static const user_address_space_info_t* _decode_to_space_definition(openlcb_statemachine_info_t *statemachine_info, uint8_t space_offset) {
+static const user_address_space_info_t *_decode_to_space_definition(openlcb_statemachine_info_t *statemachine_info, uint8_t space_offset) {
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[space_offset]) {
 
