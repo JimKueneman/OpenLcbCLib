@@ -658,7 +658,7 @@ static void _build_application(void) {
     * @param config Pointer to the @ref openlcb_config_t to use
     * @endverbatim
     */
-void OpenLcb_initialize(const openlcb_config_t *config) {
+void OpenLcbConfig_initialize(const openlcb_config_t *config) {
 
     _config = config;
 
@@ -760,7 +760,7 @@ void OpenLcb_initialize(const openlcb_config_t *config) {
     *
     * @return Pointer to the allocated @ref openlcb_node_t, or NULL if no slots available
     */
-openlcb_node_t *OpenLcb_create_node(node_id_t node_id, const node_parameters_t *parameters) {
+openlcb_node_t *OpenLcbConfig_create_node(node_id_t node_id, const node_parameters_t *parameters) {
 
     return OpenLcbNode_allocate(node_id, parameters);
 
@@ -795,7 +795,7 @@ static void _run_periodic_services(void) {
 }
 
     /** @brief Runs one iteration of all state machines and periodic services. */
-void OpenLcb_run(void) {
+void OpenLcbConfig_run(void) {
 
     CanMainStateMachine_run();
     OpenLcbLoginMainStatemachine_run();
@@ -807,7 +807,7 @@ void OpenLcb_run(void) {
 
     /** @brief Increments the global 100ms tick counter. This is the ONLY action
      *  performed by the timer interrupt — all real work runs in the main loop. */
-void OpenLcb_100ms_timer_tick(void) {
+void OpenLcbConfig_100ms_timer_tick(void) {
 
     _global_100ms_tick++;
 

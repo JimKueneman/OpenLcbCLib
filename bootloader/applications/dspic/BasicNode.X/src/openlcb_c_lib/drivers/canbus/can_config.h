@@ -99,7 +99,7 @@ extern "C" {
         /**
          * @brief Initializes the CAN bus transport layer.
          *
-         * @details Must be called BEFORE OpenLcb_initialize().
+         * @details Must be called BEFORE OpenLcbConfig_initialize().
          *
          * @param config  Pointer to @ref can_config_t configuration. Must remain
          *                valid for the lifetime of the application.

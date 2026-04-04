@@ -107,7 +107,7 @@ void Dspic33OlcbDrivers_unlock_shared_resources(void) {
  *                MCC's _T2Interrupt is not in the call path. */
 void TMR2_CallBack(void) {
 
-    OpenLcb_100ms_timer_tick();
+    OpenLcbConfig_100ms_timer_tick();
 
 }
 
@@ -115,6 +115,6 @@ void Dspic33OlcbDrivers_t2_interrupt_handler(void) {
 
     IFS0bits.T2IF = 0;
 
-    OpenLcb_100ms_timer_tick();
+    OpenLcbConfig_100ms_timer_tick();
 
 }

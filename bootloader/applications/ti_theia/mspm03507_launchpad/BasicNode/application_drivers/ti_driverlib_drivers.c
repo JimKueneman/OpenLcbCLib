@@ -135,6 +135,6 @@ void TI_DriverLibDrivers_unlock_shared_resources(void)
 void SysTick_Handler(void)
 {
 
-   OpenLcb_100ms_timer_tick();
+   OpenLcbConfig_100ms_timer_tick();
    
 }

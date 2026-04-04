@@ -148,16 +148,16 @@ int main(void) {
     Dspic33CanDriver_initialize();
 
     CanConfig_initialize(&can_config);
-    OpenLcb_initialize(&openlcb_config);
+    OpenLcbConfig_initialize(&openlcb_config);
 
-    OpenLcb_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
+    OpenLcbConfig_create_node(NODE_ID, &OpenLcbUserConfig_node_parameters);
 
     // All setup, re-enable all the interrupts (important if a bootloader jump here was made)
     _GIE = 1;
 
     while (1) {
 
-        OpenLcb_run();
+        OpenLcbConfig_run();
 
     }
 

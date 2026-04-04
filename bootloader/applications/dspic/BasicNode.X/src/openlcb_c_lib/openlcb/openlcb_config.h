@@ -28,7 +28,7 @@
  * @brief User-facing configuration struct and initialization API for OpenLcbCLib.
  *
  * @details Users populate one @ref openlcb_config_t struct with hardware driver
- * functions and optional application callbacks, then call OpenLcb_initialize()
+ * functions and optional application callbacks, then call OpenLcbConfig_initialize()
  * to bring up the entire stack.
  *
  * @author Jim Kueneman
@@ -155,7 +155,7 @@
      * @brief User configuration for OpenLcbCLib.
      *
      * @details Populate this struct with hardware driver functions and optional
-     * application callbacks, then pass it to OpenLcb_initialize(). Required
+     * application callbacks, then pass it to OpenLcbConfig_initialize(). Required
      * fields are marked REQUIRED and must be non-NULL.
      *
      * @code
@@ -168,7 +168,7 @@
      *     .on_login_complete       = &my_login_handler,
      *     .on_consumed_event_pcer  = &my_event_handler,
      * };
-     * OpenLcb_initialize(&my_config);
+     * OpenLcbConfig_initialize(&my_config);
      * @endcode
      */
 typedef struct {
@@ -501,24 +501,24 @@ extern "C" {
      *
      * @details Initializes all buffer infrastructure, builds internal interface
      * structs from the user config, and starts only the protocol modules selected
-     * by OPENLCB_COMPILE_* defines.  After this returns, call OpenLcb_create_node()
-     * to allocate nodes, then call OpenLcb_run() in your main loop.
+     * by OPENLCB_COMPILE_* defines.  After this returns, call OpenLcbConfig_create_node()
+     * to allocate nodes, then call OpenLcbConfig_run() in your main loop.
      *
      * @param config  Pointer to the @ref openlcb_config_t to use.  Must remain valid
      *                for the lifetime of the application (use static or global storage).
      *
      * @warning All required function pointers in the config struct must be non-NULL.
      */
-extern void OpenLcb_initialize(const openlcb_config_t *config);
+extern void OpenLcbConfig_initialize(const openlcb_config_t *config);
 
     /**
      * @brief Increments the global 100ms tick counter.
      *
      * @details Call from a 100ms hardware timer interrupt or periodic task.
      * This is the ONLY action performed by the timer context -- all real
-     * protocol work runs in the main loop via OpenLcb_run().
+     * protocol work runs in the main loop via OpenLcbConfig_run().
      */
-extern void OpenLcb_100ms_timer_tick(void);
+extern void OpenLcbConfig_100ms_timer_tick(void);
 
     /**
      * @brief Returns the current value of the global 100ms tick counter.
@@ -540,7 +540,7 @@ extern uint8_t OpenLcb_get_global_100ms_tick(void);
      *
      * @return Pointer to the allocated @ref openlcb_node_t, or NULL if no slots available.
      */
-extern openlcb_node_t *OpenLcb_create_node(node_id_t node_id, const node_parameters_t *parameters);
+extern openlcb_node_t *OpenLcbConfig_create_node(node_id_t node_id, const node_parameters_t *parameters);
 
     /**
      * @brief Runs one iteration of all state machines.
@@ -548,7 +548,7 @@ extern openlcb_node_t *OpenLcb_create_node(node_id_t node_id, const node_paramet
      * @details Call as fast as possible in your main loop.  Non-blocking —
      * returns after processing one operation per call.
      */
-extern void OpenLcb_run(void);
+extern void OpenLcbConfig_run(void);
 
 #ifdef __cplusplus
 }
