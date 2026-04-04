@@ -33,6 +33,7 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/drivers/canbus/can_utilities_Test.cxx
     ${ROOT_DIR}/src/drivers/canbus/alias_mappings_Test.cxx
     ${ROOT_DIR}/src/drivers/canbus/alias_mapping_listener_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_config_Test.cxx
     ${ROOT_DIR}/src/drivers/canbus/can_multinode_e2e_Test.cxx
 
     PARENT_SCOPE

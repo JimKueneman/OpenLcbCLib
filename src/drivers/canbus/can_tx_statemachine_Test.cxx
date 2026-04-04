@@ -404,6 +404,37 @@ const interface_can_tx_statemachine_t interface_can_tx_statemachine_with_sniff =
     .unlock_shared_resources = &_mock_unlock_shared_resources
 };
 
+/*******************************************************************************
+ * Interface With Register But No Lock/Unlock/Unregister
+ ******************************************************************************/
+
+const interface_can_tx_statemachine_t interface_with_register_no_lock = {
+    .is_tx_buffer_empty = &_is_can_tx_buffer_empty,
+    .handle_addressed_msg_frame = &_handle_addressed_msg_frame,
+    .handle_unaddressed_msg_frame = &_handle_unaddressed_msg_frame,
+    .handle_datagram_frame = &_handle_datagram_frame,
+    .handle_stream_frame = &_handle_stream_frame,
+    .handle_can_frame = &_handle_can_frame,
+    .listener_find_by_node_id = &_mock_listener_find_by_node_id,
+    .listener_register = &_mock_listener_register
+};
+
+/*******************************************************************************
+ * Interface With Register And Lock But No Unlock
+ ******************************************************************************/
+
+const interface_can_tx_statemachine_t interface_with_register_lock_no_unlock = {
+    .is_tx_buffer_empty = &_is_can_tx_buffer_empty,
+    .handle_addressed_msg_frame = &_handle_addressed_msg_frame,
+    .handle_unaddressed_msg_frame = &_handle_unaddressed_msg_frame,
+    .handle_datagram_frame = &_handle_datagram_frame,
+    .handle_stream_frame = &_handle_stream_frame,
+    .handle_can_frame = &_handle_can_frame,
+    .listener_find_by_node_id = &_mock_listener_find_by_node_id,
+    .listener_register = &_mock_listener_register,
+    .lock_shared_resources = &_mock_lock_shared_resources
+};
+
 #endif
 
 /**
@@ -476,6 +507,32 @@ void _initialize_with_sniff(void)
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
     CanTxStatemachine_initialize(&interface_can_tx_statemachine_with_sniff);
+
+}
+
+/**
+ * Initialize with register but no lock/unlock/unregister
+ */
+void _initialize_with_register_no_lock(void)
+{
+
+    OpenLcbBufferStore_initialize();
+    CanBufferStore_initialize();
+    CanBufferFifo_initialize();
+    CanTxStatemachine_initialize(&interface_with_register_no_lock);
+
+}
+
+/**
+ * Initialize with register and lock but no unlock
+ */
+void _initialize_with_register_lock_no_unlock(void)
+{
+
+    OpenLcbBufferStore_initialize();
+    CanBufferStore_initialize();
+    CanBufferFifo_initialize();
+    CanTxStatemachine_initialize(&interface_with_register_lock_no_unlock);
 
 }
 
@@ -1217,6 +1274,73 @@ TEST(CanTxStatemachine, listener_entry_alias_zero_drops_message)
 
 }
 
+/**
+ * Test: dest_alias=0 and dest_id=0 skips listener resolution
+ * Verifies:
+ * - When dest_alias=0 and dest_id=0, listener_find_by_node_id is NOT called
+ * - Message transmits normally (covers dest_id==0 branch)
+ *
+ * Uses the listener interface so listener_find_by_node_id is non-NULL,
+ * confirming the skip is due to dest_id==0, not a NULL function pointer.
+ */
+TEST(CanTxStatemachine, dest_alias_zero_dest_id_zero_skips_listener)
+{
+
+    _initialize_with_listener();
+    _reset_variables();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0x000, 0x000000000000,
+                                           MTI_VERIFY_NODE_ID_GLOBAL);
+    openlcb_msg->dest_alias = 0;
+    openlcb_msg->dest_id = 0;
+    openlcb_msg->payload_count = 6;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+
+    EXPECT_FALSE(_listener_find_by_node_id_called);
+    EXPECT_TRUE(_handle_unaddressed_msg_frame_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+}
+
+/**
+ * Test: dest_alias=0, dest_id non-zero, but no listener_find_by_node_id
+ * Verifies:
+ * - When listener_find_by_node_id is NULL, listener resolution is skipped
+ *   even when dest_alias=0 and dest_id is valid
+ * - Message transmits normally (covers listener_find NULL branch)
+ */
+TEST(CanTxStatemachine, no_listener_find_skips_resolution)
+{
+
+    _initialize();
+    _reset_variables();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(openlcb_msg, nullptr);
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506,
+                                           0x000, 0x060504030201,
+                                           MTI_VERIFY_NODE_ID_ADDRESSED);
+    openlcb_msg->payload_count = 6;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+
+    // listener_find_by_node_id is NULL in the basic interface, so no lookup
+    EXPECT_FALSE(_listener_find_by_node_id_called);
+    EXPECT_TRUE(_handle_addressed_msg_frame_called);
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+}
+
 #ifdef OPENLCB_COMPILE_TRAIN
 
 /*******************************************************************************
@@ -1544,6 +1668,196 @@ TEST(CanTxStatemachine, lock_unlock_called_around_ame) {
     // Clean up the AME from the FIFO
     can_msg_t *ame = CanBufferFifo_pop();
     if (ame) { CanBufferStore_free_buffer(ame); }
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/*******************************************************************************
+ * Branch Coverage: lock/unlock NULL Guard Tests (line 121)
+ ******************************************************************************/
+
+/**
+ * Test: Attach reply with lock=NULL skips AME send
+ * Covers line 121 Branch 1: lock_shared_resources is NULL
+ */
+TEST(CanTxStatemachine, attach_reply_no_lock_skips_ame) {
+
+    _initialize_with_register_no_lock();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_ATTACH, 0xA1A2A3A4A5A6, 0x00);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    // Register is still called
+    EXPECT_TRUE(_listener_register_called);
+    EXPECT_EQ(_listener_register_last_arg, (node_id_t) 0xA1A2A3A4A5A6);
+
+    // No lock/unlock (both NULL)
+    EXPECT_EQ(_lock_call_count, 0);
+    EXPECT_EQ(_unlock_call_count, 0);
+
+    // No AME pushed
+    can_msg_t *ame = CanBufferFifo_pop();
+    EXPECT_EQ(ame, nullptr);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: Attach reply with lock set but unlock=NULL skips AME send
+ * Covers line 121 Branch 2: lock_shared_resources is non-NULL,
+ *                            unlock_shared_resources is NULL
+ */
+TEST(CanTxStatemachine, attach_reply_lock_no_unlock_skips_ame) {
+
+    _initialize_with_register_lock_no_unlock();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_ATTACH, 0xA1A2A3A4A5A6, 0x00);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    // Register is still called
+    EXPECT_TRUE(_listener_register_called);
+
+    // lock && unlock is false (unlock is NULL), so no lock/unlock calls
+    EXPECT_EQ(_lock_call_count, 0);
+    EXPECT_EQ(_unlock_call_count, 0);
+
+    // No AME pushed
+    can_msg_t *ame = CanBufferFifo_pop();
+    EXPECT_EQ(ame, nullptr);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/*******************************************************************************
+ * Branch Coverage: AME Buffer Exhaustion (line 127)
+ ******************************************************************************/
+
+/**
+ * Test: Attach reply when CAN buffer store is exhausted skips AME
+ * Covers line 127 Branch 0: CanBufferStore_allocate_buffer returns NULL
+ */
+TEST(CanTxStatemachine, attach_reply_buffer_exhaustion_skips_ame) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    // Exhaust all CAN buffers
+    can_msg_t *exhausted[64];
+    int exhausted_count = 0;
+
+    while (exhausted_count < 64) {
+
+        can_msg_t *buf = CanBufferStore_allocate_buffer();
+
+        if (!buf) { break; }
+
+        exhausted[exhausted_count] = buf;
+        exhausted_count++;
+
+    }
+
+    // Verify store is actually exhausted
+    EXPECT_EQ(CanBufferStore_allocate_buffer(), nullptr);
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_ATTACH, 0xA1A2A3A4A5A6, 0x00);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    // Register is still called
+    EXPECT_TRUE(_listener_register_called);
+
+    // Lock/unlock called once for the failed allocate attempt only
+    EXPECT_EQ(_lock_call_count, 1);
+    EXPECT_EQ(_unlock_call_count, 1);
+
+    // No AME pushed (allocation failed, ame was NULL)
+    can_msg_t *ame = CanBufferFifo_pop();
+    EXPECT_EQ(ame, nullptr);
+
+    // Clean up exhausted buffers
+    for (int i = 0; i < exhausted_count; i++) {
+
+        CanBufferStore_free_buffer(exhausted[i]);
+
+    }
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/*******************************************************************************
+ * Branch Coverage: Unknown sub_cmd and NULL unregister (line 141)
+ ******************************************************************************/
+
+/**
+ * Test: Unknown sub_cmd (neither ATTACH nor DETACH) is ignored
+ * Covers line 141 Branch 1: sub_cmd != TRAIN_LISTENER_DETACH
+ */
+TEST(CanTxStatemachine, unknown_sub_cmd_ignored) {
+
+    _initialize_with_sniff();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    // sub_cmd 0xFF is neither ATTACH nor DETACH
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 0xFF, 0xA1A2A3A4A5A6, 0x00);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    EXPECT_FALSE(_listener_register_called);
+    EXPECT_FALSE(_listener_unregister_called);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+}
+
+/**
+ * Test: DETACH reply with NULL listener_unregister is safe
+ * Covers line 141 Branch 2: sub_cmd == DETACH but listener_unregister is NULL
+ */
+TEST(CanTxStatemachine, detach_reply_null_unregister_safe) {
+
+    _initialize_with_register_no_lock();
+    _reset_variables();
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    _load_listener_config_reply(msg, 0xAAA, 0x010203040506,
+                                 0xBBB, 0x060504030201,
+                                 TRAIN_LISTENER_DETACH, 0xA1A2A3A4A5A6, 0x00);
+
+    EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(msg));
+
+    // listener_unregister is NULL in this interface, so nothing happens
+    EXPECT_FALSE(_listener_unregister_called);
+    EXPECT_FALSE(_listener_register_called);
 
     OpenLcbBufferStore_free_buffer(msg);
 

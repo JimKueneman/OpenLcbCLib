@@ -377,20 +377,26 @@ TEST(ProtocolStreamHandler, initiate_request_reject_table_full) {
     openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
     node->alias = DEST_ALIAS;
 
-    // Fill the stream table (USER_DEFINED_MAX_STREAM_COUNT = 1 by default)
-    openlcb_msg_t *incoming1 = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_msg_t *outgoing1 = OpenLcbBufferStore_allocate_buffer(BASIC);
-    _load_initiate_request(incoming1, 128, 0x10);
-    openlcb_statemachine_info_t info1 = _build_statemachine_info(node, incoming1, outgoing1);
-    ProtocolStreamHandler_initiate_request(&info1);
-    EXPECT_EQ(_initiate_request_called, 1);
-    EXPECT_TRUE(info1.outgoing_msg_info.valid);
+    // Fill all USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS slots in the stream table
+    openlcb_msg_t *fill_in[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
+    openlcb_msg_t *fill_out[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
 
-    // Second request should be rejected -- table full
+    for (int i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
+
+        fill_in[i] = OpenLcbBufferStore_allocate_buffer(BASIC);
+        fill_out[i] = OpenLcbBufferStore_allocate_buffer(BASIC);
+        _load_initiate_request(fill_in[i], 128, (uint8_t) (0x10 + i));
+        openlcb_statemachine_info_t info = _build_statemachine_info(node, fill_in[i], fill_out[i]);
+        ProtocolStreamHandler_initiate_request(&info);
+        EXPECT_TRUE(info.outgoing_msg_info.valid);
+
+    }
+
+    // Next request should be rejected -- table full
     _reset_mock_counters();
     openlcb_msg_t *incoming2 = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing2 = OpenLcbBufferStore_allocate_buffer(BASIC);
-    _load_initiate_request(incoming2, 128, 0x11);
+    _load_initiate_request(incoming2, 128, 0x99);
     openlcb_statemachine_info_t info2 = _build_statemachine_info(node, incoming2, outgoing2);
     ProtocolStreamHandler_initiate_request(&info2);
 
@@ -402,6 +408,16 @@ TEST(ProtocolStreamHandler, initiate_request_reject_table_full) {
 
     EXPECT_EQ(reply_buffer_size, 0);
     EXPECT_EQ(reply_flags, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
+
+    for (int i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
+
+        OpenLcbBufferStore_free_buffer(fill_in[i]);
+        OpenLcbBufferStore_free_buffer(fill_out[i]);
+
+    }
+
+    OpenLcbBufferStore_free_buffer(incoming2);
+    OpenLcbBufferStore_free_buffer(outgoing2);
 
 }
 
@@ -1699,7 +1715,9 @@ TEST(ProtocolStreamHandler, tde_unrelated_mti_ignored) {
     _load_initiate_request(incoming_req, 128, 0xA0);
     openlcb_statemachine_info_t info_req = _build_statemachine_info(node, incoming_req, outgoing_req);
     ProtocolStreamHandler_initiate_request(&info_req);
-    EXPECT_EQ(_last_stream->state, STREAM_STATE_OPEN);
+    ASSERT_NE(_last_stream, nullptr);
+    stream_state_t *stream = _last_stream;
+    EXPECT_EQ(stream->state, STREAM_STATE_OPEN);
 
     _reset_mock_counters();
     openlcb_msg_t *incoming_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -1711,14 +1729,8 @@ TEST(ProtocolStreamHandler, tde_unrelated_mti_ignored) {
 
     EXPECT_EQ(_complete_called, 0);
 
-    // Stream still open -- second request rejected (table full)
-    _reset_mock_counters();
-    openlcb_msg_t *incoming_req2 = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_msg_t *outgoing_req2 = OpenLcbBufferStore_allocate_buffer(BASIC);
-    _load_initiate_request(incoming_req2, 128, 0xA1);
-    openlcb_statemachine_info_t info_req2 = _build_statemachine_info(node, incoming_req2, outgoing_req2);
-    ProtocolStreamHandler_initiate_request(&info_req2);
-    EXPECT_EQ(_initiate_request_called, 0);  // rejected, table full
+    // Stream still open -- verify it was not freed by the unrelated TDE
+    EXPECT_EQ(stream->state, STREAM_STATE_OPEN);
 
 }
 
@@ -1915,8 +1927,8 @@ TEST(ProtocolStreamHandler, initiate_outbound_sends_initiate_request) {
     uint8_t sid = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 4);
     EXPECT_EQ(sid, stream->source_stream_id);
 
-    uint8_t suggested_did = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 5);
-    EXPECT_EQ(suggested_did, 0xFF);
+    // 5-byte form: no DID byte when suggested DID is 0xFF and no UID
+    EXPECT_EQ(outgoing->payload_count, 5);
 
 }
 
@@ -1931,21 +1943,39 @@ TEST(ProtocolStreamHandler, initiate_outbound_table_full_returns_null) {
     openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
     node->alias = DEST_ALIAS;
 
-    // Fill the table (USER_DEFINED_MAX_STREAM_COUNT = 1)
-    openlcb_msg_t *incoming1 = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_msg_t *outgoing1 = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_statemachine_info_t info1 = _build_statemachine_info(node, incoming1, outgoing1);
-    stream_state_t *s1 = ProtocolStreamHandler_initiate_outbound(
-            &info1, SOURCE_ALIAS, SOURCE_ID, 128, 0xFF, NULL);
-    EXPECT_NE(s1, nullptr);
+    // Fill all USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS slots
+    openlcb_msg_t *fill_in[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
+    openlcb_msg_t *fill_out[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
+    stream_state_t *slots[USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS];
 
-    // Second allocation should fail
+    for (int i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
+
+        fill_in[i] = OpenLcbBufferStore_allocate_buffer(BASIC);
+        fill_out[i] = OpenLcbBufferStore_allocate_buffer(BASIC);
+        openlcb_statemachine_info_t info = _build_statemachine_info(node, fill_in[i], fill_out[i]);
+        slots[i] = ProtocolStreamHandler_initiate_outbound(
+                &info, SOURCE_ALIAS, SOURCE_ID, 128, 0xFF, NULL);
+        EXPECT_NE(slots[i], nullptr);
+
+    }
+
+    // Next allocation should fail -- table full
     openlcb_msg_t *incoming2 = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing2 = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_statemachine_info_t info2 = _build_statemachine_info(node, incoming2, outgoing2);
-    stream_state_t *s2 = ProtocolStreamHandler_initiate_outbound(
+    stream_state_t *overflow = ProtocolStreamHandler_initiate_outbound(
             &info2, SOURCE_ALIAS, SOURCE_ID, 128, 0xFF, NULL);
-    EXPECT_EQ(s2, nullptr);
+    EXPECT_EQ(overflow, nullptr);
+
+    for (int i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
+
+        OpenLcbBufferStore_free_buffer(fill_in[i]);
+        OpenLcbBufferStore_free_buffer(fill_out[i]);
+
+    }
+
+    OpenLcbBufferStore_free_buffer(incoming2);
+    OpenLcbBufferStore_free_buffer(outgoing2);
 
 }
 
@@ -2195,11 +2225,10 @@ TEST(ProtocolStreamHandler, send_complete_source) {
     EXPECT_EQ(outgoing_c->mti, MTI_STREAM_COMPLETE);
     EXPECT_EQ(outgoing_c->dest_id, SOURCE_ID);
     EXPECT_EQ(outgoing_c->dest_alias, SOURCE_ALIAS);
-    EXPECT_EQ(outgoing_c->payload_count, 8);
+    // 2-byte form: no data transferred
+    EXPECT_EQ(outgoing_c->payload_count, 2);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 0), sid);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 1), did);
-    // Bytes 2-3: flags (0x0000)
-    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_c, 2), 0x0000);
     EXPECT_EQ(stream->state, STREAM_STATE_CLOSED);
 
 }
@@ -2234,10 +2263,10 @@ TEST(ProtocolStreamHandler, send_complete_destination) {
 
     EXPECT_EQ(info_c.outgoing_msg_info.valid, true);
     EXPECT_EQ(outgoing_c->mti, MTI_STREAM_COMPLETE);
-    EXPECT_EQ(outgoing_c->payload_count, 8);
+    // 2-byte form: no data transferred
+    EXPECT_EQ(outgoing_c->payload_count, 2);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 0), sid);
     EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 1), did);
-    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_c, 2), 0x0000);
     EXPECT_EQ(stream->state, STREAM_STATE_CLOSED);
 
 }
@@ -2574,7 +2603,7 @@ TEST(ProtocolStreamHandler, initiate_outbound_without_content_uid) {
             &info, SOURCE_ALIAS, SOURCE_ID, 256, 0xFF, NULL);
 
     EXPECT_NE(stream, nullptr);
-    EXPECT_EQ(outgoing->payload_count, 6);
+    EXPECT_EQ(outgoing->payload_count, 5);
 
 }
 
@@ -2615,15 +2644,14 @@ TEST(ProtocolStreamHandler, send_complete_includes_total_bytes) {
 
     ProtocolStreamHandler_send_complete(&info_c, stream);
 
-    EXPECT_EQ(outgoing_c->payload_count, 8);
+    EXPECT_EQ(outgoing_c->payload_count, 7);
 
-    // Bytes 4-7: total bytes = 24 (big-endian)
+    // Bytes 4-6: total bytes = 24 (big-endian, 3 bytes mod 2^24)
     uint8_t b4 = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 4);
     uint8_t b5 = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 5);
     uint8_t b6 = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 6);
-    uint8_t b7 = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_c, 7);
 
-    uint32_t total = ((uint32_t) b4 << 24) | ((uint32_t) b5 << 16) | ((uint32_t) b6 << 8) | b7;
+    uint32_t total = ((uint32_t) b4 << 16) | ((uint32_t) b5 << 8) | b6;
     EXPECT_EQ(total, 24);
 
 }
