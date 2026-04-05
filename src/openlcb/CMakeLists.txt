@@ -27,6 +27,7 @@ set(SOURCES
     protocol_stream_handler.c
     protocol_config_mem_stream_handler.c
     openlcb_float16.c
+    openlcb_application_dcc_detector.c
     openlcb_config.c
 
 )
@@ -58,6 +59,7 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/openlcb/openlcb_application_train_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_train_search_handler_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_float16_Test.cxx
+    ${ROOT_DIR}/src/openlcb/openlcb_application_dcc_detector_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_multinode_e2e_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_config_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_stream_handler_Test.cxx

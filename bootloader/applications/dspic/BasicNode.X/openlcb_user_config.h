@@ -56,6 +56,7 @@
 // #define OPENLCB_COMPILE_BROADCAST_TIME
 // #define OPENLCB_COMPILE_TRAIN
 // #define OPENLCB_COMPILE_TRAIN_SEARCH
+// #define OPENLCB_COMPILE_DCC_DETECTOR
 
 // =============================================================================
 // Debug -- uncomment to print feature summary during compilation

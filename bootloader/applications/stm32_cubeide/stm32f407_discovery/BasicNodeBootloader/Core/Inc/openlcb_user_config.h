@@ -50,6 +50,7 @@
 // =============================================================================
 
 #define OPENLCB_COMPILE_BOOTLOADER
+// #define OPENLCB_COMPILE_DCC_DETECTOR
 
 // =============================================================================
 // Debug -- uncomment to print feature summary during compilation
