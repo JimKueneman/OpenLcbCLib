@@ -24,7 +24,7 @@ import signal
 # Configuration
 # ============================================================================
 
-OLCBCHECKER_DIR = "/Users/jimkueneman/Documents/OlcbChecker"
+OLCBCHECKER_DIR = "/Users/jimkueneman/Documents/OlcbCheckerClone"
 DEFAULT_PORT = 12021
 
 # ============================================================================

@@ -26,7 +26,7 @@ import sys
 import os
 import logging
 
-OLCBCHECKER_DIR = "/Users/jimkueneman/Documents/OlcbChecker"
+OLCBCHECKER_DIR = "/Users/jimkueneman/Documents/OlcbCheckerClone"
 sys.path.insert(0, OLCBCHECKER_DIR)
 os.chdir(OLCBCHECKER_DIR)
 

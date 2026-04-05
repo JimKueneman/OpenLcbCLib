@@ -22,7 +22,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-CHECKER_DIR="/Users/jimkueneman/Documents/OlcbChecker"
+CHECKER_DIR="/Users/jimkueneman/Documents/OlcbCheckerClone"
 BRIDGE_PORT=12021
 NODE_ID="05.07.01.01.00.33"
 PYTHON="${PYTHON:-/opt/homebrew/bin/python3.13}"
