@@ -89,18 +89,9 @@
 #error "OPENLCB_COMPILE_DCC_DETECTOR requires OPENLCB_COMPILE_EVENTS"
 #endif
 
-// =============================================================================
-// Transport selection validation
-// =============================================================================
-
-#if defined(OPENLCB_COMPILE_CAN) && defined(OPENLCB_COMPILE_TCP)
-#error "Only one transport can be active at a time. Define OPENLCB_COMPILE_CAN or OPENLCB_COMPILE_TCP, not both."
-#endif
-
-#if !defined(OPENLCB_COMPILE_CAN) && !defined(OPENLCB_COMPILE_TCP)
-#warning "No transport selected. Defaulting to CAN. Add #define OPENLCB_COMPILE_CAN to your openlcb_user_config.h to silence this warning."
-#define OPENLCB_COMPILE_CAN
-#endif
+// Transport selection validation has moved to openlcb_types.h so that every
+// header (including can_config.h / tcp_types.h) sees the resolved flag before
+// checking its own #ifdef guard.
 
 // =============================================================================
 // No-features warning

@@ -80,6 +80,20 @@
   #include "openlcb_user_config.h"
 #endif
 
+// =============================================================================
+// Transport selection validation (must run immediately after openlcb_user_config.h
+// so that every header including openlcb_types.h sees the resolved flag)
+// =============================================================================
+
+#if defined(OPENLCB_COMPILE_CAN) && defined(OPENLCB_COMPILE_TCP)
+#error "Only one transport can be active at a time. Define OPENLCB_COMPILE_CAN or OPENLCB_COMPILE_TCP, not both."
+#endif
+
+#if !defined(OPENLCB_COMPILE_CAN) && !defined(OPENLCB_COMPILE_TCP)
+#warning "No transport selected. Defaulting to CAN. Add #define OPENLCB_COMPILE_CAN to your openlcb_user_config.h to silence this warning."
+#define OPENLCB_COMPILE_CAN
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
