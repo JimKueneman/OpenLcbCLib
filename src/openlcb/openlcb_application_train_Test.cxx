@@ -83,6 +83,7 @@ static payload_basic_t sent_payloads[MAX_SENT_MESSAGES];
 
 static bool mock_heartbeat_timeout_called = false;
 static openlcb_node_t *mock_heartbeat_timeout_node = NULL;
+static bool fail_send = false;
 
 
 // ============================================================================
@@ -99,6 +100,7 @@ static void _reset_tracking(void) {
     send_call_count = 0;
     mock_heartbeat_timeout_called = false;
     mock_heartbeat_timeout_node = NULL;
+    fail_send = false;
 
 }
 
@@ -108,6 +110,12 @@ static void _reset_tracking(void) {
 // ============================================================================
 
 static bool _mock_send_openlcb_msg(openlcb_msg_t *openlcb_msg) {
+
+    if (fail_send) {
+
+        return false;
+
+    }
 
     mock_send_called = true;
 
@@ -1083,29 +1091,32 @@ TEST(ApplicationTrain, heartbeat_timeout_forwards_speed_zero_to_listeners)
     state->listeners[1].flags = 0x00;
     state->listener_count = 2;
 
-    // Tick past expiry
+    // Tick 1: timeout fires, sets estop_forward_pending, no forwards yet
     OpenLcbApplicationTrain_100ms_timer_tick(1);
 
-    // Heartbeat request was sent at halfway (not here — counter was at 1)
-    // Timeout fires: speed zeroed, listeners forwarded, callback fired
     EXPECT_TRUE(mock_heartbeat_timeout_called);
     EXPECT_TRUE(state->estop_active);
     EXPECT_EQ(state->set_speed, FLOAT16_POSITIVE_ZERO);
+    EXPECT_EQ(state->estop_forward_pending, (uint8_t) 1);
+    EXPECT_EQ(send_call_count, 0);
 
-    // Should have sent: 2 listener forwards + (no heartbeat request since
-    // counter jumped from 1 to 0, skipping halfway)
-    EXPECT_EQ(send_call_count, 2);
+    // Tick 2: forwards listener 0
+    OpenLcbApplicationTrain_100ms_timer_tick(2);
 
-    // First listener: Set Speed 0 with P bit
+    EXPECT_EQ(send_call_count, 1);
     EXPECT_EQ(sent_msgs[0].dest_id, TEST_LISTENER_NODE_ID);
     EXPECT_EQ(sent_msgs[0].mti, MTI_TRAIN_PROTOCOL);
     EXPECT_EQ(sent_payloads[0][0], (uint8_t) (TRAIN_SET_SPEED_DIRECTION | TRAIN_INSTRUCTION_P_BIT));
     EXPECT_EQ(sent_payloads[0][1], (uint8_t) 0x00);
     EXPECT_EQ(sent_payloads[0][2], (uint8_t) 0x00);
 
-    // Second listener
+    // Tick 3: forwards listener 1, clears pending
+    OpenLcbApplicationTrain_100ms_timer_tick(3);
+
+    EXPECT_EQ(send_call_count, 2);
     EXPECT_EQ(sent_msgs[1].dest_id, (uint64_t) 0x223344556677ULL);
     EXPECT_EQ(sent_payloads[1][0], (uint8_t) (TRAIN_SET_SPEED_DIRECTION | TRAIN_INSTRUCTION_P_BIT));
+    EXPECT_EQ(state->estop_forward_pending, (uint8_t) 0);
 
 }
 
@@ -1132,9 +1143,15 @@ TEST(ApplicationTrain, heartbeat_timeout_respects_listener_reverse_flag)
     state->listeners[0].flags = TRAIN_LISTENER_FLAG_REVERSE;
     state->listener_count = 1;
 
+    // Tick 1: timeout fires, sets estop_forward_pending
     OpenLcbApplicationTrain_100ms_timer_tick(1);
 
     EXPECT_TRUE(mock_heartbeat_timeout_called);
+    EXPECT_EQ(send_call_count, 0);
+
+    // Tick 2: forwards to the reverse listener
+    OpenLcbApplicationTrain_100ms_timer_tick(2);
+
     EXPECT_EQ(send_call_count, 1);
 
     // Speed should be negative zero (direction flipped by reverse flag)
@@ -1195,12 +1212,18 @@ TEST(ApplicationTrain, heartbeat_timeout_preserves_reverse_direction)
     state->listeners[0].flags = 0x00;
     state->listener_count = 1;
 
+    // Tick 1: timeout fires, sets estop_forward_pending
     OpenLcbApplicationTrain_100ms_timer_tick(1);
 
     EXPECT_TRUE(mock_heartbeat_timeout_called);
 
     // Direction preserved: negative zero
     EXPECT_EQ(state->set_speed, FLOAT16_NEGATIVE_ZERO);
+
+    // Tick 2: forward to listener
+    OpenLcbApplicationTrain_100ms_timer_tick(2);
+
+    EXPECT_EQ(send_call_count, 1);
 
     // Forwarded message should also have negative zero
     uint16_t forwarded_speed = ((uint16_t) sent_payloads[0][1] << 8) | sent_payloads[0][2];
@@ -1323,13 +1346,21 @@ TEST(ApplicationTrain, heartbeat_full_timeout_null_send)
     state->listeners[0].flags = 0x00;
     state->listener_count = 1;
 
-    // Tick to timeout — send is NULL, should not crash
+    // Tick 1: timeout fires, sets estop_forward_pending
     OpenLcbApplicationTrain_100ms_timer_tick(1);
 
-    // Estop fires, but no messages sent (send is NULL)
     EXPECT_TRUE(state->estop_active);
+    EXPECT_EQ(state->estop_forward_pending, (uint8_t) 1);
     EXPECT_FALSE(mock_send_called);
     EXPECT_EQ(send_call_count, 0);
+
+    // Tick 2: retry forwarding with NULL send — should not crash,
+    // pending stays set since send returns false
+    OpenLcbApplicationTrain_100ms_timer_tick(2);
+
+    EXPECT_FALSE(mock_send_called);
+    EXPECT_EQ(send_call_count, 0);
+    EXPECT_EQ(state->estop_forward_pending, (uint8_t) 1);
 
 }
 
@@ -1400,5 +1431,115 @@ TEST(ApplicationTrain, heartbeat_counter_equals_ticks_elapsed)
     EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
     EXPECT_TRUE(state->estop_active);
     EXPECT_TRUE(mock_heartbeat_timeout_called);
+
+}
+
+
+// ============================================================================
+// Section 13: Send Retry Tests
+// ============================================================================
+
+TEST(ApplicationTrain, heartbeat_send_retries_on_failure)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 100;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    // Make send fail
+    fail_send = true;
+
+    // Tick to halfway (50 ticks)
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbApplicationTrain_100ms_timer_tick((uint8_t)(i + 1));
+
+    }
+
+    // Send failed at halfway, pending flag should be set
+    EXPECT_EQ(state->heartbeat_send_pending, (uint8_t) 1);
+    EXPECT_FALSE(mock_send_called);
+
+    // Allow send to succeed
+    fail_send = false;
+
+    // Next tick retries and clears the pending flag
+    OpenLcbApplicationTrain_100ms_timer_tick(51);
+
+    EXPECT_TRUE(mock_send_called);
+    EXPECT_EQ(state->heartbeat_send_pending, (uint8_t) 0);
+    EXPECT_EQ(send_call_count, 1);
+    EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_REPLY);
+    EXPECT_EQ(last_sent_msg.dest_id, TEST_CONTROLLER_NODE_ID);
+
+}
+
+TEST(ApplicationTrain, estop_forward_retries_on_failure)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 3;
+    state->heartbeat_counter_100ms = 1;
+    state->set_speed = 0x3C00;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    state->listeners[0].node_id = TEST_LISTENER_NODE_ID;
+    state->listeners[0].flags = 0x00;
+    state->listeners[1].node_id = 0x223344556677ULL;
+    state->listeners[1].flags = 0x00;
+    state->listener_count = 2;
+
+    // Tick 1: timeout fires, sets estop_forward_pending
+    OpenLcbApplicationTrain_100ms_timer_tick(1);
+
+    EXPECT_TRUE(state->estop_active);
+    EXPECT_EQ(state->estop_forward_pending, (uint8_t) 1);
+    EXPECT_EQ(state->listener_enum_index, (uint8_t) 0);
+
+    // Make send fail before forwarding starts
+    fail_send = true;
+
+    // Tick 2: tries to forward listener 0, fails
+    OpenLcbApplicationTrain_100ms_timer_tick(2);
+
+    EXPECT_EQ(send_call_count, 0);
+    EXPECT_EQ(state->listener_enum_index, (uint8_t) 0);
+    EXPECT_EQ(state->estop_forward_pending, (uint8_t) 1);
+
+    // Allow send to succeed
+    fail_send = false;
+
+    // Tick 3: retries listener 0, succeeds
+    OpenLcbApplicationTrain_100ms_timer_tick(3);
+
+    EXPECT_EQ(send_call_count, 1);
+    EXPECT_EQ(sent_msgs[0].dest_id, TEST_LISTENER_NODE_ID);
+    EXPECT_EQ(state->estop_forward_pending, (uint8_t) 1);
+
+    // Tick 4: forwards listener 1, clears pending
+    OpenLcbApplicationTrain_100ms_timer_tick(4);
+
+    EXPECT_EQ(send_call_count, 2);
+    EXPECT_EQ(sent_msgs[1].dest_id, (uint64_t) 0x223344556677ULL);
+    EXPECT_EQ(state->estop_forward_pending, (uint8_t) 0);
 
 }

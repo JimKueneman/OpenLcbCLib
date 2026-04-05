@@ -35,7 +35,7 @@ add_compile_options(-D_SYS_COMMON_H -DSYS_TASKS_PRIORITY=int)
 
 # GTest and GMock includes + typical user config for non-bootloader tests
 include_directories(
-    ${CMAKE_SOURCE_DIR}/user_config/typical ${CMAKE_SOURCE_DIR}/ ${gtest_SOURCE_DIR}/include ${gmock_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/user_config/typical ${CMAKE_SOURCE_DIR}/ ${ROOT_DIR}/templates/tcp_ip ${gtest_SOURCE_DIR}/include ${gmock_SOURCE_DIR}/include
 )
 
 # Add libraries that have tests disabled.
@@ -45,6 +45,7 @@ set(GTEST ON)
 add_subdirectory(${ROOT_DIR}/src/utilities utilities)
 add_subdirectory(${ROOT_DIR}/src/utilities_pc utilities_pc)
 add_subdirectory(${ROOT_DIR}/src/drivers/canbus canbus)
+add_subdirectory(${ROOT_DIR}/src/drivers/tcp_ip tcp_ip)
 add_subdirectory(${ROOT_DIR}/src/openlcb openlcb)
 
 
@@ -52,6 +53,7 @@ set(LINK_LIBS ${LINK_LIBS}
     utilities
     utilities_pc
     canbus
+    tcp_ip
     openlcb
 )
 

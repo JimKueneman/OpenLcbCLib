@@ -41,6 +41,8 @@
 
 #include "can_config.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
 #include <string.h>
 
 // CAN module headers
@@ -310,3 +312,5 @@ void CanConfig_initialize(const can_config_t *config) {
 #endif
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */
