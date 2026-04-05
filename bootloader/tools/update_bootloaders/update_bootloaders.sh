@@ -31,11 +31,11 @@ copy_module() {
     local src_dir="$1"
     local dst_dir="$2"
 
-    if [ ! -d "${dst_dir}" ]; then
-        echo "  WARNING: Destination does not exist, skipping: ${dst_dir}"
+    if [ ! -d "${src_dir}" ]; then
         return
     fi
 
+    mkdir -p "${dst_dir}"
     cp "${src_dir}"/*.c "${dst_dir}/" 2>/dev/null
     cp "${src_dir}"/*.h "${dst_dir}/" 2>/dev/null
 
@@ -52,6 +52,7 @@ update_app() {
     copy_module "${BOOT_SRC}/openlcb"          "${app_src}/openlcb"
     copy_module "${BOOT_SRC}/crc"              "${app_src}/crc"
     copy_module "${BOOT_SRC}/drivers/canbus"   "${app_src}/drivers/canbus"
+    copy_module "${BOOT_SRC}/drivers/tcp_ip"   "${app_src}/drivers/tcp_ip"
 }
 
 # =========================================================================
