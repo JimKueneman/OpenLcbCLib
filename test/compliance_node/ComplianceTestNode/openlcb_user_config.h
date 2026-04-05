@@ -19,6 +19,7 @@
 #define OPENLCB_COMPILE_BROADCAST_TIME
 #define OPENLCB_COMPILE_TRAIN
 #define OPENLCB_COMPILE_TRAIN_SEARCH
+#define OPENLCB_COMPILE_DCC_DETECTOR
 // OPENLCB_COMPILE_STREAM is defined via compiler flag (-DOPENLCB_COMPILE_STREAM)
 // when --stream is passed to run_olcbchecker.sh
 
@@ -95,6 +96,7 @@ extern const struct node_parameters_TAG compliance_basic_params;
 extern const struct node_parameters_TAG compliance_broadcast_time_consumer_params;
 extern const struct node_parameters_TAG compliance_broadcast_time_producer_params;
 extern const struct node_parameters_TAG compliance_train_params;
+extern const struct node_parameters_TAG compliance_dcc_detector_params;
 
 // Required by the library — points to basic params by default
 extern const struct node_parameters_TAG OpenLcbUserConfig_node_parameters;

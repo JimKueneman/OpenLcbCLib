@@ -149,6 +149,13 @@ if "core" in run_sections:
     logger.info("=== Stream Transport ===")
     total += min(control_stream.checkAll(), 1)
 
+# ---- DCC Detector Protocol ---------------------------------------------------
+
+if "dcc_detector" in run_sections:
+    import control_dccdetector
+    logger.info("=== DCC Detector Protocol ===")
+    total += min(control_dccdetector.checkAll(), 1)
+
 # ---- Add new protocol sections here ----------------------------------------
 # if "traction_proxy" in run_sections:
 #     import control_tractionproxy

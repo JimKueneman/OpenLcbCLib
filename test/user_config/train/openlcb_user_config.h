@@ -12,6 +12,7 @@
 #define OPENLCB_COMPILE_EVENTS
 #define OPENLCB_COMPILE_TRAIN
 #define OPENLCB_COMPILE_TRAIN_SEARCH
+// #define OPENLCB_COMPILE_DCC_DETECTOR
 
 // =============================================================================
 // Core Message Buffer Pool — minimized

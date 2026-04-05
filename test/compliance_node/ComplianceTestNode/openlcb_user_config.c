@@ -431,6 +431,58 @@ const node_parameters_t compliance_train_params = {
 
 
 // =============================================================================
+// DCC Detector — event-based detection protocol
+// =============================================================================
+
+const node_parameters_t compliance_dcc_detector_params = {
+
+    // 1. snip
+    .snip = {
+        .mfg_version = 4,
+        .name = "Compliance Test Node",
+        .model = "DCC Detector Mode",
+        .hardware_version = "0.0.1",
+        .software_version = "0.0.1",
+        .user_version = 2
+    },
+
+    // 2. protocol_support
+    .protocol_support = (
+        PSI_DATAGRAM |
+        PSI_MEMORY_CONFIGURATION |
+        PSI_EVENT_EXCHANGE |
+        PSI_ABBREVIATED_DEFAULT_CDI |
+        PSI_SIMPLE_NODE_INFORMATION |
+        PSI_CONFIGURATION_DESCRIPTION_INFO |
+        PSI_FIRMWARE_UPGRADE
+#ifdef OPENLCB_COMPILE_STREAM
+        | PSI_STREAM
+#endif
+    ),
+
+    // 3-4. consumer_count_autocreate / producer_count_autocreate
+    // For internal testing only do not set to anything but 0
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
+
+    // 5. configuration_options
+#ifdef OPENLCB_COMPILE_STREAM
+    COMMON_CONFIG_OPTIONS_STREAM,
+#else
+    COMMON_CONFIG_OPTIONS_NO_STREAM,
+#endif
+    // 6-13. address spaces (0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xEF)
+    COMMON_ADDRESS_SPACES,
+
+    // 14. cdi
+    .cdi = _cdi_data,
+
+    // 15. fdi
+    .fdi = NULL,
+};
+
+
+// =============================================================================
 // Default alias — required by the library for backwards compatibility
 // =============================================================================
 

@@ -45,6 +45,7 @@ MODES=(
     "broadcast-time-consumer        --broadcast-time-consumer    broadcast_time_consumer     Broadcast Time Consumer"
     "broadcast-time-producer        --broadcast-time-producer    broadcast_time_producer     Broadcast Time Producer"
     "trains                         --train                      trains                      Train Protocol"
+    "dcc-detector                   --dcc-detector               dcc_detector                DCC Detector Protocol"
 )
 
 # ============================================================================
@@ -96,7 +97,7 @@ while [ $i -lt ${#ARGS[@]} ]; do
             echo "Usage: $0 [OPTIONS]"
             echo ""
             echo "  -m, --mode MODES       Comma-separated list of protocol modes to run (default: core)"
-            echo "                         Available: core, broadcast-time-consumer, broadcast-time-producer, trains, all"
+            echo "                         Available: core, broadcast-time-consumer, broadcast-time-producer, trains, dcc-detector, all"
             echo "  -s, --single SCRIPT    Run a single check or control script (use -m to set the node mode)"
             echo "  -r, --auto-reboot      Pass --auto-reboot to OlcbChecker (programmatic restart)"
             echo "  -w, --force-writes     Enable tests that write to config memory (0xFD)"
@@ -143,7 +144,7 @@ lookup_mode() {
         fi
     done
     echo "ERROR: Unknown mode '$target'"
-    echo "  Available: core, broadcast-time-consumer, broadcast-time-producer, trains, all"
+    echo "  Available: core, broadcast-time-consumer, broadcast-time-producer, trains, dcc-detector, all"
     exit 1
 }
 
@@ -245,11 +246,8 @@ run_protocol_test() {
     echo "=== $label ==="
     echo "=========================================="
 
-    if [ -n "$VERBOSE" ]; then
-        "$BINARY" --node-id "$NODE_ID" $node_flag </dev/null &
-    else
-        "$BINARY" --node-id "$NODE_ID" $node_flag </dev/null >/dev/null 2>&1 &
-    fi
+    NODE_LOG="/tmp/compliance_node.log"
+    "$BINARY" --node-id "$NODE_ID" $node_flag </dev/null >"$NODE_LOG" 2>&1 &
     NODE_PID=$!
     sleep 3
 

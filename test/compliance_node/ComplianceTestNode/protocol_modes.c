@@ -49,6 +49,7 @@
 #include "openlcb_c_lib/openlcb/openlcb_application_broadcast_time.h"
 #include "openlcb_c_lib/openlcb/openlcb_application_train.h"
 #include "openlcb_c_lib/openlcb/openlcb_config.h"
+#include "openlcb_c_lib/openlcb/openlcb_application_dcc_detector.h"
 
 #define VIRTUAL_TRAIN_COUNT 3
 
@@ -101,6 +102,48 @@ static void setup_train(openlcb_node_t *node) {
 }
 
 
+#ifdef OPENLCB_COMPILE_DCC_DETECTOR
+static void setup_dcc_detector(openlcb_node_t *node) {
+
+    node_id_t detector_id = node->id;
+
+    // Track-empty sentinel -- unoccupied (leaves)
+    event_id_t track_empty_unoccupied = OpenLcbApplicationDccDetector_encode_event_id(
+            detector_id,
+            DCC_DETECTOR_UNOCCUPIED,
+            DCC_DETECTOR_TRACK_EMPTY);
+    OpenLcbApplication_register_producer_eventid(
+            node, track_empty_unoccupied, EVENT_STATUS_UNKNOWN);
+
+    // Short address 3 -- occupied direction unknown (arrives)
+    uint16_t short_3 = OpenLcbApplicationDccDetector_make_short_address(3);
+    event_id_t addr3_occupied = OpenLcbApplicationDccDetector_encode_event_id(
+            detector_id,
+            DCC_DETECTOR_OCCUPIED_UNKNOWN,
+            short_3);
+    OpenLcbApplication_register_producer_eventid(
+            node, addr3_occupied, EVENT_STATUS_UNKNOWN);
+
+    // Short address 3 -- unoccupied (leaves)
+    event_id_t addr3_unoccupied = OpenLcbApplicationDccDetector_encode_event_id(
+            detector_id,
+            DCC_DETECTOR_UNOCCUPIED,
+            short_3);
+    OpenLcbApplication_register_producer_eventid(
+            node, addr3_unoccupied, EVENT_STATUS_UNKNOWN);
+
+    // Track-empty sentinel -- occupied direction unknown (arrives)
+    event_id_t track_empty_occupied = OpenLcbApplicationDccDetector_encode_event_id(
+            detector_id,
+            DCC_DETECTOR_OCCUPIED_UNKNOWN,
+            DCC_DETECTOR_TRACK_EMPTY);
+    OpenLcbApplication_register_producer_eventid(
+            node, track_empty_occupied, EVENT_STATUS_UNKNOWN);
+
+}
+#endif
+
+
 // =============================================================================
 // Protocol mode registry
 // =============================================================================
@@ -138,6 +181,16 @@ const protocol_mode_t protocol_modes[] = {
         .setup        = setup_train,
         .on_login     = NULL,
     },
+#ifdef OPENLCB_COMPILE_DCC_DETECTOR
+    {
+        .flag         = "--dcc-detector",
+        .name         = "DCC Detector",
+        .test_section = "dcc_detector",
+        .params       = &compliance_dcc_detector_params,
+        .setup        = setup_dcc_detector,
+        .on_login     = NULL,
+    },
+#endif
     // ---- Add new protocol modes here ----
     { .flag = NULL }  // sentinel
 };

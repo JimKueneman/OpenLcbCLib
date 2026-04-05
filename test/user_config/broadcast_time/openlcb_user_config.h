@@ -11,6 +11,7 @@
 
 #define OPENLCB_COMPILE_EVENTS
 #define OPENLCB_COMPILE_BROADCAST_TIME
+// #define OPENLCB_COMPILE_DCC_DETECTOR
 
 // =============================================================================
 // Core Message Buffer Pool — minimized
