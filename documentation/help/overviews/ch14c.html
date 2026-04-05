@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 14c — Memory Configuration Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch14b.html">Ch 14b — Stream Transport</a>
+            <a href="ch14c.html" class="active">Ch 14c — Memory Configuration</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch16b.html">Ch 16b — FDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch17b.html">Ch 17b — Train Search</a>
+            <a href="ch17c.html">Ch 17c — DCC Detector</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 14c — Memory Configuration Protocol</h1>
+
+        <p>
+            The Memory Configuration Protocol provides remote read/write access to a node's
+            configuration data through named address spaces. It is the primary mechanism for
+            tools and throttles to configure nodes on the bus. The protocol is built on top of
+            the Datagram Protocol (<a href="ch14.html">Ch 14</a>) and optionally the Stream
+            Transport Protocol (<a href="ch14b.html">Ch 14b</a>) for bulk transfers.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/protocol_config_mem_operations_handler.c/.h</code>,
+            <code>src/openlcb/protocol_config_mem_read_handler.c/.h</code>,
+            <code>src/openlcb/protocol_config_mem_write_handler.c/.h</code>,
+            <code>src/openlcb/protocol_config_mem_stream_handler.c/.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>14c.1 Architecture: Four Handler Modules</h2>
+
+        <p>
+            The memory configuration implementation is split into four handler modules, each
+            with its own callback interface:
+        </p>
+
+        <div class="mermaid">
+flowchart TD
+    D["Datagram Handler (Ch 14)"] --> OPS["Operations Handler<br/>options, lock, freeze, reset"]
+    D --> READ["Read Handler<br/>per-space read dispatch"]
+    D --> WRITE["Write Handler<br/>write, write-under-mask"]
+    D --> STREAM["Stream Handler<br/>config-mem ↔ stream bridge"]
+    STREAM --> ST["Stream Transport (Ch 14b)"]
+
+    style D fill:#4a90d9,color:#fff
+    style ST fill:#4a90d9,color:#fff
+        </div>
+
+        <p>
+            All four modules receive their commands as datagrams with the first byte set to
+            <code>0x20</code> (memory configuration protocol identifier). The second byte
+            identifies the specific command.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>14c.2 Address Spaces</h2>
+
+        <p>
+            Each address space is identified by a single byte and represents a logically
+            separate region of a node's configuration. See also
+            <a href="appendix_c.html">Appendix C</a>.
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Space</th><th>Name</th><th>Access</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0xFF</code></td><td>CDI</td><td>Read-only</td><td>XML Configuration Description Information (<a href="ch16.html">Ch 16</a>)</td></tr>
+                <tr><td><code>0xFE</code></td><td>All</td><td>Read/Write</td><td>Virtual space combining all others</td></tr>
+                <tr><td><code>0xFD</code></td><td>Config</td><td>Read/Write</td><td>User-configurable data (primary config space)</td></tr>
+                <tr><td><code>0xFC</code></td><td>ACDI-Mfg</td><td>Read-only</td><td>Manufacturer info (SNIP fields 1-5)</td></tr>
+                <tr><td><code>0xFB</code></td><td>ACDI-User</td><td>Read/Write</td><td>User name and description (SNIP fields 7-8)</td></tr>
+                <tr><td><code>0xFA</code></td><td>Train FDI</td><td>Read-only</td><td>Function Description Information XML (<a href="ch16b.html">Ch 16b</a>)</td></tr>
+                <tr><td><code>0xF9</code></td><td>Train Fn Config</td><td>Read/Write</td><td>Train function configuration and state</td></tr>
+                <tr><td><code>0xEF</code></td><td>Firmware</td><td>Write-only</td><td>Firmware upgrade data</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-info">
+            <strong>Space encoding:</strong> Spaces 0xFD, 0xFE, and 0xFF have dedicated
+            command byte variants for compactness. Other spaces use the generic "space in
+            byte 6" encoding, where the space number appears as an extra byte in the datagram.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>14c.3 Operations Handler</h2>
+
+        <p>
+            The Operations Handler manages node-level configuration operations that don't
+            involve reading or writing data. All operations follow a command/reply pattern
+            over datagrams.
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Code</th><th>Operation</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x80</code></td><td>Get Options</td><td>Query supported write sizes, available address spaces, and capabilities</td></tr>
+                <tr><td><code>0x82</code></td><td>Get Options Reply</td><td>Response with capability flags</td></tr>
+                <tr><td><code>0x84</code></td><td>Get Address Space Info</td><td>Query size, flags, and description of a specific space</td></tr>
+                <tr><td><code>0x86</code></td><td>Address Space Not Present</td><td>Space does not exist on this node</td></tr>
+                <tr><td><code>0x87</code></td><td>Address Space Present</td><td>Space exists; includes highest address, flags, low address</td></tr>
+                <tr><td><code>0x88</code></td><td>Lock/Reserve</td><td>Exclusive access for multi-step configuration</td></tr>
+                <tr><td><code>0x8A</code></td><td>Lock/Reserve Reply</td><td>Current lock holder's Node ID</td></tr>
+                <tr><td><code>0x8C</code></td><td>Get Unique ID</td><td>Request a unique event ID from the node</td></tr>
+                <tr><td><code>0x8D</code></td><td>Get Unique ID Reply</td><td>Returns the allocated unique event ID</td></tr>
+                <tr><td><code>0xA0</code></td><td>Unfreeze</td><td>Resume normal operation after configuration</td></tr>
+                <tr><td><code>0xA1</code></td><td>Freeze</td><td>Pause node operation during configuration update</td></tr>
+                <tr><td><code>0xA8</code></td><td>Update Complete</td><td>Signal that a configuration sequence is finished</td></tr>
+                <tr><td><code>0xA9</code></td><td>Reset/Reboot</td><td>Request node restart to apply new configuration</td></tr>
+                <tr><td><code>0xAA</code></td><td>Factory Reset</td><td>Restore all configuration to factory defaults</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>14c.4 Read Handler</h2>
+
+        <p>
+            The Read Handler processes datagram-based memory read requests. Each read follows
+            a two-phase pattern:
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Tool as Configuration Tool
+    participant Node
+
+    Tool->>Node: Datagram: Read command<br/>(space, address, byte count)
+    Node-->>Tool: Datagram Received OK<br/>(reply pending flag set)
+    Note over Node: Read from config memory
+    Node->>Tool: Datagram: Read Reply<br/>(data bytes)
+    Tool-->>Node: Datagram Received OK
+        </div>
+
+        <h3>Read Command Bytes</h3>
+
+        <table>
+            <thead>
+                <tr><th>Command</th><th>Space</th><th>Reply OK</th><th>Reply Fail</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x40</code></td><td>In byte 6</td><td><code>0x50</code></td><td><code>0x58</code></td></tr>
+                <tr><td><code>0x41</code></td><td>0xFD (Config)</td><td><code>0x51</code></td><td><code>0x59</code></td></tr>
+                <tr><td><code>0x42</code></td><td>0xFE (All)</td><td><code>0x52</code></td><td><code>0x5A</code></td></tr>
+                <tr><td><code>0x43</code></td><td>0xFF (CDI)</td><td><code>0x53</code></td><td><code>0x5B</code></td></tr>
+            </tbody>
+        </table>
+
+        <p>
+            The handler dispatches to per-space read functions. For ACDI spaces (0xFC, 0xFB),
+            it can optionally use the SNIP field loader functions to synthesize the response
+            from the node's SNIP data structure.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>14c.5 Write Handler</h2>
+
+        <p>
+            The Write Handler supports two write modes:
+        </p>
+
+        <ul>
+            <li><strong>Plain write:</strong> Overwrites bytes starting at the given address.</li>
+            <li><strong>Write-under-mask:</strong> A read-modify-write operation where alternating
+                (mask, data) byte pairs are applied: <code>new = (old &amp; ~mask) | (data &amp; mask)</code>.</li>
+        </ul>
+
+        <h3>Write Command Bytes</h3>
+
+        <table>
+            <thead>
+                <tr><th>Command</th><th>Space</th><th>Mode</th><th>Reply OK</th><th>Reply Fail</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x00</code></td><td>In byte 6</td><td>Write</td><td><code>0x10</code></td><td><code>0x18</code></td></tr>
+                <tr><td><code>0x01</code></td><td>0xFD</td><td>Write</td><td><code>0x11</code></td><td><code>0x19</code></td></tr>
+                <tr><td><code>0x02</code></td><td>0xFE</td><td>Write</td><td><code>0x12</code></td><td><code>0x1A</code></td></tr>
+                <tr><td><code>0x03</code></td><td>0xFF</td><td>Write</td><td><code>0x13</code></td><td><code>0x1B</code></td></tr>
+                <tr><td><code>0x08</code></td><td>In byte 6</td><td>Write Under Mask</td><td><code>0x10</code></td><td><code>0x18</code></td></tr>
+                <tr><td><code>0x09</code></td><td>0xFD</td><td>Write Under Mask</td><td><code>0x11</code></td><td><code>0x19</code></td></tr>
+                <tr><td><code>0x0A</code></td><td>0xFE</td><td>Write Under Mask</td><td><code>0x12</code></td><td><code>0x1A</code></td></tr>
+                <tr><td><code>0x0B</code></td><td>0xFF</td><td>Write Under Mask</td><td><code>0x13</code></td><td><code>0x1B</code></td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-warning">
+            <strong>Write-under-mask:</strong> The write handler requires a
+            <code>config_memory_read()</code> callback to perform the read-modify-write cycle.
+            If this callback is NULL, write-under-mask commands are rejected.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>14c.6 Stream Handler (Config-Mem Stream Bridge)</h2>
+
+        <p>
+            The Stream Handler bridges the Memory Configuration Protocol with the Stream Transport
+            Protocol (<a href="ch14b.html">Ch 14b</a>) for bulk transfers. This is used when
+            transferring large address spaces (e.g., reading the entire CDI or uploading firmware)
+            that would require many individual datagram round-trips.
+        </p>
+
+        <h3>Phase State Machine</h3>
+
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> IDLE
+    IDLE --> ALLOCATED : Read/Write stream command received
+    ALLOCATED --> WAIT_INITIATE_REPLY : Initiate outbound stream (read)
+    ALLOCATED --> WRITE_WAIT_STREAM_INITIATE : Wait for client stream (write)
+    WAIT_INITIATE_REPLY --> SEND_REPLY_DATAGRAM : Stream accepted
+    SEND_REPLY_DATAGRAM --> PUMPING : Reply datagram sent
+    PUMPING --> SEND_COMPLETE : All data sent
+    SEND_COMPLETE --> IDLE : Complete sent
+    WRITE_WAIT_STREAM_INITIATE --> WRITE_RECEIVING : Client stream opened
+    WRITE_RECEIVING --> WRITE_SEND_REPLY : All data received / Complete
+    WRITE_SEND_REPLY --> IDLE : Reply datagram sent
+        </div>
+
+        <h3>Stream Read/Write Command Bytes</h3>
+
+        <table>
+            <thead>
+                <tr><th>Command</th><th>Space</th><th>Mode</th><th>Reply OK</th><th>Reply Fail</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x60</code></td><td>In byte 6</td><td>Read Stream</td><td><code>0x70</code></td><td><code>0x78</code></td></tr>
+                <tr><td><code>0x61</code></td><td>0xFD</td><td>Read Stream</td><td><code>0x71</code></td><td><code>0x79</code></td></tr>
+                <tr><td><code>0x62</code></td><td>0xFE</td><td>Read Stream</td><td><code>0x72</code></td><td><code>0x7A</code></td></tr>
+                <tr><td><code>0x63</code></td><td>0xFF</td><td>Read Stream</td><td><code>0x73</code></td><td><code>0x7B</code></td></tr>
+                <tr><td><code>0x20</code></td><td>In byte 6</td><td>Write Stream</td><td><code>0x30</code></td><td><code>0x38</code></td></tr>
+                <tr><td><code>0x21</code></td><td>0xFD</td><td>Write Stream</td><td><code>0x31</code></td><td><code>0x39</code></td></tr>
+                <tr><td><code>0x22</code></td><td>0xFE</td><td>Write Stream</td><td><code>0x32</code></td><td><code>0x3A</code></td></tr>
+                <tr><td><code>0x23</code></td><td>0xFF</td><td>Write Stream</td><td><code>0x33</code></td><td><code>0x3B</code></td></tr>
+            </tbody>
+        </table>
+
+        <p>
+            The stream handler's <code>ProtocolConfigMemStreamHandler_run()</code> function must
+            be called once per main loop iteration to pump data for active stream transfers. It
+            checks for pending read data and sends it via the stream transport layer.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>User streams:</strong> When the stream handler receives a stream initiate
+            that is not a config-memory transfer, it forwards the request to the application's
+            stream callbacks (<code>user_on_initiate_request</code>, etc.), allowing the
+            application to use streams for custom purposes alongside config-mem streams.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>14c.7 Command Byte Summary</h2>
+
+        <p>
+            All Memory Configuration commands share the datagram protocol identifier byte
+            (<code>0x20</code>) as byte 0. The command byte (byte 1) determines the operation:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Range</th><th>Category</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x00-0x0B</code></td><td>Write commands (plain and write-under-mask)</td></tr>
+                <tr><td><code>0x10-0x1B</code></td><td>Write replies (OK and fail)</td></tr>
+                <tr><td><code>0x20-0x23</code></td><td>Write stream commands</td></tr>
+                <tr><td><code>0x30-0x3B</code></td><td>Write stream replies</td></tr>
+                <tr><td><code>0x40-0x43</code></td><td>Read commands</td></tr>
+                <tr><td><code>0x50-0x5B</code></td><td>Read replies (OK and fail)</td></tr>
+                <tr><td><code>0x60-0x63</code></td><td>Read stream commands</td></tr>
+                <tr><td><code>0x70-0x7B</code></td><td>Read stream replies</td></tr>
+                <tr><td><code>0x80-0xAA</code></td><td>Operations (options, lock, freeze, reset, etc.)</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>14c.8 Callback Interfaces</h2>
+
+        <p>
+            Each of the four handler modules has its own callback interface. All interfaces
+            require the datagram ACK/reject helpers. The per-space read/write callbacks are
+            optional &mdash; NULL means the space is not supported.
+        </p>
+
+        <h3>Operations Handler</h3>
+        <pre><code>typedef struct {
+    // REQUIRED: datagram helpers
+    void (*load_datagram_received_ok_message)(...);
+    void (*load_datagram_received_rejected_message)(...);
+
+    // OPTIONAL: per-operation callbacks
+    void (*operations_request_options_cmd)(...);
+    void (*operations_request_get_address_space_info)(...);
+    void (*operations_request_reserve_lock)(...);
+    void (*operations_request_freeze)(...);
+    void (*operations_request_unfreeze)(...);
+    void (*operations_request_update_complete)(...);
+    void (*operations_request_reset_reboot)(...);
+    void (*operations_request_factory_reset)(...);
+    void (*cleanup_before_handoff)(...);  // Called before freeze/reboot
+} interface_protocol_config_mem_operations_handler_t;</code></pre>
+
+        <h3>Read Handler</h3>
+        <pre><code>typedef struct {
+    // REQUIRED
+    void (*load_datagram_received_ok_message)(...);
+    void (*load_datagram_received_rejected_message)(...);
+    uint16_t (*config_memory_read)(...);
+
+    // OPTIONAL: per-space read handlers
+    void (*read_request_config_definition_info)(...);  // 0xFF
+    void (*read_request_all)(...);                     // 0xFE
+    void (*read_request_config_mem)(...);              // 0xFD
+    void (*read_request_acdi_manufacturer)(...);       // 0xFC
+    void (*read_request_acdi_user)(...);               // 0xFB
+    void (*read_request_train_function_config_definition_info)(...); // 0xFA
+    void (*read_request_train_function_config_memory)(...);         // 0xF9
+} interface_protocol_config_mem_read_handler_t;</code></pre>
+
+        <h3>Write Handler</h3>
+        <pre><code>typedef struct {
+    // REQUIRED
+    void (*load_datagram_received_ok_message)(...);
+    void (*load_datagram_received_rejected_message)(...);
+    uint16_t (*config_memory_write)(...);
+
+    // OPTIONAL
+    uint16_t (*config_memory_read)(...);  // Needed for write-under-mask
+    // Per-space write handlers for 0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xFA, 0xF9, 0xEF
+    void (*on_function_changed)(...);     // Called when train function changed via 0xF9
+} interface_protocol_config_mem_write_handler_t;</code></pre>
+
+        <h3>Stream Handler</h3>
+        <pre><code>typedef struct {
+    // REQUIRED: transport
+    void (*send_openlcb_msg)(...);
+    void (*load_datagram_received_ok_message)(...);
+    void (*load_datagram_received_rejected_message)(...);
+
+    // Stream API
+    stream_state_t* (*stream_initiate_outbound)(...);
+    bool (*stream_send_data)(...);
+    void (*stream_send_complete)(...);
+    void (*stream_send_terminate)(...);
+
+    // Per-space read/write callbacks
+    // (one for each supported address space)
+
+    // User stream callbacks (forwarded for non-config streams)
+    bool (*user_on_initiate_request)(...);
+    void (*user_on_initiate_reply)(...);
+    void (*user_on_data_received)(...);
+    void (*user_on_data_proceed)(...);
+    void (*user_on_complete)(...);
+} interface_protocol_config_mem_stream_handler_t;</code></pre>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch14b.html">Previous: Ch 14b — Stream Transport</a>
+            <a href="ch15.html">Next: Ch 15 — SNIP</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

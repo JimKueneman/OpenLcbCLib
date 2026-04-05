@@ -39,8 +39,8 @@ Outstanding items in `OlcbChecker/ChecksToAdd.md` not yet implemented:
 
 ### 3. Implement Stream Transport Tests
 
-**Status:** Deferred — Stream Transport specification has not been officially released by the OpenLCB standards group.
+**Status:** Deferred — Stream Transport specification has not been officially adopted by the OpenLCB standards group. Library stream handler is now fully implemented (`protocol_stream_handler.c/.h` and `protocol_config_mem_stream_handler.c/.h`).
 
-**Scope:** Once the spec is stable and the library stream handler is implemented, create OlcbChecker test suites for the Stream Transport protocol.
+**Scope:** Once the spec is officially adopted, create OlcbChecker test suites for the Stream Transport protocol. Library support is ready.
 
 ---

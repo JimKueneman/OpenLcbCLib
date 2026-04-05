@@ -48,9 +48,14 @@
             <a href="ch12.html">Ch 12 — Message Network</a>
             <a href="ch13.html">Ch 13 — Event Transport</a>
             <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch14b.html">Ch 14b — Stream Transport</a>
+            <a href="ch14c.html">Ch 14c — Memory Configuration</a>
             <a href="ch15.html">Ch 15 — SNIP</a>
             <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch16b.html">Ch 16b — FDI</a>
             <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch17b.html">Ch 17b — Train Search</a>
+            <a href="ch17c.html">Ch 17c — DCC Detector</a>
             <a href="ch18.html">Ch 18 — Broadcast Time</a>
         </div>
         <div class="sidebar-section">
@@ -77,7 +82,7 @@
             <a href="appendix_a.html">A — MTI Reference</a>
             <a href="appendix_b.html">B — CAN Frame Format</a>
             <a href="appendix_c.html">C — Address Spaces</a>
-            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_d.html" class="active">D — Event ID Encoding</a>
             <a href="appendix_e.html">E — Compile-Time Config</a>
             <a href="appendix_f.html">F — Spec Traceability</a>
             <a href="appendix_g.html">G — Glossary</a>
@@ -205,7 +210,24 @@ Byte 7:   Flags byte</code></pre>
             </tbody>
         </table>
 
-        <h2>D.5 Event Range Encoding</h2>
+        <h2>D.5 DCC Detector Event ID Encoding</h2>
+
+        <p>DCC detector events encode track occupancy information into 64-bit Event IDs. See <a href="ch17c.html">Ch 17c</a> for full details.</p>
+
+        <table>
+            <thead>
+                <tr><th>Bits</th><th>Width</th><th>Field</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>[63:16]</td><td>48 bits</td><td>Detector Node ID</td><td>Node ID of the detector hardware (identifies the physical block)</td></tr>
+                <tr><td>[15:14]</td><td>2 bits</td><td>Direction</td><td>0=unoccupied, 1=forward, 2=reverse, 3=unknown</td></tr>
+                <tr><td>[13:0]</td><td>14 bits</td><td>DCC Address</td><td>Long (0-0x37FF), short (0x38xx), consist (0x39xx), or track-empty (0x3800)</td></tr>
+            </tbody>
+        </table>
+
+        <p>Encoding/decoding utilities are in <code>openlcb_application_dcc_detector.c/.h</code>.</p>
+
+        <h2>D.6 Event Range Encoding</h2>
 
         <p>Event ranges allow a node to express interest in a contiguous block of Event IDs using a single identification message. The range is defined by a base Event ID and a power-of-2 count:</p>
 

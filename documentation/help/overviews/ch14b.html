@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 14b — Stream Transport Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch14b.html" class="active">Ch 14b — Stream Transport</a>
+            <a href="ch14c.html">Ch 14c — Memory Configuration</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch16b.html">Ch 16b — FDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch17b.html">Ch 17b — Train Search</a>
+            <a href="ch17c.html">Ch 17c — DCC Detector</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 14b — Stream Transport Protocol</h1>
+
+        <p>
+            The Stream Transport Protocol provides reliable, flow-controlled transfer of
+            arbitrarily large data between two nodes. Where datagrams are limited to 72 bytes,
+            streams can transfer gigabytes using a sliding-window flow control mechanism with
+            negotiated buffer sizes.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/protocol_stream_handler.c</code>,
+            <code>src/openlcb/protocol_stream_handler.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>14b.1 Stream Lifecycle</h2>
+
+        <p>
+            Each stream progresses through three states. A node can have multiple concurrent
+            streams open simultaneously (up to 255 per the specification).
+        </p>
+
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> CLOSED
+    CLOSED --> INITIATED : initiate_outbound() / receive Initiate Request
+    INITIATED --> OPEN : receive Initiate Reply (accepted)
+    INITIATED --> CLOSED : receive Initiate Reply (rejected) / TDE
+    OPEN --> CLOSED : send/receive Complete or TDE
+
+    note right of CLOSED : Slot available for reuse
+    note right of INITIATED : Waiting for reply
+    note right of OPEN : Data transfer active
+        </div>
+
+        <pre><code>typedef enum {
+    STREAM_STATE_CLOSED,     // Idle, slot not allocated
+    STREAM_STATE_INITIATED,  // Waiting for Initiate Reply
+    STREAM_STATE_OPEN        // Active data transfer
+} stream_state_enum;</code></pre>
+
+        <!-- ================================================================ -->
+        <h2>14b.2 MTI Reference</h2>
+
+        <table>
+            <thead>
+                <tr><th>MTI</th><th>Name</th><th>Direction</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x0CC8</code></td><td>Stream Initiate Request</td><td>Source &rarr; Dest</td><td>Propose a new stream with suggested buffer size and content UID</td></tr>
+                <tr><td><code>0x0868</code></td><td>Stream Initiate Reply</td><td>Dest &rarr; Source</td><td>Accept or reject the stream; negotiate buffer size</td></tr>
+                <tr><td><code>0x1F88</code></td><td>Stream Data Send</td><td>Source &rarr; Dest</td><td>Transfer payload data within the negotiated window</td></tr>
+                <tr><td><code>0x0888</code></td><td>Stream Data Proceed</td><td>Dest &rarr; Source</td><td>Flow control: grant another window of bytes</td></tr>
+                <tr><td><code>0x08A8</code></td><td>Stream Data Complete</td><td>Either</td><td>Signal end of stream (optionally with total byte count)</td></tr>
+                <tr><td><code>0x00A8</code></td><td>Terminate Due to Error</td><td>Either</td><td>Abort the stream with an error code</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>14b.3 <code>stream_state_t</code> Structure</h2>
+
+        <p>
+            Each open or pending stream is tracked by a <code>stream_state_t</code> slot:
+        </p>
+
+        <pre><code>typedef struct {
+    stream_state_enum state;       // CLOSED, INITIATED, or OPEN
+    uint8_t  source_stream_id;     // Source-assigned stream ID
+    uint8_t  dest_stream_id;       // Destination-assigned stream ID
+    node_id_t remote_node_id;      // Node ID of the remote end
+    uint16_t remote_alias;         // CAN alias of remote (0 on non-CAN)
+    uint16_t max_buffer_size;      // Negotiated window size in bytes
+    uint32_t bytes_transferred;    // Total payload bytes sent so far
+    uint16_t bytes_remaining;      // Bytes left in current send window
+    bool     is_source;            // true = this node is the sender
+    uint8_t  content_uid[6];       // Optional 6-byte stream content UID
+    void    *context;              // Application context pointer
+} stream_state_t;</code></pre>
+
+        <!-- ================================================================ -->
+        <h2>14b.4 Initiate / Reply Negotiation</h2>
+
+        <p>
+            The source proposes a maximum buffer size. The destination may accept with a
+            buffer size less than or equal to the proposed size, or reject the stream entirely.
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Source
+    participant Destination
+
+    Source->>Destination: Stream Initiate Request (MTI 0x0CC8)<br/>proposed buffer=4096, src_stream_id=1, content_uid
+    Note over Destination: Evaluate request
+    alt Accept
+        Destination-->>Source: Stream Initiate Reply (MTI 0x0868)<br/>buffer=2048 (≤ proposed), dest_stream_id=5, ACCEPT flag
+        Note over Source,Destination: Stream OPEN — window = 2048 bytes
+    else Reject
+        Destination-->>Source: Stream Initiate Reply (MTI 0x0868)<br/>error code, no ACCEPT flag
+        Note over Source,Destination: Stream stays CLOSED
+    end
+        </div>
+
+        <p>
+            The <code>STREAM_REPLY_ACCEPT</code> flag (<code>0x8000</code>) in the reply
+            indicates acceptance. If this flag is absent, the reply carries a rejection error code.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>14b.5 Flow Control: Data Send / Data Proceed</h2>
+
+        <p>
+            After the stream opens, the source sends data in chunks up to the negotiated buffer
+            size. When the destination has consumed the data (or has buffer space available), it
+            sends a Data Proceed message to grant another window:
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Source
+    participant Destination
+
+    Note over Source,Destination: Stream OPEN, window = 2048
+
+    Source->>Destination: Stream Data Send (MTI 0x1F88) [chunk 1]
+    Source->>Destination: Stream Data Send (MTI 0x1F88) [chunk 2]
+    Note over Source: Window consumed
+
+    Destination-->>Source: Stream Data Proceed (MTI 0x0888)
+    Note over Source: Window reset to 2048
+
+    Source->>Destination: Stream Data Send (MTI 0x1F88) [chunk 3]
+        </div>
+
+        <p>
+            The source tracks <code>bytes_remaining</code> and stops sending when the window
+            is exhausted. The Data Proceed message resets the window. For double-buffering,
+            the destination can send an early proceed via
+            <code>ProtocolStreamHandler_send_early_proceed()</code> before fully consuming the
+            current window.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>14b.6 Stream Completion and Error Handling</h2>
+
+        <p>
+            A stream ends in one of two ways:
+        </p>
+
+        <ul>
+            <li><strong>Normal completion:</strong> Either side sends Stream Data Complete
+                (MTI 0x08A8), optionally including the total byte count transferred.</li>
+            <li><strong>Error termination:</strong> Either side sends Terminate Due to Error
+                (MTI 0x00A8) with an error code. The stream slot is freed immediately.</li>
+        </ul>
+
+        <p>
+            The handler <code>ProtocolStreamHandler_handle_terminate_due_to_error()</code>
+            matches the error to an open stream by checking the remote node and stream IDs,
+            then frees the slot and fires the <code>on_complete</code> callback.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>14b.7 Source-Side Outbound API</h2>
+
+        <p>
+            Applications that need to send data use the source-side API:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>ProtocolStreamHandler_initiate_outbound()</code></td><td>Allocate a stream slot and send Initiate Request. Returns <code>stream_state_t*</code> or NULL if table full.</td></tr>
+                <tr><td><code>ProtocolStreamHandler_send_data()</code></td><td>Send a chunk of data on an open stream. Returns false if window exhausted.</td></tr>
+                <tr><td><code>ProtocolStreamHandler_send_complete()</code></td><td>Send Stream Data Complete to close the stream normally.</td></tr>
+                <tr><td><code>ProtocolStreamHandler_send_terminate()</code></td><td>Send Terminate Due to Error with an error code.</td></tr>
+                <tr><td><code>ProtocolStreamHandler_send_early_proceed()</code></td><td>Send an early Data Proceed for double-buffering.</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>14b.8 Callback Interface</h2>
+
+        <p>
+            The stream handler provides 5 optional callbacks for application-level stream handling:
+        </p>
+
+        <pre><code>typedef struct {
+    bool (*on_initiate_request)(     // Stream Initiate Request received
+        openlcb_node_t *node,        //   (destination role)
+        stream_state_t *stream       //   Return true to accept, false to reject
+    );
+    void (*on_initiate_reply)(       // Stream Initiate Reply received
+        openlcb_node_t *node,        //   (source role)
+        stream_state_t *stream
+    );
+    void (*on_data_received)(        // Stream data payload received
+        openlcb_node_t *node,
+        stream_state_t *stream,
+        uint8_t *data, uint16_t len
+    );
+    void (*on_data_proceed)(         // Flow control ack received
+        openlcb_node_t *node,
+        stream_state_t *stream
+    );
+    void (*on_complete)(             // Stream completed or closed
+        openlcb_node_t *node,
+        stream_state_t *stream
+    );
+} interface_protocol_stream_handler_t;</code></pre>
+
+        <div class="callout callout-warning">
+            <strong>Config Memory Streams:</strong> When the Memory Configuration Stream handler
+            (<a href="ch14c.html">Ch 14c</a>) is enabled, it intercepts stream callbacks for
+            config-memory transfers and forwards non-config streams to the application callbacks above.
+        </div>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch14.html">Previous: Ch 14 — Datagram Protocol</a>
+            <a href="ch14c.html">Next: Ch 14c — Memory Configuration</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

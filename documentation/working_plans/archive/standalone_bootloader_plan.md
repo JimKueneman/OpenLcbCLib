@@ -1,5 +1,9 @@
 # Standalone C Bootloader Plan
 
+**Status:** COMPLETE -- Standalone bootloader fully implemented. See `bootloader/`
+directory for source (`src/`), platform demos (`applications/dspic/`, `applications/stm32_cubeide/`,
+`applications/ti_theia/`, `applications/esp32/`), and test suite.
+
 ## Context
 
 The current TurnoutBoss bootloader pulls in the entire OpenLcbCLib library (~15,000+ lines) using `OPENLCB_COMPILE_BOOTLOADER`. This wastes ~20-40KB of flash. The goal is a standalone C bootloader (~900 lines) that:

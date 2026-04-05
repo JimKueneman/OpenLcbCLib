@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 17c — DCC Detector Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch14b.html">Ch 14b — Stream Transport</a>
+            <a href="ch14c.html">Ch 14c — Memory Configuration</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch16b.html">Ch 16b — FDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch17b.html">Ch 17b — Train Search</a>
+            <a href="ch17c.html" class="active">Ch 17c — DCC Detector</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 17c — DCC Detector Protocol</h1>
+
+        <p>
+            The DCC Detector Protocol reports track occupancy and locomotive detection using
+            OpenLCB Event IDs. A detector node produces events that encode the detector's
+            identity, the occupancy status (direction of travel), and the DCC address of the
+            detected locomotive. This allows layout automation systems to track train positions
+            on the network.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/openlcb_application_dcc_detector.c</code>,
+            <code>src/openlcb/openlcb_application_dcc_detector.h</code>
+        </div>
+
+        <div class="callout callout-info">
+            <strong>Transport:</strong> DCC Detector events use the standard Event Transport
+            Protocol (<a href="ch13.html">Ch 13</a>). The detector module provides
+            encoding/decoding utilities for the Event ID format &mdash; it does not define new
+            MTIs or message types.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>17c.1 Event ID Bit-Field Layout</h2>
+
+        <p>
+            Each DCC detector Event ID packs three fields into 64 bits:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Bits</th><th>Width</th><th>Field</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>[63:16]</td><td>48 bits</td><td>Detector Node ID</td><td>The Node ID of the detector hardware (identifies the physical block)</td></tr>
+                <tr><td>[15:14]</td><td>2 bits</td><td>Direction / Occupancy</td><td>Encodes occupancy state and travel direction</td></tr>
+                <tr><td>[13:0]</td><td>14 bits</td><td>DCC Address</td><td>The address of the detected locomotive (encoding varies by type)</td></tr>
+            </tbody>
+        </table>
+
+        <pre><code>// Bit layout constants
+#define DCC_DETECTOR_ADDRESS_BITS      14
+#define DCC_DETECTOR_ADDRESS_MASK      0x3FFF
+#define DCC_DETECTOR_DIRECTION_MASK    0xC000
+#define DCC_DETECTOR_DIRECTION_SHIFT   14</code></pre>
+
+        <!-- ================================================================ -->
+        <h2>17c.2 Direction / Occupancy Status</h2>
+
+        <table>
+            <thead>
+                <tr><th>Value</th><th>Constant</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x00</code></td><td><code>DCC_DETECTOR_UNOCCUPIED</code></td><td>Block is unoccupied (exit event)</td></tr>
+                <tr><td><code>0x01</code></td><td><code>DCC_DETECTOR_OCCUPIED_FORWARD</code></td><td>Occupied, locomotive traveling forward</td></tr>
+                <tr><td><code>0x02</code></td><td><code>DCC_DETECTOR_OCCUPIED_REVERSE</code></td><td>Occupied, locomotive traveling in reverse</td></tr>
+                <tr><td><code>0x03</code></td><td><code>DCC_DETECTOR_OCCUPIED_UNKNOWN</code></td><td>Occupied, direction unknown</td></tr>
+            </tbody>
+        </table>
+
+        <p>
+            The direction bits allow automation systems to determine not just whether a block
+            is occupied, but which direction the train is moving through the detection zone.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>17c.3 Address Types</h2>
+
+        <p>
+            The 14-bit address field supports multiple DCC addressing modes, distinguished by
+            prefix bits:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Type</th><th>Prefix</th><th>Range</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Long address</td><td>None</td><td>0 &ndash; 0x37FF</td><td>14-bit extended DCC address (excludes reserved ranges 0x3800-0x3FFF)</td></tr>
+                <tr><td>Short address</td><td><code>0x38xx</code></td><td>0 &ndash; 127</td><td>7-bit basic DCC address (prefix <code>DCC_DETECTOR_SHORT_ADDRESS_PREFIX</code>)</td></tr>
+                <tr><td>Consist address</td><td><code>0x39xx</code></td><td>0 &ndash; 127</td><td>7-bit consist address (prefix <code>DCC_DETECTOR_CONSIST_ADDRESS_PREFIX</code>)</td></tr>
+                <tr><td>Track empty</td><td><code>0x3800</code></td><td>N/A</td><td>Sentinel value indicating the track section is empty</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-warning">
+            <strong>Reserved range:</strong> Address values <code>0x3A00</code> through
+            <code>0x3FFF</code> are reserved and must not be used. The address prefixes
+            <code>0x38</code> and <code>0x39</code> are allocated for short and consist
+            addresses respectively.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>17c.4 Encoding Functions</h2>
+
+        <p>
+            These functions build Event IDs and format raw address values:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>OpenLcbApplicationDccDetector_encode_event_id(detector_node_id, direction, raw_address_14)</code></td>
+                    <td>Build a complete 64-bit Event ID from detector Node ID, direction enum, and 14-bit raw address</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbApplicationDccDetector_make_short_address(short_address)</code></td>
+                    <td>Convert a 7-bit short address (0-127) to 14-bit format with <code>0x38</code> prefix</td>
+                </tr>
+                <tr>
+                    <td><code>OpenLcbApplicationDccDetector_make_consist_address(consist_address)</code></td>
+                    <td>Convert a 7-bit consist address (0-127) to 14-bit format with <code>0x39</code> prefix</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Example: Encoding a Detection Event</h3>
+
+        <pre><code>// Locomotive 42 (short address) detected moving forward in block 05.02.01.01.22.00
+event_id_t event = OpenLcbApplicationDccDetector_encode_event_id(
+    0x050201012200ULL,                                        // detector node ID
+    DCC_DETECTOR_OCCUPIED_FORWARD,                            // direction
+    OpenLcbApplicationDccDetector_make_short_address(42)      // 0x382A
+);
+// Result: 0x0502010122004000 | (0x382A) = 0x050201012200782A</code></pre>
+
+        <!-- ================================================================ -->
+        <h2>17c.5 Decoding Functions</h2>
+
+        <p>
+            These functions extract fields from a received DCC detector Event ID:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Returns</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>extract_direction(event_id)</code></td>
+                    <td><code>dcc_detector_direction_enum</code></td>
+                    <td>Occupancy status and travel direction</td>
+                </tr>
+                <tr>
+                    <td><code>extract_address_type(event_id)</code></td>
+                    <td><code>dcc_detector_address_type_enum</code></td>
+                    <td>Whether address is long, short, consist, or track-empty</td>
+                </tr>
+                <tr>
+                    <td><code>extract_raw_address(event_id)</code></td>
+                    <td><code>uint16_t</code></td>
+                    <td>14-bit raw address including type prefix</td>
+                </tr>
+                <tr>
+                    <td><code>extract_dcc_address(event_id)</code></td>
+                    <td><code>uint16_t</code></td>
+                    <td>Usable DCC address (prefix stripped for short/consist)</td>
+                </tr>
+                <tr>
+                    <td><code>extract_detector_id(event_id)</code></td>
+                    <td><code>node_id_t</code></td>
+                    <td>48-bit Node ID of the detector hardware</td>
+                </tr>
+                <tr>
+                    <td><code>is_track_empty(event_id)</code></td>
+                    <td><code>bool</code></td>
+                    <td>True if the address field is the track-empty sentinel (0x3800)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Decoding Flow</h3>
+
+        <div class="mermaid">
+flowchart TD
+    A["Receive DCC Detector Event ID"] --> B["extract_detector_id()"]
+    A --> C["extract_direction()"]
+    A --> D["extract_address_type()"]
+    D --> E{{"Address type?"}}
+    E -- "Long" --> F["extract_dcc_address() → 14-bit address"]
+    E -- "Short" --> G["extract_dcc_address() → 7-bit address"]
+    E -- "Consist" --> H["extract_dcc_address() → 7-bit consist addr"]
+    E -- "Track empty" --> I["is_track_empty() → true"]
+
+    style A fill:#4a90d9,color:#fff
+        </div>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch17b.html">Previous: Ch 17b — Train Search</a>
+            <a href="ch18.html">Next: Ch 18 — Broadcast Time</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

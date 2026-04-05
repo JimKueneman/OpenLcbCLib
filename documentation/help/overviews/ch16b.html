@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 16b — Function Description Information (FDI)</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch14b.html">Ch 14b — Stream Transport</a>
+            <a href="ch14c.html">Ch 14c — Memory Configuration</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch16b.html" class="active">Ch 16b — FDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch17b.html">Ch 17b — Train Search</a>
+            <a href="ch17c.html">Ch 17c — DCC Detector</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 16b — Function Description Information (FDI)</h1>
+
+        <p>
+            Function Description Information (FDI) is the train-function counterpart to CDI
+            (<a href="ch16.html">Ch 16</a>). Where CDI describes a node's general configuration
+            structure, FDI describes the functions available on a train node &mdash; headlight,
+            bell, horn, smoke, etc. &mdash; as machine-readable XML. Configuration tools use
+            FDI to present a meaningful UI for controlling and configuring train functions.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>No dedicated handler:</strong> FDI is not implemented as a separate protocol
+            handler. It is served as address space <code>0xFA</code> through the Memory
+            Configuration Protocol (<a href="ch14c.html">Ch 14c</a>). The XML content is
+            provided by the application via config-memory read callbacks.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>16b.1 What FDI Describes</h2>
+
+        <p>
+            An FDI document is an XML file that describes each function a train node supports.
+            For each function, the FDI specifies:
+        </p>
+
+        <ul>
+            <li><strong>Function number</strong> &mdash; the DCC function index (F0, F1, F2, ...)</li>
+            <li><strong>Display name</strong> &mdash; human-readable label (e.g., "Headlight", "Bell")</li>
+            <li><strong>Type</strong> &mdash; binary (on/off) or analog (variable)</li>
+            <li><strong>Momentary flag</strong> &mdash; whether the function is momentary or latching</li>
+        </ul>
+
+        <p>
+            This allows throttles and configuration tools to show labeled buttons instead of
+            generic "F0", "F1" identifiers.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>16b.2 Address Space 0xFA</h2>
+
+        <p>
+            FDI occupies address space <code>0xFA</code>
+            (<code>CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO</code>). Key properties:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Property</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Space code</td><td><code>0xFA</code></td></tr>
+                <tr><td>Access</td><td>Read-only</td></tr>
+                <tr><td>Content</td><td>XML document (null-terminated)</td></tr>
+                <tr><td>PSI bit</td><td><code>PSI_FUNCTION_DESCRIPTION (0x000200)</code></td></tr>
+                <tr><td>Read handler</td><td><code>ProtocolConfigMemReadHandler_read_space_train_function_definition_info()</code></td></tr>
+                <tr><td>Stream read</td><td><code>ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_definition_info()</code></td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-warning">
+            <strong>Read-only enforcement:</strong> The FDI space is flagged as read-only in the
+            Address Space Info reply. Write attempts to 0xFA should be rejected by the write
+            handler. The application can override this if needed.
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>16b.3 FDI vs CDI</h2>
+
+        <table>
+            <thead>
+                <tr><th>Aspect</th><th>CDI (0xFF)</th><th>FDI (0xFA)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Purpose</td><td>Describe node configuration variables</td><td>Describe train function labels and types</td></tr>
+                <tr><td>Applies to</td><td>All nodes</td><td>Train nodes only</td></tr>
+                <tr><td>Access</td><td>Read-only</td><td>Read-only</td></tr>
+                <tr><td>Writable counterpart</td><td>Config space 0xFD</td><td>Train Fn Config space 0xF9</td></tr>
+                <tr><td>PSI bit</td><td><code>PSI_CONFIGURATION_DESCRIPTION_INFO</code></td><td><code>PSI_FUNCTION_DESCRIPTION</code></td></tr>
+                <tr><td>XML schema</td><td>CDI schema</td><td>FDI schema</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>16b.4 Reading FDI via Memory Configuration</h2>
+
+        <p>
+            FDI is accessed through the standard Memory Configuration read path. A configuration
+            tool reads FDI the same way it reads CDI &mdash; by issuing read commands targeting
+            space 0xFA:
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Tool as Configuration Tool
+    participant Train as Train Node
+
+    Tool->>Train: Datagram: Read (space=0xFA, addr=0, count=64)
+    Train-->>Tool: Datagram Received OK (reply pending)
+    Train->>Tool: Datagram: Read Reply (first 64 bytes of FDI XML)
+    Tool-->>Train: Datagram Received OK
+    Note over Tool: Continue reading until null terminator...
+        </div>
+
+        <p>
+            For large FDI documents, the stream-based read path (command bytes <code>0x60</code>)
+            is more efficient, transferring the entire document in a single stream session.
+            See <a href="ch14c.html">Ch 14c &sect;14c.6</a> for stream handler details.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>16b.5 Train Function Config Space 0xF9</h2>
+
+        <p>
+            While FDI (0xFA) describes what functions exist, the Train Function Config space
+            (0xF9) holds the actual runtime function configuration and state. This space is
+            read/write and allows tools to:
+        </p>
+
+        <ul>
+            <li>Read current function states (on/off, analog values)</li>
+            <li>Write function configuration (custom labels, consist behavior settings)</li>
+        </ul>
+
+        <table>
+            <thead>
+                <tr><th>Property</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Space code</td><td><code>0xF9</code></td></tr>
+                <tr><td>Access</td><td>Read/Write</td></tr>
+                <tr><td>PSI bit</td><td><code>PSI_FUNCTION_CONFIGURATION (0x000040)</code></td></tr>
+                <tr><td>Write callback</td><td><code>on_function_changed()</code> fires when a function value is modified</td></tr>
+            </tbody>
+        </table>
+
+        <p>
+            The relationship between these spaces mirrors CDI and Config: FDI is the schema
+            (read-only XML), and Train Fn Config is the data (read/write bytes).
+        </p>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch16.html">Previous: Ch 16 — CDI</a>
+            <a href="ch17.html">Next: Ch 17 — Train Control</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -48,9 +48,14 @@
             <a href="ch12.html">Ch 12 — Message Network</a>
             <a href="ch13.html">Ch 13 — Event Transport</a>
             <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch14b.html">Ch 14b — Stream Transport</a>
+            <a href="ch14c.html">Ch 14c — Memory Configuration</a>
             <a href="ch15.html">Ch 15 — SNIP</a>
             <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch16b.html">Ch 16b — FDI</a>
             <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch17b.html">Ch 17b — Train Search</a>
+            <a href="ch17c.html">Ch 17c — DCC Detector</a>
             <a href="ch18.html">Ch 18 — Broadcast Time</a>
         </div>
         <div class="sidebar-section">
@@ -74,7 +79,7 @@
         </div>
         <div class="sidebar-section">
             <div class="sidebar-section-title">Appendices</div>
-            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_a.html" class="active">A — MTI Reference</a>
             <a href="appendix_b.html">B — CAN Frame Format</a>
             <a href="appendix_c.html">C — Address Spaces</a>
             <a href="appendix_d.html">D — Event ID Encoding</a>
@@ -200,17 +205,17 @@
                 <tr><th>MTI Value</th><th>Constant</th><th>Dir</th><th>Addr</th><th>Handler Module</th><th>Ch</th></tr>
             </thead>
             <tbody>
-                <tr><td><code>0x0CC8</code></td><td><code>MTI_STREAM_INIT_REQUEST</code></td><td>In</td><td>Addressed</td><td>Not yet implemented</td><td>--</td></tr>
-                <tr><td><code>0x0868</code></td><td><code>MTI_STREAM_INIT_REPLY</code></td><td>Out</td><td>Addressed</td><td>Not yet implemented</td><td>--</td></tr>
-                <tr><td><code>0x1F88</code></td><td><code>MTI_STREAM_SEND</code></td><td>Both</td><td>Addressed</td><td>Not yet implemented</td><td>--</td></tr>
-                <tr><td><code>0x0888</code></td><td><code>MTI_STREAM_PROCEED</code></td><td>Both</td><td>Addressed</td><td>Not yet implemented</td><td>--</td></tr>
-                <tr><td><code>0x08A8</code></td><td><code>MTI_STREAM_COMPLETE</code></td><td>Both</td><td>Addressed</td><td>Not yet implemented</td><td>--</td></tr>
+                <tr><td><code>0x0CC8</code></td><td><code>MTI_STREAM_INIT_REQUEST</code></td><td>In</td><td>Addressed</td><td>protocol_stream_handler</td><td><a href="ch14b.html">14b</a></td></tr>
+                <tr><td><code>0x0868</code></td><td><code>MTI_STREAM_INIT_REPLY</code></td><td>Out</td><td>Addressed</td><td>protocol_stream_handler</td><td><a href="ch14b.html">14b</a></td></tr>
+                <tr><td><code>0x1F88</code></td><td><code>MTI_STREAM_SEND</code></td><td>Both</td><td>Addressed</td><td>protocol_stream_handler</td><td><a href="ch14b.html">14b</a></td></tr>
+                <tr><td><code>0x0888</code></td><td><code>MTI_STREAM_PROCEED</code></td><td>Both</td><td>Addressed</td><td>protocol_stream_handler</td><td><a href="ch14b.html">14b</a></td></tr>
+                <tr><td><code>0x08A8</code></td><td><code>MTI_STREAM_COMPLETE</code></td><td>Both</td><td>Addressed</td><td>protocol_stream_handler</td><td><a href="ch14b.html">14b</a></td></tr>
             </tbody>
         </table>
 
         <div class="callout callout-info">
             <div class="callout-title">Source Reference</div>
-            <p>All MTI constants are defined in <code>openlcb_defines.h</code>. The handler module column shows which <code>.c</code> file processes incoming messages with that MTI. "Not yet implemented" indicates the MTI constant is defined but no handler exists (the dispatcher will send OIR for these).</p>
+            <p>All MTI constants are defined in <code>openlcb_defines.h</code>. The handler module column shows which <code>.c</code> file processes incoming messages with that MTI. Stream MTIs are handled by <code>protocol_stream_handler</code> (<a href="ch14b.html">Ch 14b</a>).</p>
         </div>
 
         <div class="chapter-nav">

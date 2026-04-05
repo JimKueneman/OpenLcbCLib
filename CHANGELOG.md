@@ -9,6 +9,18 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
 ## [Unreleased]
 
 ### Added
+- **Stream Transport Protocol.** Full implementation of OpenLCB Stream Transport
+  (StreamTransportS Feb 2026 Preliminary): `protocol_stream_handler.c/.h` (Layer 1
+  with source and destination roles, flow control, content UIDs),
+  `protocol_config_mem_stream_handler.c/.h` (Layer 2 config-memory streaming
+  reads/writes), CAN stream frame routing (`can_rx_statemachine.c`,
+  `can_tx_statemachine.c`), and full unit test suites for both layers.
+- **Standalone C Bootloader.** New `bootloader/` directory with a standalone
+  bootloader using datagrams only, triple CRC-16-IBM checksum validation, and
+  platform demos for dsPIC, STM32, TI, and ESP32. Polled operation, no OS/RTOS
+  dependency.
+- **DCC Detector Protocol.** New `openlcb_application_dcc_detector.c/.h` module
+  implementing the DCC detector protocol with full unit test suite.
 - **Listener alias table registration on attach/detach.** The CAN TX path now sniffs
   outgoing Listener Config Reply messages (MTI 0x01E9, byte 0 = 0x30). On a successful
   attach reply, it registers the listener's node_id in the alias table and immediately

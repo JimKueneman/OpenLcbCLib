@@ -1,10 +1,13 @@
 # Config Memory Stream Read/Write Implementation Plan
 
-## Status
+## Status: COMPLETE
+
+All phases done. `protocol_config_mem_stream_handler.c/.h` implemented with full
+test suite (`protocol_config_mem_stream_handler_Test.cxx`).
 
 - Phase 1 (stream transport layer): COMPLETE
 - Stream handler gaps (source-side API): COMPLETE
-- Phase 2 (this plan -- config-mem stream Layer 2 module): NOT STARTED
+- Phase 2 (this plan -- config-mem stream Layer 2 module): COMPLETE
 
 
 ## Spec References

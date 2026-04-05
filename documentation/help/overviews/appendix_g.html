@@ -48,9 +48,14 @@
             <a href="ch12.html">Ch 12 — Message Network</a>
             <a href="ch13.html">Ch 13 — Event Transport</a>
             <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch14b.html">Ch 14b — Stream Transport</a>
+            <a href="ch14c.html">Ch 14c — Memory Configuration</a>
             <a href="ch15.html">Ch 15 — SNIP</a>
             <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch16b.html">Ch 16b — FDI</a>
             <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch17b.html">Ch 17b — Train Search</a>
+            <a href="ch17c.html">Ch 17c — DCC Detector</a>
             <a href="ch18.html">Ch 18 — Broadcast Time</a>
         </div>
         <div class="sidebar-section">
@@ -80,7 +85,7 @@
             <a href="appendix_d.html">D — Event ID Encoding</a>
             <a href="appendix_e.html">E — Compile-Time Config</a>
             <a href="appendix_f.html">F — Spec Traceability</a>
-            <a href="appendix_g.html">G — Glossary</a>
+            <a href="appendix_g.html" class="active">G — Glossary</a>
         </div>
     </nav>
 
@@ -223,8 +228,20 @@
                     <td>Simple Node Information Protocol. A lightweight protocol for retrieving human-readable identification from a node: manufacturer name, model, hardware/software version, and user-assigned name/description.</td>
                 </tr>
                 <tr>
-                    <td><strong>Stream</strong></td>
-                    <td>A bulk data transfer mechanism for transferring large amounts of data with flow control. Defined in the specification but not yet implemented in this library.</td>
+                    <td><strong>DCC Detector</strong></td>
+                    <td>A protocol for reporting track occupancy and locomotive detection using Event IDs that encode detector identity, travel direction, and DCC address. See <a href="ch17c.html">Ch 17c</a>.</td>
+                </tr>
+                <tr>
+                    <td><strong>Memory Configuration</strong></td>
+                    <td>The primary protocol for remote read/write access to a node's configuration data through named address spaces (0xF9-0xFF). Built on datagrams and optionally streams. See <a href="ch14c.html">Ch 14c</a>.</td>
+                </tr>
+                <tr>
+                    <td><strong>Stream Transport</strong></td>
+                    <td>A bulk data transfer mechanism with flow-controlled sliding-window delivery, negotiated buffer sizes, and support for concurrent streams. See <a href="ch14b.html">Ch 14b</a>.</td>
+                </tr>
+                <tr>
+                    <td><strong>Train Search</strong></td>
+                    <td>An event-based protocol for discovering and allocating virtual train nodes by DCC address. Uses the well-known Event ID space <code>0x090099FF</code>. See <a href="ch17b.html">Ch 17b</a>.</td>
                 </tr>
                 <tr>
                     <td><strong>Virtual Node</strong></td>

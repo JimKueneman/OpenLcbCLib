@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ch 17b — Train Search Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <h1><a href="index.html">OpenLCB C Library — Implementation Guide</a></h1>
+        <div class="header-links">
+            <a href="../html/index.html">API Reference</a>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part I: Orientation</div>
+            <a href="ch01.html">Ch 1 — Project Overview</a>
+            <a href="ch02.html">Ch 2 — Building and Running</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part II: Core Infrastructure</div>
+            <a href="ch03.html">Ch 3 — Types and Constants</a>
+            <a href="ch03b.html">Ch 3b — CAN Types</a>
+            <a href="ch04.html">Ch 4 — Buffer System</a>
+            <a href="ch04b.html">Ch 4b — CAN Buffers</a>
+            <a href="ch05.html">Ch 5 — Node Management</a>
+            <a href="ch06.html">Ch 6 — Thread Safety</a>
+            <a href="ch06b.html">Ch 6b — Callback Interfaces</a>
+            <a href="ch07.html">Ch 7 — Utilities</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part III: State Machines</div>
+            <a href="ch08.html">Ch 8 — Main Dispatcher</a>
+            <a href="ch09.html">Ch 9 — Login State Machine</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IIIb: CAN Transport</div>
+            <a href="ch10.html">Ch 10 — CAN State Machine</a>
+            <a href="ch11.html">Ch 11 — CAN RX/TX Pipelines</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part IV: Protocol Handlers</div>
+            <a href="ch12.html">Ch 12 — Message Network</a>
+            <a href="ch13.html">Ch 13 — Event Transport</a>
+            <a href="ch14.html">Ch 14 — Datagram Protocol</a>
+            <a href="ch14b.html">Ch 14b — Stream Transport</a>
+            <a href="ch14c.html">Ch 14c — Memory Configuration</a>
+            <a href="ch15.html">Ch 15 — SNIP</a>
+            <a href="ch16.html">Ch 16 — CDI</a>
+            <a href="ch16b.html">Ch 16b — FDI</a>
+            <a href="ch17.html">Ch 17 — Train Control</a>
+            <a href="ch17b.html" class="active">Ch 17b — Train Search</a>
+            <a href="ch17c.html">Ch 17c — DCC Detector</a>
+            <a href="ch18.html">Ch 18 — Broadcast Time</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part V: CAN Driver</div>
+            <a href="ch19.html">Ch 19 — Alias Mapping</a>
+            <a href="ch20.html">Ch 20 — Listener Aliases</a>
+            <a href="ch21.html">Ch 21 — Multi-Node Routing</a>
+            <a href="ch22.html">Ch 22 — CAN Login</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VI: Integration</div>
+            <a href="ch23.html">Ch 23 — Wiring It Together</a>
+            <a href="ch24.html">Ch 24 — Data Flow Walkthrough</a>
+            <a href="ch25.html">Ch 25 — Debugging Guide</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Part VII: Extending</div>
+            <a href="ch26.html">Ch 26 — Adding a Protocol</a>
+            <a href="ch27.html">Ch 27 — Adding a Transport</a>
+            <a href="ch28.html">Ch 28 — Porting to a Platform</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Appendices</div>
+            <a href="appendix_a.html">A — MTI Reference</a>
+            <a href="appendix_b.html">B — CAN Frame Format</a>
+            <a href="appendix_c.html">C — Address Spaces</a>
+            <a href="appendix_d.html">D — Event ID Encoding</a>
+            <a href="appendix_e.html">E — Compile-Time Config</a>
+            <a href="appendix_f.html">F — Spec Traceability</a>
+            <a href="appendix_g.html">G — Glossary</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1>Chapter 17b — Train Search Protocol</h1>
+
+        <p>
+            The Train Search Protocol enables throttles to discover and allocate virtual train
+            nodes by DCC address. A throttle broadcasts a search event containing the desired
+            address, and any matching train node responds. If no match exists and the
+            <code>ALLOCATE</code> flag is set, the command station creates a new virtual train
+            node on demand.
+        </p>
+
+        <div class="callout callout-info">
+            <strong>Source files:</strong>
+            <code>src/openlcb/protocol_train_search_handler.c</code>,
+            <code>src/openlcb/protocol_train_search_handler.h</code>
+        </div>
+
+        <!-- ================================================================ -->
+        <h2>17b.1 Search Event ID Encoding</h2>
+
+        <p>
+            Train search uses the well-known Event ID space <code>0x090099FF00000000</code>.
+            The lower 4 bytes encode the search query:
+        </p>
+
+        <table>
+            <thead>
+                <tr><th>Bits</th><th>Field</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>[63:32]</td><td>Event space</td><td><code>0x090099FF</code> (fixed)</td></tr>
+                <tr><td>[31:8]</td><td>Address digits</td><td>6 nibbles (4 bits each): decimal digits 0-9, <code>0x0F</code> = padding</td></tr>
+                <tr><td>[7:0]</td><td>Flags</td><td>Search options (see &sect;17b.2)</td></tr>
+            </tbody>
+        </table>
+
+        <p>
+            The 6 nibbles encode the DCC address as a decimal digit string. For example,
+            address 42 is encoded as <code>0F 0F 0F 0F 04 02</code> (four padding nibbles
+            followed by digits 4 and 2). The utility function
+            <code>ProtocolTrainSearchHandler_digits_to_address()</code> converts this back to
+            a 16-bit integer.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>17b.2 Flags</h2>
+
+        <table>
+            <thead>
+                <tr><th>Bit</th><th>Constant</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>0x80</code></td><td><code>TRAIN_SEARCH_FLAG_ALLOCATE</code></td><td>Create a new virtual train node if no match found</td></tr>
+                <tr><td><code>0x40</code></td><td><code>TRAIN_SEARCH_FLAG_EXACT</code></td><td>Require exact address match (no prefix matching)</td></tr>
+                <tr><td><code>0x20</code></td><td><code>TRAIN_SEARCH_FLAG_ADDRESS_ONLY</code></td><td>Match by address only, not by name</td></tr>
+                <tr><td><code>0x08</code></td><td><code>TRAIN_SEARCH_FLAG_DCC</code></td><td>DCC protocol train</td></tr>
+                <tr><td><code>0x04</code></td><td><code>TRAIN_SEARCH_FLAG_LONG_ADDR</code></td><td>Force 14-bit long DCC address</td></tr>
+                <tr><td><code>0x03</code></td><td><code>TRAIN_SEARCH_SPEED_STEP_MASK</code></td><td>Speed step mode (bits 1-0)</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>17b.3 Search Flow</h2>
+
+        <p>
+            The search is driven by the Event Transport Protocol. The throttle sends a
+            Producer/Consumer Event Report carrying the search Event ID. The main dispatcher
+            calls <code>ProtocolTrainSearchHandler_handle_search_event()</code> for each
+            registered train node:
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Throttle
+    participant CS as Command Station
+    participant T1 as Train Node (addr 42)
+    participant T2 as Train Node (addr 99)
+
+    Throttle->>CS: PCER: Search Event ID (address=42, EXACT|DCC)
+    Note over CS: Dispatch to each train node
+    CS->>T1: handle_search_event()
+    Note over T1: Address matches!
+    T1-->>Throttle: Producer Identified Set (search Event ID)
+    CS->>T2: handle_search_event()
+    Note over T2: Address 99 ≠ 42, skip
+        </div>
+
+        <p>
+            The matching train node responds with <code>MTI_PRODUCER_IDENTIFIED_SET</code>
+            (0x0544), carrying the same search Event ID. The throttle now knows the Node ID
+            of the train and can issue Train Control commands (<a href="ch17.html">Ch 17</a>).
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>17b.4 No-Match / Allocate Flow</h2>
+
+        <p>
+            If no train node matches the search address and the <code>ALLOCATE</code> flag is
+            set, the command station creates a new virtual train node:
+        </p>
+
+        <div class="mermaid">
+sequenceDiagram
+    participant Throttle
+    participant CS as Command Station
+
+    Throttle->>CS: PCER: Search Event ID (address=123, ALLOCATE|DCC)
+    Note over CS: No existing train matches
+    Note over CS: ALLOCATE flag set → create new node
+    CS->>CS: on_search_no_match() callback
+    Note over CS: Allocate virtual train node for addr 123
+    CS-->>Throttle: Producer Identified Set (search Event ID)
+    Note over Throttle: New train node now available
+        </div>
+
+        <p>
+            The <code>on_search_no_match()</code> callback is called after the full train node
+            enumeration completes with no match. The application allocates a new virtual train
+            node and returns a pointer to it. The newly created node then sends the Producer
+            Identified reply.
+        </p>
+
+        <!-- ================================================================ -->
+        <h2>17b.5 Utility Functions</h2>
+
+        <table>
+            <thead>
+                <tr><th>Function</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>ProtocolTrainSearchHandler_is_search_event()</code></td><td>Returns true if the Event ID is in the train search space</td></tr>
+                <tr><td><code>ProtocolTrainSearchHandler_extract_digits()</code></td><td>Extracts the 6 search-query nibbles from the Event ID</td></tr>
+                <tr><td><code>ProtocolTrainSearchHandler_extract_flags()</code></td><td>Returns the flags byte from the Event ID</td></tr>
+                <tr><td><code>ProtocolTrainSearchHandler_digits_to_address()</code></td><td>Converts 6 nibbles to a 16-bit DCC address</td></tr>
+                <tr><td><code>ProtocolTrainSearchHandler_create_event_id()</code></td><td>Builds a search Event ID from an address and flags</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ================================================================ -->
+        <h2>17b.6 Callback Interface</h2>
+
+        <pre><code>typedef struct {
+    void (*on_search_matched)(        // A train node matches the search
+        openlcb_node_t *node,         //   The matching train node
+        uint16_t address,             //   Decoded DCC address
+        uint8_t flags                 //   Search flags
+    );
+    openlcb_node_t* (*on_search_no_match)( // No match found, ALLOCATE set
+        uint16_t address,                  //   Requested DCC address
+        uint8_t flags                      //   Search flags
+    );  // Returns pointer to newly allocated train node, or NULL
+} interface_protocol_train_search_handler_t;</code></pre>
+
+        <div class="callout callout-warning">
+            <strong>Compile guard:</strong> The Train Search handler requires both
+            <code>OPENLCB_COMPILE_TRAIN</code> and <code>OPENLCB_COMPILE_TRAIN_SEARCH</code>
+            to be enabled.
+        </div>
+
+        <!-- ================================================================ -->
+        <nav class="chapter-nav">
+            <a href="ch17.html">Previous: Ch 17 — Train Control</a>
+            <a href="ch17c.html">Next: Ch 17c — DCC Detector</a>
+        </nav>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

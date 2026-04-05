@@ -1,6 +1,6 @@
 # Working Plans — Implementation Index
 
-Updated: 2026-03-19
+Updated: 2026-04-04
 Source folder: `documentation/working_plans/`
 
 This index lists all working plans — both active and archived. Each archive file
@@ -10,7 +10,7 @@ evidence (or reason for rejection) found in the canonical source tree
 
 ---
 
-## Implemented Plans (28)
+## Implemented Plans (33)
 
 These plans have been verified against the codebase and their described changes are
 present in the canonical source.
@@ -45,6 +45,11 @@ present in the canonical source.
 | 26 | [plan_unified_sibling_dispatch.md](archive/plan_unified_sibling_dispatch.md) | Unified Sibling Dispatch (Zero-FIFO, Sequential) — all 3 phases implemented + 46 tests |
 | 27 | [plan_listener_alias_table_integration.md](archive/plan_listener_alias_table_integration.md) | Listener Alias Table — CAN Layer Integration (v5) — core wiring complete; hold-until-AMD deferred (v1.0.0 known limitation) |
 | 28 | [bootloader_config_plan.md](archive/bootloader_config_plan.md) | Bootloader Build Configuration — whole-module #ifdef guards, internal #ifndef BOOTLOADER guards, 30 tests, buffer-count fix |
+| 29 | [stream_plan.md](archive/stream_plan.md) | Stream Transport Protocol — full handler, CAN drivers, config-mem stream handler, unit tests |
+| 30 | [stream_handler_gaps_plan.md](archive/stream_handler_gaps_plan.md) | Stream Handler Gaps — source-side outbound API (6 gaps closed) |
+| 31 | [config_mem_stream_plan.md](archive/config_mem_stream_plan.md) | Config Memory Stream Read/Write — Layer 2 module atop stream transport |
+| 32 | [standalone_bootloader_plan.md](archive/standalone_bootloader_plan.md) | Standalone C Bootloader — datagram-only, triple CRC-16-IBM, platform-independent |
+| 33 | [config_mem_concurrent_streams_analysis.md](archive/config_mem_concurrent_streams_analysis.md) | Config-Mem Concurrent Streams — context pooling with `_context_pool[]` and `_allocate_context()` |
 
 ---
 
@@ -60,7 +65,7 @@ banner gives the specific reason.
 | 3 | [plan_item_14_verified_node_id_dest_COMPLETE.md](archive/plan_item_14_verified_node_id_dest_COMPLETE.md) | Verified Node ID — Non-Zero Dest for Addressed Requests | Intentional design decision: MessageNetworkS §3.4.2 requires Verified Node ID to always be unaddressed; plan pre-dated closer spec reading |
 | 4 | [plan_listener_alias_resolution_COMPLETE.md](archive/plan_listener_alias_resolution_COMPLETE.md) | Listener-to-Listener Alias Resolution on CAN | Intentional design decision: alias embedded-in-struct approach superseded by separate `alias_mapping_listener.h/c` module, which is transport-agnostic and correct |
 | 5 | [plan_virtual_node_sibling_dispatch.md](archive/plan_virtual_node_sibling_dispatch.md) | Virtual Node Sibling Dispatch (early sketch) | Superseded by `sibling_dispatch_plan.md`, which was fully implemented instead |
-| 6 | [plan_stream_transport.md](archive/plan_stream_transport.md) | Stream Transport Protocol Handler | No `protocol_stream_handler.h/c` files exist; handler module was never written |
+| 6 | [plan_stream_transport.md](archive/plan_stream_transport.md) | Stream Transport Protocol Handler | Superseded by `stream_plan.md`, which was fully implemented instead |
 | 7 | [plan_olcbchecker_train_control_tests.md](archive/plan_olcbchecker_train_control_tests.md) | OlcbChecker Train Control Test Completion | TR090/100/110 done externally; TR120/130 explicitly deferred (requires multi-node harness) |
 
 ---
@@ -81,24 +86,12 @@ Their content has been folded into active plans. Retained for historical referen
 
 | File | Title / Topic | Status |
 |------|---------------|--------|
-| [plan_virtual_node_verification_protocol.md](plan_virtual_node_verification_protocol.md) | Virtual Node Verification Protocol (DRAFT) | Draft protocol spec — not yet proposed to OpenLCB standards group |
-| [stream_plan.md](stream_plan.md) | Stream Transport Protocol | DEFERRED — spec is Preliminary (Apr 2021); awaiting OpenMRN payload layout confirmation |
-
----
-
-## Hardware Regression Investigation (2026-03-19)
-
-ESP32/STM32/TI platforms stopped working after week of 2026-03-18 changes. Three separate fault case documents — to be consolidated once common root cause is identified.
-
-| File | Case | Symptom |
-|------|------|---------|
-| [fault_case_1_can_login_hang.md](fault_case_1_can_login_hang.md) | Case 1 | `OpenLcbConfig_run()` blocks during CAN login (CID/RID frames) |
-| [fault_case_2_snip_hang_no_concurrent.md](fault_case_2_snip_hang_no_concurrent.md) | Case 2 | `OpenLcbConfig_run()` blocks mid-SNIP TX (no concurrent incoming msg) |
-| [fault_case_3_snip_hang_psi_concurrent.md](fault_case_3_snip_hang_psi_concurrent.md) | Case 3 | `OpenLcbConfig_run()` blocks mid-SNIP TX while PSI arrives concurrently |
+| [test_dependancy_report.md](test_dependancy_report.md) | Test Dependency Report — Refactoring Recommendations | Analysis complete; recommendations not implemented |
 
 ---
 
 ## Also in this folder
 
-- [todo.md](todo.md) — Current active task list (not an archive plan)
+- [archive/openmrn_bootloader_reference.md](archive/openmrn_bootloader_reference.md) — OpenMRN bootloader reference analysis (informed standalone bootloader plan)
+- [archive/turnoutboss_bootloader_reference.md](archive/turnoutboss_bootloader_reference.md) — TurnoutBoss bootloader reference analysis (informed standalone bootloader plan)
 - [archive/OpenLcbCLib_OpenMRN_virtual_node_comparison_v3.md](archive/OpenLcbCLib_OpenMRN_virtual_node_comparison_v3.md) — Current-state comparison of OpenLcbCLib vs OpenMRN virtual node implementation (v3, 2026-03-17)
