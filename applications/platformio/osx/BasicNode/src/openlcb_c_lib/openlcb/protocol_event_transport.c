@@ -1047,7 +1047,7 @@ void ProtocolEventTransport_handle_events_identify(openlcb_statemachine_info_t *
         return;
 
     }
-    
+
     _identify_consumers(statemachine_info);
 
 }

@@ -33,6 +33,7 @@
  *    #define OPENLCB_COMPILE_FIRMWARE          // firmware upgrade support
  *    #define OPENLCB_COMPILE_STREAM            // stream transport for large transfers
  *    #define OPENLCB_COMPILE_BROADCAST_TIME    // clock synchronization
+ *    #define OPENLCB_COMPILE_DCC_DETECTOR      // DCC detection protocol
  *
  *  Minimal bootloader (firmware upgrade only):
  *    Use templates/bootloader/openlcb_user_config.h instead
@@ -52,6 +53,7 @@
 // #define OPENLCB_COMPILE_BROADCAST_TIME
 // #define OPENLCB_COMPILE_TRAIN
 // #define OPENLCB_COMPILE_TRAIN_SEARCH
+// #define OPENLCB_COMPILE_DCC_DETECTOR
 
 // =============================================================================
 // Debug -- uncomment to print feature summary during compilation

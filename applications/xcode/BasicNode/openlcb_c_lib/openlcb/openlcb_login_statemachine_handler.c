@@ -157,6 +157,7 @@ void OpenLcbLoginStatemachineHandler_load_producer_event(openlcb_login_statemach
 
     if ((statemachine_info->openlcb_node->producers.count == 0) && (statemachine_info->openlcb_node->producers.range_count == 0)) {
 
+        statemachine_info->openlcb_node->producers.enumerator.running = false;
         statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
 
         statemachine_info->outgoing_msg_info.valid = false;
@@ -263,6 +264,7 @@ void OpenLcbLoginStatemachineHandler_load_consumer_event(openlcb_login_statemach
 
     if ((statemachine_info->openlcb_node->consumers.count == 0) && (statemachine_info->openlcb_node->consumers.range_count == 0)) {
 
+        statemachine_info->openlcb_node->consumers.enumerator.running = false;
         statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOGIN_COMPLETE;
 
         statemachine_info->outgoing_msg_info.valid = false;

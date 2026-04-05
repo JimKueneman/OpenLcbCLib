@@ -85,6 +85,10 @@
 #error "OPENLCB_COMPILE_FIRMWARE requires OPENLCB_COMPILE_MEMORY_CONFIGURATION"
 #endif
 
+#if defined(OPENLCB_COMPILE_DCC_DETECTOR) && !defined(OPENLCB_COMPILE_EVENTS)
+#error "OPENLCB_COMPILE_DCC_DETECTOR requires OPENLCB_COMPILE_EVENTS"
+#endif
+
 // =============================================================================
 // No-features warning
 // =============================================================================
@@ -157,6 +161,12 @@
 #pragma message "OpenLcbCLib: STREAM = OFF"
 #endif
 
+#ifdef OPENLCB_COMPILE_DCC_DETECTOR
+#pragma message "OpenLcbCLib: DCC_DETECTOR = ON"
+#else
+#pragma message "OpenLcbCLib: DCC_DETECTOR = OFF"
+#endif
+
 #endif /* OPENLCB_COMPILE_VERBOSE */
 
 #ifdef OPENLCB_COMPILE_STREAM
@@ -167,6 +177,10 @@
 #endif /* OPENLCB_COMPILE_BOOTLOADER */
 #endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
 #endif
+
+#ifdef OPENLCB_COMPILE_DCC_DETECTOR
+#include "openlcb_application_dcc_detector.h"
+#endif /* OPENLCB_COMPILE_DCC_DETECTOR */
 
     /**
      * @brief User configuration for OpenLcbCLib.
