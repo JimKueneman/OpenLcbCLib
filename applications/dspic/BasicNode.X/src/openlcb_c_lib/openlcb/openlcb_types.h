@@ -747,6 +747,9 @@ extern "C" {
         bool is_long_address;    /**< true = extended (long) DCC address */
         uint8_t speed_steps;     /**< 0=default, 1=14, 2=28, 3=128 */
 
+        uint8_t heartbeat_send_pending : 1;  /**< Heartbeat NOOP needs retry */
+        uint8_t estop_forward_pending : 1;   /**< E-stop listener forwarding in progress */
+
         struct openlcb_node_TAG *owner_node; /**< Back-pointer to owning node */
 
     } train_state_t;

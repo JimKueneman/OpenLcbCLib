@@ -41,6 +41,10 @@
 #ifndef __DRIVERS_CANBUS_CAN_CONFIG__
 #define __DRIVERS_CANBUS_CAN_CONFIG__
 
+#include "../../openlcb/openlcb_types.h"   // picks up openlcb_user_config.h → OPENLCB_COMPILE_CAN
+
+#ifdef OPENLCB_COMPILE_CAN
+
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -115,5 +119,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+
+#endif /* OPENLCB_COMPILE_CAN */
 
 #endif /* __DRIVERS_CANBUS_CAN_CONFIG__ */

@@ -90,6 +90,19 @@
 #endif
 
 // =============================================================================
+// Transport selection validation
+// =============================================================================
+
+#if defined(OPENLCB_COMPILE_CAN) && defined(OPENLCB_COMPILE_TCP)
+#error "Only one transport can be active at a time. Define OPENLCB_COMPILE_CAN or OPENLCB_COMPILE_TCP, not both."
+#endif
+
+#if !defined(OPENLCB_COMPILE_CAN) && !defined(OPENLCB_COMPILE_TCP)
+#warning "No transport selected. Defaulting to CAN. Add #define OPENLCB_COMPILE_CAN to your openlcb_user_config.h to silence this warning."
+#define OPENLCB_COMPILE_CAN
+#endif
+
+// =============================================================================
 // No-features warning
 // =============================================================================
 
@@ -112,6 +125,14 @@
 // =============================================================================
 
 #ifdef OPENLCB_COMPILE_VERBOSE
+
+#ifdef OPENLCB_COMPILE_CAN
+#pragma message "OpenLcbCLib: TRANSPORT = CAN"
+#endif
+
+#ifdef OPENLCB_COMPILE_TCP
+#pragma message "OpenLcbCLib: TRANSPORT = TCP/IP"
+#endif
 
 #ifdef OPENLCB_COMPILE_EVENTS
 #pragma message "OpenLcbCLib: EVENTS = ON"

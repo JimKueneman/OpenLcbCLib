@@ -88,9 +88,15 @@
 #endif
 #endif
 
-// CAN transport
+// Transport-specific includes
+#ifdef OPENLCB_COMPILE_CAN
 #include "../drivers/canbus/can_tx_statemachine.h"
 #include "../drivers/canbus/can_main_statemachine.h"
+#endif
+
+#ifdef OPENLCB_COMPILE_TCP
+#include "../drivers/tcp_ip/tcp_config.h"
+#endif
 
 // ---- Internal storage for built interface structs ----
 
@@ -717,7 +723,12 @@ static void _build_config_mem_stream_handler(void) {
 
     memset(&_config_mem_stream, 0, sizeof(_config_mem_stream));
 
+#ifdef OPENLCB_COMPILE_CAN
     _config_mem_stream.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
+#endif
+#ifdef OPENLCB_COMPILE_TCP
+    _config_mem_stream.send_openlcb_msg = TcpConfig_get_send_openlcb_msg();
+#endif
 
     _config_mem_stream.load_datagram_received_ok_message =
             &ProtocolDatagramHandler_load_datagram_received_ok_message;
@@ -790,7 +801,12 @@ static void _build_login_statemachine(void) {
     memset(&_login_sm, 0, sizeof(_login_sm));
 
     // Direct transport send — login has its own inline sibling dispatch (Phase 2)
+#ifdef OPENLCB_COMPILE_CAN
     _login_sm.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
+#endif
+#ifdef OPENLCB_COMPILE_TCP
+    _login_sm.send_openlcb_msg = TcpConfig_get_send_openlcb_msg();
+#endif
 
     // Library-internal wiring
     _login_sm.openlcb_node_get_first          = &OpenLcbNode_get_first;
@@ -1070,7 +1086,12 @@ static void _build_main_statemachine(void) {
     // Hardware bindings
     _main_sm.lock_shared_resources   = _config->lock_shared_resources;
     _main_sm.unlock_shared_resources = _config->unlock_shared_resources;
+#ifdef OPENLCB_COMPILE_CAN
     _main_sm.send_openlcb_msg        = &CanTxStatemachine_send_openlcb_message;
+#endif
+#ifdef OPENLCB_COMPILE_TCP
+    _main_sm.send_openlcb_msg        = TcpConfig_get_send_openlcb_msg();
+#endif
 
     // Clock access (injected to maintain decoupling)
     _main_sm.get_current_tick = &OpenLcbConfig_get_global_100ms_tick;
@@ -1352,7 +1373,9 @@ static void _run_periodic_services(void) {
     /** @brief Runs one iteration of all state machines and periodic services. */
 void OpenLcbConfig_run(void) {
 
+#ifdef OPENLCB_COMPILE_CAN
     CanMainStatemachine_run();
+#endif
     OpenLcbLoginStatemachine_run();
     OpenLcbMainStatemachine_run();
 

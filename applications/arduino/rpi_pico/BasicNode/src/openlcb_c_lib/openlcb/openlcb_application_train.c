@@ -170,25 +170,27 @@ train_state_t *OpenLcbApplicationTrain_get_state(openlcb_node_t *openlcb_node) {
      * -# Build a Train Reply message (MTI_TRAIN_REPLY) addressed to controller_node_id.
      * -# Set payload bytes 0-1 to TRAIN_MANAGEMENT / TRAIN_MGMT_NOOP.
      * -# Set payload bytes 2-4 to the 3-byte heartbeat_timeout_s value.
-     * -# Call _interface->send_openlcb_msg().
+     * -# Call _interface->send_openlcb_msg() and return its result.
      *
      * @verbatim
      * @param state  Pointer to the train_state_t to send the request for.
      * @endverbatim
+     *
+     * @return true if the send succeeded, false if transport busy or precondition not met.
      */
-static void _send_heartbeat_request(train_state_t *state) {
+static bool _send_heartbeat_request(train_state_t *state) {
 
     openlcb_node_t *node = state->owner_node;
 
     if (!node || !_interface || !_interface->send_openlcb_msg) {
 
-        return;
+        return false;
 
     }
 
     if (state->controller_node_id == 0) {
 
-        return;
+        return false;
 
     }
 
@@ -214,72 +216,71 @@ static void _send_heartbeat_request(train_state_t *state) {
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (timeout >> 8) & 0xFF, 3);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, timeout & 0xFF, 4);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
     /**
-     * @brief Forwards a Set Speed 0 (with P bit) to all registered listeners.
+     * @brief Forwards a Set Speed 0 (with P bit) to one listener.
      *
-     * @details Called when heartbeat timeout triggers an emergency stop.
-     * Per TrainControlS 6.6 the implied Set Speed 0 "shall be forwarded to
-     * all registered Listeners at the same time, including the Controller
-     * node, if it is registered as a Listener."
+     * @details Sends the e-stop to the listener at state->listener_enum_index.
+     * Called repeatedly by the timer tick run-loop until all listeners have
+     * been notified.  Per TrainControlS 6.6 the implied Set Speed 0 "shall be
+     * forwarded to all registered Listeners at the same time, including the
+     * Controller node, if it is registered as a Listener."
      *
      * @verbatim
-     * @param state  Pointer to the train_state_t whose listeners receive the forward.
+     * @param state  Pointer to the train_state_t whose listener receives the forward.
      * @endverbatim
+     *
+     * @return true if the send succeeded, false if transport busy or precondition not met.
      */
-static void _forward_estop_to_listeners(train_state_t *state) {
+static bool _forward_estop_to_one_listener(train_state_t *state) {
 
     if (!state || !_interface || !_interface->send_openlcb_msg) {
 
-        return;
+        return false;
 
     }
 
     openlcb_node_t *node = state->owner_node;
 
-    if (!node || state->listener_count == 0) {
+    if (!node || state->listener_enum_index >= state->listener_count) {
 
-        return;
+        return false;
+
+    }
+
+    train_listener_entry_t *entry = &state->listeners[state->listener_enum_index];
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(
+            &msg,
+            node->alias,
+            node->id,
+            0,
+            entry->node_id,
+            MTI_TRAIN_PROTOCOL);
+
+    // Speed is already zeroed with direction preserved in state->set_speed
+    uint16_t speed = state->set_speed;
+
+    if (entry->flags & TRAIN_LISTENER_FLAG_REVERSE) {
+
+        speed ^= 0x8000;
 
     }
 
-    for (int i = 0; i < state->listener_count; i++) {
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg,
+            TRAIN_SET_SPEED_DIRECTION | TRAIN_INSTRUCTION_P_BIT, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(&msg, speed, 1);
 
-        train_listener_entry_t *entry = &state->listeners[i];
-
-        openlcb_msg_t msg = {0};
-        payload_basic_t payload;
-
-        msg.payload = (openlcb_payload_t *) &payload;
-        msg.payload_type = BASIC;
-
-        OpenLcbUtilities_load_openlcb_message(
-                &msg,
-                node->alias,
-                node->id,
-                0,
-                entry->node_id,
-                MTI_TRAIN_PROTOCOL);
-
-        // Speed is already zeroed with direction preserved in state->set_speed
-        uint16_t speed = state->set_speed;
-
-        if (entry->flags & TRAIN_LISTENER_FLAG_REVERSE) {
-
-            speed ^= 0x8000;
-
-        }
-
-        OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg,
-                TRAIN_SET_SPEED_DIRECTION | TRAIN_INSTRUCTION_P_BIT, 0);
-        OpenLcbUtilities_copy_word_to_openlcb_payload(&msg, speed, 1);
-
-        _interface->send_openlcb_msg(&msg);
-
-    }
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -290,10 +291,13 @@ static void _forward_estop_to_listeners(train_state_t *state) {
      * -# Compute ticks elapsed since last call via subtraction.
      * -# Skip if no time has elapsed (deduplication).
      * -# For each pool slot with heartbeat_timeout_s > 0:
+     *    - Retry any pending heartbeat send or e-stop listener forwarding.
      *    - Decrement heartbeat_counter_100ms by ticks_elapsed (saturate at 0).
-     *    - At the halfway point, call _send_heartbeat_request() to ping the controller.
+     *    - At the halfway point, attempt _send_heartbeat_request(); if the
+     *      transport is busy, set heartbeat_send_pending for retry next tick.
      *    - At zero, set estop_active = true, zero set_speed preserving direction,
-     *      forward Set Speed 0 to listeners, and fire on_heartbeat_timeout.
+     *      set estop_forward_pending to forward Set Speed 0 to each listener
+     *      one per tick, and fire on_heartbeat_timeout.
      *
      * @verbatim
      * @param current_tick  Current value of the global 100ms tick counter.
@@ -321,6 +325,37 @@ void OpenLcbApplicationTrain_100ms_timer_tick(uint8_t current_tick) {
 
         }
 
+        // Retry pending heartbeat send from a previous tick
+        if (state->heartbeat_send_pending) {
+
+            if (_send_heartbeat_request(state)) {
+
+                state->heartbeat_send_pending = 0;
+
+            }
+
+        }
+
+        // Retry pending e-stop listener forwarding from a previous tick
+        if (state->estop_forward_pending) {
+
+            if (_forward_estop_to_one_listener(state)) {
+
+                state->listener_enum_index++;
+
+            }
+
+            if (state->listener_enum_index >= state->listener_count) {
+
+                state->estop_forward_pending = 0;
+
+            }
+
+            // Don't process countdown while forwarding is in progress
+            continue;
+
+        }
+
         uint32_t old_counter = state->heartbeat_counter_100ms;
 
         if (state->heartbeat_counter_100ms > ticks_elapsed) {
@@ -337,7 +372,11 @@ void OpenLcbApplicationTrain_100ms_timer_tick(uint8_t current_tick) {
 
         if (old_counter > halfway && state->heartbeat_counter_100ms <= halfway) {
 
-            _send_heartbeat_request(state);
+            if (!_send_heartbeat_request(state)) {
+
+                state->heartbeat_send_pending = 1;
+
+            }
 
         }
 
@@ -351,7 +390,12 @@ void OpenLcbApplicationTrain_100ms_timer_tick(uint8_t current_tick) {
 
             // TrainControlS 6.6: forward the implied Set Speed 0 to all
             // registered Listeners, including the Controller if it is a Listener.
-            _forward_estop_to_listeners(state);
+            if (state->listener_count > 0) {
+
+                state->estop_forward_pending = 1;
+                state->listener_enum_index = 0;
+
+            }
 
             if (_interface && _interface->on_heartbeat_timeout) {
 
