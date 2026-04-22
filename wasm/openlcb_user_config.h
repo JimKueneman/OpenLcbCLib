@@ -20,7 +20,6 @@
 #define OPENLCB_COMPILE_EVENTS
 #define OPENLCB_COMPILE_DATAGRAMS
 #define OPENLCB_COMPILE_MEMORY_CONFIGURATION
-#define OPENLCB_COMPILE_FIRMWARE
 #define OPENLCB_COMPILE_BROADCAST_TIME
 #define OPENLCB_COMPILE_TRAIN
 #define OPENLCB_COMPILE_TRAIN_SEARCH
@@ -31,39 +30,39 @@
 // Core Message Buffer Pool
 // =============================================================================
 
-#define USER_DEFINED_BASIC_BUFFER_DEPTH              32
-#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4
-#define USER_DEFINED_SNIP_BUFFER_DEPTH               4
-#define USER_DEFINED_STREAM_BUFFER_DEPTH             1
+#define USER_DEFINED_BASIC_BUFFER_DEPTH              255
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           64
+#define USER_DEFINED_SNIP_BUFFER_DEPTH               64
+#define USER_DEFINED_STREAM_BUFFER_DEPTH             64
 
 // =============================================================================
 // Stream Transport
 // =============================================================================
 
-#define USER_DEFINED_STREAM_BUFFER_LEN               256
-#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   2
+#define USER_DEFINED_STREAM_BUFFER_LEN               1024
+#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   64
 
 // =============================================================================
 // Virtual Node Allocation
 // =============================================================================
 
-#define USER_DEFINED_NODE_BUFFER_DEPTH               50
+#define USER_DEFINED_NODE_BUFFER_DEPTH               255
 
 // =============================================================================
 // Events
 // =============================================================================
 
-#define USER_DEFINED_PRODUCER_COUNT                  64
-#define USER_DEFINED_PRODUCER_RANGE_COUNT            5
-#define USER_DEFINED_CONSUMER_COUNT                  32
-#define USER_DEFINED_CONSUMER_RANGE_COUNT            5
+#define USER_DEFINED_PRODUCER_COUNT                  256
+#define USER_DEFINED_PRODUCER_RANGE_COUNT            256
+#define USER_DEFINED_CONSUMER_COUNT                  256
+#define USER_DEFINED_CONSUMER_RANGE_COUNT            256
 
 // =============================================================================
 // Train Protocol
 // =============================================================================
 
-#define USER_DEFINED_TRAIN_NODE_COUNT                4
-#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         6
+#define USER_DEFINED_TRAIN_NODE_COUNT                255
+#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN         16
 #define USER_DEFINED_MAX_TRAIN_FUNCTIONS             29
 
 // =============================================================================

@@ -18,6 +18,16 @@ Single source of truth. Everything completed is in `archive/`.
 
 ---
 
+### 12. Validate event_id against producer list in send helpers
+
+**Issue:** `OpenLcbApplication_send_event_pc_report()`, `_send_event_with_mti()`, and `_send_teach_event()` do not verify that the supplied `event_id` is registered in the node's producer list before emitting the message. A buggy caller can publish an event the node never advertised; downstream nodes filter by subscription so nothing crashes, but it is still a protocol-correctness issue worth catching at the source.
+
+**Status:** Open — noticed while wrapping the library for WASM. Low priority because downstream filtering makes it silent in practice.
+
+**Scope:** Walk `openlcb_node->producers.list[0..producer_count]` in each send helper; return `false` (and optionally log) if the event is absent. Consider the same check for range producers. Preserve the existing return-value contract so callers can surface the error.
+
+---
+
 ---
 
 ---

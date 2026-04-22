@@ -1,0 +1,49 @@
+name: WASM build + tests
+
+on:
+  push:
+    paths:
+      - "src/**"
+      - "wasm/**"
+      - ".github/workflows/wasm.yml"
+  pull_request:
+    paths:
+      - "src/**"
+      - "wasm/**"
+      - ".github/workflows/wasm.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: latest
+          actions-cache-folder: "emsdk-cache"
+
+      - name: Verify emcc
+        run: emcc --version
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build WASM
+        working-directory: wasm
+        run: ./build.sh
+
+      - name: Run WASM integration tests
+        working-directory: wasm
+        run: node test.mjs
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: openlcb-core-wasm
+          path: |
+            wasm/dist/openlcb-core.wasm
+            wasm/dist/openlcb-core.js
