@@ -1,0 +1,9 @@
+# TI Theia IDE build output
+Debug/
+
+# CCS/Theia project settings
+.settings/
+.builds/
+.project
+.cproject
+.ccsproject

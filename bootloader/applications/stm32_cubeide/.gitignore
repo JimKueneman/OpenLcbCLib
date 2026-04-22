@@ -1,0 +1,23 @@
+# STM32 CubeIDE build artifacts and workspace metadata
+**/.metadata/
+**/.settings/
+**/Debug/
+**/Release/
+
+# User-specific launch configurations
+*.launch
+
+# Compiled object and analysis files
+*.o
+*.d
+*.su
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+*.cyclo
+
+# CubeIDE workspace markers
+.STM32CubeIDE_*.markers
+.STM32CubeIDE_*.state
