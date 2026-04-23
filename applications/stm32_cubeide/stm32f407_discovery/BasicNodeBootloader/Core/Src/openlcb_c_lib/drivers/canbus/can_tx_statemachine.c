@@ -42,7 +42,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <stdio.h> // printf
 
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"

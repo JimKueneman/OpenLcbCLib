@@ -78,7 +78,7 @@ static bool _has_reserved_values(const uint8_t *digits, uint8_t flags) {
     }
 
     // If DCC flag is not set, lower bits (0-2) must be zero
-    if (!(flags & TRAIN_SEARCH_FLAG_DCC) && (flags & 0x07)) {
+    if (!(flags & TRAIN_SEARCH_PROTOCOL_FAMILY_DCC) && (flags & 0x07)) {
 
         return true;
 
@@ -326,7 +326,7 @@ static bool _does_train_match(
             uint8_t flags) {
 
     // Check DCC protocol match
-    if (flags & TRAIN_SEARCH_FLAG_DCC) {
+    if (flags & TRAIN_SEARCH_PROTOCOL_FAMILY_DCC) {
 
         if (flags & TRAIN_SEARCH_FLAG_LONG_ADDR) {
 
