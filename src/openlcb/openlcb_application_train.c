@@ -728,6 +728,185 @@ void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, uint16_t tr
 
 }
 
+    /**
+     * @brief Sends a Query Controller command to a train node.
+     *
+     * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_CONTROLLER_CONFIG (0x20),
+     * byte 1 = TRAIN_CONTROLLER_QUERY (0x03).
+     */
+void OpenLcbApplicationTrain_send_query_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
+
+        return;
+
+    }
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_QUERY, 1);
+
+    _interface->send_openlcb_msg(&msg);
+
+}
+
+    /**
+     * @brief Sends a Controller Changing Notify request to a train node.
+     *
+     * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_CONTROLLER_CONFIG (0x20),
+     * byte 1 = TRAIN_CONTROLLER_CHANGED (0x04), byte 2 = flags (reserved, 0),
+     * bytes 3-8 = new (requesting) controller Node ID.
+     */
+void OpenLcbApplicationTrain_send_controller_changing_notify(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t new_controller_node_id) {
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
+
+        return;
+
+    }
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_CHANGED, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, new_controller_node_id, 3);
+
+    _interface->send_openlcb_msg(&msg);
+
+}
+
+    /**
+     * @brief Sends a Listener Attach (or Update Flags) command to a train node.
+     *
+     * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_LISTENER_CONFIG (0x30),
+     * byte 1 = TRAIN_LISTENER_ATTACH (0x01), byte 2 = flags, bytes 3-8 = listener Node ID.
+     */
+void OpenLcbApplicationTrain_send_listener_attach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id, uint8_t flags) {
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
+
+        return;
+
+    }
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, flags, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, listener_node_id, 3);
+
+    _interface->send_openlcb_msg(&msg);
+
+}
+
+    /**
+     * @brief Sends a Listener Detach command to a train node.
+     *
+     * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_LISTENER_CONFIG (0x30),
+     * byte 1 = TRAIN_LISTENER_DETACH (0x02), byte 2 = flags (reserved, 0),
+     * bytes 3-8 = listener Node ID.
+     */
+void OpenLcbApplicationTrain_send_listener_detach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id) {
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
+
+        return;
+
+    }
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_LISTENER_DETACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, listener_node_id, 3);
+
+    _interface->send_openlcb_msg(&msg);
+
+}
+
+    /**
+     * @brief Sends a Listener Query command to a train node.
+     *
+     * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_LISTENER_CONFIG (0x30),
+     * byte 1 = TRAIN_LISTENER_QUERY (0x03), byte 2 = listener index.
+     * The receive-side handler always reads byte 2, so the index is always sent
+     * even though the standard marks it optional.
+     */
+void OpenLcbApplicationTrain_send_listener_query(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint8_t listener_index) {
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
+
+        return;
+
+    }
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_LISTENER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, listener_index, 2);
+
+    _interface->send_openlcb_msg(&msg);
+
+}
+
+    /**
+     * @brief Sends a Reserve command to a train node.
+     *
+     * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_MANAGEMENT (0x40),
+     * byte 1 = TRAIN_MGMT_RESERVE (0x01).
+     */
+void OpenLcbApplicationTrain_send_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
+
+        return;
+
+    }
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MGMT_RESERVE, 1);
+
+    _interface->send_openlcb_msg(&msg);
+
+}
+
+    /**
+     * @brief Sends a Release Reserve command to a train node.
+     *
+     * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_MANAGEMENT (0x40),
+     * byte 1 = TRAIN_MGMT_RELEASE (0x02).
+     */
+void OpenLcbApplicationTrain_send_release_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
+
+        return;
+
+    }
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MGMT_RELEASE, 1);
+
+    _interface->send_openlcb_msg(&msg);
+
+}
+
 
     /**
      * @brief Sets the DCC address and address type for a train node.

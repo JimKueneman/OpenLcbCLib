@@ -556,6 +556,147 @@ TEST(ApplicationTrain, send_noop)
 
 }
 
+TEST(ApplicationTrain, send_query_controller)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationTrain_send_query_controller(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
+
+    EXPECT_TRUE(mock_send_called);
+    EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
+    EXPECT_EQ(last_sent_msg.dest_id, TEST_TRAIN_NODE_ID);
+    EXPECT_EQ(last_sent_payload[0], TRAIN_CONTROLLER_CONFIG);
+    EXPECT_EQ(last_sent_payload[1], TRAIN_CONTROLLER_QUERY);
+
+}
+
+TEST(ApplicationTrain, send_controller_changing_notify)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationTrain_send_controller_changing_notify(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, TEST_CONTROLLER_NODE_ID);
+
+    EXPECT_TRUE(mock_send_called);
+    EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
+    EXPECT_EQ(last_sent_msg.dest_id, TEST_TRAIN_NODE_ID);
+    EXPECT_EQ(last_sent_payload[0], TRAIN_CONTROLLER_CONFIG);
+    EXPECT_EQ(last_sent_payload[1], TRAIN_CONTROLLER_CHANGED);
+    EXPECT_EQ(last_sent_payload[2], 0x00);    // reserved flags byte
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(&last_sent_msg, 3), TEST_CONTROLLER_NODE_ID);
+
+}
+
+TEST(ApplicationTrain, send_listener_attach)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    uint8_t flags = TRAIN_LISTENER_FLAG_LINK_F0 | TRAIN_LISTENER_FLAG_LINK_FN;
+    OpenLcbApplicationTrain_send_listener_attach(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, TEST_LISTENER_NODE_ID, flags);
+
+    EXPECT_TRUE(mock_send_called);
+    EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
+    EXPECT_EQ(last_sent_msg.dest_id, TEST_TRAIN_NODE_ID);
+    EXPECT_EQ(last_sent_payload[0], TRAIN_LISTENER_CONFIG);
+    EXPECT_EQ(last_sent_payload[1], TRAIN_LISTENER_ATTACH);
+    EXPECT_EQ(last_sent_payload[2], flags);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(&last_sent_msg, 3), TEST_LISTENER_NODE_ID);
+
+}
+
+TEST(ApplicationTrain, send_listener_detach)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationTrain_send_listener_detach(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, TEST_LISTENER_NODE_ID);
+
+    EXPECT_TRUE(mock_send_called);
+    EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
+    EXPECT_EQ(last_sent_msg.dest_id, TEST_TRAIN_NODE_ID);
+    EXPECT_EQ(last_sent_payload[0], TRAIN_LISTENER_CONFIG);
+    EXPECT_EQ(last_sent_payload[1], TRAIN_LISTENER_DETACH);
+    EXPECT_EQ(last_sent_payload[2], 0x00);    // reserved flags byte
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(&last_sent_msg, 3), TEST_LISTENER_NODE_ID);
+
+}
+
+TEST(ApplicationTrain, send_listener_query)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationTrain_send_listener_query(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, 2);
+
+    EXPECT_TRUE(mock_send_called);
+    EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
+    EXPECT_EQ(last_sent_msg.dest_id, TEST_TRAIN_NODE_ID);
+    EXPECT_EQ(last_sent_payload[0], TRAIN_LISTENER_CONFIG);
+    EXPECT_EQ(last_sent_payload[1], TRAIN_LISTENER_QUERY);
+    EXPECT_EQ(last_sent_payload[2], 2);
+
+}
+
+TEST(ApplicationTrain, send_reserve)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationTrain_send_reserve(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
+
+    EXPECT_TRUE(mock_send_called);
+    EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
+    EXPECT_EQ(last_sent_msg.dest_id, TEST_TRAIN_NODE_ID);
+    EXPECT_EQ(last_sent_payload[0], TRAIN_MANAGEMENT);
+    EXPECT_EQ(last_sent_payload[1], TRAIN_MGMT_RESERVE);
+
+}
+
+TEST(ApplicationTrain, send_release_reserve)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationTrain_send_release_reserve(node, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
+
+    EXPECT_TRUE(mock_send_called);
+    EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
+    EXPECT_EQ(last_sent_msg.dest_id, TEST_TRAIN_NODE_ID);
+    EXPECT_EQ(last_sent_payload[0], TRAIN_MANAGEMENT);
+    EXPECT_EQ(last_sent_payload[1], TRAIN_MGMT_RELEASE);
+
+}
+
 TEST(ApplicationTrain, send_null_node_no_crash)
 {
 
@@ -570,6 +711,13 @@ TEST(ApplicationTrain, send_null_node_no_crash)
     OpenLcbApplicationTrain_send_assign_controller(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
     OpenLcbApplicationTrain_send_release_controller(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
     OpenLcbApplicationTrain_send_noop(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_query_controller(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_controller_changing_notify(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, TEST_CONTROLLER_NODE_ID);
+    OpenLcbApplicationTrain_send_listener_attach(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, TEST_LISTENER_NODE_ID, 0);
+    OpenLcbApplicationTrain_send_listener_detach(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, TEST_LISTENER_NODE_ID);
+    OpenLcbApplicationTrain_send_listener_query(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID, 0);
+    OpenLcbApplicationTrain_send_reserve(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
+    OpenLcbApplicationTrain_send_release_reserve(NULL, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID);
 
     EXPECT_FALSE(mock_send_called);
 

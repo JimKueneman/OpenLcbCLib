@@ -236,6 +236,104 @@ extern "C" {
     extern void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
+         * @brief Sends a Query Controller command to a train node.
+         *
+         * @details Asks the train node to reply with the Node ID of its currently
+         * assigned controller (or 0.0.0.0.0.0 if none).  The reply is delivered via
+         * @ref interface_protocol_train_handler_t::on_controller_query_reply.
+         *
+         * @param openlcb_node    Pointer to the sending (throttle) @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
+         * @param train_node_id   48-bit @ref node_id_t of the target train node.
+         */
+    extern void OpenLcbApplicationTrain_send_query_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+
+        /**
+         * @brief Sends a Controller Changing Notify request to a train node.
+         *
+         * @details Used when taking control away from the currently-assigned
+         * controller: the new (requesting) throttle tells the train node that a
+         * controller change is about to happen and identifies itself as the
+         * requesting controller.  The train node may forward this to the previous
+         * controller and reply via
+         * @ref interface_protocol_train_handler_t::on_controller_changed_notify_reply.
+         *
+         * @param openlcb_node               Pointer to the sending (throttle) @ref openlcb_node_t.
+         * @param train_alias                12-bit CAN alias of the target train node.
+         * @param train_node_id              48-bit @ref node_id_t of the target train node.
+         * @param new_controller_node_id     48-bit @ref node_id_t of the requesting new controller.
+         */
+    extern void OpenLcbApplicationTrain_send_controller_changing_notify(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t new_controller_node_id);
+
+        /**
+         * @brief Sends a Listener Attach (or Update Flags) command to a train node.
+         *
+         * @details Registers a listener node on the target train.  Once attached,
+         * the train node forwards selected state-changing messages to the listener
+         * (see TrainControlS §6.5).  Calling this with an already-attached listener
+         * updates the flags without changing attach order.
+         *
+         * @param openlcb_node      Pointer to the sending @ref openlcb_node_t.
+         * @param train_alias       12-bit CAN alias of the target train node.
+         * @param train_node_id     48-bit @ref node_id_t of the target train node.
+         * @param listener_node_id  48-bit @ref node_id_t of the node to attach as a listener.
+         * @param flags             Listener flags (TRAIN_LISTENER_FLAG_REVERSE, _LINK_F0, _LINK_FN, _HIDE).
+         */
+    extern void OpenLcbApplicationTrain_send_listener_attach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id, uint8_t flags);
+
+        /**
+         * @brief Sends a Listener Detach command to a train node.
+         *
+         * @details Removes a listener node from the target train's listener list.
+         * The flags byte is reserved and sent as zero per the standard.
+         *
+         * @param openlcb_node      Pointer to the sending @ref openlcb_node_t.
+         * @param train_alias       12-bit CAN alias of the target train node.
+         * @param train_node_id     48-bit @ref node_id_t of the target train node.
+         * @param listener_node_id  48-bit @ref node_id_t of the listener to detach.
+         */
+    extern void OpenLcbApplicationTrain_send_listener_detach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id);
+
+        /**
+         * @brief Sends a Listener Query command to a train node.
+         *
+         * @details The reply (via @ref interface_protocol_train_handler_t::on_listener_query_reply)
+         * carries the total listener count, the requested index, and the listener
+         * at that index (flags + node_id).  Pass index 0 to walk the list; out-of-
+         * range indices yield a count-only reply.
+         *
+         * @param openlcb_node    Pointer to the sending @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
+         * @param train_node_id   48-bit @ref node_id_t of the target train node.
+         * @param listener_index  Zero-based listener index to query.
+         */
+    extern void OpenLcbApplicationTrain_send_listener_query(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint8_t listener_index);
+
+        /**
+         * @brief Sends a Reserve command to a train node.
+         *
+         * @details Requests exclusive access to the train for a short critical
+         * operation (e.g. programming on main).  The reply is delivered via
+         * @ref interface_protocol_train_handler_t::on_reserve_reply.
+         *
+         * @param openlcb_node    Pointer to the sending @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
+         * @param train_node_id   48-bit @ref node_id_t of the target train node.
+         */
+    extern void OpenLcbApplicationTrain_send_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+
+        /**
+         * @brief Sends a Release Reserve command to a train node.
+         *
+         * @details Releases a previously-granted reservation.
+         *
+         * @param openlcb_node    Pointer to the sending @ref openlcb_node_t.
+         * @param train_alias     12-bit CAN alias of the target train node.
+         * @param train_node_id   48-bit @ref node_id_t of the target train node.
+         */
+    extern void OpenLcbApplicationTrain_send_release_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+
+        /**
          * @brief Sets the DCC address and address type for a train node.
          *
          * @param openlcb_node    Pointer to the @ref openlcb_node_t with an assigned train state.
