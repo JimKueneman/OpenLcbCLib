@@ -142,7 +142,7 @@ extern "C" {
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          * @param speed           16-bit speed/direction value in OpenLCB float16 format.
          */
-    extern void OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint16_t speed);
+    extern bool OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint16_t speed);
 
         /**
          * @brief Sends a Set Function command to a train node.
@@ -157,7 +157,7 @@ extern "C" {
          * @param fn_address      24-bit function address.
          * @param fn_value        16-bit function value (0 = off, non-zero = on or analog value).
          */
-    extern void OpenLcbApplicationTrain_send_set_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address, uint16_t fn_value);
+    extern bool OpenLcbApplicationTrain_send_set_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address, uint16_t fn_value);
 
         /**
          * @brief Sends an Emergency Stop command to a train node.
@@ -169,7 +169,7 @@ extern "C" {
          * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_emergency_stop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+    extern bool OpenLcbApplicationTrain_send_emergency_stop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a Query Speeds command to a train node.
@@ -181,7 +181,7 @@ extern "C" {
          * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_query_speeds(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+    extern bool OpenLcbApplicationTrain_send_query_speeds(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a Query Function command to a train node.
@@ -194,7 +194,7 @@ extern "C" {
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          * @param fn_address      24-bit function address to query.
          */
-    extern void OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address);
+    extern bool OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address);
 
         /**
          * @brief Sends an Assign Controller command to a train node.
@@ -207,7 +207,7 @@ extern "C" {
          * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+    extern bool OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a Release Controller command to a train node.
@@ -219,7 +219,7 @@ extern "C" {
          * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+    extern bool OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a NOOP (no-operation) management command to a train node.
@@ -232,7 +232,7 @@ extern "C" {
          * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+    extern bool OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a Query Controller command to a train node.
@@ -245,7 +245,7 @@ extern "C" {
          * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_query_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+    extern bool OpenLcbApplicationTrain_send_query_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a Controller Changing Notify request to a train node.
@@ -262,7 +262,7 @@ extern "C" {
          * @param train_node_id              48-bit @ref node_id_t of the target train node.
          * @param new_controller_node_id     48-bit @ref node_id_t of the requesting new controller.
          */
-    extern void OpenLcbApplicationTrain_send_controller_changing_notify(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t new_controller_node_id);
+    extern bool OpenLcbApplicationTrain_send_controller_changing_notify(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t new_controller_node_id);
 
         /**
          * @brief Sends a Listener Attach (or Update Flags) command to a train node.
@@ -278,7 +278,7 @@ extern "C" {
          * @param listener_node_id  48-bit @ref node_id_t of the node to attach as a listener.
          * @param flags             Listener flags (TRAIN_LISTENER_FLAG_REVERSE, _LINK_F0, _LINK_FN, _HIDE).
          */
-    extern void OpenLcbApplicationTrain_send_listener_attach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id, uint8_t flags);
+    extern bool OpenLcbApplicationTrain_send_listener_attach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id, uint8_t flags);
 
         /**
          * @brief Sends a Listener Detach command to a train node.
@@ -291,7 +291,7 @@ extern "C" {
          * @param train_node_id     48-bit @ref node_id_t of the target train node.
          * @param listener_node_id  48-bit @ref node_id_t of the listener to detach.
          */
-    extern void OpenLcbApplicationTrain_send_listener_detach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id);
+    extern bool OpenLcbApplicationTrain_send_listener_detach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id);
 
         /**
          * @brief Sends a Listener Query command to a train node.
@@ -306,7 +306,7 @@ extern "C" {
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          * @param listener_index  Zero-based listener index to query.
          */
-    extern void OpenLcbApplicationTrain_send_listener_query(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint8_t listener_index);
+    extern bool OpenLcbApplicationTrain_send_listener_query(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint8_t listener_index);
 
         /**
          * @brief Sends a Reserve command to a train node.
@@ -319,7 +319,7 @@ extern "C" {
          * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+    extern bool OpenLcbApplicationTrain_send_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sends a Release Reserve command to a train node.
@@ -330,7 +330,7 @@ extern "C" {
          * @param train_alias     12-bit CAN alias of the target train node.
          * @param train_node_id   48-bit @ref node_id_t of the target train node.
          */
-    extern void OpenLcbApplicationTrain_send_release_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
+    extern bool OpenLcbApplicationTrain_send_release_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
          * @brief Sets the DCC address and address type for a train node.

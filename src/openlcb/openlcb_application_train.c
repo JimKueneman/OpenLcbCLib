@@ -450,21 +450,21 @@ static bool _prepare_train_command(openlcb_msg_t *msg, payload_basic_t *payload,
      * @param speed           16-bit speed/direction in OpenLCB float16 format.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint16_t speed) {
+bool OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint16_t speed) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_SET_SPEED_DIRECTION, 0);
     OpenLcbUtilities_copy_word_to_openlcb_payload(&msg, speed, 1);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -486,14 +486,14 @@ void OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, uint16
      * @param fn_value        16-bit function value.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_set_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address, uint16_t fn_value) {
+bool OpenLcbApplicationTrain_send_set_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address, uint16_t fn_value) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
@@ -503,7 +503,7 @@ void OpenLcbApplicationTrain_send_set_function(openlcb_node_t *openlcb_node, uin
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, fn_address & 0xFF, 3);
     OpenLcbUtilities_copy_word_to_openlcb_payload(&msg, fn_value, 4);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -521,20 +521,20 @@ void OpenLcbApplicationTrain_send_set_function(openlcb_node_t *openlcb_node, uin
      * @param train_node_id   48-bit node_id_t of the target train node.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_emergency_stop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+bool OpenLcbApplicationTrain_send_emergency_stop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_EMERGENCY_STOP, 0);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -552,20 +552,20 @@ void OpenLcbApplicationTrain_send_emergency_stop(openlcb_node_t *openlcb_node, u
      * @param train_node_id   48-bit node_id_t of the target train node.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_query_speeds(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+bool OpenLcbApplicationTrain_send_query_speeds(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_QUERY_SPEEDS, 0);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -585,14 +585,14 @@ void OpenLcbApplicationTrain_send_query_speeds(openlcb_node_t *openlcb_node, uin
      * @param fn_address      24-bit function address to query.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address) {
+bool OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
@@ -601,7 +601,7 @@ void OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, u
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (fn_address >> 8) & 0xFF, 2);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, fn_address & 0xFF, 3);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -620,14 +620,14 @@ void OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, u
      * @param train_node_id   48-bit node_id_t of the target train node.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+bool OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
@@ -635,7 +635,7 @@ void OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_ASSIGN, 1);
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, openlcb_node->id, 2);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -654,14 +654,14 @@ void OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node
      * @param train_node_id   48-bit node_id_t of the target train node.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+bool OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
@@ -669,7 +669,7 @@ void OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_nod
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_RELEASE, 1);
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, openlcb_node->id, 2);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -687,21 +687,21 @@ void OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_nod
      * @param train_node_id   48-bit node_id_t of the target train node.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+bool OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MGMT_NOOP, 1);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -711,21 +711,21 @@ void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, uint16_t tr
      * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_CONTROLLER_CONFIG (0x20),
      * byte 1 = TRAIN_CONTROLLER_QUERY (0x03).
      */
-void OpenLcbApplicationTrain_send_query_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+bool OpenLcbApplicationTrain_send_query_controller(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_QUERY, 1);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -736,14 +736,14 @@ void OpenLcbApplicationTrain_send_query_controller(openlcb_node_t *openlcb_node,
      * byte 1 = TRAIN_CONTROLLER_CHANGED (0x04), byte 2 = flags (reserved, 0),
      * bytes 3-8 = new (requesting) controller Node ID.
      */
-void OpenLcbApplicationTrain_send_controller_changing_notify(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t new_controller_node_id) {
+bool OpenLcbApplicationTrain_send_controller_changing_notify(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t new_controller_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
@@ -752,7 +752,7 @@ void OpenLcbApplicationTrain_send_controller_changing_notify(openlcb_node_t *ope
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x00, 2);
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, new_controller_node_id, 3);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -762,14 +762,14 @@ void OpenLcbApplicationTrain_send_controller_changing_notify(openlcb_node_t *ope
      * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_LISTENER_CONFIG (0x30),
      * byte 1 = TRAIN_LISTENER_ATTACH (0x01), byte 2 = flags, bytes 3-8 = listener Node ID.
      */
-void OpenLcbApplicationTrain_send_listener_attach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id, uint8_t flags) {
+bool OpenLcbApplicationTrain_send_listener_attach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id, uint8_t flags) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
@@ -778,7 +778,7 @@ void OpenLcbApplicationTrain_send_listener_attach(openlcb_node_t *openlcb_node, 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, flags, 2);
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, listener_node_id, 3);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -789,14 +789,14 @@ void OpenLcbApplicationTrain_send_listener_attach(openlcb_node_t *openlcb_node, 
      * byte 1 = TRAIN_LISTENER_DETACH (0x02), byte 2 = flags (reserved, 0),
      * bytes 3-8 = listener Node ID.
      */
-void OpenLcbApplicationTrain_send_listener_detach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id) {
+bool OpenLcbApplicationTrain_send_listener_detach(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, node_id_t listener_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
@@ -805,7 +805,7 @@ void OpenLcbApplicationTrain_send_listener_detach(openlcb_node_t *openlcb_node, 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x00, 2);
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, listener_node_id, 3);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -817,14 +817,14 @@ void OpenLcbApplicationTrain_send_listener_detach(openlcb_node_t *openlcb_node, 
      * The receive-side handler always reads byte 2, so the index is always sent
      * even though the standard marks it optional.
      */
-void OpenLcbApplicationTrain_send_listener_query(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint8_t listener_index) {
+bool OpenLcbApplicationTrain_send_listener_query(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint8_t listener_index) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
@@ -832,7 +832,7 @@ void OpenLcbApplicationTrain_send_listener_query(openlcb_node_t *openlcb_node, u
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_LISTENER_QUERY, 1);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, listener_index, 2);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -842,21 +842,21 @@ void OpenLcbApplicationTrain_send_listener_query(openlcb_node_t *openlcb_node, u
      * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_MANAGEMENT (0x40),
      * byte 1 = TRAIN_MGMT_RESERVE (0x01).
      */
-void OpenLcbApplicationTrain_send_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+bool OpenLcbApplicationTrain_send_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MGMT_RESERVE, 1);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
@@ -866,21 +866,21 @@ void OpenLcbApplicationTrain_send_reserve(openlcb_node_t *openlcb_node, uint16_t
      * @details Payload per TrainControlS §4.3: byte 0 = TRAIN_MANAGEMENT (0x40),
      * byte 1 = TRAIN_MGMT_RELEASE (0x02).
      */
-void OpenLcbApplicationTrain_send_release_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+bool OpenLcbApplicationTrain_send_release_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
 
     if (!_prepare_train_command(&msg, &payload, openlcb_node, train_alias, train_node_id)) {
 
-        return;
+        return false;
 
     }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MGMT_RELEASE, 1);
 
-    _interface->send_openlcb_msg(&msg);
+    return _interface->send_openlcb_msg(&msg);
 
 }
 
