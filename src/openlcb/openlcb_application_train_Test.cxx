@@ -592,7 +592,13 @@ TEST(ApplicationTrain, send_controller_changing_notify)
     EXPECT_EQ(last_sent_payload[0], TRAIN_CONTROLLER_CONFIG);
     EXPECT_EQ(last_sent_payload[1], TRAIN_CONTROLLER_CHANGED);
     EXPECT_EQ(last_sent_payload[2], 0x00);    // reserved flags byte
-    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(&last_sent_msg, 3), TEST_CONTROLLER_NODE_ID);
+    // Bytes 3-8 = new controller Node ID, big-endian.
+    EXPECT_EQ(last_sent_payload[3], 0x0A);
+    EXPECT_EQ(last_sent_payload[4], 0x0B);
+    EXPECT_EQ(last_sent_payload[5], 0x0C);
+    EXPECT_EQ(last_sent_payload[6], 0x0D);
+    EXPECT_EQ(last_sent_payload[7], 0x0E);
+    EXPECT_EQ(last_sent_payload[8], 0x0F);
 
 }
 
@@ -614,7 +620,13 @@ TEST(ApplicationTrain, send_listener_attach)
     EXPECT_EQ(last_sent_payload[0], TRAIN_LISTENER_CONFIG);
     EXPECT_EQ(last_sent_payload[1], TRAIN_LISTENER_ATTACH);
     EXPECT_EQ(last_sent_payload[2], flags);
-    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(&last_sent_msg, 3), TEST_LISTENER_NODE_ID);
+    // Bytes 3-8 = listener Node ID (TEST_LISTENER_NODE_ID = 0x112233445566), big-endian.
+    EXPECT_EQ(last_sent_payload[3], 0x11);
+    EXPECT_EQ(last_sent_payload[4], 0x22);
+    EXPECT_EQ(last_sent_payload[5], 0x33);
+    EXPECT_EQ(last_sent_payload[6], 0x44);
+    EXPECT_EQ(last_sent_payload[7], 0x55);
+    EXPECT_EQ(last_sent_payload[8], 0x66);
 
 }
 
@@ -635,7 +647,13 @@ TEST(ApplicationTrain, send_listener_detach)
     EXPECT_EQ(last_sent_payload[0], TRAIN_LISTENER_CONFIG);
     EXPECT_EQ(last_sent_payload[1], TRAIN_LISTENER_DETACH);
     EXPECT_EQ(last_sent_payload[2], 0x00);    // reserved flags byte
-    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(&last_sent_msg, 3), TEST_LISTENER_NODE_ID);
+    // Bytes 3-8 = listener Node ID (TEST_LISTENER_NODE_ID = 0x112233445566), big-endian.
+    EXPECT_EQ(last_sent_payload[3], 0x11);
+    EXPECT_EQ(last_sent_payload[4], 0x22);
+    EXPECT_EQ(last_sent_payload[5], 0x33);
+    EXPECT_EQ(last_sent_payload[6], 0x44);
+    EXPECT_EQ(last_sent_payload[7], 0x55);
+    EXPECT_EQ(last_sent_payload[8], 0x66);
 
 }
 
