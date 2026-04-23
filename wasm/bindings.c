@@ -50,6 +50,9 @@
 #include "openlcb/openlcb_gridconnect.h"
 #include "openlcb/openlcb_utilities.h"
 #include "openlcb/openlcb_float16.h"
+#ifdef OPENLCB_COMPILE_BROADCAST_TIME
+#include "openlcb/protocol_broadcast_time_handler.h"
+#endif
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
 #include "openlcb/protocol_train_search_handler.h"
 #endif
@@ -1266,6 +1269,147 @@ _BT_SEND_NODE_CLOCK_U16 (wasm_bt_send_set_year,     OpenLcbApplicationBroadcastT
 _BT_SEND_NODE_CLOCK_U16 (wasm_bt_send_set_rate,     OpenLcbApplicationBroadcastTime_send_set_rate, int16_t)
 _BT_SEND_NODE_CLOCK     (wasm_bt_send_command_start, OpenLcbApplicationBroadcastTime_send_command_start)
 _BT_SEND_NODE_CLOCK     (wasm_bt_send_command_stop,  OpenLcbApplicationBroadcastTime_send_command_stop)
+
+// ---------------------------------------------------------------------------
+// Broadcast Time — clock lifecycle, triggers, and event-ID codec helpers.
+// ---------------------------------------------------------------------------
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_bt_setup_consumer(uint64_t node_id, uint64_t clock_id)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    return OpenLcbApplicationBroadcastTime_setup_consumer(n, clock_id) != NULL
+        ? WASM_OK
+        : WASM_ERR_CEILING_EXCEEDED;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_bt_setup_producer(uint64_t node_id, uint64_t clock_id)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    return OpenLcbApplicationBroadcastTime_setup_producer(n, clock_id) != NULL
+        ? WASM_OK
+        : WASM_ERR_CEILING_EXCEEDED;
+}
+
+EMSCRIPTEN_KEEPALIVE
+void wasm_bt_trigger_query_reply(uint64_t clock_id)
+{
+
+    OpenLcbApplicationBroadcastTime_trigger_query_reply(clock_id);
+}
+
+EMSCRIPTEN_KEEPALIVE
+void wasm_bt_trigger_sync_delay(uint64_t clock_id)
+{
+
+    OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint64_t wasm_bt_make_clock_id(uint64_t unique_id_48bit)
+{
+
+    return OpenLcbApplicationBroadcastTime_make_clock_id(unique_id_48bit);
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_bt_is_time_event(uint64_t event_id)
+{
+
+    return ProtocolBroadcastTimeHandler_is_time_event(event_id) ? 1 : 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint64_t wasm_bt_extract_clock_id(uint64_t event_id)
+{
+
+    return ProtocolBroadcastTimeHandler_extract_clock_id(event_id);
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint32_t wasm_bt_get_event_type(uint64_t event_id)
+{
+
+    return (uint32_t) ProtocolBroadcastTimeHandler_get_event_type(event_id);
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_bt_extract_time(uint64_t event_id)
+{
+
+    uint8_t hour = 0, minute = 0;
+    if (!ProtocolBroadcastTimeHandler_extract_time(event_id, &hour, &minute)) { return -1; }
+    return ((int32_t) hour << 8) | (int32_t) minute;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_bt_extract_date(uint64_t event_id)
+{
+
+    uint8_t month = 0, day = 0;
+    if (!ProtocolBroadcastTimeHandler_extract_date(event_id, &month, &day)) { return -1; }
+    return ((int32_t) month << 8) | (int32_t) day;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_bt_extract_year(uint64_t event_id)
+{
+
+    uint16_t year = 0;
+    if (!ProtocolBroadcastTimeHandler_extract_year(event_id, &year)) { return -1; }
+    return (int32_t) year;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_bt_extract_rate(uint64_t event_id, int16_t *rate_out)
+{
+
+    if (rate_out == NULL) { return 0; }
+    int16_t rate = 0;
+    if (!ProtocolBroadcastTimeHandler_extract_rate(event_id, &rate)) { return 0; }
+    *rate_out = rate;
+    return 1;
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint64_t wasm_bt_create_time_event_id(uint64_t clock_id, uint32_t hour, uint32_t minute, int32_t is_set)
+{
+
+    return ProtocolBroadcastTimeHandler_create_time_event_id(clock_id, (uint8_t) hour, (uint8_t) minute, is_set != 0);
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint64_t wasm_bt_create_date_event_id(uint64_t clock_id, uint32_t month, uint32_t day, int32_t is_set)
+{
+
+    return ProtocolBroadcastTimeHandler_create_date_event_id(clock_id, (uint8_t) month, (uint8_t) day, is_set != 0);
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint64_t wasm_bt_create_year_event_id(uint64_t clock_id, uint32_t year, int32_t is_set)
+{
+
+    return ProtocolBroadcastTimeHandler_create_year_event_id(clock_id, (uint16_t) year, is_set != 0);
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint64_t wasm_bt_create_rate_event_id(uint64_t clock_id, int32_t rate, int32_t is_set)
+{
+
+    return ProtocolBroadcastTimeHandler_create_rate_event_id(clock_id, (int16_t) rate, is_set != 0);
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint64_t wasm_bt_create_command_event_id(uint64_t clock_id, uint32_t command_enum)
+{
+
+    return ProtocolBroadcastTimeHandler_create_command_event_id(clock_id, (broadcast_time_event_type_enum) command_enum);
+}
 
 #endif /* OPENLCB_COMPILE_BROADCAST_TIME */
 

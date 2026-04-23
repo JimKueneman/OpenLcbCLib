@@ -205,6 +205,33 @@ All exports below take a 64-bit `clock_id` (the well-known clock event prefix).
 | `wasm_bt_send_set_year` / `_set_rate` | `(node_id, clock_id, v) -> int32` | |
 | `wasm_bt_send_command_start` / `_command_stop` | `(node_id, clock_id) -> int32` | |
 
+Lifecycle, triggers, and helpers:
+
+| Export | Signature | Notes |
+|--------|-----------|-------|
+| `wasm_bt_setup_consumer` | `(node_id: bigint, clock_id: bigint) -> int32` | Allocates a clock slot marked as consumer and registers the event ranges on the node. `WASM_OK` / `-3` unknown node / `-2` slot pool full. Required before any consumer send/receive. |
+| `wasm_bt_setup_producer` | `(node_id: bigint, clock_id: bigint) -> int32` | Same, producer side. |
+| `wasm_bt_trigger_query_reply` | `(clock_id: bigint) -> void` | Producer: starts the 6-message sync reply sequence driven by `wasm_100ms_tick`. |
+| `wasm_bt_trigger_sync_delay` | `(clock_id: bigint) -> void` | Producer: starts / resets the 3-second sync-delay timer that coalesces Set commands into one reply. |
+| `wasm_bt_make_clock_id` | `(unique_id_48bit: bigint) -> bigint` | Builds a well-formed 64-bit clock ID from a 48-bit unique identifier. |
+
+Event-ID codec (pure; for constructing sends or decoding events seen on the bus):
+
+| Export | Signature | Notes |
+|--------|-----------|-------|
+| `wasm_bt_is_time_event` | `(event_id: bigint) -> int32` | 1 if the event ID is in the broadcast-time space. |
+| `wasm_bt_extract_clock_id` | `(event_id: bigint) -> bigint` | Upper 48 bits as a clock ID. |
+| `wasm_bt_get_event_type` | `(event_id: bigint) -> u32` | `broadcast_time_event_type_enum`. |
+| `wasm_bt_extract_time` | `(event_id: bigint) -> int32` | Packed `(hour << 8) \| minute` on success, `-1` on invalid event. |
+| `wasm_bt_extract_date` | `(event_id: bigint) -> int32` | Packed `(month << 8) \| day` on success, `-1` on invalid. |
+| `wasm_bt_extract_year` | `(event_id: bigint) -> int32` | Year 0-4095 on success, `-1` on invalid. |
+| `wasm_bt_extract_rate` | `(event_id: bigint, rate_out_ptr: u32) -> int32` | 1 if valid (rate written to `HEAP16[rate_out_ptr>>1]` as int16), 0 otherwise. Heap-pointer out-param because rate is signed. |
+| `wasm_bt_create_time_event_id` | `(clock_id: bigint, hour: u32, minute: u32, is_set: int32) -> bigint` | `is_set` 1 for Set command, 0 for Report. |
+| `wasm_bt_create_date_event_id` | `(clock_id, month, day, is_set) -> bigint` | |
+| `wasm_bt_create_year_event_id` | `(clock_id, year, is_set) -> bigint` | |
+| `wasm_bt_create_rate_event_id` | `(clock_id, rate: int32, is_set) -> bigint` | `rate` is 12-bit signed fixed-point (4 = 1.0×). |
+| `wasm_bt_create_command_event_id` | `(clock_id: bigint, command_enum: u32) -> bigint` | Query / Start / Stop / Date Rollover. |
+
 ### DCC detector helpers
 
 Pure functions for encoding / decoding DCC detector event IDs (no node
