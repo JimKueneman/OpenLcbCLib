@@ -38,8 +38,8 @@ Do not break a line prematurely if the content fits within 240 characters. Use t
 
 Any function that has a large number or long identifier names shall be split up using these rules:
 
-1) If the line for a statement is less or equal to 180 the statement shall be left on one line
-2) If the line is longer than 180 characters (converting tabs equivalent number of space in the count) do the following
+1) If the line for a statement is less or equal to 240 the statement shall be left on one line
+2) If the line is longer than 240 characters (converting tabs equivalent number of space in the count) do the following
   -Break the parameter list up with a parameter on each line (a parameter may be the return from another function recursively in which the same rule applies).  The indentation shall be as follows:
 
 ~~~
