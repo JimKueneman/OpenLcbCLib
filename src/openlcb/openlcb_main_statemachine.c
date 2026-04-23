@@ -136,8 +136,7 @@ static bool _path_b_pending;
     * @param interface_openlcb_main_statemachine Pointer to populated interface structure
     * @endverbatim
     */
-void OpenLcbMainStatemachine_initialize(
-            const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine) {
+void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine) {
 
     _interface = interface_openlcb_main_statemachine;
 
@@ -525,15 +524,9 @@ void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_OPTIONAL_INTERACTION_REJECTED);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL,
-            0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL, 0);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->incoming_msg_info.msg_ptr->mti,
-            2);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->incoming_msg_info.msg_ptr->mti, 2);
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -1132,9 +1125,7 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
         default:
 
-            if (OpenLcbUtilities_is_addressed_message_for_node(
-                        statemachine_info->openlcb_node, 
-                        statemachine_info->incoming_msg_info.msg_ptr)) {
+            if (OpenLcbUtilities_is_addressed_message_for_node(statemachine_info->openlcb_node, statemachine_info->incoming_msg_info.msg_ptr)) {
 
                 _interface->load_interaction_rejected(statemachine_info);
 

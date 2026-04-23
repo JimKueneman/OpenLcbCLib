@@ -347,8 +347,7 @@ static void _build_stream_handler(void) {
 // ---- Per-space stream read-request callbacks ----
 
     /** @brief Stream read from CDI (0xFF): copy from node->parameters->cdi[]. */
-static uint16_t _stream_read_request_config_definition_info(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+static uint16_t _stream_read_request_config_definition_info(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     if (!node->parameters->cdi) {
 
@@ -363,8 +362,7 @@ static uint16_t _stream_read_request_config_definition_info(
 }
 
     /** @brief Stream read from All (0xFE): same layout as CDI. */
-static uint16_t _stream_read_request_all(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+static uint16_t _stream_read_request_all(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     if (!node->parameters->cdi) {
 
@@ -379,8 +377,7 @@ static uint16_t _stream_read_request_all(
 }
 
     /** @brief Stream read from Config Memory (0xFD): delegate to user callback. */
-static uint16_t _stream_read_request_configuration_memory(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+static uint16_t _stream_read_request_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     if (!_config->config_mem_read) {
 
@@ -461,8 +458,7 @@ static uint16_t _read_field_array(const _config_field_t *fields,
 
 }
 
-static uint16_t _stream_read_request_acdi_manufacturer(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+static uint16_t _stream_read_request_acdi_manufacturer(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     const _config_field_t fields[] = {
 
@@ -496,8 +492,7 @@ static uint16_t _stream_read_request_acdi_manufacturer(
      * User name and description are stored in configuration memory (0xFD space)
      * starting at CONFIG_MEM_CONFIG_USER_NAME_OFFSET.
      */
-static uint16_t _stream_read_request_acdi_user(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+static uint16_t _stream_read_request_acdi_user(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     uint16_t filled = 0;
 
@@ -533,8 +528,7 @@ static uint16_t _stream_read_request_acdi_user(
 
             }
 
-            uint16_t actual = _config->config_mem_read(
-                    node, config_addr, to_read, (configuration_memory_buffer_t *) &buffer[filled]);
+            uint16_t actual = _config->config_mem_read(node, config_addr, to_read, (configuration_memory_buffer_t *) &buffer[filled]);
 
             filled += actual;
 
@@ -567,8 +561,7 @@ static uint16_t _stream_read_request_acdi_user(
 
             }
 
-            uint16_t actual = _config->config_mem_read(
-                    node, config_addr, to_read, (configuration_memory_buffer_t *) &buffer[filled]);
+            uint16_t actual = _config->config_mem_read(node, config_addr, to_read, (configuration_memory_buffer_t *) &buffer[filled]);
 
             filled += actual;
 
@@ -593,8 +586,7 @@ static uint16_t _stream_read_request_acdi_user(
 #ifdef OPENLCB_COMPILE_TRAIN
 
     /** @brief Stream read from Train FDI (0xFA): copy from node->parameters->fdi[]. */
-static uint16_t _stream_read_request_train_function_definition_info(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+static uint16_t _stream_read_request_train_function_definition_info(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     if (!node->parameters->fdi) {
 
@@ -614,8 +606,7 @@ static uint16_t _stream_read_request_train_function_definition_info(
      * @details Each 16-bit function value occupies 2 bytes big-endian:
      * address/2 = fn_index, address%2 selects high/low byte.
      */
-static uint16_t _stream_read_request_train_function_config_memory(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+static uint16_t _stream_read_request_train_function_config_memory(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
 
@@ -652,16 +643,14 @@ static uint16_t _stream_read_request_train_function_config_memory(
 #endif /* OPENLCB_COMPILE_TRAIN */
 
     /** @brief Stream write to Config Memory (0xFD): delegates to user config_mem_write. */
-static uint16_t _stream_write_request_configuration_memory(
-        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+static uint16_t _stream_write_request_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
 
     return _config->config_mem_write(node, address, count, (configuration_memory_buffer_t *) buffer);
 
 }
 
     /** @brief Stream write to ACDI User (0xFB): delegates to user config_mem_write with low_address offset. */
-static uint16_t _stream_write_request_acdi_user(
-        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+static uint16_t _stream_write_request_acdi_user(openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
 
     uint32_t config_address = address + node->parameters->address_space_acdi_user.low_address;
 
@@ -677,8 +666,7 @@ static uint16_t _stream_write_request_acdi_user(
      * @details Each 16-bit function value occupies 2 bytes big-endian:
      * address/2 = fn_index, address%2 selects high/low byte.
      */
-static uint16_t _stream_write_request_train_function_config_memory(
-        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+static uint16_t _stream_write_request_train_function_config_memory(openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
 
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
 
@@ -1405,22 +1393,19 @@ void OpenLcbConfig_100ms_timer_tick(void) {
 #ifdef GTEST
 #if defined(OPENLCB_COMPILE_STREAM) && defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION) && !defined(OPENLCB_COMPILE_BOOTLOADER)
 
-uint16_t OpenLcbConfigTest_stream_read_request_config_definition_info(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+uint16_t OpenLcbConfigTest_stream_read_request_config_definition_info(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     return _stream_read_request_config_definition_info(node, address, count, buffer);
 
 }
 
-uint16_t OpenLcbConfigTest_stream_read_request_all(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+uint16_t OpenLcbConfigTest_stream_read_request_all(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     return _stream_read_request_all(node, address, count, buffer);
 
 }
 
-uint16_t OpenLcbConfigTest_stream_read_request_configuration_memory(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+uint16_t OpenLcbConfigTest_stream_read_request_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     return _stream_read_request_configuration_memory(node, address, count, buffer);
 
@@ -1433,15 +1418,13 @@ uint16_t OpenLcbConfigTest_read_field_array(const _config_field_t *fields,
 
 }
 
-uint16_t OpenLcbConfigTest_stream_read_request_acdi_manufacturer(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+uint16_t OpenLcbConfigTest_stream_read_request_acdi_manufacturer(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     return _stream_read_request_acdi_manufacturer(node, address, count, buffer);
 
 }
 
-uint16_t OpenLcbConfigTest_stream_read_request_acdi_user(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+uint16_t OpenLcbConfigTest_stream_read_request_acdi_user(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     return _stream_read_request_acdi_user(node, address, count, buffer);
 
@@ -1449,15 +1432,13 @@ uint16_t OpenLcbConfigTest_stream_read_request_acdi_user(
 
 #ifdef OPENLCB_COMPILE_TRAIN
 
-uint16_t OpenLcbConfigTest_stream_read_request_train_function_definition_info(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+uint16_t OpenLcbConfigTest_stream_read_request_train_function_definition_info(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     return _stream_read_request_train_function_definition_info(node, address, count, buffer);
 
 }
 
-uint16_t OpenLcbConfigTest_stream_read_request_train_function_config_memory(
-        openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
+uint16_t OpenLcbConfigTest_stream_read_request_train_function_config_memory(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer) {
 
     return _stream_read_request_train_function_config_memory(node, address, count, buffer);
 
@@ -1465,15 +1446,13 @@ uint16_t OpenLcbConfigTest_stream_read_request_train_function_config_memory(
 
 #endif /* OPENLCB_COMPILE_TRAIN */
 
-uint16_t OpenLcbConfigTest_stream_write_request_configuration_memory(
-        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+uint16_t OpenLcbConfigTest_stream_write_request_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
 
     return _stream_write_request_configuration_memory(node, address, count, buffer);
 
 }
 
-uint16_t OpenLcbConfigTest_stream_write_request_acdi_user(
-        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+uint16_t OpenLcbConfigTest_stream_write_request_acdi_user(openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
 
     return _stream_write_request_acdi_user(node, address, count, buffer);
 
@@ -1481,8 +1460,7 @@ uint16_t OpenLcbConfigTest_stream_write_request_acdi_user(
 
 #ifdef OPENLCB_COMPILE_TRAIN
 
-uint16_t OpenLcbConfigTest_stream_write_request_train_function_config_memory(
-        openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
+uint16_t OpenLcbConfigTest_stream_write_request_train_function_config_memory(openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer) {
 
     return _stream_write_request_train_function_config_memory(node, address, count, buffer);
 

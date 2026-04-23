@@ -86,8 +86,7 @@ extern "C" {
          *
          * @warning Must be called before OpenLcbApplicationTrain_setup().
          */
-    extern void OpenLcbApplicationTrain_initialize(
-            const interface_openlcb_application_train_t *interface);
+    extern void OpenLcbApplicationTrain_initialize(const interface_openlcb_application_train_t *interface);
 
         /**
          * @brief Allocates a train state slot and assigns it to the node.

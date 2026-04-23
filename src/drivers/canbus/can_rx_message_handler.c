@@ -106,23 +106,11 @@ static void _load_reject_message(uint16_t source_alias, uint16_t dest_alias, uin
 
         // TODO: Probably Stream is a special case too
 
-        OpenLcbUtilities_load_openlcb_message(
-                target_openlcb_msg,
-                source_alias,
-                0,
-                dest_alias,
-                0,
-                mti);
+        OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti);
 
-        OpenLcbUtilities_copy_word_to_openlcb_payload(
-                target_openlcb_msg,
-                dest_alias,
-                0);
+        OpenLcbUtilities_copy_word_to_openlcb_payload(target_openlcb_msg, dest_alias, 0);
 
-        OpenLcbUtilities_copy_word_to_openlcb_payload(
-                target_openlcb_msg,
-                error_code,
-                2);
+        OpenLcbUtilities_copy_word_to_openlcb_payload(target_openlcb_msg, error_code, 2);
 
         OpenLcbBufferFifo_push(target_openlcb_msg);
 
@@ -210,13 +198,7 @@ void CanRxMessageHandler_first_frame(can_msg_t *can_msg, uint8_t offset, payload
 
     }
 
-    OpenLcbUtilities_load_openlcb_message(
-            target_openlcb_msg,
-            source_alias,
-            0,
-            dest_alias,
-            0,
-            mti);
+    OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti);
 
     target_openlcb_msg->timer.assembly_ticks = _interface->get_current_tick();
     target_openlcb_msg->state.inprocess = true;
@@ -299,18 +281,9 @@ void CanRxMessageHandler_single_frame(can_msg_t *can_msg, uint8_t offset, payloa
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
-    OpenLcbUtilities_load_openlcb_message(
-            target_openlcb_msg,
-            source_alias,
-            0,
-            dest_alias,
-            0,
-            mti);
+    OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti);
 
-    CanUtilities_append_can_payload_to_openlcb_payload(
-            target_openlcb_msg,
-            can_msg,
-            offset);
+    CanUtilities_append_can_payload_to_openlcb_payload(target_openlcb_msg, can_msg, offset);
 
     OpenLcbBufferFifo_push(target_openlcb_msg); // Can not fail List is as large as the number of buffers
 
@@ -391,19 +364,10 @@ void CanRxMessageHandler_stream_frame(can_msg_t *can_msg, uint8_t offset, payloa
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
-    OpenLcbUtilities_load_openlcb_message(
-            target_openlcb_msg,
-            source_alias,
-            0,
-            dest_alias,
-            0,
-            mti);
+    OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti);
 
     // Copy the entire CAN payload (DID + data bytes) starting at offset 0
-    CanUtilities_append_can_payload_to_openlcb_payload(
-            target_openlcb_msg,
-            can_msg,
-            0);
+    CanUtilities_append_can_payload_to_openlcb_payload(target_openlcb_msg, can_msg, 0);
 
     OpenLcbBufferFifo_push(target_openlcb_msg);
 
@@ -633,9 +597,7 @@ void CanRxMessageHandler_ame_frame(can_msg_t *can_msg) {
             // Their aliases are already known — no need to wait for AMD off the wire.
             if (_interface->listener_set_alias) {
 
-                _interface->listener_set_alias(
-                        alias_mapping_info->list[i].node_id,
-                        alias_mapping_info->list[i].alias);
+                _interface->listener_set_alias(alias_mapping_info->list[i].node_id, alias_mapping_info->list[i].alias);
 
             }
 

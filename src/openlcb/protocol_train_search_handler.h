@@ -104,9 +104,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
          */
-    extern void ProtocolTrainSearchHandler_handle_search_no_match(
-            openlcb_statemachine_info_t *statemachine_info,
-            event_id_t event_id);
+    extern void ProtocolTrainSearchHandler_handle_search_no_match(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
         /**
          * @brief Forwards a train-search reply to the on_search_reply callback.
@@ -120,9 +118,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param event_id           Full 64-bit @ref event_id_t from the reply.
          */
-    extern void ProtocolTrainSearchHandler_handle_search_reply(
-            openlcb_statemachine_info_t *statemachine_info,
-            event_id_t event_id);
+    extern void ProtocolTrainSearchHandler_handle_search_reply(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
     // =========================================================================
     // Train Search Event ID Utilities

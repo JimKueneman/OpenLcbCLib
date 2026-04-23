@@ -200,13 +200,7 @@ static bool _send_heartbeat_request(train_state_t *state) {
     msg.payload = (openlcb_payload_t *) &payload;
     msg.payload_type = BASIC;
 
-    OpenLcbUtilities_load_openlcb_message(
-            &msg,
-            node->alias,
-            node->id,
-            state->controller_alias,
-            state->controller_node_id,
-            MTI_TRAIN_REPLY);
+    OpenLcbUtilities_load_openlcb_message(&msg, node->alias, node->id, state->controller_alias, state->controller_node_id, MTI_TRAIN_REPLY);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MGMT_NOOP, 1);
@@ -259,13 +253,7 @@ static bool _forward_estop_to_one_listener(train_state_t *state) {
     msg.payload = (openlcb_payload_t *) &payload;
     msg.payload_type = BASIC;
 
-    OpenLcbUtilities_load_openlcb_message(
-            &msg,
-            node->alias,
-            node->id,
-            0,
-            entry->node_id,
-            MTI_TRAIN_PROTOCOL);
+    OpenLcbUtilities_load_openlcb_message(&msg, node->alias, node->id, 0, entry->node_id, MTI_TRAIN_PROTOCOL);
 
     // Speed is already zeroed with direction preserved in state->set_speed
     uint16_t speed = state->set_speed;
@@ -440,13 +428,7 @@ static bool _prepare_train_command(openlcb_msg_t *msg, payload_basic_t *payload,
     msg->payload = (openlcb_payload_t *) payload;
     msg->payload_type = BASIC;
 
-    OpenLcbUtilities_load_openlcb_message(
-            msg,
-            openlcb_node->alias,
-            openlcb_node->id,
-            train_alias,
-            train_node_id,
-            MTI_TRAIN_PROTOCOL);
+    OpenLcbUtilities_load_openlcb_message(msg, openlcb_node->alias, openlcb_node->id, train_alias, train_node_id, MTI_TRAIN_PROTOCOL);
 
     return true;
 
@@ -504,10 +486,7 @@ void OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, uint16
      * @param fn_value        16-bit function value.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_set_function(
-        openlcb_node_t *openlcb_node, uint16_t train_alias,
-        node_id_t train_node_id,
-        uint32_t fn_address, uint16_t fn_value) {
+void OpenLcbApplicationTrain_send_set_function(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id, uint32_t fn_address, uint16_t fn_value) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
@@ -542,8 +521,7 @@ void OpenLcbApplicationTrain_send_set_function(
      * @param train_node_id   48-bit node_id_t of the target train node.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_emergency_stop(
-        openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+void OpenLcbApplicationTrain_send_emergency_stop(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;
@@ -574,8 +552,7 @@ void OpenLcbApplicationTrain_send_emergency_stop(
      * @param train_node_id   48-bit node_id_t of the target train node.
      * @endverbatim
      */
-void OpenLcbApplicationTrain_send_query_speeds(
-        openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
+void OpenLcbApplicationTrain_send_query_speeds(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id) {
 
     openlcb_msg_t msg = {0};
     payload_basic_t payload;

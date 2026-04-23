@@ -319,11 +319,7 @@ static bool _does_name_match(const char *name, const uint8_t *digits, uint8_t fl
 }
 
     /** @brief Return true if the train node matches the search query and flags per TrainSearchS §6.3. */
-static bool _does_train_match(
-            train_state_t *train_state,
-            const uint8_t *digits,
-            uint16_t search_address,
-            uint8_t flags) {
+static bool _does_train_match(train_state_t *train_state, const uint8_t *digits, uint16_t search_address, uint8_t flags) {
 
     // Check DCC protocol match
     if (flags & TRAIN_SEARCH_PROTOCOL_FAMILY_DCC) {
@@ -392,9 +388,7 @@ static bool _does_train_match(
      * @param event_id           Full 64-bit event_id_t containing encoded search query.
      * @endverbatim
      */
-void ProtocolTrainSearchHandler_handle_search_event(
-        openlcb_statemachine_info_t *statemachine_info,
-        event_id_t event_id) {
+void ProtocolTrainSearchHandler_handle_search_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
 
     if (!statemachine_info || !statemachine_info->openlcb_node) {
 
@@ -431,13 +425,7 @@ void ProtocolTrainSearchHandler_handle_search_event(
     }
 
     // Build reply: Producer Identified Set echoing the queried search event ID
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            0,
-            0,
-            MTI_PRODUCER_IDENTIFIED_SET);
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, 0, 0, MTI_PRODUCER_IDENTIFIED_SET);
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, event_id);
 
@@ -466,9 +454,7 @@ void ProtocolTrainSearchHandler_handle_search_event(
      * @param event_id           Full 64-bit event_id_t containing encoded search query.
      * @endverbatim
      */
-void ProtocolTrainSearchHandler_handle_search_no_match(
-        openlcb_statemachine_info_t *statemachine_info,
-        event_id_t event_id) {
+void ProtocolTrainSearchHandler_handle_search_no_match(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
 
     if (!statemachine_info) {
 
@@ -506,16 +492,9 @@ void ProtocolTrainSearchHandler_handle_search_no_match(
     if (new_node && new_node->train_state) {
 
         // Build Producer Identified reply echoing the queried search event ID
-        OpenLcbUtilities_load_openlcb_message(
-                statemachine_info->outgoing_msg_info.msg_ptr,
-                new_node->alias,
-                new_node->id,
-                0,
-                0,
-                MTI_PRODUCER_IDENTIFIED_SET);
+        OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, new_node->alias, new_node->id, 0, 0, MTI_PRODUCER_IDENTIFIED_SET);
 
-        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-                statemachine_info->outgoing_msg_info.msg_ptr, event_id);
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, event_id);
 
         statemachine_info->outgoing_msg_info.valid = true;
 
@@ -536,9 +515,7 @@ void ProtocolTrainSearchHandler_handle_search_no_match(
      * @param event_id           Full 64-bit event_id_t from the reply.
      * @endverbatim
      */
-void ProtocolTrainSearchHandler_handle_search_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        event_id_t event_id) {
+void ProtocolTrainSearchHandler_handle_search_reply(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
 
     if (!statemachine_info || !statemachine_info->incoming_msg_info.msg_ptr) {
 

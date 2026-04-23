@@ -391,8 +391,7 @@ extern "C" {
          *
          * @param interface_openlcb_main_statemachine  Pointer to @ref interface_openlcb_main_statemachine_t.  Must remain valid for application lifetime.
          */
-    extern void OpenLcbMainStatemachine_initialize(
-            const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine);
+    extern void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine);
 
         /**
          * @brief Runs one non-blocking step of protocol processing.
@@ -407,8 +406,7 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void OpenLcbMainStatemachine_load_interaction_rejected(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info_t *statemachine_info);
 
     // ---- Internal functions exposed for unit testing ----
 
@@ -432,16 +430,14 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void OpenLcbMainStatemachine_process_main_statemachine(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Address filter.  Returns true if the node should process this message.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern bool OpenLcbMainStatemachine_does_node_process_msg(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *statemachine_info);
 
         /** @brief Returns pointer to internal static state machine info.  For unit testing only — do not modify. */
     extern openlcb_statemachine_info_t *OpenLcbMainStatemachine_get_statemachine_info(void);
