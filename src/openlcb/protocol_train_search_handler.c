@@ -467,7 +467,7 @@ void ProtocolTrainSearchHandler_handle_search_event(openlcb_statemachine_info_t 
      *
      * @details Called by the main statemachine when the last node in the
      * enumeration has been reached and no train node matched the search query.
-     * If the ALLOCATE flag is set in the search event and the on_search_no_match
+     * If the ALLOCATE flag is set in the search event and the on_search_no_match_with_allocate
      * callback is registered, invokes it so the application can create a new
      * virtual train node.
      *
@@ -578,7 +578,7 @@ void ProtocolTrainSearchHandler_handle_search_reply(openlcb_statemachine_info_t 
      * @brief 100ms tick driver for the pending-allocate timeout queue.
      *
      * @details For each live slot: decrement ticks_remaining; when it reaches
-     * zero, fire on_search_no_match (only if no reply was seen) and free the
+     * zero, fire on_search_no_match_with_allocate (only if no reply was seen) and free the
      * slot.  The callback return value is ignored; the application is
      * responsible for emitting the Producer Identified reply via
      * OpenLcbApplicationTrain_send_search_match.
@@ -597,9 +597,9 @@ void ProtocolTrainSearchHandler_100ms_timer_tick(void) {
 
         if (_pending[i].ticks_remaining == 0) {
 
-            if (!_pending[i].reply_seen && _interface && _interface->on_search_no_match) {
+            if (!_pending[i].reply_seen && _interface && _interface->on_search_no_match_with_allocate) {
 
-                _interface->on_search_no_match(_pending[i].search_event_id);
+                _interface->on_search_no_match_with_allocate(_pending[i].search_event_id);
 
             }
 

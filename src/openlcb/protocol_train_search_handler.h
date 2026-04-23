@@ -72,7 +72,7 @@
              * network.  The application must allocate a new virtual train node
              * and call @ref OpenLcbApplicationTrain_send_search_match to emit the
              * Producer Identified reply. */
-        openlcb_node_t* (*on_search_no_match)(event_id_t search_event_id);
+        openlcb_node_t* (*on_search_no_match_with_allocate)(event_id_t search_event_id);
 
             /** @brief Called when a remote node replies to a search sent from this device.  Optional.  source identifies the remote replier. */
         void (*on_search_reply)(source_info_t *source, event_id_t event_id);
@@ -105,7 +105,7 @@ extern "C" {
         /**
          * @brief Handles the no-match case after full train search enumeration.
          *
-         * @details If the ALLOCATE flag is set and on_search_no_match is registered,
+         * @details If the ALLOCATE flag is set and on_search_no_match_with_allocate is registered,
          * invokes the callback to create a new virtual train node.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
@@ -133,7 +133,7 @@ extern "C" {
          * @details Application must call this once every 100ms.  Decrements the
          * timeout on every live pending-allocate slot; when a slot reaches zero
          * without a Producer Identified reply having been seen for its event ID,
-         * fires on_search_no_match and frees the slot.
+         * fires on_search_no_match_with_allocate and frees the slot.
          */
     extern void ProtocolTrainSearchHandler_100ms_timer_tick(void);
 

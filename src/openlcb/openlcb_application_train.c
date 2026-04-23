@@ -889,7 +889,7 @@ bool OpenLcbApplicationTrain_send_release_reserve(openlcb_node_t *openlcb_node, 
      * @brief Sends a Producer Identified Set reply echoing a train-search event id.
      *
      * @details Used by the CS application after allocating a new train node in
-     * response to on_search_no_match.  The new train node announces itself by
+     * response to on_search_no_match_with_allocate.  The new train node announces itself by
      * echoing the query event id back to the network.
      */
 bool OpenLcbApplicationTrain_send_search_match(openlcb_node_t *openlcb_node, event_id_t search_event_id) {

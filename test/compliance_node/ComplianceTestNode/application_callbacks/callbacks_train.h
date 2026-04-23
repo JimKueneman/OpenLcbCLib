@@ -61,7 +61,7 @@ extern "C"
 
     extern bool CallbacksTrain_on_controller_changed_request(openlcb_node_t *openlcb_node, node_id_t new_controller);
 
-    extern openlcb_node_t* CallbacksTrain_on_search_no_match(uint16_t search_address, uint8_t flags);
+    extern openlcb_node_t* CallbacksTrain_on_search_no_match_with_allocate(event_id_t search_event_id);
 
     extern void CallbacksTrain_set_virtual_pool(openlcb_node_t **pool, int count);
 

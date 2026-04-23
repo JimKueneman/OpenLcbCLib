@@ -534,7 +534,7 @@ typedef struct {
          * 100ms ticks with no Producer Identified reply on the network. Return a newly
          * created train node (the CS must then call OpenLcbApplicationTrain_send_search_match
          * to emit the Producer Identified reply), or NULL to decline. Optional. */
-    openlcb_node_t* (*on_train_search_no_match)(event_id_t search_event_id);
+    openlcb_node_t* (*on_train_search_no_match_with_allocate)(event_id_t search_event_id);
 
 #endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
 

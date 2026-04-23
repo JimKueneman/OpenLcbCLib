@@ -94,7 +94,7 @@ static uint8_t _no_match_flags;
 static event_id_t _no_match_event_id;
 static openlcb_node_t *_no_match_return_node;
 
-static openlcb_node_t* _test_on_search_no_match(event_id_t search_event_id) {
+static openlcb_node_t* _test_on_search_no_match_with_allocate(event_id_t search_event_id) {
 
     uint8_t digits[6];
     ProtocolTrainSearchHandler_extract_digits(search_event_id, digits);
@@ -122,6 +122,10 @@ static void _test_on_search_reply(source_info_t *source, event_id_t event_id) {
 
 }
 
+static bool _app_train_send_called;
+static openlcb_msg_t _app_train_last_sent_msg;
+static event_id_t _app_train_last_sent_event_id;
+
 static void _reset_tracking(void) {
 
     _search_matched_count = 0;
@@ -141,6 +145,9 @@ static void _reset_tracking(void) {
     _search_reply_source_alias = 0;
     _search_reply_event_id = 0;
 
+    _app_train_send_called = false;
+    _app_train_last_sent_event_id = 0;
+
 }
 
 
@@ -151,7 +158,7 @@ static void _reset_tracking(void) {
 static interface_protocol_train_search_handler_t _interface_all = {
 
     .on_search_matched = &_test_on_search_matched,
-    .on_search_no_match = NULL,
+    .on_search_no_match_with_allocate = NULL,
     .on_search_reply = NULL,
 
 };
@@ -159,7 +166,7 @@ static interface_protocol_train_search_handler_t _interface_all = {
 static interface_protocol_train_search_handler_t _interface_nulls = {
 
     .on_search_matched = NULL,
-    .on_search_no_match = NULL,
+    .on_search_no_match_with_allocate = NULL,
     .on_search_reply = NULL,
 
 };
@@ -167,7 +174,7 @@ static interface_protocol_train_search_handler_t _interface_nulls = {
 static interface_protocol_train_search_handler_t _interface_with_no_match = {
 
     .on_search_matched = &_test_on_search_matched,
-    .on_search_no_match = &_test_on_search_no_match,
+    .on_search_no_match_with_allocate = &_test_on_search_no_match_with_allocate,
     .on_search_reply = NULL,
 
 };
@@ -175,16 +182,25 @@ static interface_protocol_train_search_handler_t _interface_with_no_match = {
 static interface_protocol_train_search_handler_t _interface_with_reply = {
 
     .on_search_matched = NULL,
-    .on_search_no_match = NULL,
+    .on_search_no_match_with_allocate = NULL,
     .on_search_reply = &_test_on_search_reply,
 
 };
 
 static interface_protocol_train_handler_t _interface_train = {};
 
+static bool _mock_app_train_send_openlcb_msg(openlcb_msg_t *msg) {
+
+    _app_train_send_called = true;
+    _app_train_last_sent_msg = *msg;
+    _app_train_last_sent_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(msg);
+    return true;
+
+}
+
 static interface_openlcb_application_train_t _interface_app_train = {
 
-    .send_openlcb_msg = NULL,
+    .send_openlcb_msg = &_mock_app_train_send_openlcb_msg,
 
 };
 
@@ -2349,5 +2365,293 @@ TEST(TrainSearch, handle_search_reply_null_callback_no_crash)
     ProtocolTrainSearchHandler_handle_search_reply(&sm, reply_event);
 
     EXPECT_EQ(_search_reply_count, 0);
+
+}
+
+
+// ============================================================================
+// SECTION 14: Deferred Allocate-Timeout Behavior
+// ============================================================================
+
+// ============================================================================
+// TEST: Producer Identified reply during the 200ms window cancels the callback.
+// @coverage handle_search_reply sets reply_seen; tick skips on_search_no_match_with_allocate
+// ============================================================================
+
+TEST(TrainSearch, allocate_reply_within_window_cancels_callback)
+{
+
+    _global_initialize_with_no_match();
+    // on_search_reply callback is not wired; we only want the pending-slot side effect.
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
+            321, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
+
+    // Remote train answers inside the quiet window (populate source fields so
+    // handle_search_reply doesn't early-return on the incoming_msg_info guard)
+    incoming->source_id = 0x050101011234ULL;
+    incoming->source_alias = 0x0333;
+    ProtocolTrainSearchHandler_handle_search_reply(&sm, search_event);
+
+    for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS; i++) {
+
+        ProtocolTrainSearchHandler_100ms_timer_tick();
+
+    }
+
+    EXPECT_EQ(_no_match_count, 0);
+
+}
+
+
+// ============================================================================
+// TEST: Duplicate ALLOCATE for the same event_id keeps the original deadline.
+// @coverage handle_search_no_match dedupe branch (return without touching slot)
+// ============================================================================
+
+TEST(TrainSearch, allocate_duplicate_does_not_reset_timer)
+{
+
+    _global_initialize_with_no_match();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
+            777, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
+
+    // Burn TIMEOUT_TICKS-1 ticks then resubmit — the duplicate must not refresh the timer
+    for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS - 1; i++) {
+
+        ProtocolTrainSearchHandler_100ms_timer_tick();
+
+    }
+
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
+
+    // One more tick hits the ORIGINAL deadline
+    ProtocolTrainSearchHandler_100ms_timer_tick();
+
+    EXPECT_EQ(_no_match_count, 1);
+    EXPECT_EQ(_no_match_event_id, search_event);
+
+}
+
+
+// ============================================================================
+// TEST: Queue exhaustion drops additional distinct requests silently.
+// @coverage handle_search_no_match no-free-slot branch
+// ============================================================================
+
+TEST(TrainSearch, allocate_queue_exhaustion_drops_extras)
+{
+
+    _global_initialize_with_no_match();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Fill the queue with TRAIN_SEARCH_PENDING_ALLOCATE_COUNT distinct addresses
+    for (uint16_t i = 0; i < TRAIN_SEARCH_PENDING_ALLOCATE_COUNT; i++) {
+
+        event_id_t e = ProtocolTrainSearchHandler_create_event_id(
+                (uint16_t)(100 + i), TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+        ProtocolTrainSearchHandler_handle_search_no_match(&sm, e);
+
+    }
+
+    // One more distinct request — should be dropped
+    event_id_t overflow = ProtocolTrainSearchHandler_create_event_id(
+            9999, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_ALLOCATE);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, overflow);
+
+    // Drive the timeout
+    for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS; i++) {
+
+        ProtocolTrainSearchHandler_100ms_timer_tick();
+
+    }
+
+    // Exactly TRAIN_SEARCH_PENDING_ALLOCATE_COUNT callbacks — overflow was dropped
+    EXPECT_EQ(_no_match_count, (int) TRAIN_SEARCH_PENDING_ALLOCATE_COUNT);
+
+    // The overflow address (9999) must never appear
+    EXPECT_NE(_no_match_address, (uint16_t) 9999);
+
+}
+
+
+// ============================================================================
+// TEST: Slot becomes reusable after the callback fires and frees it.
+// @coverage tick's free-slot branch
+// ============================================================================
+
+TEST(TrainSearch, allocate_slot_reused_after_expiry)
+{
+
+    _global_initialize_with_no_match();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Fill to capacity, drain, then enqueue one more — must succeed.
+    for (uint16_t i = 0; i < TRAIN_SEARCH_PENDING_ALLOCATE_COUNT; i++) {
+
+        event_id_t e = ProtocolTrainSearchHandler_create_event_id(
+                (uint16_t)(200 + i), TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+        ProtocolTrainSearchHandler_handle_search_no_match(&sm, e);
+
+    }
+
+    for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS; i++) {
+
+        ProtocolTrainSearchHandler_100ms_timer_tick();
+
+    }
+
+    EXPECT_EQ(_no_match_count, (int) TRAIN_SEARCH_PENDING_ALLOCATE_COUNT);
+
+    // Queue is empty again — a new request must be accepted
+    event_id_t fresh = ProtocolTrainSearchHandler_create_event_id(
+            555, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, fresh);
+
+    for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS; i++) {
+
+        ProtocolTrainSearchHandler_100ms_timer_tick();
+
+    }
+
+    EXPECT_EQ(_no_match_count, (int) TRAIN_SEARCH_PENDING_ALLOCATE_COUNT + 1);
+    EXPECT_EQ(_no_match_event_id, fresh);
+
+}
+
+
+// ============================================================================
+// TEST: Tick is a safe no-op when no requests are pending.
+// @coverage tick's search_event_id == 0 continue branch
+// ============================================================================
+
+TEST(TrainSearch, tick_with_empty_queue_is_noop)
+{
+
+    _global_initialize_with_no_match();
+
+    for (uint8_t i = 0; i < 10; i++) {
+
+        ProtocolTrainSearchHandler_100ms_timer_tick();
+
+    }
+
+    EXPECT_EQ(_no_match_count, 0);
+
+}
+
+
+// ============================================================================
+// TEST: Tick fires nothing when on_search_no_match_with_allocate is not registered.
+// @coverage tick's null-callback branch (reply_seen == false, callback NULL)
+// ============================================================================
+
+TEST(TrainSearch, tick_null_callback_still_frees_slot)
+{
+
+    _global_initialize();  // wires _interface_all — on_search_no_match_with_allocate is NULL
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    event_id_t e = ProtocolTrainSearchHandler_create_event_id(
+            111, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+    ProtocolTrainSearchHandler_handle_search_no_match(&sm, e);
+
+    for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS; i++) {
+
+        ProtocolTrainSearchHandler_100ms_timer_tick();
+
+    }
+
+    EXPECT_EQ(_no_match_count, 0);
+
+    // Slot must have been freed — a second request for the same id should enqueue
+    // (it wouldn't if the slot still held the id as a duplicate).  Since the
+    // callback is still NULL, we can't directly observe enqueue from outside,
+    // so the real assertion is that no crash occurs and _no_match_count stays 0.
+
+}
+
+
+// ============================================================================
+// TEST: OpenLcbApplicationTrain_send_search_match — happy path emits the reply.
+// @coverage send_search_match success branch
+// ============================================================================
+
+TEST(TrainSearch, send_search_match_success)
+{
+
+    _global_initialize_with_no_match();
+
+    openlcb_node_t *node = _create_train_node();
+
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
+            42, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    EXPECT_TRUE(OpenLcbApplicationTrain_send_search_match(node, search_event));
+    EXPECT_TRUE(_app_train_send_called);
+    EXPECT_EQ(_app_train_last_sent_msg.mti, MTI_PRODUCER_IDENTIFIED_SET);
+    EXPECT_EQ(_app_train_last_sent_msg.source_alias, node->alias);
+    EXPECT_EQ(_app_train_last_sent_msg.source_id, (uint64_t) node->id);
+    EXPECT_EQ(_app_train_last_sent_event_id, search_event);
+
+}
+
+
+// ============================================================================
+// TEST: OpenLcbApplicationTrain_send_search_match — NULL node returns false.
+// @coverage send_search_match null-precondition branch
+// ============================================================================
+
+TEST(TrainSearch, send_search_match_null_node_returns_false)
+{
+
+    _global_initialize_with_no_match();
+
+    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
+            42, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
+
+    EXPECT_FALSE(OpenLcbApplicationTrain_send_search_match(NULL, search_event));
 
 }

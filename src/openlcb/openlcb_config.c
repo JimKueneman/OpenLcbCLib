@@ -305,7 +305,7 @@ static void _build_train_search_handler(void) {
     memset(&_train_search, 0, sizeof(_train_search));
 
     _train_search.on_search_matched  = _config->on_train_search_matched;
-    _train_search.on_search_no_match = _config->on_train_search_no_match;
+    _train_search.on_search_no_match_with_allocate = _config->on_train_search_no_match_with_allocate;
 
 }
 

@@ -336,7 +336,7 @@ extern "C" {
          * @brief Sends a Producer Identified Set reply from a newly allocated train node.
          *
          * @details Called by the Command Station application from within (or after)
-         * the @ref interface_protocol_train_search_handler_t::on_search_no_match
+         * the @ref interface_protocol_train_search_handler_t::on_search_no_match_with_allocate
          * callback.  The new train node announces itself by echoing the original
          * train-search event ID in a Producer Identified Set message.
          *

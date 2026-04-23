@@ -689,10 +689,10 @@ extern "C" {
     /** @brief Maximum DCC short (7-bit) address; addresses >= this are long */
 #define TRAIN_MAX_DCC_SHORT_ADDRESS          128
 
-    /** @brief Pending-allocate queue depth for deferred on_search_no_match dispatch. */
+    /** @brief Pending-allocate queue depth for deferred on_search_no_match_with_allocate dispatch. */
 #define TRAIN_SEARCH_PENDING_ALLOCATE_COUNT  10
 
-    /** @brief 100ms ticks to wait after an ALLOCATE search before firing on_search_no_match.
+    /** @brief 100ms ticks to wait after an ALLOCATE search before firing on_search_no_match_with_allocate.
      *
      * @details TrainSearchS §6.2 requires at least 200ms.  3 ticks guarantees
      * >=200ms of real delay regardless of tick alignment (worst-case first
