@@ -12,13 +12,40 @@ cd wasm
 ./build.sh
 ```
 
-Produces `wasm/dist/openlcb-core.{mjs,wasm}`.  Requires Emscripten on `PATH`
-(`brew install emscripten`).
+Produces three artifacts in `wasm/dist/`:
 
-Output is a native ES module with a default export (the Emscripten factory).
+- `openlcb-core.wasm` — the compiled protocol core
+- `openlcb-core.mjs` — Emscripten ES-module glue (default export is the factory)
+- `openlcb-defines.mjs` — auto-generated JS constants module (see below)
+
+Requires Emscripten on `PATH` (`brew install emscripten`) and Node 18+ (used
+by the constants codegen).
+
 Works in browsers and Node 18+ via `import` — no bundler required.
 
-Current artifact size: ~107 KB `.wasm` + ~30 KB `.mjs` glue.
+Current artifact size: ~109 KB `.wasm` + ~31 KB `.mjs` glue + ~19 KB defines.
+
+### Constants codegen
+
+`build.sh` runs `generate_defines.mjs` after `emcmake`.  That script:
+
+- Scans `src/openlcb/openlcb_defines.h`, `openlcb_float16.h`, and
+  `protocol_train_search_handler.h` for `#define NAME VALUE` macros.
+- Runs the system C preprocessor with the WASM build's `openlcb_user_config.h`
+  active, so `OPENLCB_COMPILE_*` flag gating is honored.
+- Resolves macro references and arithmetic expressions, then emits
+  `dist/openlcb-defines.mjs` as `export const NAME = value;` lines.
+
+This is the single source of truth for protocol constants across C and JS —
+the JS wrapper imports from `openlcb-defines.mjs` rather than redefining
+values.  Values that don't fit in a JS `Number` (64-bit event IDs, masks) are
+emitted as `BigInt` literals.
+
+Rebuild constants without rebuilding the `.wasm`:
+
+```
+node wasm/generate_defines.mjs
+```
 
 ## Test
 
@@ -212,6 +239,49 @@ Exports for the throttle side (controlling a train) plus per-node property gette
 | `wasm_train_set_dcc_address` / `wasm_train_get_dcc_address` / `wasm_train_is_long_address` | `(train_node_id, ...) -> int32` | Configure this node as a train. |
 | `wasm_train_set_speed_steps` / `wasm_train_get_speed_steps` | `(train_node_id, ...) -> int32` | |
 
+### Utility helpers
+
+Pure queries against node state and the event-range encoder.  All node-scoped
+queries return `-1` if `node_id` is not a known node.
+
+| Export | Signature | Notes |
+|--------|-----------|-------|
+| `wasm_util_generate_event_range_id` | `(base_event_id: bigint, count_enum: u32) -> bigint` | Builds a masked Event ID for a Range Identified message.  `count_enum` is `event_range_count_enum`. |
+| `wasm_util_is_producer_event_assigned` | `(node_id: bigint, event_id: bigint) -> int32` | Returns the producer list index on match, `-1` otherwise. |
+| `wasm_util_is_consumer_event_assigned` | `(node_id: bigint, event_id: bigint) -> int32` | Returns the consumer list index on match, `-1` otherwise. |
+| `wasm_util_is_event_in_producer_ranges` | `(node_id: bigint, event_id: bigint) -> int32` | `1` if the event falls within any of this node's producer ranges, `0` otherwise. `-1` for unknown node. |
+| `wasm_util_is_event_in_consumer_ranges` | `(node_id: bigint, event_id: bigint) -> int32` | `1` / `0` / `-1`, same shape. |
+
+### Float16 helpers
+
+Pure bit-twiddling math around IEEE 754 half-precision, used for OpenLCB
+train speed (sign bit = direction).  No protocol state, no node lookup.
+Always compiled in.
+
+| Export | Signature | Notes |
+|--------|-----------|-------|
+| `wasm_float16_from_float` | `(value: f32) -> u32` | Returns the 16-bit float16 pattern as a u32 (upper bits zero). |
+| `wasm_float16_to_float` | `(half: u32) -> f32` | |
+| `wasm_float16_negate` | `(half: u32) -> u32` | Flips the sign/direction bit. |
+| `wasm_float16_is_nan` | `(half: u32) -> int32` | 1 / 0. |
+| `wasm_float16_is_zero` | `(half: u32) -> int32` | 1 / 0 (matches either positive or negative zero). |
+| `wasm_float16_speed_with_direction` | `(speed: f32, reverse: int32) -> u32` | Encodes magnitude + direction. |
+| `wasm_float16_get_speed` | `(half: u32) -> f32` | Magnitude; ignores sign bit. |
+| `wasm_float16_get_direction` | `(half: u32) -> int32` | 1 if reverse, 0 if forward. |
+
+### Train-search helpers
+
+Pure functions for encoding / decoding train search event IDs.  Gated by
+`OPENLCB_COMPILE_TRAIN` + `OPENLCB_COMPILE_TRAIN_SEARCH`.
+
+| Export | Signature | Notes |
+|--------|-----------|-------|
+| `wasm_train_search_is_search_event` | `(event_id: bigint) -> int32` | 1 if the upper 4 bytes match the train-search space. |
+| `wasm_train_search_extract_flags` | `(event_id: bigint) -> u32` | Flags byte (bit 7 of event ID). |
+| `wasm_train_search_extract_digits` | `(event_id: bigint, digits_ptr: u32) -> void` | Writes 6 nibble bytes into `HEAPU8[digits_ptr..digits_ptr+6]`. Caller allocates. |
+| `wasm_train_search_digits_to_address` | `(digits_ptr: u32) -> u32` | Reads 6 nibble bytes from `HEAPU8[digits_ptr..digits_ptr+6]` and returns the decoded DCC address. |
+| `wasm_train_search_create_event_id` | `(address: u32, flags: u32) -> bigint` | Builds a search event ID from a DCC address + flags. |
+
 Also exported for JS interop: `_malloc`, `_free`.  Runtime methods: `ccall`,
 `cwrap`, `HEAPU8`.
 
@@ -325,6 +395,7 @@ wasm/
   CMakeLists.txt          Emscripten build config
   build.sh                one-command build
   bindings.c              C entry points + JS trampolines
+  generate_defines.mjs    C #defines → JS constants codegen
   openlcb_user_config.h   feature flags, buffer sizes
   can_user_config.h       CAN driver pool size
   dist/                   build output (gitignored)
@@ -360,8 +431,11 @@ Things the JS wrapper needs to handle; none of these are C-side gaps:
   `train_emergency_type_enum`, `event_range_count_enum`,
   `event_status_enum`, `dcc_detector_direction_enum`, and
   `dcc_detector_address_type_enum` are passed as `u32` over `cwrap` / the
-  JS hooks.  The wrapper must keep its enum ↔ integer mapping in sync with
-  `src/openlcb/openlcb_types.h`.
+  JS hooks.  Protocol constants (MTIs, event IDs, train-search flags,
+  float16 sentinels, PSI bits, etc.) are emitted into
+  `dist/openlcb-defines.mjs` by the build — the JS wrapper should import
+  from there rather than hard-coding values.  Enum values defined in
+  `openlcb_types.h` are not yet included in the codegen scan.
 - **`wasm_send_event_pc_report` does not validate** that `event_id` is in
   the node's producer list.  The C call always succeeds; downstream nodes
   may ignore an un-produced event.  Wrappers that want stricter semantics

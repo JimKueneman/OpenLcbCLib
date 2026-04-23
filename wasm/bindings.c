@@ -48,6 +48,11 @@
 #include "openlcb/openlcb_application_train.h"
 #include "openlcb/openlcb_application_dcc_detector.h"
 #include "openlcb/openlcb_gridconnect.h"
+#include "openlcb/openlcb_utilities.h"
+#include "openlcb/openlcb_float16.h"
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
+#include "openlcb/protocol_train_search_handler.h"
+#endif
 #include "drivers/canbus/can_config.h"
 #include "drivers/canbus/can_types.h"
 #include "drivers/canbus/can_rx_statemachine.h"
@@ -1438,3 +1443,165 @@ int32_t wasm_dcc_is_track_empty(uint64_t event_id)
 }
 
 #endif /* OPENLCB_COMPILE_DCC_DETECTOR */
+
+// ---------------------------------------------------------------------------
+// Utility helpers — pure node/event queries and the event-range ID builder.
+// All node-scoped queries return -1 for an unknown node_id.
+// ---------------------------------------------------------------------------
+
+EMSCRIPTEN_KEEPALIVE
+uint64_t wasm_util_generate_event_range_id(uint64_t base_event_id, uint32_t count_enum)
+{
+
+    return OpenLcbUtilities_generate_event_range_id(base_event_id, (event_range_count_enum) count_enum);
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_util_is_producer_event_assigned(uint64_t node_id, uint64_t event_id)
+{
+
+    openlcb_node_t *node = OpenLcbNode_find_by_node_id(node_id);
+    if (node == NULL) { return -1; }
+    uint16_t index = 0;
+    if (OpenLcbUtilities_is_producer_event_assigned_to_node(node, event_id, &index)) {
+        return (int32_t) index;
+    }
+    return -1;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_util_is_consumer_event_assigned(uint64_t node_id, uint64_t event_id)
+{
+
+    openlcb_node_t *node = OpenLcbNode_find_by_node_id(node_id);
+    if (node == NULL) { return -1; }
+    uint16_t index = 0;
+    if (OpenLcbUtilities_is_consumer_event_assigned_to_node(node, event_id, &index)) {
+        return (int32_t) index;
+    }
+    return -1;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_util_is_event_in_producer_ranges(uint64_t node_id, uint64_t event_id)
+{
+
+    openlcb_node_t *node = OpenLcbNode_find_by_node_id(node_id);
+    if (node == NULL) { return -1; }
+    return OpenLcbUtilities_is_event_id_in_producer_ranges(node, event_id) ? 1 : 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_util_is_event_in_consumer_ranges(uint64_t node_id, uint64_t event_id)
+{
+
+    openlcb_node_t *node = OpenLcbNode_find_by_node_id(node_id);
+    if (node == NULL) { return -1; }
+    return OpenLcbUtilities_is_event_id_in_consumer_ranges(node, event_id) ? 1 : 0;
+}
+
+// ---------------------------------------------------------------------------
+// Float16 helpers — always-on.  Pure bit-twiddling math, no protocol state.
+// JS wrapper calls these directly; no compile flag gates the family.
+// ---------------------------------------------------------------------------
+
+EMSCRIPTEN_KEEPALIVE
+uint32_t wasm_float16_from_float(float value)
+{
+
+    return (uint32_t) OpenLcbFloat16_from_float(value);
+}
+
+EMSCRIPTEN_KEEPALIVE
+float wasm_float16_to_float(uint32_t half)
+{
+
+    return OpenLcbFloat16_to_float((uint16_t) half);
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint32_t wasm_float16_negate(uint32_t half)
+{
+
+    return (uint32_t) OpenLcbFloat16_negate((uint16_t) half);
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_float16_is_nan(uint32_t half)
+{
+
+    return OpenLcbFloat16_is_nan((uint16_t) half) ? 1 : 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_float16_is_zero(uint32_t half)
+{
+
+    return OpenLcbFloat16_is_zero((uint16_t) half) ? 1 : 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint32_t wasm_float16_speed_with_direction(float speed, int32_t reverse)
+{
+
+    return (uint32_t) OpenLcbFloat16_speed_with_direction(speed, reverse != 0);
+}
+
+EMSCRIPTEN_KEEPALIVE
+float wasm_float16_get_speed(uint32_t half)
+{
+
+    return OpenLcbFloat16_get_speed((uint16_t) half);
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_float16_get_direction(uint32_t half)
+{
+
+    return OpenLcbFloat16_get_direction((uint16_t) half) ? 1 : 0;
+}
+
+// ---------------------------------------------------------------------------
+// Train-search helpers — gated by TRAIN + TRAIN_SEARCH.
+// ---------------------------------------------------------------------------
+
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_search_is_search_event(uint64_t event_id)
+{
+
+    return ProtocolTrainSearchHandler_is_search_event(event_id) ? 1 : 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint32_t wasm_train_search_extract_flags(uint64_t event_id)
+{
+
+    return (uint32_t) ProtocolTrainSearchHandler_extract_flags(event_id);
+}
+
+EMSCRIPTEN_KEEPALIVE
+void wasm_train_search_extract_digits(uint64_t event_id, uint8_t *digits_out)
+{
+
+    if (digits_out == NULL) { return; }
+    ProtocolTrainSearchHandler_extract_digits(event_id, digits_out);
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint32_t wasm_train_search_digits_to_address(const uint8_t *digits_in)
+{
+
+    if (digits_in == NULL) { return 0; }
+    return (uint32_t) ProtocolTrainSearchHandler_digits_to_address(digits_in);
+}
+
+EMSCRIPTEN_KEEPALIVE
+uint64_t wasm_train_search_create_event_id(uint32_t address, uint32_t flags)
+{
+
+    return ProtocolTrainSearchHandler_create_event_id((uint16_t) address, (uint8_t) flags);
+}
+
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */

@@ -18,6 +18,9 @@ mkdir -p dist
 rm -f dist/openlcb-core.js
 cp build/openlcb-core.mjs build/openlcb-core.wasm dist/
 
+# Generate the JS constants module from the C headers (single source of truth).
+node generate_defines.mjs
+
 echo ""
 echo "Built:"
 ls -lh dist/openlcb-core.*
