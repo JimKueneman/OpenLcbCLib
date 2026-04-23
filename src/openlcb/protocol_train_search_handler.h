@@ -37,7 +37,7 @@
  * every train node so each can check for a match.
  *
  * @author Jim Kueneman
- * @date 20 Mar 2026
+ * @date 23 Apr 2026
  *
  * @see openlcb_application_train.h - Train state with DCC address
  * @see openlcb_utilities.h - General message utility functions
@@ -66,6 +66,9 @@
 
             /** @brief Called when no train node matches (allocate case, deferred). */
         openlcb_node_t* (*on_search_no_match)(uint16_t search_address, uint8_t flags);
+
+            /** @brief Called when a remote node replies to a search sent from this device.  Optional.  source identifies the remote replier. */
+        void (*on_search_reply)(source_info_t *source, event_id_t event_id);
 
     } interface_protocol_train_search_handler_t;
 
@@ -102,6 +105,22 @@ extern "C" {
          * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
          */
     extern void ProtocolTrainSearchHandler_handle_search_no_match(
+            openlcb_statemachine_info_t *statemachine_info,
+            event_id_t event_id);
+
+        /**
+         * @brief Forwards a train-search reply to the on_search_reply callback.
+         *
+         * @details Called from the main statemachine MTI_PRODUCER_IDENTIFIED_SET
+         * case when the event ID is in the train-search range.  Builds a
+         * @ref source_info_t from the incoming message and invokes the
+         * application callback.  No decoding is performed here; the callback
+         * receives the raw event ID so it can extract digits or flags as needed.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         * @param event_id           Full 64-bit @ref event_id_t from the reply.
+         */
+    extern void ProtocolTrainSearchHandler_handle_search_reply(
             openlcb_statemachine_info_t *statemachine_info,
             event_id_t event_id);
 

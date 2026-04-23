@@ -834,6 +834,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     // Optional - Train Search & Emergency
     .train_search_event_handler = &_mock_train_search_event_handler,
     .train_search_no_match_handler = &_mock_train_search_no_match_handler,
+    .train_search_reply_handler = nullptr,
     .train_emergency_event_handler = &_mock_train_emergency_event_handler,
 
     // Event Classification Filters

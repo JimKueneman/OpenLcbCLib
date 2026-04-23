@@ -32,7 +32,7 @@
  * Module_initialize() functions in the correct order.
  *
  * @author Jim Kueneman
- * @date 04 Apr 2026
+ * @date 23 Apr 2026
  */
 
 #include "openlcb_config.h"
@@ -1171,6 +1171,7 @@ static void _build_main_statemachine(void) {
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
     _main_sm.train_search_event_handler    = &ProtocolTrainSearchHandler_handle_search_event;
     _main_sm.train_search_no_match_handler = &ProtocolTrainSearchHandler_handle_search_no_match;
+    _main_sm.train_search_reply_handler    = &ProtocolTrainSearchHandler_handle_search_reply;
     _main_sm.is_train_search_event         = &ProtocolTrainSearchHandler_is_search_event;
 #endif
 

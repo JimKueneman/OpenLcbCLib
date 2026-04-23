@@ -39,9 +39,10 @@
 * - Section 9: Handler — Prefix / Exact Match Tests
 * - Section 10: Handler — Name Match Tests
 * - Section 11: Handler — Short/Long Address Disambiguation Tests
+* - Section 12: Handler — Search Reply Tests
 *
 * @author Jim Kueneman
-* @date 17 Feb 2026
+* @date 23 Apr 2026
 */
 
 #include "test/main_Test.hxx"
@@ -98,6 +99,20 @@ static openlcb_node_t* _test_on_search_no_match(uint16_t search_address, uint8_t
 
 }
 
+static int _search_reply_count;
+static node_id_t _search_reply_source_id;
+static uint16_t _search_reply_source_alias;
+static event_id_t _search_reply_event_id;
+
+static void _test_on_search_reply(source_info_t *source, event_id_t event_id) {
+
+    _search_reply_count++;
+    _search_reply_source_id = source->source_id;
+    _search_reply_source_alias = source->source_alias;
+    _search_reply_event_id = event_id;
+
+}
+
 static void _reset_tracking(void) {
 
     _search_matched_count = 0;
@@ -110,6 +125,11 @@ static void _reset_tracking(void) {
     _no_match_flags = 0;
     _no_match_return_node = NULL;
 
+    _search_reply_count = 0;
+    _search_reply_source_id = 0;
+    _search_reply_source_alias = 0;
+    _search_reply_event_id = 0;
+
 }
 
 
@@ -121,6 +141,7 @@ static interface_protocol_train_search_handler_t _interface_all = {
 
     .on_search_matched = &_test_on_search_matched,
     .on_search_no_match = NULL,
+    .on_search_reply = NULL,
 
 };
 
@@ -128,6 +149,7 @@ static interface_protocol_train_search_handler_t _interface_nulls = {
 
     .on_search_matched = NULL,
     .on_search_no_match = NULL,
+    .on_search_reply = NULL,
 
 };
 
@@ -135,6 +157,15 @@ static interface_protocol_train_search_handler_t _interface_with_no_match = {
 
     .on_search_matched = &_test_on_search_matched,
     .on_search_no_match = &_test_on_search_no_match,
+    .on_search_reply = NULL,
+
+};
+
+static interface_protocol_train_search_handler_t _interface_with_reply = {
+
+    .on_search_matched = NULL,
+    .on_search_no_match = NULL,
+    .on_search_reply = &_test_on_search_reply,
 
 };
 
@@ -2394,5 +2425,65 @@ TEST(TrainSearch, train_match_null_owner_node_skips_name_match)
 
     // No match — address mismatch and name match skipped
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+
+// ============================================================================
+// Section 12: Handler — Search Reply Tests
+// ============================================================================
+
+TEST(TrainSearch, handle_search_reply_fires_callback)
+{
+
+    _global_initialize();
+    _reset_tracking();
+
+    ProtocolTrainSearchHandler_initialize(&_interface_with_reply);
+
+    openlcb_node_t *node = _create_train_node();
+    ASSERT_NE(node, (openlcb_node_t *)NULL);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    event_id_t reply_event = ProtocolTrainSearchHandler_create_event_id(
+            1234, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC);
+
+    ProtocolTrainSearchHandler_handle_search_reply(&sm, reply_event);
+
+    EXPECT_EQ(_search_reply_count, 1);
+    EXPECT_EQ(_search_reply_source_id, (node_id_t)TEST_SOURCE_ID);
+    EXPECT_EQ(_search_reply_source_alias, (uint16_t)TEST_SOURCE_ALIAS);
+    EXPECT_EQ(_search_reply_event_id, reply_event);
+
+}
+
+TEST(TrainSearch, handle_search_reply_null_callback_no_crash)
+{
+
+    _global_initialize();
+    _reset_tracking();
+
+    ProtocolTrainSearchHandler_initialize(&_interface_nulls);
+
+    openlcb_node_t *node = _create_train_node();
+    ASSERT_NE(node, (openlcb_node_t *)NULL);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    event_id_t reply_event = ProtocolTrainSearchHandler_create_event_id(
+            1234, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC);
+
+    ProtocolTrainSearchHandler_handle_search_reply(&sm, reply_event);
+
+    EXPECT_EQ(_search_reply_count, 0);
 
 }

@@ -32,7 +32,7 @@
  * Identified event when a match is found.
  *
  * @author Jim Kueneman
- * @date 20 Mar 2026
+ * @date 23 Apr 2026
  */
 
 #include "protocol_train_search_handler.h"
@@ -520,6 +520,44 @@ void ProtocolTrainSearchHandler_handle_search_no_match(
         statemachine_info->outgoing_msg_info.valid = true;
 
     }
+
+}
+
+    /**
+     * @brief Forwards a train-search reply to the on_search_reply callback.
+     *
+     * @details Algorithm:
+     * -# Return early if the interface or on_search_reply callback is NULL.
+     * -# Build a source_info_t from the incoming message's source fields.
+     * -# Invoke the callback with the raw event ID.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param event_id           Full 64-bit event_id_t from the reply.
+     * @endverbatim
+     */
+void ProtocolTrainSearchHandler_handle_search_reply(
+        openlcb_statemachine_info_t *statemachine_info,
+        event_id_t event_id) {
+
+    if (!statemachine_info || !statemachine_info->incoming_msg_info.msg_ptr) {
+
+        return;
+
+    }
+
+    if (!_interface || !_interface->on_search_reply) {
+
+        return;
+
+    }
+
+    source_info_t source = {
+        statemachine_info->incoming_msg_info.msg_ptr->source_id,
+        statemachine_info->incoming_msg_info.msg_ptr->source_alias
+    };
+
+    _interface->on_search_reply(&source, event_id);
 
 }
 
