@@ -526,10 +526,15 @@ typedef struct {
     // =========================================================================
 
         /** @brief A train search matched this node. Optional. */
-    void (*on_train_search_matched)(openlcb_node_t *openlcb_node, uint16_t search_address, uint8_t flags);
+    void (*on_train_search_matched)(openlcb_node_t *openlcb_node, event_id_t search_event_id);
 
-        /** @brief No train node matched the search. Return a newly created train node, or NULL to decline. Optional. */
-    openlcb_node_t* (*on_train_search_no_match)(uint16_t search_address, uint8_t flags);
+        /** @brief No train node matched the search after the 200ms quiet window.
+         *
+         * @details Fires only for ALLOCATE searches after TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS
+         * 100ms ticks with no Producer Identified reply on the network. Return a newly
+         * created train node (the CS must then call OpenLcbApplicationTrain_send_search_match
+         * to emit the Producer Identified reply), or NULL to decline. Optional. */
+    openlcb_node_t* (*on_train_search_no_match)(event_id_t search_event_id);
 
 #endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
 

@@ -886,6 +886,35 @@ bool OpenLcbApplicationTrain_send_release_reserve(openlcb_node_t *openlcb_node, 
 
 
     /**
+     * @brief Sends a Producer Identified Set reply echoing a train-search event id.
+     *
+     * @details Used by the CS application after allocating a new train node in
+     * response to on_search_no_match.  The new train node announces itself by
+     * echoing the query event id back to the network.
+     */
+bool OpenLcbApplicationTrain_send_search_match(openlcb_node_t *openlcb_node, event_id_t search_event_id) {
+
+    if (!openlcb_node || !_interface || !_interface->send_openlcb_msg) {
+
+        return false;
+
+    }
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, openlcb_node->alias, openlcb_node->id, 0, 0, MTI_PRODUCER_IDENTIFIED_SET);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, search_event_id);
+
+    return _interface->send_openlcb_msg(&msg);
+
+}
+
+
+    /**
      * @brief Sets the DCC address and address type for a train node.
      *
      * @details Algorithm:

@@ -333,6 +333,21 @@ extern "C" {
     extern bool OpenLcbApplicationTrain_send_release_reserve(openlcb_node_t *openlcb_node, uint16_t train_alias, node_id_t train_node_id);
 
         /**
+         * @brief Sends a Producer Identified Set reply from a newly allocated train node.
+         *
+         * @details Called by the Command Station application from within (or after)
+         * the @ref interface_protocol_train_search_handler_t::on_search_no_match
+         * callback.  The new train node announces itself by echoing the original
+         * train-search event ID in a Producer Identified Set message.
+         *
+         * @param openlcb_node      Pointer to the newly allocated train @ref openlcb_node_t.
+         * @param search_event_id   The event_id of the originating train-search query.
+         *
+         * @return true if the message was queued, false if preconditions failed or the queue was full.
+         */
+    extern bool OpenLcbApplicationTrain_send_search_match(openlcb_node_t *openlcb_node, event_id_t search_event_id);
+
+        /**
          * @brief Sets the DCC address and address type for a train node.
          *
          * @param openlcb_node    Pointer to the @ref openlcb_node_t with an assigned train state.

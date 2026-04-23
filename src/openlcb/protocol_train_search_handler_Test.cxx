@@ -73,27 +73,36 @@ static int _search_matched_count;
 static openlcb_node_t *_search_matched_node;
 static uint16_t _search_matched_address;
 static uint8_t _search_matched_flags;
+static event_id_t _search_matched_event_id;
 
-static void _test_on_search_matched(openlcb_node_t *openlcb_node,
-        uint16_t search_address, uint8_t flags) {
+static void _test_on_search_matched(openlcb_node_t *openlcb_node, event_id_t search_event_id) {
+
+    uint8_t digits[6];
+    ProtocolTrainSearchHandler_extract_digits(search_event_id, digits);
 
     _search_matched_count++;
     _search_matched_node = openlcb_node;
-    _search_matched_address = search_address;
-    _search_matched_flags = flags;
+    _search_matched_address = ProtocolTrainSearchHandler_digits_to_address(digits);
+    _search_matched_flags = ProtocolTrainSearchHandler_extract_flags(search_event_id);
+    _search_matched_event_id = search_event_id;
 
 }
 
 static int _no_match_count;
 static uint16_t _no_match_address;
 static uint8_t _no_match_flags;
+static event_id_t _no_match_event_id;
 static openlcb_node_t *_no_match_return_node;
 
-static openlcb_node_t* _test_on_search_no_match(uint16_t search_address, uint8_t flags) {
+static openlcb_node_t* _test_on_search_no_match(event_id_t search_event_id) {
+
+    uint8_t digits[6];
+    ProtocolTrainSearchHandler_extract_digits(search_event_id, digits);
 
     _no_match_count++;
-    _no_match_address = search_address;
-    _no_match_flags = flags;
+    _no_match_address = ProtocolTrainSearchHandler_digits_to_address(digits);
+    _no_match_flags = ProtocolTrainSearchHandler_extract_flags(search_event_id);
+    _no_match_event_id = search_event_id;
 
     return _no_match_return_node;
 
@@ -119,10 +128,12 @@ static void _reset_tracking(void) {
     _search_matched_node = NULL;
     _search_matched_address = 0;
     _search_matched_flags = 0;
+    _search_matched_event_id = 0;
 
     _no_match_count = 0;
     _no_match_address = 0;
     _no_match_flags = 0;
+    _no_match_event_id = 0;
     _no_match_return_node = NULL;
 
     _search_reply_count = 0;
@@ -1594,7 +1605,7 @@ TEST(TrainSearch, handler_disambig_non_dcc_search_ignores_address_type)
 // @coverage ProtocolTrainSearchHandler_handle_search_no_match()
 // ============================================================================
 
-TEST(TrainSearch, no_match_allocate_flag_set)
+TEST(TrainSearch, no_match_allocate_enqueues_and_fires_after_timeout)
 {
 
     _global_initialize_with_no_match();
@@ -1607,21 +1618,34 @@ TEST(TrainSearch, no_match_allocate_flag_set)
     openlcb_statemachine_info_t sm;
     _setup_statemachine(&sm, node, incoming, outgoing);
 
-    // Search with ALLOCATE flag
     event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
             200, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
 
-    _no_match_return_node = NULL;  // application returns NULL (no allocation)
-
     ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
 
-    // Callback must be invoked
+    // Callback must NOT have fired yet — enqueued only
+    EXPECT_EQ(_no_match_count, 0);
+
+    // Tick TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS-1 times: still silent
+    for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS - 1; i++) {
+
+        ProtocolTrainSearchHandler_100ms_timer_tick();
+
+    }
+
+    EXPECT_EQ(_no_match_count, 0);
+
+    // Final tick fires the callback exactly once
+    ProtocolTrainSearchHandler_100ms_timer_tick();
+
     EXPECT_EQ(_no_match_count, 1);
+    EXPECT_EQ(_no_match_event_id, search_event);
     EXPECT_EQ(_no_match_address, (uint16_t) 200);
     EXPECT_EQ(_no_match_flags & TRAIN_SEARCH_FLAG_ALLOCATE, TRAIN_SEARCH_FLAG_ALLOCATE);
 
-    // No reply since callback returned NULL
-    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+    // Extra ticks after expiry do nothing
+    ProtocolTrainSearchHandler_100ms_timer_tick();
+    EXPECT_EQ(_no_match_count, 1);
 
 }
 
@@ -1687,81 +1711,6 @@ TEST(TrainSearch, no_match_null_interface)
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
 
 }
-
-// ============================================================================
-// TEST: No-match handler loads reply when callback returns valid node
-// @coverage ProtocolTrainSearchHandler_handle_search_no_match()
-// ============================================================================
-
-TEST(TrainSearch, no_match_returns_node_with_train_state)
-{
-
-    _global_initialize_with_no_match();
-
-    // Create a node that the no-match callback will "allocate"
-    openlcb_node_t *new_node = _create_train_node();
-    OpenLcbApplicationTrain_set_dcc_address(new_node, 200, true);
-
-    // Use a separate node as the statemachine context (last enumerated node)
-    openlcb_node_t *current_node = OpenLcbNode_allocate(0x050101010A00ULL, &_test_node_parameters);
-    current_node->alias = 0x0CCC;
-
-    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
-
-    openlcb_statemachine_info_t sm;
-    _setup_statemachine(&sm, current_node, incoming, outgoing);
-
-    // Set up callback to return the new node
-    _no_match_return_node = new_node;
-
-    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
-            200, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_ALLOCATE);
-
-    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
-
-    // Callback invoked
-    EXPECT_EQ(_no_match_count, 1);
-
-    // Reply loaded from the NEW node
-    EXPECT_TRUE(sm.outgoing_msg_info.valid);
-    EXPECT_EQ(outgoing->source_alias, new_node->alias);
-    EXPECT_EQ(outgoing->source_id, (uint64_t) new_node->id);
-    EXPECT_EQ(outgoing->mti, MTI_PRODUCER_IDENTIFIED_SET);
-
-}
-
-// ============================================================================
-// TEST: No-match handler does not load reply when callback returns NULL
-// @coverage ProtocolTrainSearchHandler_handle_search_no_match()
-// ============================================================================
-
-TEST(TrainSearch, no_match_returns_null)
-{
-
-    _global_initialize_with_no_match();
-
-    openlcb_node_t *node = _create_train_node();
-
-    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
-
-    openlcb_statemachine_info_t sm;
-    _setup_statemachine(&sm, node, incoming, outgoing);
-
-    _no_match_return_node = NULL;
-
-    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
-            200, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
-
-    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
-
-    // Callback invoked but returned NULL
-    EXPECT_EQ(_no_match_count, 1);
-    EXPECT_FALSE(sm.outgoing_msg_info.valid);
-
-}
-
 
 // ============================================================================
 // SECTION 13: ADDITIONAL COVERAGE -- Missing Branch Tests
@@ -2242,91 +2191,6 @@ TEST(TrainSearch, handle_search_no_match_null_interface_pointer)
 
     EXPECT_EQ(_no_match_count, 0);
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
-
-}
-
-// ============================================================================
-// TEST: No-match returns node with train_state == NULL (line 468)
-// @coverage ProtocolTrainSearchHandler_handle_search_no_match — new_node->train_state == NULL
-// ============================================================================
-
-TEST(TrainSearch, no_match_returns_node_with_null_train_state)
-{
-
-    _global_initialize_with_no_match();
-
-    // Create a node WITHOUT train state
-    openlcb_node_t *new_node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
-    new_node->alias = TEST_DEST_ALIAS;
-    new_node->train_state = NULL;  // no train state
-
-    // Use a separate node as the statemachine context
-    openlcb_node_t *current_node = OpenLcbNode_allocate(0x050101010A00ULL, &_test_node_parameters);
-    current_node->alias = 0x0CCC;
-
-    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
-
-    openlcb_statemachine_info_t sm;
-    _setup_statemachine(&sm, current_node, incoming, outgoing);
-
-    // Callback will return a node with NULL train_state
-    _no_match_return_node = new_node;
-
-    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
-            200, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
-
-    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
-
-    // Callback invoked
-    EXPECT_EQ(_no_match_count, 1);
-
-    // No reply since train_state is NULL
-    EXPECT_FALSE(sm.outgoing_msg_info.valid);
-
-}
-
-// ============================================================================
-// TEST: No-match returns node with short address (line 472 FALSE branch)
-// @coverage ProtocolTrainSearchHandler_handle_search_no_match — is_long_address == false
-// ============================================================================
-
-TEST(TrainSearch, no_match_returns_node_with_short_address)
-{
-
-    _global_initialize_with_no_match();
-
-    // Create a train node with SHORT address
-    openlcb_node_t *new_node = _create_train_node();
-    OpenLcbApplicationTrain_set_dcc_address(new_node, 42, false);
-
-    // Use a separate node as the statemachine context
-    openlcb_node_t *current_node = OpenLcbNode_allocate(0x050101010A00ULL, &_test_node_parameters);
-    current_node->alias = 0x0CCC;
-
-    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
-
-    openlcb_statemachine_info_t sm;
-    _setup_statemachine(&sm, current_node, incoming, outgoing);
-
-    // Callback returns node with short address
-    _no_match_return_node = new_node;
-
-    event_id_t search_event = ProtocolTrainSearchHandler_create_event_id(
-            42, TRAIN_SEARCH_PROTOCOL_FAMILY_DCC | TRAIN_SEARCH_FLAG_ALLOCATE);
-
-    ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
-
-    // Callback invoked
-    EXPECT_EQ(_no_match_count, 1);
-
-    // Reply loaded — should echo the search event ID
-    EXPECT_TRUE(sm.outgoing_msg_info.valid);
-
-    event_id_t reply_event = OpenLcbUtilities_extract_event_id_from_openlcb_payload(
-            sm.outgoing_msg_info.msg_ptr);
-    EXPECT_EQ(reply_event, search_event);
 
 }
 
