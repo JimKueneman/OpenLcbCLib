@@ -41,7 +41,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <stdio.h>
 
 #include "openlcb_defines.h"
 #include "openlcb_types.h"

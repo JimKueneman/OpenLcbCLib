@@ -631,18 +631,54 @@
     /** @brief Mask for upper 4 bytes of train search event ID */
 #define TRAIN_SEARCH_MASK              0xFFFFFFFF00000000ULL
 
-    /** @brief Train search flags byte — allocate new node if no match */
+    /** @brief Train search flags byte — allocate new node if no match (bit 7) */
 #define TRAIN_SEARCH_FLAG_ALLOCATE     0x80
-    /** @brief Train search flags byte — exact match only */
+    /** @brief Train search flags byte — exact match only (bit 6) */
 #define TRAIN_SEARCH_FLAG_EXACT        0x40
-    /** @brief Train search flags byte — match address only (not name) */
+    /** @brief Train search flags byte — match address only (bit 5) */
 #define TRAIN_SEARCH_FLAG_ADDRESS_ONLY 0x20
-    /** @brief Train search flags byte — DCC protocol */
-#define TRAIN_SEARCH_FLAG_DCC          0x08
-    /** @brief Train search flags byte — force long (14-bit) DCC address */
+
+    /** @brief Track protocol selector — bits 4-0 of flag byte rr */
+#define TRAIN_SEARCH_PROTOCOL_MASK         0x1F
+    /** @brief Track protocol family selector — bits 4-3 of flag byte rr */
+#define TRAIN_SEARCH_PROTOCOL_FAMILY_MASK  0x18
+
+    /** @brief Protocol family: Native OpenLCB / MFX / Marklin-Motorola (bits 4-3 = 0b00) */
+#define TRAIN_SEARCH_PROTOCOL_FAMILY_NATIVE    0x00
+    /** @brief Protocol family: DCC (bits 4-3 = 0b01) */
+#define TRAIN_SEARCH_PROTOCOL_FAMILY_DCC       0x08
+
+    /** @brief Protocol: any / default track protocol */
+#define TRAIN_SEARCH_PROTOCOL_ANY              0x00
+    /** @brief Protocol: native OpenLCB Train Node */
+#define TRAIN_SEARCH_PROTOCOL_OPENLCB_NATIVE   0x01
+    /** @brief Protocol: MFX / M4 track protocol */
+#define TRAIN_SEARCH_PROTOCOL_MFX              0x02
+    /** @brief Protocol: Marklin-Motorola, any / default version */
+#define TRAIN_SEARCH_PROTOCOL_MM_ANY           0x04
+    /** @brief Protocol: MM Protocol version I (14 speed steps + F0) */
+#define TRAIN_SEARCH_PROTOCOL_MM_V1            0x05
+    /** @brief Protocol: MM Protocol version II (directional + F0-F4) */
+#define TRAIN_SEARCH_PROTOCOL_MM_V2            0x06
+    /** @brief Protocol: MM Protocol version II with following address for F5-F8 */
+#define TRAIN_SEARCH_PROTOCOL_MM_V2_EXTENDED   0x07
+
+    /** @brief Train search flags byte — force long (14-bit) DCC address (bit 2, DCC family only) */
 #define TRAIN_SEARCH_FLAG_LONG_ADDR    0x04
-    /** @brief Train search flags byte — speed step mode mask (bits 1-0) */
+    /** @brief Train search flags byte — speed step mode mask (bits 1-0, DCC family only) */
 #define TRAIN_SEARCH_SPEED_STEP_MASK   0x03
+
+    /** @brief DCC speed steps: any / default */
+#define TRAIN_SEARCH_DCC_SPEED_STEPS_DEFAULT   0x00
+    /** @brief DCC speed steps: 14 */
+#define TRAIN_SEARCH_DCC_SPEED_STEPS_14        0x01
+    /** @brief DCC speed steps: 28 */
+#define TRAIN_SEARCH_DCC_SPEED_STEPS_28        0x02
+    /** @brief DCC speed steps: 128 */
+#define TRAIN_SEARCH_DCC_SPEED_STEPS_128       0x03
+
+    /** @brief Search query nibble — empty / unused position / separator (Table 2) */
+#define TRAIN_SEARCH_NIBBLE_EMPTY              0x0F
 
     /** @brief Maximum DCC short (7-bit) address; addresses >= this are long */
 #define TRAIN_MAX_DCC_SHORT_ADDRESS          128
