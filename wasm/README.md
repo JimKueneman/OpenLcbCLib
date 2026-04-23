@@ -12,10 +12,13 @@ cd wasm
 ./build.sh
 ```
 
-Produces `wasm/dist/openlcb-core.{js,wasm}`.  Requires Emscripten on `PATH`
+Produces `wasm/dist/openlcb-core.{mjs,wasm}`.  Requires Emscripten on `PATH`
 (`brew install emscripten`).
 
-Current artifact size: ~104 KB `.wasm` + ~27 KB `.js` glue.
+Output is a native ES module with a default export (the Emscripten factory).
+Works in browsers and Node 18+ via `import` — no bundler required.
+
+Current artifact size: ~107 KB `.wasm` + ~30 KB `.mjs` glue.
 
 ## Test
 
@@ -262,7 +265,7 @@ callback returns.
 ## Minimum JS usage
 
 ```js
-import factory from "./openlcb-core.js";
+import factory from "./openlcb-core.mjs";
 
 const Module = await factory({
     onGridconnectTx:   (frame) => socket.send(frame + "\n"),

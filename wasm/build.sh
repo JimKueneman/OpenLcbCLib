@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build the OpenLcbCLib WASM artifact.
-# Output: wasm/dist/openlcb-core.{js,wasm}
+# Output: wasm/dist/openlcb-core.{mjs,wasm}
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -15,7 +15,8 @@ emcmake cmake -S . -B build
 cmake --build build -j
 
 mkdir -p dist
-cp build/openlcb-core.js build/openlcb-core.wasm dist/
+rm -f dist/openlcb-core.js
+cp build/openlcb-core.mjs build/openlcb-core.wasm dist/
 
 echo ""
 echo "Built:"

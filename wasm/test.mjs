@@ -2,7 +2,7 @@
 // Run after build.sh:  node wasm/test.mjs
 // Exits non-zero on any assertion failure.
 
-import factory from "./dist/openlcb-core.js";
+import factory from "./dist/openlcb-core.mjs";
 
 let failures = 0;
 const results = [];
