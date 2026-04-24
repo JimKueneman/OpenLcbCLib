@@ -157,10 +157,7 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            CONFIG_MEM_CONFIGURATION,
-            0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
 
     statemachine_info->outgoing_msg_info.valid = false; // Assume there is not a message to send by default
 
@@ -322,32 +319,17 @@ void ProtocolConfigMemOperationsHandler_request_options_cmd(openlcb_statemachine
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            CONFIG_MEM_OPTIONS_REPLY,
-            1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, CONFIG_MEM_OPTIONS_REPLY, 1);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            _available_commands_flags(statemachine_info),
-            2);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, _available_commands_flags(statemachine_info), 2);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            _available_write_flags(statemachine_info),
-            4);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, _available_write_flags(statemachine_info), 4);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->parameters->configuration_options.high_address_space,
-            5);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->parameters->configuration_options.high_address_space, 5);
 
 
     // elect to always send this optional byte
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->parameters->configuration_options.low_address_space,
-            6);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->parameters->configuration_options.low_address_space, 6);
 
     if (strlen(statemachine_info->openlcb_node->parameters->configuration_options.description) > 0x00) {
 
@@ -385,32 +367,20 @@ void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_s
 
         if (config_mem_operations_request_info->space_info->present) {
 
-            OpenLcbUtilities_copy_byte_to_openlcb_payload(
-                    statemachine_info->outgoing_msg_info.msg_ptr,
-                    CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT,
-                    1);
+            OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT, 1);
 
             OpenLcbUtilities_copy_byte_to_openlcb_payload(
                     statemachine_info->outgoing_msg_info.msg_ptr,
     *statemachine_info->incoming_msg_info.msg_ptr->payload[2],
                     2);
 
-            OpenLcbUtilities_copy_dword_to_openlcb_payload(
-                    statemachine_info->outgoing_msg_info.msg_ptr,
-                    config_mem_operations_request_info->space_info->highest_address,
-                    3);
+            OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_operations_request_info->space_info->highest_address, 3);
 
-            OpenLcbUtilities_copy_byte_to_openlcb_payload(
-                    statemachine_info->outgoing_msg_info.msg_ptr,
-                    _available_address_space_info_flags(config_mem_operations_request_info),
-                    7);
+            OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, _available_address_space_info_flags(config_mem_operations_request_info), 7);
 
             if (config_mem_operations_request_info->space_info->low_address_valid) {
 
-                OpenLcbUtilities_copy_dword_to_openlcb_payload(
-                        statemachine_info->outgoing_msg_info.msg_ptr,
-                        config_mem_operations_request_info->space_info->low_address,
-                        8);
+                OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_operations_request_info->space_info->low_address, 8);
 
                 description_offset = 12;
 
@@ -418,10 +388,7 @@ void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_s
 
             if (strlen(config_mem_operations_request_info->space_info->description) > 0) {
 
-                OpenLcbUtilities_copy_string_to_openlcb_payload(
-                        statemachine_info->outgoing_msg_info.msg_ptr,
-                        config_mem_operations_request_info->space_info->description,
-                        description_offset);
+                OpenLcbUtilities_copy_string_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_operations_request_info->space_info->description, description_offset);
 
             }
 
@@ -435,10 +402,7 @@ void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_s
 
     // default reply
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT,
-            1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT, 1);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -612,9 +576,7 @@ void ProtocolConfigMemOperationsHandler_request_reserve_lock(openlcb_statemachin
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
-    node_id_t new_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(
-            statemachine_info->incoming_msg_info.msg_ptr,
-            2);
+    node_id_t new_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
 
     if (statemachine_info->openlcb_node->owner_node == 0) {
 
@@ -632,15 +594,9 @@ void ProtocolConfigMemOperationsHandler_request_reserve_lock(openlcb_statemachin
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            CONFIG_MEM_RESERVE_LOCK_REPLY,
-            1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, CONFIG_MEM_RESERVE_LOCK_REPLY, 1);
 
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->owner_node,
-            2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->owner_node, 2);
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -714,8 +670,7 @@ void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_inf
      * target Node ID must match or the command is silently ignored. */
 void ProtocolConfigMemOperationsHandler_factory_reset(openlcb_statemachine_info_t *statemachine_info) {
 
-    node_id_t target_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(
-            statemachine_info->incoming_msg_info.msg_ptr, 2);
+    node_id_t target_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
 
     if (target_node_id != statemachine_info->openlcb_node->id) {
 

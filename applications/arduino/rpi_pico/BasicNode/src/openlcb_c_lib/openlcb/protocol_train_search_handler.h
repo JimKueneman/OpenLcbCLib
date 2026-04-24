@@ -37,7 +37,7 @@
  * every train node so each can check for a match.
  *
  * @author Jim Kueneman
- * @date 20 Mar 2026
+ * @date 23 Apr 2026
  *
  * @see openlcb_application_train.h - Train state with DCC address
  * @see openlcb_utilities.h - General message utility functions
@@ -62,10 +62,20 @@
     typedef struct {
 
             /** @brief Called when a search matches this train node. */
-        void (*on_search_matched)(openlcb_node_t *openlcb_node, uint16_t search_address, uint8_t flags);
+        void (*on_search_matched)(openlcb_node_t *openlcb_node, event_id_t search_event_id);
 
-            /** @brief Called when no train node matches (allocate case, deferred). */
-        openlcb_node_t* (*on_search_no_match)(uint16_t search_address, uint8_t flags);
+            /** @brief Called when no train node matches after the 200ms allocate window.
+             *
+             * @details Fires only for searches with TRAIN_SEARCH_FLAG_ALLOCATE set,
+             * and only after TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS 100ms ticks have
+             * elapsed with no Producer Identified Set reply from any node on the
+             * network.  The application must allocate a new virtual train node
+             * and call @ref OpenLcbApplicationTrain_send_search_match to emit the
+             * Producer Identified reply. */
+        openlcb_node_t* (*on_search_no_match_with_allocate)(event_id_t search_event_id);
+
+            /** @brief Called when a remote node replies to a search sent from this device.  Optional.  source identifies the remote replier. */
+        void (*on_search_reply)(source_info_t *source, event_id_t event_id);
 
     } interface_protocol_train_search_handler_t;
 
@@ -95,15 +105,37 @@ extern "C" {
         /**
          * @brief Handles the no-match case after full train search enumeration.
          *
-         * @details If the ALLOCATE flag is set and on_search_no_match is registered,
+         * @details If the ALLOCATE flag is set and on_search_no_match_with_allocate is registered,
          * invokes the callback to create a new virtual train node.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param event_id           Full 64-bit @ref event_id_t containing encoded search query.
          */
-    extern void ProtocolTrainSearchHandler_handle_search_no_match(
-            openlcb_statemachine_info_t *statemachine_info,
-            event_id_t event_id);
+    extern void ProtocolTrainSearchHandler_handle_search_no_match(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+
+        /**
+         * @brief Forwards a train-search reply to the on_search_reply callback.
+         *
+         * @details Called from the main statemachine MTI_PRODUCER_IDENTIFIED_SET
+         * case when the event ID is in the train-search range.  Builds a
+         * @ref source_info_t from the incoming message and invokes the
+         * application callback.  No decoding is performed here; the callback
+         * receives the raw event ID so it can extract digits or flags as needed.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         * @param event_id           Full 64-bit @ref event_id_t from the reply.
+         */
+    extern void ProtocolTrainSearchHandler_handle_search_reply(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+
+        /**
+         * @brief 100ms tick driver for the pending-allocate timeout queue.
+         *
+         * @details Application must call this once every 100ms.  Decrements the
+         * timeout on every live pending-allocate slot; when a slot reaches zero
+         * without a Producer Identified reply having been seen for its event ID,
+         * fires on_search_no_match_with_allocate and frees the slot.
+         */
+    extern void ProtocolTrainSearchHandler_100ms_timer_tick(void);
 
     // =========================================================================
     // Train Search Event ID Utilities

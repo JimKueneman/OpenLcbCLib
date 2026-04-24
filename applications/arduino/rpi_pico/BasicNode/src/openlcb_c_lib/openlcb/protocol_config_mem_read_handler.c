@@ -298,10 +298,7 @@ void ProtocolConfigMemReadHandler_read_request_train_function_config_memory(open
 
             }
 
-            OpenLcbUtilities_copy_byte_to_openlcb_payload(
-                    statemachine_info->outgoing_msg_info.msg_ptr,
-                    val,
-                    payload_offset + i);
+            OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, val, payload_offset + i);
 
         }
 
@@ -365,12 +362,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
             if (_interface->snip_load_manufacturer_version_id) {
 
-                _interface->snip_load_manufacturer_version_id(
-                        statemachine_info->openlcb_node,
-                        statemachine_info->outgoing_msg_info.msg_ptr,
-                        config_mem_read_request_info->data_start,
-                        config_mem_read_request_info->bytes
-                        );
+                _interface->snip_load_manufacturer_version_id(statemachine_info->openlcb_node, statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->data_start, config_mem_read_request_info->bytes);
 
             } else {
 
@@ -386,12 +378,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
             if (_interface->snip_load_name) {
 
-                _interface->snip_load_name(
-                        statemachine_info->openlcb_node,
-                        statemachine_info->outgoing_msg_info.msg_ptr,
-                        config_mem_read_request_info->data_start,
-                        config_mem_read_request_info->bytes
-                        );
+                _interface->snip_load_name(statemachine_info->openlcb_node, statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->data_start, config_mem_read_request_info->bytes);
 
             } else {
 
@@ -407,12 +394,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
             if (_interface->snip_load_model) {
 
-                _interface->snip_load_model(
-                        statemachine_info->openlcb_node,
-                        statemachine_info->outgoing_msg_info.msg_ptr,
-                        config_mem_read_request_info->data_start,
-                        config_mem_read_request_info->bytes
-                        );
+                _interface->snip_load_model(statemachine_info->openlcb_node, statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->data_start, config_mem_read_request_info->bytes);
 
             } else {
 
@@ -428,12 +410,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
             if (_interface->snip_load_hardware_version) {
 
-                _interface->snip_load_hardware_version(
-                        statemachine_info->openlcb_node,
-                        statemachine_info->outgoing_msg_info.msg_ptr,
-                        config_mem_read_request_info->data_start,
-                        config_mem_read_request_info->bytes
-                        );
+                _interface->snip_load_hardware_version(statemachine_info->openlcb_node, statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->data_start, config_mem_read_request_info->bytes);
 
             } else {
 
@@ -449,12 +426,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
             if (_interface->snip_load_software_version) {
 
-                _interface->snip_load_software_version(
-                        statemachine_info->openlcb_node,
-                        statemachine_info->outgoing_msg_info.msg_ptr,
-                        config_mem_read_request_info->data_start,
-                        config_mem_read_request_info->bytes
-                        );
+                _interface->snip_load_software_version(statemachine_info->openlcb_node, statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->data_start, config_mem_read_request_info->bytes);
 
             } else {
 
@@ -489,12 +461,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
 
             if (_interface->snip_load_user_version_id) {
 
-                _interface->snip_load_user_version_id(
-                        statemachine_info->openlcb_node,
-                        statemachine_info->outgoing_msg_info.msg_ptr,
-                        config_mem_read_request_info->data_start,
-                        config_mem_read_request_info->bytes
-                        );
+                _interface->snip_load_user_version_id(statemachine_info->openlcb_node, statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->data_start, config_mem_read_request_info->bytes);
 
             } else {
 
@@ -510,12 +477,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
 
             if (_interface->snip_load_user_name) {
 
-                _interface->snip_load_user_name(
-                        statemachine_info->openlcb_node,
-                        statemachine_info->outgoing_msg_info.msg_ptr,
-                        config_mem_read_request_info->data_start,
-                        config_mem_read_request_info->bytes
-                        );
+                _interface->snip_load_user_name(statemachine_info->openlcb_node, statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->data_start, config_mem_read_request_info->bytes);
 
             } else {
 
@@ -531,12 +493,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
 
             if (_interface->snip_load_user_description) {
 
-                _interface->snip_load_user_description(
-                        statemachine_info->openlcb_node,
-                        statemachine_info->outgoing_msg_info.msg_ptr,
-                        config_mem_read_request_info->data_start,
-                        config_mem_read_request_info->bytes
-                        );
+                _interface->snip_load_user_description(statemachine_info->openlcb_node, statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->data_start, config_mem_read_request_info->bytes);
 
             } else {
 

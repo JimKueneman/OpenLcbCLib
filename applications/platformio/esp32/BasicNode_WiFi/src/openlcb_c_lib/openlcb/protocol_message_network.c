@@ -81,9 +81,7 @@ static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_in
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_PC_EVENT_REPORT);
 
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            EVENT_ID_DUPLICATE_NODE_DETECTED);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, EVENT_ID_DUPLICATE_NODE_DETECTED);
 
     statemachine_info->openlcb_node->state.duplicate_id_detected = true;
     statemachine_info->outgoing_msg_info.valid = true;
@@ -99,8 +97,7 @@ static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_in
      *
      * @param statemachine_info  @ref openlcb_statemachine_info_t context.
      */
-static void _load_verified_node_id(
-            openlcb_statemachine_info_t *statemachine_info) {
+static void _load_verified_node_id(openlcb_statemachine_info_t *statemachine_info) {
 
     uint16_t mti = MTI_VERIFIED_NODE_ID;
 
@@ -117,10 +114,7 @@ static void _load_verified_node_id(
             0,
             mti);
 
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->id,
-            0);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->id, 0);
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -257,23 +251,17 @@ void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_statema
 
         if (statemachine_info->incoming_msg_info.msg_ptr->payload_count >= 2) {
 
-            error_code = OpenLcbUtilities_extract_word_from_openlcb_payload(
-                    statemachine_info->incoming_msg_info.msg_ptr, 0);
+            error_code = OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0);
 
         }
 
         if (statemachine_info->incoming_msg_info.msg_ptr->payload_count >= 4) {
 
-            rejected_mti = OpenLcbUtilities_extract_word_from_openlcb_payload(
-                    statemachine_info->incoming_msg_info.msg_ptr, 2);
+            rejected_mti = OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
 
         }
 
-        _interface->on_optional_interaction_rejected(
-                statemachine_info->openlcb_node,
-                statemachine_info->incoming_msg_info.msg_ptr->source_id,
-                error_code,
-                rejected_mti);
+        _interface->on_optional_interaction_rejected(statemachine_info->openlcb_node, statemachine_info->incoming_msg_info.msg_ptr->source_id, error_code, rejected_mti);
 
     }
 
@@ -294,23 +282,17 @@ void ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_statemachine_i
 
         if (statemachine_info->incoming_msg_info.msg_ptr->payload_count >= 2) {
 
-            error_code = OpenLcbUtilities_extract_word_from_openlcb_payload(
-                    statemachine_info->incoming_msg_info.msg_ptr, 0);
+            error_code = OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0);
 
         }
 
         if (statemachine_info->incoming_msg_info.msg_ptr->payload_count >= 4) {
 
-            rejected_mti = OpenLcbUtilities_extract_word_from_openlcb_payload(
-                    statemachine_info->incoming_msg_info.msg_ptr, 2);
+            rejected_mti = OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
 
         }
 
-        _interface->on_terminate_due_to_error(
-                statemachine_info->openlcb_node,
-                statemachine_info->incoming_msg_info.msg_ptr->source_id,
-                error_code,
-                rejected_mti);
+        _interface->on_terminate_due_to_error(statemachine_info->openlcb_node, statemachine_info->incoming_msg_info.msg_ptr->source_id, error_code, rejected_mti);
 
     }
 

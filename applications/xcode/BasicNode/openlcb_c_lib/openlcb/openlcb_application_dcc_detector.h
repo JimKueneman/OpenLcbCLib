@@ -143,10 +143,7 @@ typedef enum {
          *
          * @return Assembled @ref event_id_t.
          */
-    extern event_id_t OpenLcbApplicationDccDetector_encode_event_id(
-            node_id_t detector_node_id,
-            dcc_detector_direction_enum direction,
-            uint16_t raw_address_14);
+    extern event_id_t OpenLcbApplicationDccDetector_encode_event_id(node_id_t detector_node_id, dcc_detector_direction_enum direction, uint16_t raw_address_14);
 
         /**
          * @brief Builds a 14-bit raw address field for a DCC short address.
@@ -184,8 +181,7 @@ typedef enum {
          *
          * @return @ref dcc_detector_direction_enum value.
          */
-    extern dcc_detector_direction_enum OpenLcbApplicationDccDetector_extract_direction(
-            event_id_t event_id);
+    extern dcc_detector_direction_enum OpenLcbApplicationDccDetector_extract_direction(event_id_t event_id);
 
         /**
          * @brief Determines the DCC address category from a detector Event ID.
@@ -197,8 +193,7 @@ typedef enum {
          *
          * @return @ref dcc_detector_address_type_enum category.
          */
-    extern dcc_detector_address_type_enum OpenLcbApplicationDccDetector_extract_address_type(
-            event_id_t event_id);
+    extern dcc_detector_address_type_enum OpenLcbApplicationDccDetector_extract_address_type(event_id_t event_id);
 
         /**
          * @brief Extracts the raw 14-bit DCC address field from a detector Event ID.

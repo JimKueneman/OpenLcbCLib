@@ -32,7 +32,7 @@
  * Identified event when a match is found.
  *
  * @author Jim Kueneman
- * @date 20 Mar 2026
+ * @date 23 Apr 2026
  */
 
 #include "protocol_train_search_handler.h"
@@ -54,6 +54,20 @@
 
     /** @brief Stored callback interface pointer. */
 static const interface_protocol_train_search_handler_t *_interface;
+
+
+    /** @brief Pending-allocate slot; search_event_id == 0 means free. */
+typedef struct {
+
+    event_id_t search_event_id;
+    uint8_t    ticks_remaining;
+    bool       reply_seen;
+
+} _pending_allocate_t;
+
+
+    /** @brief Fixed pool of pending allocate requests awaiting the 200ms quiet window. */
+static _pending_allocate_t _pending[TRAIN_SEARCH_PENDING_ALLOCATE_COUNT];
 
 
     /** @brief Return true if the search event contains reserved nibbles (0xA-0xE) or reserved flag bits. */
@@ -99,6 +113,14 @@ static bool _has_reserved_values(const uint8_t *digits, uint8_t flags) {
 void ProtocolTrainSearchHandler_initialize(const interface_protocol_train_search_handler_t *interface) {
 
     _interface = interface;
+
+    for (uint8_t i = 0; i < TRAIN_SEARCH_PENDING_ALLOCATE_COUNT; i++) {
+
+        _pending[i].search_event_id = 0;
+        _pending[i].ticks_remaining = 0;
+        _pending[i].reply_seen = false;
+
+    }
 
 }
 
@@ -319,11 +341,7 @@ static bool _does_name_match(const char *name, const uint8_t *digits, uint8_t fl
 }
 
     /** @brief Return true if the train node matches the search query and flags per TrainSearchS §6.3. */
-static bool _does_train_match(
-            train_state_t *train_state,
-            const uint8_t *digits,
-            uint16_t search_address,
-            uint8_t flags) {
+static bool _does_train_match(train_state_t *train_state, const uint8_t *digits, uint16_t search_address, uint8_t flags) {
 
     // Check DCC protocol match
     if (flags & TRAIN_SEARCH_PROTOCOL_FAMILY_DCC) {
@@ -392,9 +410,7 @@ static bool _does_train_match(
      * @param event_id           Full 64-bit event_id_t containing encoded search query.
      * @endverbatim
      */
-void ProtocolTrainSearchHandler_handle_search_event(
-        openlcb_statemachine_info_t *statemachine_info,
-        event_id_t event_id) {
+void ProtocolTrainSearchHandler_handle_search_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
 
     if (!statemachine_info || !statemachine_info->openlcb_node) {
 
@@ -431,13 +447,7 @@ void ProtocolTrainSearchHandler_handle_search_event(
     }
 
     // Build reply: Producer Identified Set echoing the queried search event ID
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            0,
-            0,
-            MTI_PRODUCER_IDENTIFIED_SET);
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, 0, 0, MTI_PRODUCER_IDENTIFIED_SET);
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, event_id);
 
@@ -446,7 +456,7 @@ void ProtocolTrainSearchHandler_handle_search_event(
     // Fire callback
     if (_interface && _interface->on_search_matched) {
 
-        _interface->on_search_matched(statemachine_info->openlcb_node, search_address, flags);
+        _interface->on_search_matched(statemachine_info->openlcb_node, event_id);
 
     }
 
@@ -457,7 +467,7 @@ void ProtocolTrainSearchHandler_handle_search_event(
      *
      * @details Called by the main statemachine when the last node in the
      * enumeration has been reached and no train node matched the search query.
-     * If the ALLOCATE flag is set in the search event and the on_search_no_match
+     * If the ALLOCATE flag is set in the search event and the on_search_no_match_with_allocate
      * callback is registered, invokes it so the application can create a new
      * virtual train node.
      *
@@ -466,15 +476,9 @@ void ProtocolTrainSearchHandler_handle_search_event(
      * @param event_id           Full 64-bit event_id_t containing encoded search query.
      * @endverbatim
      */
-void ProtocolTrainSearchHandler_handle_search_no_match(
-        openlcb_statemachine_info_t *statemachine_info,
-        event_id_t event_id) {
+void ProtocolTrainSearchHandler_handle_search_no_match(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
 
-    if (!statemachine_info) {
-
-        return;
-
-    }
+    (void) statemachine_info;
 
     uint8_t digits[6];
     ProtocolTrainSearchHandler_extract_digits(event_id, digits);
@@ -493,31 +497,116 @@ void ProtocolTrainSearchHandler_handle_search_no_match(
 
     }
 
-    if (!_interface || !_interface->on_search_no_match) {
+    // Dedupe: if a live slot already holds this event_id, keep the original deadline
+    for (uint8_t i = 0; i < TRAIN_SEARCH_PENDING_ALLOCATE_COUNT; i++) {
+
+        if (_pending[i].search_event_id == event_id) {
+
+            return;
+
+        }
+
+    }
+
+    // Enqueue into first free slot; drop silently if the queue is full
+    for (uint8_t i = 0; i < TRAIN_SEARCH_PENDING_ALLOCATE_COUNT; i++) {
+
+        if (_pending[i].search_event_id == 0) {
+
+            _pending[i].search_event_id = event_id;
+            _pending[i].ticks_remaining = TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS;
+            _pending[i].reply_seen = false;
+            return;
+
+        }
+
+    }
+
+}
+
+    /**
+     * @brief Forwards a train-search reply to the on_search_reply callback.
+     *
+     * @details Algorithm:
+     * -# Return early if the interface or on_search_reply callback is NULL.
+     * -# Build a source_info_t from the incoming message's source fields.
+     * -# Invoke the callback with the raw event ID.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @param event_id           Full 64-bit event_id_t from the reply.
+     * @endverbatim
+     */
+void ProtocolTrainSearchHandler_handle_search_reply(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
+
+    if (!statemachine_info || !statemachine_info->incoming_msg_info.msg_ptr) {
 
         return;
 
     }
 
-    uint16_t search_address = ProtocolTrainSearchHandler_digits_to_address(digits);
+    // Cancel any pending allocate timeout for this exact search event id —
+    // a real train on the network has answered, so we must not auto-allocate.
+    for (uint8_t i = 0; i < TRAIN_SEARCH_PENDING_ALLOCATE_COUNT; i++) {
 
-    openlcb_node_t *new_node = _interface->on_search_no_match(search_address, flags);
+        if (_pending[i].search_event_id == event_id) {
 
-    if (new_node && new_node->train_state) {
+            _pending[i].reply_seen = true;
+            break;
 
-        // Build Producer Identified reply echoing the queried search event ID
-        OpenLcbUtilities_load_openlcb_message(
-                statemachine_info->outgoing_msg_info.msg_ptr,
-                new_node->alias,
-                new_node->id,
-                0,
-                0,
-                MTI_PRODUCER_IDENTIFIED_SET);
+        }
 
-        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-                statemachine_info->outgoing_msg_info.msg_ptr, event_id);
+    }
 
-        statemachine_info->outgoing_msg_info.valid = true;
+    if (!_interface || !_interface->on_search_reply) {
+
+        return;
+
+    }
+
+    source_info_t source = {
+        statemachine_info->incoming_msg_info.msg_ptr->source_id,
+        statemachine_info->incoming_msg_info.msg_ptr->source_alias
+    };
+
+    _interface->on_search_reply(&source, event_id);
+
+}
+
+
+    /**
+     * @brief 100ms tick driver for the pending-allocate timeout queue.
+     *
+     * @details For each live slot: decrement ticks_remaining; when it reaches
+     * zero, fire on_search_no_match_with_allocate (only if no reply was seen) and free the
+     * slot.  The callback return value is ignored; the application is
+     * responsible for emitting the Producer Identified reply via
+     * OpenLcbApplicationTrain_send_search_match.
+     */
+void ProtocolTrainSearchHandler_100ms_timer_tick(void) {
+
+    for (uint8_t i = 0; i < TRAIN_SEARCH_PENDING_ALLOCATE_COUNT; i++) {
+
+        if (_pending[i].search_event_id == 0) {
+
+            continue;
+
+        }
+
+        _pending[i].ticks_remaining--;
+
+        if (_pending[i].ticks_remaining == 0) {
+
+            if (!_pending[i].reply_seen && _interface && _interface->on_search_no_match_with_allocate) {
+
+                _interface->on_search_no_match_with_allocate(_pending[i].search_event_id);
+
+            }
+
+            _pending[i].search_event_id = 0;
+            _pending[i].reply_seen = false;
+
+        }
 
     }
 

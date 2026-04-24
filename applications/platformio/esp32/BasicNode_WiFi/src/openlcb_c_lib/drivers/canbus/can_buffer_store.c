@@ -41,6 +41,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h> // printf
 #include <string.h>
 
 #include "can_types.h"

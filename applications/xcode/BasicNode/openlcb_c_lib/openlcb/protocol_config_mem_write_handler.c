@@ -481,11 +481,7 @@ static uint16_t _write_data_under_mask(openlcb_statemachine_info_t *statemachine
     }
 
     // Step 1: Read current values
-    read_count = _interface->config_memory_read(
-            statemachine_info->openlcb_node,
-            config_mem_write_request_info->address,
-            config_mem_write_request_info->bytes,
-            &temp);
+    read_count = _interface->config_memory_read(statemachine_info->openlcb_node, config_mem_write_request_info->address, config_mem_write_request_info->bytes, &temp);
 
     if (read_count < config_mem_write_request_info->bytes) {
 
@@ -510,11 +506,7 @@ static uint16_t _write_data_under_mask(openlcb_statemachine_info_t *statemachine
     // Step 3: Write back merged values
     if (_interface->config_memory_write) {
 
-        write_count = _interface->config_memory_write(
-                statemachine_info->openlcb_node,
-                config_mem_write_request_info->address,
-                config_mem_write_request_info->bytes,
-                &temp);
+        write_count = _interface->config_memory_write(statemachine_info->openlcb_node, config_mem_write_request_info->address, config_mem_write_request_info->bytes, &temp);
 
         if (write_count < config_mem_write_request_info->bytes) {
 
@@ -805,12 +797,7 @@ static uint16_t _write_data(openlcb_statemachine_info_t *statemachine_info, conf
 
     if (_interface->config_memory_write) {
 
-        write_count = _interface->config_memory_write(
-                statemachine_info->openlcb_node,
-                config_mem_write_request_info->address,
-                config_mem_write_request_info->bytes,
-                config_mem_write_request_info->write_buffer
-                );
+        write_count = _interface->config_memory_write(statemachine_info->openlcb_node, config_mem_write_request_info->address, config_mem_write_request_info->bytes, config_mem_write_request_info->write_buffer);
 
         if (write_count < config_mem_write_request_info->bytes) {
 
@@ -932,11 +919,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
 
             if (_interface->config_memory_write) {
 
-                write_count = _interface->config_memory_write(
-                        statemachine_info->openlcb_node,
-                        config_address,
-                        config_mem_write_request_info->bytes,
-                        config_mem_write_request_info->write_buffer);
+                write_count = _interface->config_memory_write(statemachine_info->openlcb_node, config_address, config_mem_write_request_info->bytes, config_mem_write_request_info->write_buffer);
 
             }
 
@@ -954,11 +937,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
 
             if (_interface->config_memory_write) {
 
-                write_count = _interface->config_memory_write(
-                        statemachine_info->openlcb_node,
-                        config_address,
-                        config_mem_write_request_info->bytes,
-                        config_mem_write_request_info->write_buffer);
+                write_count = _interface->config_memory_write(statemachine_info->openlcb_node, config_address, config_mem_write_request_info->bytes, config_mem_write_request_info->write_buffer);
 
             }
 
@@ -1079,10 +1058,7 @@ void ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(op
 
             if (_interface && _interface->on_function_changed) {
 
-                _interface->on_function_changed(
-                        statemachine_info->openlcb_node,
-                        (uint32_t) fn,
-                        state->functions[fn]);
+                _interface->on_function_changed(statemachine_info->openlcb_node, (uint32_t) fn, state->functions[fn]);
 
             }
 

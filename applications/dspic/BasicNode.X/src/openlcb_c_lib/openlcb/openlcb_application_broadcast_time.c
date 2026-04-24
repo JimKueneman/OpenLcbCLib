@@ -717,9 +717,7 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
                         // Periodic Report Time PCER (rate-limited to once per 60 real seconds)
                         if (clock->report_cooldown_ticks == 0) {
 
-                            OpenLcbApplicationBroadcastTime_send_report_time(
-                                node, clock->state.clock_id,
-                                clock->state.time.hour, clock->state.time.minute);
+                            OpenLcbApplicationBroadcastTime_send_report_time(node, clock->state.clock_id, clock->state.time.hour, clock->state.time.minute);
 
                             clock->report_cooldown_ticks = 600;  // 60 seconds
 
@@ -729,10 +727,8 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
                         if (prev_hour == 23 && clock->state.time.hour == 0) {
 
                             OpenLcbApplicationBroadcastTime_send_date_rollover(node, clock->state.clock_id);
-                            OpenLcbApplicationBroadcastTime_send_report_year(
-                                node, clock->state.clock_id, clock->state.year.year);
-                            OpenLcbApplicationBroadcastTime_send_report_date(
-                                node, clock->state.clock_id, clock->state.date.month, clock->state.date.day);
+                            OpenLcbApplicationBroadcastTime_send_report_year(node, clock->state.clock_id, clock->state.year.year);
+                            OpenLcbApplicationBroadcastTime_send_report_date(node, clock->state.clock_id, clock->state.date.month, clock->state.date.day);
 
                         }
 

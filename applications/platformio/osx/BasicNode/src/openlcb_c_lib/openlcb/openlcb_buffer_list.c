@@ -118,9 +118,7 @@ openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias
 
         if (_openlcb_msg_buffer_list[i]) {
 
-            if ((_openlcb_msg_buffer_list[i]->dest_alias == dest_alias) &&
-                    (_openlcb_msg_buffer_list[i]->source_alias == source_alias) &&
-                    (_openlcb_msg_buffer_list[i]->mti == mti)) {
+            if ((_openlcb_msg_buffer_list[i]->dest_alias == dest_alias) && (_openlcb_msg_buffer_list[i]->source_alias == source_alias) && (_openlcb_msg_buffer_list[i]->mti == mti)) {
 
                 return _openlcb_msg_buffer_list[i];
 

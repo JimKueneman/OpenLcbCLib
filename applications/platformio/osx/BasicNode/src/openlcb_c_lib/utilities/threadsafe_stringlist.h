@@ -35,6 +35,7 @@
 #ifndef __THREADSAFE_STRINGLIST_
 #define __THREADSAFE_STRINGLIST_
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>

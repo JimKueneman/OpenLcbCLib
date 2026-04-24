@@ -41,6 +41,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
@@ -323,22 +324,14 @@ uint8_t OpenLcbUtilities_extract_byte_from_openlcb_payload(openlcb_msg_t *openlc
     /** @brief Extracts a 16-bit word (big-endian) from payload at the given offset. */
 uint16_t OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t offset) {
 
-    return (
-            ((uint16_t) * openlcb_msg->payload[0 + offset] << 8) |
-            ((uint16_t) * openlcb_msg->payload[1 + offset])
-            );
+    return (((uint16_t) * openlcb_msg->payload[0 + offset] << 8) | ((uint16_t) * openlcb_msg->payload[1 + offset]));
 
 }
 
     /** @brief Extracts a 32-bit doubleword (big-endian) from payload at the given offset. */
 uint32_t OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t offset) {
 
-    return (
-            ((uint32_t) * openlcb_msg->payload[0 + offset] << 24) |
-            ((uint32_t) * openlcb_msg->payload[1 + offset] << 16) |
-            ((uint32_t) * openlcb_msg->payload[2 + offset] << 8) |
-            ((uint32_t) * openlcb_msg->payload[3 + offset])
-            );
+    return (((uint32_t) * openlcb_msg->payload[0 + offset] << 24) | ((uint32_t) * openlcb_msg->payload[1 + offset] << 16) | ((uint32_t) * openlcb_msg->payload[2 + offset] << 8) | ((uint32_t) * openlcb_msg->payload[3 + offset]));
 
 }
 
@@ -459,10 +452,7 @@ node_id_t OpenLcbUtilities_extract_node_id_from_config_mem_buffer(configuration_
     /** @brief Extracts a 16-bit word from a config memory buffer at the given index. */
 uint16_t OpenLcbUtilities_extract_word_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_t index) {
 
-    return (
-            ((uint16_t) (*buffer)[0 + index] << 8) |
-            ((uint16_t) (*buffer)[1 + index])
-            );
+    return (((uint16_t) (*buffer)[0 + index] << 8) | ((uint16_t) (*buffer)[1 + index]));
 
 }
 
@@ -523,20 +513,14 @@ void OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(openlcb_stat
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            CONFIG_MEM_CONFIGURATION,
-            0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_OK_OFFSET,
             1);
 
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            config_mem_write_request_info->address,
-            2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_write_request_info->address, 2);
 
     if (config_mem_write_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) {
 
@@ -570,20 +554,14 @@ void OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(openlcb_st
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            CONFIG_MEM_CONFIGURATION,
-            0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_FAIL_OFFSET,
             1);
 
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            config_mem_write_request_info->address,
-            2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_write_request_info->address, 2);
 
     if (config_mem_write_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) {
 
@@ -592,17 +570,11 @@ void OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(openlcb_st
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6],
                 6);
 
-        OpenLcbUtilities_copy_word_to_openlcb_payload(
-                statemachine_info->outgoing_msg_info.msg_ptr,
-                error_code,
-                7);
+        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, error_code, 7);
 
     } else {
 
-        OpenLcbUtilities_copy_word_to_openlcb_payload(
-                statemachine_info->outgoing_msg_info.msg_ptr,
-                error_code,
-                6);
+        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, error_code, 6);
 
     }
 
@@ -627,20 +599,14 @@ void OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(openlcb_state
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            CONFIG_MEM_CONFIGURATION,
-            0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_OK_OFFSET,
             1);
 
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            config_mem_read_request_info->address,
-            2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->address, 2);
 
     if (config_mem_read_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) {
 
@@ -674,20 +640,14 @@ void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(openlcb_sta
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            CONFIG_MEM_CONFIGURATION,
-            0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_FAIL_OFFSET,
             1);
 
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            config_mem_read_request_info->address,
-            2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->address, 2);
 
     if (config_mem_read_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) {
 
@@ -698,10 +658,7 @@ void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(openlcb_sta
 
     }
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            error_code,
-            config_mem_read_request_info->data_start);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, error_code, config_mem_read_request_info->data_start);
 
 }
 

@@ -86,9 +86,7 @@ static gridconnect_buffer_t _receive_buffer;
     /** @brief Return true when the byte is a valid hexadecimal digit. */
 static bool _is_valid_hex_char(uint8_t next_byte) {
 
-    return (((next_byte >= '0') && (next_byte <= '9')) ||
-            ((next_byte >= 'A') && (next_byte <= 'F')) ||
-            ((next_byte >= 'a') && (next_byte <= 'f')));
+    return (((next_byte >= '0') && (next_byte <= '9')) || ((next_byte >= 'A') && (next_byte <= 'F')) || ((next_byte >= 'a') && (next_byte <= 'f')));
 
 }
 
