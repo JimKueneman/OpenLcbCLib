@@ -378,6 +378,7 @@ static const interface_openlcb_main_statemachine_t _e2e_main_interface = {
     .broadcast_time_event_handler     = NULL,
     .train_search_event_handler       = NULL,
     .train_search_no_match_handler    = NULL,
+    .train_search_reply_handler       = NULL,
     .train_emergency_event_handler    = NULL,
 
     // Event classification filters — NULL (no train/time protocols in e2e test)

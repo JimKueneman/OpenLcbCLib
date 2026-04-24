@@ -230,10 +230,7 @@ static void _load_query_function_reply(openlcb_statemachine_info_t *statemachine
      * current controller so the requester can negotiate a handoff.
      * Per TrainControlTN Section 2.8.
      */
-static void _load_controller_assign_reply(
-            openlcb_statemachine_info_t *statemachine_info,
-            uint8_t result,
-            node_id_t current_controller) {
+static void _load_controller_assign_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t result, node_id_t current_controller) {
 
     _load_reply_header(statemachine_info);
 
@@ -388,19 +385,9 @@ static uint32_t _extract_fn_address(openlcb_msg_t *msg, uint16_t offset) {
      * @param instruction        Base instruction byte (P bit masked off).
      * @endverbatim
      */
-static void _load_forwarded_command(
-            openlcb_statemachine_info_t *statemachine_info,
-            node_id_t listener_node_id,
-            uint8_t listener_flags,
-            uint8_t instruction) {
+static void _load_forwarded_command(openlcb_statemachine_info_t *statemachine_info, node_id_t listener_node_id, uint8_t listener_flags, uint8_t instruction) {
 
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            0,
-            listener_node_id,
-            MTI_TRAIN_PROTOCOL);
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, 0, listener_node_id, MTI_TRAIN_PROTOCOL);
 
     openlcb_msg_t *incoming = statemachine_info->incoming_msg_info.msg_ptr;
     openlcb_msg_t *outgoing = statemachine_info->outgoing_msg_info.msg_ptr;
@@ -1226,8 +1213,7 @@ void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *stat
 
     }
 
-    uint8_t raw_instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(
-            statemachine_info->incoming_msg_info.msg_ptr, 0);
+    uint8_t raw_instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0);
     uint8_t instruction = raw_instruction & ~TRAIN_INSTRUCTION_P_BIT;
 
     // TrainControlS 6.6: any command or query from the Controller clears
@@ -1384,8 +1370,7 @@ void ProtocolTrainHandler_handle_train_reply(openlcb_statemachine_info_t *statem
      * @param event_id           Well-known event_id_t for the emergency condition.
      * @endverbatim
      */
-void ProtocolTrainHandler_handle_emergency_event(
-        openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
+void ProtocolTrainHandler_handle_emergency_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
 
     if (!statemachine_info) {
 

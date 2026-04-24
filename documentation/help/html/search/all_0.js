@@ -50,10 +50,11 @@ var searchData=
   ['aliasmappings_5fregister_47',['AliasMappings_register',['../alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447',1,'AliasMappings_register(uint16_t alias, node_id_t node_id):&#160;alias_mappings.c'],['../alias__mappings_8h.html#afe1490dc1fc7c2f410abc31cad6f6447',1,'AliasMappings_register(uint16_t alias, node_id_t node_id):&#160;alias_mappings.c']]],
   ['aliasmappings_5fset_5fhas_5fduplicate_5falias_5fflag_48',['AliasMappings_set_has_duplicate_alias_flag',['../alias__mappings_8c.html#a1e2639729c40c4ba017fa2529493c2d7',1,'AliasMappings_set_has_duplicate_alias_flag(void):&#160;alias_mappings.c'],['../alias__mappings_8h.html#a1e2639729c40c4ba017fa2529493c2d7',1,'AliasMappings_set_has_duplicate_alias_flag(void):&#160;alias_mappings.c']]],
   ['aliasmappings_5funregister_49',['AliasMappings_unregister',['../alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4',1,'AliasMappings_unregister(uint16_t alias):&#160;alias_mappings.c'],['../alias__mappings_8h.html#a9f08c60c95f97546d47c8386270cc8b4',1,'AliasMappings_unregister(uint16_t alias):&#160;alias_mappings.c']]],
-  ['allocated_50',['allocated',['../structopenlcb__msg__state__t.html#a1bdc374dc38908c70ed24a978ecfd22e',1,'openlcb_msg_state_t::allocated'],['../structopenlcb__node__state__t.html#a1bdc374dc38908c70ed24a978ecfd22e',1,'openlcb_node_state_t::allocated'],['../structcan__msg__state__struct.html#a2f6e1ef9ab9da4be83ad9239cbfac13e',1,'can_msg_state_struct::allocated']]],
-  ['and_20masks_51',['CAN Frame Format and Masks',['../group__can__frame__format.html',1,'']]],
-  ['and_20values_52',['Data Field Bit Masks and Values',['../group__data__field__masks.html',1,'']]],
-  ['arrays_53',['Payload Buffer Pool Arrays',['../group__payload__pool__types.html',1,'']]],
-  ['assembly_5fticks_54',['assembly_ticks',['../unionopenlcb__msg__timer__t.html#ad4f9783940799b959c408814489fc4a9',1,'openlcb_msg_timer_t']]],
-  ['auto_20routed_20well_20known_20events_55',['Auto Routed Well Known Events',['../group__well__known__events__auto.html',1,'Auto-Routed Well-Known Events'],['../group__well__known__events__local.html',1,'Non-Auto-Routed Well-Known Events']]]
+  ['allocate_5fbuffer_50',['allocate_buffer',['../structinterface__tcp__login__statemachine__t.html#a60bcdd334706432d0b0b608e4228156e',1,'interface_tcp_login_statemachine_t::allocate_buffer'],['../structinterface__tcp__rx__statemachine__t.html#a60bcdd334706432d0b0b608e4228156e',1,'interface_tcp_rx_statemachine_t::allocate_buffer']]],
+  ['allocated_51',['allocated',['../structopenlcb__msg__state__t.html#a1bdc374dc38908c70ed24a978ecfd22e',1,'openlcb_msg_state_t::allocated'],['../structopenlcb__node__state__t.html#a1bdc374dc38908c70ed24a978ecfd22e',1,'openlcb_node_state_t::allocated'],['../structcan__msg__state__struct.html#a2f6e1ef9ab9da4be83ad9239cbfac13e',1,'can_msg_state_struct::allocated']]],
+  ['and_20masks_52',['CAN Frame Format and Masks',['../group__can__frame__format.html',1,'']]],
+  ['and_20values_53',['Data Field Bit Masks and Values',['../group__data__field__masks.html',1,'']]],
+  ['arrays_54',['Payload Buffer Pool Arrays',['../group__payload__pool__types.html',1,'']]],
+  ['assembly_5fticks_55',['assembly_ticks',['../unionopenlcb__msg__timer__t.html#ad4f9783940799b959c408814489fc4a9',1,'openlcb_msg_timer_t']]],
+  ['auto_20routed_20well_20known_20events_56',['Auto Routed Well Known Events',['../group__well__known__events__auto.html',1,'Auto-Routed Well-Known Events'],['../group__well__known__events__local.html',1,'Non-Auto-Routed Well-Known Events']]]
 ];

@@ -35,7 +35,7 @@
  * time — there is no dynamic allocation at runtime.
  *
  * @author Jim Kueneman
- * @date 18 Mar 2026
+ * @date 23 Apr 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -455,6 +455,20 @@ extern "C" {
 
         /** @brief Event payload data buffer (LEN_EVENT_PAYLOAD bytes). */
     typedef uint8_t event_payload_t[LEN_EVENT_PAYLOAD];
+
+        /**
+         * @brief Identifies the remote node that sent a received message.
+         *
+         * @details Passed by reference to application callbacks that need to
+         * know the sender of an incoming message.  The pointer is only valid
+         * for the duration of the callback.
+         */
+    typedef struct {
+
+        node_id_t source_id;    /**< Source node 48-bit Node ID (0 if not yet resolved) */
+        uint16_t source_alias;  /**< Source node 12-bit CAN alias */
+
+    } source_info_t;
 
         /** @brief Configuration memory read/write operation buffer (64 bytes). */
     typedef uint8_t configuration_memory_buffer_t[LEN_DATAGRAM_MAX_PAYLOAD];

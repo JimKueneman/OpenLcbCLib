@@ -38,7 +38,7 @@
 #define USER_DEFINED_BASIC_BUFFER_DEPTH              117 // must be >= 1; enforced by compiler
 #define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4   // must be >= 1; enforced by compiler
 #define USER_DEFINED_SNIP_BUFFER_DEPTH               4   // must be >= 1; enforced by compiler
-#define USER_DEFINED_STREAM_BUFFER_DEPTH             2   // must be >= 1; enforced by compiler
+#define USER_DEFINED_STREAM_BUFFER_DEPTH             8   // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Stream Transport (requires OPENLCB_COMPILE_STREAM)

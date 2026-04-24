@@ -9,5 +9,6 @@ var searchData=
   ['openlcb_5fc_5flib_5fversion_5fmajor_6',['OPENLCB_C_LIB_VERSION_MAJOR',['../openlcb__defines_8h.html#adc08095c3332c10131756272728157dc',1,'openlcb_defines.h']]],
   ['openlcb_5fc_5flib_5fversion_5fminor_7',['OPENLCB_C_LIB_VERSION_MINOR',['../openlcb__defines_8h.html#a2eb10d1e63a0f5f2cb2d471754893c44',1,'openlcb_defines.h']]],
   ['openlcb_5fc_5flib_5fversion_5fpatch_8',['OPENLCB_C_LIB_VERSION_PATCH',['../openlcb__defines_8h.html#ac58ddd7b83b9465e59d929cfb07fd847',1,'openlcb_defines.h']]],
-  ['openlcb_5fevent_5fid_5foffset_9',['OPENLCB_EVENT_ID_OFFSET',['../openlcb__node_8c.html#ac2a7e31805a9b2f6cc448d65a06935f1',1,'openlcb_node.c']]]
+  ['openlcb_5fcompile_5fcan_9',['OPENLCB_COMPILE_CAN',['../openlcb__types_8h.html#a5d7b93a9aae87e4f058691b22ece61e9',1,'openlcb_types.h']]],
+  ['openlcb_5fevent_5fid_5foffset_10',['OPENLCB_EVENT_ID_OFFSET',['../openlcb__node_8c.html#ac2a7e31805a9b2f6cc448d65a06935f1',1,'openlcb_node.c']]]
 ];

@@ -99,11 +99,7 @@ typedef enum {
      *
      * @return Actual number of bytes placed in @p buffer.
      */
-typedef uint16_t (*config_mem_stream_read_request_func_t)(
-        openlcb_node_t *node,
-        uint32_t address,
-        uint16_t count,
-        uint8_t *buffer);
+typedef uint16_t (*config_mem_stream_read_request_func_t)(openlcb_node_t *node, uint32_t address, uint16_t count, uint8_t *buffer);
 
 // =============================================================================
 // Write-request callback typedef
@@ -122,11 +118,7 @@ typedef uint16_t (*config_mem_stream_read_request_func_t)(
      *
      * @return Actual number of bytes written.
      */
-typedef uint16_t (*config_mem_stream_write_request_func_t)(
-        openlcb_node_t *node,
-        uint32_t address,
-        uint16_t count,
-        const uint8_t *buffer);
+typedef uint16_t (*config_mem_stream_write_request_func_t)(openlcb_node_t *node, uint32_t address, uint16_t count, const uint8_t *buffer);
 
 // =============================================================================
 // Context for an active config-mem stream operation
@@ -224,31 +216,16 @@ typedef struct {
     // ---- Stream handler API (Layer 1) ----
 
         /** @brief Initiate an outbound stream.  Returns stream pointer or NULL. */
-    stream_state_t *(*stream_initiate_outbound)(
-            openlcb_statemachine_info_t *statemachine_info,
-            uint16_t dest_alias,
-            node_id_t dest_id,
-            uint16_t proposed_buffer_size,
-            uint8_t suggested_dest_stream_id,
-            const uint8_t *content_uid);
+    stream_state_t *(*stream_initiate_outbound)(openlcb_statemachine_info_t *statemachine_info, uint16_t dest_alias, node_id_t dest_id, uint16_t proposed_buffer_size, uint8_t suggested_dest_stream_id, const uint8_t *content_uid);
 
         /** @brief Send data on an open stream.  Returns true on success. */
-    bool (*stream_send_data)(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream,
-            const uint8_t *data,
-            uint16_t data_len);
+    bool (*stream_send_data)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream, const uint8_t *data, uint16_t data_len);
 
         /** @brief Send Stream Data Complete and free the stream slot. */
-    void (*stream_send_complete)(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream);
+    void (*stream_send_complete)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
 
         /** @brief Send Terminate Due To Error and free the stream slot. */
-    void (*stream_send_terminate)(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream,
-            uint16_t error_code);
+    void (*stream_send_terminate)(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream, uint16_t error_code);
 
     // ---- Per-space read request callbacks ----
 
@@ -334,8 +311,7 @@ extern "C" {
          *
          * @param interface  Pointer to @ref interface_protocol_config_mem_stream_handler_t (must remain valid for application lifetime).
          */
-    extern void ProtocolConfigMemStreamHandler_initialize(
-            const interface_protocol_config_mem_stream_handler_t *interface);
+    extern void ProtocolConfigMemStreamHandler_initialize(const interface_protocol_config_mem_stream_handler_t *interface);
 
     // ---- Datagram callbacks (wired into datagram handler interface) ----
 
@@ -347,40 +323,35 @@ extern "C" {
          *
          * @param statemachine_info  Main state machine context (from datagram handler).
          */
-    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_info(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_info(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handles incoming Read Stream All (0xFE) datagram command.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_all(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_all(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handles incoming Read Stream Config Memory (0xFD) datagram command.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_configuration_memory(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handles incoming Read Stream ACDI Manufacturer (0xFC) datagram command.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_manufacturer(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handles incoming Read Stream ACDI User (0xFB) datagram command.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_user(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_user(openlcb_statemachine_info_t *statemachine_info);
 
 #ifdef OPENLCB_COMPILE_TRAIN
 
@@ -389,16 +360,14 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_definition_info(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handles incoming Read Stream Train Fn Config (0xF9) datagram command.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_config_memory(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
 
 #endif /* OPENLCB_COMPILE_TRAIN */
 
@@ -409,8 +378,7 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_firmware(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_read_stream_space_firmware(openlcb_statemachine_info_t *statemachine_info);
 
 #endif /* OPENLCB_COMPILE_FIRMWARE */
 
@@ -423,8 +391,7 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_config_description_info(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_config_description_info(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handles incoming Write Stream All (0xFE) datagram command.
@@ -433,16 +400,14 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_all(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_all(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handles incoming Write Stream Config Memory (0xFD) datagram command.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_configuration_memory(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handles incoming Write Stream ACDI Manufacturer (0xFC) datagram command.
@@ -451,16 +416,14 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_manufacturer(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handles incoming Write Stream ACDI User (0xFB) datagram command.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_user(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_user(openlcb_statemachine_info_t *statemachine_info);
 
 #ifdef OPENLCB_COMPILE_TRAIN
 
@@ -471,16 +434,14 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_definition_info(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Handles incoming Write Stream Train Fn Config (0xF9) datagram command.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_config_memory(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
 
 #endif /* OPENLCB_COMPILE_TRAIN */
 
@@ -491,8 +452,7 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_firmware(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemStreamHandler_handle_write_stream_space_firmware(openlcb_statemachine_info_t *statemachine_info);
 
 #endif /* OPENLCB_COMPILE_FIRMWARE */
 
@@ -530,9 +490,7 @@ extern "C" {
          *
          * @return true to accept, false to reject.
          */
-    extern bool ProtocolConfigMemStreamHandler_on_initiate_request(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream);
+    extern bool ProtocolConfigMemStreamHandler_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
 
         /**
          * @brief Routes Stream Initiate Reply between config-mem and user.
@@ -540,9 +498,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param stream             Pointer to @ref stream_state_t entry.
          */
-    extern void ProtocolConfigMemStreamHandler_on_initiate_reply(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream);
+    extern void ProtocolConfigMemStreamHandler_on_initiate_reply(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
 
         /**
          * @brief Routes Stream Data Received between config-mem and user.
@@ -550,9 +506,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param stream             Pointer to @ref stream_state_t entry.
          */
-    extern void ProtocolConfigMemStreamHandler_on_data_received(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream);
+    extern void ProtocolConfigMemStreamHandler_on_data_received(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
 
         /**
          * @brief Routes Stream Data Proceed between config-mem and user.
@@ -560,9 +514,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param stream             Pointer to @ref stream_state_t entry.
          */
-    extern void ProtocolConfigMemStreamHandler_on_data_proceed(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream);
+    extern void ProtocolConfigMemStreamHandler_on_data_proceed(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
 
         /**
          * @brief Routes Stream Complete between config-mem and user.
@@ -570,9 +522,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param stream             Pointer to @ref stream_state_t entry.
          */
-    extern void ProtocolConfigMemStreamHandler_on_complete(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream);
+    extern void ProtocolConfigMemStreamHandler_on_complete(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
 
 #ifdef __cplusplus
 }

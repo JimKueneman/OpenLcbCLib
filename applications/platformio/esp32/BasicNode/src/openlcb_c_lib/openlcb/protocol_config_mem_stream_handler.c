@@ -274,27 +274,17 @@ static void _load_reply_fail_datagram(config_mem_stream_context_t *ctx, uint16_t
 
     _pump_sm_info.openlcb_node = ctx->node;
 
-    OpenLcbUtilities_load_openlcb_message(
-            _pump_sm_info.outgoing_msg_info.msg_ptr,
-            ctx->node->alias,
-            ctx->node->id,
-            ctx->remote_alias,
-            ctx->remote_node_id,
-            MTI_DATAGRAM);
+    OpenLcbUtilities_load_openlcb_message(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->node->alias, ctx->node->id, ctx->remote_alias, ctx->remote_node_id, MTI_DATAGRAM);
 
     OpenLcbUtilities_clear_openlcb_message_payload(_pump_sm_info.outgoing_msg_info.msg_ptr);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->reply_fail_cmd_byte, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->reply_fail_cmd_byte, 1);
 
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->start_address, 2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->start_address, 2);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, error_code, 6);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, error_code, 6);
 
     _pump_sm_info.outgoing_msg_info.msg_ptr->payload_count = 8;
     _pump_sm_info.outgoing_msg_info.valid = true;
@@ -318,33 +308,21 @@ static void _load_reply_ok_datagram(config_mem_stream_context_t *ctx) {
 
     _pump_sm_info.openlcb_node = ctx->node;
 
-    OpenLcbUtilities_load_openlcb_message(
-            _pump_sm_info.outgoing_msg_info.msg_ptr,
-            ctx->node->alias,
-            ctx->node->id,
-            ctx->remote_alias,
-            ctx->remote_node_id,
-            MTI_DATAGRAM);
+    OpenLcbUtilities_load_openlcb_message(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->node->alias, ctx->node->id, ctx->remote_alias, ctx->remote_node_id, MTI_DATAGRAM);
 
     OpenLcbUtilities_clear_openlcb_message_payload(_pump_sm_info.outgoing_msg_info.msg_ptr);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->reply_cmd_byte, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->reply_cmd_byte, 1);
 
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->start_address, 2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->start_address, 2);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->stream->source_stream_id, 6);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->stream->source_stream_id, 6);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->dest_stream_id, 7);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->dest_stream_id, 7);
 
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->total_bytes, 8);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->total_bytes, 8);
 
     _pump_sm_info.outgoing_msg_info.msg_ptr->payload_count = 12;
     _pump_sm_info.outgoing_msg_info.valid = true;
@@ -386,8 +364,7 @@ static bool _pump_next_chunk(config_mem_stream_context_t *ctx) {
 
     }
 
-    uint16_t actual = ctx->read_request_func(
-            ctx->node, ctx->current_address, chunk, _read_buffer);
+    uint16_t actual = ctx->read_request_func(ctx->node, ctx->current_address, chunk, _read_buffer);
 
     if (actual == 0) {
 
@@ -419,8 +396,7 @@ static bool _pump_next_chunk(config_mem_stream_context_t *ctx) {
      * @param interface  Populated DI table.
      * @endverbatim
      */
-void ProtocolConfigMemStreamHandler_initialize(
-        const interface_protocol_config_mem_stream_handler_t *interface) {
+void ProtocolConfigMemStreamHandler_initialize(const interface_protocol_config_mem_stream_handler_t *interface) {
 
     _interface = (interface_protocol_config_mem_stream_handler_t *) interface;
 
@@ -456,12 +432,7 @@ void ProtocolConfigMemStreamHandler_initialize(
      * @param reply_cmd_byte      Reply OK command byte (e.g. 0x73 for CDI).
      * @param reply_fail_cmd_byte Reply Fail command byte (e.g. 0x7B for CDI).
      */
-static void _handle_read_stream(
-        openlcb_statemachine_info_t *statemachine_info,
-        const user_address_space_info_t *space_info,
-        config_mem_stream_read_request_func_t read_request_func,
-        uint8_t reply_cmd_byte,
-        uint8_t reply_fail_cmd_byte) {
+static void _handle_read_stream(openlcb_statemachine_info_t *statemachine_info, const user_address_space_info_t *space_info, config_mem_stream_read_request_func_t read_request_func, uint8_t reply_cmd_byte, uint8_t reply_fail_cmd_byte) {
 
     // Phase 1 needs a fresh context; Phase 2 reuses the one stashed on the node
     config_mem_stream_context_t *ctx = NULL;
@@ -473,8 +444,7 @@ static void _handle_read_stream(
 
         if (!ctx) {
 
-            _interface->load_datagram_received_rejected_message(
-                    statemachine_info, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
+            _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
 
             return;
 
@@ -483,8 +453,7 @@ static void _handle_read_stream(
         // Reject if space not present or no read callback
         if (!space_info->present || !read_request_func) {
 
-            _interface->load_datagram_received_rejected_message(
-                    statemachine_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+            _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
             return;
 
@@ -501,8 +470,7 @@ static void _handle_read_stream(
         ctx->node = statemachine_info->openlcb_node;
         ctx->space_info = space_info;
         ctx->read_request_func = read_request_func;
-        ctx->start_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(
-                statemachine_info->incoming_msg_info.msg_ptr, 2);
+        ctx->start_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
         ctx->current_address = ctx->start_address;
         ctx->dest_stream_id = *statemachine_info->incoming_msg_info.msg_ptr->payload[7];
         ctx->reply_cmd_byte = reply_cmd_byte;
@@ -513,8 +481,7 @@ static void _handle_read_stream(
         // Extract read count (bytes 8-11), 0 = read to end
         if (statemachine_info->incoming_msg_info.msg_ptr->payload_count >= 12) {
 
-            ctx->total_bytes = OpenLcbUtilities_extract_dword_from_openlcb_payload(
-                    statemachine_info->incoming_msg_info.msg_ptr, 8);
+            ctx->total_bytes = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 8);
 
         } else {
 
@@ -560,13 +527,7 @@ static void _handle_read_stream(
 
     }
 
-    stream_state_t *stream = _interface->stream_initiate_outbound(
-            statemachine_info,
-            ctx->remote_alias,
-            ctx->remote_node_id,
-            LEN_MESSAGE_BYTES_STREAM,
-            ctx->dest_stream_id,
-            NULL);
+    stream_state_t *stream = _interface->stream_initiate_outbound(statemachine_info, ctx->remote_alias, ctx->remote_node_id, LEN_MESSAGE_BYTES_STREAM, ctx->dest_stream_id, NULL);
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false;
     statemachine_info->incoming_msg_info.enumerate = false;
@@ -593,8 +554,7 @@ static void _handle_read_stream(
 // =============================================================================
 
     /** @brief Handles Read Stream CDI (0xFF). */
-void ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_info(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_info(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_read_stream(
             statemachine_info,
@@ -606,21 +566,14 @@ void ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_
 }
 
     /** @brief Handles Read Stream All (0xFE). */
-void ProtocolConfigMemStreamHandler_handle_read_stream_space_all(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_read_stream_space_all(openlcb_statemachine_info_t *statemachine_info) {
 
-    _handle_read_stream(
-            statemachine_info,
-            &statemachine_info->openlcb_node->parameters->address_space_all,
-            _interface->read_request_all,
-            CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FE,
-            CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FE);
+    _handle_read_stream(statemachine_info, &statemachine_info->openlcb_node->parameters->address_space_all, _interface->read_request_all, CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FE, CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FE);
 
 }
 
     /** @brief Handles Read Stream Config Memory (0xFD). */
-void ProtocolConfigMemStreamHandler_handle_read_stream_space_configuration_memory(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_read_stream_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_read_stream(
             statemachine_info,
@@ -632,8 +585,7 @@ void ProtocolConfigMemStreamHandler_handle_read_stream_space_configuration_memor
 }
 
     /** @brief Handles Read Stream ACDI Manufacturer (0xFC). */
-void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_manufacturer(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_read_stream(
             statemachine_info,
@@ -645,8 +597,7 @@ void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_manufacturer(
 }
 
     /** @brief Handles Read Stream ACDI User (0xFB). */
-void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_user(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_user(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_read_stream(
             statemachine_info,
@@ -660,8 +611,7 @@ void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_user(
 #ifdef OPENLCB_COMPILE_TRAIN
 
     /** @brief Handles Read Stream Train FDI (0xFA). */
-void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_definition_info(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_read_stream(
             statemachine_info,
@@ -673,8 +623,7 @@ void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_defi
 }
 
     /** @brief Handles Read Stream Train Fn Config (0xF9). */
-void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_config_memory(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_read_stream(
             statemachine_info,
@@ -690,8 +639,7 @@ void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_conf
 #ifdef OPENLCB_COMPILE_FIRMWARE
 
     /** @brief Handles Read Stream Firmware (0xEF). */
-void ProtocolConfigMemStreamHandler_handle_read_stream_space_firmware(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_read_stream_space_firmware(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_read_stream(
             statemachine_info,
@@ -722,30 +670,19 @@ static void _load_write_reply_ok_datagram(config_mem_stream_context_t *ctx) {
 
     _pump_sm_info.openlcb_node = ctx->node;
 
-    OpenLcbUtilities_load_openlcb_message(
-            _pump_sm_info.outgoing_msg_info.msg_ptr,
-            ctx->node->alias,
-            ctx->node->id,
-            ctx->remote_alias,
-            ctx->remote_node_id,
-            MTI_DATAGRAM);
+    OpenLcbUtilities_load_openlcb_message(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->node->alias, ctx->node->id, ctx->remote_alias, ctx->remote_node_id, MTI_DATAGRAM);
 
     OpenLcbUtilities_clear_openlcb_message_payload(_pump_sm_info.outgoing_msg_info.msg_ptr);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->reply_cmd_byte, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->reply_cmd_byte, 1);
 
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->start_address, 2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->start_address, 2);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->source_stream_id, 6);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->source_stream_id, 6);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            _pump_sm_info.outgoing_msg_info.msg_ptr, ctx->dest_stream_id, 7);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->dest_stream_id, 7);
 
     _pump_sm_info.outgoing_msg_info.msg_ptr->payload_count = 8;
     _pump_sm_info.outgoing_msg_info.valid = true;
@@ -790,8 +727,7 @@ static void _handle_write_stream(
 
         if (!ctx) {
 
-            _interface->load_datagram_received_rejected_message(
-                    statemachine_info, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
+            _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
 
             return;
 
@@ -800,8 +736,7 @@ static void _handle_write_stream(
         // Reject if space not present, read-only, or no write callback
         if (!space_info->present || space_info->read_only || !write_request_func) {
 
-            _interface->load_datagram_received_rejected_message(
-                    statemachine_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+            _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
             return;
 
@@ -818,8 +753,7 @@ static void _handle_write_stream(
         ctx->space_info = space_info;
         ctx->write_request_func = write_request_func;
         ctx->read_request_func = NULL;
-        ctx->start_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(
-                statemachine_info->incoming_msg_info.msg_ptr, 2);
+        ctx->start_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
         ctx->current_address = ctx->start_address;
         ctx->source_stream_id = *statemachine_info->incoming_msg_info.msg_ptr->payload[source_stream_id_offset];
         ctx->reply_cmd_byte = reply_cmd_byte;
@@ -879,36 +813,21 @@ static void _handle_write_stream(
 // =============================================================================
 
     /** @brief Handles Write Stream CDI (0xFF) -- rejected (read-only). */
-void ProtocolConfigMemStreamHandler_handle_write_stream_space_config_description_info(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_write_stream_space_config_description_info(openlcb_statemachine_info_t *statemachine_info) {
 
-    _handle_write_stream(
-            statemachine_info,
-            &statemachine_info->openlcb_node->parameters->address_space_configuration_definition,
-            NULL,
-            CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FF,
-            CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FF,
-            6);
+    _handle_write_stream(statemachine_info, &statemachine_info->openlcb_node->parameters->address_space_configuration_definition, NULL, CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FF, CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FF, 6);
 
 }
 
     /** @brief Handles Write Stream All (0xFE) -- rejected (read-only). */
-void ProtocolConfigMemStreamHandler_handle_write_stream_space_all(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_write_stream_space_all(openlcb_statemachine_info_t *statemachine_info) {
 
-    _handle_write_stream(
-            statemachine_info,
-            &statemachine_info->openlcb_node->parameters->address_space_all,
-            NULL,
-            CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FE,
-            CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FE,
-            6);
+    _handle_write_stream(statemachine_info, &statemachine_info->openlcb_node->parameters->address_space_all, NULL, CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FE, CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FE, 6);
 
 }
 
     /** @brief Handles Write Stream Config Memory (0xFD). */
-void ProtocolConfigMemStreamHandler_handle_write_stream_space_configuration_memory(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_write_stream_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_write_stream(
             statemachine_info,
@@ -921,22 +840,14 @@ void ProtocolConfigMemStreamHandler_handle_write_stream_space_configuration_memo
 }
 
     /** @brief Handles Write Stream ACDI Manufacturer (0xFC) -- rejected (read-only). */
-void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_manufacturer(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info) {
 
-    _handle_write_stream(
-            statemachine_info,
-            &statemachine_info->openlcb_node->parameters->address_space_acdi_manufacturer,
-            NULL,
-            CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6,
-            CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6,
-            7);
+    _handle_write_stream(statemachine_info, &statemachine_info->openlcb_node->parameters->address_space_acdi_manufacturer, NULL, CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6, CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6, 7);
 
 }
 
     /** @brief Handles Write Stream ACDI User (0xFB). */
-void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_user(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_user(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_write_stream(
             statemachine_info,
@@ -951,8 +862,7 @@ void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_user(
 #ifdef OPENLCB_COMPILE_TRAIN
 
     /** @brief Handles Write Stream Train FDI (0xFA) -- rejected (read-only). */
-void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_definition_info(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_write_stream(
             statemachine_info,
@@ -965,8 +875,7 @@ void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_def
 }
 
     /** @brief Handles Write Stream Train Fn Config (0xF9). */
-void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_config_memory(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_write_stream(
             statemachine_info,
@@ -983,8 +892,7 @@ void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_con
 #ifdef OPENLCB_COMPILE_FIRMWARE
 
     /** @brief Handles Write Stream Firmware (0xEF). */
-void ProtocolConfigMemStreamHandler_handle_write_stream_space_firmware(
-        openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemStreamHandler_handle_write_stream_space_firmware(openlcb_statemachine_info_t *statemachine_info) {
 
     _handle_write_stream(
             statemachine_info,
@@ -1133,8 +1041,7 @@ void ProtocolConfigMemStreamHandler_check_timeouts(uint8_t current_tick) {
         if (ctx->stream) {
 
             _pump_sm_info.openlcb_node = ctx->node;
-            _interface->stream_send_terminate(
-                    &_pump_sm_info, ctx->stream, ERROR_TEMPORARY_TIME_OUT);
+            _interface->stream_send_terminate(&_pump_sm_info, ctx->stream, ERROR_TEMPORARY_TIME_OUT);
 
         }
 
@@ -1163,9 +1070,7 @@ void ProtocolConfigMemStreamHandler_check_timeouts(uint8_t current_tick) {
      *
      * @return true to accept, false to reject.
      */
-bool ProtocolConfigMemStreamHandler_on_initiate_request(
-        openlcb_statemachine_info_t *statemachine_info,
-        stream_state_t *stream) {
+bool ProtocolConfigMemStreamHandler_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     // Check if this is the inbound stream for a pending write
     config_mem_stream_context_t *ctx = _find_context_for_write_initiate(stream->remote_alias);
@@ -1203,9 +1108,7 @@ bool ProtocolConfigMemStreamHandler_on_initiate_request(
      * @param stream             Pointer to stream_state_t entry.
      * @endverbatim
      */
-void ProtocolConfigMemStreamHandler_on_initiate_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        stream_state_t *stream) {
+void ProtocolConfigMemStreamHandler_on_initiate_reply(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     config_mem_stream_context_t *ctx = _find_context_by_stream(stream);
 
@@ -1247,9 +1150,7 @@ void ProtocolConfigMemStreamHandler_on_initiate_reply(
      * @param stream             Pointer to stream_state_t entry.
      * @endverbatim
      */
-void ProtocolConfigMemStreamHandler_on_data_received(
-        openlcb_statemachine_info_t *statemachine_info,
-        stream_state_t *stream) {
+void ProtocolConfigMemStreamHandler_on_data_received(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     config_mem_stream_context_t *ctx = _find_context_by_stream(stream);
 
@@ -1264,8 +1165,7 @@ void ProtocolConfigMemStreamHandler_on_data_received(
             uint16_t data_len = payload_count - 1;
             const uint8_t *data = (const uint8_t *) statemachine_info->incoming_msg_info.msg_ptr->payload[1];
 
-            uint16_t actual = ctx->write_request_func(
-                    ctx->node, ctx->current_address, data_len, data);
+            uint16_t actual = ctx->write_request_func(ctx->node, ctx->current_address, data_len, data);
 
             ctx->current_address += actual;
             ctx->bytes_sent += actual;
@@ -1298,9 +1198,7 @@ void ProtocolConfigMemStreamHandler_on_data_received(
      * @param stream             Pointer to stream_state_t entry.
      * @endverbatim
      */
-void ProtocolConfigMemStreamHandler_on_data_proceed(
-        openlcb_statemachine_info_t *statemachine_info,
-        stream_state_t *stream) {
+void ProtocolConfigMemStreamHandler_on_data_proceed(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     config_mem_stream_context_t *ctx = _find_context_by_stream(stream);
 
@@ -1334,9 +1232,7 @@ void ProtocolConfigMemStreamHandler_on_data_proceed(
      * @param stream             Pointer to stream_state_t entry.
      * @endverbatim
      */
-void ProtocolConfigMemStreamHandler_on_complete(
-        openlcb_statemachine_info_t *statemachine_info,
-        stream_state_t *stream) {
+void ProtocolConfigMemStreamHandler_on_complete(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     config_mem_stream_context_t *ctx = _find_context_by_stream(stream);
 

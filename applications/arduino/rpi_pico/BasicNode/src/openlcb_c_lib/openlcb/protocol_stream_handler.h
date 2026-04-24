@@ -250,11 +250,7 @@ extern "C" {
          *
          * @return true if data was sent, false on precondition failure.
          */
-    extern bool ProtocolStreamHandler_send_data(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream,
-            const uint8_t *data,
-            uint16_t data_len);
+    extern bool ProtocolStreamHandler_send_data(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream, const uint8_t *data, uint16_t data_len);
 
         /**
          * @brief Sends Stream Data Complete and frees the stream slot.
@@ -264,9 +260,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param stream             Pointer to the stream state entry.
          */
-    extern void ProtocolStreamHandler_send_complete(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream);
+    extern void ProtocolStreamHandler_send_complete(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
 
         /**
          * @brief Sends Terminate Due To Error to abort a stream and frees the slot.
@@ -278,10 +272,7 @@ extern "C" {
          * @param stream             Pointer to the stream state entry.
          * @param error_code         Error code for the TDE payload.
          */
-    extern void ProtocolStreamHandler_send_terminate(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream,
-            uint16_t error_code);
+    extern void ProtocolStreamHandler_send_terminate(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream, uint16_t error_code);
 
         /**
          * @brief Sends an early Stream Data Proceed to allow double-buffering.
@@ -296,9 +287,7 @@ extern "C" {
          *
          * @return true if Proceed was sent, false if precondition failed.
          */
-    extern bool ProtocolStreamHandler_send_early_proceed(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream);
+    extern bool ProtocolStreamHandler_send_early_proceed(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream);
 
 #ifdef __cplusplus
 }

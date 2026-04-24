@@ -130,6 +130,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a9031d677b11fedb301c9ab120a58f3b8" id="r_a9031d677b11fedb301c9ab120a58f3b8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9031d677b11fedb301c9ab120a58f3b8">operations_request_get_unique_id_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
 <tr class="memdesc:a9031d677b11fedb301c9ab120a58f3b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Handle Get Unique ID reply.  <br /></td></tr>
 <tr class="separator:a9031d677b11fedb301c9ab120a58f3b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6950a596927a52b7baa98f252a8e5c73" id="r_a6950a596927a52b7baa98f252a8e5c73"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6950a596927a52b7baa98f252a8e5c73">cleanup_before_handoff</a> )(void)</td></tr>
+<tr class="memdesc:a6950a596927a52b7baa98f252a8e5c73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Tear down peripherals before freeze or reboot. Called automatically by the library before dispatching freeze or reboot if not NULL.  <br /></td></tr>
+<tr class="separator:a6950a596927a52b7baa98f252a8e5c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9d251619e06d250a8a8d2cd5714b0cb" id="r_aa9d251619e06d250a8a8d2cd5714b0cb"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9d251619e06d250a8a8d2cd5714b0cb">operations_request_freeze</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
 <tr class="memdesc:aa9d251619e06d250a8a8d2cd5714b0cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Handle Freeze command.  <br /></td></tr>
 <tr class="separator:aa9d251619e06d250a8a8d2cd5714b0cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -323,6 +326,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Optional — Handle Get Unique ID reply. </p>
+
+</div>
+</div>
+<a id="a6950a596927a52b7baa98f252a8e5c73" name="a6950a596927a52b7baa98f252a8e5c73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6950a596927a52b7baa98f252a8e5c73">&#9670;&#160;</a></span>cleanup_before_handoff</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* cleanup_before_handoff) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional — Tear down peripherals before freeze or reboot. Called automatically by the library before dispatching freeze or reboot if not NULL. </p>
 
 </div>
 </div>

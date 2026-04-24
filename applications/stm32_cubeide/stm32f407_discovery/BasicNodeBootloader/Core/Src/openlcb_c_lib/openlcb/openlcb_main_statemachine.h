@@ -34,7 +34,7 @@
 * cover SNIP, events, trains, datagrams, and streams.
 *
 * @author Jim Kueneman
-* @date 17 Mar 2026
+* @date 23 Apr 2026
 */
 
 #ifndef __OPENLCB_OPENLCB_MAIN_STATEMACHINE__
@@ -218,6 +218,8 @@ typedef struct {
         /** @brief MTI 0x05F4 — PC Event Report with Payload.  Optional. */
     void (*event_transport_pc_report_with_payload)(openlcb_statemachine_info_t *statemachine_info);
 
+#ifdef OPENLCB_COMPILE_TRAIN
+
     // =========================================================================
     // Optional Train Protocol Handlers (NULL = Interaction Rejected)
     // =========================================================================
@@ -237,6 +239,8 @@ typedef struct {
 
         /** @brief MTI 0x0A48 — Simple Train Node Ident Info Reply (received).  Optional. */
     void (*simple_train_node_ident_info_reply)(openlcb_statemachine_info_t *statemachine_info);
+
+#endif /* OPENLCB_COMPILE_TRAIN */
 
     // =========================================================================
     // Optional Datagram Handlers (NULL = Interaction Rejected)
@@ -276,12 +280,18 @@ typedef struct {
         /** @brief Terminate Due To Error with stream MTI.  Optional. */
     void (*stream_terminate_due_to_error)(openlcb_statemachine_info_t *statemachine_info);
 
+#ifdef OPENLCB_COMPILE_BROADCAST_TIME
+
     // =========================================================================
     // Optional Broadcast Time Handler (NULL = not implemented)
     // =========================================================================
 
         /** @brief Called by the event transport handler for broadcast time Event IDs.  Optional. */
     void (*broadcast_time_event_handler)(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+
+#endif /* OPENLCB_COMPILE_BROADCAST_TIME */
+
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
 
     // =========================================================================
     // Optional Train Search Handler (NULL = not implemented)
@@ -293,12 +303,21 @@ typedef struct {
         /** @brief Called when train search enumeration completes with no match.  Optional. */
     void (*train_search_no_match_handler)(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
+        /** @brief Called when a Producer Identified Set carries a train-search event ID (reply to a search).  Optional. */
+    void (*train_search_reply_handler)(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
+
+#ifdef OPENLCB_COMPILE_TRAIN
+
     // =========================================================================
     // Optional Train Emergency Event Handler (NULL = not implemented)
     // =========================================================================
 
         /** @brief Called for well-known emergency events; dispatched to every train node.  Optional. */
     void (*train_emergency_event_handler)(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+
+#endif /* OPENLCB_COMPILE_TRAIN */
 
     // =========================================================================
     // Optional Event Classification Filters (NULL = skip filtering)
@@ -324,7 +343,9 @@ typedef struct {
          * @param event_id  The 64-bit event identifier to classify.
          * @return true if @p event_id is a broadcast time event.
          */
+#ifdef OPENLCB_COMPILE_BROADCAST_TIME
     bool (*is_broadcast_time_event)(event_id_t event_id);
+#endif /* OPENLCB_COMPILE_BROADCAST_TIME */
 
         /**
          * @brief Test whether an event ID is a train search request.
@@ -337,7 +358,9 @@ typedef struct {
          * @param event_id  The 64-bit event identifier to classify.
          * @return true if @p event_id is a train search event.
          */
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
     bool (*is_train_search_event)(event_id_t event_id);
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
 
         /**
          * @brief Test whether an event ID is a well-known emergency event.
@@ -350,7 +373,9 @@ typedef struct {
          * @param event_id  The 64-bit event identifier to classify.
          * @return true if @p event_id is an emergency event.
          */
+#ifdef OPENLCB_COMPILE_TRAIN
     bool (*is_emergency_event)(event_id_t event_id);
+#endif /* OPENLCB_COMPILE_TRAIN */
 
 } interface_openlcb_main_statemachine_t;
 
@@ -366,8 +391,7 @@ extern "C" {
          *
          * @param interface_openlcb_main_statemachine  Pointer to @ref interface_openlcb_main_statemachine_t.  Must remain valid for application lifetime.
          */
-    extern void OpenLcbMainStatemachine_initialize(
-            const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine);
+    extern void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine);
 
         /**
          * @brief Runs one non-blocking step of protocol processing.
@@ -382,8 +406,7 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void OpenLcbMainStatemachine_load_interaction_rejected(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info_t *statemachine_info);
 
     // ---- Internal functions exposed for unit testing ----
 
@@ -407,16 +430,14 @@ extern "C" {
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern void OpenLcbMainStatemachine_process_main_statemachine(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Address filter.  Returns true if the node should process this message.
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
-    extern bool OpenLcbMainStatemachine_does_node_process_msg(
-            openlcb_statemachine_info_t *statemachine_info);
+    extern bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *statemachine_info);
 
         /** @brief Returns pointer to internal static state machine info.  For unit testing only — do not modify. */
     extern openlcb_statemachine_info_t *OpenLcbMainStatemachine_get_statemachine_info(void);

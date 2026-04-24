@@ -43,6 +43,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h> // printf
 
 #include "can_types.h"
 #include "can_utilities.h"

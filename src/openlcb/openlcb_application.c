@@ -102,13 +102,7 @@ bool OpenLcbApplication_send_event_with_mti(openlcb_node_t *openlcb_node, event_
     msg.payload = (openlcb_payload_t *)&payload;
     msg.payload_type = BASIC;
 
-    OpenLcbUtilities_load_openlcb_message(
-        &msg,
-        openlcb_node->alias,
-        openlcb_node->id,
-        0,
-        NULL_NODE_ID,
-        mti);
+    OpenLcbUtilities_load_openlcb_message(&msg, openlcb_node->alias, openlcb_node->id, 0, NULL_NODE_ID, mti);
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, event_id);
 
@@ -368,17 +362,9 @@ bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *openlcb_node, event
     msg.payload = (openlcb_payload_t *) &payload;
     msg.payload_type = BASIC;
 
-    OpenLcbUtilities_load_openlcb_message(
-            &msg,
-            openlcb_node->alias,
-            openlcb_node->id,
-            0,
-            NULL_NODE_ID,
-            MTI_PC_EVENT_REPORT);
+    OpenLcbUtilities_load_openlcb_message(&msg, openlcb_node->alias, openlcb_node->id, 0, NULL_NODE_ID, MTI_PC_EVENT_REPORT);
 
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-            &msg,
-            event_id);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, event_id);
 
     if (_interface->send_openlcb_msg) {
 
@@ -420,17 +406,9 @@ bool OpenLcbApplication_send_teach_event(openlcb_node_t *openlcb_node, event_id_
     msg.payload = (openlcb_payload_t *) &payload;
     msg.payload_type = BASIC;
 
-    OpenLcbUtilities_load_openlcb_message(
-            &msg,
-            openlcb_node->alias,
-            openlcb_node->id,
-            0,
-            NULL_NODE_ID,
-            MTI_EVENT_LEARN);
+    OpenLcbUtilities_load_openlcb_message(&msg, openlcb_node->alias, openlcb_node->id, 0, NULL_NODE_ID, MTI_EVENT_LEARN);
 
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-            &msg,
-            event_id);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, event_id);
 
     if (_interface->send_openlcb_msg) {
 
@@ -474,18 +452,9 @@ bool OpenLcbApplication_send_initialization_event(openlcb_node_t *openlcb_node) 
     msg.payload = (openlcb_payload_t *) &payload;
     msg.payload_type = BASIC;
 
-    OpenLcbUtilities_load_openlcb_message(
-            &msg,
-            openlcb_node->alias,
-            openlcb_node->id,
-            0,
-            NULL_NODE_ID,
-            MTI_INITIALIZATION_COMPLETE);
+    OpenLcbUtilities_load_openlcb_message(&msg, openlcb_node->alias, openlcb_node->id, 0, NULL_NODE_ID, MTI_INITIALIZATION_COMPLETE);
 
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(
-            &msg,
-            openlcb_node->id,
-            0);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, openlcb_node->id, 0);
 
     if (_interface->send_openlcb_msg) {
 
@@ -519,12 +488,7 @@ uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *openlcb_no
 
     if (_interface->config_memory_read) {
 
-        return (_interface->config_memory_read(
-                openlcb_node,
-                address,
-                count,
-                buffer)
-                );
+        return (_interface->config_memory_read(openlcb_node, address, count, buffer));
 
     }
 
@@ -555,12 +519,7 @@ uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *openlcb_n
 
     if (_interface->config_memory_write) {
 
-        return (_interface->config_memory_write(
-                openlcb_node,
-                address,
-                count,
-                buffer)
-                );
+        return (_interface->config_memory_write(openlcb_node, address, count, buffer));
 
     }
 

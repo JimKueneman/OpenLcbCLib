@@ -130,7 +130,7 @@ static const openlcb_config_t openlcb_config = {
     .on_train_controller_changed_request = &CallbacksTrain_on_controller_changed_request,
 
     // Train search callbacks
-    .on_train_search_no_match            = &CallbacksTrain_on_search_no_match,
+    .on_train_search_no_match_with_allocate = &CallbacksTrain_on_search_no_match_with_allocate,
 
 #ifdef OPENLCB_COMPILE_STREAM
     // Stream transport callbacks

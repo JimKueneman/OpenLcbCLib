@@ -46,6 +46,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#include <stdio.h> // DEBUG: temporary printf instrumentation
 
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
@@ -202,12 +203,7 @@ static uint8_t _assign_dest_stream_id(void) {
      * @param source_stream_id   SID from the request.
      * @param dest_stream_id     DID assigned by this node.
      */
-static void _load_initiate_reply(
-            openlcb_statemachine_info_t *statemachine_info,
-            uint16_t max_buffer_size,
-            uint16_t flags_or_error,
-            uint8_t source_stream_id,
-            uint8_t dest_stream_id) {
+static void _load_initiate_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t max_buffer_size, uint16_t flags_or_error, uint8_t source_stream_id, uint8_t dest_stream_id) {
 
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -239,9 +235,7 @@ static void _load_initiate_reply(
      * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
      * @param stream             Pointer to the stream state entry.
      */
-static void _load_data_proceed(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream) {
+static void _load_data_proceed(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -316,13 +310,7 @@ static void _load_initiate_request(
             node_id_t dest_id,
             const uint8_t *content_uid) {
 
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            dest_alias,
-            dest_id,
-            MTI_STREAM_INIT_REQUEST);
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, dest_alias, dest_id, MTI_STREAM_INIT_REQUEST);
 
     OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
 
@@ -371,19 +359,9 @@ static void _load_initiate_request(
      * @param data               Pointer to data bytes to send.
      * @param data_len           Number of data bytes.
      */
-static void _load_data_send(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream,
-            const uint8_t *data,
-            uint16_t data_len) {
+static void _load_data_send(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream, const uint8_t *data, uint16_t data_len) {
 
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            stream->remote_alias,
-            stream->remote_node_id,
-            MTI_STREAM_SEND);
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, stream->remote_alias, stream->remote_node_id, MTI_STREAM_SEND);
 
     OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
 
@@ -410,17 +388,9 @@ static void _load_data_send(
      * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
      * @param stream             Pointer to the stream state entry.
      */
-static void _load_data_complete(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream) {
+static void _load_data_complete(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            stream->remote_alias,
-            stream->remote_node_id,
-            MTI_STREAM_COMPLETE);
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, stream->remote_alias, stream->remote_node_id, MTI_STREAM_COMPLETE);
 
     OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
 
@@ -562,12 +532,7 @@ void ProtocolStreamHandler_initiate_request(openlcb_statemachine_info_t *statema
 
         stream->state = STREAM_STATE_OPEN;
 
-        _load_initiate_reply(
-                statemachine_info,
-                stream->max_buffer_size,
-                STREAM_REPLY_ACCEPT,
-                stream->source_stream_id,
-                stream->dest_stream_id);
+        _load_initiate_reply(statemachine_info, stream->max_buffer_size, STREAM_REPLY_ACCEPT, stream->source_stream_id, stream->dest_stream_id);
 
     } else {
 
@@ -663,9 +628,21 @@ void ProtocolStreamHandler_data_send(openlcb_statemachine_info_t *statemachine_i
 
     stream_state_t *stream = _find_stream(incoming->source_id, dest_stream_id, false);
 
-    if (!stream) { return; }
+    if (!stream) {
 
-    if (stream->state != STREAM_STATE_OPEN) { return; }
+        printf("DATA_SEND_NO_STREAM: src_alias=0x%03X did=0x%02X\n",
+               incoming->source_alias, dest_stream_id); fflush(stdout);
+        return;
+
+    }
+
+    if (stream->state != STREAM_STATE_OPEN) {
+
+        printf("DATA_SEND_STREAM_NOT_OPEN: src_alias=0x%03X did=0x%02X state=%d bytes_remaining=%u\n",
+               incoming->source_alias, dest_stream_id, stream->state, stream->bytes_remaining); fflush(stdout);
+        return;
+
+    }
 
     // Data bytes are payload[1..payload_count-1]
     uint16_t data_len = 0;
@@ -854,13 +831,7 @@ void ProtocolStreamHandler_handle_terminate_due_to_error(openlcb_statemachine_in
      *
      * @return Pointer to allocated stream_state_t, or NULL if table full.
      */
-stream_state_t *ProtocolStreamHandler_initiate_outbound(
-            openlcb_statemachine_info_t *statemachine_info,
-            uint16_t dest_alias,
-            node_id_t dest_id,
-            uint16_t proposed_buffer_size,
-            uint8_t suggested_dest_stream_id,
-            const uint8_t *content_uid) {
+stream_state_t *ProtocolStreamHandler_initiate_outbound(openlcb_statemachine_info_t *statemachine_info, uint16_t dest_alias, node_id_t dest_id, uint16_t proposed_buffer_size, uint8_t suggested_dest_stream_id, const uint8_t *content_uid) {
 
     stream_state_t *stream = _allocate_stream();
 
@@ -887,14 +858,7 @@ stream_state_t *ProtocolStreamHandler_initiate_outbound(
 
     }
 
-    _load_initiate_request(
-            statemachine_info,
-            proposed_buffer_size,
-            stream->source_stream_id,
-            suggested_dest_stream_id,
-            dest_alias,
-            dest_id,
-            content_uid);
+    _load_initiate_request(statemachine_info, proposed_buffer_size, stream->source_stream_id, suggested_dest_stream_id, dest_alias, dest_id, content_uid);
 
     return stream;
 
@@ -918,11 +882,7 @@ stream_state_t *ProtocolStreamHandler_initiate_outbound(
      *
      * @return true if data was sent, false if precondition failed.
      */
-bool ProtocolStreamHandler_send_data(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream,
-            const uint8_t *data,
-            uint16_t data_len) {
+bool ProtocolStreamHandler_send_data(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream, const uint8_t *data, uint16_t data_len) {
 
     if (!stream) { return false; }
 
@@ -952,9 +912,7 @@ bool ProtocolStreamHandler_send_data(
      * @param stream             Pointer to the stream state entry.
      * @endverbatim
      */
-void ProtocolStreamHandler_send_complete(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream) {
+void ProtocolStreamHandler_send_complete(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     if (!stream) { return; }
 
@@ -977,22 +935,13 @@ void ProtocolStreamHandler_send_complete(
      * @param error_code         Error code for bytes 0-1 of the TDE payload.
      * @endverbatim
      */
-void ProtocolStreamHandler_send_terminate(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream,
-            uint16_t error_code) {
+void ProtocolStreamHandler_send_terminate(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream, uint16_t error_code) {
 
     if (!stream) { return; }
 
     uint16_t rejected_mti = stream->is_source ? MTI_STREAM_PROCEED : MTI_STREAM_SEND;
 
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            stream->remote_alias,
-            stream->remote_node_id,
-            MTI_TERMINATE_DUE_TO_ERROR);
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, stream->remote_alias, stream->remote_node_id, MTI_TERMINATE_DUE_TO_ERROR);
 
     OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
 
@@ -1021,9 +970,7 @@ void ProtocolStreamHandler_send_terminate(
      *
      * @return true if Proceed was sent, false if precondition failed.
      */
-bool ProtocolStreamHandler_send_early_proceed(
-            openlcb_statemachine_info_t *statemachine_info,
-            stream_state_t *stream) {
+bool ProtocolStreamHandler_send_early_proceed(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     if (!stream) { return false; }
 
@@ -1031,13 +978,7 @@ bool ProtocolStreamHandler_send_early_proceed(
 
     if (stream->is_source) { return false; }
 
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            stream->remote_alias,
-            stream->remote_node_id,
-            MTI_STREAM_PROCEED);
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, stream->remote_alias, stream->remote_node_id, MTI_STREAM_PROCEED);
 
     OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
 

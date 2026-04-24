@@ -40,6 +40,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h> // printf
 
 #include "can_types.h"
 #include "can_utilities.h"
@@ -402,8 +403,7 @@ bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg
      */
 bool CanTxMessageHandler_stream_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index) {
 
-    can_msg_worker->identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_STREAM |
-                                 ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias;
+    can_msg_worker->identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_STREAM | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias;
 
     // Byte 0 of every CAN stream frame is the DID (openlcb payload[0])
     can_msg_worker->payload[0] = *openlcb_msg->payload[0];

@@ -185,8 +185,7 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          * @param event_id           Well-known @ref event_id_t for the emergency condition.
          */
-    extern void ProtocolTrainHandler_handle_emergency_event(
-            openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+    extern void ProtocolTrainHandler_handle_emergency_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
     // =========================================================================
     // Emergency Event Classification

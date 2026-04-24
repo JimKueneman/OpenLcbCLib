@@ -272,8 +272,7 @@ void ProtocolBroadcastTimeHandler_handle_time_event(openlcb_statemachine_info_t 
                 _handle_report_time(node, clock, event_id);
 
                 // Send immediate Report Time PCER so consumers see the change right away
-                OpenLcbApplicationBroadcastTime_send_report_time(node, clock_id,
-                    clock->time.hour, clock->time.minute);
+                OpenLcbApplicationBroadcastTime_send_report_time(node, clock_id, clock->time.hour, clock->time.minute);
 
                 // Start/reset 3-second coalescing timer for full sync sequence
                 OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);

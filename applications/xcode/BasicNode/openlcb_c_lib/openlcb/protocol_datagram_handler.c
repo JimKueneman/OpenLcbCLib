@@ -1421,10 +1421,7 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
 
     uint8_t flags = exponent | DATAGRAM_OK_REPLY_PENDING;
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            flags,
-            0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, flags, 0);
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -1453,10 +1450,7 @@ void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM_REJECTED_REPLY);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            return_code,
-            0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
 
     statemachine_info->outgoing_msg_info.valid = true;
 

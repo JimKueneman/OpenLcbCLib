@@ -58,10 +58,7 @@
      *
      * @return Assembled event_id_t
      */
-event_id_t OpenLcbApplicationDccDetector_encode_event_id(
-        node_id_t detector_node_id,
-        dcc_detector_direction_enum direction,
-        uint16_t raw_address_14) {
+event_id_t OpenLcbApplicationDccDetector_encode_event_id(node_id_t detector_node_id, dcc_detector_direction_enum direction, uint16_t raw_address_14) {
 
     uint64_t result = (detector_node_id & 0xFFFFFFFFFFFFULL) << 16;
 

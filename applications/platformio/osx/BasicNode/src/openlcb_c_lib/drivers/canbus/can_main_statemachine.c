@@ -41,6 +41,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h> // printf
 
 #include "can_types.h"
 #include "can_buffer_store.h"
@@ -441,9 +442,7 @@ void CanMainStatemachine_send_global_alias_enquiry(void) {
             // Their aliases are already known — no need to wait for AMD off the wire.
             if (_interface->listener_set_alias) {
 
-                _interface->listener_set_alias(
-                        alias_mapping_info->list[i].node_id,
-                        alias_mapping_info->list[i].alias);
+                _interface->listener_set_alias(alias_mapping_info->list[i].node_id, alias_mapping_info->list[i].alias);
 
             }
 
@@ -452,12 +451,8 @@ void CanMainStatemachine_send_global_alias_enquiry(void) {
 
             if (outgoing_can_msg) {
 
-                outgoing_can_msg->identifier = RESERVED_TOP_BIT |
-                        CAN_CONTROL_FRAME_AMD |
-                        alias_mapping_info->list[i].alias;
-                CanUtilities_copy_node_id_to_payload(
-                        outgoing_can_msg,
-                        alias_mapping_info->list[i].node_id, 0);
+                outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | alias_mapping_info->list[i].alias;
+                CanUtilities_copy_node_id_to_payload(outgoing_can_msg, alias_mapping_info->list[i].node_id, 0);
                 CanBufferFifo_push(outgoing_can_msg);
 
             }

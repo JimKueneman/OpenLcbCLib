@@ -41,6 +41,7 @@
 
 #include "../openlcb_c_lib/openlcb/openlcb_defines.h"
 #include "../openlcb_c_lib/openlcb/openlcb_application_train.h"
+#include "../openlcb_c_lib/openlcb/protocol_train_search_handler.h"
 
 static openlcb_node_t **_virtual_pool = NULL;
 static int _virtual_pool_count = 0;
@@ -109,7 +110,12 @@ void CallbacksTrain_set_virtual_pool(openlcb_node_t **pool, int count) {
 
 }
 
-openlcb_node_t* CallbacksTrain_on_search_no_match(uint16_t search_address, uint8_t flags) {
+openlcb_node_t* CallbacksTrain_on_search_no_match_with_allocate(event_id_t search_event_id) {
+
+    uint8_t digits[6];
+    ProtocolTrainSearchHandler_extract_digits(search_event_id, digits);
+    uint16_t search_address = ProtocolTrainSearchHandler_digits_to_address(digits);
+    uint8_t flags = ProtocolTrainSearchHandler_extract_flags(search_event_id);
 
     printf("Train search no match: address=%u flags=0x%02X\n", search_address, flags);
 
@@ -130,6 +136,9 @@ openlcb_node_t* CallbacksTrain_on_search_no_match(uint16_t search_address, uint8
             bool is_long = (flags & TRAIN_SEARCH_FLAG_LONG_ADDR) != 0;
             OpenLcbApplicationTrain_set_dcc_address(node, search_address, is_long);
             OpenLcbApplicationTrain_set_speed_steps(node, 3);  // 128 speed steps
+
+            // Emit the Producer Identified Set reply echoing the search event id.
+            OpenLcbApplicationTrain_send_search_match(node, search_event_id);
 
             printf("  Allocated virtual train: node_id=0x%012llX address=%u\n",
                    node->id, search_address);

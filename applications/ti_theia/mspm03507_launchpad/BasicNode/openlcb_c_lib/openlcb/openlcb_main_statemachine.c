@@ -60,7 +60,7 @@
 * Resource locking callbacks protect access to shared buffer pools and FIFOs.
 *
 * @author Jim Kueneman
-* @date 18 Mar 2026
+* @date 23 Apr 2026
 *
 * @see openlcb_main_statemachine.h - Public interface
 * @see openlcb_types.h - Core data structures
@@ -93,8 +93,10 @@ static openlcb_statemachine_info_t _statemachine_info;
      *  main dispatch. Shares the same protocol handler functions. */
 static openlcb_statemachine_info_t _sibling_statemachine_info;
 
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
     /** @brief Tracks whether any train node matched during the current enumeration. */
 static bool _train_search_match_found;
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
 
     /** @brief TRUE while we are iterating siblings for an outgoing message. */
 static bool _sibling_dispatch_active;
@@ -134,8 +136,7 @@ static bool _path_b_pending;
     * @param interface_openlcb_main_statemachine Pointer to populated interface structure
     * @endverbatim
     */
-void OpenLcbMainStatemachine_initialize(
-            const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine) {
+void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine) {
 
     _interface = interface_openlcb_main_statemachine;
 
@@ -523,15 +524,9 @@ void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_OPTIONAL_INTERACTION_REJECTED);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL,
-            0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL, 0);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->incoming_msg_info.msg_ptr->mti,
-            2);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->incoming_msg_info.msg_ptr->mti, 2);
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -755,6 +750,8 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
         case MTI_PRODUCER_IDENTIFY: {
 
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
+
             event_id_t producer_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
 
             bool is_train_search = _interface->train_search_event_handler &&
@@ -789,6 +786,8 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
             }
 
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
+
             if (_interface->event_transport_producer_identify) {
 
                 _interface->event_transport_producer_identify(statemachine_info);
@@ -821,6 +820,24 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
         case MTI_PRODUCER_IDENTIFIED_SET:
 
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
+
+            if (_interface->train_search_reply_handler && _interface->is_train_search_event && statemachine_info->openlcb_node->index == 0) {
+
+                event_id_t event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
+                if (_interface->is_train_search_event(event_id)) {
+
+                    _interface->train_search_reply_handler(statemachine_info, event_id);
+                    break;
+
+                }
+
+            }
+
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
+
+#ifdef OPENLCB_COMPILE_BROADCAST_TIME
+
             if (_interface->broadcast_time_event_handler && _interface->is_broadcast_time_event && statemachine_info->openlcb_node->index == 0) {
 
                 event_id_t event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
@@ -832,6 +849,8 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
                 }
 
             }
+
+#endif /* OPENLCB_COMPILE_BROADCAST_TIME */
 
             if (_interface->event_transport_producer_identified_set) {
 
@@ -893,7 +912,13 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
         case MTI_PC_EVENT_REPORT: {
 
+#if defined(OPENLCB_COMPILE_BROADCAST_TIME) || defined(OPENLCB_COMPILE_TRAIN)
+
             event_id_t event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
+
+#endif /* OPENLCB_COMPILE_BROADCAST_TIME || OPENLCB_COMPILE_TRAIN */
+
+#ifdef OPENLCB_COMPILE_BROADCAST_TIME
 
             if (_interface->broadcast_time_event_handler && _interface->is_broadcast_time_event && statemachine_info->openlcb_node->index == 0) {
 
@@ -907,6 +932,10 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
             }
 
+#endif /* OPENLCB_COMPILE_BROADCAST_TIME */
+
+#ifdef OPENLCB_COMPILE_TRAIN
+
             // Global Emergency event intercept -- check ALL train nodes
             if (_interface->train_emergency_event_handler && _interface->is_emergency_event && statemachine_info->openlcb_node->train_state) {
 
@@ -919,6 +948,8 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
                 }
 
             }
+
+#endif /* OPENLCB_COMPILE_TRAIN */
 
             if (_interface->event_transport_pc_report) {
 
@@ -939,6 +970,8 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
             }
 
             break;
+
+#ifdef OPENLCB_COMPILE_TRAIN
 
         case MTI_TRAIN_PROTOCOL:
 
@@ -987,6 +1020,8 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
             }
 
             break;
+
+#endif /* OPENLCB_COMPILE_TRAIN */
 
         case MTI_DATAGRAM:
 
@@ -1090,9 +1125,7 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
         default:
 
-            if (OpenLcbUtilities_is_addressed_message_for_node(
-                        statemachine_info->openlcb_node, 
-                        statemachine_info->incoming_msg_info.msg_ptr)) {
+            if (OpenLcbUtilities_is_addressed_message_for_node(statemachine_info->openlcb_node, statemachine_info->incoming_msg_info.msg_ptr)) {
 
                 _interface->load_interaction_rejected(statemachine_info);
 
@@ -1217,7 +1250,9 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void) {
 
     if (!_statemachine_info.openlcb_node) {
 
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
         _train_search_match_found = false;
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
 
         _statemachine_info.openlcb_node =
                     _interface->openlcb_node_get_first(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
