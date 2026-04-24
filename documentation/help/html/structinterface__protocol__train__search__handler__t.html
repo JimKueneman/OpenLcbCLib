@@ -97,25 +97,28 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a88b9ebf936bfb5834825fb442259d503" id="r_a88b9ebf936bfb5834825fb442259d503"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88b9ebf936bfb5834825fb442259d503">on_search_matched</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t search_address, uint8_t flags)</td></tr>
-<tr class="memdesc:a88b9ebf936bfb5834825fb442259d503"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a search matches this train node.  <br /></td></tr>
-<tr class="separator:a88b9ebf936bfb5834825fb442259d503"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae883079f155b7a57b02a5133b5ea073f" id="r_ae883079f155b7a57b02a5133b5ea073f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae883079f155b7a57b02a5133b5ea073f">on_search_no_match</a> )(uint16_t search_address, uint8_t flags)</td></tr>
-<tr class="memdesc:ae883079f155b7a57b02a5133b5ea073f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when no train node matches (allocate case, deferred).  <br /></td></tr>
-<tr class="separator:ae883079f155b7a57b02a5133b5ea073f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64380babb2736ee377cfb619a5ee27b9" id="r_a64380babb2736ee377cfb619a5ee27b9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64380babb2736ee377cfb619a5ee27b9">on_search_matched</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> search_event_id)</td></tr>
+<tr class="memdesc:a64380babb2736ee377cfb619a5ee27b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a search matches this train node.  <br /></td></tr>
+<tr class="separator:a64380babb2736ee377cfb619a5ee27b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58af249a645c459e60b64676417eb8ad" id="r_a58af249a645c459e60b64676417eb8ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58af249a645c459e60b64676417eb8ad">on_search_no_match_with_allocate</a> )(<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> search_event_id)</td></tr>
+<tr class="memdesc:a58af249a645c459e60b64676417eb8ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when no train node matches after the 200ms allocate window.  <br /></td></tr>
+<tr class="separator:a58af249a645c459e60b64676417eb8ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad64f2cb854b1988ff7a342d25deb48be" id="r_ad64f2cb854b1988ff7a342d25deb48be"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad64f2cb854b1988ff7a342d25deb48be">on_search_reply</a> )(<a class="el" href="structsource__info__t.html">source_info_t</a> *source, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:ad64f2cb854b1988ff7a342d25deb48be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a remote node replies to a search sent from this device. Optional. source identifies the remote replier.  <br /></td></tr>
+<tr class="separator:ad64f2cb854b1988ff7a342d25deb48be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Application callbacks for train search events. </p>
 <p>All callbacks are optional (can be NULL). </p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a id="a88b9ebf936bfb5834825fb442259d503" name="a88b9ebf936bfb5834825fb442259d503"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a88b9ebf936bfb5834825fb442259d503">&#9670;&#160;</a></span>on_search_matched</h2>
+<a id="a64380babb2736ee377cfb619a5ee27b9" name="a64380babb2736ee377cfb619a5ee27b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64380babb2736ee377cfb619a5ee27b9">&#9670;&#160;</a></span>on_search_matched</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_search_matched) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint16_t search_address, uint8_t flags)</td>
+          <td class="memname">void(* on_search_matched) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> search_event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -124,19 +127,36 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="ae883079f155b7a57b02a5133b5ea073f" name="ae883079f155b7a57b02a5133b5ea073f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae883079f155b7a57b02a5133b5ea073f">&#9670;&#160;</a></span>on_search_no_match</h2>
+<a id="a58af249a645c459e60b64676417eb8ad" name="a58af249a645c459e60b64676417eb8ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58af249a645c459e60b64676417eb8ad">&#9670;&#160;</a></span>on_search_no_match_with_allocate</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(* on_search_no_match) (uint16_t search_address, uint8_t flags)</td>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *(* on_search_no_match_with_allocate) (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> search_event_id)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Called when no train node matches (allocate case, deferred). </p>
+<p>Called when no train node matches after the 200ms allocate window. </p>
+<p>Fires only for searches with TRAIN_SEARCH_FLAG_ALLOCATE set, and only after TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS 100ms ticks have elapsed with no Producer Identified Set reply from any node on the network. The application must allocate a new virtual train node and call <a class="el" href="openlcb__application__train_8h.html#ac2129ad962eaa8223eb3b7f866ee33d0">OpenLcbApplicationTrain_send_search_match</a> to emit the Producer Identified reply. </p>
+
+</div>
+</div>
+<a id="ad64f2cb854b1988ff7a342d25deb48be" name="ad64f2cb854b1988ff7a342d25deb48be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad64f2cb854b1988ff7a342d25deb48be">&#9670;&#160;</a></span>on_search_reply</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* on_search_reply) (<a class="el" href="structsource__info__t.html">source_info_t</a> *source, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Called when a remote node replies to a search sent from this device. Optional. source identifies the remote replier. </p>
 
 </div>
 </div>

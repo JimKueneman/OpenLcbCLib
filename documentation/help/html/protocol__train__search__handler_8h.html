@@ -119,6 +119,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ae97a4f3de8a1d7ddc57ec5bdd35ca11d" id="r_ae97a4f3de8a1d7ddc57ec5bdd35ca11d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae97a4f3de8a1d7ddc57ec5bdd35ca11d">ProtocolTrainSearchHandler_handle_search_no_match</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
 <tr class="memdesc:ae97a4f3de8a1d7ddc57ec5bdd35ca11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the no-match case after full train search enumeration.  <br /></td></tr>
 <tr class="separator:ae97a4f3de8a1d7ddc57ec5bdd35ca11d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab79e1cfbd02b02ea4fece7dcf80f75be" id="r_ab79e1cfbd02b02ea4fece7dcf80f75be"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab79e1cfbd02b02ea4fece7dcf80f75be">ProtocolTrainSearchHandler_handle_search_reply</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:ab79e1cfbd02b02ea4fece7dcf80f75be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwards a train-search reply to the on_search_reply callback.  <br /></td></tr>
+<tr class="separator:ab79e1cfbd02b02ea4fece7dcf80f75be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97e3cd4d0e164c8e1bd2c1f4bd3bb74f" id="r_a97e3cd4d0e164c8e1bd2c1f4bd3bb74f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97e3cd4d0e164c8e1bd2c1f4bd3bb74f">ProtocolTrainSearchHandler_100ms_timer_tick</a> (void)</td></tr>
+<tr class="memdesc:a97e3cd4d0e164c8e1bd2c1f4bd3bb74f"><td class="mdescLeft">&#160;</td><td class="mdescRight">100ms tick driver for the pending-allocate timeout queue.  <br /></td></tr>
+<tr class="separator:a97e3cd4d0e164c8e1bd2c1f4bd3bb74f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9a7fbb5f92de73b48c364919409c1ee" id="r_ab9a7fbb5f92de73b48c364919409c1ee"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9a7fbb5f92de73b48c364919409c1ee">ProtocolTrainSearchHandler_is_search_event</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
 <tr class="memdesc:ab9a7fbb5f92de73b48c364919409c1ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the event ID belongs to the train search space (upper 4 bytes = 0x090099FF).  <br /></td></tr>
 <tr class="separator:ab9a7fbb5f92de73b48c364919409c1ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,7 +153,7 @@ Functions</h2></td></tr>
 <p>Handles incoming train search Event IDs from the network. Decodes the search query (DCC address, flags) and compares against each train node's address. Matching nodes reply with a Producer Identified event containing their own address.</p>
 <p>Called from the main statemachine when a train search event is detected. Unlike broadcast time (node index 0 only), train search is called for every train node so each can check for a match.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>20 Mar 2026</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>23 Apr 2026</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__application__train_8h.html" title="Application-level Train Control Protocol module.">openlcb_application_train.h</a> - Train state with DCC address </dd>
 <dd>
 <a class="el" href="openlcb__utilities_8h.html" title="Common utility functions for OpenLCB message and buffer manipulation.">openlcb_utilities.h</a> - General message utility functions </dd></dl>
@@ -252,7 +258,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Handles the no-match case after full train search enumeration. </p>
-<p>If the ALLOCATE flag is set and on_search_no_match is registered, invokes the callback to create a new virtual train node.</p>
+<p>If the ALLOCATE flag is set and on_search_no_match_with_allocate is registered, invokes the callback to create a new virtual train node.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
@@ -260,6 +266,73 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="ab79e1cfbd02b02ea4fece7dcf80f75be" name="ab79e1cfbd02b02ea4fece7dcf80f75be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab79e1cfbd02b02ea4fece7dcf80f75be">&#9670;&#160;</a></span>ProtocolTrainSearchHandler_handle_search_reply()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolTrainSearchHandler_handle_search_reply </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Forwards a train-search reply to the on_search_reply callback. </p>
+<p>Called from the main statemachine MTI_PRODUCER_IDENTIFIED_SET case when the event ID is in the train-search range. Builds a <a class="el" href="structsource__info__t.html">source_info_t</a> from the incoming message and invokes the application callback. No decoding is performed here; the callback receives the raw event ID so it can extract digits or flags as needed.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> from the reply. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a97e3cd4d0e164c8e1bd2c1f4bd3bb74f" name="a97e3cd4d0e164c8e1bd2c1f4bd3bb74f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97e3cd4d0e164c8e1bd2c1f4bd3bb74f">&#9670;&#160;</a></span>ProtocolTrainSearchHandler_100ms_timer_tick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolTrainSearchHandler_100ms_timer_tick </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>100ms tick driver for the pending-allocate timeout queue. </p>
+<p>Application must call this once every 100ms. Decrements the timeout on every live pending-allocate slot; when a slot reaches zero without a Producer Identified reply having been seen for its event ID, fires on_search_no_match_with_allocate and frees the slot. </p>
 
 </div>
 </div>

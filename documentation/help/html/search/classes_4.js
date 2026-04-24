@@ -23,5 +23,10 @@ var searchData=
   ['interface_5fprotocol_5fconfig_5fmem_5fwrite_5fhandler_5ft_20',['interface_protocol_config_mem_write_handler_t',['../structinterface__protocol__config__mem__write__handler__t.html',1,'']]],
   ['interface_5fprotocol_5fdatagram_5fhandler_5ft_21',['interface_protocol_datagram_handler_t',['../structinterface__protocol__datagram__handler__t.html',1,'']]],
   ['interface_5fprotocol_5ftrain_5fhandler_5ft_22',['interface_protocol_train_handler_t',['../structinterface__protocol__train__handler__t.html',1,'']]],
-  ['interface_5fprotocol_5ftrain_5fsearch_5fhandler_5ft_23',['interface_protocol_train_search_handler_t',['../structinterface__protocol__train__search__handler__t.html',1,'']]]
+  ['interface_5fprotocol_5ftrain_5fsearch_5fhandler_5ft_23',['interface_protocol_train_search_handler_t',['../structinterface__protocol__train__search__handler__t.html',1,'']]],
+  ['interface_5ftcp_5flink_5fcontrol_5ft_24',['interface_tcp_link_control_t',['../structinterface__tcp__link__control__t.html',1,'']]],
+  ['interface_5ftcp_5flogin_5fstatemachine_5ft_25',['interface_tcp_login_statemachine_t',['../structinterface__tcp__login__statemachine__t.html',1,'']]],
+  ['interface_5ftcp_5fmain_5fstatemachine_5ft_26',['interface_tcp_main_statemachine_t',['../structinterface__tcp__main__statemachine__t.html',1,'']]],
+  ['interface_5ftcp_5frx_5fstatemachine_5ft_27',['interface_tcp_rx_statemachine_t',['../structinterface__tcp__rx__statemachine__t.html',1,'']]],
+  ['interface_5ftcp_5ftx_5fstatemachine_5ft_28',['interface_tcp_tx_statemachine_t',['../structinterface__tcp__tx__statemachine__t.html',1,'']]]
 ];

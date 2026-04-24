@@ -135,6 +135,10 @@ Data Fields</h2></td></tr>
 <tr class="separator:a9231569054cae5f2bd081aaf0978b75e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8763ce7d33dc8d6f7a6a52fbd52990e1" id="r_a8763ce7d33dc8d6f7a6a52fbd52990e1"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8763ce7d33dc8d6f7a6a52fbd52990e1">speed_steps</a></td></tr>
 <tr class="separator:a8763ce7d33dc8d6f7a6a52fbd52990e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6451eeef8b873f7eb42cd54f5c6a92ac" id="r_a6451eeef8b873f7eb42cd54f5c6a92ac"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6451eeef8b873f7eb42cd54f5c6a92ac">heartbeat_send_pending</a>: 1</td></tr>
+<tr class="separator:a6451eeef8b873f7eb42cd54f5c6a92ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c188632faa2d0c72f82e45bdb96fdfe" id="r_a7c188632faa2d0c72f82e45bdb96fdfe"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c188632faa2d0c72f82e45bdb96fdfe">estop_forward_pending</a>: 1</td></tr>
+<tr class="separator:a7c188632faa2d0c72f82e45bdb96fdfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7578aa179402443343ac697b33e39514" id="r_a7578aa179402443343ac697b33e39514"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structopenlcb__node___t_a_g.html">openlcb_node_TAG</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7578aa179402443343ac697b33e39514">owner_node</a></td></tr>
 <tr class="separator:a7578aa179402443343ac697b33e39514"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -422,6 +426,36 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>0=default, 1=14, 2=28, 3=128 </p>
+
+</div>
+</div>
+<a id="a6451eeef8b873f7eb42cd54f5c6a92ac" name="a6451eeef8b873f7eb42cd54f5c6a92ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6451eeef8b873f7eb42cd54f5c6a92ac">&#9670;&#160;</a></span>heartbeat_send_pending</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t heartbeat_send_pending</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Heartbeat NOOP needs retry </p>
+
+</div>
+</div>
+<a id="a7c188632faa2d0c72f82e45bdb96fdfe" name="a7c188632faa2d0c72f82e45bdb96fdfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c188632faa2d0c72f82e45bdb96fdfe">&#9670;&#160;</a></span>estop_forward_pending</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t estop_forward_pending</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>E-stop listener forwarding in progress </p>
 
 </div>
 </div>

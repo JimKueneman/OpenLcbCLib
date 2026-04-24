@@ -112,6 +112,9 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structevent__id__range__t.html">event_id_range_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contiguous range of Event IDs starting at a base address.  <a href="structevent__id__range__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsource__info__t.html">source_info_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Identifies the remote node that sent a received message.  <a href="structsource__info__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbroadcast__time__t.html">broadcast_time_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast Time hour/minute.  <a href="structbroadcast__time__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -214,6 +217,14 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:a5d7b93a9aae87e4f058691b22ece61e9" id="r_a5d7b93a9aae87e4f058691b22ece61e9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d7b93a9aae87e4f058691b22ece61e9">OPENLCB_COMPILE_CAN</a></td></tr>
+<tr class="separator:a5d7b93a9aae87e4f058691b22ece61e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6979a5461154792d5d61db73f1b2f86c" id="r_ga6979a5461154792d5d61db73f1b2f86c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga6979a5461154792d5d61db73f1b2f86c">USER_DEFINED_STREAM_BUFFER_LEN</a>&#160;&#160;&#160;256</td></tr>
+<tr class="memdesc:ga6979a5461154792d5d61db73f1b2f86c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of BASIC message buffers (16 bytes each) in the pool.  <br /></td></tr>
+<tr class="separator:ga6979a5461154792d5d61db73f1b2f86c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1834aa5c411f57f22a20404bd6f46d35" id="r_ga1834aa5c411f57f22a20404bd6f46d35"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga1834aa5c411f57f22a20404bd6f46d35">USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:ga1834aa5c411f57f22a20404bd6f46d35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum concurrent active streams across all nodes.  <br /></td></tr>
+<tr class="separator:ga1834aa5c411f57f22a20404bd6f46d35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga37cd38742a23b040e5cd7f3483bef546" id="r_ga37cd38742a23b040e5cd7f3483bef546"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga37cd38742a23b040e5cd7f3483bef546">LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</a>&#160;&#160;&#160;(64 - 1)</td></tr>
 <tr class="memdesc:ga37cd38742a23b040e5cd7f3483bef546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum description length for Configuration Options reply.  <br /></td></tr>
 <tr class="separator:ga37cd38742a23b040e5cd7f3483bef546"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -452,8 +463,23 @@ Enumerations</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Defines all fundamental data types used across the library: message buffers (BASIC/DATAGRAM/SNIP/STREAM pools), node structures with event producer/consumer lists, configuration memory request types, broadcast time clock state, and train state. All memory is statically allocated at compile time — there is no dynamic allocation at runtime.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>18 Mar 2026 </dd></dl>
-</div><h2 class="groupheader">Typedef Documentation</h2>
+<dl class="section date"><dt>Date</dt><dd>23 Apr 2026 </dd></dl>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a5d7b93a9aae87e4f058691b22ece61e9" name="a5d7b93a9aae87e4f058691b22ece61e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d7b93a9aae87e4f058691b22ece61e9">&#9670;&#160;</a></span>OPENLCB_COMPILE_CAN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OPENLCB_COMPILE_CAN</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
 <a id="a4925a4e7a5380d3c40cfceadbbed1c78" name="a4925a4e7a5380d3c40cfceadbbed1c78"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4925a4e7a5380d3c40cfceadbbed1c78">&#9670;&#160;</a></span>openlcb_payload_t</h2>
 
