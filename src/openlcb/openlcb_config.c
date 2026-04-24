@@ -1357,6 +1357,10 @@ static void _run_periodic_services(void) {
     OpenLcbApplicationTrain_100ms_timer_tick(tick);
 #endif
 
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
+    ProtocolTrainSearchHandler_100ms_timer_tick();
+#endif
+
 }
 
     /** @brief Runs one iteration of all state machines and periodic services. */
