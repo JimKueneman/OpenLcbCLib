@@ -32,7 +32,7 @@
 * Terminate Due To Error.  Also detects duplicate Node IDs on the network.
 *
 * @author Jim Kueneman
-* @date 4 Mar 2026
+* @date 24 Apr 2026
 *
 * @see MessageNetworkS.pdf
 */
@@ -67,6 +67,12 @@ typedef struct {
          * @param error_code       The 2-byte error code from payload bytes 0-1.
          * @param rejected_mti     The MTI of the terminated message from payload bytes 2-3. */
     void (*on_terminate_due_to_error)(openlcb_node_t *openlcb_node, node_id_t source_node_id, uint16_t error_code, uint16_t rejected_mti);
+
+        /** @brief Optional. Called when a Verified Node ID reply is received
+         *         from a remote node (MessageNetworkS Section 3.4).  Fires for
+         *         non-self replies only — the duplicate-NodeID detection path
+         *         consumes self matches before this hook runs. */
+    void (*on_verified_node_id)(openlcb_node_t *openlcb_node, source_info_t *source);
 
 } interface_openlcb_protocol_message_network_t;
 

@@ -32,7 +32,7 @@
  * field extraction, MTI conversion, and NULL-counting for legacy SNIP detection.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 24 Apr 2026
  */
 
 #include "can_utilities.h"
@@ -41,7 +41,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <stdio.h> // printf
 
 #include "can_types.h"
 
@@ -160,7 +159,7 @@ uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_i
      */
 uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg, uint16_t openlcb_start_index, uint8_t can_start_index) {
 
-    can_msg->payload_count = 0;
+    can_msg->payload_count = can_start_index;
     uint8_t count = 0;
 
     if (openlcb_msg->payload_count == 0) {

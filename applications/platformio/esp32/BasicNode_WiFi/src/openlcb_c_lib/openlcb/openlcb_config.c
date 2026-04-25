@@ -32,7 +32,7 @@
  * Module_initialize() functions in the correct order.
  *
  * @author Jim Kueneman
- * @date 23 Apr 2026
+ * @date 24 Apr 2026
  */
 
 #include "openlcb_config.h"
@@ -306,6 +306,7 @@ static void _build_train_search_handler(void) {
 
     _train_search.on_search_matched  = _config->on_train_search_matched;
     _train_search.on_search_no_match_with_allocate = _config->on_train_search_no_match_with_allocate;
+    _train_search.on_search_reply    = _config->on_train_search_reply;
 
 }
 
@@ -822,6 +823,7 @@ static void _build_msg_network(void) {
 
     _msg_network.on_optional_interaction_rejected = _config->on_optional_interaction_rejected;
     _msg_network.on_terminate_due_to_error        = _config->on_terminate_due_to_error;
+    _msg_network.on_verified_node_id              = _config->on_verified_node_id;
 
 }
 
@@ -1358,7 +1360,7 @@ static void _run_periodic_services(void) {
 #endif
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
-    ProtocolTrainSearchHandler_100ms_timer_tick();
+    ProtocolTrainSearchHandler_100ms_timer_tick(tick);
 #endif
 
 }

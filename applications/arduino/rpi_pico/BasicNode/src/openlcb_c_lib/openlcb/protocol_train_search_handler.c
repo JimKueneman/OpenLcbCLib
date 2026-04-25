@@ -55,6 +55,11 @@
     /** @brief Stored callback interface pointer. */
 static const interface_protocol_train_search_handler_t *_interface;
 
+    /** @brief Last tick value seen by the timer handler — used to detect
+     *  tick edges so periodic-services callers (which run every main-loop
+     *  iteration) don't decrement faster than once per 100 ms. */
+static uint8_t _last_seen_tick = 0;
+
 
     /** @brief Pending-allocate slot; search_event_id == 0 means free. */
 typedef struct {
@@ -113,6 +118,7 @@ static bool _has_reserved_values(const uint8_t *digits, uint8_t flags) {
 void ProtocolTrainSearchHandler_initialize(const interface_protocol_train_search_handler_t *interface) {
 
     _interface = interface;
+    _last_seen_tick = 0;
 
     for (uint8_t i = 0; i < TRAIN_SEARCH_PENDING_ALLOCATE_COUNT; i++) {
 
@@ -583,7 +589,16 @@ void ProtocolTrainSearchHandler_handle_search_reply(openlcb_statemachine_info_t 
      * responsible for emitting the Producer Identified reply via
      * OpenLcbApplicationTrain_send_search_match.
      */
-void ProtocolTrainSearchHandler_100ms_timer_tick(void) {
+void ProtocolTrainSearchHandler_100ms_timer_tick(uint8_t current_tick) {
+
+    // Edge-detect: callers (openlcb_config.c::_run_periodic_services) invoke
+    // this on every main-loop iteration, not strictly every 100 ms.  We only
+    // do work when the global tick counter has actually advanced.
+    uint8_t ticks_elapsed = (uint8_t)(current_tick - _last_seen_tick);
+    if (ticks_elapsed == 0) {
+        return;
+    }
+    _last_seen_tick = current_tick;
 
     for (uint8_t i = 0; i < TRAIN_SEARCH_PENDING_ALLOCATE_COUNT; i++) {
 
@@ -593,9 +608,9 @@ void ProtocolTrainSearchHandler_100ms_timer_tick(void) {
 
         }
 
-        _pending[i].ticks_remaining--;
-
-        if (_pending[i].ticks_remaining == 0) {
+        // Fire if we've crossed (or reached) the deadline.  Using
+        // saturating subtraction so a long pause doesn't underflow.
+        if (_pending[i].ticks_remaining <= ticks_elapsed) {
 
             if (!_pending[i].reply_seen && _interface && _interface->on_search_no_match_with_allocate) {
 
@@ -605,6 +620,10 @@ void ProtocolTrainSearchHandler_100ms_timer_tick(void) {
 
             _pending[i].search_event_id = 0;
             _pending[i].reply_seen = false;
+
+        } else {
+
+            _pending[i].ticks_remaining -= ticks_elapsed;
 
         }
 

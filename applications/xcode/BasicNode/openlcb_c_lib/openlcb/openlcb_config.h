@@ -32,7 +32,7 @@
  * to bring up the entire stack.
  *
  * @author Jim Kueneman
- * @date 04 Apr 2026
+ * @date 24 Apr 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -349,6 +349,17 @@ typedef struct {
          *  @see MessageNetworkS Section 3.5.2. */
     void (*on_terminate_due_to_error)(openlcb_node_t *openlcb_node, node_id_t source_node_id, uint16_t error_code, uint16_t rejected_mti);
 
+        /** @brief Verified Node ID reply received from a remote node. Optional.
+         *
+         *  @details Fires when this device receives a Verified Node ID reply
+         *  identifying a remote node — typically in response to an addressed or
+         *  global Verify Node ID this device sent.  The @ref source_info_t
+         *  parameter carries the resolved 48-bit NodeID and the 12-bit CAN alias
+         *  of the replier.  The pointer is only valid for the duration of the
+         *  callback.  Self matches are consumed by the duplicate-NodeID detection
+         *  path and do NOT fire this callback. */
+    void (*on_verified_node_id)(openlcb_node_t *openlcb_node, source_info_t *source);
+
         /** @brief 100ms periodic timer callback. Optional. */
     void (*on_100ms_timer)(void);
 
@@ -535,6 +546,16 @@ typedef struct {
          * created train node (the CS must then call OpenLcbApplicationTrain_send_search_match
          * to emit the Producer Identified reply), or NULL to decline. Optional. */
     openlcb_node_t* (*on_train_search_no_match_with_allocate)(event_id_t search_event_id);
+
+        /** @brief A remote node replied to a train-search this device sent. Optional.
+         *
+         * @details Throttle-side hook.  Fires when any Producer Identified
+         * (Set/Clear/Unknown) message is received that carries a train-search
+         * event ID we previously sent.  `source` identifies the replying
+         * train (48-bit Node ID + CAN alias) — required for the throttle to
+         * address subsequent Train Control messages to that train.  The
+         * pointer is only valid for the duration of the callback. */
+    void (*on_train_search_reply)(source_info_t *source, event_id_t search_event_id);
 
 #endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
 

@@ -50,10 +50,10 @@
      */
 typedef struct {
 
-        /** @brief REQUIRED. Register a new alias/Node ID pair. Typical impl: AliasMappings_register. */
+        /** @brief REQUIRED. Register a new alias/Node ID pair. Typical impl: InternalNodeAliasTable_register. */
     alias_mapping_t *(*alias_mapping_register)(uint16_t alias, node_id_t node_id);
 
-        /** @brief REQUIRED. Find a mapping by alias. Typical impl: AliasMappings_find_mapping_by_alias. */
+        /** @brief REQUIRED. Find a mapping by alias. Typical impl: InternalNodeAliasTable_find_mapping_by_alias. */
     alias_mapping_t *(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
 
         /** @brief OPTIONAL. Called when an alias is successfully registered. May be NULL. */

@@ -32,7 +32,7 @@
 * Terminate Due To Error.  Also detects duplicate Node IDs on the network.
 *
 * @author Jim Kueneman
-* @date 4 Mar 2026
+* @date 24 Apr 2026
 *
 * @see protocol_message_network.h
 * @see MessageNetworkS.pdf
@@ -221,10 +221,28 @@ void ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_statemachine
 
 }
 
-    /** @brief Handle Verified Node ID — fires duplicate-ID event if IDs match. */
+    /**
+     * @brief Handle Verified Node ID — duplicate-detect first, then fire app callback.
+     *
+     * @details Algorithm:
+     * -# Extract the 6-byte source NodeID from the incoming payload at offset 0.
+     * -# If it matches our own openlcb_node->id, load a duplicate-NodeID error
+     *    response and return — this path consumes the message; no application
+     *    callback fires for self matches.
+     * -# Otherwise mark the outgoing slot as invalid (no automatic reply).
+     * -# If the application registered an on_verified_node_id callback, build a
+     *    source_info_t containing the extracted NodeID and the source alias from
+     *    the incoming CAN frame, then invoke the callback.
+     *
+     * @verbatim
+     * @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+     * @endverbatim
+     */
 void ProtocolMessageNetwork_handle_verified_node_id(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) == statemachine_info->openlcb_node->id) {
+    node_id_t source_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0);
+
+    if (source_id == statemachine_info->openlcb_node->id) {
 
         _load_duplicate_node_id(statemachine_info);
 
@@ -233,6 +251,17 @@ void ProtocolMessageNetwork_handle_verified_node_id(openlcb_statemachine_info_t 
     }
 
     statemachine_info->outgoing_msg_info.valid = false;
+
+    if (_interface->on_verified_node_id) {
+
+        source_info_t source = {
+            source_id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias
+        };
+
+        _interface->on_verified_node_id(statemachine_info->openlcb_node, &source);
+
+    }
 
 }
 

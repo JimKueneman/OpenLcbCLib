@@ -46,7 +46,6 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
-#include <stdio.h> // DEBUG: temporary printf instrumentation
 
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
@@ -628,21 +627,9 @@ void ProtocolStreamHandler_data_send(openlcb_statemachine_info_t *statemachine_i
 
     stream_state_t *stream = _find_stream(incoming->source_id, dest_stream_id, false);
 
-    if (!stream) {
+    if (!stream) { return; }
 
-        printf("DATA_SEND_NO_STREAM: src_alias=0x%03X did=0x%02X\n",
-               incoming->source_alias, dest_stream_id); fflush(stdout);
-        return;
-
-    }
-
-    if (stream->state != STREAM_STATE_OPEN) {
-
-        printf("DATA_SEND_STREAM_NOT_OPEN: src_alias=0x%03X did=0x%02X state=%d bytes_remaining=%u\n",
-               incoming->source_alias, dest_stream_id, stream->state, stream->bytes_remaining); fflush(stdout);
-        return;
-
-    }
+    if (stream->state != STREAM_STATE_OPEN) { return; }
 
     // Data bytes are payload[1..payload_count-1]
     uint16_t data_len = 0;

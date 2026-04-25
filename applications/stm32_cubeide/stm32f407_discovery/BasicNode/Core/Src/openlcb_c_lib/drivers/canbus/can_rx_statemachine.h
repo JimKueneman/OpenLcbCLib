@@ -96,7 +96,7 @@ typedef struct {
     /** @brief REQUIRED. CID (Check ID) control frame. Typical: CanRxMessageHandler_cid_frame. */
     void (*handle_cid_frame)(can_msg_t *can_msg);
 
-    /** @brief REQUIRED. Find alias mapping by 12-bit alias (validates addressed-message destination). Typical: AliasMappings_find_mapping_by_alias. */
+    /** @brief REQUIRED. Find alias mapping by 12-bit alias (validates addressed-message destination). Typical: InternalNodeAliasTable_find_mapping_by_alias. */
     alias_mapping_t *(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
 
     /** @brief OPTIONAL. Called immediately when a frame arrives, before any routing. Good for counters/LEDs. May be NULL. */

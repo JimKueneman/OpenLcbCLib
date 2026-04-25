@@ -42,7 +42,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <stdio.h> // printf
 
 #include "can_types.h"
 #include "can_utilities.h"
@@ -356,7 +355,6 @@ void CanRxMessageHandler_stream_frame(can_msg_t *can_msg, uint8_t offset, payloa
 
     if (!target_openlcb_msg) {
 
-        printf("STREAM_RX_DROP: buffer pool empty\n"); fflush(stdout);
         return;
 
     }

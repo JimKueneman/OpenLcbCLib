@@ -77,10 +77,10 @@ extern "C" {
         /** @brief REQUIRED. Advance the login state machine one step. Typical: CanLoginStatemachine_run. */
         void (*login_statemachine_run)(can_statemachine_info_t *can_statemachine_info);
 
-        /** @brief REQUIRED. Return pointer to the alias mapping table. Typical: AliasMappings_get_alias_mapping_info. */
+        /** @brief REQUIRED. Return pointer to the alias mapping table. Typical: InternalNodeAliasTable_get_alias_mapping_info. */
         alias_mapping_info_t *(*alias_mapping_get_alias_mapping_info)(void);
 
-        /** @brief REQUIRED. Remove an alias from the mapping table. Typical: AliasMappings_unregister. */
+        /** @brief REQUIRED. Remove an alias from the mapping table. Typical: InternalNodeAliasTable_unregister. */
         void (*alias_mapping_unregister)(uint16_t alias);
 
         /** @brief REQUIRED. Return the current value of the global 100ms tick counter. Typical: OpenLcbConfig_get_global_100ms_tick. */

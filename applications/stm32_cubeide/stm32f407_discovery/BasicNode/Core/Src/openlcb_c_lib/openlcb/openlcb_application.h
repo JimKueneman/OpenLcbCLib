@@ -34,7 +34,7 @@
  * before making any other call in this module.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 24 Apr 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -309,6 +309,70 @@ extern "C" {
          * @warning Returns false if OpenLcbApplication_initialize() was not called first.
          */
     extern bool OpenLcbApplication_send_initialization_event(openlcb_node_t *openlcb_node);
+
+        /**
+         * @brief Sends an addressed Verify Node ID request to a specific remote alias.
+         *
+         * @details Builds an MTI_VERIFY_NODE_ID_ADDRESSED (0x0488) message targeting
+         * the given destination alias and queues it via the send_openlcb_msg callback.
+         * The remote node replies with a Verified Node ID message; the application
+         * receives that reply through the on_verified_node_id callback registered on
+         * @ref openlcb_config_t.
+         *
+         * Use cases:
+         * - Resolving a remote NodeID after observing a CAN frame whose source alias
+         *   you know but whose 48-bit NodeID is not yet in any local table.
+         * - Confirming a peer is still present and identifying themselves under a
+         *   specific NodeID.
+         *
+         * Verification semantics:
+         * - When @p dest_node_id is non-zero, its 6-byte value is included as the
+         *   message payload.  The remote node MUST compare against its own NodeID
+         *   and reply only on match.
+         * - When @p dest_node_id is zero (NULL_NODE_ID), no payload is included and
+         *   the remote node always replies.
+         *
+         * @param openlcb_node    Pointer to the sending @ref openlcb_node_t.
+         * @param dest_alias      12-bit CAN alias of the remote node to query.
+         * @param dest_node_id    Optional 48-bit @ref node_id_t to verify against; pass
+         *                        0 (NULL_NODE_ID) for unconditional identify.
+         *
+         * @return true if queued successfully, false if the transmit buffer is full or
+         *         the callback is NULL.
+         *
+         * @warning NULL openlcb_node causes a crash — no NULL check is performed.
+         * @warning Returns false if OpenLcbApplication_initialize() was not called first.
+         *
+         * @see OpenLcbApplication_send_verify_node_id_global
+         */
+    extern bool OpenLcbApplication_send_verify_node_id_addressed(openlcb_node_t *openlcb_node, uint16_t dest_alias, node_id_t dest_node_id);
+
+        /**
+         * @brief Sends a global Verify Node ID broadcast asking every node to identify itself.
+         *
+         * @details Builds an MTI_VERIFY_NODE_ID_GLOBAL (0x0490) message and queues it via
+         * the send_openlcb_msg callback.  Every node on the network replies with a
+         * Verified Node ID message; the application receives one event per replier
+         * through the on_verified_node_id callback registered on @ref openlcb_config_t.
+         *
+         * Use cases:
+         * - Bus enumeration at startup: command stations or network monitors learning
+         *   which nodes are currently on the bus.
+         * - Diagnostics: confirming a node count after a topology change.
+         *
+         * @param openlcb_node    Pointer to the sending @ref openlcb_node_t.
+         *
+         * @return true if queued successfully, false if the transmit buffer is full or
+         *         the callback is NULL.
+         *
+         * @warning NULL openlcb_node causes a crash — no NULL check is performed.
+         * @warning Returns false if OpenLcbApplication_initialize() was not called first.
+         * @warning Generates one reply per node on the network — expect bursts of
+         *          incoming Verified Node ID messages on busy buses.
+         *
+         * @see OpenLcbApplication_send_verify_node_id_addressed
+         */
+    extern bool OpenLcbApplication_send_verify_node_id_global(openlcb_node_t *openlcb_node);
 
         /**
          * @brief Reads bytes from the node's configuration memory via the application callback.

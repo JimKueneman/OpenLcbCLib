@@ -55,7 +55,7 @@
 #include "can_tx_message_handler.h"
 #include "can_tx_statemachine.h"
 #include "can_main_statemachine.h"
-#include "alias_mappings.h"
+#include "internal_node_alias_table.h"
 #include "alias_mapping_listener.h"
 
 // Cross-layer includes
@@ -97,8 +97,8 @@ static void _build_login_message_handler(void) {
     memset(&_login_msg, 0, sizeof(_login_msg));
 
     // Library-internal wiring
-    _login_msg.alias_mapping_register = &AliasMappings_register;
-    _login_msg.alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias;
+    _login_msg.alias_mapping_register = &InternalNodeAliasTable_register;
+    _login_msg.alias_mapping_find_mapping_by_alias = &InternalNodeAliasTable_find_mapping_by_alias;
 
     // User callback (optional)
     _login_msg.on_alias_change = _config->on_alias_change;
@@ -132,10 +132,10 @@ static void _build_rx_message_handler(void) {
     // Library-internal wiring
     _rx_msg.can_buffer_store_allocate_buffer = &CanBufferStore_allocate_buffer;
     _rx_msg.openlcb_buffer_store_allocate_buffer = &OpenLcbBufferStore_allocate_buffer;
-    _rx_msg.alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias;
-    _rx_msg.alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id;
-    _rx_msg.alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info;
-    _rx_msg.alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag;
+    _rx_msg.alias_mapping_find_mapping_by_alias = &InternalNodeAliasTable_find_mapping_by_alias;
+    _rx_msg.alias_mapping_find_mapping_by_node_id = &InternalNodeAliasTable_find_mapping_by_node_id;
+    _rx_msg.alias_mapping_get_alias_mapping_info = &InternalNodeAliasTable_get_alias_mapping_info;
+    _rx_msg.alias_mapping_set_has_duplicate_alias_flag = &InternalNodeAliasTable_set_has_duplicate_alias_flag;
     _rx_msg.get_current_tick = &OpenLcbConfig_get_global_100ms_tick;
 
     // Listener alias management (OPTIONAL — NULL if OPENLCB_COMPILE_TRAIN not defined)
@@ -167,7 +167,7 @@ static void _build_rx_statemachine(void) {
     _rx_sm.handle_cid_frame       = CanRxMessageHandler_cid_frame;
 
     // Library-internal wiring -- alias lookup
-    _rx_sm.alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias;
+    _rx_sm.alias_mapping_find_mapping_by_alias = &InternalNodeAliasTable_find_mapping_by_alias;
 
     // User callback (optional)
     _rx_sm.on_receive = _config->on_rx;
@@ -231,8 +231,8 @@ static void _build_main_statemachine(void) {
     _main_sm.openlcb_node_get_next  = &OpenLcbNode_get_next;
     _main_sm.openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias;
     _main_sm.login_statemachine_run = &CanLoginStatemachine_run;
-    _main_sm.alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info;
-    _main_sm.alias_mapping_unregister = &AliasMappings_unregister;
+    _main_sm.alias_mapping_get_alias_mapping_info = &InternalNodeAliasTable_get_alias_mapping_info;
+    _main_sm.alias_mapping_unregister = &InternalNodeAliasTable_unregister;
 
     // Clock access (injected to maintain decoupling)
     _main_sm.get_current_tick = &OpenLcbConfig_get_global_100ms_tick;
@@ -266,7 +266,7 @@ static void _build_main_statemachine(void) {
      * -# Build all 7 internal interface structs from user config and library functions.
      * -# Initialize all CAN modules in dependency order:
      *    RxMessageHandler, RxStatemachine, TxMessageHandler, TxStatemachine,
-     *    LoginMessageHandler, LoginStateMachine, MainStatemachine, AliasMappings.
+     *    LoginMessageHandler, LoginStateMachine, MainStatemachine, InternalNodeAliasTable.
      *
      * @verbatim
      * @param config  Pointer to @ref can_config_t configuration. Must remain
@@ -305,7 +305,7 @@ void CanConfig_initialize(const can_config_t *config) {
     CanLoginStatemachine_initialize(&_login_sm);
     CanMainStatemachine_initialize(&_main_sm);
 
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
 
 #ifdef OPENLCB_COMPILE_TRAIN
     AliasMappingListener_initialize();
