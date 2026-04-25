@@ -62,7 +62,7 @@ tools/node_wizard/
         wizard_advanced_validation_rules/
         wizard_display_matrix/
     test/                       CDI validator/renderer test suite
-        test_runner.html
+        run_tests.html
         cdi/                    25 self-describing XML test cases
         TEST_CASES.md
     vendor/

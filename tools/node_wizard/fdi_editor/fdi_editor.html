@@ -661,6 +661,11 @@
 <script src="../vendor/xmllint/xmllint_api.js"></script>
 <script src="js/fdi_validator.js"></script>
 <script src="js/fdi_function_grid.js"></script>
+
+<!-- LanguageTargets registry — Array view uses target.renderByteArray() -->
+<script src="../js/language_target.js"></script>
+<script src="../js/c_target.js"></script>
+<script src="../js/js_target.js"></script>
 <script>
 
 /* =========================================================================
@@ -1216,6 +1221,7 @@ _updateStatusBar();
 
 var _fdiToolsView = 'fnmap';
 var _fdiArrayViewer = null;
+var _targetLanguage = 'c';   /* gates Array view formatting; set by parent */
 
 var elFdiToolsContent = document.getElementById('fdi-tools-content');
 var elFdiToolsEmpty   = document.getElementById('fdi-tools-empty');
@@ -1269,16 +1275,12 @@ function _setFdiToolsView(view) {
 
 }
 
-function _renderFdiArray() {
-
-    var xmlRawText = elEditor.value.trim();
-
-    if (!xmlRawText) {
-
-        elFdiToolsContent.innerHTML = '<div style="color:#888;font-style:italic;padding:20px;font-size:13px;">No FDI XML to convert</div>';
-        return;
-
-    }
+/**
+ * Convert raw XML text into one byte-row per source line, preserving the
+ * original line as a comment.  Skips blank/whitespace-only lines.  Strips
+ * non-printable characters (FDI bytes are ASCII per spec).  Mirror of the
+ * helper in cdi_view.html — kept local to avoid cross-iframe loads. */
+function _xmlToByteRows(xmlRawText) {
 
     function isPrintable(ch) {
         var code = ch.charCodeAt(0);
@@ -1286,16 +1288,7 @@ function _renderFdiArray() {
     }
 
     var rawLines = xmlRawText.split(/\r\n|\n|\r/);
-    var resultLines = [];
-    var totalChars = 0;
-
-    resultLines.push('// FDI (Function Description Information) byte array.');
-    resultLines.push('// Paste this into the .fdi field of the node_parameters_t struct');
-    resultLines.push('// in openlcb_user_config.c to define the train function descriptions.');
-    resultLines.push('//');
-    resultLines.push('// NOTE: THIS IS FOR CONVENIENCE OF THOSE MANUALLY BUILDING THEIR OPENLCB_USER_CONFIG.C FILE.');
-    resultLines.push('');
-    resultLines.push('.fdi = {');
+    var rows     = [];
 
     rawLines.forEach(function (originalLine) {
 
@@ -1317,31 +1310,49 @@ function _renderFdiArray() {
         }
         if (firstIdx === -1 || lastIdx === -1 || firstIdx > lastIdx) { return; }
 
-        var converted = '';
-
+        var bytes = [];
         for (var i = firstIdx; i <= lastIdx; i++) {
             var ch = originalLine[i];
             if (!isPrintable(ch)) { continue; }
-            var hex = '0x' + ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
-            converted += hex + ', ';
-            totalChars++;
+            bytes.push(ch.charCodeAt(0));
         }
 
         var comment = originalLine.slice(firstIdx, lastIdx + 1).replace(/^\s+|\s+$/g, '');
-        converted += '  // ' + comment;
-
-        resultLines.push(converted);
+        rows.push({ bytes: bytes, comment: comment });
 
     });
 
-    resultLines.push('0x00    // String terminating null');
-    totalChars += 1;
+    return rows;
 
-    resultLines.push('},');
-    resultLines.push('');
-    resultLines.push('#define USER_FDI_ARRAY_SIZE  ' + totalChars + '  // Total bytes including null terminator');
+}
 
-    var text = resultLines.join('\n');
+function _renderFdiArray() {
+
+    var xmlRawText = elEditor.value.trim();
+
+    if (!xmlRawText) {
+
+        elFdiToolsContent.innerHTML = '<div style="color:#888;font-style:italic;padding:20px;font-size:13px;">No FDI XML to convert</div>';
+        return;
+
+    }
+
+    /* Build language-neutral byte rows; defer formatting to the active target. */
+    var rows = _xmlToByteRows(xmlRawText);
+    rows.push({ bytes: [0x00], comment: 'String terminating null' });
+
+    var target = (typeof LanguageTargets !== 'undefined')
+        ? LanguageTargets.get(_targetLanguage || 'c')
+        : null;
+
+    if (!target || typeof target.renderByteArray !== 'function') {
+        elFdiToolsContent.innerHTML = '<div style="color:#888;font-style:italic;padding:20px;font-size:13px;">No byte-array renderer for target "' + (_targetLanguage || 'c') + '"</div>';
+        return;
+    }
+
+    var rendered  = target.renderByteArray(rows, 'fdi');
+    var text      = rendered.text;
+    var totalChars = rendered.totalBytes;
 
     /* Build the UI */
     elFdiToolsContent.innerHTML = '';
@@ -1452,6 +1463,18 @@ if (_isEmbedded) {
                 if (e.data.filename) { _setFilename(e.data.filename); }
                 onEditorChange();
 
+            }
+
+        } else if (e.data.type === 'setTargetLanguage') {
+
+            _targetLanguage = e.data.target || 'c';
+
+            /* The Array button stays visible in every target — its output
+             * is now produced by the active LanguageTarget's renderByteArray
+             * (C struct vs JS Uint8Array vs ...).  Re-render if active so
+             * the user sees the new format immediately. */
+            if (_fdiToolsView === 'array') {
+                _renderFdiArray();
             }
 
         }

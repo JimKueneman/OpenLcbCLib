@@ -17,6 +17,9 @@
         /* ===== Reset & base ================================================ */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+        /* Utility: hide an element regardless of its native display rule. */
+        .hidden { display: none !important; }
+
         :root {
             --color-primary:        #0056b3;
             --color-primary-dark:   #004494;
@@ -912,6 +915,14 @@
 <script src="../vendor/xmllint/xmllint_patched.js"></script>
 <script src="../vendor/xmllint/xmllint_api.js"></script>
 <script src="js/cdi_validator.js"></script>
+
+<!-- LanguageTargets registry — used by the Array view to format bytes
+     in the active target's syntax (C struct vs JS Uint8Array vs ...).
+     The registry's buildFiles() and friends are NOT called from this iframe;
+     only target.renderByteArray() is invoked. -->
+<script src="../js/language_target.js"></script>
+<script src="../js/c_target.js"></script>
+<script src="../js/js_target.js"></script>
 <script>
 
 /* =========================================================================
@@ -1118,6 +1129,7 @@ const TYPE_COLOURS = {
 };
 
 let _mapView = 'flat';
+let _targetLanguage = 'c';   /* gates Array view formatting; set by parent */
 
 const MAP_TOGGLE_BTNS = ['btn-map-flat', 'btn-map-tree', 'btn-map-defines', 'btn-map-struct', 'btn-map-array', 'btn-map-preview'];
 
@@ -1809,15 +1821,14 @@ function _renderMapStruct(mapData) {
     viewer.value = text;
 }
 
-/* --- Array (C byte array) view -------------------------------------------- */
+/* --- Array view (language-neutral byte rows + target-specific formatter) - */
 
-function _renderMapArray() {
-
-    const xmlRawText = elEditor.value.trim();
-    if (!xmlRawText) {
-        elMapContent.innerHTML = '<div class="map-empty">No CDI XML to convert</div>';
-        return;
-    }
+/**
+ * Convert raw XML text into one byte-row per source line, preserving the
+ * original line as a comment.  Skips lines that are blank/whitespace-only.
+ * Strips non-printable characters (CDI bytes are ASCII per spec).
+ */
+function _xmlToByteRows(xmlRawText) {
 
     function isPrintable(ch) {
         const code = ch.charCodeAt(0);
@@ -1825,26 +1836,15 @@ function _renderMapArray() {
     }
 
     const rawLines = xmlRawText.split(/\r\n|\n|\r/);
-    const resultLines = [];
-    let totalChars = 0;
-
-    resultLines.push('// CDI (Configuration Description Information) byte array.');
-    resultLines.push('// Paste this into the .cdi field of the node_parameters_t struct');
-    resultLines.push('// in openlcb_user_config.c to define the node\'s configuration layout.');
-    resultLines.push('//');
-    resultLines.push('// NOTE: THIS IS FOR CONVENIENCE OF THOSE MANUALLY BUILDING THEIR OPENLCB_USER_CONFIG.C FILE.');
-    resultLines.push('');
-    resultLines.push('.cdi = {');
+    const rows     = [];
 
     rawLines.forEach(function (originalLine) {
 
-        /* Skip lines that are empty after removing non-printables and whitespace */
         const forSkip = originalLine
             .replace(/[^\x20-\x7E]/g, '')
             .replace(/\s+/g, '');
         if (forSkip.length === 0) { return; }
 
-        /* Find first and last printable non-whitespace characters */
         let firstIdx = -1;
         let lastIdx  = -1;
 
@@ -1858,33 +1858,52 @@ function _renderMapArray() {
         }
         if (firstIdx === -1 || lastIdx === -1 || firstIdx > lastIdx) { return; }
 
-        let converted = '';
-
+        const bytes = [];
         for (let i = firstIdx; i <= lastIdx; i++) {
             const ch = originalLine[i];
             if (!isPrintable(ch)) { continue; }
-            const hex = '0x' + ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
-            converted += hex + ', ';
-            totalChars++;
+            bytes.push(ch.charCodeAt(0));
         }
 
-        /* Comment: original segment trimmed */
-        let comment = originalLine.slice(firstIdx, lastIdx + 1).replace(/^\s+|\s+$/g, '');
-        converted += '  // ' + comment;
-
-        resultLines.push(converted);
+        const comment = originalLine.slice(firstIdx, lastIdx + 1).replace(/^\s+|\s+$/g, '');
+        rows.push({ bytes: bytes, comment: comment });
 
     });
 
-    /* Null terminator */
-    resultLines.push('0x00    // String terminating null');
-    totalChars += 1;
+    return rows;
 
-    resultLines.push('},');
-    resultLines.push('');
-    resultLines.push('#define USER_CDI_ARRAY_SIZE  ' + totalChars + '  // Total bytes including null terminator');
+}
 
-    const text = resultLines.join('\n');
+function _renderMapArray() {
+
+    const xmlRawText = elEditor.value.trim();
+    if (!xmlRawText) {
+        elMapContent.innerHTML = '<div class="map-empty">No CDI XML to convert</div>';
+        return;
+    }
+
+    /* Convert XML to byte rows once (language-neutral), then hand to the
+     * active LanguageTarget for formatting.  New languages plug in by
+     * implementing renderByteArray() — no editor changes needed. */
+    const rows = _xmlToByteRows(xmlRawText);
+
+    /* Trailing NUL terminator — required by the CDI spec for tools that
+     * read the byte stream as a C string. */
+    rows.push({ bytes: [0x00], comment: 'String terminating null' });
+
+    const target = (typeof LanguageTargets !== 'undefined')
+        ? LanguageTargets.get(_targetLanguage || 'c')
+        : null;
+
+    if (!target || typeof target.renderByteArray !== 'function') {
+        elMapContent.innerHTML = '<div class="map-empty">No byte-array renderer for target "' +
+            (_targetLanguage || 'c') + '"</div>';
+        return;
+    }
+
+    const rendered   = target.renderByteArray(rows, 'cdi');
+    const text       = rendered.text;
+    const totalChars = rendered.totalBytes;
 
     /* Render with copy bar + CodeMirror viewer */
     const wrapper = document.createElement('div');
@@ -2350,17 +2369,8 @@ const BASIC_CDI_XML =
     <softwareVersion>1.0</softwareVersion>
   </identification>
 
-  <!-- ACDI: declares Abbreviated CDI protocol support -->
   <acdi/>
 
-  <!--
-    Space 253 (0xFD) — Configuration Memory
-    Bytes 0-127 are RESERVED by the default CDI:
-      Byte   0-61  : User Node Name        (62-byte null-terminated string)
-      Byte  62-124 : User Node Description (63-byte null-terminated string)
-
-    Place your custom configuration at origin 128 or higher.
-  -->
   <segment space="253" origin="0">
     <name>User Identification</name>
     <group>
@@ -2377,30 +2387,11 @@ const BASIC_CDI_XML =
     </group>
   </segment>
 
-  <!-- Add your custom configuration here (origin >= 128 keeps reserved bytes intact) -->
   <segment space="253" origin="128">
     <name>Configuration</name>
     <group>
       <name>Configuration</name>
       <description>Node configuration settings</description>
-
-      <!-- Example: integer field
-      <int size="1">
-        <name>My Setting</name>
-        <description>A simple 1-byte configuration value</description>
-        <min>0</min>
-        <max>255</max>
-        <default>0</default>
-      </int>
-      -->
-
-      <!-- Example: Event ID
-      <eventid>
-        <name>My Event</name>
-        <description>An event this node produces or consumes</description>
-      </eventid>
-      -->
-
     </group>
   </segment>
 
@@ -2525,6 +2516,29 @@ if (_isEmbedded) {
                     _renderMapStats(mapData, document.getElementById('map-stats-bar'));
                     _renderConfigMemWarning(mapData, document.getElementById('map-config-warning'));
                 }
+            }
+
+        } else if (e.data.type === 'setTargetLanguage') {
+
+            _targetLanguage = e.data.target || 'c';
+            const isJs    = _targetLanguage === 'js';
+
+            /* C-only map views: Defines (#define header) and Struct (C struct
+             * layout) have no analogue in JS.  Hide them; if active, fall
+             * back to the Flat view. */
+            const defines = document.getElementById('btn-map-defines');
+            const struct  = document.getElementById('btn-map-struct');
+            if (defines) { defines.classList.toggle('hidden', isJs); }
+            if (struct)  { struct.classList.toggle('hidden', isJs); }
+
+            if (isJs && (_mapView === 'defines' || _mapView === 'struct')) {
+                _setMapView('flat');
+            }
+
+            /* The Array view's output IS language-specific — re-render so the
+             * user sees the new format (C struct vs JS Uint8Array). */
+            if (_mapView === 'array') {
+                _renderMapArray();
             }
 
         }

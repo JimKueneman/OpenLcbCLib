@@ -8,6 +8,7 @@
 </head>
 <body>
 
+    <!-- BANNER_INJECTION_POINT -->
     <header>
         <h1>Node Wizard</h1>
         <p class="subtitle">Configure your OpenLCB node and preview the generated source files</p>
@@ -26,6 +27,16 @@
 
         <!-- ===== LEFT: Navigation sidebar ===== -->
         <nav class="sidebar" id="sidebar">
+
+            <div class="sidebar-section">
+                <span class="sidebar-label">Target Language</span>
+                <select class="sidebar-select" id="target-language-select"
+                        onchange="setTargetLanguage(this.value)"
+                        title="Choose the output language for generated code">
+                    <option value="c">C (OpenLcbCLib)</option>
+                    <option value="js">JavaScript (OpenLcbJSLib)</option>
+                </select>
+            </div>
 
             <div class="sidebar-section">
                 <span class="sidebar-label">Node Type</span>
@@ -125,6 +136,9 @@
     <script src="drivers/js/driver_defs.js"></script>
     <script src="drivers/js/driver_codegen.js"></script>
     <script src="js/codegen.js"></script>
+    <script src="js/language_target.js"></script>
+    <script src="js/c_target.js"></script>
+    <script src="js/js_target.js"></script>
 
     <!-- Application scripts -->
     <script src="js/zip_export.js"></script>

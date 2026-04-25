@@ -4,10 +4,10 @@ Reference: OpenLCB CDI Standard (ConfigurationDescriptionInformationS.pdf, June 
 
 ## Test Runner
 
-Open `test_runner.html` in a browser and drag all `.xml` files from `test/cdi/` onto
-the drop zone. The runner:
+Open `run_tests.html` in a browser. Tests auto-run on page load via `fetch()` of
+`test/cdi/` and `test/fdi/`. The runner:
 
-- Reads each XML via FileReader (no server needed)
+- Loads each XML by HTTP fetch (must be served — opening from `file://` may not work depending on browser)
 - Parses `<!-- TEST_CHECKS -->` comment blocks embedded in each XML
 - Runs validation (`CdiValidator.validate`) and map (`CdiRenderer.buildMap`) checks
 - Runs compile checks (`CdiRenderer.checkDefineCollisions`, `CdiRenderer.checkStructCollisions`)
@@ -588,19 +588,12 @@ The previously-existing test 30 was extended to also include `<link>`, `<visibil
 
 ## How to Run
 
-### Headless (Node.js — fastest, runs all 55 tests at once)
-```
-node run_tests.js
-```
-Requires `jsdom` (`npm install jsdom`).  Exits 0 on all-pass, 1 on any failure.
-The script lives at the repository root alongside this folder.
+### Browser automated (runs every test in `test/cdi/` and `test/fdi/`)
+1. Open `run_tests.html` in a browser
+2. Tests auto-run on page load via `fetch()` of the test directories
+3. Results appear in the output panel — click "Run Tests" to re-run
 
-### Browser automated (recommended for visual review)
-1. Open `test_runner.html` in a browser
-2. Select all files in `test/cdi/` and drag them onto the drop zone
-3. Results appear immediately — failed tests auto-expand
-
-### Manual
+### Manual (one file at a time, in the wizard editor)
 1. Open `node_wizard.html` in a browser
 2. Select "Typical" node type
 3. Click the CDI tile to enter the CDI editor

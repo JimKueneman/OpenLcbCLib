@@ -6,6 +6,7 @@
 /* ---------- State ---------- */
 
 let selectedNodeType = null;
+let currentTargetLanguage = 'c';   /* 'c' | 'js' — gates compile-time-only sections */
 let currentTab       = 'h';
 let cdiUserBytes     = null;
 let cdiUserText      = null;
@@ -176,6 +177,62 @@ function _highlightNodeTypeBtn(type) {
 
 }
 
+/* Hide controls that don't apply when the target language is JS:
+ *   - Bootloader Node Type button (JS lib has no firmware-upgrade flow)
+ *   - Event Buffers section (compile-time WASM constants)
+ *   - Memory Configuration section (compile-time WASM constants)
+ *   - Advanced section (compile-time WASM constants)
+ *   - Firmware Update add-on (no firmware-upgrade flow in JS)
+ * If the user had Bootloader selected when switching to JS, fall back to Basic.
+ * If Firmware was checked when switching to JS, uncheck so codegen sees it off. */
+function _applyTargetLanguage(target) {
+
+    currentTargetLanguage = target || 'c';
+    const isJs = currentTargetLanguage === 'js';
+
+    const bootBtn = document.querySelector('button.node-type-btn[data-type="bootloader"]');
+    if (bootBtn) { bootBtn.classList.toggle('hidden', isJs); }
+
+    const evtSection = document.getElementById('addon-events-group');
+    if (evtSection) { evtSection.classList.toggle('hidden', isJs); }
+
+    /* Memory Configuration: keep the section visible — the JS target needs
+     * the configMemHighest field at runtime.  Hide only the two checkboxes
+     * (unaligned reads/writes) since those are WASM compile-time constants. */
+    const unalignedR = document.getElementById('config-unaligned-reads');
+    const unalignedW = document.getElementById('config-unaligned-writes');
+    if (unalignedR) {
+        const lbl = unalignedR.closest('label.addon-item');
+        if (lbl) { lbl.classList.toggle('hidden', isJs); }
+    }
+    if (unalignedW) {
+        const lbl = unalignedW.closest('label.addon-item');
+        if (lbl) { lbl.classList.toggle('hidden', isJs); }
+    }
+
+    const advSection = document.getElementById('addon-advanced-section');
+    if (advSection) { advSection.classList.toggle('hidden', isJs); }
+
+    const firmwareGroup    = document.getElementById('addon-firmware-label');
+    const firmwareCheckbox = document.getElementById('addon-firmware');
+    if (firmwareGroup) { firmwareGroup.classList.toggle('hidden', isJs); }
+    if (isJs && firmwareCheckbox && firmwareCheckbox.checked) {
+        firmwareCheckbox.checked = false;
+        firmwareCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    if (isJs && selectedNodeType === 'bootloader') {
+        applyNodeType('basic');
+        if (_isEmbedded) {
+            window.parent.postMessage({
+                type: 'nodeTypeChanged',
+                nodeType: 'basic'
+            }, '*');
+        }
+    }
+
+}
+
 function applyNodeType(type) {
 
     selectedNodeType = type;
@@ -233,13 +290,22 @@ function applyNodeType(type) {
 
     }
 
-    /* Config Memory options: Typical and Train only (hidden for Basic and Bootloader) */
+    /* Sections that are compile-time-only (no meaning for the JS target,
+     * because the WASM is built with fixed values).  These ride alongside
+     * the existing node-type rules — JS-target hide takes precedence. */
+    const isJs = currentTargetLanguage === 'js';
+
+    /* Config Memory options: Typical and Train only (hidden for Basic and
+     * Bootloader).  Visible in JS too — the configMemHighest field inside
+     * is used by the JS target for addressSpaceConfigMemory.highestAddress;
+     * the two unaligned checkboxes are hidden separately by
+     * _applyTargetLanguage(). */
     const configGroup = document.getElementById('addon-config-group');
     configGroup.classList.toggle('hidden', type === 'basic' || isBootloader);
 
-    /* Event Buffers section: hidden for Bootloader (no events) */
+    /* Event Buffers section: hidden for Bootloader (no events) and for JS */
     const eventsGroup = document.getElementById('addon-events-group');
-    if (eventsGroup) { eventsGroup.classList.toggle('hidden', isBootloader); }
+    if (eventsGroup) { eventsGroup.classList.toggle('hidden', isJs || isBootloader); }
 
     /* Well Known Events section: hidden for Bootloader (no events) */
     const wkeSection = document.getElementById('wellknown-events-section');
@@ -249,9 +315,9 @@ function applyNodeType(type) {
     const addonsSection = document.getElementById('addon-extras-section');
     if (addonsSection) { addonsSection.classList.toggle('hidden', isBootloader); }
 
-    /* Advanced section: hidden for Bootloader (all values are fixed minimums) */
+    /* Advanced section: hidden for Bootloader (all values are fixed minimums) and for JS */
     const advancedSection = document.getElementById('addon-advanced-section');
-    if (advancedSection) { advancedSection.classList.toggle('hidden', isBootloader); }
+    if (advancedSection) { advancedSection.classList.toggle('hidden', isJs || isBootloader); }
 
     /* Advanced: Train Protocol and Listener groups — train/train-controller only */
     const isTrain = type === 'train' || type === 'train-controller';
@@ -1457,6 +1523,10 @@ window.addEventListener('message', function (e) {
         if (f.currentTab) { switchTab(f.currentTab); }
 
         updatePreview();
+
+    } else if (e.data.type === 'setTargetLanguage') {
+
+        _applyTargetLanguage(e.data.target || 'c');
 
     } else if (e.data.type === 'setArduinoMode') {
 

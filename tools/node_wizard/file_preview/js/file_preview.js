@@ -37,166 +37,7 @@ function _ensureCMViewer() {
 }
 
 /* ========================================================================= */
-/* Codegen state builder (mirrors zip_export.js _buildCodegenState)          */
-/* ========================================================================= */
-
-function _buildCodegenState(ws) {
-
-    var s = {};
-
-    if (ws.configFormState) {
-
-        Object.keys(ws.configFormState).forEach(function (key) {
-            s[key] = ws.configFormState[key];
-        });
-
-    }
-
-    s.nodeType      = ws.selectedNodeType;
-    s.driverState   = ws.driverState   || {};
-    s.callbackState = ws.callbackState || {};
-    s.platformState = ws.platformState || null;
-    s.cdiUserXml         = ws.cdiUserXml         || null;
-    s.fdiUserXml         = ws.fdiUserXml         || null;
-    s.preserveWhitespace = !!ws.preserveWhitespace;
-
-    return s;
-
-}
-
-/* ========================================================================= */
-/* Active group detection (mirrors zip_export.js)                            */
-/* ========================================================================= */
-
-function _getActiveCallbackGroups(state) {
-
-    var active = [];
-
-    if (typeof CALLBACK_GROUPS === 'undefined') { return active; }
-
-    var groupKeys = Object.keys(CALLBACK_GROUPS);
-
-    for (var i = 0; i < groupKeys.length; i++) {
-
-        var key   = groupKeys[i];
-        var group = CALLBACK_GROUPS[key];
-        var cs = (state.callbackState && state.callbackState[key]) ? state.callbackState[key] : null;
-        var checkedNames = (cs && cs.checked) ? cs.checked : [];
-
-        var activeFns = [];
-        for (var j = 0; j < group.functions.length; j++) {
-
-            var fn = group.functions[j];
-            if (fn.required || checkedNames.indexOf(fn.name) >= 0) {
-                activeFns.push(fn);
-            }
-
-        }
-
-        if (activeFns.length > 0) {
-            active.push({ key: key, group: group, functions: activeFns });
-        }
-
-    }
-
-    return active;
-
-}
-
-function _getActiveDriverGroups(state) {
-
-    var active = [];
-
-    if (typeof DRIVER_GROUPS === 'undefined') { return active; }
-
-    var groupKeys = Object.keys(DRIVER_GROUPS);
-    var isBootloader = state.nodeType === 'bootloader';
-
-    for (var i = 0; i < groupKeys.length; i++) {
-
-        var key   = groupKeys[i];
-        var group = DRIVER_GROUPS[key];
-        var ds = (state.driverState && state.driverState[key]) ? state.driverState[key] : null;
-        var checkedNames = (ds && ds.checked) ? ds.checked : [];
-
-        var activeFns = [];
-        for (var j = 0; j < group.functions.length; j++) {
-
-            var fn = group.functions[j];
-            if (isBootloader && (fn.name === 'config_mem_read' || fn.name === 'config_mem_write')) { continue; }
-            if (fn.required || checkedNames.indexOf(fn.name) >= 0) {
-                activeFns.push(fn);
-            }
-
-        }
-
-        if (activeFns.length > 0) {
-            active.push({ key: key, group: group, functions: activeFns });
-        }
-
-    }
-
-    return active;
-
-}
-
-/* ========================================================================= */
-/* Include path fixup helpers (mirrors zip_export.js)                        */
-/* ========================================================================= */
-
-function _fixMainIncludes(code, isArduino) {
-
-    var prefix = isArduino ? 'src/' : '';
-
-    code = code.replace(
-        /#include "src\/(openlcb|drivers|utilities)\//g,
-        '#include "' + prefix + 'openlcb_c_lib/$1/'
-    );
-
-    code = code.replace(
-        /#include "openlcb_can_drivers\.h"/g,
-        '#include "' + prefix + 'application_drivers/openlcb_can_drivers.h"'
-    );
-    code = code.replace(
-        /#include "openlcb_drivers\.h"/g,
-        '#include "' + prefix + 'application_drivers/openlcb_drivers.h"'
-    );
-
-    code = code.replace(
-        /#include "(callbacks_\w+\.h)"/g,
-        '#include "' + prefix + 'application_callbacks/$1"'
-    );
-
-    return code;
-
-}
-
-function _fixSubfolderIncludes(code) {
-
-    code = code.replace(
-        /#include "src\/(openlcb|drivers|utilities)\//g,
-        '#include "../openlcb_c_lib/$1/'
-    );
-
-    return code;
-
-}
-
-function _fixConfigIncludes(code, isArduino) {
-
-    var prefix = isArduino ? 'src/' : '';
-
-    code = code.replace(
-        /#include "src\/(openlcb|drivers|utilities)\//g,
-        '#include "' + prefix + 'openlcb_c_lib/$1/'
-    );
-
-    return code;
-
-}
-
-/* ========================================================================= */
-/* Build file map from wizard state                                          */
+/* Build file map from wizard state — delegates to the active LanguageTarget */
 /* ========================================================================= */
 
 function _buildFileMap(ws) {
@@ -204,83 +45,40 @@ function _buildFileMap(ws) {
     var map = {};
 
     if (!ws || !ws.selectedNodeType) { return map; }
+    if (typeof LanguageTargets === 'undefined') { return map; }
 
-    var codegenState = _buildCodegenState(ws);
-    var isArduino    = !!ws.arduino;
-    var srcExt       = isArduino ? '.cpp' : '.c';
-    var mainFilename = isArduino ? 'main.ino' : 'main.c';
-
-    /* Subfolder prefix for Arduino layout */
-    var sub = isArduino ? 'src/' : '';
-
-    /* Core files */
-    if (typeof generateMain === 'function') {
-        map[mainFilename] = _fixMainIncludes(generateMain(codegenState), isArduino);
-    }
-    if (typeof generateH === 'function') {
-        map['openlcb_user_config.h'] = _fixConfigIncludes(generateH(codegenState), isArduino);
-    }
-    if (typeof generateC === 'function') {
-        map['openlcb_user_config.c'] = _fixConfigIncludes(generateC(codegenState), isArduino);
-    }
-    if (typeof generateCanH === 'function') {
-        map['can_user_config.h'] = generateCanH(codegenState);
+    var target;
+    try {
+        target = LanguageTargets.get(ws.targetLanguage || 'c');
+    } catch (e) {
+        return map;
     }
 
-    /* Driver files */
-    var activeDrivers = _getActiveDriverGroups(codegenState);
-
-    if (typeof DriverCodegen !== 'undefined') {
-
-        activeDrivers.forEach(function (entry) {
-
-            var hCode = DriverCodegen.generateH(entry.group, entry.functions, ws.platformState);
-            var cCode = DriverCodegen.generateC(entry.group, entry.functions, ws.platformState, isArduino);
-
-            hCode = _fixSubfolderIncludes(hCode);
-            cCode = _fixSubfolderIncludes(cCode);
-
-            map[sub + 'application_drivers/' + entry.group.filePrefix + '.h']      = hCode;
-            map[sub + 'application_drivers/' + entry.group.filePrefix + srcExt] = cCode;
-
-        });
-
+    var entries;
+    try {
+        entries = target.buildFiles(ws);
+    } catch (e) {
+        /* Target rejected this state (e.g. JS + bootloader).  Show a single
+         * pseudo-file in the tree so the user sees what happened. */
+        map['__error__.txt'] = String(e.message || e);
+        return map;
     }
 
-    /* Callback files */
-    var activeCallbacks = _getActiveCallbackGroups(codegenState);
+    entries.forEach(function (entry) {
 
-    if (typeof CallbackCodegen !== 'undefined') {
+        /* Targets can mark meta files (GETTING_STARTED.txt, *_project.json,
+         * etc.) as previewable:false — they ship in the ZIP but don't appear
+         * in the file-preview tree. */
+        if (entry.previewable === false) { return; }
 
-        activeCallbacks.forEach(function (entry) {
-
-            var hCode = CallbackCodegen.generateH(entry.group, entry.functions);
-            var cCode = CallbackCodegen.generateC(entry.group, entry.functions, isArduino);
-
-            hCode = _fixSubfolderIncludes(hCode);
-            cCode = _fixSubfolderIncludes(cCode);
-
-            map[sub + 'application_callbacks/' + entry.group.filePrefix + '.h']      = hCode;
-            map[sub + 'application_callbacks/' + entry.group.filePrefix + srcExt] = cCode;
-
-        });
-
-    }
-
-    /* XML files — bootloader has no CDI or FDI */
-    if (ws.selectedNodeType !== 'bootloader') {
-        if (ws.cdiUserXml && ws.cdiUserXml.trim()) {
-            map[sub + 'xml_files/cdi.xml'] = ws.cdiUserXml;
+        if (entry.dir) {
+            /* Trailing slash signals "empty folder" to the tree renderer. */
+            map[entry.path + '/'] = null;
+        } else {
+            map[entry.path] = entry.content;
         }
-        if (ws.fdiUserXml && ws.fdiUserXml.trim()) {
-            map[sub + 'xml_files/fdi.xml'] = ws.fdiUserXml;
-        }
-    }
 
-    /* Placeholder library folders (shown as empty folders in tree) */
-    map[sub + 'openlcb_c_lib/openlcb/'] = null;
-    map[sub + 'openlcb_c_lib/drivers/canbus/'] = null;
-    map[sub + 'openlcb_c_lib/utilities/'] = null;
+    });
 
     return map;
 
@@ -488,8 +286,13 @@ function _refresh() {
 
     _renderTree(_elTree, tree.children);
 
-    /* Restore saved selection from wizard state (parent persists this) */
-    if (!_selectedFile && _wizardState && _wizardState.filePreviewSelection) {
+    /* Restore saved selection from wizard state (parent persists this), but
+     * only when the saved path actually exists in the current file map.
+     * Otherwise we'd carry a stale selection across target switches —
+     * e.g. a 'main.c' selection bleeding into a JS-target session. */
+    if (!_selectedFile && _wizardState && _wizardState.filePreviewSelection
+        && _fileMap.hasOwnProperty(_wizardState.filePreviewSelection)
+        && _fileMap[_wizardState.filePreviewSelection] != null) {
         _selectedFile = _wizardState.filePreviewSelection;
     }
 
@@ -573,6 +376,13 @@ window.addEventListener('message', function (e) {
     if (!e.data || !e.data.type) { return; }
 
     switch (e.data.type) {
+
+        case 'setTargetLanguage':
+
+            /* Local selection becomes stale when target changes — clear it so
+             * the next refresh picks a file that exists in the new target. */
+            _selectedFile = null;
+            break;
 
         case 'setWizardState':
 

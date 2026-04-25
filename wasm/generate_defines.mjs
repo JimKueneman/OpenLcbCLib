@@ -25,6 +25,8 @@ const HEADERS = [
     `${ROOT}/src/openlcb/openlcb_defines.h`,
     `${ROOT}/src/openlcb/openlcb_float16.h`,
     `${ROOT}/src/openlcb/protocol_train_search_handler.h`,
+    /* WASM build's USER_DEFINED_* sizing constants — surfaced as JS Limits.* */
+    `${ROOT}/wasm/openlcb_user_config.h`,
 ];
 
 // Headers scanned ONLY for `typedef enum { ... } name_t;` blocks.  Each

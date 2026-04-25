@@ -23,6 +23,7 @@ let cdiValidation     = null;    /* { errors: N, warnings: N } from CDI editor *
 let fdiValidation     = null;    /* { errors: N, warnings: N } from FDI editor (future) */
 let filePreviewSelection = null; /* last selected file path in file-preview */
 let preserveWhitespace   = false; /* CDI editor: preserve whitespace in output byte array */
+let targetLanguage       = 'c';   /* output language target: 'c' | 'js' */
 
 /* ---------- DOM refs ---------- */
 
@@ -108,7 +109,8 @@ function _saveState() {
             callbackState:    callbackState,
             platformState:    platformState,
             filePreviewSelection: filePreviewSelection,
-            preserveWhitespace: preserveWhitespace
+            preserveWhitespace: preserveWhitespace,
+            targetLanguage:    targetLanguage
         };
 
         try {
@@ -166,6 +168,9 @@ function _restoreState() {
         }
         if (state.preserveWhitespace !== undefined) {
             preserveWhitespace = !!state.preserveWhitespace;
+        }
+        if (state.targetLanguage) {
+            targetLanguage = state.targetLanguage;
         }
 
         /* Migration: convert old arduinoMode to platform isArduino */
@@ -357,6 +362,86 @@ function selectNodeType(type, fromConfig) {
 
 }
 
+/* ---------- Target language selection ---------- */
+
+function setTargetLanguage(id) {
+
+    targetLanguage = id || 'c';
+    _saveState();
+    _applyTargetVisibility();
+
+    if (!_iframeReady) { return; }
+
+    /* Tell the active iframe so it can apply its own hiding rules.
+     * Iframes that don't gate on target simply ignore this message. */
+    elIframe.contentWindow.postMessage({
+        type:   'setTargetLanguage',
+        target: targetLanguage
+    }, '*');
+
+    /* file-preview also needs the full state to re-render against the
+     * new target's buildFiles output. */
+    if (_loadedView === 'file-preview') {
+        elIframe.contentWindow.postMessage({
+            type:  'setWizardState',
+            state: _buildWizardState()
+        }, '*');
+    }
+
+}
+
+function _syncTargetLanguageSelector() {
+
+    const el = document.getElementById('target-language-select');
+    if (el) { el.value = targetLanguage; }
+
+}
+
+/* Hide sidebar tiles whose view is not in the current target's
+ * applicablePanels list, then hide any sidebar-section whose tiles are all
+ * gone (so orphan labels like "Platform Drivers" don't linger).
+ * Falls back to "show everything" if the registry is unavailable. */
+function _applyTargetVisibility() {
+
+    if (typeof LanguageTargets === 'undefined') { return; }
+
+    let target;
+    try { target = LanguageTargets.get(targetLanguage); } catch (e) { return; }
+
+    const applicable = (target && target.applicablePanels) || null;
+
+    Object.keys(VIEW_TILES).forEach(function (viewId) {
+
+        const tile = VIEW_TILES[viewId];
+        if (!tile) { return; }
+
+        const show = !applicable || applicable.indexOf(viewId) !== -1;
+        tile.classList.toggle('hidden', !show);
+
+    });
+
+    /* Hide a sidebar-section if every tile inside it is hidden.  Sections
+     * without any .sidebar-tile children (e.g. the Target Language select)
+     * are left alone. */
+    document.querySelectorAll('.sidebar-section').forEach(function (section) {
+
+        const tiles = section.querySelectorAll('.sidebar-tile');
+        if (tiles.length === 0) { return; }
+
+        const anyVisible = Array.from(tiles).some(function (t) {
+            return !t.classList.contains('hidden');
+        });
+        section.classList.toggle('hidden', !anyVisible);
+
+    });
+
+    /* If the active view just became hidden, fall back to 'config'. */
+    if (_loadedView && applicable && applicable.indexOf(_loadedView) === -1) {
+        _loadView('config');
+    }
+
+}
+
 /* ---------- View selection ---------- */
 
 function selectView(view) {
@@ -414,6 +499,10 @@ function _loadView(view) {
 function _buildInitMessages(view) {
 
     const msgs = [];
+
+    /* Every view gets the current target language; iframes that have no
+     * gating rules simply ignore this message. */
+    msgs.push({ type: 'setTargetLanguage', target: targetLanguage });
 
     if (view === 'config') {
 
@@ -524,7 +613,8 @@ function _buildWizardState() {
         callbackState:    callbackState,
         platformState:    platformState,
         arduino:          _isArduino(),
-        filePreviewSelection: filePreviewSelection
+        filePreviewSelection: filePreviewSelection,
+        targetLanguage:   targetLanguage
     };
 
 }
@@ -782,6 +872,7 @@ document.getElementById('file-load-project').addEventListener('change', function
             platformState    = state.platformState     || null;
             filePreviewSelection = state.filePreviewSelection || null;
             preserveWhitespace   = !!state.preserveWhitespace;
+            targetLanguage       = state.targetLanguage    || 'c';
             cdiValidation    = null;
             fdiValidation    = null;
 
@@ -794,6 +885,9 @@ document.getElementById('file-load-project').addEventListener('change', function
             _saveState();
 
             /* Reload UI */
+            _syncTargetLanguageSelector();
+            _applyTargetVisibility();
+
             if (selectedNodeType) {
 
                 _updateNodeTypeTile();
@@ -828,6 +922,9 @@ document.getElementById('file-load-project').addEventListener('change', function
 /* ---------- Init: restore state and apply sidebar ----------------------- */
 
 _restoreState();
+
+_syncTargetLanguageSelector();
+_applyTargetVisibility();
 
 if (selectedNodeType) {
 

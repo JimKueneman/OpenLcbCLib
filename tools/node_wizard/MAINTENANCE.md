@@ -26,6 +26,7 @@ updating** to **least likely**.
 
 **Reference**
 11. [Architecture Overview](#11-architecture-overview) — How the wizard is structured.
+12. [Distribution to OpenLcbJSLib](#12-distribution-to-openlcbjslib) — How edits here propagate to the JS-lib copy.
 
 ---
 
@@ -117,16 +118,10 @@ DOMParser to query the XML tree and push `{ severity, line, col, message }` obje
 
 **When:** A new validator rule is added, a bug is fixed, or an edge case is discovered.
 
-**How to run:**
-
-```bash
-cd tools/node_wizard/test
-npm install jsdom    # first time only
-node run_tests.js
-```
-
-The test runner uses the same xmllint engine as the browser validators, so results
-are identical.
+**How to run:** open `tools/node_wizard/test/run_tests.html` in a browser. Tests
+auto-run on page load — results appear in the output panel; click "Run Tests" to
+re-run. The runner uses the same xmllint engine as the browser validators, so
+results match what the editors show.
 
 **How to add a test:** Copy an existing XML file from `test/cdi/` (or `test/fdi/`),
 modify it for the scenario being tested, and embed a `<!-- TEST_CHECKS -->` block
@@ -138,7 +133,7 @@ describing the expected outcomes. See `test/TEST_CASES.md` for the format.
 |----------|------|
 | `test/cdi/` | CDI XML test files, each self-describing expected results |
 | `test/fdi/` | FDI XML test files |
-| `test/run_tests.js` | Headless Node.js test runner |
+| `test/run_tests.html` | Browser-based test runner (fetches test files, auto-runs on load) |
 | `test/TEST_CASES.md` | Format reference and test case inventory |
 
 ---
@@ -298,3 +293,38 @@ focus/selection behaviour, descriptor warning badge logic, node type differences
 section — is in:
 
 [`documentation/maintenance_instructions.md`](documentation/maintenance_instructions.md)
+
+---
+
+## 12. Distribution to OpenLcbJSLib
+
+**When:** Any change to the wizard.  The wizard lives here as the source of
+truth and is mirrored into `OpenLcbJSLib/tools/node_wizard/` for JS-lib users.
+
+**How the sync runs:** OpenLcbJSLib's release script does the pull.  From the
+JSLib repo root:
+
+```bash
+./tools/wasm_update_wizard/wasm_update_wizard.sh
+```
+
+Step 4 of that script `rsync`s `OpenLcbCLib/tools/node_wizard/` →
+`OpenLcbJSLib/tools/node_wizard/`, injects a runtime banner into the destination
+`node_wizard.html` (replacing a `<!-- BANNER_INJECTION_POINT -->` marker), and
+writes a `DO_NOT_EDIT.md` next to the wizard files.  Excludes `.DS_Store` and
+`test/golden/` (operator-generated).  Use `--skip-wizard-sync` to bypass.
+
+**Important — never edit the JSLib copy directly.**  All changes go in this
+(OpenLcbCLib) repo and propagate via the script.  Both the runtime banner and
+the `DO_NOT_EDIT.md` exist to prevent stray edits in the destination.
+
+**The banner injection marker:** `<!-- BANNER_INJECTION_POINT -->` lives just
+inside `<body>` in `node_wizard.html`.  Don't remove it — without the marker
+the sync step fails with a clear error.
+
+### Files involved
+
+| File | Role |
+|------|------|
+| `node_wizard.html` (in this repo) | Contains `<!-- BANNER_INJECTION_POINT -->` marker; banner stays empty here |
+| `OpenLcbJSLib/tools/wasm_update_wizard/wasm_update_wizard.sh` (step 4) | Performs the rsync, injects the banner, writes DO_NOT_EDIT.md |

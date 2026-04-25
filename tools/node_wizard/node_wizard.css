@@ -237,6 +237,29 @@ header .subtitle {
 
 }
 
+/* ---- Sidebar inline selectors ---- */
+
+.sidebar-select {
+
+    display: block;
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 13px;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    cursor: pointer;
+
+}
+
+.sidebar-select:focus {
+
+    outline: 2px solid var(--color-accent, #0066cc);
+    outline-offset: 1px;
+
+}
+
 /* ---- Sidebar Tiles ---- */
 
 .sidebar-tile {
