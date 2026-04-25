@@ -53,9 +53,9 @@
 // =============================================================================
 
 #define USER_DEFINED_PRODUCER_COUNT                  256
-#define USER_DEFINED_PRODUCER_RANGE_COUNT            256
+#define USER_DEFINED_PRODUCER_RANGE_COUNT            32
 #define USER_DEFINED_CONSUMER_COUNT                  256
-#define USER_DEFINED_CONSUMER_RANGE_COUNT            256
+#define USER_DEFINED_CONSUMER_RANGE_COUNT            32
 
 // =============================================================================
 // Train Protocol

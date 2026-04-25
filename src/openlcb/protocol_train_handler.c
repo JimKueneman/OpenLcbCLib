@@ -33,7 +33,7 @@
  * callbacks.
  *
  * @author Jim Kueneman
- * @date 20 Mar 2026
+ * @date 25 Apr 2026
  */
 
 #include "protocol_train_handler.h"
@@ -674,6 +674,21 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
                         state->controller_alias = msg->source_alias;
 
                     }
+
+                }
+
+                // TrainControlS §6.6: fresh controller starting — re-arm the
+                // heartbeat countdown.  The Release path zeros the counter to
+                // prevent the no-controller period from firing a false
+                // timeout; this re-establishes it now that a controller is
+                // assigned again.  Also clear any pending-send flag that may
+                // have lingered from the no-controller period (the halfway
+                // fire repeatedly retried _send_heartbeat_request, which kept
+                // returning false because controller_node_id was 0).
+                if (accepted && state->heartbeat_timeout_s > 0) {
+
+                    state->heartbeat_counter_100ms = state->heartbeat_timeout_s * 10;
+                    state->heartbeat_send_pending = 0;
 
                 }
 

@@ -39,7 +39,7 @@
  * pointer in node->train_state.  Non-train nodes have train_state == NULL.
  *
  * @author Jim Kueneman
- * @date 28 Feb 2026
+ * @date 25 Apr 2026
  *
  * @see protocol_train_handler.h
  */
@@ -394,6 +394,97 @@ extern "C" {
          * @return Speed-step count (14, 28, or 128), or 0 if the node has no train state.
          */
     extern uint8_t OpenLcbApplicationTrain_get_speed_steps(openlcb_node_t *openlcb_node);
+
+        /**
+         * @brief Configures the heartbeat-monitor deadline for a train node.
+         *
+         * @details Enables periodic Heartbeat Request messages from this train
+         * to its assigned controller.  A non-zero value opts the train into
+         * monitoring; zero disables it.  The countdown begins as soon as a
+         * controller is assigned and is reset by any incoming command from
+         * the controller.  Per @b TrainControlS §6.6: if the controller does
+         * not reply within the deadline, the train interprets the silence as
+         * a Set Speed 0 command (preserving direction) and forwards that to
+         * all registered listeners.  This is NOT an Emergency Stop.
+         *
+         * @param openlcb_node  Pointer to the @ref openlcb_node_t with an
+         *                      assigned train state.
+         * @param seconds       Reply deadline in seconds.  0 disables
+         *                      heartbeat monitoring; spec recommends 10.
+         *
+         * @note Silently ignored if the node pointer or train_state pointer is NULL.
+         *
+         * @see OpenLcbApplicationTrain_get_heartbeat_timeout
+         */
+    extern void OpenLcbApplicationTrain_set_heartbeat_timeout(openlcb_node_t *openlcb_node, uint32_t seconds);
+
+        /**
+         * @brief Returns the configured heartbeat deadline for a train node.
+         *
+         * @param openlcb_node  Pointer to the @ref openlcb_node_t.
+         *
+         * @return Configured deadline in seconds, or 0 if heartbeat monitoring
+         *         is disabled or the node has no train state.
+         *
+         * @see OpenLcbApplicationTrain_set_heartbeat_timeout
+         */
+    extern uint32_t OpenLcbApplicationTrain_get_heartbeat_timeout(openlcb_node_t *openlcb_node);
+
+        /**
+         * @brief Returns the Node ID currently holding the train's reservation.
+         *
+         * @details Per @b TrainControlS §6.x a train may be reserved by a single
+         * controller node via the Train Control Management Reserve sub-command.
+         * This getter exposes the held reservation so application code (e.g. a
+         * Command Station roster UI) can surface the state.  A return value of
+         * zero means no reservation is currently held, the node has no train
+         * state, or the node pointer is NULL.
+         *
+         * @param openlcb_node  Pointer to the @ref openlcb_node_t.
+         *
+         * @return Reserving controller's @ref node_id_t, or 0 if no reservation
+         *         is held / no train state / NULL node.
+         */
+    extern node_id_t OpenLcbApplicationTrain_get_reserved_by_node_id(openlcb_node_t *openlcb_node);
+
+        /**
+         * @brief Returns the number of listener nodes attached to a train.
+         *
+         * @details Listeners are attached and detached via the Train Listener
+         * Configuration sub-commands (@b TrainControlS §6.5).  This getter
+         * exposes the current attached count so application code can render
+         * a consist roster without round-tripping a Listener Query message.
+         *
+         * @param openlcb_node  Pointer to the @ref openlcb_node_t.
+         *
+         * @return Listener count (0 to USER_DEFINED_MAX_LISTENERS_PER_TRAIN), or
+         *         0 if the node has no train state / NULL node.
+         *
+         * @see OpenLcbApplicationTrain_get_listener_at
+         */
+    extern uint8_t OpenLcbApplicationTrain_get_listener_count(openlcb_node_t *openlcb_node);
+
+        /**
+         * @brief Reads one listener entry from a train's listener list.
+         *
+         * @details Index zero through (count - 1) returns the listener entries in
+         * the order they were attached (per @b TrainControlS §5 — updating flags
+         * does not change order).  Indices outside that range return false and
+         * leave the out-params unchanged.
+         *
+         * @param openlcb_node   Pointer to the @ref openlcb_node_t.
+         * @param index          Zero-based listener slot.
+         * @param out_node_id    Receives the listener's @ref node_id_t.  Required.
+         * @param out_flags      Receives the listener flag byte (rev / link-F0 /
+         *                       link-Fn / hide).  Required.
+         *
+         * @return true if the index was in range and the values were written,
+         *         false if the index is out of range, the node has no train
+         *         state, or any required pointer is NULL.
+         *
+         * @see OpenLcbApplicationTrain_get_listener_count
+         */
+    extern bool OpenLcbApplicationTrain_get_listener_at(openlcb_node_t *openlcb_node, uint8_t index, node_id_t *out_node_id, uint8_t *out_flags);
 
 #ifdef __cplusplus
 }

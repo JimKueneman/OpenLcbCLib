@@ -31,7 +31,7 @@
  * send helpers for the OpenLCB Train Control Protocol.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 25 Apr 2026
  */
 
 #include "openlcb_application_train.h"
@@ -169,7 +169,11 @@ train_state_t *OpenLcbApplicationTrain_get_state(openlcb_node_t *openlcb_node) {
      * -# Bail out if state->controller_node_id == 0 (no controller assigned).
      * -# Build a Train Reply message (MTI_TRAIN_REPLY) addressed to controller_node_id.
      * -# Set payload bytes 0-1 to TRAIN_MANAGEMENT / TRAIN_MGMT_NOOP.
-     * -# Set payload bytes 2-4 to the 3-byte heartbeat_timeout_s value.
+     * -# Set payload bytes 2-4 to the 3-byte remaining-deadline-in-seconds value
+     *    (heartbeat_counter_100ms / 10, rounded up).  Per TrainControlS §6.6 the
+     *    argument must be the time the Controller has to reply, not the full
+     *    configured heartbeat_timeout_s — the train fires at the halfway point
+     *    of the countdown so only the remainder is available before timeout.
      * -# Call _interface->send_openlcb_msg() and return its result.
      *
      * @verbatim
@@ -205,10 +209,16 @@ static bool _send_heartbeat_request(train_state_t *state) {
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MGMT_NOOP, 1);
 
-    uint32_t timeout = state->heartbeat_timeout_s;
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (timeout >> 16) & 0xFF, 2);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (timeout >> 8) & 0xFF, 3);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, timeout & 0xFF, 4);
+    // TrainControlS §6.6: the deadline argument is the time the Controller
+    // has to reply, NOT the train's full configured heartbeat period.  Since
+    // we fire at the halfway point of the countdown, only the remaining
+    // counter time is available before the internal timeout-handler runs.
+    // Send remaining time (rounded up so a partial tick still leaves the
+    // controller a full second's worth of headroom).
+    uint32_t remaining_s = (state->heartbeat_counter_100ms + 9) / 10;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (remaining_s >> 16) & 0xFF, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (remaining_s >> 8) & 0xFF, 3);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, remaining_s & 0xFF, 4);
 
     return _interface->send_openlcb_msg(&msg);
 
@@ -313,10 +323,17 @@ void OpenLcbApplicationTrain_100ms_timer_tick(uint8_t current_tick) {
 
         }
 
-        // Retry pending heartbeat send from a previous tick
+        // Retry pending heartbeat send from a previous tick.
+        // TrainControlS §6.6: drop the pending send if set_speed has gone
+        // to zero between the original attempt and this retry — a stopped
+        // train no longer needs to verify controller liveness.
         if (state->heartbeat_send_pending) {
 
-            if (_send_heartbeat_request(state)) {
+            if (OpenLcbFloat16_is_zero(state->set_speed)) {
+
+                state->heartbeat_send_pending = 0;
+
+            } else if (_send_heartbeat_request(state)) {
 
                 state->heartbeat_send_pending = 0;
 
@@ -358,7 +375,15 @@ void OpenLcbApplicationTrain_100ms_timer_tick(uint8_t current_tick) {
 
         uint32_t halfway = (state->heartbeat_timeout_s * 10) / 2;
 
-        if (old_counter > halfway && state->heartbeat_counter_100ms <= halfway) {
+        // TrainControlS §6.6: do not initiate a Heartbeat Request when the
+        // last Set Speed is zero (including the Emergency Stop state).  A
+        // stationary train doesn't need to verify controller liveness — the
+        // protocol's safety case is preventing a moving train from running
+        // away if the throttle disappears.  Both signed-zero values
+        // (FLOAT16_POSITIVE_ZERO / FLOAT16_NEGATIVE_ZERO) count as zero.
+        bool speed_is_zero = OpenLcbFloat16_is_zero(state->set_speed);
+
+        if (old_counter > halfway && state->heartbeat_counter_100ms <= halfway && !speed_is_zero) {
 
             if (!_send_heartbeat_request(state)) {
 
@@ -1029,13 +1054,171 @@ void OpenLcbApplicationTrain_set_speed_steps(openlcb_node_t *openlcb_node, uint8
      */
 uint8_t OpenLcbApplicationTrain_get_speed_steps(openlcb_node_t *openlcb_node) {
 
-    if (!openlcb_node || !openlcb_node->train_state) { 
-        
-        return 0; 
-    
+    if (!openlcb_node || !openlcb_node->train_state) {
+
+        return 0;
+
     }
 
     return openlcb_node->train_state->speed_steps;
+
+}
+
+    /**
+     * @brief Configures the heartbeat-monitor deadline for a train node.
+     *
+     * @details Algorithm:
+     * -# Return if openlcb_node or train_state is NULL.
+     * -# Store seconds in train_state->heartbeat_timeout_s.
+     * -# Reset train_state->heartbeat_counter_100ms to seconds * 10 so the
+     *    countdown restarts cleanly from this configuration call (avoids a
+     *    spurious early Heartbeat Request fired by a stale partial countdown
+     *    when the timeout is being raised).  When seconds is zero, also
+     *    clear the counter so the per-tick handler skips this slot.
+     *
+     * @verbatim
+     * @param openlcb_node  Pointer to the openlcb_node_t.
+     * @param seconds       Reply deadline in seconds (0 disables monitoring).
+     * @endverbatim
+     */
+void OpenLcbApplicationTrain_set_heartbeat_timeout(openlcb_node_t *openlcb_node, uint32_t seconds) {
+
+    if (!openlcb_node || !openlcb_node->train_state) {
+
+        return;
+
+    }
+
+    openlcb_node->train_state->heartbeat_timeout_s = seconds;
+    openlcb_node->train_state->heartbeat_counter_100ms = seconds * 10;
+
+}
+
+    /**
+     * @brief Returns the configured heartbeat deadline for a train node.
+     *
+     * @details Algorithm:
+     * -# Return 0 if openlcb_node or train_state is NULL.
+     * -# Return train_state->heartbeat_timeout_s.
+     *
+     * @verbatim
+     * @param openlcb_node  Pointer to the openlcb_node_t.
+     * @endverbatim
+     *
+     * @return Configured deadline in seconds, or 0 if disabled / no train state.
+     */
+uint32_t OpenLcbApplicationTrain_get_heartbeat_timeout(openlcb_node_t *openlcb_node) {
+
+    if (!openlcb_node || !openlcb_node->train_state) {
+
+        return 0;
+
+    }
+
+    return openlcb_node->train_state->heartbeat_timeout_s;
+
+}
+
+    /**
+     * @brief Returns the Node ID currently holding the train's reservation.
+     *
+     * @details Algorithm:
+     * -# Return 0 if openlcb_node or train_state is NULL.
+     * -# Return 0 if reserved_node_count is zero (no active reservation).
+     * -# Return train_state->reserved_by_node_id.
+     *
+     * @verbatim
+     * @param openlcb_node  Pointer to the openlcb_node_t.
+     * @endverbatim
+     *
+     * @return Reserving node ID, or 0 if no reservation is held.
+     */
+node_id_t OpenLcbApplicationTrain_get_reserved_by_node_id(openlcb_node_t *openlcb_node) {
+
+    if (!openlcb_node || !openlcb_node->train_state) {
+
+        return 0;
+
+    }
+
+    if (openlcb_node->train_state->reserved_node_count == 0) {
+
+        return 0;
+
+    }
+
+    return openlcb_node->train_state->reserved_by_node_id;
+
+}
+
+    /**
+     * @brief Returns the number of listener nodes attached to a train.
+     *
+     * @details Algorithm:
+     * -# Return 0 if openlcb_node or train_state is NULL.
+     * -# Return train_state->listener_count.
+     *
+     * @verbatim
+     * @param openlcb_node  Pointer to the openlcb_node_t.
+     * @endverbatim
+     *
+     * @return Listener count, or 0 if the node has no train state.
+     */
+uint8_t OpenLcbApplicationTrain_get_listener_count(openlcb_node_t *openlcb_node) {
+
+    if (!openlcb_node || !openlcb_node->train_state) {
+
+        return 0;
+
+    }
+
+    return openlcb_node->train_state->listener_count;
+
+}
+
+    /**
+     * @brief Reads one listener entry from a train's listener list.
+     *
+     * @details Algorithm:
+     * -# Return false if openlcb_node, train_state, out_node_id, or out_flags is NULL.
+     * -# Return false if index is greater than or equal to listener_count.
+     * -# Copy listeners[index].node_id into *out_node_id.
+     * -# Copy listeners[index].flags into *out_flags.
+     * -# Return true.
+     *
+     * @verbatim
+     * @param openlcb_node  Pointer to the openlcb_node_t.
+     * @param index         Zero-based listener slot.
+     * @param out_node_id   Pointer to receive the listener's node_id_t.
+     * @param out_flags     Pointer to receive the listener's flag byte.
+     * @endverbatim
+     *
+     * @return true on success, false on out-of-range index or NULL inputs.
+     */
+bool OpenLcbApplicationTrain_get_listener_at(openlcb_node_t *openlcb_node, uint8_t index, node_id_t *out_node_id, uint8_t *out_flags) {
+
+    if (!openlcb_node || !openlcb_node->train_state) {
+
+        return false;
+
+    }
+
+    if (!out_node_id || !out_flags) {
+
+        return false;
+
+    }
+
+    if (index >= openlcb_node->train_state->listener_count) {
+
+        return false;
+
+    }
+
+    *out_node_id = openlcb_node->train_state->listeners[index].node_id;
+    *out_flags = openlcb_node->train_state->listeners[index].flags;
+
+    return true;
 
 }
 

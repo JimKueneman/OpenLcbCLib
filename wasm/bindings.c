@@ -557,13 +557,12 @@ static void _on_train_listener_query_reply(openlcb_node_t *node, uint8_t count, 
     EM_ASM({
         if (Module.onTrainListenerQueryReply) {
             var nid = BigInt($0) | (BigInt($1) << 32n);
-            var lnode = BigInt($4) | (BigInt($5) << 32n);
-            Module.onTrainListenerQueryReply(nid, $2, $3, lnode);
+            var lnode = BigInt($5) | (BigInt($6) << 32n);
+            Module.onTrainListenerQueryReply(nid, $2, $3, $4, lnode);
         }
     }, (uint32_t) (node->id & 0xFFFFFFFFu), (uint32_t) ((node->id >> 32) & 0xFFFFu),
-       (int) count, (int) index,
+       (int) count, (int) index, (int) flags,
        (uint32_t) (lid & 0xFFFFFFFFu), (uint32_t) ((lid >> 32) & 0xFFFFu));
-    (void) flags;
 }
 
 static void _on_train_reserve_reply(openlcb_node_t *node, uint8_t result)
@@ -1621,6 +1620,29 @@ int32_t wasm_train_get_speed_steps(uint64_t node_id)
     return (int32_t) OpenLcbApplicationTrain_get_speed_steps(n);
 }
 
+// Configure heartbeat-monitor deadline (seconds).  Pass 0 to disable.
+// Per TrainControlS §6.6 the train fires Heartbeat Request to its
+// controller; if the controller stays silent past the deadline, the train
+// behaves as if the controller sent Set Speed 0.
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_set_heartbeat_timeout(uint64_t node_id, uint32_t seconds)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    OpenLcbApplicationTrain_set_heartbeat_timeout(n, seconds);
+    return WASM_OK;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_get_heartbeat_timeout(uint64_t node_id)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    return (int32_t) OpenLcbApplicationTrain_get_heartbeat_timeout(n);
+}
+
 // --- Additional throttle senders (3-arg shape, covered by macro) ------------
 
 _TRAIN_THROTTLE_SEND(wasm_train_send_query_controller,  OpenLcbApplicationTrain_send_query_controller)
@@ -1672,6 +1694,64 @@ int32_t wasm_train_send_listener_query(uint64_t throttle_node_id, uint32_t train
     openlcb_node_t *n = OpenLcbNode_find_by_node_id(throttle_node_id);
     if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
     OpenLcbApplicationTrain_send_listener_query(n, (uint16_t) train_alias, train_node_id, (uint8_t) listener_index);
+    return WASM_OK;
+}
+
+// Returns the Node ID currently holding the train's reservation, or 0 if no
+// reservation is active.  Returns 0 for unknown nodes / non-train nodes too —
+// 0 is never a valid OpenLCB Node ID, so the sentinel is unambiguous.
+EMSCRIPTEN_KEEPALIVE
+uint64_t wasm_train_get_reserved_by_node_id(uint64_t node_id)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(node_id);
+    if (n == NULL) { return 0; }
+    return (uint64_t) OpenLcbApplicationTrain_get_reserved_by_node_id(n);
+}
+
+// Returns the count of listeners attached to the train, or WASM_ERR_UNKNOWN_NODE
+// if the node ID is not registered.  Non-train nodes return 0.
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_get_listener_count(uint64_t node_id)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    return (int32_t) OpenLcbApplicationTrain_get_listener_count(n);
+}
+
+// Reads one listener entry into a 9-byte JS-allocated buffer:
+//   bytes 0..7  listener Node ID, little-endian uint64
+//   byte  8     listener flag byte
+// The buffer is only written when the call succeeds (return WASM_OK); on
+// failure the buffer is left untouched.
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_get_listener_at(uint64_t node_id, uint32_t index, uint8_t *out_buffer)
+{
+
+    if (out_buffer == NULL) { return WASM_ERR_INVALID_ARG; }
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+
+    node_id_t listener_node_id = 0;
+    uint8_t listener_flags = 0;
+    if (!OpenLcbApplicationTrain_get_listener_at(n, (uint8_t) index, &listener_node_id, &listener_flags)) {
+
+        return WASM_ERR_INVALID_ARG;
+
+    }
+
+    out_buffer[0] = (uint8_t) (listener_node_id & 0xFF);
+    out_buffer[1] = (uint8_t) ((listener_node_id >> 8) & 0xFF);
+    out_buffer[2] = (uint8_t) ((listener_node_id >> 16) & 0xFF);
+    out_buffer[3] = (uint8_t) ((listener_node_id >> 24) & 0xFF);
+    out_buffer[4] = (uint8_t) ((listener_node_id >> 32) & 0xFF);
+    out_buffer[5] = (uint8_t) ((listener_node_id >> 40) & 0xFF);
+    out_buffer[6] = (uint8_t) ((listener_node_id >> 48) & 0xFF);
+    out_buffer[7] = (uint8_t) ((listener_node_id >> 56) & 0xFF);
+    out_buffer[8] = listener_flags;
+
     return WASM_OK;
 }
 
