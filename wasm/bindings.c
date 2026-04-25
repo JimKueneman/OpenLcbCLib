@@ -59,6 +59,7 @@
 #include "drivers/canbus/can_config.h"
 #include "drivers/canbus/can_types.h"
 #include "drivers/canbus/can_rx_statemachine.h"
+#include "drivers/canbus/internal_node_alias_table.h"
 
 // ---------------------------------------------------------------------------
 // Error codes — document in wasm/README.md
@@ -593,23 +594,69 @@ static void _on_train_heartbeat_request(openlcb_node_t *node, uint32_t timeout_s
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
 
-static void _on_train_search_matched(openlcb_node_t *node, uint16_t addr, uint8_t flags)
+static void _on_train_search_matched(openlcb_node_t *node, event_id_t search_event_id)
 {
 
+    // Pass the node ID and event ID to JS as two 32-bit halves each so the
+    // trampoline stays in int-sized EM_ASM arguments.  Node IDs are 48-bit;
+    // event IDs are full 64-bit.
     EM_ASM({
         if (Module.onTrainSearchMatched) {
-            var nid = BigInt($0) | (BigInt($1) << 32n);
-            Module.onTrainSearchMatched(nid, $2, $3);
+            var nid = BigInt($0 >>> 0) | (BigInt($1 >>> 0) << 32n);
+            var eid = BigInt($2 >>> 0) | (BigInt($3 >>> 0) << 32n);
+            Module.onTrainSearchMatched(nid, eid);
         }
-    }, (uint32_t) (node->id & 0xFFFFFFFFu), (uint32_t) ((node->id >> 32) & 0xFFFFu),
-       (int) addr, (int) flags);
+    }, (uint32_t) (node->id & 0xFFFFFFFFu),
+       (uint32_t) ((node->id >> 32) & 0xFFFFu),
+       (uint32_t) (search_event_id & 0xFFFFFFFFu),
+       (uint32_t) ((search_event_id >> 32) & 0xFFFFFFFFu));
 }
 
-static openlcb_node_t *_on_train_search_no_match(uint16_t addr, uint8_t flags)
+static openlcb_node_t *_on_train_search_no_match_with_allocate(event_id_t search_event_id)
 {
 
-    (void) addr; (void) flags;
-    return NULL;
+    // JS may return a node ID (BigInt) to allocate-on-search.  Coerce to a
+    // double — OpenLCB node IDs are 48-bit and fit losslessly.  Return 0
+    // (or anything non-BigInt) to decline.  The JS callback is responsible
+    // for creating the node via wasm_create_node before returning its ID.
+    // After we hand the node back, the CS must call
+    // wasm_train_send_search_match to emit the Producer Identified reply
+    // (TrainSearchS §6.2).
+    double r = EM_ASM_DOUBLE({
+        if (Module.onTrainSearchNoMatch) {
+            var eid = BigInt($0 >>> 0) | (BigInt($1 >>> 0) << 32n);
+            var v = Module.onTrainSearchNoMatch(eid);
+            if (typeof v === 'bigint') return Number(v);
+            if (typeof v === 'number') return v;
+        }
+        return 0;
+    }, (uint32_t) (search_event_id & 0xFFFFFFFFu),
+       (uint32_t) ((search_event_id >> 32) & 0xFFFFFFFFu));
+    if (r <= 0) { return NULL; }
+    node_id_t nid = (node_id_t) r;
+    return OpenLcbNode_find_by_node_id(nid);
+}
+
+// Throttle-side hook — fires when a remote train replies to a search this
+// device sent.  Carries the replier's 48-bit Node ID + 12-bit CAN alias so
+// the throttle can address subsequent Train Control messages to that train
+// without reconstructing the ID from the CS base.
+static void _on_train_search_reply(source_info_t *source, event_id_t event_id)
+{
+
+    if (source == NULL) { return; }
+    EM_ASM({
+        if (Module.onTrainSearchReply) {
+            var sid = BigInt($0 >>> 0) | (BigInt($1 >>> 0) << 32n);
+            var alias = $2 & 0xFFF;
+            var eid = BigInt($3 >>> 0) | (BigInt($4 >>> 0) << 32n);
+            Module.onTrainSearchReply(sid, alias, eid);
+        }
+    }, (uint32_t) (source->source_id & 0xFFFFFFFFu),
+       (uint32_t) ((source->source_id >> 32) & 0xFFFFu),
+       (int) source->source_alias,
+       (uint32_t) (event_id & 0xFFFFFFFFu),
+       (uint32_t) ((event_id >> 32) & 0xFFFFFFFFu));
 }
 
 #endif
@@ -679,6 +726,28 @@ static void _on_terminate_due_to_error(openlcb_node_t *node, node_id_t src, uint
     }, (uint32_t) (node->id & 0xFFFFFFFFu), (uint32_t) ((node->id >> 32) & 0xFFFFu),
        (uint32_t) (src & 0xFFFFFFFFu),      (uint32_t) ((src >> 32) & 0xFFFFu),
        (int) error_code, (int) rejected_mti);
+}
+
+// Receiver-side hook for Verified Node ID replies from remote nodes.
+// Carries both the resolved 48-bit NodeID and the source 12-bit alias from
+// the wire frame so the JS application can address subsequent messages by
+// either identifier (forward-compatible with TCP transport).
+static void _on_verified_node_id(openlcb_node_t *node, source_info_t *source)
+{
+
+    if (source == NULL) { return; }
+    EM_ASM({
+        if (Module.onVerifiedNodeId) {
+            var nid = BigInt($0 >>> 0) | (BigInt($1 >>> 0) << 32n);
+            var sid = BigInt($2 >>> 0) | (BigInt($3 >>> 0) << 32n);
+            var alias = $4 & 0xFFF;
+            Module.onVerifiedNodeId(nid, sid, alias);
+        }
+    }, (uint32_t) (node->id & 0xFFFFFFFFu),
+       (uint32_t) ((node->id >> 32) & 0xFFFFu),
+       (uint32_t) (source->source_id & 0xFFFFFFFFu),
+       (uint32_t) ((source->source_id >> 32) & 0xFFFFu),
+       (int) source->source_alias);
 }
 
 static void _on_100ms_timer(void)
@@ -757,6 +826,7 @@ static const openlcb_config_t _openlcb_config = {
 #endif
     .on_optional_interaction_rejected = &_on_optional_interaction_rejected,
     .on_terminate_due_to_error        = &_on_terminate_due_to_error,
+    .on_verified_node_id              = &_on_verified_node_id,
     .on_100ms_timer                   = &_on_100ms_timer,
     .on_login_complete       = &_on_login_complete,
 #ifdef OPENLCB_COMPILE_EVENTS
@@ -809,8 +879,9 @@ static const openlcb_config_t _openlcb_config = {
     .on_train_heartbeat_request           = &_on_train_heartbeat_request,
 #endif
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
-    .on_train_search_matched  = &_on_train_search_matched,
-    .on_train_search_no_match = &_on_train_search_no_match,
+    .on_train_search_matched                = &_on_train_search_matched,
+    .on_train_search_no_match_with_allocate = &_on_train_search_no_match_with_allocate,
+    .on_train_search_reply                  = &_on_train_search_reply,
 #endif
 #ifdef OPENLCB_COMPILE_STREAM
     .on_stream_initiate_request  = &_on_stream_initiate_request,
@@ -1111,6 +1182,29 @@ int32_t wasm_send_initialization_event(uint64_t node_id)
     openlcb_node_t *node = OpenLcbNode_find_by_node_id(node_id);
     if (node == NULL) { return WASM_ERR_UNKNOWN_NODE; }
     return OpenLcbApplication_send_initialization_event(node) ? WASM_OK : WASM_ERR_TX_BUSY;
+}
+
+// Send Verify Node ID Addressed to a specific remote alias.  Pass
+// dest_node_id = 0 for unconditional identify; pass non-zero for
+// verification (receiver replies only on match).
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_send_verify_node_id_addressed(uint64_t node_id, uint32_t dest_alias, uint64_t dest_node_id)
+{
+
+    openlcb_node_t *node = OpenLcbNode_find_by_node_id(node_id);
+    if (node == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    return OpenLcbApplication_send_verify_node_id_addressed(node, (uint16_t) dest_alias, dest_node_id) ? WASM_OK : WASM_ERR_TX_BUSY;
+}
+
+// Send Verify Node ID Global — every node on the bus replies, each
+// firing Module.onVerifiedNodeId once.
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_send_verify_node_id_global(uint64_t node_id)
+{
+
+    openlcb_node_t *node = OpenLcbNode_find_by_node_id(node_id);
+    if (node == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    return OpenLcbApplication_send_verify_node_id_global(node) ? WASM_OK : WASM_ERR_TX_BUSY;
 }
 
 EMSCRIPTEN_KEEPALIVE
@@ -1465,6 +1559,21 @@ int32_t wasm_train_send_query_function(uint64_t throttle_node_id, uint32_t train
     return WASM_OK;
 }
 
+// Allocate train_state for a node and register its standard event IDs.
+// Must be called once after wasm_create_node() for any node that wants to
+// behave as a train (i.e. the node itself is a DCC locomotive, not a
+// throttle).  Returns -2 if the pool is full, -3 if the node is unknown.
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_setup(uint64_t node_id)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    train_state_t *st = OpenLcbApplicationTrain_setup(n);
+    if (st == NULL) { return WASM_ERR_CEILING_EXCEEDED; }
+    return WASM_OK;
+}
+
 EMSCRIPTEN_KEEPALIVE
 int32_t wasm_train_set_dcc_address(uint64_t node_id, uint32_t dcc_address, int32_t is_long)
 {
@@ -1510,6 +1619,60 @@ int32_t wasm_train_get_speed_steps(uint64_t node_id)
     openlcb_node_t *n = OpenLcbNode_find_by_node_id(node_id);
     if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
     return (int32_t) OpenLcbApplicationTrain_get_speed_steps(n);
+}
+
+// --- Additional throttle senders (3-arg shape, covered by macro) ------------
+
+_TRAIN_THROTTLE_SEND(wasm_train_send_query_controller,  OpenLcbApplicationTrain_send_query_controller)
+_TRAIN_THROTTLE_SEND(wasm_train_send_reserve,           OpenLcbApplicationTrain_send_reserve)
+_TRAIN_THROTTLE_SEND(wasm_train_send_release_reserve,   OpenLcbApplicationTrain_send_release_reserve)
+
+// --- 4-arg: (throttle, alias, train, new_controller_node_id) ---------------
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_send_controller_changing_notify(uint64_t throttle_node_id, uint32_t train_alias, uint64_t train_node_id, uint64_t new_controller_node_id)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(throttle_node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    OpenLcbApplicationTrain_send_controller_changing_notify(n, (uint16_t) train_alias, train_node_id, new_controller_node_id);
+    return WASM_OK;
+}
+
+// --- 4-arg: (throttle, alias, train, listener_node_id) ---------------------
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_send_listener_detach(uint64_t throttle_node_id, uint32_t train_alias, uint64_t train_node_id, uint64_t listener_node_id)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(throttle_node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    OpenLcbApplicationTrain_send_listener_detach(n, (uint16_t) train_alias, train_node_id, listener_node_id);
+    return WASM_OK;
+}
+
+// --- 5-arg: (throttle, alias, train, listener_node_id, flags) --------------
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_send_listener_attach(uint64_t throttle_node_id, uint32_t train_alias, uint64_t train_node_id, uint64_t listener_node_id, uint32_t flags)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(throttle_node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    OpenLcbApplicationTrain_send_listener_attach(n, (uint16_t) train_alias, train_node_id, listener_node_id, (uint8_t) flags);
+    return WASM_OK;
+}
+
+// --- 4-arg: (throttle, alias, train, listener_index) -----------------------
+
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_send_listener_query(uint64_t throttle_node_id, uint32_t train_alias, uint64_t train_node_id, uint32_t listener_index)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(throttle_node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    OpenLcbApplicationTrain_send_listener_query(n, (uint16_t) train_alias, train_node_id, (uint8_t) listener_index);
+    return WASM_OK;
 }
 
 #endif /* OPENLCB_COMPILE_TRAIN */
@@ -1598,6 +1761,19 @@ uint64_t wasm_util_generate_event_range_id(uint64_t base_event_id, uint32_t coun
 {
 
     return OpenLcbUtilities_generate_event_range_id(base_event_id, (event_range_count_enum) count_enum);
+}
+
+// Look up the CAN alias assigned to a given 48-bit node ID.  Returns 0 if
+// the mapping is unknown (remote node we haven't heard from) or not yet
+// permitted (own node still logging in).  Used by throttle apps to address
+// remote trains after a Producer Identified reply.
+EMSCRIPTEN_KEEPALIVE
+uint32_t wasm_util_alias_for_node_id(uint64_t node_id)
+{
+
+    alias_mapping_t *m = InternalNodeAliasTable_find_mapping_by_node_id(node_id);
+    if (m == NULL) { return 0; }
+    return (uint32_t) m->alias;
 }
 
 EMSCRIPTEN_KEEPALIVE
@@ -1746,6 +1922,20 @@ uint64_t wasm_train_search_create_event_id(uint32_t address, uint32_t flags)
 {
 
     return ProtocolTrainSearchHandler_create_event_id((uint16_t) address, (uint8_t) flags);
+}
+
+// Send a Producer Identified for a train-search event this node matched.
+// Used by a Command Station after creating a train in response to a search
+// with the Allocate flag — it publishes the match so the throttle can
+// proceed to assign.
+EMSCRIPTEN_KEEPALIVE
+int32_t wasm_train_send_search_match(uint64_t node_id, uint64_t search_event_id)
+{
+
+    openlcb_node_t *n = OpenLcbNode_find_by_node_id(node_id);
+    if (n == NULL) { return WASM_ERR_UNKNOWN_NODE; }
+    OpenLcbApplicationTrain_send_search_match(n, search_event_id);
+    return WASM_OK;
 }
 
 #endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */

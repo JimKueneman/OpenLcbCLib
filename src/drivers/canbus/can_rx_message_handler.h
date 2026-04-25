@@ -63,16 +63,16 @@ extern "C" {
         /** @brief REQUIRED. Allocate an OpenLCB buffer for message assembly. Typical: OpenLcbBufferStore_allocate_buffer. */
         openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum payload_type);
 
-        /** @brief REQUIRED. Find an @ref alias_mapping_t by 12-bit alias. Typical: AliasMappings_find_mapping_by_alias. */
+        /** @brief REQUIRED. Find an @ref alias_mapping_t by 12-bit alias. Typical: InternalNodeAliasTable_find_mapping_by_alias. */
         alias_mapping_t *(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
 
-        /** @brief REQUIRED. Find an @ref alias_mapping_t by 48-bit @ref node_id_t. Typical: AliasMappings_find_mapping_by_node_id. */
+        /** @brief REQUIRED. Find an @ref alias_mapping_t by 48-bit @ref node_id_t. Typical: InternalNodeAliasTable_find_mapping_by_node_id. */
         alias_mapping_t *(*alias_mapping_find_mapping_by_node_id)(node_id_t node_id);
 
-        /** @brief REQUIRED. Return pointer to the full @ref alias_mapping_info_t table. Typical: AliasMappings_get_alias_mapping_info. */
+        /** @brief REQUIRED. Return pointer to the full @ref alias_mapping_info_t table. Typical: InternalNodeAliasTable_get_alias_mapping_info. */
         alias_mapping_info_t *(*alias_mapping_get_alias_mapping_info)(void);
 
-        /** @brief REQUIRED. Set the global duplicate-alias flag. Typical: AliasMappings_set_has_duplicate_alias_flag. */
+        /** @brief REQUIRED. Set the global duplicate-alias flag. Typical: InternalNodeAliasTable_set_has_duplicate_alias_flag. */
         void (*alias_mapping_set_has_duplicate_alias_flag)(void);
 
         /** @brief Returns the current global 100ms tick. Used to stamp incoming buffers.  Optional. */

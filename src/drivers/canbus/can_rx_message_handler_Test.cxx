@@ -24,7 +24,7 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_buffer_list.h"
 #include "../../openlcb/openlcb_defines.h"
-#include "../../drivers/canbus/alias_mappings.h"
+#include "../../drivers/canbus/internal_node_alias_table.h"
 #include "../../openlcb/openlcb_utilities.h"
 
 /*******************************************************************************
@@ -153,20 +153,20 @@ void _mock_listener_flush_aliases(void)
 const interface_can_rx_message_handler_t _can_rx_message_handler_interface = {
     .can_buffer_store_allocate_buffer = &can_buffer_store_allocate_buffer,
     .openlcb_buffer_store_allocate_buffer = &openlcb_buffer_store_allocate_buffer,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
-    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
-    .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
-    .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag,
+    .alias_mapping_find_mapping_by_alias = &InternalNodeAliasTable_find_mapping_by_alias,
+    .alias_mapping_find_mapping_by_node_id = &InternalNodeAliasTable_find_mapping_by_node_id,
+    .alias_mapping_get_alias_mapping_info = &InternalNodeAliasTable_get_alias_mapping_info,
+    .alias_mapping_set_has_duplicate_alias_flag = &InternalNodeAliasTable_set_has_duplicate_alias_flag,
     .get_current_tick = &_mock_get_current_tick,
 };
 
 const interface_can_rx_message_handler_t _can_rx_message_handler_interface_with_listeners = {
     .can_buffer_store_allocate_buffer = &can_buffer_store_allocate_buffer,
     .openlcb_buffer_store_allocate_buffer = &openlcb_buffer_store_allocate_buffer,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
-    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
-    .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
-    .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag,
+    .alias_mapping_find_mapping_by_alias = &InternalNodeAliasTable_find_mapping_by_alias,
+    .alias_mapping_find_mapping_by_node_id = &InternalNodeAliasTable_find_mapping_by_node_id,
+    .alias_mapping_get_alias_mapping_info = &InternalNodeAliasTable_get_alias_mapping_info,
+    .alias_mapping_set_has_duplicate_alias_flag = &InternalNodeAliasTable_set_has_duplicate_alias_flag,
     .get_current_tick = &_mock_get_current_tick,
     .listener_set_alias = &_mock_listener_set_alias,
     .listener_clear_alias_by_alias = &_mock_listener_clear_alias_by_alias,
@@ -184,7 +184,7 @@ void _global_initialize(void)
     OpenLcbBufferStore_initialize();
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
     CanRxMessageHandler_initialize(&_can_rx_message_handler_interface);
 }
 
@@ -195,7 +195,7 @@ void _global_initialize_with_listeners(void)
     OpenLcbBufferStore_initialize();
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
     CanRxMessageHandler_initialize(&_can_rx_message_handler_interface_with_listeners);
 }
 
@@ -271,8 +271,8 @@ TEST(CanRxMessageHandler, cid_frame)
     
     can_msg_t can_msg;
     
-    // Register using CORRECT API: AliasMappings_register()
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    // Register using CORRECT API: InternalNodeAliasTable_register()
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     
     // Create CID frame - ALL 8 bytes required
     CanUtilities_load_can_message(&can_msg, 0x17000000 | NODE_ALIAS_1, 0,
@@ -300,7 +300,7 @@ TEST(CanRxMessageHandler, rid_frame)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     
     // RID frame - broadcast request for alias map definitions
     CanUtilities_load_can_message(&can_msg, 0x10700000 | NODE_ALIAS_1, 0,
@@ -341,7 +341,7 @@ TEST(CanRxMessageHandler, ame_frame)
 
     can_msg_t can_msg;
 
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping->is_permitted = true;
 
     CanUtilities_load_can_message(&can_msg, 0x17020AAA, 8,
@@ -390,8 +390,8 @@ TEST(CanRxMessageHandler, single_frame_buffer_fail)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     force_fail_allocate = true;
     
@@ -417,8 +417,8 @@ TEST(CanRxMessageHandler, single_frame_message)
     can_msg_t can_msg;
     openlcb_msg_t *openlcb_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     CanUtilities_load_can_message(&can_msg, 0x195B4000 | SOURCE_ALIAS, 8,
                                    NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
@@ -455,8 +455,8 @@ TEST(CanRxMessageHandler, first_frame)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // First frame - addressed message with dest in payload bytes 0-1
     CanUtilities_load_can_message(&can_msg, 0x19C48000 | SOURCE_ALIAS, 8,
@@ -488,8 +488,8 @@ TEST(CanRxMessageHandler, middle_frame)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // First frame - addressed message with dest in payload bytes 0-1
     CanUtilities_load_can_message(&can_msg, 0x19C48000 | SOURCE_ALIAS, 8,
@@ -526,8 +526,8 @@ TEST(CanRxMessageHandler, last_frame)
     can_msg_t can_msg;
     openlcb_msg_t *openlcb_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // First frame
     CanUtilities_load_can_message(&can_msg, 0x19C48000 | SOURCE_ALIAS, 8,
@@ -565,8 +565,8 @@ TEST(CanRxMessageHandler, datagram_sequence)
     can_msg_t can_msg;
     openlcb_msg_t *openlcb_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // First
     CanUtilities_load_can_message(&can_msg, 0x19C48000 | SOURCE_ALIAS, 8,
@@ -609,8 +609,8 @@ TEST(CanRxMessageHandler, snip_sequence)
     can_msg_t can_msg;
     openlcb_msg_t *openlcb_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // First SNIP frame
     CanUtilities_load_can_message(&can_msg, 0x19A08000 | SOURCE_ALIAS, 8,
@@ -646,8 +646,8 @@ TEST(CanRxMessageHandler, legacy_snip)
     can_msg_t can_msg;
     openlcb_msg_t *openlcb_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // Frame 1: 2 nulls at end
     CanUtilities_load_can_message(&can_msg, 0x19A08000 | SOURCE_ALIAS, 8,
@@ -703,8 +703,8 @@ TEST(CanRxMessageHandler, stream_frame)
     can_msg_t can_msg;
     openlcb_msg_t *openlcb_msg;
 
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
 
     // Stream Data Send: dest alias in identifier bits 12-23 (spec section 8.1)
     // payload[0] = Destination Stream ID, payload[1-7] = stream data
@@ -747,8 +747,8 @@ TEST(CanRxMessageHandler, first_frame_already_in_progress)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // Send first frame to start a message
     CanUtilities_load_can_message(&can_msg, 0x19C48000 | SOURCE_ALIAS, 8,
@@ -794,8 +794,8 @@ TEST(CanRxMessageHandler, middle_frame_without_first)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // Send middle frame without sending first frame (should reject)
     CanUtilities_load_can_message(&can_msg, 0x19C48000 | SOURCE_ALIAS, 8,
@@ -824,8 +824,8 @@ TEST(CanRxMessageHandler, last_frame_without_first)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // Send last frame without sending first frame (should reject)
     CanUtilities_load_can_message(&can_msg, 0x19C48000 | SOURCE_ALIAS, 8,
@@ -854,7 +854,7 @@ TEST(CanRxMessageHandler, ame_frame_with_node_id)
 
     can_msg_t can_msg;
 
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping->is_permitted = true;
 
     // AME frame with specific Node ID in payload
@@ -886,7 +886,7 @@ TEST(CanRxMessageHandler, ame_frame_node_id_not_found)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     
     // AME frame with Node ID that doesn't match any registered node
     CanUtilities_load_can_message(&can_msg, 0x17020AAA, 8,
@@ -908,7 +908,7 @@ TEST(CanRxMessageHandler, ame_frame_buffer_allocation_failure)
 
     can_msg_t can_msg;
 
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping->is_permitted = true;
 
     // Force buffer allocation to fail
@@ -956,7 +956,7 @@ TEST(CanRxMessageHandler, cid_frame_buffer_allocation_failure)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     
     // Force buffer allocation to fail
     fail_buffer = true;
@@ -982,8 +982,8 @@ TEST(CanRxMessageHandler, first_frame_buffer_allocation_failure)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // Force buffer allocation to fail
     force_fail_allocate = true;
@@ -1013,7 +1013,7 @@ TEST(CanRxMessageHandler, amd_frame_duplicate_alias)
     can_msg_t can_msg;
     
     // Register an alias
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping->is_permitted = true;
     
     // AMD frame from same alias but different Node ID (duplicate!)
@@ -1045,7 +1045,7 @@ TEST(CanRxMessageHandler, amr_frame_duplicate_alias)
     can_msg_t can_msg;
     
     // Register an alias
-    alias_mapping_t *mapping = AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     mapping->is_permitted = true;
     
     // AMR frame from same alias (duplicate detected elsewhere)
@@ -1220,7 +1220,7 @@ TEST(CanRxMessageHandler, error_info_report_duplicate_alias)
     can_msg_t can_msg;
 
     // Register an alias
-    alias_mapping_t *mapping = AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     mapping->is_permitted = true;
 
     // Error info report from same alias (duplicate detected)
@@ -1251,7 +1251,7 @@ TEST(CanRxMessageHandler, ame_frame_duplicate_alias_early_return)
     can_msg_t can_msg;
     
     // Register an alias
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping->is_permitted = true;
     
     // AME frame from duplicate alias
@@ -1284,7 +1284,7 @@ TEST(CanRxMessageHandler, duplicate_alias_not_permitted)
     can_msg_t can_msg;
     
     // Register an alias but NOT permitted yet
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping->is_permitted = false;  // Not yet permitted
     
     // AMD frame from duplicate alias
@@ -1309,7 +1309,7 @@ TEST(CanRxMessageHandler, duplicate_alias_can_buffer_fail)
     can_msg_t can_msg;
     
     // Register an alias
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping->is_permitted = true;
     
     // Force CAN buffer allocation to fail
@@ -1351,9 +1351,9 @@ TEST(CanRxMessageHandler, ame_frame_broadcast)
     can_msg_t can_msg;
 
     // Register multiple aliases to test the loop
-    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping1 = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping1->is_permitted = true;
-    alias_mapping_t *mapping2 = AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    alias_mapping_t *mapping2 = InternalNodeAliasTable_register(NODE_ALIAS_2, NODE_ID_2);
     mapping2->is_permitted = true;
     
     // AME frame with NO payload (broadcast - tell me about ALL aliases)
@@ -1406,9 +1406,9 @@ TEST(CanRxMessageHandler, ame_frame_broadcast_buffer_fail)
     can_msg_t can_msg;
 
     // Register multiple aliases
-    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping1 = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping1->is_permitted = true;
-    alias_mapping_t *mapping2 = AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    alias_mapping_t *mapping2 = InternalNodeAliasTable_register(NODE_ALIAS_2, NODE_ID_2);
     mapping2->is_permitted = true;
     
     // Force buffer allocation failure
@@ -1443,8 +1443,8 @@ TEST(CanRxMessageHandler, datagram_first_frame_already_in_progress_reject)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // Start a datagram sequence
     CanUtilities_load_can_message(&can_msg, 0x1A000000 | SOURCE_ALIAS, 8,
@@ -1494,8 +1494,8 @@ TEST(CanRxMessageHandler, reject_message_openlcb_buffer_fail)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // Force OpenLCB buffer allocation failure
     force_fail_allocate = true;
@@ -1528,8 +1528,8 @@ TEST(CanRxMessageHandler, datagram_middle_frame_without_first_reject)
     
     can_msg_t can_msg;
     
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // Send middle datagram frame without first frame (protocol violation)
     CanUtilities_load_can_message(&can_msg, 0x1B000000 | SOURCE_ALIAS, 8,
@@ -1568,7 +1568,7 @@ TEST(CanRxMessageHandler, ame_targeted_inhibited_no_response)
     can_msg_t can_msg;
 
     // Register node but leave in Inhibited state (is_permitted defaults to false)
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
 
     // Targeted AME with matching Node ID
     CanUtilities_load_can_message(&can_msg, 0x17020AAA, 8,
@@ -1596,7 +1596,7 @@ TEST(CanRxMessageHandler, ame_global_inhibited_no_response)
     can_msg_t can_msg;
 
     // Register node but leave in Inhibited state
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
 
     // Global AME (no payload)
     CanUtilities_load_can_message(&can_msg, 0x17020AAA, 0,
@@ -1623,11 +1623,11 @@ TEST(CanRxMessageHandler, ame_global_mixed_permitted_inhibited)
     can_msg_t can_msg;
 
     // Node 1: Permitted
-    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping1 = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping1->is_permitted = true;
 
     // Node 2: Inhibited (still logging in)
-    AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    InternalNodeAliasTable_register(NODE_ALIAS_2, NODE_ID_2);
 
     // Global AME (no payload)
     CanUtilities_load_can_message(&can_msg, 0x17020AAA, 0,
@@ -1672,7 +1672,7 @@ TEST(CanRxMessageHandler, cid_frame_permitted_node)
     can_msg_t can_msg;
 
     // Register a PERMITTED alias
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping->is_permitted = true;
 
     // CID frame using our alias
@@ -1715,8 +1715,8 @@ TEST(CanRxMessageHandler, cid_frame_non_permitted_node)
 
     can_msg_t can_msg;
 
-    // Register a NOT YET PERMITTED alias (default from AliasMappings_register)
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    // Register a NOT YET PERMITTED alias (default from InternalNodeAliasTable_register)
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping->is_permitted = false;
 
     // CID frame using our alias
@@ -1760,7 +1760,7 @@ TEST(CanRxMessageHandler, cid_frame_permitted_buffer_fail)
     can_msg_t can_msg;
 
     // Register a PERMITTED alias
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping->is_permitted = true;
 
     // Force buffer allocation to fail
@@ -1794,8 +1794,8 @@ TEST(CanRxMessageHandler, middle_frame_timeout)
 
     can_msg_t can_msg;
 
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(SOURCE_ALIAS, 0x050403020106);
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+    InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
 
     // First frame at tick 0
     _test_global_100ms_tick = 0;
@@ -2221,7 +2221,7 @@ TEST(CanRxMessageHandler, ame_global_flushes_listener_aliases)
     can_msg_t can_msg;
 
     // Register permitted aliases so the AME handler has work to do
-    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping1 = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping1->is_permitted = true;
 
     // Global AME (no payload)
@@ -2266,7 +2266,7 @@ TEST(CanRxMessageHandler, ame_targeted_does_not_flush_listener_aliases)
     can_msg_t can_msg;
 
     // Register a permitted alias
-    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping1 = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping1->is_permitted = true;
 
     // Targeted AME with specific Node ID in payload
@@ -2310,7 +2310,7 @@ TEST(CanRxMessageHandler, ame_global_no_listener_interface_no_crash)
 
     can_msg_t can_msg;
 
-    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping1 = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping1->is_permitted = true;
 
     // Global AME (no payload)
@@ -2356,10 +2356,10 @@ TEST(CanRxMessageHandler, ame_global_repopulates_listener_entries)
     _global_reset_variables();
 
     // Register 2 permitted aliases in the real mapping table
-    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping1 = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping1->is_permitted = true;
 
-    alias_mapping_t *mapping2 = AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    alias_mapping_t *mapping2 = InternalNodeAliasTable_register(NODE_ALIAS_2, NODE_ID_2);
     mapping2->is_permitted = true;
 
     can_msg_t can_msg;
@@ -2407,10 +2407,10 @@ TEST(CanRxMessageHandler, ame_global_no_listener_support_still_sends_amds)
     _global_initialize();  // Uses interface WITHOUT listener callbacks
     _global_reset_variables();
 
-    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping1 = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping1->is_permitted = true;
 
-    alias_mapping_t *mapping2 = AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    alias_mapping_t *mapping2 = InternalNodeAliasTable_register(NODE_ALIAS_2, NODE_ID_2);
     mapping2->is_permitted = true;
 
     can_msg_t can_msg;
@@ -2456,7 +2456,7 @@ TEST(CanRxMessageHandler, ame_targeted_does_not_repopulate_listeners)
     _global_initialize_with_listeners();
     _global_reset_variables();
 
-    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping1 = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping1->is_permitted = true;
 
     can_msg_t can_msg;
@@ -2500,10 +2500,10 @@ TEST(CanRxMessageHandler, ame_global_skips_non_permitted_for_listener)
     _global_reset_variables();
 
     // One permitted, one not
-    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *mapping1 = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     mapping1->is_permitted = true;
 
-    alias_mapping_t *mapping2 = AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    alias_mapping_t *mapping2 = InternalNodeAliasTable_register(NODE_ALIAS_2, NODE_ID_2);
     mapping2->is_permitted = false;  // NOT permitted (still in CID/RID phase)
 
     can_msg_t can_msg;

@@ -60,7 +60,7 @@ set(OPENLCB_SOURCES
 # ----------------------------------------------------------------------------
 set(CANBUS_SOURCES
     ${ROOT_DIR}/src/drivers/canbus/alias_mapping_listener.c
-    ${ROOT_DIR}/src/drivers/canbus/alias_mappings.c
+    ${ROOT_DIR}/src/drivers/canbus/internal_node_alias_table.c
     ${ROOT_DIR}/src/drivers/canbus/can_buffer_fifo.c
     ${ROOT_DIR}/src/drivers/canbus/can_buffer_store.c
     ${ROOT_DIR}/src/drivers/canbus/can_config.c

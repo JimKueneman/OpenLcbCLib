@@ -2,7 +2,7 @@
  * File: alias_mappings_Test.cxx
  * 
  * Description:
- *   Comprehensive test suite for the AliasMappings module.
+ *   Comprehensive test suite for the InternalNodeAliasTable module.
  *   Tests alias registration, lookup, validation, and buffer management.
  *
  * Test Coverage:
@@ -22,7 +22,7 @@
 #include "test/main_Test.hxx"
 
 #include "can_types.h"
-#include "alias_mappings.h"
+#include "internal_node_alias_table.h"
 #include "../../openlcb/openlcb_types.h"
 
 /*******************************************************************************
@@ -41,7 +41,7 @@
  */
 void setup_test(void)
 {
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
 }
 
 /**
@@ -52,7 +52,7 @@ void fill_mapping_table(void)
 {
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
-        AliasMappings_register(NODE_ALIAS + i, NODE_ID + i);
+        InternalNodeAliasTable_register(NODE_ALIAS + i, NODE_ID + i);
     }
 }
 
@@ -66,9 +66,9 @@ bool verify_mappings_exist(int count)
 {
     for (int i = 0; i < count; i++)
     {
-        if (AliasMappings_find_mapping_by_alias(NODE_ALIAS + i) == nullptr)
+        if (InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS + i) == nullptr)
             return false;
-        if (AliasMappings_find_mapping_by_node_id(NODE_ID + i) == nullptr)
+        if (InternalNodeAliasTable_find_mapping_by_node_id(NODE_ID + i) == nullptr)
             return false;
     }
     return true;
@@ -96,7 +96,7 @@ TEST(AliasMapping, get_alias_mapping_info_returns_valid_pointer)
 {
     setup_test();
     
-    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    alias_mapping_info_t *info = InternalNodeAliasTable_get_alias_mapping_info();
     
     EXPECT_NE(info, nullptr);
 }
@@ -109,8 +109,8 @@ TEST(AliasMapping, set_has_duplicate_alias_flag_sets_flag)
 {
     setup_test();
     
-    AliasMappings_set_has_duplicate_alias_flag();
-    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    InternalNodeAliasTable_set_has_duplicate_alias_flag();
+    alias_mapping_info_t *info = InternalNodeAliasTable_get_alias_mapping_info();
     
     EXPECT_TRUE(info->has_duplicate_alias);
 }
@@ -124,12 +124,12 @@ TEST(AliasMapping, clear_has_duplicate_alias_flag_clears_flag)
     setup_test();
     
     // Set the flag first
-    AliasMappings_set_has_duplicate_alias_flag();
-    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    InternalNodeAliasTable_set_has_duplicate_alias_flag();
+    alias_mapping_info_t *info = InternalNodeAliasTable_get_alias_mapping_info();
     EXPECT_TRUE(info->has_duplicate_alias);
     
     // Clear the flag
-    AliasMappings_clear_has_duplicate_alias_flag();
+    InternalNodeAliasTable_clear_has_duplicate_alias_flag();
     EXPECT_FALSE(info->has_duplicate_alias);
 }
 
@@ -142,12 +142,12 @@ TEST(AliasMapping, initialize_clears_has_duplicate_alias_flag)
     setup_test();
     
     // Set the flag
-    AliasMappings_set_has_duplicate_alias_flag();
-    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    InternalNodeAliasTable_set_has_duplicate_alias_flag();
+    alias_mapping_info_t *info = InternalNodeAliasTable_get_alias_mapping_info();
     EXPECT_TRUE(info->has_duplicate_alias);
     
     // Re-initialize should clear it
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
     EXPECT_FALSE(info->has_duplicate_alias);
 }
 
@@ -171,7 +171,7 @@ TEST(AliasMapping, register_fills_table_to_capacity)
     EXPECT_TRUE(verify_mappings_exist(ALIAS_MAPPING_BUFFER_DEPTH));
     
     // Table is full, next registration should fail
-    alias_mapping_t *overflow = AliasMappings_register(NODE_ALIAS - 1, NODE_ID - 1);
+    alias_mapping_t *overflow = InternalNodeAliasTable_register(NODE_ALIAS - 1, NODE_ID - 1);
     EXPECT_EQ(overflow, nullptr);
 }
 
@@ -183,7 +183,7 @@ TEST(AliasMapping, register_initializes_mapping_fields_correctly)
 {
     setup_test();
     
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS, NODE_ID);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
     
     EXPECT_NE(mapping, nullptr);
     EXPECT_EQ(mapping->alias, NODE_ALIAS);
@@ -202,17 +202,17 @@ TEST(AliasMapping, register_updates_alias_for_existing_node_id)
     setup_test();
     
     // Register with first alias
-    AliasMappings_register(NODE_ALIAS, NODE_ID);
-    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS), nullptr);
+    InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
+    EXPECT_NE(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS), nullptr);
     
     // Register same Node ID with different alias (should update, not add new)
-    AliasMappings_register(NODE_ALIAS + 1, NODE_ID);
+    InternalNodeAliasTable_register(NODE_ALIAS + 1, NODE_ID);
     
     // Old alias should be gone
-    EXPECT_EQ(AliasMappings_find_mapping_by_alias(NODE_ALIAS), nullptr);
+    EXPECT_EQ(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS), nullptr);
     
     // New alias should exist
-    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS + 1), nullptr);
+    EXPECT_NE(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS + 1), nullptr);
 }
 
 /**
@@ -223,11 +223,11 @@ TEST(AliasMapping, register_update_preserves_structure_pointer)
 {
     setup_test();
     
-    alias_mapping_t *first_mapping = AliasMappings_register(NODE_ALIAS, NODE_ID);
+    alias_mapping_t *first_mapping = InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
     EXPECT_NE(first_mapping, nullptr);
     
     // Register same node_id with different alias (should update same slot)
-    alias_mapping_t *second_mapping = AliasMappings_register(NODE_ALIAS + 1, NODE_ID);
+    alias_mapping_t *second_mapping = InternalNodeAliasTable_register(NODE_ALIAS + 1, NODE_ID);
     
     // Should return the same structure pointer (same slot in array)
     EXPECT_EQ(first_mapping, second_mapping);
@@ -253,13 +253,13 @@ TEST(AliasMapping, unregister_removes_all_mappings)
     // Unregister all mappings
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
-        AliasMappings_unregister(NODE_ALIAS + i);
+        InternalNodeAliasTable_unregister(NODE_ALIAS + i);
     }
     
     // Verify all mappings are gone
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
-        EXPECT_EQ(AliasMappings_find_mapping_by_alias(NODE_ALIAS + i), nullptr);
+        EXPECT_EQ(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS + i), nullptr);
     }
 }
 
@@ -271,14 +271,14 @@ TEST(AliasMapping, unregister_clears_all_mapping_fields)
 {
     setup_test();
     
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS, NODE_ID);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
     EXPECT_NE(mapping, nullptr);
     
     // Manually set flags to verify they get cleared
     mapping->is_duplicate = true;
     mapping->is_permitted = true;
     
-    AliasMappings_unregister(NODE_ALIAS);
+    InternalNodeAliasTable_unregister(NODE_ALIAS);
     
     // After unregister, the mapping should be completely cleared
     EXPECT_EQ(mapping->alias, 0);
@@ -295,13 +295,13 @@ TEST(AliasMapping, unregister_ignores_nonexistent_alias)
 {
     setup_test();
     
-    AliasMappings_register(NODE_ALIAS, NODE_ID);
+    InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
     
     // Unregistering non-existent alias should not crash
-    AliasMappings_unregister(NODE_ALIAS + 1);
+    InternalNodeAliasTable_unregister(NODE_ALIAS + 1);
     
     // Original mapping should still exist
-    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS), nullptr);
+    EXPECT_NE(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS), nullptr);
 }
 
 /**
@@ -315,23 +315,23 @@ TEST(AliasMapping, unregister_finds_and_removes_middle_slot)
     // Register several mappings
     for (int i = 0; i < 5; i++)
     {
-        AliasMappings_register(NODE_ALIAS + i, NODE_ID + i);
+        InternalNodeAliasTable_register(NODE_ALIAS + i, NODE_ID + i);
     }
     
     // Get pointer to middle entry before unregister
-    alias_mapping_t *middle = AliasMappings_find_mapping_by_alias(NODE_ALIAS + 2);
+    alias_mapping_t *middle = InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS + 2);
     EXPECT_NE(middle, nullptr);
     
     // Unregister the middle one - exercises loop finding it
-    AliasMappings_unregister(NODE_ALIAS + 2);
+    InternalNodeAliasTable_unregister(NODE_ALIAS + 2);
     
     // Verify it's gone
     EXPECT_EQ(middle->alias, 0);
     EXPECT_EQ(middle->node_id, 0);
     
     // Verify others still exist
-    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS + 1), nullptr);
-    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS + 3), nullptr);
+    EXPECT_NE(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS + 1), nullptr);
+    EXPECT_NE(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS + 3), nullptr);
 }
 
 /*******************************************************************************
@@ -347,11 +347,11 @@ TEST(AliasMapping, find_by_alias_finds_first_slot)
     setup_test();
     
     // Register a mapping in the first slot
-    alias_mapping_t *registered = AliasMappings_register(NODE_ALIAS, NODE_ID);
+    alias_mapping_t *registered = InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
     EXPECT_NE(registered, nullptr);
     
     // Search for it - this will cause the loop to find it in slot 0
-    alias_mapping_t *found = AliasMappings_find_mapping_by_alias(NODE_ALIAS);
+    alias_mapping_t *found = InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS);
     
     EXPECT_NE(found, nullptr);
     EXPECT_EQ(found, registered);  // Should be the same pointer
@@ -370,11 +370,11 @@ TEST(AliasMapping, find_by_alias_finds_middle_slot)
     // Fill first few slots
     for (int i = 0; i < 5; i++)
     {
-        AliasMappings_register(NODE_ALIAS + i, NODE_ID + i);
+        InternalNodeAliasTable_register(NODE_ALIAS + i, NODE_ID + i);
     }
     
     // Search for one in the middle - this exercises the loop continuing
-    alias_mapping_t *found = AliasMappings_find_mapping_by_alias(NODE_ALIAS + 3);
+    alias_mapping_t *found = InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS + 3);
     
     EXPECT_NE(found, nullptr);
     EXPECT_EQ(found->alias, NODE_ALIAS + 3);
@@ -392,18 +392,18 @@ TEST(AliasMapping, find_by_alias_finds_last_slot)
     // Register entries one by one and verify each one
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
-        alias_mapping_t *registered = AliasMappings_register(NODE_ALIAS + i, NODE_ID + i);
+        alias_mapping_t *registered = InternalNodeAliasTable_register(NODE_ALIAS + i, NODE_ID + i);
         EXPECT_NE(registered, nullptr) << "Failed to register at index " << i;
     }
     
     // Verify the table is actually full by checking we can't add more
-    alias_mapping_t *overflow = AliasMappings_register(NODE_ALIAS - 1, NODE_ID - 1);
+    alias_mapping_t *overflow = InternalNodeAliasTable_register(NODE_ALIAS - 1, NODE_ID - 1);
     EXPECT_EQ(overflow, nullptr) << "Table should be full";
     
     // Now search for each entry to verify they all exist
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
-        alias_mapping_t *found = AliasMappings_find_mapping_by_alias(NODE_ALIAS + i);
+        alias_mapping_t *found = InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS + i);
         EXPECT_NE(found, nullptr) << "Failed to find alias at index " << i 
                                    << " (alias=0x" << std::hex << (NODE_ALIAS + i) << ")";
         if (found) {
@@ -421,11 +421,11 @@ TEST(AliasMapping, find_returns_null_for_nonexistent_mappings)
 {
     setup_test();
     
-    AliasMappings_register(NODE_ALIAS, NODE_ID);
+    InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
     
     // Search for different alias and node_id should return NULL
-    EXPECT_EQ(AliasMappings_find_mapping_by_alias(NODE_ALIAS + 1), nullptr);
-    EXPECT_EQ(AliasMappings_find_mapping_by_node_id(NODE_ID + 1), nullptr);
+    EXPECT_EQ(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS + 1), nullptr);
+    EXPECT_EQ(InternalNodeAliasTable_find_mapping_by_node_id(NODE_ID + 1), nullptr);
 }
 
 /*******************************************************************************
@@ -440,10 +440,10 @@ TEST(AliasMapping, find_by_node_id_finds_first_slot)
 {
     setup_test();
     
-    alias_mapping_t *registered = AliasMappings_register(NODE_ALIAS, NODE_ID);
+    alias_mapping_t *registered = InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
     EXPECT_NE(registered, nullptr);
     
-    alias_mapping_t *found = AliasMappings_find_mapping_by_node_id(NODE_ID);
+    alias_mapping_t *found = InternalNodeAliasTable_find_mapping_by_node_id(NODE_ID);
     
     EXPECT_NE(found, nullptr);
     EXPECT_EQ(found, registered);
@@ -460,10 +460,10 @@ TEST(AliasMapping, find_by_node_id_finds_middle_slot)
     
     for (int i = 0; i < 5; i++)
     {
-        AliasMappings_register(NODE_ALIAS + i, NODE_ID + i);
+        InternalNodeAliasTable_register(NODE_ALIAS + i, NODE_ID + i);
     }
     
-    alias_mapping_t *found = AliasMappings_find_mapping_by_node_id(NODE_ID + 3);
+    alias_mapping_t *found = InternalNodeAliasTable_find_mapping_by_node_id(NODE_ID + 3);
     
     EXPECT_NE(found, nullptr);
     EXPECT_EQ(found->node_id, NODE_ID + 3);
@@ -482,7 +482,7 @@ TEST(AliasMapping, register_rejects_zero_alias)
 {
     setup_test();
     
-    alias_mapping_t *mapping = AliasMappings_register(0, NODE_ID);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(0, NODE_ID);
     
     EXPECT_EQ(mapping, nullptr);
 }
@@ -496,7 +496,7 @@ TEST(AliasMapping, register_rejects_alias_above_max)
     setup_test();
     
     // 0xFFF is max valid 12-bit alias, 0x1000 is over
-    alias_mapping_t *mapping = AliasMappings_register(0x1000, NODE_ID);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(0x1000, NODE_ID);
     
     EXPECT_EQ(mapping, nullptr);
 }
@@ -510,7 +510,7 @@ TEST(AliasMapping, register_accepts_max_valid_alias)
     setup_test();
     
     // 0xFFF is the maximum valid 12-bit alias
-    alias_mapping_t *mapping = AliasMappings_register(0xFFF, NODE_ID);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(0xFFF, NODE_ID);
     
     EXPECT_NE(mapping, nullptr);
 }
@@ -523,7 +523,7 @@ TEST(AliasMapping, find_by_alias_rejects_zero_alias)
 {
     setup_test();
 
-    alias_mapping_t *mapping = AliasMappings_find_mapping_by_alias(0);
+    alias_mapping_t *mapping = InternalNodeAliasTable_find_mapping_by_alias(0);
 
     EXPECT_EQ(mapping, nullptr);
 }
@@ -536,7 +536,7 @@ TEST(AliasMapping, find_by_alias_rejects_alias_above_max)
 {
     setup_test();
 
-    alias_mapping_t *mapping = AliasMappings_find_mapping_by_alias(0x1000);
+    alias_mapping_t *mapping = InternalNodeAliasTable_find_mapping_by_alias(0x1000);
 
     EXPECT_EQ(mapping, nullptr);
 }
@@ -553,7 +553,7 @@ TEST(AliasMapping, register_rejects_zero_node_id)
 {
     setup_test();
     
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS, 0);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS, 0);
     
     EXPECT_EQ(mapping, nullptr);
 }
@@ -568,7 +568,7 @@ TEST(AliasMapping, register_rejects_node_id_above_max)
     
     // Max is 0xFFFFFFFFFFFF (48 bits), test with higher value
     node_id_t invalid_node_id = 0x1000000000000ULL;
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS, invalid_node_id);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS, invalid_node_id);
     
     EXPECT_EQ(mapping, nullptr);
 }
@@ -583,7 +583,7 @@ TEST(AliasMapping, register_accepts_max_valid_node_id)
     
     // 0xFFFFFFFFFFFF is the maximum valid 48-bit Node ID
     node_id_t max_node_id = 0xFFFFFFFFFFFFULL;
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS, max_node_id);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS, max_node_id);
     
     EXPECT_NE(mapping, nullptr);
     EXPECT_EQ(mapping->node_id, max_node_id);
@@ -598,7 +598,7 @@ TEST(AliasMapping, find_by_node_id_rejects_zero_node_id)
 {
     setup_test();
 
-    alias_mapping_t *mapping = AliasMappings_find_mapping_by_node_id(0);
+    alias_mapping_t *mapping = InternalNodeAliasTable_find_mapping_by_node_id(0);
 
     EXPECT_EQ(mapping, nullptr);
 }
@@ -612,7 +612,7 @@ TEST(AliasMapping, find_by_node_id_rejects_node_id_above_max)
     setup_test();
 
     node_id_t invalid_node_id = 0x1000000000000ULL;
-    alias_mapping_t *mapping = AliasMappings_find_mapping_by_node_id(invalid_node_id);
+    alias_mapping_t *mapping = InternalNodeAliasTable_find_mapping_by_node_id(invalid_node_id);
 
     EXPECT_EQ(mapping, nullptr);
 }
@@ -634,17 +634,17 @@ TEST(AliasMapping, flush_clears_all_mappings)
     EXPECT_TRUE(verify_mappings_exist(ALIAS_MAPPING_BUFFER_DEPTH));
     
     // Flush all mappings
-    AliasMappings_flush();
+    InternalNodeAliasTable_flush();
     
     // Verify all mappings are gone
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
-        EXPECT_EQ(AliasMappings_find_mapping_by_alias(NODE_ALIAS + i), nullptr);
-        EXPECT_EQ(AliasMappings_find_mapping_by_node_id(NODE_ID + i), nullptr);
+        EXPECT_EQ(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS + i), nullptr);
+        EXPECT_EQ(InternalNodeAliasTable_find_mapping_by_node_id(NODE_ID + i), nullptr);
     }
     
     // Re-initialize to ensure clean state for next test
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
 }
 
 /**
@@ -655,15 +655,15 @@ TEST(AliasMapping, flush_clears_has_duplicate_alias_flag)
 {
     setup_test();
     
-    AliasMappings_set_has_duplicate_alias_flag();
-    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    InternalNodeAliasTable_set_has_duplicate_alias_flag();
+    alias_mapping_info_t *info = InternalNodeAliasTable_get_alias_mapping_info();
     EXPECT_TRUE(info->has_duplicate_alias);
     
-    AliasMappings_flush();
+    InternalNodeAliasTable_flush();
     EXPECT_FALSE(info->has_duplicate_alias);
     
     // Re-initialize to ensure clean state for next test
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
 }
 
 /**
@@ -674,17 +674,17 @@ TEST(AliasMapping, flush_clears_all_mapping_fields)
 {
     setup_test();
     
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS, NODE_ID);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
     EXPECT_NE(mapping, nullptr);
     
     // Set flags
     mapping->is_duplicate = true;
     mapping->is_permitted = true;
     
-    AliasMappings_flush();
+    InternalNodeAliasTable_flush();
     
     // Verify all fields cleared
-    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    alias_mapping_info_t *info = InternalNodeAliasTable_get_alias_mapping_info();
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
         EXPECT_EQ(info->list[i].alias, 0);
@@ -694,7 +694,7 @@ TEST(AliasMapping, flush_clears_all_mapping_fields)
     }
     
     // Re-initialize to ensure clean state for next test
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
 }
 
 /*******************************************************************************
@@ -709,15 +709,15 @@ TEST(AliasMapping, multiple_initializations_work_correctly)
 {
     setup_test();
     
-    AliasMappings_register(NODE_ALIAS, NODE_ID);
-    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS), nullptr);
+    InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
+    EXPECT_NE(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS), nullptr);
     
     // Re-initialize should clear everything
-    AliasMappings_initialize();
-    EXPECT_EQ(AliasMappings_find_mapping_by_alias(NODE_ALIAS), nullptr);
+    InternalNodeAliasTable_initialize();
+    EXPECT_EQ(InternalNodeAliasTable_find_mapping_by_alias(NODE_ALIAS), nullptr);
     
     // Should be able to register again
-    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS, NODE_ID);
+    alias_mapping_t *mapping = InternalNodeAliasTable_register(NODE_ALIAS, NODE_ID);
     EXPECT_NE(mapping, nullptr);
 }
 

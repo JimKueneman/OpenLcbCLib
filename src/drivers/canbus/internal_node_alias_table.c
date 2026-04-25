@@ -35,7 +35,7 @@
  * @date 4 Mar 2026
  */
 
-#include "alias_mappings.h"
+#include "internal_node_alias_table.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -56,8 +56,8 @@ static alias_mapping_info_t _alias_mapping_info;
      * -# Set alias, node_id to 0 and both flags to false in each entry
      * -# Clear the has_duplicate_alias flag
      *
-     * @see AliasMappings_initialize
-     * @see AliasMappings_flush
+     * @see InternalNodeAliasTable_initialize
+     * @see InternalNodeAliasTable_flush
      */
 static void _reset_mappings(void) {
 
@@ -75,7 +75,7 @@ static void _reset_mappings(void) {
 }
 
     /** @brief Initializes the alias mapping buffer, clearing all entries and flags. */
-void AliasMappings_initialize(void) {
+void InternalNodeAliasTable_initialize(void) {
 
     _reset_mappings();
 
@@ -86,21 +86,21 @@ void AliasMappings_initialize(void) {
      *
      * @return Pointer to the @ref alias_mapping_info_t structure (never NULL).
      */
-alias_mapping_info_t *AliasMappings_get_alias_mapping_info(void) {
+alias_mapping_info_t *InternalNodeAliasTable_get_alias_mapping_info(void) {
 
     return &_alias_mapping_info;
 
 }
 
     /** @brief Sets the has_duplicate_alias flag to signal an alias conflict. */
-void AliasMappings_set_has_duplicate_alias_flag(void) {
+void InternalNodeAliasTable_set_has_duplicate_alias_flag(void) {
 
     _alias_mapping_info.has_duplicate_alias = true;
 
 }
 
     /** @brief Clears the has_duplicate_alias flag after conflict resolution. */
-void AliasMappings_clear_has_duplicate_alias_flag(void) {
+void InternalNodeAliasTable_clear_has_duplicate_alias_flag(void) {
 
     _alias_mapping_info.has_duplicate_alias = false;
 
@@ -133,11 +133,11 @@ void AliasMappings_clear_has_duplicate_alias_flag(void) {
      * @warning Out-of-range alias or node_id values return NULL.
      * @warning An existing Node ID entry will have its alias silently replaced.
      *
-     * @see AliasMappings_unregister
-     * @see AliasMappings_find_mapping_by_alias
-     * @see AliasMappings_find_mapping_by_node_id
+     * @see InternalNodeAliasTable_unregister
+     * @see InternalNodeAliasTable_find_mapping_by_alias
+     * @see InternalNodeAliasTable_find_mapping_by_node_id
      */
-alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id) {
+alias_mapping_t *InternalNodeAliasTable_register(uint16_t alias, node_id_t node_id) {
 
     // Validate alias is within OpenLCB 12-bit range (0x001-0xFFF)
     if (alias == 0 || alias > 0xFFF) {
@@ -182,10 +182,10 @@ alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id) {
      * @param alias  12-bit CAN alias to remove.
      * @endverbatim
      *
-     * @see AliasMappings_register
-     * @see AliasMappings_flush
+     * @see InternalNodeAliasTable_register
+     * @see InternalNodeAliasTable_flush
      */
-void AliasMappings_unregister(uint16_t alias) {
+void InternalNodeAliasTable_unregister(uint16_t alias) {
 
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
@@ -220,9 +220,9 @@ void AliasMappings_unregister(uint16_t alias) {
      *
      * @warning NULL is returned when not found — caller MUST check before use.
      *
-     * @see AliasMappings_find_mapping_by_node_id
+     * @see InternalNodeAliasTable_find_mapping_by_node_id
      */
-alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias) {
+alias_mapping_t *InternalNodeAliasTable_find_mapping_by_alias(uint16_t alias) {
 
     if (alias == 0 || alias > 0xFFF) {
 
@@ -260,9 +260,9 @@ alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias) {
      *
      * @warning NULL is returned when not found — caller MUST check before use.
      *
-     * @see AliasMappings_find_mapping_by_alias
+     * @see InternalNodeAliasTable_find_mapping_by_alias
      */
-alias_mapping_t *AliasMappings_find_mapping_by_node_id(node_id_t node_id) {
+alias_mapping_t *InternalNodeAliasTable_find_mapping_by_node_id(node_id_t node_id) {
 
     if (node_id == 0 || node_id > 0xFFFFFFFFFFFFULL) {
 
@@ -285,7 +285,7 @@ alias_mapping_t *AliasMappings_find_mapping_by_node_id(node_id_t node_id) {
 }
 
     /** @brief Clears all alias mappings and resets all flags.  Runtime equivalent of initialize(). */
-void AliasMappings_flush(void) {
+void InternalNodeAliasTable_flush(void) {
 
     _reset_mappings();
 

@@ -49,7 +49,7 @@
 #include "can_rx_message_handler.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
-#include "alias_mappings.h"
+#include "internal_node_alias_table.h"
 
 #include <cstring>
 #include <set>
@@ -164,22 +164,22 @@ void _on_alias_change(uint16_t alias, node_id_t node_id)
 
 }
 
-// Interface without callback — uses REAL AliasMappings module
+// Interface without callback — uses REAL InternalNodeAliasTable module
 const interface_openlcb_node_t interface_openlcb_node = {};
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
 
-    .alias_mapping_register = &AliasMappings_register,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_register = &InternalNodeAliasTable_register,
+    .alias_mapping_find_mapping_by_alias = &InternalNodeAliasTable_find_mapping_by_alias,
     .on_alias_change = nullptr
 
 };
 
-// Interface with callback — uses REAL AliasMappings module
+// Interface with callback — uses REAL InternalNodeAliasTable module
 const interface_can_login_message_handler_t interface_can_login_message_handler_on_alias_callback = {
 
-    .alias_mapping_register = &AliasMappings_register,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_register = &InternalNodeAliasTable_register,
+    .alias_mapping_find_mapping_by_alias = &InternalNodeAliasTable_find_mapping_by_alias,
     .on_alias_change = &_on_alias_change
 
 };
@@ -200,7 +200,7 @@ void setup_test(const interface_can_login_message_handler_t *interface)
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();
     OpenLcbNode_initialize(&interface_openlcb_node);
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
 
     CanLoginMessageHandler_initialize(interface);
 
@@ -618,7 +618,7 @@ TEST(CanLoginMessageHandler, load_amd)
     initialize_statemachine_info(&info);
 
     // Register the alias in the real mapping table (load_amd does a lookup)
-    AliasMappings_register(info.openlcb_node->alias, info.openlcb_node->id);
+    InternalNodeAliasTable_register(info.openlcb_node->alias, info.openlcb_node->id);
 
     CanLoginMessageHandler_state_load_amd(&info);
     
@@ -781,7 +781,7 @@ TEST(CanLoginMessageHandler, alias_registration)
     CanLoginMessageHandler_state_generate_alias(&info);
 
     // Mapping should be registered in the real alias mapping table
-    alias_mapping_t *mapping = AliasMappings_find_mapping_by_alias(info.openlcb_node->alias);
+    alias_mapping_t *mapping = InternalNodeAliasTable_find_mapping_by_alias(info.openlcb_node->alias);
 
     EXPECT_NE(mapping, nullptr);
     EXPECT_EQ(mapping->alias, info.openlcb_node->alias);
@@ -918,7 +918,7 @@ TEST(CanLoginMessageHandler, relogin_no_self_match)
     EXPECT_NE(first_alias, (uint16_t) 0);
 
     // Simulate conflict: unregister the old alias (as _process_duplicate_aliases does)
-    AliasMappings_unregister(first_alias);
+    InternalNodeAliasTable_unregister(first_alias);
 
     // Advance seed (as state_generate_seed does on retry)
     CanLoginMessageHandler_state_generate_seed(&info);

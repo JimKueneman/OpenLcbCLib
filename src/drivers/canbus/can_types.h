@@ -186,7 +186,7 @@ extern "C" {
      * @details Flags may be set from interrupt context and read from the main loop.
      * Use lock/unlock around accesses shared between contexts.
      *
-     * @see alias_mappings.h
+     * @see internal_node_alias_table.h
      */
     typedef struct alias_mapping_struct {
         node_id_t node_id;       /**< @brief Permanent 48-bit Node ID. */
@@ -202,8 +202,8 @@ extern "C" {
      * @details has_duplicate_alias is a fast-check flag: when set, at least one entry
      * has is_duplicate set and the main loop should scan the list to find and resolve it.
      *
-     * @see alias_mappings.h
-     * @see AliasMappings_set_has_duplicate_alias_flag
+     * @see internal_node_alias_table.h
+     * @see InternalNodeAliasTable_set_has_duplicate_alias_flag
      */
     typedef struct alias_mapping_info_struct {
         alias_mapping_t list[ALIAS_MAPPING_BUFFER_DEPTH]; /**< @brief All registered mappings. */

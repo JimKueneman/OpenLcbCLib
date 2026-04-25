@@ -34,7 +34,7 @@
  * directly or call through to those callbacks.
  *
  * @author Jim Kueneman
- * @date 4 Mar 2026
+ * @date 24 Apr 2026
  */
 
 #include "openlcb_application.h"
@@ -455,6 +455,104 @@ bool OpenLcbApplication_send_initialization_event(openlcb_node_t *openlcb_node) 
     OpenLcbUtilities_load_openlcb_message(&msg, openlcb_node->alias, openlcb_node->id, 0, NULL_NODE_ID, MTI_INITIALIZATION_COMPLETE);
 
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, openlcb_node->id, 0);
+
+    if (_interface->send_openlcb_msg) {
+
+        return _interface->send_openlcb_msg(&msg);
+
+    }
+
+    return false;
+
+}
+
+    /**
+     * @brief Sends an addressed Verify Node ID request to a specific remote alias.
+     *
+     * @details Algorithm:
+     * -# Declare msg and payload on the stack with zero-initialization.
+     * -# Point msg.payload at the local payload buffer; set payload_type to BASIC.
+     * -# Call OpenLcbUtilities_load_openlcb_message() with the sending node's
+     *    alias/ID, the destination alias, the destination NodeID, and
+     *    MTI_VERIFY_NODE_ID_ADDRESSED (0x0488).
+     * -# When dest_node_id is non-zero, copy its 6-byte value to payload offset 0
+     *    so the remote node verifies its identity before replying.
+     * -# When dest_node_id is zero (NULL_NODE_ID), leave the payload empty so the
+     *    remote node always replies.
+     * -# If the send callback is non-NULL, call it and return its result; otherwise
+     *    return false.
+     *
+     * @verbatim
+     * @param openlcb_node    Pointer to the sending openlcb_node_t.
+     * @param dest_alias      12-bit CAN alias of the remote node to query.
+     * @param dest_node_id    Optional 48-bit node_id_t to verify; 0 for unconditional.
+     * @endverbatim
+     *
+     * @return true if queued successfully, false if the transmit buffer is full or
+     *         the callback is NULL.
+     *
+     * @warning NULL pointer on the node causes a crash — no NULL check is performed.
+     * @warning Returns false if OpenLcbApplication_initialize() was not called first.
+     */
+bool OpenLcbApplication_send_verify_node_id_addressed(openlcb_node_t *openlcb_node, uint16_t dest_alias, node_id_t dest_node_id) {
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, openlcb_node->alias, openlcb_node->id, dest_alias, dest_node_id, MTI_VERIFY_NODE_ID_ADDRESSED);
+
+    if (dest_node_id != NULL_NODE_ID) {
+
+        OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, dest_node_id, 0);
+
+    }
+
+    if (_interface->send_openlcb_msg) {
+
+        return _interface->send_openlcb_msg(&msg);
+
+    }
+
+    return false;
+
+}
+
+    /**
+     * @brief Sends a global Verify Node ID broadcast asking every node to identify itself.
+     *
+     * @details Algorithm:
+     * -# Declare msg and payload on the stack with zero-initialization.
+     * -# Point msg.payload at the local payload buffer; set payload_type to BASIC.
+     * -# Call OpenLcbUtilities_load_openlcb_message() with the sending node's
+     *    alias/ID, a zero destination alias, NULL_NODE_ID destination, and
+     *    MTI_VERIFY_NODE_ID_GLOBAL (0x0490).
+     * -# Leave the payload empty so every node replies (no NodeID-prefix filter).
+     * -# If the send callback is non-NULL, call it and return its result; otherwise
+     *    return false.
+     *
+     * @verbatim
+     * @param openlcb_node    Pointer to the sending openlcb_node_t.
+     * @endverbatim
+     *
+     * @return true if queued successfully, false if the transmit buffer is full or
+     *         the callback is NULL.
+     *
+     * @warning NULL pointer on the node causes a crash — no NULL check is performed.
+     * @warning Returns false if OpenLcbApplication_initialize() was not called first.
+     * @warning Generates one reply per node on the network.
+     */
+bool OpenLcbApplication_send_verify_node_id_global(openlcb_node_t *openlcb_node) {
+
+    openlcb_msg_t msg = {0};
+    payload_basic_t payload;
+
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, openlcb_node->alias, openlcb_node->id, 0, NULL_NODE_ID, MTI_VERIFY_NODE_ID_GLOBAL);
 
     if (_interface->send_openlcb_msg) {
 

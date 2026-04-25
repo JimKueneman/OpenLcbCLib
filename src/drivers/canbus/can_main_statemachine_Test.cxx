@@ -38,7 +38,7 @@
 #include "can_utilities.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
-#include "alias_mappings.h"
+#include "internal_node_alias_table.h"
 #include "alias_mapping_listener.h"
 
 #include "../../openlcb/openlcb_node.h"
@@ -185,7 +185,7 @@ node_parameters_t _node_parameters_main_node = {
 alias_mapping_info_t *_alias_mapping_get_alias_mapping_info(void)
 {
     alias_mapping_get_alias_mapping_info_called = true;
-    return AliasMappings_get_alias_mapping_info();
+    return InternalNodeAliasTable_get_alias_mapping_info();
 }
 
 /**
@@ -194,7 +194,7 @@ alias_mapping_info_t *_alias_mapping_get_alias_mapping_info(void)
  */
 void _alias_mapping_unregister(uint16_t alias)
 {
-    AliasMappings_unregister(alias);
+    InternalNodeAliasTable_unregister(alias);
 }
 
 /**
@@ -427,7 +427,7 @@ void setup_test(void)
 {
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
     AliasMappingListener_initialize();
     OpenLcbBufferStore_initialize();
     OpenLcbBufferFifo_initialize();
@@ -591,10 +591,10 @@ TEST(CanMainStatemachine, duplicate_alias)
     node1->state.run_state = RUNSTATE_RUN;
     
     // Mark alias as duplicate
-    alias_mapping_t *alias_mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *alias_mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     alias_mapping->is_duplicate = true;
     alias_mapping->is_permitted = true;
-    AliasMappings_set_has_duplicate_alias_flag();
+    InternalNodeAliasTable_set_has_duplicate_alias_flag();
     
     CanMainStatemachine_run();
     
@@ -627,10 +627,10 @@ TEST(CanMainStatemachine, duplicate_alias)
     node1->state.run_state = RUNSTATE_RUN;
     node1->last_received_datagram = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
     
-    alias_mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     alias_mapping->is_duplicate = true;
     alias_mapping->is_permitted = true;
-    AliasMappings_set_has_duplicate_alias_flag();
+    InternalNodeAliasTable_set_has_duplicate_alias_flag();
     
     CanMainStatemachine_run();
     
@@ -661,10 +661,10 @@ TEST(CanMainStatemachine, duplicate_alias_fail_to_find_mapping)
     node1->state.initialized = true;
     node1->state.run_state = RUNSTATE_RUN;
     
-    alias_mapping_t *alias_mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *alias_mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     alias_mapping->is_duplicate = true;
     alias_mapping->is_permitted = true;
-    AliasMappings_set_has_duplicate_alias_flag();
+    InternalNodeAliasTable_set_has_duplicate_alias_flag();
     
     // Force node lookup to fail
     node_find_node_by_alias_fail = true;
@@ -842,9 +842,9 @@ TEST(CanMainStatemachine, priority_order)
     // Mark alias as duplicate (highest priority)
     openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
     node1->alias = NODE_ALIAS_1;
-    alias_mapping_t *alias_mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping_t *alias_mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     alias_mapping->is_duplicate = true;
-    AliasMappings_set_has_duplicate_alias_flag();
+    InternalNodeAliasTable_set_has_duplicate_alias_flag();
     
     // Queue outgoing message
     can_msg_t *msg = CanBufferStore_allocate_buffer();
@@ -1375,12 +1375,12 @@ TEST(CanMainStatemachine, global_ame_repopulates_and_sends_amds_for_local_nodes)
     reset_test_variables();
 
     // Register 3 permitted local virtual nodes
-    AliasMappings_register(0x0AAA, 0x010203040501);
-    AliasMappings_register(0x0BBB, 0x010203040502);
-    AliasMappings_register(0x0CCC, 0x010203040503);
+    InternalNodeAliasTable_register(0x0AAA, 0x010203040501);
+    InternalNodeAliasTable_register(0x0BBB, 0x010203040502);
+    InternalNodeAliasTable_register(0x0CCC, 0x010203040503);
 
     // Mark all as permitted
-    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    alias_mapping_info_t *info = InternalNodeAliasTable_get_alias_mapping_info();
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         if (info->list[i].alias != 0x00) {
@@ -1425,8 +1425,8 @@ TEST(CanMainStatemachine, global_ame_amd_frames_have_correct_content)
     reset_test_variables();
 
     // Register one permitted local node
-    AliasMappings_register(0x0AAA, 0x050101010100);
-    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    InternalNodeAliasTable_register(0x0AAA, 0x050101010100);
+    alias_mapping_info_t *info = InternalNodeAliasTable_get_alias_mapping_info();
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         if (info->list[i].alias == 0x0AAA) {
@@ -1474,10 +1474,10 @@ TEST(CanMainStatemachine, global_ame_skips_non_permitted_entries)
     reset_test_variables();
 
     // Register 2 nodes but only permit 1
-    AliasMappings_register(0x0AAA, 0x010203040501);
-    AliasMappings_register(0x0BBB, 0x010203040502);
+    InternalNodeAliasTable_register(0x0AAA, 0x010203040501);
+    InternalNodeAliasTable_register(0x0BBB, 0x010203040502);
 
-    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    alias_mapping_info_t *info = InternalNodeAliasTable_get_alias_mapping_info();
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         if (info->list[i].alias == 0x0AAA) {
@@ -1554,12 +1554,12 @@ TEST(CanMainStatemachine, global_ame_stress_max_virtual_nodes)
 
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
-        AliasMappings_register(0x100 + i, 0x050101010100 + i);
+        InternalNodeAliasTable_register(0x100 + i, 0x050101010100 + i);
         registered++;
 
     }
 
-    alias_mapping_info_t *info = AliasMappings_get_alias_mapping_info();
+    alias_mapping_info_t *info = InternalNodeAliasTable_get_alias_mapping_info();
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         if (info->list[i].alias != 0x00) {

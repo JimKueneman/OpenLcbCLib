@@ -94,7 +94,7 @@ set(BOOTLOADER_LIB_SOURCES
     ${ROOT_DIR}/src/openlcb/protocol_train_search_handler.c
     ${ROOT_DIR}/src/openlcb/openlcb_config.c
     ${ROOT_DIR}/src/drivers/canbus/alias_mapping_listener.c
-    ${ROOT_DIR}/src/drivers/canbus/alias_mappings.c
+    ${ROOT_DIR}/src/drivers/canbus/internal_node_alias_table.c
     ${ROOT_DIR}/src/drivers/canbus/can_buffer_fifo.c
     ${ROOT_DIR}/src/drivers/canbus/can_buffer_store.c
     ${ROOT_DIR}/src/drivers/canbus/can_login_message_handler.c

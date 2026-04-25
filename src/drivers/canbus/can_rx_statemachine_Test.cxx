@@ -50,7 +50,7 @@
 #include "can_types.h"
 #include "can_utilities.h"
 #include "../../openlcb/openlcb_defines.h"
-#include "alias_mappings.h"
+#include "internal_node_alias_table.h"
 
 /*******************************************************************************
  * Mock Handler Tracking

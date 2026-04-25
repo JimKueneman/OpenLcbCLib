@@ -135,7 +135,7 @@ extern "C" {
          * without a Producer Identified reply having been seen for its event ID,
          * fires on_search_no_match_with_allocate and frees the slot.
          */
-    extern void ProtocolTrainSearchHandler_100ms_timer_tick(void);
+    extern void ProtocolTrainSearchHandler_100ms_timer_tick(uint8_t current_tick);
 
     // =========================================================================
     // Train Search Event ID Utilities

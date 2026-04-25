@@ -59,7 +59,7 @@
 #include "can_rx_message_handler.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
-#include "alias_mappings.h"
+#include "internal_node_alias_table.h"
 #include "alias_mapping_listener.h"
 #include "can_utilities.h"
 
@@ -169,8 +169,8 @@ static void _can_e2e_unlock(void) { }
 
 static const interface_can_login_message_handler_t _can_login_msg_interface = {
 
-    .alias_mapping_register           = &AliasMappings_register,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_register           = &InternalNodeAliasTable_register,
+    .alias_mapping_find_mapping_by_alias = &InternalNodeAliasTable_find_mapping_by_alias,
     .on_alias_change                  = NULL,
 
 };
@@ -202,10 +202,10 @@ static const interface_can_rx_message_handler_t _can_rx_msg_interface = {
 
     .can_buffer_store_allocate_buffer        = &CanBufferStore_allocate_buffer,
     .openlcb_buffer_store_allocate_buffer    = &OpenLcbBufferStore_allocate_buffer,
-    .alias_mapping_find_mapping_by_alias     = &AliasMappings_find_mapping_by_alias,
-    .alias_mapping_find_mapping_by_node_id   = &AliasMappings_find_mapping_by_node_id,
-    .alias_mapping_get_alias_mapping_info    = &AliasMappings_get_alias_mapping_info,
-    .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag,
+    .alias_mapping_find_mapping_by_alias     = &InternalNodeAliasTable_find_mapping_by_alias,
+    .alias_mapping_find_mapping_by_node_id   = &InternalNodeAliasTable_find_mapping_by_node_id,
+    .alias_mapping_get_alias_mapping_info    = &InternalNodeAliasTable_get_alias_mapping_info,
+    .alias_mapping_set_has_duplicate_alias_flag = &InternalNodeAliasTable_set_has_duplicate_alias_flag,
     .get_current_tick                        = &_can_e2e_get_tick,
 
     // Listener alias management — wired unconditionally (no OPENLCB_COMPILE_TRAIN guard)
@@ -232,8 +232,8 @@ static const interface_can_main_statemachine_t _can_main_interface = {
     .openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias,
 
     .login_statemachine_run              = &CanLoginStatemachine_run,
-    .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
-    .alias_mapping_unregister            = &AliasMappings_unregister,
+    .alias_mapping_get_alias_mapping_info = &InternalNodeAliasTable_get_alias_mapping_info,
+    .alias_mapping_unregister            = &InternalNodeAliasTable_unregister,
 
     .get_current_tick = &_can_e2e_get_tick,
 
@@ -268,7 +268,7 @@ static void _can_e2e_init(void) {
 
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
-    AliasMappings_initialize();
+    InternalNodeAliasTable_initialize();
     AliasMappingListener_initialize();
     OpenLcbBufferStore_initialize();
     OpenLcbBufferFifo_initialize();
@@ -290,7 +290,7 @@ static bool _all_nodes_can_login_complete(void) {
 
     while (node) {
 
-        alias_mapping_t *m = AliasMappings_find_mapping_by_node_id(node->id);
+        alias_mapping_t *m = InternalNodeAliasTable_find_mapping_by_node_id(node->id);
 
         if (!m || !m->is_permitted) { return false; }
 
@@ -353,8 +353,8 @@ TEST(CanMultinodeE2E, two_nodes_login_with_distinct_aliases)
     EXPECT_NE(nodeA->alias, nodeB->alias);
 
     // Both must appear in the alias mapping table as permitted
-    alias_mapping_t *mappingA = AliasMappings_find_mapping_by_node_id(nodeA->id);
-    alias_mapping_t *mappingB = AliasMappings_find_mapping_by_node_id(nodeB->id);
+    alias_mapping_t *mappingA = InternalNodeAliasTable_find_mapping_by_node_id(nodeA->id);
+    alias_mapping_t *mappingB = InternalNodeAliasTable_find_mapping_by_node_id(nodeB->id);
 
     ASSERT_NE(mappingA, nullptr);
     ASSERT_NE(mappingB, nullptr);
