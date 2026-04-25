@@ -134,7 +134,7 @@ Data Fields</h2></td></tr>
 <tr class="memdesc:a0d0e0cb0d2e7d8c2ceaf9e0837b51e25"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. CID (Check ID) control frame. Typical: CanRxMessageHandler_cid_frame.  <br /></td></tr>
 <tr class="separator:a0d0e0cb0d2e7d8c2ceaf9e0837b51e25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91e0e61d6e690cb434694399ee865976" id="r_a91e0e61d6e690cb434694399ee865976"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91e0e61d6e690cb434694399ee865976">alias_mapping_find_mapping_by_alias</a> )(uint16_t alias)</td></tr>
-<tr class="memdesc:a91e0e61d6e690cb434694399ee865976"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Find alias mapping by 12-bit alias (validates addressed-message destination). Typical: AliasMappings_find_mapping_by_alias.  <br /></td></tr>
+<tr class="memdesc:a91e0e61d6e690cb434694399ee865976"><td class="mdescLeft">&#160;</td><td class="mdescRight">REQUIRED. Find alias mapping by 12-bit alias (validates addressed-message destination). Typical: InternalNodeAliasTable_find_mapping_by_alias.  <br /></td></tr>
 <tr class="separator:a91e0e61d6e690cb434694399ee865976"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74e23c8dcaedb643f11cb3c3791e7aad" id="r_a74e23c8dcaedb643f11cb3c3791e7aad"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74e23c8dcaedb643f11cb3c3791e7aad">on_receive</a> )(<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
 <tr class="memdesc:a74e23c8dcaedb643f11cb3c3791e7aad"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Called immediately when a frame arrives, before any routing. Good for counters/LEDs. May be NULL.  <br /></td></tr>
@@ -358,7 +358,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>REQUIRED. Find alias mapping by 12-bit alias (validates addressed-message destination). Typical: AliasMappings_find_mapping_by_alias. </p>
+<p>REQUIRED. Find alias mapping by 12-bit alias (validates addressed-message destination). Typical: InternalNodeAliasTable_find_mapping_by_alias. </p>
 
 </div>
 </div>

@@ -141,7 +141,7 @@ Functions</h2></td></tr>
 <li>Save the user-provided config pointer.</li>
 <li>Initialize buffer infrastructure (CanBufferStore, CanBufferFifo).</li>
 <li>Build all 7 internal interface structs from user config and library functions.</li>
-<li>Initialize all CAN modules in dependency order: RxMessageHandler, RxStatemachine, TxMessageHandler, TxStatemachine, LoginMessageHandler, LoginStateMachine, MainStatemachine, AliasMappings.</li>
+<li>Initialize all CAN modules in dependency order: RxMessageHandler, RxStatemachine, TxMessageHandler, TxStatemachine, LoginMessageHandler, LoginStateMachine, MainStatemachine, InternalNodeAliasTable.</li>
 </ol>
 <pre class="fragment">* @param config  Pointer to @ref can_config_t configuration. Must remain
 *                valid for the lifetime of the application.

@@ -103,6 +103,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ac9d95e47aad42d2a436400cf5d1f227a" id="r_ac9d95e47aad42d2a436400cf5d1f227a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9d95e47aad42d2a436400cf5d1f227a">on_terminate_due_to_error</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> source_node_id, uint16_t error_code, uint16_t rejected_mti)</td></tr>
 <tr class="memdesc:ac9d95e47aad42d2a436400cf5d1f227a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional. Called when a Terminate Due To Error message is received (MessageNetworkS Section 3.5.2).  <br /></td></tr>
 <tr class="separator:ac9d95e47aad42d2a436400cf5d1f227a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa0822929cf39948893ef84e8be37bc5" id="r_aaa0822929cf39948893ef84e8be37bc5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa0822929cf39948893ef84e8be37bc5">on_verified_node_id</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structsource__info__t.html">source_info_t</a> *source)</td></tr>
+<tr class="memdesc:aaa0822929cf39948893ef84e8be37bc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional. Called when a Verified Node ID reply is received from a remote node (MessageNetworkS Section 3.4). Fires for non-self replies only — the duplicate-NodeID detection path consumes self matches before this hook runs.  <br /></td></tr>
+<tr class="separator:aaa0822929cf39948893ef84e8be37bc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Callback interface for message network protocol notifications. </p>
@@ -154,6 +157,22 @@ Data Fields</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="aaa0822929cf39948893ef84e8be37bc5" name="aaa0822929cf39948893ef84e8be37bc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa0822929cf39948893ef84e8be37bc5">&#9670;&#160;</a></span>on_verified_node_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* on_verified_node_id) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structsource__info__t.html">source_info_t</a> *source)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional. Called when a Verified Node ID reply is received from a remote node (MessageNetworkS Section 3.4). Fires for non-self replies only — the duplicate-NodeID detection path consumes self matches before this hook runs. </p>
 
 </div>
 </div>

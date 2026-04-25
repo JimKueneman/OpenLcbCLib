@@ -152,7 +152,7 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Implements Verify Node ID (addressed and global), Protocol Support Inquiry/Reply, Initialization Complete, Optional Interaction Rejected, and Terminate Due To Error. Also detects duplicate Node IDs on the network.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>4 Mar 2026</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>24 Apr 2026</dd></dl>
 <dl class="section see"><dt>See also</dt><dd>MessageNetworkS.pdf </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a6de2e392dcc8fc3e752b535e822ad275" name="a6de2e392dcc8fc3e752b535e822ad275"></a>
@@ -422,8 +422,15 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Handle Verified Node ID — checks for duplicate Node ID. </p>
-
+<p>Handle Verified Node ID — checks for duplicate Node ID.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Extract the 6-byte source NodeID from the incoming payload at offset 0.</li>
+<li>If it matches our own openlcb_node-&gt;id, load a duplicate-NodeID error response and return — this path consumes the message; no application callback fires for self matches.</li>
+<li>Otherwise mark the outgoing slot as invalid (no automatic reply).</li>
+<li>If the application registered an on_verified_node_id callback, build a <a class="el" href="structsource__info__t.html" title="Identifies the remote node that sent a received message.">source_info_t</a> containing the extracted NodeID and the source alias from the incoming CAN frame, then invoke the callback.</li>
+</ol>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* </pre> 
 </div>
 </div>
 <a id="a28784d330fe4b9dc5edaae0e0ed25970" name="a28784d330fe4b9dc5edaae0e0ed25970"></a>

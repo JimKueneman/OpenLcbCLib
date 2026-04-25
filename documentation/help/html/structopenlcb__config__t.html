@@ -109,6 +109,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ac9d95e47aad42d2a436400cf5d1f227a" id="r_ac9d95e47aad42d2a436400cf5d1f227a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9d95e47aad42d2a436400cf5d1f227a">on_terminate_due_to_error</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> source_node_id, uint16_t error_code, uint16_t rejected_mti)</td></tr>
 <tr class="memdesc:ac9d95e47aad42d2a436400cf5d1f227a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate Due To Error received. Optional. Notifies the application that a remote node terminated with an error.  <br /></td></tr>
 <tr class="separator:ac9d95e47aad42d2a436400cf5d1f227a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa0822929cf39948893ef84e8be37bc5" id="r_aaa0822929cf39948893ef84e8be37bc5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa0822929cf39948893ef84e8be37bc5">on_verified_node_id</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structsource__info__t.html">source_info_t</a> *source)</td></tr>
+<tr class="memdesc:aaa0822929cf39948893ef84e8be37bc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verified Node ID reply received from a remote node. Optional.  <br /></td></tr>
+<tr class="separator:aaa0822929cf39948893ef84e8be37bc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53e562fab863518edb4da67f436116c8" id="r_a53e562fab863518edb4da67f436116c8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53e562fab863518edb4da67f436116c8">on_100ms_timer</a> )(void)</td></tr>
 <tr class="memdesc:a53e562fab863518edb4da67f436116c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">100ms periodic timer callback. Optional.  <br /></td></tr>
 <tr class="separator:a53e562fab863518edb4da67f436116c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,7 +132,7 @@ Data Fields</h2></td></tr>
 <div class="line">    .on_consumed_event_pcer  = &amp;my_event_handler,</div>
 <div class="line">};</div>
 <div class="line"><a class="code hl_function" href="openlcb__config_8h.html#a0a8853350c1554368da8ea6158ec3e44">OpenLcbConfig_initialize</a>(&amp;my_config);</div>
-<div class="ttc" id="aopenlcb__config_8h_html_a0a8853350c1554368da8ea6158ec3e44"><div class="ttname"><a href="openlcb__config_8h.html#a0a8853350c1554368da8ea6158ec3e44">OpenLcbConfig_initialize</a></div><div class="ttdeci">void OpenLcbConfig_initialize(const openlcb_config_t *config)</div><div class="ttdoc">Initializes the entire OpenLCB stack with one call.</div><div class="ttdef"><b>Definition</b> openlcb_config.c:1206</div></div>
+<div class="ttc" id="aopenlcb__config_8h_html_a0a8853350c1554368da8ea6158ec3e44"><div class="ttname"><a href="openlcb__config_8h.html#a0a8853350c1554368da8ea6158ec3e44">OpenLcbConfig_initialize</a></div><div class="ttdeci">void OpenLcbConfig_initialize(const openlcb_config_t *config)</div><div class="ttdoc">Initializes the entire OpenLCB stack with one call.</div><div class="ttdef"><b>Definition</b> openlcb_config.c:1208</div></div>
 <div class="ttc" id="astructopenlcb__config__t_html"><div class="ttname"><a href="structopenlcb__config__t.html">openlcb_config_t</a></div><div class="ttdoc">User configuration for OpenLcbCLib.</div><div class="ttdef"><b>Definition</b> openlcb_config.h:217</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
@@ -195,6 +198,23 @@ Data Fields</h2></td></tr>
 
 <p>Terminate Due To Error received. Optional. Notifies the application that a remote node terminated with an error. </p>
 <dl class="section see"><dt>See also</dt><dd>MessageNetworkS Section 3.5.2. </dd></dl>
+
+</div>
+</div>
+<a id="aaa0822929cf39948893ef84e8be37bc5" name="aaa0822929cf39948893ef84e8be37bc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa0822929cf39948893ef84e8be37bc5">&#9670;&#160;</a></span>on_verified_node_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* on_verified_node_id) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="structsource__info__t.html">source_info_t</a> *source)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Verified Node ID reply received from a remote node. Optional. </p>
+<p>Fires when this device receives a Verified Node ID reply identifying a remote node — typically in response to an addressed or global Verify Node ID this device sent. The <a class="el" href="structsource__info__t.html">source_info_t</a> parameter carries the resolved 48-bit NodeID and the 12-bit CAN alias of the replier. The pointer is only valid for the duration of the callback. Self matches are consumed by the duplicate-NodeID detection path and do NOT fire this callback. </p>
 
 </div>
 </div>

@@ -464,7 +464,7 @@ outgoing_can_msg must be freed after successful transmission.</dd></dl>
 
 <p>One entry in the alias mapping table: a <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> / 12-bit alias pair. </p>
 <p>Flags may be set from interrupt context and read from the main loop. Use lock/unlock around accesses shared between contexts.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8h.html" title="Fixed-size buffer mapping 12-bit CAN aliases to 48-bit OpenLCB Node IDs.">alias_mappings.h</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="internal__node__alias__table_8h.html" title="Lock-free snapshot of THIS device&#39;s own (alias, Node ID) pairs.">internal_node_alias_table.h</a> </dd></dl>
 
 </div>
 </div>
@@ -482,9 +482,9 @@ outgoing_can_msg must be freed after successful transmission.</dd></dl>
 
 <p>Container for all <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> entries plus a global duplicate flag. </p>
 <p>has_duplicate_alias is a fast-check flag: when set, at least one entry has is_duplicate set and the main loop should scan the list to find and resolve it.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8h.html" title="Fixed-size buffer mapping 12-bit CAN aliases to 48-bit OpenLCB Node IDs.">alias_mappings.h</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="internal__node__alias__table_8h.html" title="Lock-free snapshot of THIS device&#39;s own (alias, Node ID) pairs.">internal_node_alias_table.h</a> </dd>
 <dd>
-<a class="el" href="alias__mappings_8c.html#a1e2639729c40c4ba017fa2529493c2d7" title="Sets the has_duplicate_alias flag to signal an alias conflict.">AliasMappings_set_has_duplicate_alias_flag</a> </dd></dl>
+<a class="el" href="internal__node__alias__table_8c.html#affff5cd83e49ca2a17ad66942dc0c199" title="Sets the has_duplicate_alias flag to signal an alias conflict.">InternalNodeAliasTable_set_has_duplicate_alias_flag</a> </dd></dl>
 
 </div>
 </div>
