@@ -118,6 +118,7 @@ static bool _has_reserved_values(const uint8_t *digits, uint8_t flags) {
 void ProtocolTrainSearchHandler_initialize(const interface_protocol_train_search_handler_t *interface) {
 
     _interface = interface;
+    _last_seen_tick = 0;
 
     for (uint8_t i = 0; i < TRAIN_SEARCH_PENDING_ALLOCATE_COUNT; i++) {
 

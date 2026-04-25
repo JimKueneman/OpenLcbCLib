@@ -13,7 +13,7 @@ SOURCES
     can_tx_statemachine.c 
     can_utilities.c
     can_config.c
-    alias_mappings.c
+    internal_node_alias_table.c
     alias_mapping_listener.c
 )
 
@@ -31,7 +31,7 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/drivers/canbus/can_login_statemachine_Test.cxx
     ${ROOT_DIR}/src/drivers/canbus/can_tx_statemachine_Test.cxx
     ${ROOT_DIR}/src/drivers/canbus/can_utilities_Test.cxx
-    ${ROOT_DIR}/src/drivers/canbus/alias_mappings_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/internal_node_alias_table_Test.cxx
     ${ROOT_DIR}/src/drivers/canbus/alias_mapping_listener_Test.cxx
     ${ROOT_DIR}/src/drivers/canbus/can_config_Test.cxx
     ${ROOT_DIR}/src/drivers/canbus/can_multinode_e2e_Test.cxx

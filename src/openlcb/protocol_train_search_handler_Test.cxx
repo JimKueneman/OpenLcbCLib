@@ -1645,14 +1645,14 @@ TEST(TrainSearch, no_match_allocate_enqueues_and_fires_after_timeout)
     // Tick TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS-1 times: still silent
     for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS - 1; i++) {
 
-        ProtocolTrainSearchHandler_100ms_timer_tick();
+        ProtocolTrainSearchHandler_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 
     EXPECT_EQ(_no_match_count, 0);
 
     // Final tick fires the callback exactly once
-    ProtocolTrainSearchHandler_100ms_timer_tick();
+    ProtocolTrainSearchHandler_100ms_timer_tick(TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS);
 
     EXPECT_EQ(_no_match_count, 1);
     EXPECT_EQ(_no_match_event_id, search_event);
@@ -1660,7 +1660,7 @@ TEST(TrainSearch, no_match_allocate_enqueues_and_fires_after_timeout)
     EXPECT_EQ(_no_match_flags & TRAIN_SEARCH_FLAG_ALLOCATE, TRAIN_SEARCH_FLAG_ALLOCATE);
 
     // Extra ticks after expiry do nothing
-    ProtocolTrainSearchHandler_100ms_timer_tick();
+    ProtocolTrainSearchHandler_100ms_timer_tick((uint8_t)(TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS + 1));
     EXPECT_EQ(_no_match_count, 1);
 
 }
@@ -2405,7 +2405,7 @@ TEST(TrainSearch, allocate_reply_within_window_cancels_callback)
 
     for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS; i++) {
 
-        ProtocolTrainSearchHandler_100ms_timer_tick();
+        ProtocolTrainSearchHandler_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 
@@ -2440,14 +2440,14 @@ TEST(TrainSearch, allocate_duplicate_does_not_reset_timer)
     // Burn TIMEOUT_TICKS-1 ticks then resubmit — the duplicate must not refresh the timer
     for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS - 1; i++) {
 
-        ProtocolTrainSearchHandler_100ms_timer_tick();
+        ProtocolTrainSearchHandler_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 
     ProtocolTrainSearchHandler_handle_search_no_match(&sm, search_event);
 
     // One more tick hits the ORIGINAL deadline
-    ProtocolTrainSearchHandler_100ms_timer_tick();
+    ProtocolTrainSearchHandler_100ms_timer_tick(TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS);
 
     EXPECT_EQ(_no_match_count, 1);
     EXPECT_EQ(_no_match_event_id, search_event);
@@ -2490,7 +2490,7 @@ TEST(TrainSearch, allocate_queue_exhaustion_drops_extras)
     // Drive the timeout
     for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS; i++) {
 
-        ProtocolTrainSearchHandler_100ms_timer_tick();
+        ProtocolTrainSearchHandler_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 
@@ -2532,7 +2532,7 @@ TEST(TrainSearch, allocate_slot_reused_after_expiry)
 
     for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS; i++) {
 
-        ProtocolTrainSearchHandler_100ms_timer_tick();
+        ProtocolTrainSearchHandler_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 
@@ -2545,7 +2545,7 @@ TEST(TrainSearch, allocate_slot_reused_after_expiry)
 
     for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS; i++) {
 
-        ProtocolTrainSearchHandler_100ms_timer_tick();
+        ProtocolTrainSearchHandler_100ms_timer_tick((uint8_t)(TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS + i + 1));
 
     }
 
@@ -2567,7 +2567,7 @@ TEST(TrainSearch, tick_with_empty_queue_is_noop)
 
     for (uint8_t i = 0; i < 10; i++) {
 
-        ProtocolTrainSearchHandler_100ms_timer_tick();
+        ProtocolTrainSearchHandler_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 
@@ -2600,7 +2600,7 @@ TEST(TrainSearch, tick_null_callback_still_frees_slot)
 
     for (uint8_t i = 0; i < TRAIN_SEARCH_ALLOCATE_TIMEOUT_TICKS; i++) {
 
-        ProtocolTrainSearchHandler_100ms_timer_tick();
+        ProtocolTrainSearchHandler_100ms_timer_tick((uint8_t)(i + 1));
 
     }
 

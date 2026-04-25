@@ -362,20 +362,51 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
     // Test 4: Empty OpenLCB payload (returns 0)
     openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg, nullptr);
-    
+
     if (openlcb_msg)
     {
         CanUtilities_load_can_message(&can_msg, 0xABAB, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB,
                                                0x0CCC, 0xDDDDDDDDDDDD, 0x0999);
-        
+
         openlcb_msg->payload_count = 0;  // Empty
-        
+
         result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, 0, 0);
-        
+
         EXPECT_EQ(result, 0);
         EXPECT_EQ(can_msg.payload_count, 0);
-        
+
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+    }
+
+    // Test 5: Regression — empty OpenLCB payload with non-zero can_start_index.
+    // An addressed message whose user payload is empty (e.g. Verify Node ID
+    // Addressed with dest_node_id == 0) still carries a 2-byte destination-alias
+    // prefix that the caller has already written into can_msg->payload[0..1] and
+    // has set can_start_index = OFFSET_CAN_WITH_DEST_ADDRESS (= 2).  The early
+    // return on payload_count == 0 must report can_msg->payload_count as the
+    // prefix length (= can_start_index), not 0, otherwise the prefix bytes are
+    // truncated and the receiver cannot tell who the frame is addressed to.
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    EXPECT_NE(openlcb_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+        // Pre-populate CAN payload[0..1] with the dest-alias prefix the caller wrote.
+        CanUtilities_load_can_message(&can_msg, 0xABAB, 0,
+                                       0xAA, 0xBB, 0, 0, 0, 0, 0, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB,
+                                               0x0CCC, 0xDDDDDDDDDDDD, 0x0999);
+
+        openlcb_msg->payload_count = 0;  // Empty user payload
+
+        result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, 0, 2);
+
+        EXPECT_EQ(result, 0);
+        EXPECT_EQ(can_msg.payload_count, 2);  // Prefix bytes preserved
+        EXPECT_EQ(can_msg.payload[0], 0xAA);  // Dest alias high byte
+        EXPECT_EQ(can_msg.payload[1], 0xBB);  // Dest alias low byte
+
         OpenLcbBufferStore_free_buffer(openlcb_msg);
     }
 }
