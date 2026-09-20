@@ -132,6 +132,10 @@ static interface_protocol_train_handler_t _train_handler;
 static interface_openlcb_application_train_t _app_train;
 #endif
 
+#ifdef OPENLCB_COMPILE_DCC_CV
+static interface_openlcb_application_dcc_cv_t _app_dcc_cv;
+#endif
+
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
 static interface_protocol_train_search_handler_t _train_search;
 #endif
@@ -871,6 +875,16 @@ static void _build_config_mem_read(void) {
     _config_read.read_request_config_mem = &ProtocolConfigMemReadHandler_read_request_config_mem;
     _config_read.read_request_acdi_manufacturer = &ProtocolConfigMemReadHandler_read_request_acdi_manufacturer;
     _config_read.read_request_acdi_user = &ProtocolConfigMemReadHandler_read_request_acdi_user;
+
+    // Claimed only when the application supplied a hook, so that without one a read of
+    // space 0xF8 is rejected as unimplemented rather than answered with an error reply.
+#ifdef OPENLCB_COMPILE_DCC_CV
+    if (_config->dcc_cv_read) {
+
+        _config_read.read_request_dcc_cv = &OpenLcbApplicationDccCv_handle_read_request;
+
+    }
+#endif
 #endif
 
     // Train profile: FDI + Function Config Memory read request handlers
@@ -897,6 +911,14 @@ static void _build_config_mem_write(void) {
 #ifndef OPENLCB_COMPILE_BOOTLOADER
     _config_write.write_request_config_mem                = &ProtocolConfigMemWriteHandler_write_request_config_mem;
     _config_write.write_request_acdi_user                 =  &ProtocolConfigMemWriteHandler_write_request_acdi_user;
+
+#ifdef OPENLCB_COMPILE_DCC_CV
+    if (_config->dcc_cv_write) {
+
+        _config_write.write_request_dcc_cv                = &OpenLcbApplicationDccCv_handle_write_request;
+
+    }
+#endif
 #endif
 
     // Train profile: Function Config Memory write request handler
@@ -973,6 +995,11 @@ static void _build_datagram_handler(void) {
     // Write address spaces
     _datagram.memory_write_space_configuration_memory = &ProtocolConfigMemWriteHandler_write_space_config_memory;
     _datagram.memory_write_space_acdi_user            = &ProtocolConfigMemWriteHandler_write_space_acdi_user;
+
+#ifdef OPENLCB_COMPILE_DCC_CV
+    _datagram.memory_read_space_dcc_cv                = &ProtocolConfigMemReadHandler_read_space_dcc_cv;
+    _datagram.memory_write_space_dcc_cv               = &ProtocolConfigMemWriteHandler_write_space_dcc_cv;
+#endif
 #endif /* OPENLCB_COMPILE_BOOTLOADER */
 
 #ifdef OPENLCB_COMPILE_FIRMWARE
@@ -1196,6 +1223,21 @@ static void _build_application(void) {
 
 }
 
+#ifdef OPENLCB_COMPILE_DCC_CV
+
+    /** @brief Wires the CAN send function and the application's CV hooks into the DCC CV module. */
+static void _build_app_dcc_cv(void) {
+
+    memset(&_app_dcc_cv, 0, sizeof(_app_dcc_cv));
+
+    _app_dcc_cv.send_openlcb_msg = &OpenLcbMainStatemachine_send_with_sibling_dispatch;
+    _app_dcc_cv.dcc_cv_read      = _config->dcc_cv_read;
+    _app_dcc_cv.dcc_cv_write     = _config->dcc_cv_write;
+
+}
+
+#endif /* OPENLCB_COMPILE_DCC_CV */
+
 // ---- Public API ----
 
     /**
@@ -1242,6 +1284,10 @@ void OpenLcbConfig_initialize(const openlcb_config_t *config) {
     _build_config_mem_operations();
 #endif
 
+#ifdef OPENLCB_COMPILE_DCC_CV
+    _build_app_dcc_cv();
+#endif
+
 #ifdef OPENLCB_COMPILE_BROADCAST_TIME
     _build_broadcast_time();
     _build_app_broadcast_time();
@@ -1278,6 +1324,10 @@ void OpenLcbConfig_initialize(const openlcb_config_t *config) {
 #endif
     ProtocolConfigMemWriteHandler_initialize(&_config_write);
     ProtocolConfigMemOperationsHandler_initialize(&_config_ops);
+#endif
+
+#ifdef OPENLCB_COMPILE_DCC_CV
+    OpenLcbApplicationDccCv_initialize(&_app_dcc_cv);
 #endif
 
 #ifdef OPENLCB_COMPILE_EVENTS
@@ -1367,6 +1417,10 @@ static void _run_periodic_services(void) {
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
     ProtocolTrainSearchHandler_100ms_timer_tick(tick);
+#endif
+
+#ifdef OPENLCB_COMPILE_DCC_CV
+    OpenLcbApplicationDccCv_run(tick);
 #endif
 
 }

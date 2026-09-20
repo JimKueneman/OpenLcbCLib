@@ -606,6 +606,18 @@ void ProtocolConfigMemReadHandler_read_space_train_function_config_memory(openlc
 
 }
 
+    /** @brief Dispatch DCC CV (0xF8) read to two-phase handler. */
+void ProtocolConfigMemReadHandler_read_space_dcc_cv(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_read_request_info_t config_mem_read_request_info;
+
+    config_mem_read_request_info.read_space_func = _interface->read_request_dcc_cv;
+    config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_dcc_cv;
+
+    _handle_read_request(statemachine_info, &config_mem_read_request_info);
+
+}
+
 // Message handling stub functions are documented in the header file
 // These are intentional stubs reserved for future implementation
 

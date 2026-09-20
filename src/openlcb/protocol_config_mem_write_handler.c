@@ -367,6 +367,18 @@ void ProtocolConfigMemWriteHandler_write_space_train_function_config_memory(open
 
 }
 
+    /** @brief Dispatch DCC CV (0xF8) write to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_space_dcc_cv(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.write_space_func = _interface->write_request_dcc_cv;
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_dcc_cv;
+
+    _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
 // ============================================================================
 // Write-Under-Mask Implementation
 // ============================================================================

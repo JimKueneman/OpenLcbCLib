@@ -87,6 +87,8 @@ typedef struct {
     void (*write_request_train_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
         /** @brief Optional — Train Fn Config (0xF9) write handler. */
     void (*write_request_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
+        /** @brief Optional — DCC CV (0xF8) write handler; see openlcb_application_dcc_cv.h. */
+    void (*write_request_dcc_cv)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
         /** @brief Optional — Firmware (0xEF) write handler (receives write_result completion callback). */
     void (*write_request_firmware)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result);
 
@@ -164,6 +166,13 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
     extern void ProtocolConfigMemWriteHandler_write_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
+
+        /**
+         * @brief Write to DCC CV space (0xF8).
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolConfigMemWriteHandler_write_space_dcc_cv(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Write to Firmware space (0xEF).
