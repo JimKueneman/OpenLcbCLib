@@ -854,10 +854,154 @@ TEST(CanTxMessageHandler, unaddressed_no_payload)
     OpenLcbBufferStore_free_buffer(openlcb_msg);
 }
 
+// PC Event Report with payload: FIRST (0x0F16) / MIDDLE (0x0F15) / LAST (0x0F14) frames.
+
+static openlcb_msg_t *_pcer_with_payload_msg(uint16_t payload_count)
+{
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+    EXPECT_NE(openlcb_msg, nullptr);
+
+    openlcb_msg->source_alias = 0xAAA;
+    openlcb_msg->dest_alias = 0;
+    openlcb_msg->mti = MTI_PC_EVENT_REPORT_WITH_PAYLOAD;
+    openlcb_msg->payload_count = payload_count;
+
+    for (int i = 0; i < payload_count; i++)
+    {
+        *openlcb_msg->payload[i] = (uint8_t)i;
+    }
+
+    return openlcb_msg;
+}
+
+TEST(CanTxMessageHandler, pcer_with_payload_first_and_last)
+{
+    can_msg_t can_msg;
+    uint16_t offset = 0;
+
+    _reset_variables();
+    _global_initialize();
+
+    // Event ID + a 2-byte word: 10 bytes, FIRST(8) + LAST(2)
+    openlcb_msg_t *openlcb_msg = _pcer_with_payload_msg(10);
+
+    while (offset < openlcb_msg->payload_count)
+    {
+        EXPECT_TRUE(CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg, &can_msg, &offset));
+    }
+
+    EXPECT_EQ(offset, 10);
+    EXPECT_EQ(transmit_can_frame_index, 2);
+
+    uint8_t bytes0[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+    EXPECT_TRUE(compare_can_msg(&transmitted_can_msg[0], 0x19F16AAA, 8, bytes0));
+
+    uint8_t bytes1[2] = {0x08, 0x09};
+    EXPECT_TRUE(compare_can_msg(&transmitted_can_msg[1], 0x19F14AAA, 2, bytes1));
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+}
+
+TEST(CanTxMessageHandler, pcer_with_payload_exact_fit)
+{
+    can_msg_t can_msg;
+    uint16_t offset = 0;
+
+    _reset_variables();
+    _global_initialize();
+
+    // 16 bytes: FIRST(8) + LAST(8), no MIDDLE
+    openlcb_msg_t *openlcb_msg = _pcer_with_payload_msg(16);
+
+    while (offset < openlcb_msg->payload_count)
+    {
+        EXPECT_TRUE(CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg, &can_msg, &offset));
+    }
+
+    EXPECT_EQ(offset, 16);
+    EXPECT_EQ(transmit_can_frame_index, 2);
+
+    uint8_t bytes0[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+    EXPECT_TRUE(compare_can_msg(&transmitted_can_msg[0], 0x19F16AAA, 8, bytes0));
+
+    uint8_t bytes1[8] = {0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
+    EXPECT_TRUE(compare_can_msg(&transmitted_can_msg[1], 0x19F14AAA, 8, bytes1));
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+}
+
+TEST(CanTxMessageHandler, pcer_with_payload_multi_frame)
+{
+    can_msg_t can_msg;
+    uint16_t offset = 0;
+
+    _reset_variables();
+    _global_initialize();
+
+    // 29 bytes: FIRST(8) + MIDDLE(8) + MIDDLE(8) + LAST(5)
+    openlcb_msg_t *openlcb_msg = _pcer_with_payload_msg(29);
+
+    while (offset < openlcb_msg->payload_count)
+    {
+        EXPECT_TRUE(CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg, &can_msg, &offset));
+        EXPECT_TRUE(application_callback_tx_called);
+        application_callback_tx_called = false;
+    }
+
+    EXPECT_EQ(offset, 29);
+    EXPECT_EQ(transmit_can_frame_index, 4);
+
+    uint8_t bytes0[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+    EXPECT_TRUE(compare_can_msg(&transmitted_can_msg[0], 0x19F16AAA, 8, bytes0));
+
+    uint8_t bytes1[8] = {0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
+    EXPECT_TRUE(compare_can_msg(&transmitted_can_msg[1], 0x19F15AAA, 8, bytes1));
+
+    uint8_t bytes2[8] = {0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17};
+    EXPECT_TRUE(compare_can_msg(&transmitted_can_msg[2], 0x19F15AAA, 8, bytes2));
+
+    uint8_t bytes3[5] = {0x18, 0x19, 0x1A, 0x1B, 0x1C};
+    EXPECT_TRUE(compare_can_msg(&transmitted_can_msg[3], 0x19F14AAA, 5, bytes3));
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+}
+
+TEST(CanTxMessageHandler, pcer_with_payload_transmit_retry)
+{
+    can_msg_t can_msg;
+    uint16_t offset = 0;
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_msg_t *openlcb_msg = _pcer_with_payload_msg(10);
+
+    // First frame goes out
+    EXPECT_TRUE(CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg, &can_msg, &offset));
+    EXPECT_EQ(offset, 8);
+
+    // Hardware busy: index unchanged, nothing recorded
+    transmit_can_frame_enabled = false;
+    EXPECT_FALSE(CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg, &can_msg, &offset));
+    EXPECT_EQ(offset, 8);
+    EXPECT_EQ(transmit_can_frame_index, 1);
+
+    // Retry sends the LAST frame
+    transmit_can_frame_enabled = true;
+    EXPECT_TRUE(CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg, &can_msg, &offset));
+    EXPECT_EQ(offset, 10);
+    EXPECT_EQ(transmit_can_frame_index, 2);
+
+    uint8_t bytes1[2] = {0x08, 0x09};
+    EXPECT_TRUE(compare_can_msg(&transmitted_can_msg[1], 0x19F14AAA, 2, bytes1));
+
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+}
+
 /*******************************************************************************
  * COVERAGE SUMMARY
  * 
- * Active Tests: 15
+ * Active Tests: 19
  * Coverage: ~100%
  * Status: Production Ready ✅
  * 

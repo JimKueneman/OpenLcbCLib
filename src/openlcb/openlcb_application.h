@@ -256,6 +256,28 @@ extern "C" {
     extern bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *openlcb_node, event_id_t event_id);
 
         /**
+         * @brief Sends a Producer/Consumer Event Report with payload.
+         *
+         * @details Builds a global PCER-with-payload message (MTI 0x0F14): the event ID
+         * followed by @p payload_count bytes of @p payload, and queues it via the
+         * send_openlcb_msg callback. On CAN it goes out as FIRST/MIDDLE/LAST frames
+         * (CAN-MTIs 0x0F16/0x0F15/0x0F14). The whole message, event ID included, can be
+         * at most LEN_EVENT_PAYLOAD bytes -- the most a receiver built on this library
+         * reassembles.
+         *
+         * @param openlcb_node   Pointer to the sending @ref openlcb_node_t.
+         * @param event_id       64-bit @ref event_id_t to report.
+         * @param payload        Bytes that follow the event ID.
+         * @param payload_count  How many, 1 to LEN_EVENT_PAYLOAD - 8.
+         *
+         * @return true if queued successfully; false if the transmit buffer is full, the
+         *         callback is NULL, or @p payload_count is 0 or too large.
+         *
+         * @warning NULL pointer causes a crash on the node — no NULL check is performed.
+         */
+    extern bool OpenLcbApplication_send_event_pc_report_with_payload(openlcb_node_t *openlcb_node, event_id_t event_id, const uint8_t *payload, uint16_t payload_count);
+
+        /**
          * @brief Sends an event message with an arbitrary MTI.
          *
          * @details Builds a global OpenLCB message carrying the given event ID and MTI,
