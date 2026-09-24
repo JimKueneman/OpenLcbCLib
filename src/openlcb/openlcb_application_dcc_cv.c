@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2026, Bob
+ * Copyright (c) 2026, Bob Gamble
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
