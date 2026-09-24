@@ -2325,3 +2325,77 @@ TEST(OpenLcbUtilities, broadcast_time_roundtrip_all_clocks)
     }
 
 }
+
+// ============================================================================
+// generate_event_range_id
+// ============================================================================
+
+    // Length of the run of identical low-order bits: how a receiver sizes a range.
+static int _range_run_length(event_id_t event_id)
+{
+
+    uint64_t low_bit = event_id & 1ULL;
+    int run = 0;
+
+    while (run < 64 && ((event_id >> run) & 1ULL) == low_bit) {
+
+        run++;
+
+    }
+
+    return run;
+
+}
+
+TEST(OpenLcbUtilities, generate_event_range_id_fills_ones_when_bit_n_is_zero)
+{
+
+    EXPECT_EQ(OpenLcbUtilities_generate_event_range_id(0x0501010101940000ULL, EVENT_RANGE_COUNT_65536), 0x050101010194FFFFULL);
+    EXPECT_EQ(OpenLcbUtilities_generate_event_range_id(0x00000000000003F0ULL, EVENT_RANGE_COUNT_8), 0x00000000000003F7ULL);
+
+}
+
+TEST(OpenLcbUtilities, generate_event_range_id_fills_zeros_when_bit_n_is_one)
+{
+
+    // Upper half of a 2^16 block: bit 15 of the base is 1, so the low 15 bits must be 0s.
+    EXPECT_EQ(OpenLcbUtilities_generate_event_range_id(0x0501010101948000ULL, EVENT_RANGE_COUNT_32768), 0x0501010101948000ULL);
+    // 1000 = 0x3E8: bit 3 is 1.
+    EXPECT_EQ(OpenLcbUtilities_generate_event_range_id(1000ULL, EVENT_RANGE_COUNT_8), 1000ULL);
+
+}
+
+TEST(OpenLcbUtilities, generate_event_range_id_count_1_is_base)
+{
+
+    EXPECT_EQ(OpenLcbUtilities_generate_event_range_id(0x0501010101940001ULL, EVENT_RANGE_COUNT_1), 0x0501010101940001ULL);
+    EXPECT_EQ(OpenLcbUtilities_generate_event_range_id(0x0501010101940000ULL, EVENT_RANGE_COUNT_1), 0x0501010101940000ULL);
+
+}
+
+TEST(OpenLcbUtilities, generate_event_range_id_run_length_matches_count)
+{
+
+    event_id_t bases[] = {
+        0x0501010101940000ULL,
+        0x0501010101948000ULL,
+        0x05010101019400F0ULL,
+        0x0501010101940100ULL,
+        0x0501010101FFFF00ULL
+    };
+
+    for (int b = 0; b < 5; b++) {
+
+        for (int n = 1; n <= 8; n++) {
+
+            event_id_t base = bases[b] & ~((1ULL << n) - 1ULL);
+            event_id_t range_id = OpenLcbUtilities_generate_event_range_id(base, (event_range_count_enum) n);
+
+            EXPECT_EQ(_range_run_length(range_id), n);
+            EXPECT_EQ(range_id & ~((1ULL << n) - 1ULL), base);
+
+        }
+
+    }
+
+}
