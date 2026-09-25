@@ -46,6 +46,8 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_config.h"
 
+#ifdef OPENLCB_COMPILE_TCP
+
 // =========================================================================
 // Module state
 // =========================================================================
@@ -167,3 +169,5 @@ bool (*TcpConfig_get_send_openlcb_msg(void))(openlcb_msg_t *msg) {
 
     return &_send_openlcb_msg_wrapper;
 }
+
+#endif /* OPENLCB_COMPILE_TCP */

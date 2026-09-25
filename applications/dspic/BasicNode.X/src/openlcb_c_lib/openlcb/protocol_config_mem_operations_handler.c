@@ -120,6 +120,10 @@ static const user_address_space_info_t *_decode_to_space_definition(openlcb_stat
 
             return &statemachine_info->openlcb_node->parameters->address_space_train_function_config_memory;
 
+        case CONFIG_MEM_SPACE_DCC_CV:
+
+            return &statemachine_info->openlcb_node->parameters->address_space_dcc_cv;
+
         case CONFIG_MEM_SPACE_FIRMWARE:
 
             return &statemachine_info->openlcb_node->parameters->address_space_firmware;

@@ -33,6 +33,8 @@
 
 #include "tcp_main_statemachine.h"
 
+#ifdef OPENLCB_COMPILE_TCP
+
 // =========================================================================
 // Module state
 // =========================================================================
@@ -115,3 +117,5 @@ tcp_statemachine_info_t *TcpMainStatemachine_get_statemachine_info(void) {
 
     return &_statemachine_info;
 }
+
+#endif /* OPENLCB_COMPILE_TCP */

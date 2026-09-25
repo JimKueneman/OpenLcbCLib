@@ -160,6 +160,12 @@ static void _handle_read_address_space_at_offset_6(openlcb_statemachine_info_t *
 
             break;
 
+        case CONFIG_MEM_SPACE_DCC_CV:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_dcc_cv);
+
+            break;
+
         default:
 
             ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
@@ -499,6 +505,12 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
         case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_train_function_config_memory);
+
+            break;
+
+        case CONFIG_MEM_SPACE_DCC_CV:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_dcc_cv);
 
             break;
 

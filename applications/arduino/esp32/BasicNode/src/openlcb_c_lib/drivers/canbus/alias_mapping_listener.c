@@ -43,6 +43,8 @@
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
 /** @brief Static storage for the listener alias table. */
 static listener_alias_entry_t _table[LISTENER_ALIAS_TABLE_DEPTH];
 
@@ -383,3 +385,5 @@ node_id_t AliasMappingListener_check_one_verification(uint8_t current_tick) {
     return 0;  // nothing to do this cycle
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

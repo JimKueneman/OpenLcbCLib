@@ -54,6 +54,8 @@
 #include "../../openlcb/openlcb_defines.h"
 #endif
 
+#ifdef OPENLCB_COMPILE_CAN
+
 
 /** @brief Saved pointer to the dependency-injected transmit interface. */
 static interface_can_tx_statemachine_t *_interface;
@@ -292,3 +294,5 @@ bool CanTxStatemachine_send_can_message(can_msg_t *can_msg) {
     return _interface->handle_can_frame(can_msg);
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

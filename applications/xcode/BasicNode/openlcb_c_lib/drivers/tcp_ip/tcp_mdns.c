@@ -33,6 +33,8 @@
 
 #include "tcp_mdns.h"
 
+#ifdef OPENLCB_COMPILE_TCP
+
 // =========================================================================
 // Module state
 // =========================================================================
@@ -79,3 +81,5 @@ void TcpMdns_stop_advertising(const char *name) {
 
     _config->mdns_unregister(name);
 }
+
+#endif /* OPENLCB_COMPILE_TCP */

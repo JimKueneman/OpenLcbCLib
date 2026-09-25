@@ -37,6 +37,8 @@
 
 #include <string.h>
 
+#ifdef OPENLCB_COMPILE_TCP
+
 // =========================================================================
 // Module state
 // =========================================================================
@@ -351,3 +353,5 @@ void TcpRxStatemachine_reset(void) {
         _free_multipart_slot(&_multipart_table[i]);
     }
 }
+
+#endif /* OPENLCB_COMPILE_TCP */

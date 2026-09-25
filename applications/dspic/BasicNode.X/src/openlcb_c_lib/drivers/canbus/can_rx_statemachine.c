@@ -48,6 +48,8 @@
 #include "can_utilities.h"
 #include "../../openlcb/openlcb_defines.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
 /** @brief CAN payload byte offset when destination alias occupies bytes 0-1. */
 #define OFFSET_DEST_ID_IN_PAYLOAD     2
 
@@ -554,3 +556,5 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t *can_msg) {
     }
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

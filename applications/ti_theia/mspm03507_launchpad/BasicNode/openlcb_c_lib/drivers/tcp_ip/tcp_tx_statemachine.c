@@ -37,6 +37,8 @@
 
 #include <string.h>
 
+#ifdef OPENLCB_COMPILE_TCP
+
 // =========================================================================
 // Module state
 // =========================================================================
@@ -140,3 +142,5 @@ bool TcpTxStatemachine_send_link_control(uint16_t flags, const uint8_t *body, ui
 
     return result;
 }
+
+#endif /* OPENLCB_COMPILE_TCP */

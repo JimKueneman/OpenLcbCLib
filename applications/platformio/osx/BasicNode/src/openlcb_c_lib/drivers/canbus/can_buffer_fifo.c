@@ -44,6 +44,8 @@
 #include "can_types.h"
 #include "can_buffer_store.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
 /** @brief Internal circular buffer for queuing @ref can_msg_t pointers. */
 typedef struct {
     can_msg_t *list[LEN_CAN_FIFO_BUFFER];  /**< @brief Message pointer slots. */
@@ -170,3 +172,5 @@ uint16_t CanBufferFifo_get_allocated_count(void) {
     }
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

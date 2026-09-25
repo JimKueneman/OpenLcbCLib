@@ -47,6 +47,8 @@
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
 
 /** @brief Saved pointer to the dependency-injected login state machine interface. */
 static interface_can_login_state_machine_t *_interface;
@@ -136,3 +138,5 @@ void CanLoginStatemachine_run(can_statemachine_info_t *can_statemachine_info) {
     }
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

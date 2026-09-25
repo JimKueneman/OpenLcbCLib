@@ -46,6 +46,8 @@
 
 #include "../../openlcb/openlcb_utilities.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
     /** @brief Clears identifier, payload_count, and all payload bytes in a @ref can_msg_t. */
 void CanUtilities_clear_can_message(can_msg_t *can_msg) {
 
@@ -477,3 +479,5 @@ bool CanUtilities_is_openlcb_message(can_msg_t *can_msg) {
     return (can_msg->identifier & CAN_OPENLCB_MSG) == CAN_OPENLCB_MSG;
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

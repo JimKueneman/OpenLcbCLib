@@ -705,6 +705,7 @@ extern "C" {
         user_address_space_info_t address_space_acdi_user;               /**< Space 0xFB */
         user_address_space_info_t address_space_train_function_definition_info; /**< Space 0xFA */
         user_address_space_info_t address_space_train_function_config_memory;   /**< Space 0xF9 */
+        user_address_space_info_t address_space_dcc_cv;                   /**< Space 0xF8 */
         user_address_space_info_t address_space_firmware;                 /**< Space 0xEF */
         const uint8_t *cdi;   /**< Pointer to CDI XML byte array; NULL when unused */
         const uint8_t *fdi;   /**< Pointer to FDI XML byte array; NULL when unused */

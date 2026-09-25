@@ -89,6 +89,10 @@
 #error "OPENLCB_COMPILE_DCC_DETECTOR requires OPENLCB_COMPILE_EVENTS"
 #endif
 
+#if defined(OPENLCB_COMPILE_DCC_CV) && !defined(OPENLCB_COMPILE_MEMORY_CONFIGURATION)
+#error "OPENLCB_COMPILE_DCC_CV requires OPENLCB_COMPILE_MEMORY_CONFIGURATION"
+#endif
+
 // Transport selection validation has moved to openlcb_types.h so that every
 // header (including can_config.h / tcp_types.h) sees the resolved flag before
 // checking its own #ifdef guard.
@@ -179,6 +183,12 @@
 #pragma message "OpenLcbCLib: DCC_DETECTOR = OFF"
 #endif
 
+#ifdef OPENLCB_COMPILE_DCC_CV
+#pragma message "OpenLcbCLib: DCC_CV = ON"
+#else
+#pragma message "OpenLcbCLib: DCC_CV = OFF"
+#endif
+
 #endif /* OPENLCB_COMPILE_VERBOSE */
 
 #ifdef OPENLCB_COMPILE_STREAM
@@ -193,6 +203,10 @@
 #ifdef OPENLCB_COMPILE_DCC_DETECTOR
 #include "openlcb_application_dcc_detector.h"
 #endif /* OPENLCB_COMPILE_DCC_DETECTOR */
+
+#ifdef OPENLCB_COMPILE_DCC_CV
+#include "openlcb_application_dcc_cv.h"
+#endif /* OPENLCB_COMPILE_DCC_CV */
 
     /**
      * @brief User configuration for OpenLcbCLib.
@@ -281,28 +295,61 @@ typedef struct {
     void (*update_complete)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
         /**
-         * @brief Return delayed reply time flag for config memory reads. Optional.
+         * @brief Return the expected reply time for config memory reads. Optional.
          *
-         * @details Return 0 for no delay, or (0x80 | N) for 2^N second reply pending.
+         * @details Return the number of seconds until the Read Reply will be sent, or 0 for
+         * no estimate. The library rounds the value up to the next power of two and encodes
+         * the exponent in the Reply Pending byte of the Datagram Received OK message; do not
+         * return the encoded byte or the exponent yourself. Requesters such as JMRI use this
+         * to decide how long to wait before re-sending, so a slow read should return at
+         * least 4.
          *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_read_request_info @ref config_mem_read_request_info_t context
          *
-         * @return Delay flag byte
+         * @return Expected reply time in seconds, or 0 for no estimate
          */
     uint16_t (*config_mem_read_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
 
         /**
-         * @brief Return delayed reply time flag for config memory writes. Optional.
+         * @brief Return the expected reply time for config memory writes. Optional.
+         *
+         * @details Return the number of seconds until the Write Reply will be sent, or 0 for
+         * no estimate. The library rounds the value up to the next power of two and encodes
+         * the exponent in the Reply Pending byte of the Datagram Received OK message; do not
+         * return the encoded byte or the exponent yourself.
          *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_write_request_info @ref config_mem_write_request_info_t context
          *
-         * @return Delay flag byte
+         * @return Expected reply time in seconds, or 0 for no estimate
          */
     uint16_t (*config_mem_write_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
 #endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
+
+#ifdef OPENLCB_COMPILE_DCC_CV
+
+    // =========================================================================
+    // DCC CV space 0xF8 (requires MEMORY_CONFIGURATION)
+    // =========================================================================
+
+        /**
+         * @brief Read one DCC CV.  Optional (NULL = reads of space 0xF8 are rejected).
+         *
+         * @details May answer immediately or defer; see @ref dcc_cv_read_func_t and
+         * openlcb_application_dcc_cv.h.
+         */
+    dcc_cv_read_func_t dcc_cv_read;
+
+        /**
+         * @brief Write one DCC CV.  Optional (NULL = writes of space 0xF8 are rejected).
+         *
+         * @details See @ref dcc_cv_write_func_t.
+         */
+    dcc_cv_write_func_t dcc_cv_write;
+
+#endif /* OPENLCB_COMPILE_DCC_CV */
 
 #ifdef OPENLCB_COMPILE_FIRMWARE
 

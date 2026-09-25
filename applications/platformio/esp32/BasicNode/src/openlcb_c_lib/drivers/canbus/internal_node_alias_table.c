@@ -45,6 +45,8 @@
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
 /** @brief Static storage for the alias mapping buffer and control flags. */
 static alias_mapping_info_t _alias_mapping_info;
 
@@ -290,3 +292,5 @@ void InternalNodeAliasTable_flush(void) {
     _reset_mappings();
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

@@ -145,11 +145,16 @@ static uint16_t _is_valid_write_parameters(config_mem_write_request_info_t *conf
     /** @brief Clamp byte count so the write does not exceed highest_address. */
 static void _check_for_write_overrun(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
-    // Don't read past the end of the space
+    // Don't write past the end of the space. highest_address is inclusive, so a
+    // transfer may cover bytes_after_first more bytes beyond its first one. The
+    // caller has already rejected address > highest_address and bytes == 0, and
+    // the subtraction form cannot overflow when highest_address is 0xFFFFFFFF.
 
-    if ((config_mem_write_request_info->address + config_mem_write_request_info->bytes) >= config_mem_write_request_info->space_info->highest_address) {
+    uint32_t bytes_after_first = config_mem_write_request_info->space_info->highest_address - config_mem_write_request_info->address;
 
-        config_mem_write_request_info->bytes = (uint8_t) (config_mem_write_request_info->space_info->highest_address - config_mem_write_request_info->address) + 1; // length +1 due to 0...end
+    if ((uint32_t) (config_mem_write_request_info->bytes - 1) > bytes_after_first) {
+
+        config_mem_write_request_info->bytes = (uint16_t) (bytes_after_first + 1); // length +1 due to 0...end
 
     }
 
@@ -357,6 +362,18 @@ void ProtocolConfigMemWriteHandler_write_space_train_function_config_memory(open
 
     config_mem_write_request_info.write_space_func = _interface->write_request_train_function_config_memory;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_config_memory;
+
+    _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
+
+}
+
+    /** @brief Dispatch DCC CV (0xF8) write to two-phase handler. */
+void ProtocolConfigMemWriteHandler_write_space_dcc_cv(openlcb_statemachine_info_t *statemachine_info) {
+
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    config_mem_write_request_info.write_space_func = _interface->write_request_dcc_cv;
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_dcc_cv;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
 

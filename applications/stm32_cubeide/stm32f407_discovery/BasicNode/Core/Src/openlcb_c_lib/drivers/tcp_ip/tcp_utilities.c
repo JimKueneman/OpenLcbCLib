@@ -33,6 +33,8 @@
 
 #include "tcp_utilities.h"
 
+#ifdef OPENLCB_COMPILE_TCP
+
 // =========================================================================
 // Preamble Encoding
 // =========================================================================
@@ -169,3 +171,5 @@ uint16_t TcpUtilities_multipart_type(uint16_t flags) {
 
     return flags & TCP_FLAGS_MULTIPART_MASK;
 }
+
+#endif /* OPENLCB_COMPILE_TCP */

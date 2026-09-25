@@ -97,8 +97,10 @@ typedef struct {
     void (*read_request_train_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
         /** @brief Custom Train Fn Config (0xF9) read handler.  Optional. */
     void (*read_request_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
+        /** @brief DCC CV (0xF8) read handler.  Optional; see openlcb_application_dcc_cv.h. */
+    void (*read_request_dcc_cv)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
 
-        /** @brief Override reply delay (return N means 2^N seconds).  Optional (default 0). */
+        /** @brief Expected reply time in seconds, rounded up to 2^N by the datagram handler.  Optional (default 0, no estimate). */
     uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
 
         /** @brief Optional — Returns train state for the given node (DI for train module). */
@@ -168,6 +170,13 @@ extern "C" {
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
          */
     extern void ProtocolConfigMemReadHandler_read_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
+
+        /**
+         * @brief Read from DCC CV space (0xF8).
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolConfigMemReadHandler_read_space_dcc_cv(openlcb_statemachine_info_t *statemachine_info);
 
     // ---- Outgoing read requests (client side — reading from another node) ----
 

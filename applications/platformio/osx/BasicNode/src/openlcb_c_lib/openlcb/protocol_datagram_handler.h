@@ -80,6 +80,8 @@ typedef struct {
     void (*memory_read_space_train_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
         /** @brief Read Train Fn Config (0xF9) via datagram.  Optional. */
     void (*memory_read_space_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+        /** @brief Read DCC CV (0xF8) via datagram.  Optional. */
+    void (*memory_read_space_dcc_cv)(openlcb_statemachine_info_t *statemachine_info);
 
     // =========================================================================
     // Datagram-transport READ reply handlers  (client side — OK / fail)
@@ -186,6 +188,8 @@ typedef struct {
     void (*memory_write_space_train_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
         /** @brief Write Train Fn Config (0xF9) via datagram.  Optional. */
     void (*memory_write_space_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+        /** @brief Write DCC CV (0xF8) via datagram.  Optional. */
+    void (*memory_write_space_dcc_cv)(openlcb_statemachine_info_t *statemachine_info);
         /** @brief Write Firmware Upgrade space via datagram.  Optional. */
     void (*memory_write_space_firmware_upgrade)(openlcb_statemachine_info_t *statemachine_info);
 

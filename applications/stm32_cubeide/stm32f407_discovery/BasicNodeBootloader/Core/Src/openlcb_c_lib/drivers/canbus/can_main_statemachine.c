@@ -56,6 +56,8 @@
 // Used when handling duplicate alias errors
 #include "../../openlcb/openlcb_node.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
 
 
 /** @brief Saved pointer to the dependency-injected main state machine interface. */
@@ -528,3 +530,5 @@ void CanMainStatemachine_run(void) {
     }
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

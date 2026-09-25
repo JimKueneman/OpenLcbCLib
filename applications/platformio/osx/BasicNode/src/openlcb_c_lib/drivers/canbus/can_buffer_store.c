@@ -47,6 +47,8 @@
 #include "can_utilities.h"
 #include "../../openlcb/openlcb_types.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
 
 /** @brief Pre-allocated pool of @ref can_msg_t buffers, size USER_DEFINED_CAN_MSG_BUFFER_DEPTH. */
 static can_msg_array_t _can_buffer_store;
@@ -169,3 +171,5 @@ void CanBufferStore_clear_max_allocated(void) {
     _can_buffer_store_message_max_allocated = 0;
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

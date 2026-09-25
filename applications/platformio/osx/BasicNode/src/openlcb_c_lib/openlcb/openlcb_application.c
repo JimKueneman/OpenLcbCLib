@@ -377,6 +377,59 @@ bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *openlcb_node, event
 }
 
     /**
+     * @brief Sends a Producer/Consumer Event Report with payload to the network.
+     *
+     * @details Algorithm:
+     * -# Refuse an empty payload, or one that with the 8-byte event ID would not fit in
+     *    LEN_EVENT_PAYLOAD (the most a receiver built on this library reassembles).
+     * -# Declare msg and a SNIP-sized payload on the stack; set payload_type to SNIP.
+     * -# Load the message with MTI_PC_EVENT_REPORT_WITH_PAYLOAD, copy in the event ID, then
+     *    the payload bytes after it.
+     * -# If the send callback is non-NULL, call it and return its result; otherwise return false.
+     *
+     * @verbatim
+     * @param openlcb_node   Pointer to the sending openlcb_node_t.
+     * @param event_id       64-bit event_id_t to report.
+     * @param payload        Bytes that follow the event ID.
+     * @param payload_count  How many, 1 to LEN_EVENT_PAYLOAD - 8.
+     * @endverbatim
+     *
+     * @return true if queued successfully; false if the transmit buffer is full, the
+     *         callback is NULL, or payload_count is out of range.
+     *
+     * @warning NULL pointer on the node causes a crash — no NULL check is performed.
+     */
+bool OpenLcbApplication_send_event_pc_report_with_payload(openlcb_node_t *openlcb_node, event_id_t event_id, const uint8_t *payload, uint16_t payload_count) {
+
+    if (payload_count == 0 || payload_count > LEN_EVENT_PAYLOAD - sizeof(event_id_t)) {
+
+        return false;
+
+    }
+
+    openlcb_msg_t msg = {0};
+    payload_snip_t msg_payload;
+
+    msg.payload = (openlcb_payload_t *) &msg_payload;
+    msg.payload_type = SNIP;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, openlcb_node->alias, openlcb_node->id, 0, NULL_NODE_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD);
+
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, event_id);
+
+    OpenLcbUtilities_copy_byte_array_to_openlcb_payload(&msg, payload, sizeof(event_id_t), payload_count);
+
+    if (_interface->send_openlcb_msg) {
+
+        return _interface->send_openlcb_msg(&msg);
+
+    }
+
+    return false;
+
+}
+
+    /**
      * @brief Sends a Learn Event (teach) message to the network.
      *
      * @details Algorithm:

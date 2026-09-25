@@ -44,6 +44,8 @@
 #include "can_types.h"
 #include "can_utilities.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
 
 /** @brief Saved pointer to the dependency-injected login message handler interface. */
 static interface_can_login_message_handler_t *_interface;
@@ -258,3 +260,5 @@ void CanLoginMessageHandler_state_load_amd(can_statemachine_info_t *can_statemac
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

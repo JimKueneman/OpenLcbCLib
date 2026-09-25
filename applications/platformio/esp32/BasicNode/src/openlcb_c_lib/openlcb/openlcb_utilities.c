@@ -714,10 +714,22 @@ void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(openlcb_sta
     /** @brief Generates a masked Event ID covering a range of 2^count consecutive events.
      *
      * @details count is the exponent N from event_range_count_enum (0..32).
-     * For N == 0 the mask is 0 and the result equals base_event_id (single event). */
+     * For N == 0 the mask is 0 and the result equals base_event_id (single event).
+     *
+     * A receiver finds the range's size from the run of identical low-order bits
+     * (Event Transport TN), so the low N bits are filled with the opposite of
+     * bit N of the base: 1s if bit N is 0, 0s if it is 1. Filling with 1s when
+     * bit N is 1 would extend the run and announce a larger range. */
  event_id_t OpenLcbUtilities_generate_event_range_id(event_id_t base_event_id, event_range_count_enum count) {
 
      event_id_t mask = (count == 0) ? 0ULL : ((1ULL << count) - 1ULL);
+
+     if (base_event_id & (1ULL << count)) {
+
+         return base_event_id & ~mask;
+
+     }
+
      event_id_t rangeEventID = (base_event_id & ~mask) | mask;
 
      return rangeEventID;

@@ -54,6 +54,8 @@
 #include "../../openlcb/openlcb_buffer_list.h"
 #include "../../openlcb/openlcb_utilities.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
     /** @brief Multi-frame assembly timeout in 100ms ticks (3 seconds). */
 #define CAN_RX_INPROCESS_TIMEOUT_TICKS 30
 
@@ -699,3 +701,5 @@ void CanRxMessageHandler_error_info_report_frame(can_msg_t *can_msg) {
     _check_for_duplicate_alias(can_msg);
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */

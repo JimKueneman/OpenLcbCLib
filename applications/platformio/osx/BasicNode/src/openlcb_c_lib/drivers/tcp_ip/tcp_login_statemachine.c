@@ -36,6 +36,8 @@
 
 #include <string.h>
 
+#ifdef OPENLCB_COMPILE_TCP
+
 // =========================================================================
 // Module state
 // =========================================================================
@@ -117,3 +119,5 @@ tcp_login_state_enum TcpLoginStatemachine_get_state(void) {
 
     return _login_state;
 }
+
+#endif /* OPENLCB_COMPILE_TCP */

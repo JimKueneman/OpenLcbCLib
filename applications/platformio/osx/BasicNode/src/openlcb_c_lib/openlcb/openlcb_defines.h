@@ -1070,6 +1070,9 @@ extern "C" {
     /** @brief Train Function Configuration Memory space */
 #define CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY 0xF9
 
+    /** @brief DCC CV space - one DCC configuration variable per byte, address = CV number - 1 */
+#define CONFIG_MEM_SPACE_DCC_CV 0xF8
+
     /** @brief Firmware upgrade space */
 #define CONFIG_MEM_SPACE_FIRMWARE 0xEF
 
