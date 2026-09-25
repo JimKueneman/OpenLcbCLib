@@ -281,24 +281,34 @@ typedef struct {
     void (*update_complete)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
         /**
-         * @brief Return delayed reply time flag for config memory reads. Optional.
+         * @brief Return the expected reply time for config memory reads. Optional.
          *
-         * @details Return 0 for no delay, or (0x80 | N) for 2^N second reply pending.
+         * @details Return the number of seconds until the Read Reply will be sent, or 0 for
+         * no estimate. The library rounds the value up to the next power of two and encodes
+         * the exponent in the Reply Pending byte of the Datagram Received OK message; do not
+         * return the encoded byte or the exponent yourself. Requesters such as JMRI use this
+         * to decide how long to wait before re-sending, so a slow read should return at
+         * least 4.
          *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_read_request_info @ref config_mem_read_request_info_t context
          *
-         * @return Delay flag byte
+         * @return Expected reply time in seconds, or 0 for no estimate
          */
     uint16_t (*config_mem_read_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
 
         /**
-         * @brief Return delayed reply time flag for config memory writes. Optional.
+         * @brief Return the expected reply time for config memory writes. Optional.
+         *
+         * @details Return the number of seconds until the Write Reply will be sent, or 0 for
+         * no estimate. The library rounds the value up to the next power of two and encodes
+         * the exponent in the Reply Pending byte of the Datagram Received OK message; do not
+         * return the encoded byte or the exponent yourself.
          *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_write_request_info @ref config_mem_write_request_info_t context
          *
-         * @return Delay flag byte
+         * @return Expected reply time in seconds, or 0 for no estimate
          */
     uint16_t (*config_mem_write_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 

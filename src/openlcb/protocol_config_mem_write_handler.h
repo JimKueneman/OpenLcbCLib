@@ -92,7 +92,7 @@ typedef struct {
 
     // ---- Optional extras ----
 
-        /** @brief Optional — Override reply delay (return N → 2^N seconds).  Default 0. */
+        /** @brief Optional - Expected reply time in seconds, rounded up to 2^N by the datagram handler.  Default 0 (no estimate). */
     uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
         /** @brief Optional — Notifier fired when a train function changes via 0xF9 write. */
