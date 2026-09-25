@@ -368,6 +368,62 @@ void OpenLcbApplicationDccCv_handle_write_request(openlcb_statemachine_info_t *s
 }
 
     /**
+     * @brief Reply time for a read: the 0xF8 default, or the application's answer.
+     *
+     * @verbatim
+     * @param statemachine_info             Context.
+     * @param config_mem_read_request_info  Parsed request.
+     * @endverbatim
+     *
+     * @return Seconds, or 0 for no estimate.
+     */
+uint16_t OpenLcbApplicationDccCv_read_delayed_reply_time(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+
+    if (config_mem_read_request_info->space_info->address_space == CONFIG_MEM_SPACE_DCC_CV) {
+
+        return USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS;
+
+    }
+
+    if (_interface->config_mem_read_delayed_reply_time) {
+
+        return _interface->config_mem_read_delayed_reply_time(statemachine_info, config_mem_read_request_info);
+
+    }
+
+    return 0;
+
+}
+
+    /**
+     * @brief Reply time for a write: the 0xF8 default, or the application's answer.
+     *
+     * @verbatim
+     * @param statemachine_info              Context.
+     * @param config_mem_write_request_info  Parsed request.
+     * @endverbatim
+     *
+     * @return Seconds, or 0 for no estimate.
+     */
+uint16_t OpenLcbApplicationDccCv_write_delayed_reply_time(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+
+    if (config_mem_write_request_info->space_info->address_space == CONFIG_MEM_SPACE_DCC_CV) {
+
+        return USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS;
+
+    }
+
+    if (_interface->config_mem_write_delayed_reply_time) {
+
+        return _interface->config_mem_write_delayed_reply_time(statemachine_info, config_mem_write_request_info);
+
+    }
+
+    return 0;
+
+}
+
+    /**
      * @brief Records the result of a deferred request; run() sends the reply.
      *
      * @verbatim

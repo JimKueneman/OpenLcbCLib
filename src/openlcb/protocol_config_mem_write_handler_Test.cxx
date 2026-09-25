@@ -264,6 +264,17 @@ const node_parameters_t _node_parameters_main_node = {
         .description = "Train Configuration Memory storage"
     },
 
+    // Space 0xF8
+    .address_space_dcc_cv = {
+        .present = true,
+        .read_only = false,
+        .low_address_valid = false, // assume the low address starts at 0
+        .address_space = CONFIG_MEM_SPACE_DCC_CV,
+        .highest_address = 1023, // CV 1..1024, address = CV number - 1
+        .low_address = 0, // ignored if low_address_valid is false
+        .description = "DCC CV"
+    },
+
     // Space 0xEF
     .address_space_firmware = {
         .present = true,
@@ -535,6 +546,15 @@ void _write_request_train_config_memory(openlcb_statemachine_info_t *statemachin
     _update_called_function_ptr((void *)&_write_request_train_config_memory);
 }
 
+void _write_request_dcc_cv(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
+{
+
+    statemachine_info->outgoing_msg_info.valid = false;
+    local_config_mem_write_request_info = *config_mem_write_request_info;
+
+    _update_called_function_ptr((void *)&_write_request_dcc_cv);
+}
+
 uint16_t _config_memory_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
@@ -643,6 +663,7 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_acdi_user = &_write_request_acdi_user,
     .write_request_train_function_config_definition_info = &_write_request_train_config_decscription_info,
     .write_request_train_function_config_memory = &_write_request_train_config_memory,
+    .write_request_dcc_cv = &_write_request_dcc_cv,
 
     .delayed_reply_time = nullptr,
     .get_train_state = &OpenLcbApplicationTrain_get_state
@@ -4474,6 +4495,82 @@ TEST(ProtocolConfigMemWriteHandler, write_overrun_clamp_boundaries)
     EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, 0xFFFFFFFF, 64), 1);
 
     node1->parameters = &_node_parameters_main_node;
+
+    OpenLcbBufferStore_free_buffer(incoming_msg);
+    OpenLcbBufferStore_free_buffer(outgoing_msg);
+
+}
+
+// ============================================================================
+// TEST: DCC CV space (0xF8) write dispatch
+// ============================================================================
+// @details Phase 1 must ACK, phase 2 must reach the write_request_dcc_cv handler
+// with the parsed one-byte request and the 0xF8 space definition. With no
+// handler wired the request is rejected as an unimplemented subcommand.
+
+TEST(ProtocolConfigMemWriteHandler, memory_write_space_dcc_cv)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 2, 2); // CV 3
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_DCC_CV;
+    *incoming_msg->payload[7] = 0x7F;
+    incoming_msg->payload_count = 8;
+
+    // Phase 1: ACK
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_space_dcc_cv(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+    EXPECT_TRUE(statemachine_info.incoming_msg_info.enumerate);
+
+    // Phase 2: dispatched to the space handler
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_space_dcc_cv(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_write_request_dcc_cv);
+    EXPECT_EQ(local_config_mem_write_request_info.write_space_func, &_write_request_dcc_cv);
+    EXPECT_EQ(local_config_mem_write_request_info.bytes, 1);
+    EXPECT_EQ(local_config_mem_write_request_info.encoding, ADDRESS_SPACE_IN_BYTE_6);
+    EXPECT_EQ(local_config_mem_write_request_info.address, 2u);
+    EXPECT_EQ(local_config_mem_write_request_info.data_start, 7);
+    EXPECT_EQ((*local_config_mem_write_request_info.write_buffer)[0], 0x7F);
+    EXPECT_EQ(local_config_mem_write_request_info.space_info, &_node_parameters_main_node.address_space_dcc_cv);
+    EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
+
+    // No handler wired: rejected in phase 1 as an unimplemented subcommand
+    _global_initialize_with_nulls();
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_space_dcc_cv(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
+    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
     OpenLcbBufferStore_free_buffer(incoming_msg);
     OpenLcbBufferStore_free_buffer(outgoing_msg);

@@ -9,6 +9,27 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
 ## [Unreleased]
 
 ### Added
+- **DCC CV memory space (0xF8) with deferred replies.** New
+  `openlcb_application_dcc_cv.c/.h` module behind `OPENLCB_COMPILE_DCC_CV`
+  (requires MEMORY_CONFIGURATION). Serves one CV per byte (address = CV number - 1)
+  so JMRI's OpenLCB programmer and OpenMRN's TractionCvSpace can read and write
+  decoder CVs through a node built on this library. Two optional hooks in
+  `openlcb_config_t`, `dcc_cv_read` and `dcc_cv_write`, may answer at once or return
+  `OPENLCB_DCC_CV_RESULT_PENDING` and complete later with
+  `OpenLcbApplicationDccCv_complete()`; the reply datagram is then sent from
+  `OpenLcbConfig_run()` without stalling the main state machine. Includes a pending
+  table (`USER_DEFINED_DCC_CV_PENDING_COUNT`), a completion timeout
+  (`USER_DEFINED_DCC_CV_TIMEOUT_TICKS`), absorption of a requester's re-send of an
+  outstanding request, and a default Reply Pending estimate for the space
+  (`USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS`, 4 s) applied when the application
+  supplies no delayed-reply-time callback. Contributed by Bob Gamble (#11).
+- **Feature-flag guard audit.** `test/guard_audit.sh` compiles the library under
+  every configuration in `test/user_config/` plus a set synthesized from `typical`
+  with one feature group removed, and fails on any compile error or on any
+  undefined library symbol with no definition in the archive, which is what an
+  unguarded call into a compiled-out module looks like.
+- **TCP test configuration.** `test/user_config/tcp` (typical with TCP instead of
+  CAN); the tcp_ip library and its tests build against it.
 - **Stream Transport Protocol.** Full implementation of OpenLCB Stream Transport
   (StreamTransportS Feb 2026 Preliminary): `protocol_stream_handler.c/.h` (Layer 1
   with source and destination roles, flow control, content UIDs),
@@ -33,6 +54,16 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **Config memory overrun clamp fired one byte early.** `_check_for_read_overrun()`
+  and `_check_for_write_overrun()` treated a transfer ending exactly one byte short
+  of `highest_address` as an overrun and grew it by one byte, so a one-byte write at
+  `highest_address - 1` became a two-byte write. The clamp now compares against the
+  bytes remaining after the first address, a form that also cannot overflow for the
+  full-range firmware space. Boundary tests added for both handlers. Reported in #11.
+- **`delayed_reply_time` documentation.** The `config_mem_read/write_delayed_reply_time`
+  callback comments in `openlcb_config.h` and both handler headers said to return an
+  exponent or an encoded flag byte. The callbacks return seconds; the datagram handler
+  encodes the exponent itself.
 - **Compliance node FDI data.** Replaced single-byte placeholder with valid FDI XML
   byte array. The `<function>` element now uses `<number>` as a child element instead
   of an attribute, matching the FDI XSD schema.
@@ -56,6 +87,13 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   both the Python tool and Node Wizard.
 
 ### Changed
+- **Transport drivers are guarded by their flag.** All `src/drivers/canbus` sources
+  are wrapped in `OPENLCB_COMPILE_CAN` and all `src/drivers/tcp_ip` sources in
+  `OPENLCB_COMPILE_TCP`, so the unused transport no longer compiles into the image
+  and relies on linker garbage collection. No user configuration in the tree is
+  affected; `openlcb_types.h` still defaults to CAN when neither flag is set.
+- **Test initializers reordered** in four test files to match struct declaration
+  order, which Apple clang 21 now enforces under `-Werror` (GCC always did).
 - **CDI/FDI arrays moved to pointers.** `node_parameters_t` now holds `const uint8_t *`
   pointers to CDI and FDI byte arrays instead of embedding fixed-size arrays in the
   struct. Allows auto-generation of array-only files when new XMLs are created.

@@ -26,6 +26,7 @@
 #define OPENLCB_COMPILE_TRAIN_SEARCH
 #define OPENLCB_COMPILE_STREAM
 #define OPENLCB_COMPILE_DCC_DETECTOR
+#define OPENLCB_COMPILE_DCC_CV
 
 // =============================================================================
 // Core Message Buffer Pool

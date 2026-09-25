@@ -229,6 +229,12 @@ void _memory_read_space_train_function_config_memory(openlcb_statemachine_info_t
     _update_called_function_ptr((void *)&_memory_read_space_train_function_config_memory);
 }
 
+void _memory_read_space_dcc_cv(openlcb_statemachine_info_t *statemachine_info)
+{
+
+    _update_called_function_ptr((void *)&_memory_read_space_dcc_cv);
+}
+
 void _memory_read_space_config_description_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
 {
     _update_called_function_ptr((void *)&_memory_read_space_config_description_info_reply_ok);
@@ -444,6 +450,11 @@ void _memory_write_space_train_function_definition_info(openlcb_statemachine_inf
 void _memory_write_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
 {
     _update_called_function_ptr((void *)&_memory_write_space_train_function_config_memory);
+}
+
+void _memory_write_space_dcc_cv(openlcb_statemachine_info_t *statemachine_info)
+{
+    _update_called_function_ptr((void *)&_memory_write_space_dcc_cv);
 }
 
 void _memory_write_space_firmware_upgrade(openlcb_statemachine_info_t *statemachine_info)
@@ -773,6 +784,7 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_read_space_acdi_user = &_memory_read_space_acdi_user,
     .memory_read_space_train_function_definition_info = &_memory_read_space_train_function_definition_info,
     .memory_read_space_train_function_config_memory = &_memory_read_space_train_function_config_memory,
+    .memory_read_space_dcc_cv = &_memory_read_space_dcc_cv,
 
     // Config Memory Read Reply Ok
     .memory_read_space_config_description_info_reply_ok = &_memory_read_space_config_description_info_reply_ok,
@@ -827,6 +839,7 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_write_space_acdi_user = &_memory_write_space_acdi_user,
     .memory_write_space_train_function_definition_info = &_memory_write_space_train_function_definition_info,
     .memory_write_space_train_function_config_memory = &_memory_write_space_train_function_config_memory,
+    .memory_write_space_dcc_cv = &_memory_write_space_dcc_cv,
     .memory_write_space_firmware_upgrade = _memory_write_space_firmware_upgrade,
 
     // Config Memory Write Reply Ok
@@ -1184,6 +1197,20 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
         _test_for_rejected_datagram(statemachine_info);
     else
         EXPECT_EQ(called_function_ptr, &_memory_read_space_train_function_config_memory);
+
+    _reset_variables();
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_DCC_CV;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
+    statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
+
+    ProtocolDatagramHandler_datagram(statemachine_info);
+
+    if (is_null_subcommand)
+        _test_for_rejected_datagram(statemachine_info);
+    else
+        EXPECT_EQ(called_function_ptr, &_memory_read_space_dcc_cv);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -2180,6 +2207,20 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         _test_for_rejected_datagram(statemachine_info);
     else
         EXPECT_EQ(called_function_ptr, &_memory_write_space_train_function_config_memory);
+
+    _reset_variables();
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_DCC_CV;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
+    statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
+
+    ProtocolDatagramHandler_datagram(statemachine_info);
+
+    if (is_null_subcommand)
+        _test_for_rejected_datagram(statemachine_info);
+    else
+        EXPECT_EQ(called_function_ptr, &_memory_write_space_dcc_cv);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;

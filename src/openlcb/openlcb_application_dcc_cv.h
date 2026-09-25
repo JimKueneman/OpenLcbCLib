@@ -110,8 +110,27 @@ extern "C" {
 #define USER_DEFINED_DCC_CV_TIMEOUT_TICKS 80
 #endif
 
+    /**
+     * @brief Reply time, in seconds, advertised in the Reply Pending byte of the
+     *        Datagram Received OK for a space 0xF8 request.
+     *
+     * @details Used when the application has not supplied its own
+     * config_mem_read/write_delayed_reply_time callback. The datagram handler rounds
+     * it up to 2^N seconds. Requesters wait this long before re-sending, so it must
+     * be at least the time a CV operation normally takes; JMRI treats 0 as 3 s.
+     * Must not exceed USER_DEFINED_DCC_CV_TIMEOUT_TICKS / 10, or the library would
+     * time out a request before the requester expects an answer.
+     */
+#ifndef USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS
+#define USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS 4
+#endif
+
 #if USER_DEFINED_DCC_CV_PENDING_COUNT < 1 || USER_DEFINED_DCC_CV_PENDING_COUNT > 255
 #error "USER_DEFINED_DCC_CV_PENDING_COUNT must be 1..255"
+#endif
+
+#if (USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS * 10) > USER_DEFINED_DCC_CV_TIMEOUT_TICKS
+#error "USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS must not exceed USER_DEFINED_DCC_CV_TIMEOUT_TICKS / 10"
 #endif
 
 #if USER_DEFINED_DCC_CV_TIMEOUT_TICKS < 1 || USER_DEFINED_DCC_CV_TIMEOUT_TICKS > 200
@@ -192,6 +211,12 @@ extern "C" {
             /** @brief Application write hook.  NULL = writes are not served. */
         dcc_cv_write_func_t dcc_cv_write;
 
+            /** @brief The application's own read reply-time callback, or NULL. Consulted for every space but 0xF8. */
+        uint16_t (*config_mem_read_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
+
+            /** @brief The application's own write reply-time callback, or NULL. Consulted for every space but 0xF8. */
+        uint16_t (*config_mem_write_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
+
     } interface_openlcb_application_dcc_cv_t;
 
         /**
@@ -217,6 +242,32 @@ extern "C" {
          * @param config_mem_write_request_info  Parsed request.
          */
     extern void OpenLcbApplicationDccCv_handle_write_request(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
+
+        /**
+         * @brief Reply-time callback wired in place of the application's read callback.
+         *
+         * @details Returns USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS for a space 0xF8
+         * request; for any other space forwards to the application's own callback,
+         * or returns 0 when it has none.
+         *
+         * @param statemachine_info             Context.
+         * @param config_mem_read_request_info  Parsed request; space_info identifies the space.
+         *
+         * @return Expected reply time in seconds, or 0 for no estimate.
+         */
+    extern uint16_t OpenLcbApplicationDccCv_read_delayed_reply_time(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
+
+        /**
+         * @brief Reply-time callback wired in place of the application's write callback.
+         *
+         * @details Same as @ref OpenLcbApplicationDccCv_read_delayed_reply_time for writes.
+         *
+         * @param statemachine_info              Context.
+         * @param config_mem_write_request_info  Parsed request; space_info identifies the space.
+         *
+         * @return Expected reply time in seconds, or 0 for no estimate.
+         */
+    extern uint16_t OpenLcbApplicationDccCv_write_delayed_reply_time(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
         /**
          * @brief Reports the result of a request an application hook answered with

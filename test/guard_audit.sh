@@ -30,7 +30,7 @@ for d in "$ROOT"/test/build/_deps/googletest-src/googletest/include; do [ -d "$d
 
 CFLAGS="-std=gnu99 -Wall -Werror -Wno-error=#warnings -Wno-attributes -D__psv__= -D_SYS_COMMON_H -DSYS_TASKS_PRIORITY=int -D_GNU_SOURCE -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
 SRC=$(find "$ROOT/src/openlcb" "$ROOT/src/drivers/canbus" "$ROOT/src/drivers/tcp_ip" "$ROOT/src/utilities" -name '*.c' | sort)
-ALLFLAGS="CAN TCP EVENTS DATAGRAMS MEMORY_CONFIGURATION FIRMWARE BROADCAST_TIME TRAIN TRAIN_SEARCH STREAM DCC_DETECTOR"
+ALLFLAGS="CAN TCP EVENTS DATAGRAMS MEMORY_CONFIGURATION FIRMWARE BROADCAST_TIME TRAIN TRAIN_SEARCH STREAM DCC_DETECTOR DCC_CV"
 STATUS=0
 
 # ---- configurations -------------------------------------------------------
@@ -49,11 +49,12 @@ synth typical_no_STREAM STREAM
 synth typical_no_FIRMWARE FIRMWARE
 synth typical_no_BROADCAST_TIME BROADCAST_TIME
 synth typical_no_DCC_DETECTOR DCC_DETECTOR
+synth typical_no_DCC_CV DCC_CV
 synth typical_no_TRAIN_SEARCH TRAIN_SEARCH
 synth typical_no_TRAIN TRAIN TRAIN_SEARCH
 synth typical_no_EVENTS EVENTS BROADCAST_TIME DCC_DETECTOR TRAIN TRAIN_SEARCH
-synth typical_no_MEMCFG MEMORY_CONFIGURATION FIRMWARE
-synth typical_no_DATAGRAMS DATAGRAMS MEMORY_CONFIGURATION FIRMWARE
+synth typical_no_MEMCFG MEMORY_CONFIGURATION FIRMWARE DCC_CV
+synth typical_no_DATAGRAMS DATAGRAMS MEMORY_CONFIGURATION FIRMWARE DCC_CV
 synth typical_tcp_only CAN
 sed -i '' -E 's|^[[:space:]]*// #define OPENLCB_COMPILE_TCP|#define OPENLCB_COMPILE_TCP|' "$OUT/cfg_typical_tcp_only/openlcb_user_config.h"
 
@@ -68,6 +69,7 @@ leak_prefixes() {
         TRAIN) echo "ProtocolTrainHandler_ OpenLcbApplicationTrain_ ProtocolTrainSearchHandler_";;
         TRAIN_SEARCH) echo "ProtocolTrainSearchHandler_";;
         DCC_DETECTOR) echo "OpenLcbApplicationDccDetector_";;
+        DCC_CV) echo "OpenLcbApplicationDccCv_";;
         FIRMWARE) echo "ProtocolConfigMemStreamHandler_handle_read_stream_space_firmware ProtocolConfigMemStreamHandler_handle_write_stream_space_firmware";;
         TCP) echo "Tcp";;
         CAN) echo "Can AliasMappingListener_ InternalNodeAliasTable_";;

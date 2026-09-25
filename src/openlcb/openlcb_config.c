@@ -895,7 +895,13 @@ static void _build_config_mem_read(void) {
 #endif
 
     // User extension
+#ifdef OPENLCB_COMPILE_DCC_CV
+    // The DCC CV module answers the reply time for space 0xF8 and forwards every
+    // other space to the application's callback (kept in _app_dcc_cv).
+    _config_read.delayed_reply_time = &OpenLcbApplicationDccCv_read_delayed_reply_time;
+#else
     _config_read.delayed_reply_time = _config->config_mem_read_delayed_reply_time;
+#endif
 
 }
 
@@ -933,7 +939,11 @@ static void _build_config_mem_write(void) {
 #ifdef OPENLCB_COMPILE_FIRMWARE
     _config_write.write_request_firmware = _config->firmware_write;
 #endif
+#ifdef OPENLCB_COMPILE_DCC_CV
+    _config_write.delayed_reply_time = &OpenLcbApplicationDccCv_write_delayed_reply_time;
+#else
     _config_write.delayed_reply_time = _config->config_mem_write_delayed_reply_time;
+#endif
 
 }
 
@@ -1233,6 +1243,8 @@ static void _build_app_dcc_cv(void) {
     _app_dcc_cv.send_openlcb_msg = &OpenLcbMainStatemachine_send_with_sibling_dispatch;
     _app_dcc_cv.dcc_cv_read      = _config->dcc_cv_read;
     _app_dcc_cv.dcc_cv_write     = _config->dcc_cv_write;
+    _app_dcc_cv.config_mem_read_delayed_reply_time  = _config->config_mem_read_delayed_reply_time;
+    _app_dcc_cv.config_mem_write_delayed_reply_time = _config->config_mem_write_delayed_reply_time;
 
 }
 

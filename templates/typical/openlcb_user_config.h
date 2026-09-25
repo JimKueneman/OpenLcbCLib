@@ -34,6 +34,7 @@
  *    #define OPENLCB_COMPILE_STREAM            // stream transport for large transfers
  *    #define OPENLCB_COMPILE_BROADCAST_TIME    // clock synchronization
  *    #define OPENLCB_COMPILE_DCC_DETECTOR      // DCC detection protocol
+ *    #define OPENLCB_COMPILE_DCC_CV            // DCC CV programming space 0xF8 (needs MEMORY_CONFIGURATION)
  *
  *  Minimal bootloader (firmware upgrade only):
  *    Use templates/bootloader/openlcb_user_config.h instead
@@ -61,6 +62,7 @@
 // #define OPENLCB_COMPILE_TRAIN
 // #define OPENLCB_COMPILE_TRAIN_SEARCH
 // #define OPENLCB_COMPILE_DCC_DETECTOR
+// #define OPENLCB_COMPILE_DCC_CV
 
 // =============================================================================
 // Debug -- uncomment to print feature summary during compilation
@@ -153,6 +155,20 @@
 #define USER_DEFINED_LISTENER_PROBE_TICK_INTERVAL    1
 #define USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS   250
 #define USER_DEFINED_LISTENER_VERIFY_TIMEOUT_TICKS   30
+
+// =============================================================================
+// DCC CV Space 0xF8 (requires OPENLCB_COMPILE_DCC_CV)
+// =============================================================================
+// PENDING_COUNT       -- CV requests that may be waiting on the track at once (1..255)
+// TIMEOUT_TICKS       -- 100 ms ticks before an unanswered request fails with a
+//                        temporary time-out (1..200); also bounds a stuck reply
+// REPLY_TIME_SECONDS  -- reply time advertised to the requester when the application
+//                        supplies no delayed-reply-time callback; must not exceed
+//                        TIMEOUT_TICKS / 10
+
+#define USER_DEFINED_DCC_CV_PENDING_COUNT            4
+#define USER_DEFINED_DCC_CV_TIMEOUT_TICKS            80
+#define USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS       4
 
 // =============================================================================
 // Application-defined node parameters (forward-declared to avoid circular include)
