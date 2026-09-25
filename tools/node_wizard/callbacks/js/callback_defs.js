@@ -310,7 +310,7 @@ const CALLBACK_GROUPS = {
                 returnType: 'uint16_t',
                 params: 'openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info',
                 description: 'Return how long a configuration read will take to complete',
-                detail: 'Fires before a configuration memory read operation. Return 0 if the read will complete immediately (most EEPROM/Flash reads). If your storage is slow (e.g. reading over a network), return (0x80 | N) where N indicates the read will take up to 2^N seconds. The library uses this to send a Reply Pending response so the requesting tool knows to wait. See Memory Configuration Standard for timing semantics.',
+                detail: 'Fires before a configuration memory read operation. Return 0 if the read will complete immediately (most EEPROM/Flash reads). If your storage is slow (e.g. reading over a network), return the expected time in seconds; the library rounds it up to 2^N seconds and encodes it in the Reply Pending byte of the Datagram Received OK so the requesting tool knows how long to wait before re-sending. See Memory Configuration Standard for timing semantics.',
                 required: false,
                 configField: 'config_mem_read_delayed_reply_time'
             },
@@ -320,7 +320,7 @@ const CALLBACK_GROUPS = {
                 returnType: 'uint16_t',
                 params: 'openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info',
                 description: 'Return how long a configuration write will take to complete',
-                detail: 'Same as the read version but for write operations. Flash storage with erase cycles may need longer. Return 0 for immediate writes (most EEPROM), or (0x80 | N) for delayed completion. The library will send a Reply Pending response if needed, then the actual write reply once the operation completes. See Memory Configuration Standard for write semantics.',
+                detail: 'Same as the read version but for write operations. Flash storage with erase cycles may need longer. Return 0 for immediate writes (most EEPROM), or the expected time in seconds for delayed completion (the library encodes the exponent itself). The library will send a Reply Pending response if needed, then the actual write reply once the operation completes. See Memory Configuration Standard for write semantics.',
                 required: false,
                 configField: 'config_mem_write_delayed_reply_time'
             },
@@ -380,6 +380,44 @@ const CALLBACK_GROUPS = {
                 detail: 'Fires for each firmware data block received during an upgrade. The write_request_info contains the target address and data buffer. Write the data to your flash memory at the specified offset. The address space is 0xEF (firmware). Handle flash page alignment and erase as needed for your platform. Call write_result when finished to send a write-OK or write-error reply.',
                 required: false,
                 configField: 'firmware_write'
+            }
+
+        ]
+
+    },
+
+    'cb-dcc-cv': {
+
+        title: 'DCC CV Programming Callbacks',
+        description: 'Serve decoder CV reads and writes requested through memory space 0xF8',
+        groupDetail: 'JMRI DecoderPro and OpenMRN read and write decoder CVs through OpenLCB memory space 0xF8, one CV per byte with address = CV number - 1. Service-mode (programming track) requests go to the command station node; ops-mode (POM) requests go to the train node. Each callback receives the addressed node, the CV address and a handle. Answer at once by returning S_OK (and, for a read, storing the byte in *value) or an OpenLCB error code such as OPENLCB_DCC_CV_ERROR_NO_LOCO, or return OPENLCB_DCC_CV_RESULT_PENDING and later call OpenLcbApplicationDccCv_complete(handle, result, value) from the same context as OpenLcbConfig_run(). The library then sends the reply datagram itself, absorbs the requester\'s re-send of the same request while it is outstanding, and answers with a temporary time-out if the application never completes it. Requires Config Memory.',
+        filePrefix: 'callbacks_dcc_cv',
+        headerGuard: '__CALLBACKS_DCC_CV__',
+        includes: [
+            '#include "src/openlcb/openlcb_types.h"',
+            '#include "src/openlcb/openlcb_application_dcc_cv.h"'
+        ],
+        functionPrefix: 'CallbacksDccCv',
+        functions: [
+
+            {
+                name: 'dcc_cv_read',
+                returnType: 'uint16_t',
+                params: 'openlcb_node_t *openlcb_node, uint32_t cv_address, uint8_t *value, uint16_t handle',
+                description: 'Read one decoder CV',
+                detail: 'Fires for a one-byte read of space 0xF8. cv_address is the CV number minus one. Return S_OK with the byte stored in *value, an OpenLCB error code (see the OPENLCB_DCC_CV_ERROR_* constants for the codes JMRI understands), or OPENLCB_DCC_CV_RESULT_PENDING to answer later with OpenLcbApplicationDccCv_complete(handle, result, value). Must not block: a service-mode read that waits for the decoder acknowledgement, or a POM read that waits for the RailCom cutout, should return PENDING and complete from the main loop.',
+                required: false,
+                configField: 'dcc_cv_read'
+            },
+
+            {
+                name: 'dcc_cv_write',
+                returnType: 'uint16_t',
+                params: 'openlcb_node_t *openlcb_node, uint32_t cv_address, uint8_t value, uint16_t handle',
+                description: 'Write one decoder CV',
+                detail: 'Fires for a one-byte write of space 0xF8. cv_address is the CV number minus one and value is the byte to write. Return S_OK, an OpenLCB error code, or OPENLCB_DCC_CV_RESULT_PENDING to answer later with OpenLcbApplicationDccCv_complete(handle, result, 0). Must not block.',
+                required: false,
+                configField: 'dcc_cv_write'
             }
 
         ]

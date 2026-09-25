@@ -221,6 +221,15 @@ function _applyTargetLanguage(target) {
         firmwareCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
+    /* DCC CV programming: C library only (no 0xF8 space in the JS lib) */
+    const dccCvGroup    = document.getElementById('addon-dcc-cv-label');
+    const dccCvCheckbox = document.getElementById('addon-dcc-cv');
+    if (dccCvGroup) { dccCvGroup.classList.toggle('hidden', isJs); }
+    if (isJs && dccCvCheckbox && dccCvCheckbox.checked) {
+        dccCvCheckbox.checked = false;
+        dccCvCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
     /* Well Known Events: hide the Firmware group on both Producer and Consumer
      * sides for JS — the JS lib has no firmware-upgrade flow. */
     document.querySelectorAll('summary[data-help="wke-group-firmware"]').forEach(function (sum) {
@@ -272,6 +281,27 @@ function applyNodeType(type) {
         firmwareCheckbox.disabled = false;
         firmwareGroup.classList.remove('disabled');
         firmwareNote.classList.add('hidden');
+
+    }
+
+    /* DCC CV programming: needs Config Memory, so unavailable on Basic;
+     * the bootloader serves only the firmware space */
+    const dccCvCheckbox = document.getElementById('addon-dcc-cv');
+    const dccCvGroup    = document.getElementById('addon-dcc-cv-label');
+    const dccCvNote     = document.getElementById('dcc-cv-note');
+
+    if (type === 'basic' || isBootloader) {
+
+        dccCvCheckbox.checked  = false;
+        dccCvCheckbox.disabled = true;
+        dccCvGroup.classList.add('disabled');
+        dccCvNote.classList.remove('hidden');
+
+    } else {
+
+        dccCvCheckbox.disabled = false;
+        dccCvGroup.classList.remove('disabled');
+        dccCvNote.classList.add('hidden');
 
     }
 
@@ -493,7 +523,7 @@ function _updateBroadcastNote() {
 }
 
 /* Checkbox add-ons */
-['addon-firmware', 'config-unaligned-reads', 'config-unaligned-writes'].forEach(id => {
+['addon-firmware', 'addon-dcc-cv', 'config-unaligned-reads', 'config-unaligned-writes'].forEach(id => {
     document.getElementById(id).addEventListener('change', updatePreview);
 });
 
@@ -634,6 +664,7 @@ function getState() {
         fdiOutputName:    document.getElementById('fdi-output-name').value.trim(),
         broadcast:        broadcastEl ? broadcastEl.value : 'none',
         firmware:         document.getElementById('addon-firmware').checked,
+        dccCv:            document.getElementById('addon-dcc-cv').checked,
         snipEnabled:      document.getElementById('addon-snip').checked,
         snipName:         document.getElementById('snip-manufacturer').value,
         snipModel:        document.getElementById('snip-model').value,
@@ -1415,6 +1446,7 @@ function _postStateToParent(state) {
             fdiOutputName:      state.fdiOutputName,
             broadcast:          state.broadcast,
             firmware:           state.firmware,
+            dccCv:              state.dccCv,
             snipEnabled:        state.snipEnabled,
             snipName:           state.snipName,
             snipModel:          state.snipModel,
@@ -1517,6 +1549,7 @@ window.addEventListener('message', function (e) {
 
         /* Checkboxes */
         if (typeof f.firmware        === 'boolean') { document.getElementById('addon-firmware').checked         = f.firmware; }
+        if (typeof f.dccCv           === 'boolean') { document.getElementById('addon-dcc-cv').checked           = f.dccCv; }
         if (typeof f.snipEnabled     === 'boolean') { document.getElementById('addon-snip').checked             = f.snipEnabled; }
         if (typeof f.unalignedReads  === 'boolean') { document.getElementById('config-unaligned-reads').checked = f.unalignedReads; }
         if (typeof f.unalignedWrites === 'boolean') { document.getElementById('config-unaligned-writes').checked = f.unalignedWrites; }
@@ -1713,6 +1746,11 @@ var HELP_DATA = {
         title: 'Firmware Update',
         description: 'Enables over-the-network firmware upgrades using the OpenLCB Firmware Upgrade Protocol.',
         detail: 'When enabled, a configuration tool can send a new firmware image to this node over the bus without physical access. Requires Memory Configuration (not available for Basic nodes). The node must implement the firmware write driver callback to flash the received image. See Firmware Upgrade Standard.'
+    },
+    'dcc-cv': {
+        title: 'DCC CV Programming',
+        description: 'Serves decoder configuration variables through OpenLCB memory space 0xF8 so JMRI DecoderPro and OpenMRN tools can read and write CVs through this node.',
+        detail: 'Space 0xF8 holds one CV per byte, address = CV number - 1. JMRI sends service-mode (programming track) requests to the node that produces the programming-track event and ops-mode (POM) requests to the train node, so enable this on a command station node or a locomotive node. Your application implements the dcc_cv_read and dcc_cv_write callbacks (see the Callbacks panel); each may answer at once, or return OPENLCB_DCC_CV_RESULT_PENDING and report the result later with OpenLcbApplicationDccCv_complete() so a slow decoder read never stalls the node. The generated header carries USER_DEFINED_DCC_CV_PENDING_COUNT, USER_DEFINED_DCC_CV_TIMEOUT_TICKS and USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS with library defaults. Requires Memory Configuration (not available for Basic or Bootloader nodes).'
     },
     'buf-pool': {
         title: 'Message Buffer Pool',
@@ -2113,6 +2151,7 @@ document.getElementById('btn-reset-defaults').addEventListener('click', function
     var noneRadio = document.querySelector('input[name="addon-broadcast"][value="none"]');
     if (noneRadio) { noneRadio.checked = true; }
     document.getElementById('addon-firmware').checked = false;
+    document.getElementById('addon-dcc-cv').checked = false;
 
     /* SNIP text fields */
     document.getElementById('snip-manufacturer').value = '';

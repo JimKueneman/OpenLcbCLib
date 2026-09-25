@@ -145,7 +145,7 @@
     };
 
     /* Current add-on selections from the config editor */
-    var _addons = { broadcast: 'none', firmware: false };
+    var _addons = { broadcast: 'none', firmware: false, dccCv: false };
 
     /*
      * Maps add-on keys to the callback group they unlock.
@@ -154,7 +154,8 @@
      */
     var _addonGroupMap = [
         { key: 'broadcast', test: function (v) { return v && v !== 'none'; }, group: 'cb-bcast-time' },
-        { key: 'firmware',  test: function (v) { return !!v; },              group: 'cb-firmware' }
+        { key: 'firmware',  test: function (v) { return !!v; },              group: 'cb-firmware' },
+        { key: 'dccCv',     test: function (v) { return !!v; },              group: 'cb-dcc-cv' }
     ];
 
     /* Build the effective visibility list from node type + add-ons */

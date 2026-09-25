@@ -6,6 +6,39 @@ For library changes, see the root `CHANGELOG.md`.
 
 ---
 
+## [1.0.2] - 2026-09-25
+
+### Added
+
+- **DCC CV Programming add-on** (memory space 0xF8, library flag
+  `OPENLCB_COMPILE_DCC_CV`). New checkbox in the Node Configuration add-ons,
+  available on node types with Config Memory (disabled for Basic and
+  Bootloader, hidden for the JS target). When enabled the generated
+  `openlcb_user_config.h` defines the flag and the three
+  `USER_DEFINED_DCC_CV_*` settings, `openlcb_user_config.c` marks
+  `address_space_dcc_cv` present (highest address 1023) and lowers
+  `configuration_options.low_address_space` to 0xF8 when no firmware space is
+  below it, and a new **DCC CV Programming Callbacks** group offers
+  `dcc_cv_read` and `dcc_cv_write`.
+
+### Fixed
+
+- **Generated `openlcb_user_config.h` now selects the transport.** The header
+  never defined `OPENLCB_COMPILE_CAN`, so every generated project relied on the
+  library's default-to-CAN fallback and compiled with its warning. A Transport
+  Selection section (CAN on, TCP commented out) is emitted ahead of the
+  feature flags, matching the templates.
+- **Generated `openlcb_user_config.c` used a macro the library does not define.**
+  The 0xF9 space and the derived `low_address_space` were emitted as
+  `CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIG`; the library name is
+  `CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY`. Every generated
+  node parameters file failed to compile until the name was corrected by hand.
+- **Reply-time callback descriptions.** The `config_mem_read/write_delayed_reply_time`
+  entries said to return `(0x80 | N)`; the callbacks return seconds and the
+  library encodes the exponent.
+
+---
+
 ## [1.0.1] — 2026-03-22
 
 ### Housekeeping

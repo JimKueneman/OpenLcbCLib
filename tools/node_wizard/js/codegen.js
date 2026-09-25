@@ -437,6 +437,7 @@ function generateH(s) {
     var hasCfgMem    = !isBasic && !isBootloader;
     var broadcastOn  = s.broadcast !== 'none';
     var firmwareOn   = s.firmware && hasCfgMem;
+    var dccCvOn      = s.dccCv && hasCfgMem;
     var nodeLabel    = s.nodeType === 'train-controller' ? 'Train Controller'
                      : s.nodeType.charAt(0).toUpperCase() + s.nodeType.slice(1);
 
@@ -486,6 +487,7 @@ function generateH(s) {
     L.push(' *  Add these to any recipe above as needed:');
     L.push(' *');
     L.push(' *    #define OPENLCB_COMPILE_FIRMWARE          // firmware upgrade support');
+    L.push(' *    #define OPENLCB_COMPILE_DCC_CV            // DCC CV programming space 0xF8 (needs MEMORY_CONFIGURATION)');
     L.push(' *    #define OPENLCB_COMPILE_STREAM            // stream transport for large transfers');
     L.push(' *    #define OPENLCB_COMPILE_BROADCAST_TIME    // clock synchronization');
     L.push(' *');
@@ -495,6 +497,13 @@ function generateH(s) {
     L.push('');
     L.push('#ifndef __OPENLCB_USER_CONFIG__');
     L.push('#define __OPENLCB_USER_CONFIG__');
+    L.push('');
+
+    /* ---- Transport ---- */
+    L.push(_section('Transport Selection -- exactly one must be defined'));
+    L.push('');
+    L.push(' #define OPENLCB_COMPILE_CAN');
+    L.push('// #define OPENLCB_COMPILE_TCP');
     L.push('');
 
     /* ---- Feature Flags ---- */
@@ -524,6 +533,12 @@ function generateH(s) {
             L.push(' #define OPENLCB_COMPILE_FIRMWARE');
         } else {
             L.push('// #define OPENLCB_COMPILE_FIRMWARE');
+        }
+
+        if (dccCvOn) {
+            L.push(' #define OPENLCB_COMPILE_DCC_CV');
+        } else {
+            L.push('// #define OPENLCB_COMPILE_DCC_CV');
         }
 
         if (broadcastOn) {
@@ -640,6 +655,20 @@ function generateH(s) {
     L.push(_def('USER_DEFINED_LISTENER_VERIFY_TIMEOUT_TICKS', (s.advVerifyTimeout !== undefined ? s.advVerifyTimeout : 30).toString()));
     L.push('');
 
+    /* ---- DCC CV Space 0xF8 ---- */
+    L.push(_section('DCC CV Space 0xF8 (requires OPENLCB_COMPILE_DCC_CV)'));
+    L.push('// PENDING_COUNT       -- CV requests that may be waiting on the track at once (1..255)');
+    L.push('// TIMEOUT_TICKS       -- 100 ms ticks before an unanswered request fails with a');
+    L.push('//                        temporary time-out (1..200); also bounds a stuck reply');
+    L.push('// REPLY_TIME_SECONDS  -- reply time advertised to the requester when the application');
+    L.push('//                        supplies no delayed-reply-time callback; must not exceed');
+    L.push('//                        TIMEOUT_TICKS / 10');
+    L.push('');
+    L.push(_def('USER_DEFINED_DCC_CV_PENDING_COUNT',      '4'));
+    L.push(_def('USER_DEFINED_DCC_CV_TIMEOUT_TICKS',      '80'));
+    L.push(_def('USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS', '4'));
+    L.push('');
+
     /* ---- Forward declaration ---- */
     L.push(_section('Application-defined node parameters (forward-declared to avoid circular include)'));
     L.push('');
@@ -729,6 +758,7 @@ function generateC(s) {
     var hasCfgMem    = !isBasic && !isBootloader;
     var broadcastOn  = s.broadcast !== 'none';
     var firmwareOn   = isBootloader ? true : (s.firmware && hasCfgMem);
+    var dccCvOn      = !isBootloader && s.dccCv && hasCfgMem;
     var unalignedR   = hasCfgMem && s.unalignedReads;
     var unalignedW   = hasCfgMem && s.unalignedWrites;
     var cfgHighest   = hasCfgMem ? (s.configMemHighest || '0x200') : '0';
@@ -804,8 +834,9 @@ function generateC(s) {
      *  11. address_space_acdi_user                 (0xFB)
      *  12. address_space_train_function_definition_info (0xFA)
      *  13. address_space_train_function_config_memory   (0xF9)
-     *  14. configuration_options
-     *  15. address_space_firmware                  (0xEF)
+     *  14. address_space_dcc_cv                    (0xF8)
+     *  15. configuration_options
+     *  16. address_space_firmware                  (0xEF)
      *
      * Within each user_address_space_info_t:
      *   present, read_only, low_address_valid, address_space,
@@ -938,8 +969,10 @@ function generateC(s) {
         lowAddrSpace = '0x00';
     } else if (firmwareOn) {
         lowAddrSpace = 'CONFIG_MEM_SPACE_FIRMWARE';
+    } else if (dccCvOn) {
+        lowAddrSpace = 'CONFIG_MEM_SPACE_DCC_CV';
     } else if (isTrainNode) {
-        lowAddrSpace = 'CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIG';
+        lowAddrSpace = 'CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY';
     } else {
         lowAddrSpace = 'CONFIG_MEM_SPACE_ACDI_USER_ACCESS';
     }
@@ -1074,13 +1107,24 @@ function generateC(s) {
     L.push('    .address_space_train_function_config_memory.present = ' + (isTrainNode ? 'true' : 'false') + ',  // auto-set: train (locomotive) node type only');
     L.push('    .address_space_train_function_config_memory.read_only = false,  // function config is read/write');
     L.push('    .address_space_train_function_config_memory.low_address_valid = false,  // assume the low address starts at 0');
-    L.push('    .address_space_train_function_config_memory.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIG,');
+    L.push('    .address_space_train_function_config_memory.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,');
     L.push('    .address_space_train_function_config_memory.highest_address = 0,  // library calculates from train function count at runtime');
     L.push('    .address_space_train_function_config_memory.low_address = 0,  // ignored if low_address_valid is false');
     L.push('    .address_space_train_function_config_memory.description = "",');
     L.push('');
 
-    /* ---- 15. Space 0xEF — Firmware (address_space_firmware) ---- */
+    /* ---- 14. Space 0xF8 - DCC CV (address_space_dcc_cv) ---- */
+    L.push('    // Space 0xF8 - DCC CV programming (one CV per byte, address = CV number - 1)');
+    L.push('    .address_space_dcc_cv.present = ' + (dccCvOn ? 'true' : 'false') + ',  // from wizard DCC CV Programming option');
+    L.push('    .address_space_dcc_cv.read_only = false,  // CVs are read/write');
+    L.push('    .address_space_dcc_cv.low_address_valid = false,  // assume the low address starts at 0');
+    L.push('    .address_space_dcc_cv.address_space = CONFIG_MEM_SPACE_DCC_CV,');
+    L.push('    .address_space_dcc_cv.highest_address = 1023,  // CV 1..1024');
+    L.push('    .address_space_dcc_cv.low_address = 0,  // ignored if low_address_valid is false');
+    L.push('    .address_space_dcc_cv.description = "",');
+    L.push('');
+
+    /* ---- 16. Space 0xEF — Firmware (address_space_firmware) ---- */
     L.push('    // Space 0xEF — Firmware Upgrade');
     L.push('    .address_space_firmware.present = ' + (firmwareOn ? 'true' : 'false') + ',  // from wizard Firmware Update option');
     L.push('    .address_space_firmware.read_only = false,  // firmware space accepts writes for flashing');
@@ -1141,6 +1185,7 @@ function generateMain(s) {
     var hasCfgMem    = !isBasic && !isBootloader;
     var broadcastOn  = s.broadcast !== 'none';
     var firmwareOn   = isBootloader ? true : (s.firmware && hasCfgMem);
+    var dccCvOn      = !isBootloader && s.dccCv && hasCfgMem;
     var nodeLabel    = s.nodeType === 'train-controller' ? 'Train Controller'
                      : s.nodeType.charAt(0).toUpperCase() + s.nodeType.slice(1);
 
@@ -1153,6 +1198,7 @@ function generateMain(s) {
     var cbConfigChecked   = _getCheckedCallbackFns('cb-config-mem', s);
     var cbTrainChecked    = _getCheckedCallbackFns('cb-train', s);
     var cbBcastChecked    = _getCheckedCallbackFns('cb-bcast-time', s);
+    var cbDccCvChecked    = dccCvOn ? _getCheckedCallbackFns('cb-dcc-cv', s) : [];
 
     var _author = s.projectAuthor || '<YOUR NAME OR COMPANY>';
     var _year   = new Date().getFullYear();
@@ -1220,6 +1266,9 @@ function generateMain(s) {
     }
     if (cbTrainChecked.length > 0) {
         L.push('#include "callbacks_train.h"');
+    }
+    if (cbDccCvChecked.length > 0) {
+        L.push('#include "callbacks_dcc_cv.h"');
     }
     if (cbBcastChecked.length > 0) {
         L.push('#include "callbacks_broadcast_time.h"');
@@ -1383,6 +1432,15 @@ function generateMain(s) {
 
         L.push('    // Broadcast Time callbacks');
         _emitCallbackWiring(L, cbBcastChecked, 'CallbacksBroadcastTime');
+        L.push('');
+
+    }
+
+    /* -- DCC CV programming callbacks (conditional) -- */
+    if (cbDccCvChecked.length > 0) {
+
+        L.push('    // DCC CV programming (memory space 0xF8)');
+        _emitCallbackWiring(L, cbDccCvChecked, 'CallbacksDccCv');
         L.push('');
 
     }

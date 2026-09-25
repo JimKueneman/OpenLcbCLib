@@ -82,7 +82,8 @@ function _getAddons() {
 
     return {
         broadcast: (configFormState && configFormState.broadcast) || 'none',
-        firmware:  !!(configFormState && configFormState.firmware)
+        firmware:  !!(configFormState && configFormState.firmware),
+        dccCv:     !!(configFormState && configFormState.dccCv)
     };
 
 }
