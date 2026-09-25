@@ -47,6 +47,8 @@
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_utilities.h"
 
+#ifdef OPENLCB_COMPILE_CAN
+
     /** @brief Pre-built upper bits for a datagram-only (single-frame) CAN identifier. */
 static const uint32_t _OPENLCB_MESSAGE_DATAGRAM_ONLY = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_ONLY;
 
@@ -507,3 +509,5 @@ bool CanTxMessageHandler_can_frame(can_msg_t *can_msg) {
     return _transmit_can_frame(can_msg);
 
 }
+
+#endif /* OPENLCB_COMPILE_CAN */
