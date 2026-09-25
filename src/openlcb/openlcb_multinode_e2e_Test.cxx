@@ -332,6 +332,19 @@ static const interface_openlcb_main_statemachine_t _e2e_main_interface = {
     .message_network_protocol_support_inquiry       = &_e2e_noop_handler,
     .message_network_protocol_support_reply         = &_e2e_noop_handler,
 
+    // Real internal handlers
+    .process_main_statemachine      = &_e2e_process_main_statemachine,
+    .does_node_process_msg          = &OpenLcbMainStatemachine_does_node_process_msg,
+    .handle_outgoing_openlcb_message =
+            &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
+    .handle_try_reenumerate         = &OpenLcbMainStatemachine_handle_try_reenumerate,
+    .handle_try_pop_next_incoming_openlcb_message =
+            &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
+    .handle_try_enumerate_first_node =
+            &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node =
+            &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
+
     // SNIP — noop
     .snip_simple_node_info_request = &_e2e_noop_handler,
     .snip_simple_node_info_reply   = &_e2e_noop_handler,
@@ -386,19 +399,6 @@ static const interface_openlcb_main_statemachine_t _e2e_main_interface = {
     .is_train_search_event   = NULL,
     .is_emergency_event      = NULL,
 
-    // Real internal handlers
-    .process_main_statemachine      = &_e2e_process_main_statemachine,
-    .does_node_process_msg          = &OpenLcbMainStatemachine_does_node_process_msg,
-    .handle_outgoing_openlcb_message =
-            &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
-    .handle_try_reenumerate         = &OpenLcbMainStatemachine_handle_try_reenumerate,
-    .handle_try_pop_next_incoming_openlcb_message =
-            &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
-    .handle_try_enumerate_first_node =
-            &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
-    .handle_try_enumerate_next_node =
-            &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
-
 };
 
 // ============================================================================
@@ -435,7 +435,6 @@ static const interface_openlcb_login_state_machine_t _e2e_login_interface = {
     .send_openlcb_msg        = &_e2e_wire_send,
     .openlcb_node_get_first  = &OpenLcbNode_get_first,
     .openlcb_node_get_next   = &OpenLcbNode_get_next,
-    .openlcb_node_get_count  = &OpenLcbNode_get_count,
 
     .load_initialization_complete = &OpenLcbLoginStatemachineHandler_load_initialization_complete,
     .load_producer_events         = &OpenLcbLoginStatemachineHandler_load_producer_event,
@@ -444,7 +443,7 @@ static const interface_openlcb_login_state_machine_t _e2e_login_interface = {
     // Sibling dispatch wired to the real main statemachine via our logging wrapper
     .process_main_statemachine = &_e2e_process_main_statemachine,
 
-    .on_login_complete = NULL,
+    .openlcb_node_get_count  = &OpenLcbNode_get_count,
 
     // Real internal handlers
     .process_login_statemachine        = &OpenLcbLoginStatemachine_process,
@@ -455,6 +454,8 @@ static const interface_openlcb_login_state_machine_t _e2e_login_interface = {
             &OpenLcbLoginStatemachine_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node    =
             &OpenLcbLoginStatemachine_handle_try_enumerate_next_node,
+
+    .on_login_complete = NULL,
 
 };
 

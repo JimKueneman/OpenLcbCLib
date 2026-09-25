@@ -185,6 +185,21 @@ Functions</h2></td></tr>
 <tr class="memitem:a975fa0984828245d2dd93e179b6135b5" id="r_a975fa0984828245d2dd93e179b6135b5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a975fa0984828245d2dd93e179b6135b5">OpenLcbApplicationTrain_get_speed_steps</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
 <tr class="memdesc:a975fa0984828245d2dd93e179b6135b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the speed-step mode for a train node.  <br /></td></tr>
 <tr class="separator:a975fa0984828245d2dd93e179b6135b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a101983192c5b5d275f26f22698a8d5e8" id="r_a101983192c5b5d275f26f22698a8d5e8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a101983192c5b5d275f26f22698a8d5e8">OpenLcbApplicationTrain_set_heartbeat_timeout</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t seconds)</td></tr>
+<tr class="memdesc:a101983192c5b5d275f26f22698a8d5e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configures the heartbeat-monitor deadline for a train node.  <br /></td></tr>
+<tr class="separator:a101983192c5b5d275f26f22698a8d5e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2cfd30b8fc04718f254bbeb4494bffb7" id="r_a2cfd30b8fc04718f254bbeb4494bffb7"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cfd30b8fc04718f254bbeb4494bffb7">OpenLcbApplicationTrain_get_heartbeat_timeout</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a2cfd30b8fc04718f254bbeb4494bffb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the configured heartbeat deadline for a train node.  <br /></td></tr>
+<tr class="separator:a2cfd30b8fc04718f254bbeb4494bffb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad45a14e0960d8c3d7bdac0bc2b4c4d26" id="r_ad45a14e0960d8c3d7bdac0bc2b4c4d26"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad45a14e0960d8c3d7bdac0bc2b4c4d26">OpenLcbApplicationTrain_get_reserved_by_node_id</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:ad45a14e0960d8c3d7bdac0bc2b4c4d26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Node ID currently holding the train's reservation.  <br /></td></tr>
+<tr class="separator:ad45a14e0960d8c3d7bdac0bc2b4c4d26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b0e646e00c0c1a464e3a933ea69992d" id="r_a4b0e646e00c0c1a464e3a933ea69992d"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b0e646e00c0c1a464e3a933ea69992d">OpenLcbApplicationTrain_get_listener_count</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a4b0e646e00c0c1a464e3a933ea69992d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of listener nodes attached to a train.  <br /></td></tr>
+<tr class="separator:a4b0e646e00c0c1a464e3a933ea69992d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f618d843ee22f7a2484d834d647905b" id="r_a8f618d843ee22f7a2484d834d647905b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f618d843ee22f7a2484d834d647905b">OpenLcbApplicationTrain_get_listener_at</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint8_t index, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> *out_node_id, uint8_t *out_flags)</td></tr>
+<tr class="memdesc:a8f618d843ee22f7a2484d834d647905b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads one listener entry from a train's listener list.  <br /></td></tr>
+<tr class="separator:a8f618d843ee22f7a2484d834d647905b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Application-level Train Control Protocol module. </p>
@@ -198,7 +213,7 @@ Functions</h2></td></tr>
 <p>Provides per-node train state, a fixed-size allocation pool, throttle-side send helpers, and a heartbeat countdown timer for the OpenLCB Train Control Protocol.</p>
 <p>The protocol handler (<a class="el" href="protocol__train__handler_8c.html" title="Train Control Protocol message handler implementation (Layer 1)">protocol_train_handler.c</a>) handles incoming commands automatically. This module provides the application developer API: state allocation, state access, throttle send functions, and the heartbeat tick. State is drawn from a pool sized by USER_DEFINED_TRAIN_NODE_COUNT. Each train node gets a slot via <a class="el" href="#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>, which stores a pointer in node-&gt;train_state. Non-train nodes have train_state == NULL.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>28 Feb 2026</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>25 Apr 2026</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__train__handler_8h.html" title="Train Control Protocol message handler (Layer 1)">protocol_train_handler.h</a> </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a39e73ffa95b7478a16a9f116f951c12a" name="a39e73ffa95b7478a16a9f116f951c12a"></a>
@@ -1294,6 +1309,206 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Speed-step count (14, 28, or 128), or 0 if the node has no train state. </dd></dl>
+
+</div>
+</div>
+<a id="a101983192c5b5d275f26f22698a8d5e8" name="a101983192c5b5d275f26f22698a8d5e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a101983192c5b5d275f26f22698a8d5e8">&#9670;&#160;</a></span>OpenLcbApplicationTrain_set_heartbeat_timeout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbApplicationTrain_set_heartbeat_timeout </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>seconds</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Configures the heartbeat-monitor deadline for a train node. </p>
+<p>Enables periodic Heartbeat Request messages from this train to its assigned controller. A non-zero value opts the train into monitoring; zero disables it. The countdown begins as soon as a controller is assigned and is reset by any incoming command from the controller. Per <b>TrainControlS</b> §6.6: if the controller does not reply within the deadline, the train interprets the silence as a Set Speed 0 command (preserving direction) and forwards that to all registered listeners. This is NOT an Emergency Stop.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> with an assigned train state. </td></tr>
+    <tr><td class="paramname">seconds</td><td>Reply deadline in seconds. 0 disables heartbeat monitoring; spec recommends 10.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Silently ignored if the node pointer or train_state pointer is NULL.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2cfd30b8fc04718f254bbeb4494bffb7" title="Returns the configured heartbeat deadline for a train node.">OpenLcbApplicationTrain_get_heartbeat_timeout</a> </dd></dl>
+
+</div>
+</div>
+<a id="a2cfd30b8fc04718f254bbeb4494bffb7" name="a2cfd30b8fc04718f254bbeb4494bffb7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cfd30b8fc04718f254bbeb4494bffb7">&#9670;&#160;</a></span>OpenLcbApplicationTrain_get_heartbeat_timeout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t OpenLcbApplicationTrain_get_heartbeat_timeout </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the configured heartbeat deadline for a train node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Configured deadline in seconds, or 0 if heartbeat monitoring is disabled or the node has no train state.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a101983192c5b5d275f26f22698a8d5e8" title="Configures the heartbeat-monitor deadline for a train node.">OpenLcbApplicationTrain_set_heartbeat_timeout</a> </dd></dl>
+
+</div>
+</div>
+<a id="ad45a14e0960d8c3d7bdac0bc2b4c4d26" name="ad45a14e0960d8c3d7bdac0bc2b4c4d26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad45a14e0960d8c3d7bdac0bc2b4c4d26">&#9670;&#160;</a></span>OpenLcbApplicationTrain_get_reserved_by_node_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> OpenLcbApplicationTrain_get_reserved_by_node_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the Node ID currently holding the train's reservation. </p>
+<p>Per <b>TrainControlS</b> §6.x a train may be reserved by a single controller node via the Train Control Management Reserve sub-command. This getter exposes the held reservation so application code (e.g. a Command Station roster UI) can surface the state. A return value of zero means no reservation is currently held, the node has no train state, or the node pointer is NULL.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Reserving controller's <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>, or 0 if no reservation is held / no train state / NULL node. </dd></dl>
+
+</div>
+</div>
+<a id="a4b0e646e00c0c1a464e3a933ea69992d" name="a4b0e646e00c0c1a464e3a933ea69992d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b0e646e00c0c1a464e3a933ea69992d">&#9670;&#160;</a></span>OpenLcbApplicationTrain_get_listener_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t OpenLcbApplicationTrain_get_listener_count </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the number of listener nodes attached to a train. </p>
+<p>Listeners are attached and detached via the Train Listener Configuration sub-commands (<b>TrainControlS</b> §6.5). This getter exposes the current attached count so application code can render a consist roster without round-tripping a Listener Query message.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Listener count (0 to USER_DEFINED_MAX_LISTENERS_PER_TRAIN), or 0 if the node has no train state / NULL node.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8f618d843ee22f7a2484d834d647905b" title="Reads one listener entry from a train&#39;s listener list.">OpenLcbApplicationTrain_get_listener_at</a> </dd></dl>
+
+</div>
+</div>
+<a id="a8f618d843ee22f7a2484d834d647905b" name="a8f618d843ee22f7a2484d834d647905b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f618d843ee22f7a2484d834d647905b">&#9670;&#160;</a></span>OpenLcbApplicationTrain_get_listener_at()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbApplicationTrain_get_listener_at </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> *</td>          <td class="paramname"><span class="paramname"><em>out_node_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>out_flags</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads one listener entry from a train's listener list. </p>
+<p>Index zero through (count - 1) returns the listener entries in the order they were attached (per <b>TrainControlS</b> §5 — updating flags does not change order). Indices outside that range return false and leave the out-params unchanged.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">index</td><td>Zero-based listener slot. </td></tr>
+    <tr><td class="paramname">out_node_id</td><td>Receives the listener's <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>. Required. </td></tr>
+    <tr><td class="paramname">out_flags</td><td>Receives the listener flag byte (rev / link-F0 / link-Fn / hide). Required.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the index was in range and the values were written, false if the index is out of range, the node has no train state, or any required pointer is NULL.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4b0e646e00c0c1a464e3a933ea69992d" title="Returns the number of listener nodes attached to a train.">OpenLcbApplicationTrain_get_listener_count</a> </dd></dl>
 
 </div>
 </div>

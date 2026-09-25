@@ -260,6 +260,9 @@ static const node_parameters_t _node_params_full = {
     .protocol_support = PSI_SIMPLE_NODE_INFORMATION | PSI_IDENTIFICATION
                         | PSI_STREAM | PSI_DATAGRAM,
 
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
+
     .address_space_configuration_definition = {
         .present = true,
         .read_only = true,
@@ -333,9 +336,6 @@ static const node_parameters_t _node_params_full = {
     .cdi = _test_cdi,
     .fdi = _test_fdi,
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
 };
 
 // Node params with NULL cdi/fdi for null-pointer branches
@@ -352,11 +352,11 @@ static const node_parameters_t _node_params_null_cdi = {
 
     .protocol_support = PSI_SIMPLE_NODE_INFORMATION | PSI_IDENTIFICATION,
 
-    .cdi = NULL,
-    .fdi = NULL,
-
     .consumer_count_autocreate = 0,
     .producer_count_autocreate = 0,
+
+    .cdi = NULL,
+    .fdi = NULL,
 
 };
 

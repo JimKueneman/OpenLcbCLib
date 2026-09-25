@@ -4619,6 +4619,15 @@ static const interface_openlcb_main_statemachine_t _st_interface = {
     .message_network_protocol_support_inquiry = &_st_log_handler,
     .message_network_protocol_support_reply = &_st_log_handler,
 
+    // Real internal handlers
+    .process_main_statemachine = &OpenLcbMainStatemachine_process_main_statemachine,
+    .does_node_process_msg = &OpenLcbMainStatemachine_does_node_process_msg,
+    .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
+    .handle_try_reenumerate = &OpenLcbMainStatemachine_handle_try_reenumerate,
+    .handle_try_pop_next_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
+    .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
+
     .snip_simple_node_info_request = &_st_log_handler,
     .snip_simple_node_info_reply = &_st_log_handler,
 
@@ -4654,15 +4663,6 @@ static const interface_openlcb_main_statemachine_t _st_interface = {
     .stream_send_data = &_st_log_handler,
     .stream_data_proceed = &_st_log_handler,
     .stream_data_complete = &_st_log_handler,
-
-    // Real internal handlers
-    .process_main_statemachine = &OpenLcbMainStatemachine_process_main_statemachine,
-    .does_node_process_msg = &OpenLcbMainStatemachine_does_node_process_msg,
-    .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
-    .handle_try_reenumerate = &OpenLcbMainStatemachine_handle_try_reenumerate,
-    .handle_try_pop_next_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
-    .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
-    .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
 
 };
 

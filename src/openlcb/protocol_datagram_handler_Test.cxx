@@ -762,6 +762,9 @@ void _unlock_shared_resources(void)
 
 interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
 
+    .lock_shared_resources = &_lock_shared_resources,     //  HARDWARE INTERFACE
+    .unlock_shared_resources = &_unlock_shared_resources, //  HARDWARE INTERFACE
+
     // Config Memory Read
     .memory_read_space_config_description_info = &_memory_read_space_config_description_info,
     .memory_read_space_all = &_memory_read_space_all,
@@ -898,11 +901,12 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_reset_reboot = &_memory_reset_reboot,
     .memory_factory_reset = &_memory_factory_reset,
 
-    .lock_shared_resources = &_lock_shared_resources,     //  HARDWARE INTERFACE
-    .unlock_shared_resources = &_unlock_shared_resources, //  HARDWARE INTERFACE
 };
 
 interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_nulls = {
+
+    .lock_shared_resources = &_lock_shared_resources,     //  HARDWARE INTERFACE
+    .unlock_shared_resources = &_unlock_shared_resources, //  HARDWARE INTERFACE
 
     // Config Memory Read
     .memory_read_space_config_description_info = NULL,
@@ -1031,9 +1035,6 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_update_complete = NULL,
     .memory_reset_reboot = NULL,
     .memory_factory_reset = NULL,
-
-    .lock_shared_resources = &_lock_shared_resources,     //  HARDWARE INTERFACE
-    .unlock_shared_resources = &_unlock_shared_resources, //  HARDWARE INTERFACE
 
 };
 

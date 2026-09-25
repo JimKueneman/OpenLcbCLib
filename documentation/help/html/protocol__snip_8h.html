@@ -146,6 +146,30 @@ Functions</h2></td></tr>
 <tr class="memitem:ad9dd288bc1780719e4078408eef25b03" id="r_ad9dd288bc1780719e4078408eef25b03"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9dd288bc1780719e4078408eef25b03">ProtocolSnip_validate_snip_reply</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *snip_reply_msg)</td></tr>
 <tr class="memdesc:ad9dd288bc1780719e4078408eef25b03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates a SNIP reply: correct MTI, valid length, exactly 6 null terminators.  <br /></td></tr>
 <tr class="separator:ad9dd288bc1780719e4078408eef25b03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad25e6853f3335063cd65cd275a642035" id="r_ad25e6853f3335063cd65cd275a642035"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad25e6853f3335063cd65cd275a642035">ProtocolSnip_extract_manufacturer_version_id</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *incoming_msg, uint8_t *out_version)</td></tr>
+<tr class="memdesc:ad25e6853f3335063cd65cd275a642035"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the manufacturer version ID byte from a SNIP reply.  <br /></td></tr>
+<tr class="separator:ad25e6853f3335063cd65cd275a642035"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af274d6129f9d34455037ae990ad8b6d2" id="r_af274d6129f9d34455037ae990ad8b6d2"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af274d6129f9d34455037ae990ad8b6d2">ProtocolSnip_extract_name</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *incoming_msg, char *out_buffer, uint16_t max_bytes)</td></tr>
+<tr class="memdesc:af274d6129f9d34455037ae990ad8b6d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the manufacturer name string from a SNIP reply.  <br /></td></tr>
+<tr class="separator:af274d6129f9d34455037ae990ad8b6d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b760eee4dc1495fa8fa7e655bb42852" id="r_a5b760eee4dc1495fa8fa7e655bb42852"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b760eee4dc1495fa8fa7e655bb42852">ProtocolSnip_extract_model</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *incoming_msg, char *out_buffer, uint16_t max_bytes)</td></tr>
+<tr class="memdesc:a5b760eee4dc1495fa8fa7e655bb42852"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the model name string from a SNIP reply.  <br /></td></tr>
+<tr class="separator:a5b760eee4dc1495fa8fa7e655bb42852"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aece5d05f0cba6de25d1016ca201d423e" id="r_aece5d05f0cba6de25d1016ca201d423e"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aece5d05f0cba6de25d1016ca201d423e">ProtocolSnip_extract_hardware_version</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *incoming_msg, char *out_buffer, uint16_t max_bytes)</td></tr>
+<tr class="memdesc:aece5d05f0cba6de25d1016ca201d423e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the hardware version string from a SNIP reply.  <br /></td></tr>
+<tr class="separator:aece5d05f0cba6de25d1016ca201d423e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4fde25abbb9f4e4d695668485a85f44" id="r_af4fde25abbb9f4e4d695668485a85f44"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4fde25abbb9f4e4d695668485a85f44">ProtocolSnip_extract_software_version</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *incoming_msg, char *out_buffer, uint16_t max_bytes)</td></tr>
+<tr class="memdesc:af4fde25abbb9f4e4d695668485a85f44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the software version string from a SNIP reply.  <br /></td></tr>
+<tr class="separator:af4fde25abbb9f4e4d695668485a85f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8faed16d8511788404fee4bc1e65a870" id="r_a8faed16d8511788404fee4bc1e65a870"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8faed16d8511788404fee4bc1e65a870">ProtocolSnip_extract_user_version_id</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *incoming_msg, uint8_t *out_version)</td></tr>
+<tr class="memdesc:a8faed16d8511788404fee4bc1e65a870"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the user version ID byte from a SNIP reply.  <br /></td></tr>
+<tr class="separator:a8faed16d8511788404fee4bc1e65a870"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a725f644c0756d85d030ac29fd1965540" id="r_a725f644c0756d85d030ac29fd1965540"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a725f644c0756d85d030ac29fd1965540">ProtocolSnip_extract_user_name</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *incoming_msg, char *out_buffer, uint16_t max_bytes)</td></tr>
+<tr class="memdesc:a725f644c0756d85d030ac29fd1965540"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the user-provided node name string from a SNIP reply.  <br /></td></tr>
+<tr class="separator:a725f644c0756d85d030ac29fd1965540"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5c863da8bf3923be0ad2562672de719" id="r_af5c863da8bf3923be0ad2562672de719"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5c863da8bf3923be0ad2562672de719">ProtocolSnip_extract_user_description</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *incoming_msg, char *out_buffer, uint16_t max_bytes)</td></tr>
+<tr class="memdesc:af5c863da8bf3923be0ad2562672de719"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the user-provided node description string from a SNIP reply.  <br /></td></tr>
+<tr class="separator:af5c863da8bf3923be0ad2562672de719"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Simple Node Information Protocol (SNIP) handler. </p>
@@ -158,7 +182,7 @@ Functions</h2></td></tr>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <p>Returns manufacturer info (from node params) and user name/description (from config memory) in a single reply message. Provides individual field loaders for assembling the SNIP payload and a validation function for incoming SNIP replies.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>28 Apr 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a299e55a84322665954521e5e913372d8" name="a299e55a84322665954521e5e913372d8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a299e55a84322665954521e5e913372d8">&#9670;&#160;</a></span>ProtocolSnip_initialize()</h2>
@@ -269,8 +293,16 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Handles an incoming SNIP reply (MTI 0x0A08). No automatic response. </p>
-
+<p>Handles an incoming SNIP reply (MTI 0x0A08). No automatic response.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Mark outgoing valid = false (no automatic response).</li>
+<li>Return early if no on_snip_reply callback is registered.</li>
+<li>Validate the incoming reply via ProtocolSnip_validate_snip_reply; drop on failure.</li>
+<li>Build a <a class="el" href="structsource__info__t.html" title="Identifies the remote node that sent a received message.">source_info_t</a> from the incoming message header.</li>
+<li>Invoke on_snip_reply with source and the incoming message pointer. The application uses ProtocolSnip_extract_* helpers to read fields.</li>
+</ol>
+<pre class="fragment">* @param statemachine_info  Context with the incoming SNIP reply.
+* </pre> 
 </div>
 </div>
 <a id="a14ec26901f3c7831ef7620dea7cc8d06" name="a14ec26901f3c7831ef7620dea7cc8d06"></a>
@@ -748,6 +780,425 @@ Functions</h2></td></tr>
 </ol>
 <pre class="fragment">* @param snip_reply_msg  Message to validate.
 * </pre><dl class="section return"><dt>Returns</dt><dd>true if the message is a well-formed SNIP reply. </dd></dl>
+
+</div>
+</div>
+<a id="ad25e6853f3335063cd65cd275a642035" name="ad25e6853f3335063cd65cd275a642035"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad25e6853f3335063cd65cd275a642035">&#9670;&#160;</a></span>ProtocolSnip_extract_manufacturer_version_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t ProtocolSnip_extract_manufacturer_version_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>incoming_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>out_version</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads the manufacturer version ID byte from a SNIP reply. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">incoming_msg</td><td>Pointer to a validated <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> SNIP reply. </td></tr>
+    <tr><td class="paramname">out_version</td><td>Destination for the version byte. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 on success, 0 if the field could not be located.</dd></dl>
+<p>Reads the manufacturer version ID byte from a SNIP reply.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Reject if payload_count &lt; 1.</li>
+<li>Copy byte at offset 0 to *out_version.</li>
+</ol>
+<pre class="fragment">* @param incoming_msg  Validated SNIP reply.
+* @param out_version   Destination byte.
+* </pre><dl class="section return"><dt>Returns</dt><dd>1 on success, 0 if payload too short. </dd></dl>
+
+</div>
+</div>
+<a id="af274d6129f9d34455037ae990ad8b6d2" name="af274d6129f9d34455037ae990ad8b6d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af274d6129f9d34455037ae990ad8b6d2">&#9670;&#160;</a></span>ProtocolSnip_extract_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t ProtocolSnip_extract_name </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>incoming_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out_buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>max_bytes</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads the manufacturer name string from a SNIP reply. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">incoming_msg</td><td>Pointer to a validated <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> SNIP reply. </td></tr>
+    <tr><td class="paramname">out_buffer</td><td>Destination buffer; result is null-terminated. </td></tr>
+    <tr><td class="paramname">max_bytes</td><td>Size of out_buffer in bytes (must be &gt; 0). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes written, including the terminating null.</dd></dl>
+<p>Reads the manufacturer name string from a SNIP reply.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Field starts at payload offset 1 (immediately after mfg version byte).</li>
+<li>Copy null-terminated string into out_buffer (truncated to max_bytes - 1).</li>
+</ol>
+<pre class="fragment">* @param incoming_msg  Validated SNIP reply.
+* @param out_buffer    Destination buffer; result is null-terminated.
+* @param max_bytes     Size of out_buffer.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Bytes written including the terminating null. </dd></dl>
+
+</div>
+</div>
+<a id="a5b760eee4dc1495fa8fa7e655bb42852" name="a5b760eee4dc1495fa8fa7e655bb42852"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b760eee4dc1495fa8fa7e655bb42852">&#9670;&#160;</a></span>ProtocolSnip_extract_model()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t ProtocolSnip_extract_model </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>incoming_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out_buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>max_bytes</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads the model name string from a SNIP reply. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">incoming_msg</td><td>Pointer to a validated <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> SNIP reply. </td></tr>
+    <tr><td class="paramname">out_buffer</td><td>Destination buffer; result is null-terminated. </td></tr>
+    <tr><td class="paramname">max_bytes</td><td>Size of out_buffer in bytes (must be &gt; 0). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes written, including the terminating null.</dd></dl>
+<p>Reads the model name string from a SNIP reply.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Field starts immediately after the 1st null (end of mfg name).</li>
+<li>Copy null-terminated string into out_buffer.</li>
+</ol>
+<pre class="fragment">* @param incoming_msg  Validated SNIP reply.
+* @param out_buffer    Destination buffer; result is null-terminated.
+* @param max_bytes     Size of out_buffer.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Bytes written including the terminating null. </dd></dl>
+
+</div>
+</div>
+<a id="aece5d05f0cba6de25d1016ca201d423e" name="aece5d05f0cba6de25d1016ca201d423e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aece5d05f0cba6de25d1016ca201d423e">&#9670;&#160;</a></span>ProtocolSnip_extract_hardware_version()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t ProtocolSnip_extract_hardware_version </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>incoming_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out_buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>max_bytes</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads the hardware version string from a SNIP reply. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">incoming_msg</td><td>Pointer to a validated <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> SNIP reply. </td></tr>
+    <tr><td class="paramname">out_buffer</td><td>Destination buffer; result is null-terminated. </td></tr>
+    <tr><td class="paramname">max_bytes</td><td>Size of out_buffer in bytes (must be &gt; 0). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes written, including the terminating null.</dd></dl>
+<p>Reads the hardware version string from a SNIP reply.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Field starts immediately after the 2nd null (end of model).</li>
+<li>Copy null-terminated string into out_buffer.</li>
+</ol>
+<pre class="fragment">* @param incoming_msg  Validated SNIP reply.
+* @param out_buffer    Destination buffer; result is null-terminated.
+* @param max_bytes     Size of out_buffer.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Bytes written including the terminating null. </dd></dl>
+
+</div>
+</div>
+<a id="af4fde25abbb9f4e4d695668485a85f44" name="af4fde25abbb9f4e4d695668485a85f44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4fde25abbb9f4e4d695668485a85f44">&#9670;&#160;</a></span>ProtocolSnip_extract_software_version()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t ProtocolSnip_extract_software_version </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>incoming_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out_buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>max_bytes</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads the software version string from a SNIP reply. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">incoming_msg</td><td>Pointer to a validated <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> SNIP reply. </td></tr>
+    <tr><td class="paramname">out_buffer</td><td>Destination buffer; result is null-terminated. </td></tr>
+    <tr><td class="paramname">max_bytes</td><td>Size of out_buffer in bytes (must be &gt; 0). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes written, including the terminating null.</dd></dl>
+<p>Reads the software version string from a SNIP reply.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Field starts immediately after the 3rd null (end of hw version).</li>
+<li>Copy null-terminated string into out_buffer.</li>
+</ol>
+<pre class="fragment">* @param incoming_msg  Validated SNIP reply.
+* @param out_buffer    Destination buffer; result is null-terminated.
+* @param max_bytes     Size of out_buffer.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Bytes written including the terminating null. </dd></dl>
+
+</div>
+</div>
+<a id="a8faed16d8511788404fee4bc1e65a870" name="a8faed16d8511788404fee4bc1e65a870"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8faed16d8511788404fee4bc1e65a870">&#9670;&#160;</a></span>ProtocolSnip_extract_user_version_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t ProtocolSnip_extract_user_version_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>incoming_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>out_version</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads the user version ID byte from a SNIP reply. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">incoming_msg</td><td>Pointer to a validated <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> SNIP reply. </td></tr>
+    <tr><td class="paramname">out_version</td><td>Destination for the version byte. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 on success, 0 if the field could not be located.</dd></dl>
+<p>Reads the user version ID byte from a SNIP reply.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Locate offset just after the 4th null (end of sw version).</li>
+<li>Reject if offset is invalid or past payload end.</li>
+<li>Copy byte at that offset to *out_version.</li>
+</ol>
+<pre class="fragment">* @param incoming_msg  Validated SNIP reply.
+* @param out_version   Destination byte.
+* </pre><dl class="section return"><dt>Returns</dt><dd>1 on success, 0 if the field could not be located. </dd></dl>
+
+</div>
+</div>
+<a id="a725f644c0756d85d030ac29fd1965540" name="a725f644c0756d85d030ac29fd1965540"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a725f644c0756d85d030ac29fd1965540">&#9670;&#160;</a></span>ProtocolSnip_extract_user_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t ProtocolSnip_extract_user_name </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>incoming_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out_buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>max_bytes</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads the user-provided node name string from a SNIP reply. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">incoming_msg</td><td>Pointer to a validated <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> SNIP reply. </td></tr>
+    <tr><td class="paramname">out_buffer</td><td>Destination buffer; result is null-terminated. </td></tr>
+    <tr><td class="paramname">max_bytes</td><td>Size of out_buffer in bytes (must be &gt; 0). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes written, including the terminating null.</dd></dl>
+<p>Reads the user-provided node name string from a SNIP reply.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Locate offset just after the 4th null, then advance one byte past the user version byte.</li>
+<li>Copy null-terminated string into out_buffer.</li>
+</ol>
+<pre class="fragment">* @param incoming_msg  Validated SNIP reply.
+* @param out_buffer    Destination buffer; result is null-terminated.
+* @param max_bytes     Size of out_buffer.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Bytes written including the terminating null. </dd></dl>
+
+</div>
+</div>
+<a id="af5c863da8bf3923be0ad2562672de719" name="af5c863da8bf3923be0ad2562672de719"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5c863da8bf3923be0ad2562672de719">&#9670;&#160;</a></span>ProtocolSnip_extract_user_description()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t ProtocolSnip_extract_user_description </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>incoming_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out_buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>max_bytes</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads the user-provided node description string from a SNIP reply. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">incoming_msg</td><td>Pointer to a validated <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> SNIP reply. </td></tr>
+    <tr><td class="paramname">out_buffer</td><td>Destination buffer; result is null-terminated. </td></tr>
+    <tr><td class="paramname">max_bytes</td><td>Size of out_buffer in bytes (must be &gt; 0). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes written, including the terminating null.</dd></dl>
+<p>Reads the user-provided node description string from a SNIP reply.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Field starts immediately after the 5th null (end of user name).</li>
+<li>Copy null-terminated string into out_buffer.</li>
+</ol>
+<pre class="fragment">* @param incoming_msg  Validated SNIP reply.
+* @param out_buffer    Destination buffer; result is null-terminated.
+* @param max_bytes     Size of out_buffer.
+* </pre><dl class="section return"><dt>Returns</dt><dd>Bytes written including the terminating null. </dd></dl>
 
 </div>
 </div>

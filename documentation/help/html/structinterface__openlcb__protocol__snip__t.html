@@ -100,6 +100,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ab4ad220ab7a2676bb10369163fcb0ba2" id="r_ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4ad220ab7a2676bb10369163fcb0ba2">config_memory_read</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
 <tr class="memdesc:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from config memory (ACDI User space) for user name/description. REQUIRED.  <br /></td></tr>
 <tr class="separator:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37bf2fb581810b6f303c5979881b3992" id="r_a37bf2fb581810b6f303c5979881b3992"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37bf2fb581810b6f303c5979881b3992">on_snip_reply</a> )(<a class="el" href="structsource__info__t.html">source_info_t</a> *source, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *incoming_msg)</td></tr>
+<tr class="memdesc:a37bf2fb581810b6f303c5979881b3992"><td class="mdescLeft">&#160;</td><td class="mdescRight">A remote node returned a SNIP reply we asked for. Optional.  <br /></td></tr>
+<tr class="separator:a37bf2fb581810b6f303c5979881b3992"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Callback interface for SNIP. config_memory_read is REQUIRED. </p>
@@ -117,6 +120,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Read from config memory (ACDI User space) for user name/description. REQUIRED. </p>
+
+</div>
+</div>
+<a id="a37bf2fb581810b6f303c5979881b3992" name="a37bf2fb581810b6f303c5979881b3992"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37bf2fb581810b6f303c5979881b3992">&#9670;&#160;</a></span>on_snip_reply</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* on_snip_reply) (<a class="el" href="structsource__info__t.html">source_info_t</a> *source, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *incoming_msg)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A remote node returned a SNIP reply we asked for. Optional. </p>
 
 </div>
 </div>
