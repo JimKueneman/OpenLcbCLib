@@ -34,6 +34,8 @@
 #include "tcp_link_control.h"
 #include "tcp_utilities.h"
 
+#ifdef OPENLCB_COMPILE_TCP
+
 // =========================================================================
 // Module state
 // =========================================================================
@@ -189,3 +191,5 @@ bool TcpLinkControl_send_drop_link_request(void) {
 
     return _interface->send_link_control(0x0000, body, 2);
 }
+
+#endif /* OPENLCB_COMPILE_TCP */

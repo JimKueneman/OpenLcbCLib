@@ -46,6 +46,9 @@ add_subdirectory(${ROOT_DIR}/src/utilities utilities)
 add_subdirectory(${ROOT_DIR}/src/utilities_pc utilities_pc)
 add_subdirectory(${ROOT_DIR}/src/drivers/canbus canbus)
 add_subdirectory(${ROOT_DIR}/src/drivers/tcp_ip tcp_ip)
+# The TCP/IP driver is guarded by OPENLCB_COMPILE_TCP, so it and its tests build
+# against the TCP configuration. Everything else uses typical (CAN).
+target_include_directories(tcp_ip BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/user_config/tcp)
 add_subdirectory(${ROOT_DIR}/src/openlcb openlcb)
 
 
@@ -170,6 +173,9 @@ foreach(testsourcefile ${TESTS})
         PUBLIC
             ${ROOT_DIR}/src
     )
+    if (testdir STREQUAL "tcp_ip")
+        target_include_directories(${testname} BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/user_config/tcp)
+    endif()
     target_link_libraries(${testname}
         GTest::gtest_main
         GTest::gmock_main
