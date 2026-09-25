@@ -203,6 +203,7 @@ def build(story):
     openlcb_c_lib/            <- library (do not edit)
       openlcb/                <- protocol engine
       drivers/canbus/         <- CAN state machines
+      drivers/tcp_ip/         <- TCP/IP transport (compiled out for CAN nodes)
       utilities/              <- helper files"""))
     story.append(Paragraph(
         "Note: Never rename the src/ subfolder. Arduino IDE will stop compiling the library files if "
@@ -260,7 +261,7 @@ def build(story):
             ["Node Type", "Pick the role of your node: Basic, Typical, Train, or Train Controller."],
             ["CDI", "Describe the settings your node exposes to JMRI and other tools. Required for Typical, Train, and Train Controller nodes."],
             ["FDI", "Describe the DCC functions your decoder supports. Train nodes only."],
-            ["Platform Drivers", "Select your target hardware. The Wizard pre-fills working driver code for the chosen platform."],
+            ["Target Platform", "Select your target hardware. The Wizard pre-fills working driver code for the chosen platform."],
             ["Callbacks", "Choose which protocol events your application needs to respond to."],
             ["Generated Files", "Preview the output file tree and click Download ZIP to get your project."],
         ],
@@ -290,17 +291,22 @@ def build(story):
         "This is the most important file in your project. It tells the library how much memory to allocate "
         "and which features to compile in. Every value is mandatory.", styles["Body"]))
     story.append(code_block(
-"""// --- Feature Flags -------------------------------------------
+"""// --- Transport -- exactly one must be defined ---------------
+#define OPENLCB_COMPILE_CAN
+// #define OPENLCB_COMPILE_TCP
+
+// --- Feature Flags -------------------------------------------
 // Uncomment to enable the protocols your node uses.
 #define OPENLCB_COMPILE_EVENTS                // event producer/consumer
 #define OPENLCB_COMPILE_DATAGRAMS             // needed for config memory
 #define OPENLCB_COMPILE_MEMORY_CONFIGURATION  // CDI/settings support
-// #define OPENLCB_COMPILE_FIRMWARE           // firmware upgrade
-// #define OPENLCB_COMPILE_STREAM             // stream transport
+#define OPENLCB_COMPILE_FIRMWARE              // firmware upgrade (on in BasicNode)
 // #define OPENLCB_COMPILE_BROADCAST_TIME     // clock synchronization
 // #define OPENLCB_COMPILE_TRAIN             // locomotive control
 // #define OPENLCB_COMPILE_TRAIN_SEARCH      // throttle train discovery
+// #define OPENLCB_COMPILE_STREAM             // stream transport
 // #define OPENLCB_COMPILE_DCC_DETECTOR      // DCC detection protocol
+// #define OPENLCB_COMPILE_DCC_CV            // DCC CV programming space 0xF8
 
 // --- Buffer Pool --------------------------------------------
 #define USER_DEFINED_BASIC_BUFFER_DEPTH      32  // 16 bytes each
@@ -338,9 +344,9 @@ def build(story):
     story.append(Paragraph("Testing With JMRI", styles["H2"]))
     story.append(Paragraph("\u2022 Open JMRI and connect to your LCC network.", styles["Body"]))
     story.append(Paragraph(
-        '\u2022 Go to Tools > LCC > LCC Nodes. Your node should appear in the list.', styles["Body"]))
+        '\u2022 Go to the LCC menu and choose Configure Nodes. Your node should appear in the list.', styles["Body"]))
     story.append(Paragraph(
-        '\u2022 Right-click the node and choose "Configure". JMRI reads the CDI and shows your settings.',
+        '\u2022 Select the node and click Open Configuration Dialog. JMRI reads the CDI and shows your settings.',
         styles["Body"]))
     story.append(Paragraph(
         "\u2022 You can change the node name and description from here.", styles["Body"]))

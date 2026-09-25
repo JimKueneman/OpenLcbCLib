@@ -108,12 +108,13 @@ def build(story):
         ("2.", "OpenLCB/LCC Concepts"),
         ("3.", "Project File Structure"),
         ("4.", "The Node Wizard in Detail"),
-        ("", "4.1 Node Type Selection"),
+        ("", "4.1 Node Type and Project Options"),
         ("", "4.2 CDI Editor"),
         ("", "4.3 FDI Editor (Train Nodes Only)"),
-        ("", "4.4 Driver Stubs"),
-        ("", "4.5 Callback Stubs"),
-        ("", "4.6 Exporting the Code"),
+        ("", "4.4 Target Platform"),
+        ("", "4.5 Callbacks"),
+        ("", "4.6 Generated Files"),
+        ("", "4.7 Arduino vs. Non-Arduino Differences"),
         ("5.", "openlcb_user_config.h in Depth"),
         ("", "5.1 Feature Flags"),
         ("", "5.2 Message Buffer Pool"),
@@ -122,6 +123,7 @@ def build(story):
         ("", "5.5 Stream Transport"),
         ("", "5.6 Train Protocol"),
         ("", "5.7 Listener Alias Verification"),
+        ("", "5.8 DCC CV Programming Space"),
         ("6.", "Initialization \u2014 main.ino"),
         ("", "6.1 The CAN Config Struct"),
         ("", "6.2 The OpenLCB Config Struct"),
@@ -173,12 +175,13 @@ def build(story):
     story.append(make_table(
         ["Processor / Board", "Example IDE / Toolchain"],
         [
-            ["ESP32", "Arduino IDE, PlatformIO"],
-            ["Raspberry Pi Pico (RP2040)", "Arduino IDE, PlatformIO"],
-            ["STM32 (F4 and others)", "STM32 Cube IDE"],
+            ["ESP32 (CAN via TWAI)", "Arduino IDE, PlatformIO"],
+            ["ESP32 (WiFi GridConnect)", "PlatformIO"],
+            ["Raspberry Pi Pico (RP2040, MCP2517FD)", "Arduino IDE (Earle Philhower core)"],
+            ["STM32F4xx (F407 Discovery)", "STM32CubeIDE"],
             ["Microchip dsPIC33", "MPLAB X"],
-            ["TI MSPM0", "Code Composer Studio"],
-            ["macOS (simulation)", "Xcode"],
+            ["TI MSPM0 (MSPM0G3507 LaunchPad)", "Code Composer Studio Theia"],
+            ["macOS (GridConnect over TCP)", "Xcode, PlatformIO"],
         ],
         col_widths=[2.5*inch, 3.5*inch]
     ))
@@ -267,6 +270,7 @@ def build(story):
         openlcb_application_broadcast_time.h/c
         openlcb_application_train.h/c
         openlcb_application_dcc_detector.h/c
+        openlcb_application_dcc_cv.h/c  - DCC CV programming space (0xF8)
         openlcb_buffer_fifo.h/c       - FIFO buffer management
         openlcb_buffer_list.h/c       - List buffer management
         openlcb_buffer_store.h/c      - Buffer pool allocation
@@ -289,6 +293,7 @@ def build(story):
         protocol_train_handler.h/c
         protocol_train_search_handler.h/c
       drivers/canbus/          <- CAN state machines (do not edit)
+      drivers/tcp_ip/          <- TCP/IP transport; compiles out when CAN is selected
       utilities/               <- Shared utilities"""))
 
     # =========================================================================
@@ -315,7 +320,7 @@ def build(story):
             ["Typical", "Events plus user-configurable settings stored in config memory. The CDI section is enabled. Most common choice for sensors, turnout drivers, and signal heads."],
             ["Train", "Locomotive decoder. CDI and FDI sections are both enabled."],
             ["Train Controller", "Throttle or command station."],
-            ["Custom", "Select your own feature flags and callbacks manually."],
+            ["Bootloader", "Firmware-upgrade image only: datagrams, config memory and firmware upgrade, nothing else. Pairs with the standalone bootloader projects."],
         ],
         col_widths=[1.2*inch, 5.0*inch]
     ))
@@ -332,6 +337,7 @@ def build(story):
             ["Node ID", "Your node's globally unique 48-bit identifier in dotted hex format: xx.xx.xx.xx.xx.xx (e.g. 05.01.01.00.00.01). The field auto-formats as you type and shows a live valid / invalid indicator."],
             ["Broadcast Time", "Optionally compile in the OpenLCB Broadcast Time protocol. Choose None (default), Producer, or Consumer."],
             ["Firmware Update", "Enables the OpenLCB Firmware Upgrade Protocol so the node can accept a new firmware image over the bus without physical access. Requires config memory."],
+            ["DCC CV Programming", "Serves decoder CVs through memory space 0xF8 so JMRI DecoderPro can program through this node (command stations and train nodes). Adds the dcc_cv_read / dcc_cv_write callbacks. Requires config memory."],
         ],
         col_widths=[1.2*inch, 5.0*inch]
     ))
@@ -369,10 +375,10 @@ def build(story):
         "supports (headlight, bell, horn, etc.). Each function entry maps a function number (F0-F28) to "
         "a name and behaviour type (binary on/off, or momentary).", styles["Body"]))
 
-    # 4.4 Platform Drivers
-    story.append(Paragraph("4.4 Platform Drivers", styles["H2"]))
+    # 4.4 Target Platform
+    story.append(Paragraph("4.4 Target Platform", styles["H2"]))
     story.append(Paragraph(
-        "The Platform Drivers section is where you select your target hardware. This is one of the most "
+        "The Target Platform section is where you select your target hardware. This is one of the most "
         "important steps \u2014 the platform you choose determines two things: whether the output uses Arduino or "
         "non-Arduino layout, and whether the driver files come pre-filled with working code or just TODO stubs.",
         styles["Body"]))
@@ -420,7 +426,7 @@ def build(story):
             ["xml_files/cdi.xml", "Your CDI XML definition."],
             ["xml_files/fdi.xml", "Your FDI XML (train nodes only)."],
             ["GETTING_STARTED.txt", "Step-by-step instructions included in every ZIP."],
-            ["_project.json", "Saved Wizard state. Reload it to resume editing."],
+            ["&lt;type&gt;_project.json", "Saved Wizard state (e.g. typical_project.json). Load it from the header to resume editing."],
         ],
         col_widths=[2.2*inch, 4.0*inch]
     ))
@@ -428,7 +434,7 @@ def build(story):
     # 4.7 Arduino vs Non-Arduino
     story.append(Paragraph("4.7 Arduino vs. Non-Arduino Differences", styles["H2"]))
     story.append(Paragraph(
-        "The platform you select in the Platform Drivers step automatically determines the output layout. "
+        "The platform you select in the Target Platform step automatically determines the output layout. "
         "There is no manual checkbox \u2014 the Wizard sets Arduino mode based on the chosen platform. This "
         "changes two things in the generated output:", styles["Body"]))
     story.append(Paragraph(
@@ -467,10 +473,15 @@ def build(story):
 // #define OPENLCB_COMPILE_BROADCAST_TIME     // Clock synchronization
 // #define OPENLCB_COMPILE_TRAIN             // Locomotive control
 // #define OPENLCB_COMPILE_TRAIN_SEARCH      // Throttle train discovery
-// #define OPENLCB_COMPILE_DCC_DETECTOR      // DCC detection protocol"""))
+// #define OPENLCB_COMPILE_DCC_DETECTOR      // DCC detection protocol
+// #define OPENLCB_COMPILE_DCC_CV            // DCC CV programming space 0xF8
+
+// Transport -- exactly one must be defined (see Section 6)
+#define OPENLCB_COMPILE_CAN
+// #define OPENLCB_COMPILE_TCP"""))
     story.append(Paragraph(
         "Note: OPENLCB_COMPILE_MEMORY_CONFIGURATION requires OPENLCB_COMPILE_DATAGRAMS. "
-        "OPENLCB_COMPILE_FIRMWARE requires OPENLCB_COMPILE_MEMORY_CONFIGURATION. "
+        "OPENLCB_COMPILE_FIRMWARE and OPENLCB_COMPILE_DCC_CV require OPENLCB_COMPILE_MEMORY_CONFIGURATION. "
         "OPENLCB_COMPILE_DCC_DETECTOR requires OPENLCB_COMPILE_EVENTS. "
         "OPENLCB_COMPILE_BROADCAST_TIME requires OPENLCB_COMPILE_EVENTS. "
         "OPENLCB_COMPILE_TRAIN_SEARCH requires both OPENLCB_COMPILE_TRAIN and OPENLCB_COMPILE_EVENTS.",
@@ -545,6 +556,17 @@ def build(story):
 #define USER_DEFINED_LISTENER_PROBE_INTERVAL_TICKS  250  // 100ms ticks between probes of same entry
 #define USER_DEFINED_LISTENER_VERIFY_TIMEOUT_TICKS   30  // 100ms ticks to wait for AMD reply"""))
 
+    # 5.8 DCC CV
+    story.append(Paragraph("5.8 DCC CV Programming Space", styles["H2"]))
+    story.append(Paragraph(
+        "Only meaningful when OPENLCB_COMPILE_DCC_CV is defined. The library keeps a small table of CV "
+        "requests that the application has not answered yet, so a slow decoder read never stalls the node.",
+        styles["Body"]))
+    story.append(code_block(
+"""#define USER_DEFINED_DCC_CV_PENDING_COUNT        4   // CV requests waiting on the track at once
+#define USER_DEFINED_DCC_CV_TIMEOUT_TICKS       80   // 100ms ticks before an unanswered request fails
+#define USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS   4   // reply time advertised to the requester"""))
+
     # =========================================================================
     # 6. INITIALIZATION
     # =========================================================================
@@ -591,18 +613,23 @@ def build(story):
     .factory_reset           = &CallbacksConfigMem_factory_reset, // optional
 
     // Firmware Upgrade (requires OPENLCB_COMPILE_FIRMWARE)
-    .freeze                  = &CallbacksConfigMem_freeze,
-    .unfreeze                = &CallbacksConfigMem_unfreeze,
-    .firmware_write          = &CallbacksConfigMem_firmware_write,
+    .freeze                  = &Drivers_freeze,
+    .unfreeze                = &Drivers_unfreeze,
+    .firmware_write          = &Drivers_firmware_write,
+
+    // DCC CV programming (requires OPENLCB_COMPILE_DCC_CV)
+    .dcc_cv_read             = &CallbacksDccCv_dcc_cv_read,   // optional
+    .dcc_cv_write            = &CallbacksDccCv_dcc_cv_write,  // optional
 
     // Application callbacks
     .on_100ms_timer          = &CallbacksOlcb_on_100ms_timer,
-    .on_consumed_event_pcer  = &CallbacksOlcb_on_event, // optional (EVENTS)
+    .on_consumed_event_pcer  = &CallbacksEvents_on_consumed_event_pcer, // optional (EVENTS)
 };"""))
     story.append(Paragraph(
         "The struct contains additional optional callback fields for event identification, broadcast time, "
-        "train control, train search, and stream transport. Set any field to NULL (or omit it) to use the "
-        "library default. See openlcb_config.h for the full list.", styles["Note"]))
+        "train control, train search, stream transport, and the config memory reply-time estimates "
+        "(config_mem_read/write_delayed_reply_time, which return seconds). Set any field to NULL (or omit it) "
+        "to use the library default. See openlcb_config.h for the full list.", styles["Note"]))
 
     # 6.3 Setup and Loop
     story.append(Paragraph("6.3 Setup and Loop", styles["H2"]))
@@ -652,12 +679,12 @@ void loop() {
         "is_tx_buffer_clear() returns true.", styles["Body"]))
     story.append(code_block(
 """bool Esp32CanDriver_transmit_raw_can_frame(can_msg_t *can_msg) {
-    twai_message_t msg;
+    twai_message_t msg = {};
     msg.extd = 1;  // OpenLCB uses 29-bit extended IDs
-    msg.identifier = can_msg->id;
-    msg.data_length_code = can_msg->dlc;
-    for (int i = 0; i < can_msg->dlc; i++)
-        msg.data[i] = can_msg->data[i];
+    msg.identifier = can_msg->identifier;
+    msg.data_length_code = can_msg->payload_count;
+    for (int i = 0; i < can_msg->payload_count; i++)
+        msg.data[i] = can_msg->payload[i];
     return (twai_transmit(&msg, 0) == ESP_OK);  // non-blocking
 }"""))
     story.append(Paragraph("is_tx_buffer_clear", styles["H3"]))
@@ -665,7 +692,7 @@ void loop() {
 """bool Esp32CanDriver_is_can_tx_buffer_clear(void) {
     twai_status_info_t info;
     twai_get_status_info(&info);
-    return (info.msgs_to_tx == 0);
+    return ((TX_QUEUE_LEN - info.msgs_to_tx) > 0);  // room for one more frame
 }"""))
     story.append(Paragraph("Receiving Frames", styles["H3"]))
     story.append(Paragraph(
@@ -676,17 +703,18 @@ void loop() {
     twai_message_t msg;
     for (;;) {
         if (twai_receive(&msg, pdMS_TO_TICKS(10)) == ESP_OK) {
+            if (!msg.extd) continue;  // OpenLCB frames are extended only
             can_msg_t can_msg;
-            can_msg.id  = msg.identifier;
-            can_msg.dlc = msg.data_length_code;
+            can_msg.identifier    = msg.identifier;
+            can_msg.payload_count = msg.data_length_code;
             for (int i = 0; i < msg.data_length_code; i++)
-                can_msg.data[i] = msg.data[i];
-            CanMainStateMachine_process_rx_frame(&can_msg);
+                can_msg.payload[i] = msg.data[i];
+            CanRxStatemachine_incoming_can_driver_callback(&can_msg);
         }
     }
 }"""))
 
-    # 7.2 Platform Drivers
+    # 7.2 Target Platform
     story.append(Paragraph("7.2 OpenLCB Platform Drivers (esp32_drivers.cpp)", styles["H2"]))
     story.append(Paragraph("Configuration Memory Read and Write", styles["H3"]))
     story.append(Paragraph(
@@ -808,13 +836,28 @@ void CallbacksOlcb_on_100ms_timer(void) {
     story.append(make_table(
         ["Space", "Purpose"],
         [
-            ["253 (0xFD)", "User configuration. CDI describes this space. JMRI reads and writes here."],
-            ["252 (0xFC)", "All memory (read only). Used internally by the library."],
-            ["251 (0xFB)", "CDI XML. The library serves CDI from here."],
-            ["249 (0xF9)", "FDI XML (train nodes only)."],
+            ["255 (0xFF)", "CDI XML. The library serves the CDI byte array from here (read only)."],
+            ["254 (0xFE)", "All memory (read only). Raw view of the node's memory."],
+            ["253 (0xFD)", "User configuration. The CDI describes this space; JMRI reads and writes here through your config_mem_read/write drivers."],
+            ["252 (0xFC)", "ACDI manufacturer information (read only), served from the SNIP data."],
+            ["251 (0xFB)", "ACDI user information: user name and description, read/write."],
+            ["250 (0xFA)", "FDI XML (train nodes only, read only)."],
+            ["249 (0xF9)", "Train function configuration memory (train nodes only)."],
+            ["248 (0xF8)", "DCC CV programming: one CV per byte, address = CV number - 1 (OPENLCB_COMPILE_DCC_CV)."],
+            ["239 (0xEF)", "Firmware upgrade image (OPENLCB_COMPILE_FIRMWARE)."],
         ],
         col_widths=[1.2*inch, 5.0*inch]
     ))
+    story.append(Paragraph("DCC CV Programming (Space 0xF8)", styles["H2"]))
+    story.append(Paragraph(
+        "With OPENLCB_COMPILE_DCC_CV enabled, JMRI DecoderPro and OpenMRN tools read and write decoder CVs "
+        "through this node. Service-mode (programming track) requests go to the command station node; ops-mode "
+        "(POM) requests go to the train node. Your dcc_cv_read and dcc_cv_write callbacks may answer at once, "
+        "or return OPENLCB_DCC_CV_RESULT_PENDING and report the result later with "
+        "OpenLcbApplicationDccCv_complete(handle, result, value) from the main loop, so waiting for a decoder "
+        "acknowledgement or a RailCom cutout never stalls the node. The library advertises a reply time of "
+        "USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS, absorbs a requester's re-send of an outstanding request, and "
+        "answers with a temporary time-out if the application never completes it.", styles["Body"]))
 
     # =========================================================================
     # 11. TRAIN NODES
@@ -846,12 +889,19 @@ void CallbacksOlcb_on_100ms_timer(void) {
 platform = espressif32
 board = esp32dev
 framework = arduino
-
-; Add the sketch directory to the include path
-build_flags = -I src"""))
+monitor_speed = 921600
+build_flags = -std=gnu99
+build_src_filter = -<**>
+                   +<*.c> +<*.cpp> +<*.h>
+                   +<openlcb_c_lib/openlcb/*.c> +<openlcb_c_lib/openlcb/*.h>
+                   +<openlcb_c_lib/drivers/canbus/*.c> +<openlcb_c_lib/drivers/canbus/*.h>
+                   +<openlcb_c_lib/utilities/*.c> +<openlcb_c_lib/utilities/*.h>
+                   +<application_callbacks/*.c> +<application_callbacks/*.h>
+                   +<application_drivers/*.c> +<application_drivers/*.cpp>"""))
     story.append(Paragraph(
-        "Place all source files in the src/ directory. PlatformIO will compile all .c and .cpp files in "
-        "src/ automatically.", styles["Body"]))
+        "The source filter lists exactly which folders under src/ are compiled, which keeps the unused "
+        "transport driver out of the build. The full file is in applications/platformio/esp32/BasicNode/.",
+        styles["Body"]))
 
     # =========================================================================
     # 13. TROUBLESHOOTING
@@ -867,7 +917,7 @@ build_flags = -I src"""))
             ["Node appears then immediately disappears",
              "Another node has the same Node ID. Every node must have a unique ID."],
             ["JMRI config panel is empty",
-             "CDI is malformed or the CDI byte array was not regenerated after editing the XML. Re-run the cdi_to_array tool."],
+             "CDI is malformed or the CDI byte array was not regenerated after editing the XML. Re-run tools/xml_to_array or regenerate the project with the Node Wizard."],
             ["Settings do not save across power cycles",
              "config_mem_write is not writing to NVS. Add Serial.println() in the write function to confirm it is being called."],
             ["Events not received by consumer",

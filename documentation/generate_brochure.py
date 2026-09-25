@@ -185,9 +185,11 @@ def build_page1(story):
          "No RTOS required. A single run() call per main-loop tick drives "
          "the entire protocol engine."),
         ("Compliance-tested",
-         "45 gTest suites deliver 99.2% line, 99.9% function, and 95.8% "
-         "branch coverage across the full source tree. All 93 OlcbChecker "
-         "integration checks pass fully automated."),
+         "55 GoogleTest suites (2,147 tests) deliver 96.4% line, 98.0% function, "
+         "and 91.2% branch coverage across the full source tree, and a "
+         "guard audit compiles every feature-flag configuration. The OpenLCB "
+         "OlcbChecker compliance suite runs fully automated against the "
+         "macOS demo node."),
         ("Dependency injection",
          "Hardware callbacks are function pointers wired at init time. Swap "
          "platforms by changing the driver layer \u2014 the protocol code is "
@@ -228,9 +230,10 @@ def build_page2(story):
         ["Event Transport",
          "Producer / consumer, identify events, learn / teach"],
         ["Datagram",
-         "Send, receive, timeout, 3-retry limit, temporary error backoff"],
+         "Send, receive, Reply Pending with time estimate, timeout handling"],
         ["Config Memory",
-         "Read, write, write-under-mask, lock, ACDI spaces, CDI / FDI delivery"],
+         "Read, write, write-under-mask, lock, ACDI spaces, CDI / FDI delivery, "
+         "DCC CV programming space (0xF8) with deferred replies"],
         ["Broadcast Time",
          "Query, set, immediate time, rollover, producer and consumer roles"],
         ["Train Control",
@@ -255,23 +258,23 @@ def build_page2(story):
         "Demo Platforms, Tools &amp; Getting Started", styles["SectionHead"]
     ))
     story.append(Paragraph(
-        "Eight platforms ship with ready-to-run example projects. Porting to "
-        "a new CAN platform means writing just two driver files \u2014 a CAN "
-        "hardware driver and an OpenLCB driver \u2014 then everything else runs "
-        "unchanged.",
+        "Seven platform and transport combinations ship with ready-to-run "
+        "example projects. Porting to a new CAN platform means writing just "
+        "two driver files \u2014 a CAN hardware driver and an OpenLCB driver "
+        "\u2014 then everything else runs unchanged.",
         styles["Body"]
     ))
 
     plat_headers = ["Platform", "Transport", "Toolchain / IDE"]
     plat_rows = [
         ["ESP32", "CAN (TWAI)", "Arduino IDE, PlatformIO"],
-        ["ESP32", "WiFi GridConnect", "Arduino IDE, PlatformIO"],
+        ["ESP32", "WiFi GridConnect", "PlatformIO"],
         ["Raspberry Pi Pico (RP2040)", "MCP2517FD SPI",
          "Arduino IDE (Philhower core)"],
         ["STM32F4xx", "CAN", "STM32CubeIDE"],
         ["TI MSPM0", "MCAN", "Code Composer Theia"],
         ["dsPIC", "CAN", "MPLAB X"],
-        ["macOS", "GridConnect", "Xcode"],
+        ["macOS", "GridConnect over TCP", "Xcode, PlatformIO"],
     ]
     story.append(make_table(plat_headers, plat_rows,
                             col_widths=[1.8 * inch, 1.4 * inch, 2.6 * inch]))
@@ -298,18 +301,20 @@ def build_page3(story):
     story.append(Paragraph("Unit Test Coverage", styles["SectionHead"]))
     cov_headers = ["Metric", "Coverage", "Detail"]
     cov_rows = [
-        ["Lines", "99.2%", "8,047 / 8,109"],
-        ["Functions", "99.9%", "674 / 675"],
-        ["Branches", "95.8%", "2,918 / 3,047"],
+        ["Lines", "96.4%", "9,012 / 9,349"],
+        ["Functions", "98.0%", "813 / 830"],
+        ["Branches", "91.2%", "3,376 / 3,703"],
     ]
     story.append(make_table(cov_headers, cov_rows,
                             col_widths=[1.2 * inch, 1.0 * inch, 2.0 * inch]))
     story.append(Spacer(1, 4))
     story.append(Paragraph(
-        "45 gTest suites cover the full source tree (utilities, CAN driver, "
-        "protocol engine). All 93 OlcbChecker integration checks pass "
-        "(FR, ME, SN, EV, DA, MC, CD, FD, BT, TR, TS, ST, DD); "
-        "all 93 run fully automated.",
+        "55 GoogleTest suites, 2,147 tests, cover the full source tree "
+        "(utilities, CAN and TCP drivers, protocol engine), measured with gcovr "
+        "on the typical configuration. The OlcbChecker compliance suite "
+        "(frame, message network, SNIP, events, datagrams, config memory, CDI, "
+        "FDI, broadcast time, train control and search) runs fully automated "
+        "through test/olcbchecker_bridge.",
         styles["BodySmall"]
     ))
 
