@@ -3112,3 +3112,106 @@ TEST(ProtocolConfigMemReadHandler, read_request_function_config_memory_midrange)
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[8], 0x34);
 
 }
+
+// ============================================================================
+// TEST: Read overrun clamp boundaries
+// ============================================================================
+// @details highest_address is inclusive. A read whose last byte lands on or
+// before highest_address must not be altered; one that runs past it must be
+// clamped to exactly the bytes that remain. Uses the FDI space (0xFA), whose
+// test definition has highest_address = 9 (10 bytes, indices 0..9).
+
+static uint16_t _run_fdi_read_and_get_bytes(openlcb_statemachine_info_t *statemachine_info, openlcb_msg_t *incoming_msg, uint32_t address, uint8_t count)
+{
+
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, address, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
+    *incoming_msg->payload[7] = count;
+    incoming_msg->payload_count = 8;
+
+    // Phase 1: ACK
+    _reset_variables();
+    ProtocolConfigMemReadHandler_read_space_train_function_definition_info(statemachine_info);
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+
+    // Phase 2: dispatch to the space handler with the clamped byte count
+    _reset_variables();
+    ProtocolConfigMemReadHandler_read_space_train_function_definition_info(statemachine_info);
+    EXPECT_EQ(called_function_ptr, (void *)&_read_request_train_config_decscription_info);
+
+    return local_config_mem_read_request_info.bytes;
+
+}
+
+TEST(ProtocolConfigMemReadHandler, read_overrun_clamp_boundaries)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+    EXPECT_EQ(_node_parameters_main_node.address_space_train_function_definition_info.highest_address, 9);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+
+    // One byte, ending one short of the top: must stay 1 (was 2 before the fix)
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 8, 1), 1);
+
+    // Two bytes ending exactly at the top: unchanged
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 8, 2), 2);
+
+    // One byte at the top address: unchanged
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 9, 1), 1);
+
+    // From zero, ending one short of the top: must stay 9 (was 10 before the fix)
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 0, 9), 9);
+
+    // From zero, the whole space: unchanged
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 0, 10), 10);
+
+    // Overruns are clamped to what remains
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 0, 64), 10);
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 5, 64), 5);
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 9, 64), 1);
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 8, 3), 2);
+
+    // Full-range space (highest_address = 0xFFFFFFFF, as the firmware space uses):
+    // the clamp arithmetic must not overflow and must leave in-range reads alone.
+    static node_parameters_t full_range_params;
+    full_range_params = _node_parameters_main_node;
+    full_range_params.address_space_train_function_definition_info.highest_address = 0xFFFFFFFF;
+    node1->parameters = &full_range_params;
+
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 0x00001000, 4), 4);
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 0x00000000, 64), 64);
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 0xFFFFFFFE, 2), 2);
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 0xFFFFFFFE, 64), 2);
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 0xFFFFFFFF, 1), 1);
+    EXPECT_EQ(_run_fdi_read_and_get_bytes(&statemachine_info, incoming_msg, 0xFFFFFFFF, 64), 1);
+
+    node1->parameters = &_node_parameters_main_node;
+
+    OpenLcbBufferStore_free_buffer(incoming_msg);
+    OpenLcbBufferStore_free_buffer(outgoing_msg);
+
+}

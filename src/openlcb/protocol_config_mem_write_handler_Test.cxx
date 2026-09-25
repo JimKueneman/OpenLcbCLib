@@ -4373,3 +4373,109 @@ TEST(ProtocolConfigMemWriteHandler, write_under_mask_too_many_bytes)
     EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
 }
+
+// ============================================================================
+// TEST: Write overrun clamp boundaries
+// ============================================================================
+// @details highest_address is inclusive. A write whose last byte lands on or
+// before highest_address must not be altered; one that runs past it must be
+// clamped to exactly the bytes that remain. Uses the Train Function Config
+// space (0xF9), whose test definition has highest_address =
+// (USER_DEFINED_MAX_TRAIN_FUNCTIONS * 2) - 1.
+
+static uint16_t _run_fn_config_write_and_get_bytes(openlcb_statemachine_info_t *statemachine_info, openlcb_msg_t *incoming_msg, uint32_t address, uint8_t count)
+{
+
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, address, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
+    incoming_msg->payload_count = 7 + count;
+
+    // Phase 1: ACK
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_space_train_function_config_memory(statemachine_info);
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+
+    // Phase 2: dispatch to the space handler with the clamped byte count
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_space_train_function_config_memory(statemachine_info);
+    EXPECT_EQ(called_function_ptr, (void *)&_write_request_train_config_memory);
+
+    return local_config_mem_write_request_info.bytes;
+
+}
+
+TEST(ProtocolConfigMemWriteHandler, write_overrun_clamp_boundaries)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    const uint32_t top = (USER_DEFINED_MAX_TRAIN_FUNCTIONS * 2) - 1;
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+    EXPECT_EQ(_node_parameters_main_node.address_space_train_function_config_memory.highest_address, top);
+    EXPECT_LE(top + 1, 64u); // the whole space fits in one datagram, needed by the cases below
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+
+    // One byte, ending one short of the top: must stay 1 (was 2 before the fix)
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, top - 1, 1), 1);
+
+    // Two bytes ending exactly at the top: unchanged
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, top - 1, 2), 2);
+
+    // One byte at the top address: unchanged
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, top, 1), 1);
+
+    // From zero, ending one short of the top: must not grow (was top + 1 before the fix)
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, 0, (uint8_t) top), top);
+
+    // From zero, the whole space: unchanged
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, 0, (uint8_t) (top + 1)), top + 1);
+
+    // Overruns are clamped to what remains
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, 0, 64), top + 1);
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, top - 4, 64), 5);
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, top, 64), 1);
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, top - 1, 3), 2);
+
+    // Full-range space (highest_address = 0xFFFFFFFF, as the firmware space uses):
+    // the clamp arithmetic must not overflow and must leave in-range writes alone.
+    static node_parameters_t full_range_params;
+    full_range_params = _node_parameters_main_node;
+    full_range_params.address_space_train_function_config_memory.highest_address = 0xFFFFFFFF;
+    node1->parameters = &full_range_params;
+
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, 0x00001000, 4), 4);
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, 0x00000000, 64), 64);
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, 0xFFFFFFFE, 2), 2);
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, 0xFFFFFFFE, 64), 2);
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, 0xFFFFFFFF, 1), 1);
+    EXPECT_EQ(_run_fn_config_write_and_get_bytes(&statemachine_info, incoming_msg, 0xFFFFFFFF, 64), 1);
+
+    node1->parameters = &_node_parameters_main_node;
+
+    OpenLcbBufferStore_free_buffer(incoming_msg);
+    OpenLcbBufferStore_free_buffer(outgoing_msg);
+
+}
