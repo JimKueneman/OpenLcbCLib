@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -151,8 +151,11 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a60e114b6133aebdf6f31f11d59f079c6" id="r_a60e114b6133aebdf6f31f11d59f079c6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60e114b6133aebdf6f31f11d59f079c6">read_request_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
 <tr class="memdesc:a60e114b6133aebdf6f31f11d59f079c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom Train Fn Config (0xF9) read handler. Optional.  <br /></td></tr>
 <tr class="separator:a60e114b6133aebdf6f31f11d59f079c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa79332c63f472412bb2c07b2613a5561" id="r_aa79332c63f472412bb2c07b2613a5561"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa79332c63f472412bb2c07b2613a5561">read_request_dcc_cv</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:aa79332c63f472412bb2c07b2613a5561"><td class="mdescLeft">&#160;</td><td class="mdescRight">DCC CV (0xF8) read handler. Optional; see <a class="el" href="openlcb__application__dcc__cv_8h.html" title="DCC CV memory space (0xF8) with deferred replies.">openlcb_application_dcc_cv.h</a>.  <br /></td></tr>
+<tr class="separator:aa79332c63f472412bb2c07b2613a5561"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae34ac57960a8202d10d1c22dc66b61ea" id="r_ae34ac57960a8202d10d1c22dc66b61ea"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae34ac57960a8202d10d1c22dc66b61ea">delayed_reply_time</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
-<tr class="memdesc:ae34ac57960a8202d10d1c22dc66b61ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Override reply delay (return N means 2^N seconds). Optional (default 0).  <br /></td></tr>
+<tr class="memdesc:ae34ac57960a8202d10d1c22dc66b61ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Expected reply time in seconds, rounded up to 2^N by the datagram handler. Optional (default 0, no estimate).  <br /></td></tr>
 <tr class="separator:ae34ac57960a8202d10d1c22dc66b61ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af777915e82cc62643931b644f3c8f959" id="r_af777915e82cc62643931b644f3c8f959"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a4aacdb6ee7a816ef7bb419414ee990af">train_state_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af777915e82cc62643931b644f3c8f959">get_train_state</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node)</td></tr>
 <tr class="memdesc:af777915e82cc62643931b644f3c8f959"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Returns train state for the given node (DI for train module).  <br /></td></tr>
@@ -449,6 +452,22 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
+<a id="aa79332c63f472412bb2c07b2613a5561" name="aa79332c63f472412bb2c07b2613a5561"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa79332c63f472412bb2c07b2613a5561">&#9670;&#160;</a></span>read_request_dcc_cv</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* read_request_dcc_cv) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>DCC CV (0xF8) read handler. Optional; see <a class="el" href="openlcb__application__dcc__cv_8h.html" title="DCC CV memory space (0xF8) with deferred replies.">openlcb_application_dcc_cv.h</a>. </p>
+
+</div>
+</div>
 <a id="ae34ac57960a8202d10d1c22dc66b61ea" name="ae34ac57960a8202d10d1c22dc66b61ea"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae34ac57960a8202d10d1c22dc66b61ea">&#9670;&#160;</a></span>delayed_reply_time</h2>
 
@@ -461,7 +480,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Override reply delay (return N means 2^N seconds). Optional (default 0). </p>
+<p>Expected reply time in seconds, rounded up to 2^N by the datagram handler. Optional (default 0, no estimate). </p>
 
 </div>
 </div>

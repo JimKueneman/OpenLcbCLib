@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -184,11 +184,13 @@ Functions</h2></td></tr>
 <p>Initializes the Train Search Protocol handler. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface</td><td>Pointer to <a class="el" href="structinterface__protocol__train__search__handler__t.html">interface_protocol_train_search_handler_t</a> callbacks (may be NULL). </td></tr>
+    <tr><td class="paramname">interface</td><td>Pointer to <a class="el" href="structinterface__protocol__train__search__handler__t.html">interface_protocol_train_search_handler_t</a> callbacks (may be NULL).</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Initializes the Train Search Protocol handler.</p>
+<pre class="fragment">* @param interface  Populated callback table (may be NULL).
+* </pre> 
 </div>
 </div>
 <a id="ad4cea7fa1cfe7925b0eba233d283da43" name="ad4cea7fa1cfe7925b0eba233d283da43"></a>
@@ -223,11 +225,14 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> containing encoded search query. </td></tr>
+    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> containing encoded search query.</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Decodes the search query, compares against this node's DCC address, and loads a Producer Identified reply if matched.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param event_id           Full 64-bit event_id_t containing encoded search query.
+* </pre> 
 </div>
 </div>
 <a id="ae97a4f3de8a1d7ddc57ec5bdd35ca11d" name="ae97a4f3de8a1d7ddc57ec5bdd35ca11d"></a>
@@ -262,11 +267,15 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> containing encoded search query. </td></tr>
+    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> containing encoded search query.</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Handles the no-match case after full train search enumeration.</p>
+<p>Called by the main statemachine when the last node in the enumeration has been reached and no train node matched the search query. If the ALLOCATE flag is set in the search event and the on_search_no_match_with_allocate callback is registered, invokes it so the application can create a new virtual train node.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param event_id           Full 64-bit event_id_t containing encoded search query.
+* </pre> 
 </div>
 </div>
 <a id="ab79e1cfbd02b02ea4fece7dcf80f75be" name="ab79e1cfbd02b02ea4fece7dcf80f75be"></a>
@@ -301,11 +310,18 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> from the reply. </td></tr>
+    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> from the reply.</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Algorithm:</p><ol type="1">
+<li>Return early if the interface or on_search_reply callback is NULL.</li>
+<li>Build a <a class="el" href="structsource__info__t.html" title="Identifies the remote node that sent a received message.">source_info_t</a> from the incoming message's source fields.</li>
+<li>Invoke the callback with the raw event ID.</li>
+</ol>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param event_id           Full 64-bit event_id_t from the reply.
+* </pre> 
 </div>
 </div>
 <a id="a9bcd55ed1d804950c0ca3cd551f3f8ca" name="a9bcd55ed1d804950c0ca3cd551f3f8ca"></a>
@@ -332,7 +348,8 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>100ms tick driver for the pending-allocate timeout queue. </p>
-<p>Application must call this once every 100ms. Decrements the timeout on every live pending-allocate slot; when a slot reaches zero without a Producer Identified reply having been seen for its event ID, fires on_search_no_match_with_allocate and frees the slot. </p>
+<p>Application must call this once every 100ms. Decrements the timeout on every live pending-allocate slot; when a slot reaches zero without a Producer Identified reply having been seen for its event ID, fires on_search_no_match_with_allocate and frees the slot.</p>
+<p>For each live slot: decrement ticks_remaining; when it reaches zero, fire on_search_no_match_with_allocate (only if no reply was seen) and free the slot. The callback return value is ignored; the application is responsible for emitting the Producer Identified reply via OpenLcbApplicationTrain_send_search_match. </p>
 
 </div>
 </div>
@@ -366,7 +383,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the event ID is a train search event. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the event ID is a train search event.</dd></dl>
+<p>Returns true if the event ID belongs to the train search space (upper 4 bytes = 0x090099FF). </p>
 
 </div>
 </div>

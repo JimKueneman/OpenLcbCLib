@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['event_5frange_5fcount_5fenum_0',['event_range_count_enum',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa',1,'openlcb_types.h']]],
-  ['event_5fstatus_5fenum_1',['event_status_enum',['../openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce',1,'openlcb_types.h']]]
+  ['config_5fmem_5fstream_5fphase_5fenum_0',['config_mem_stream_phase_enum',['../protocol__config__mem__stream__handler_8h.html#aa2648fef38912cf80419351bdd3f88a9',1,'protocol_config_mem_stream_handler.h']]]
 ];

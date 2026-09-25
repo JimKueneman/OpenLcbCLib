@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -196,11 +196,13 @@ Functions</h2></td></tr>
 <p>Initializes the Broadcast Time Protocol handler. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_openlcb_protocol_broadcast_time_handler</td><td>Pointer to <a class="el" href="structinterface__openlcb__protocol__broadcast__time__handler__t.html">interface_openlcb_protocol_broadcast_time_handler_t</a> (must remain valid for application lifetime). </td></tr>
+    <tr><td class="paramname">interface_openlcb_protocol_broadcast_time_handler</td><td>Pointer to <a class="el" href="structinterface__openlcb__protocol__broadcast__time__handler__t.html">interface_openlcb_protocol_broadcast_time_handler_t</a> (must remain valid for application lifetime).</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Initializes the Broadcast Time Protocol handler.</p>
+<pre class="fragment">* @param interface_openlcb_protocol_broadcast_time_handler  Populated callback table.
+* </pre> 
 </div>
 </div>
 <a id="a2bd1b6bb4a819938221d5ff72f1ad362" name="a2bd1b6bb4a819938221d5ff72f1ad362"></a>
@@ -235,11 +237,14 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> containing encoded time data. </td></tr>
+    <tr><td class="paramname">event_id</td><td>Full 64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> containing encoded time data.</td></tr>
   </table>
   </dd>
 </dl>
-
+<p>Decodes the event type, looks up the matching clock, and dispatches to the appropriate sub-handler.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param event_id           Full 64-bit event_id_t containing encoded time data.
+* </pre> 
 </div>
 </div>
 <a id="a153ed5b06858a0a9d0f56d65fb3031d4" name="a153ed5b06858a0a9d0f56d65fb3031d4"></a>
@@ -385,7 +390,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if values are valid, false if out of range. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if values are valid, false if out of range.</dd></dl>
+<p>Extracts hour and minute from a broadcast time event ID. </p>
 
 </div>
 </div>
@@ -430,7 +436,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if values are valid, false if out of range. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if values are valid, false if out of range.</dd></dl>
+<p>Extracts month and day from a broadcast time event ID. </p>
 
 </div>
 </div>
@@ -469,7 +476,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if extraction successful. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if extraction successful.</dd></dl>
+<p>Extracts year from a broadcast time event ID. </p>
 
 </div>
 </div>
@@ -508,7 +516,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if extraction successful. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if extraction successful.</dd></dl>
+<p>Rate format is 10.2 fixed point. Sign-extends bit 11 for negative rates. Returns false (without writing *rate) if event_id is not a Report Rate or Set Rate event — the rate range covers all 4096 possible 12-bit values, so we can't disambiguate by value alone like extract_time/date/year do; we must check byte 6's upper nibble explicitly. </p>
 
 </div>
 </div>

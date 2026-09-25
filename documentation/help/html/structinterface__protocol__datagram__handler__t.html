@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -124,6 +124,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ab46ca4cb48dfda435307b97aef855915" id="r_ab46ca4cb48dfda435307b97aef855915"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab46ca4cb48dfda435307b97aef855915">memory_read_space_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:ab46ca4cb48dfda435307b97aef855915"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read Train Fn Config (0xF9) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:ab46ca4cb48dfda435307b97aef855915"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a754da36ca33fe368b2f549d565f521fe" id="r_a754da36ca33fe368b2f549d565f521fe"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a754da36ca33fe368b2f549d565f521fe">memory_read_space_dcc_cv</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a754da36ca33fe368b2f549d565f521fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read DCC CV (0xF8) via datagram. Optional.  <br /></td></tr>
+<tr class="separator:a754da36ca33fe368b2f549d565f521fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa82087482db53ec9435c7190303bf610" id="r_aa82087482db53ec9435c7190303bf610"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa82087482db53ec9435c7190303bf610">memory_read_space_config_description_info_reply_ok</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:aa82087482db53ec9435c7190303bf610"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read reply OK — CDI via datagram. Optional.  <br /></td></tr>
 <tr class="separator:aa82087482db53ec9435c7190303bf610"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -250,6 +253,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ae3abf954e2973be3a64a2094db023120" id="r_ae3abf954e2973be3a64a2094db023120"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3abf954e2973be3a64a2094db023120">memory_write_space_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:ae3abf954e2973be3a64a2094db023120"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write Train Fn Config (0xF9) via datagram. Optional.  <br /></td></tr>
 <tr class="separator:ae3abf954e2973be3a64a2094db023120"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af59b4a8b582b7109614fa12d0f8c00c2" id="r_af59b4a8b582b7109614fa12d0f8c00c2"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af59b4a8b582b7109614fa12d0f8c00c2">memory_write_space_dcc_cv</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:af59b4a8b582b7109614fa12d0f8c00c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write DCC CV (0xF8) via datagram. Optional.  <br /></td></tr>
+<tr class="separator:af59b4a8b582b7109614fa12d0f8c00c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bb3202e5587dd9c16acdee5a583acd8" id="r_a6bb3202e5587dd9c16acdee5a583acd8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bb3202e5587dd9c16acdee5a583acd8">memory_write_space_firmware_upgrade</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:a6bb3202e5587dd9c16acdee5a583acd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write Firmware Upgrade space via datagram. Optional.  <br /></td></tr>
 <tr class="separator:a6bb3202e5587dd9c16acdee5a583acd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -572,6 +578,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Read Train Fn Config (0xF9) via datagram. Optional. </p>
+
+</div>
+</div>
+<a id="a754da36ca33fe368b2f549d565f521fe" name="a754da36ca33fe368b2f549d565f521fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a754da36ca33fe368b2f549d565f521fe">&#9670;&#160;</a></span>memory_read_space_dcc_cv</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* memory_read_space_dcc_cv) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read DCC CV (0xF8) via datagram. Optional. </p>
 
 </div>
 </div>
@@ -1244,6 +1266,22 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Write Train Fn Config (0xF9) via datagram. Optional. </p>
+
+</div>
+</div>
+<a id="af59b4a8b582b7109614fa12d0f8c00c2" name="af59b4a8b582b7109614fa12d0f8c00c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af59b4a8b582b7109614fa12d0f8c00c2">&#9670;&#160;</a></span>memory_write_space_dcc_cv</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* memory_write_space_dcc_cv) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write DCC CV (0xF8) via datagram. Optional. </p>
 
 </div>
 </div>

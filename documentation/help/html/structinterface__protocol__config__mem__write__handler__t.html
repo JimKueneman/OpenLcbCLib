@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -130,11 +130,14 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a35e20af9d55c24371e5aeba556b27c31" id="r_a35e20af9d55c24371e5aeba556b27c31"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35e20af9d55c24371e5aeba556b27c31">write_request_train_function_config_memory</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
 <tr class="memdesc:a35e20af9d55c24371e5aeba556b27c31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Train Fn Config (0xF9) write handler.  <br /></td></tr>
 <tr class="separator:a35e20af9d55c24371e5aeba556b27c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcdc16bcc165be4d0d71c40a2173513e" id="r_adcdc16bcc165be4d0d71c40a2173513e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adcdc16bcc165be4d0d71c40a2173513e">write_request_dcc_cv</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:adcdc16bcc165be4d0d71c40a2173513e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional - DCC CV (0xF8) write handler; see <a class="el" href="openlcb__application__dcc__cv_8h.html" title="DCC CV memory space (0xF8) with deferred replies.">openlcb_application_dcc_cv.h</a>.  <br /></td></tr>
+<tr class="separator:adcdc16bcc165be4d0d71c40a2173513e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51fe5c8fc50ff2d5adb0789bc626a74b" id="r_a51fe5c8fc50ff2d5adb0789bc626a74b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51fe5c8fc50ff2d5adb0789bc626a74b">write_request_firmware</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info, <a class="el" href="openlcb__types_8h.html#a217935f55ce99fe0af81c36639afd651">write_result_t</a> write_result)</td></tr>
 <tr class="memdesc:a51fe5c8fc50ff2d5adb0789bc626a74b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Firmware (0xEF) write handler (receives write_result completion callback).  <br /></td></tr>
 <tr class="separator:a51fe5c8fc50ff2d5adb0789bc626a74b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82baac869860da64982f0bde9385d3bb" id="r_a82baac869860da64982f0bde9385d3bb"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82baac869860da64982f0bde9385d3bb">delayed_reply_time</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
-<tr class="memdesc:a82baac869860da64982f0bde9385d3bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Override reply delay (return N → 2^N seconds). Default 0.  <br /></td></tr>
+<tr class="memdesc:a82baac869860da64982f0bde9385d3bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional - Expected reply time in seconds, rounded up to 2^N by the datagram handler. Default 0 (no estimate).  <br /></td></tr>
 <tr class="separator:a82baac869860da64982f0bde9385d3bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a317d544123df617738d3d60062331418" id="r_a317d544123df617738d3d60062331418"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a317d544123df617738d3d60062331418">on_function_changed</a> )(<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, uint32_t fn_address, uint16_t fn_value)</td></tr>
 <tr class="memdesc:a317d544123df617738d3d60062331418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional — Notifier fired when a train function changes via 0xF9 write.  <br /></td></tr>
@@ -323,6 +326,22 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
+<a id="adcdc16bcc165be4d0d71c40a2173513e" name="adcdc16bcc165be4d0d71c40a2173513e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcdc16bcc165be4d0d71c40a2173513e">&#9670;&#160;</a></span>write_request_dcc_cv</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* write_request_dcc_cv) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional - DCC CV (0xF8) write handler; see <a class="el" href="openlcb__application__dcc__cv_8h.html" title="DCC CV memory space (0xF8) with deferred replies.">openlcb_application_dcc_cv.h</a>. </p>
+
+</div>
+</div>
 <a id="a51fe5c8fc50ff2d5adb0789bc626a74b" name="a51fe5c8fc50ff2d5adb0789bc626a74b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a51fe5c8fc50ff2d5adb0789bc626a74b">&#9670;&#160;</a></span>write_request_firmware</h2>
 
@@ -351,7 +370,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Optional — Override reply delay (return N → 2^N seconds). Default 0. </p>
+<p>Optional - Expected reply time in seconds, rounded up to 2^N by the datagram handler. Default 0 (no estimate). </p>
 
 </div>
 </div>

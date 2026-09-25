@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -140,6 +140,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a56e3f060f9a65d5d4b35588ffd4a0028" id="r_a56e3f060f9a65d5d4b35588ffd4a0028"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56e3f060f9a65d5d4b35588ffd4a0028">OpenLcbApplication_send_event_pc_report</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
 <tr class="memdesc:a56e3f060f9a65d5d4b35588ffd4a0028"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Producer/Consumer Event Report (PCER) message to the network.  <br /></td></tr>
 <tr class="separator:a56e3f060f9a65d5d4b35588ffd4a0028"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac923f41f0db1bf1a4b1a24620fd4858e" id="r_ac923f41f0db1bf1a4b1a24620fd4858e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac923f41f0db1bf1a4b1a24620fd4858e">OpenLcbApplication_send_event_pc_report_with_payload</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, const uint8_t *payload, uint16_t payload_count)</td></tr>
+<tr class="memdesc:ac923f41f0db1bf1a4b1a24620fd4858e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Producer/Consumer Event Report with payload.  <br /></td></tr>
+<tr class="separator:ac923f41f0db1bf1a4b1a24620fd4858e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90a0fe82553f0554429866a6bc770e40" id="r_a90a0fe82553f0554429866a6bc770e40"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90a0fe82553f0554429866a6bc770e40">OpenLcbApplication_send_event_with_mti</a> (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t mti)</td></tr>
 <tr class="memdesc:a90a0fe82553f0554429866a6bc770e40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an event message with an arbitrary MTI.  <br /></td></tr>
 <tr class="separator:a90a0fe82553f0554429866a6bc770e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -547,7 +550,7 @@ Check the return value for 0xFFFF before assuming registration succeeded.</dd></
   <table class="params">
     <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> receiving the registration. </td></tr>
     <tr><td class="paramname">event_id_base</td><td>Base <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> of the range. </td></tr>
-    <tr><td class="paramname">range_size</td><td>Number of consecutive event IDs in the range (<a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a>).</td></tr>
+    <tr><td class="paramname">range_size</td><td>Exponent N from <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a>; range covers 2^N consecutive event IDs.</td></tr>
   </table>
   </dd>
 </dl>
@@ -564,7 +567,7 @@ Check the return value for 0xFFFF before assuming registration succeeded.</dd></
 </ol>
 <pre class="fragment">* @param openlcb_node    Pointer to the openlcb_node_t receiving the registration.
 * @param event_id_base   Base event_id_t of the range.
-* @param range_size      Number of consecutive event IDs (event_range_count_enum).
+* @param range_size      Exponent N from event_range_count_enum; range covers 2^N consecutive event IDs.
 * </pre><dl class="section return"><dt>Returns</dt><dd>true if registered successfully, false if the range array is full.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash — no NULL check is performed on the node. </dd></dl>
 
@@ -608,7 +611,7 @@ Check the return value for 0xFFFF before assuming registration succeeded.</dd></
   <table class="params">
     <tr><td class="paramname">openlcb_node</td><td>Pointer to the <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> receiving the registration. </td></tr>
     <tr><td class="paramname">event_id_base</td><td>Base <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> of the range. </td></tr>
-    <tr><td class="paramname">range_size</td><td>Number of consecutive event IDs in the range (<a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a>).</td></tr>
+    <tr><td class="paramname">range_size</td><td>Exponent N from <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a>; range covers 2^N consecutive event IDs.</td></tr>
   </table>
   </dd>
 </dl>
@@ -625,7 +628,7 @@ Check the return value for 0xFFFF before assuming registration succeeded.</dd></
 </ol>
 <pre class="fragment">* @param openlcb_node    Pointer to the openlcb_node_t receiving the registration.
 * @param event_id_base   Base event_id_t of the range.
-* @param range_size      Number of consecutive event IDs (event_range_count_enum).
+* @param range_size      Exponent N from event_range_count_enum; range covers 2^N consecutive event IDs.
 * </pre><dl class="section return"><dt>Returns</dt><dd>true if registered successfully, false if the range array is full.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash — no NULL check is performed on the node. </dd></dl>
 
@@ -684,6 +687,72 @@ Returns false if <a class="el" href="openlcb__application_8c.html#a78c4dd26cc000
 <dl class="section warning"><dt>Warning</dt><dd>NULL pointer on the node causes a crash — no NULL check is performed. </dd>
 <dd>
 Returns false if <a class="el" href="openlcb__application_8c.html#a78c4dd26cc000fae9e2af5b6453ad511" title="Stores the application callback interface for use by all application layer functions.">OpenLcbApplication_initialize()</a> was not called first. </dd></dl>
+
+</div>
+</div>
+<a id="ac923f41f0db1bf1a4b1a24620fd4858e" name="ac923f41f0db1bf1a4b1a24620fd4858e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac923f41f0db1bf1a4b1a24620fd4858e">&#9670;&#160;</a></span>OpenLcbApplication_send_event_pc_report_with_payload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbApplication_send_event_pc_report_with_payload </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>payload</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>payload_count</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sends a Producer/Consumer Event Report with payload. </p>
+<p>Builds a global PCER-with-payload message (MTI 0x0F14): the event ID followed by <code>payload_count</code> bytes of <code>payload</code>, and queues it via the send_openlcb_msg callback. On CAN it goes out as FIRST/MIDDLE/LAST frames (CAN-MTIs 0x0F16/0x0F15/0x0F14). The whole message, event ID included, can be at most LEN_EVENT_PAYLOAD bytes &ndash; the most a receiver built on this library reassembles.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the sending <a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a>. </td></tr>
+    <tr><td class="paramname">event_id</td><td>64-bit <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> to report. </td></tr>
+    <tr><td class="paramname">payload</td><td>Bytes that follow the event ID. </td></tr>
+    <tr><td class="paramname">payload_count</td><td>How many, 1 to LEN_EVENT_PAYLOAD - 8.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if queued successfully; false if the transmit buffer is full, the callback is NULL, or <code>payload_count</code> is 0 or too large.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer causes a crash on the node — no NULL check is performed.</dd></dl>
+<p>Sends a Producer/Consumer Event Report with payload.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Refuse an empty payload, or one that with the 8-byte event ID would not fit in LEN_EVENT_PAYLOAD (the most a receiver built on this library reassembles).</li>
+<li>Declare msg and a SNIP-sized payload on the stack; set payload_type to SNIP.</li>
+<li>Load the message with MTI_PC_EVENT_REPORT_WITH_PAYLOAD, copy in the event ID, then the payload bytes after it.</li>
+<li>If the send callback is non-NULL, call it and return its result; otherwise return false.</li>
+</ol>
+<pre class="fragment">* @param openlcb_node   Pointer to the sending openlcb_node_t.
+* @param event_id       64-bit event_id_t to report.
+* @param payload        Bytes that follow the event ID.
+* @param payload_count  How many, 1 to LEN_EVENT_PAYLOAD - 8.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if queued successfully; false if the transmit buffer is full, the callback is NULL, or payload_count is out of range.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer on the node causes a crash — no NULL check is performed. </dd></dl>
 
 </div>
 </div>

@@ -1,18 +1,10 @@
 var searchData=
 [
-  ['reserved_5ftop_5fbit_0',['RESERVED_TOP_BIT',['../openlcb__defines_8h.html#a97e367b03f496622abf8b1ee6c316ade',1,'openlcb_defines.h']]],
-  ['runstate_5fgenerate_5falias_1',['RUNSTATE_GENERATE_ALIAS',['../openlcb__defines_8h.html#a7efde0142413bf152f42a47666e5f234',1,'openlcb_defines.h']]],
-  ['runstate_5fgenerate_5fseed_2',['RUNSTATE_GENERATE_SEED',['../openlcb__defines_8h.html#ac50f65b85c2c4dfed3c6474a2f613335',1,'openlcb_defines.h']]],
-  ['runstate_5finit_3',['RUNSTATE_INIT',['../openlcb__defines_8h.html#a78bb04ebef2f0ee7fe6f15a27a8f8be0',1,'openlcb_defines.h']]],
-  ['runstate_5fload_5falias_5fmap_5fdefinition_4',['RUNSTATE_LOAD_ALIAS_MAP_DEFINITION',['../openlcb__defines_8h.html#a38405ddcab8d834c92f2d99517180d32',1,'openlcb_defines.h']]],
-  ['runstate_5fload_5fcheck_5fid_5f04_5',['RUNSTATE_LOAD_CHECK_ID_04',['../openlcb__defines_8h.html#ab06a4d2109029204fe06d00df79cb4ee',1,'openlcb_defines.h']]],
-  ['runstate_5fload_5fcheck_5fid_5f05_6',['RUNSTATE_LOAD_CHECK_ID_05',['../openlcb__defines_8h.html#a53c57672c5502b5a023e096b3ba8e358',1,'openlcb_defines.h']]],
-  ['runstate_5fload_5fcheck_5fid_5f06_7',['RUNSTATE_LOAD_CHECK_ID_06',['../openlcb__defines_8h.html#af2a580e589a724a98206ba1ecc224049',1,'openlcb_defines.h']]],
-  ['runstate_5fload_5fcheck_5fid_5f07_8',['RUNSTATE_LOAD_CHECK_ID_07',['../openlcb__defines_8h.html#af93ae86b0c4bbadbed321e40133856f5',1,'openlcb_defines.h']]],
-  ['runstate_5fload_5fconsumer_5fevents_9',['RUNSTATE_LOAD_CONSUMER_EVENTS',['../openlcb__defines_8h.html#a75ee6f410ee754afe21247321de81f58',1,'openlcb_defines.h']]],
-  ['runstate_5fload_5finitialization_5fcomplete_10',['RUNSTATE_LOAD_INITIALIZATION_COMPLETE',['../openlcb__defines_8h.html#ac1cbddb1be6516477038aa787447be6f',1,'openlcb_defines.h']]],
-  ['runstate_5fload_5fproducer_5fevents_11',['RUNSTATE_LOAD_PRODUCER_EVENTS',['../openlcb__defines_8h.html#a08482f1fdb216fe0bd36cacf8dbf092e',1,'openlcb_defines.h']]],
-  ['runstate_5fload_5freserve_5fid_12',['RUNSTATE_LOAD_RESERVE_ID',['../openlcb__defines_8h.html#a74ea27ad00731fddd84c780d6b63c12c',1,'openlcb_defines.h']]],
-  ['runstate_5frun_13',['RUNSTATE_RUN',['../openlcb__defines_8h.html#af6eaeb155cdfde837a166bac521293a8',1,'openlcb_defines.h']]],
-  ['runstate_5fwait_5f200ms_14',['RUNSTATE_WAIT_200ms',['../openlcb__defines_8h.html#ad7e4daa95126753e0481d086a0cd2054',1,'openlcb_defines.h']]]
+  ['user_5fdefined_5fcan_5fmsg_5fbuffer_5fdepth_0',['USER_DEFINED_CAN_MSG_BUFFER_DEPTH',['../can__types_8h.html#a66e224442df976c1bb15398aa0a681ab',1,'can_types.h']]],
+  ['user_5fdefined_5fdcc_5fcv_5fpending_5fcount_1',['USER_DEFINED_DCC_CV_PENDING_COUNT',['../openlcb__application__dcc__cv_8h.html#afbae98d15ef44780fd836151a08e5843',1,'openlcb_application_dcc_cv.h']]],
+  ['user_5fdefined_5fdcc_5fcv_5freply_5ftime_5fseconds_2',['USER_DEFINED_DCC_CV_REPLY_TIME_SECONDS',['../openlcb__application__dcc__cv_8h.html#ad95422b2bd43aca7200b9f446c2350f6',1,'openlcb_application_dcc_cv.h']]],
+  ['user_5fdefined_5fdcc_5fcv_5ftimeout_5fticks_3',['USER_DEFINED_DCC_CV_TIMEOUT_TICKS',['../openlcb__application__dcc__cv_8h.html#a187b9c9a072ec58d839c757e7efe2c76',1,'openlcb_application_dcc_cv.h']]],
+  ['user_5fdefined_5ftcp_5fmax_5fmultipart_5fassemblies_4',['USER_DEFINED_TCP_MAX_MULTIPART_ASSEMBLIES',['../tcp__user__config_8h.html#a72461e78d94f4dfd3d95f94fb41366b6',1,'tcp_user_config.h']]],
+  ['user_5fdefined_5ftcp_5frx_5faccumulation_5fbuffer_5flen_5',['USER_DEFINED_TCP_RX_ACCUMULATION_BUFFER_LEN',['../tcp__user__config_8h.html#a17d39d96cea1563fb5a04f5013c0ffcd',1,'tcp_user_config.h']]],
+  ['user_5fdefined_5ftcp_5ftx_5fbuffer_5flen_6',['USER_DEFINED_TCP_TX_BUFFER_LEN',['../tcp__user__config_8h.html#a0f0d2dc4e2fdcc0e1d51ecde5eb32cd4',1,'tcp_user_config.h']]]
 ];

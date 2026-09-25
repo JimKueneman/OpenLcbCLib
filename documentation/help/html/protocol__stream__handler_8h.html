@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -90,6 +90,10 @@ $(function(){ initResizable(false); });
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">protocol_stream_handler.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -98,6 +102,64 @@ $(function(){ initResizable(false); });
 <a href="#details">More...</a></p>
 
 <p><a href="protocol__stream__handler_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstream__state__t.html">stream_state_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracks the state of a single open stream.  <a href="structstream__state__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__protocol__stream__handler__t.html">interface_protocol_stream_handler_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Application callbacks for stream transport notifications.  <a href="structinterface__protocol__stream__handler__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a50f7c933dc795a3d11470705a3832d57" id="r_a50f7c933dc795a3d11470705a3832d57"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50f7c933dc795a3d11470705a3832d57">stream_state_enum</a> { <a class="el" href="#a50f7c933dc795a3d11470705a3832d57af1f190fc1965a05084b2eaa1aa131187">STREAM_STATE_CLOSED</a>
+, <a class="el" href="#a50f7c933dc795a3d11470705a3832d57ae1712ca6cd98dd2a36c10ae07c63ec98">STREAM_STATE_INITIATED</a>
+, <a class="el" href="#a50f7c933dc795a3d11470705a3832d57a269fa7b8fd15fcc0d83dcd946bf0b1f3">STREAM_STATE_OPEN</a>
+ }</td></tr>
+<tr class="memdesc:a50f7c933dc795a3d11470705a3832d57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream lifecycle states per the OpenLCB Stream Transport Standard.  <a href="#a50f7c933dc795a3d11470705a3832d57">More...</a><br /></td></tr>
+<tr class="separator:a50f7c933dc795a3d11470705a3832d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a8e1292d8993f74b27248430d72a2e210" id="r_a8e1292d8993f74b27248430d72a2e210"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e1292d8993f74b27248430d72a2e210">ProtocolStreamHandler_initialize</a> (const <a class="el" href="structinterface__protocol__stream__handler__t.html">interface_protocol_stream_handler_t</a> *interface_protocol_stream_handler)</td></tr>
+<tr class="memdesc:a8e1292d8993f74b27248430d72a2e210"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the callback interface. Call once at startup.  <br /></td></tr>
+<tr class="separator:a8e1292d8993f74b27248430d72a2e210"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6c45eddd23e35827dd77fd8291aa88f" id="r_ab6c45eddd23e35827dd77fd8291aa88f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6c45eddd23e35827dd77fd8291aa88f">ProtocolStreamHandler_initiate_request</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ab6c45eddd23e35827dd77fd8291aa88f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Stream Initiate Request (MTI 0x0CC8).  <br /></td></tr>
+<tr class="separator:ab6c45eddd23e35827dd77fd8291aa88f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7672e82b48fe2d1b3e0d66b52265f1f" id="r_ab7672e82b48fe2d1b3e0d66b52265f1f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7672e82b48fe2d1b3e0d66b52265f1f">ProtocolStreamHandler_initiate_reply</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ab7672e82b48fe2d1b3e0d66b52265f1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Stream Initiate Reply (MTI 0x0868).  <br /></td></tr>
+<tr class="separator:ab7672e82b48fe2d1b3e0d66b52265f1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c9af78bef64319553e175fd951415fa" id="r_a5c9af78bef64319553e175fd951415fa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c9af78bef64319553e175fd951415fa">ProtocolStreamHandler_data_send</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a5c9af78bef64319553e175fd951415fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Stream Data Send (MTI 0x1F88).  <br /></td></tr>
+<tr class="separator:a5c9af78bef64319553e175fd951415fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7717b8a62241a56d0ea9618bd4ed10e8" id="r_a7717b8a62241a56d0ea9618bd4ed10e8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7717b8a62241a56d0ea9618bd4ed10e8">ProtocolStreamHandler_data_proceed</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a7717b8a62241a56d0ea9618bd4ed10e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Stream Data Proceed (MTI 0x0888).  <br /></td></tr>
+<tr class="separator:a7717b8a62241a56d0ea9618bd4ed10e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5a4b31088b9fb8da90a23d1be318ebc" id="r_ad5a4b31088b9fb8da90a23d1be318ebc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5a4b31088b9fb8da90a23d1be318ebc">ProtocolStreamHandler_data_complete</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ad5a4b31088b9fb8da90a23d1be318ebc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Stream Data Complete (MTI 0x08A8).  <br /></td></tr>
+<tr class="separator:ad5a4b31088b9fb8da90a23d1be318ebc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a407407fb57459b85fde988d243c4b0e2" id="r_a407407fb57459b85fde988d243c4b0e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a407407fb57459b85fde988d243c4b0e2">ProtocolStreamHandler_handle_terminate_due_to_error</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a407407fb57459b85fde988d243c4b0e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Terminate Due To Error for stream-related MTIs.  <br /></td></tr>
+<tr class="separator:a407407fb57459b85fde988d243c4b0e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab208e6f655b2c2bc0bcfd6c0e3ead52" id="r_aab208e6f655b2c2bc0bcfd6c0e3ead52"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structstream__state__t.html">stream_state_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab208e6f655b2c2bc0bcfd6c0e3ead52">ProtocolStreamHandler_initiate_outbound</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t dest_alias, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> dest_id, uint16_t proposed_buffer_size, uint8_t suggested_dest_stream_id, const uint8_t *content_uid)</td></tr>
+<tr class="memdesc:aab208e6f655b2c2bc0bcfd6c0e3ead52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens an outbound stream where this node is the source.  <br /></td></tr>
+<tr class="separator:aab208e6f655b2c2bc0bcfd6c0e3ead52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a59b573d967b1dc77b2baa0d37d1ee9" id="r_a6a59b573d967b1dc77b2baa0d37d1ee9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a59b573d967b1dc77b2baa0d37d1ee9">ProtocolStreamHandler_send_data</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structstream__state__t.html">stream_state_t</a> *stream, const uint8_t *data, uint16_t data_len)</td></tr>
+<tr class="memdesc:a6a59b573d967b1dc77b2baa0d37d1ee9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends data on an open stream where this node is the source.  <br /></td></tr>
+<tr class="separator:a6a59b573d967b1dc77b2baa0d37d1ee9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67461ef7376f2879078603cfcd047794" id="r_a67461ef7376f2879078603cfcd047794"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67461ef7376f2879078603cfcd047794">ProtocolStreamHandler_send_complete</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structstream__state__t.html">stream_state_t</a> *stream)</td></tr>
+<tr class="memdesc:a67461ef7376f2879078603cfcd047794"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends Stream Data Complete and frees the stream slot.  <br /></td></tr>
+<tr class="separator:a67461ef7376f2879078603cfcd047794"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cfb6d7486a3f8b1d3abf2b2a1421958" id="r_a9cfb6d7486a3f8b1d3abf2b2a1421958"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9cfb6d7486a3f8b1d3abf2b2a1421958">ProtocolStreamHandler_send_terminate</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structstream__state__t.html">stream_state_t</a> *stream, uint16_t error_code)</td></tr>
+<tr class="memdesc:a9cfb6d7486a3f8b1d3abf2b2a1421958"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends Terminate Due To Error to abort a stream and frees the slot.  <br /></td></tr>
+<tr class="separator:a9cfb6d7486a3f8b1d3abf2b2a1421958"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ef88e6efa848708374e5898d5602281" id="r_a0ef88e6efa848708374e5898d5602281"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ef88e6efa848708374e5898d5602281">ProtocolStreamHandler_send_early_proceed</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structstream__state__t.html">stream_state_t</a> *stream)</td></tr>
+<tr class="memdesc:a0ef88e6efa848708374e5898d5602281"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an early Stream Data Proceed to allow double-buffering.  <br /></td></tr>
+<tr class="separator:a0ef88e6efa848708374e5898d5602281"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Stream Transport protocol handler. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2026, Jim Kueneman All rights reserved.</dd></dl>
@@ -110,7 +172,612 @@ $(function(){ initResizable(false); });
 <p>Handles stream initiation, data transfer with flow control, and stream completion per the OpenLCB Stream Transport Standard (Feb 2026). All application callbacks are optional (NULL = reject or ignore).</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>04 Apr 2026 </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a50f7c933dc795a3d11470705a3832d57" name="a50f7c933dc795a3d11470705a3832d57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50f7c933dc795a3d11470705a3832d57">&#9670;&#160;</a></span>stream_state_enum</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a50f7c933dc795a3d11470705a3832d57">stream_state_enum</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stream lifecycle states per the OpenLCB Stream Transport Standard. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a50f7c933dc795a3d11470705a3832d57af1f190fc1965a05084b2eaa1aa131187" name="a50f7c933dc795a3d11470705a3832d57af1f190fc1965a05084b2eaa1aa131187"></a>STREAM_STATE_CLOSED&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a50f7c933dc795a3d11470705a3832d57ae1712ca6cd98dd2a36c10ae07c63ec98" name="a50f7c933dc795a3d11470705a3832d57ae1712ca6cd98dd2a36c10ae07c63ec98"></a>STREAM_STATE_INITIATED&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a50f7c933dc795a3d11470705a3832d57a269fa7b8fd15fcc0d83dcd946bf0b1f3" name="a50f7c933dc795a3d11470705a3832d57a269fa7b8fd15fcc0d83dcd946bf0b1f3"></a>STREAM_STATE_OPEN&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a8e1292d8993f74b27248430d72a2e210" name="a8e1292d8993f74b27248430d72a2e210"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e1292d8993f74b27248430d72a2e210">&#9670;&#160;</a></span>ProtocolStreamHandler_initialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolStreamHandler_initialize </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structinterface__protocol__stream__handler__t.html">interface_protocol_stream_handler_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface_protocol_stream_handler</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Stores the callback interface. Call once at startup. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface_protocol_stream_handler</td><td>Pointer to <a class="el" href="structinterface__protocol__stream__handler__t.html">interface_protocol_stream_handler_t</a> (must remain valid for application lifetime).</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Stores the callback interface. Call once at startup.</p>
+<p>Algorithm:</p><ol type="1">
+<li>Store pointer to callback interface</li>
+<li>Clear the stream state table</li>
+<li>Reset the DID counter</li>
+</ol>
+<pre class="fragment">* @param interface_protocol_stream_handler  Pointer to callback interface structure.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must remain valid for lifetime of application. </dd>
+<dd>
+NOT thread-safe &ndash; call during single-threaded initialization only. </dd></dl>
+
+</div>
+</div>
+<a id="ab6c45eddd23e35827dd77fd8291aa88f" name="ab6c45eddd23e35827dd77fd8291aa88f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6c45eddd23e35827dd77fd8291aa88f">&#9670;&#160;</a></span>ProtocolStreamHandler_initiate_request()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolStreamHandler_initiate_request </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Stream Initiate Request (MTI 0x0CC8). </p>
+<p>Parses the request, allocates a stream state entry, negotiates buffer size, and sends a Stream Initiate Reply. If no callback is registered or the stream table is full, sends a reject reply.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Extract max_buffer_size (bytes 0-1), flags (bytes 2-3), SID (byte 4)</li>
+<li>If payload &gt;= 6, extract proposed DID (byte 5)</li>
+<li>If payload &gt;= 12, extract 6-byte Stream Content UID (bytes 6-11)</li>
+<li>If no on_initiate_request callback, reject with streams not supported</li>
+<li>Allocate a stream state entry; if table full, reject with buffer unavailable</li>
+<li>Assign a DID, populate stream state</li>
+<li>Call on_initiate_request callback</li>
+<li>Send accept reply with negotiated buffer size</li>
+</ol>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* </pre> 
+</div>
+</div>
+<a id="ab7672e82b48fe2d1b3e0d66b52265f1f" name="ab7672e82b48fe2d1b3e0d66b52265f1f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7672e82b48fe2d1b3e0d66b52265f1f">&#9670;&#160;</a></span>ProtocolStreamHandler_initiate_reply()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolStreamHandler_initiate_reply </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Stream Initiate Reply (MTI 0x0868). </p>
+<p>Parses accept/reject, updates stream state to OPEN or CLOSED, and notifies the application callback.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Extract max_buffer_size (bytes 0-1), flags (bytes 2-3), SID (byte 4), DID (byte 5)</li>
+<li>Find stream state entry by SID and remote node ID</li>
+<li>If not found, ignore (stale or unknown reply)</li>
+<li>If flags indicate accept (0x8000 or 0x0000 with non-zero buffer), transition to OPEN</li>
+<li>If reject, free the stream state entry</li>
+<li>Notify application callback</li>
+</ol>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* </pre> 
+</div>
+</div>
+<a id="a5c9af78bef64319553e175fd951415fa" name="a5c9af78bef64319553e175fd951415fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c9af78bef64319553e175fd951415fa">&#9670;&#160;</a></span>ProtocolStreamHandler_data_send()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolStreamHandler_data_send </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Stream Data Send (MTI 0x1F88). </p>
+<p>Tracks bytes received against the flow control window and notifies the application callback with the received data.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Extract DID from byte 0 of payload</li>
+<li>Find stream state entry by DID and remote node ID</li>
+<li>If not found, ignore</li>
+<li>Track bytes received (payload_count - 1 for the DID byte)</li>
+<li>Decrement bytes_remaining by data length</li>
+<li>Notify application callback</li>
+</ol>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* </pre> 
+</div>
+</div>
+<a id="a7717b8a62241a56d0ea9618bd4ed10e8" name="a7717b8a62241a56d0ea9618bd4ed10e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7717b8a62241a56d0ea9618bd4ed10e8">&#9670;&#160;</a></span>ProtocolStreamHandler_data_proceed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolStreamHandler_data_proceed </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Stream Data Proceed (MTI 0x0888). </p>
+<p>Extends the send window by max_buffer_size and notifies the application callback.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Extract SID (byte 0) and DID (byte 1) from payload</li>
+<li>Find stream state entry by SID and remote node ID (we are source)</li>
+<li>If not found, ignore</li>
+<li>Extend send window by max_buffer_size</li>
+<li>Notify application callback</li>
+</ol>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* </pre> 
+</div>
+</div>
+<a id="ad5a4b31088b9fb8da90a23d1be318ebc" name="ad5a4b31088b9fb8da90a23d1be318ebc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5a4b31088b9fb8da90a23d1be318ebc">&#9670;&#160;</a></span>ProtocolStreamHandler_data_complete()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolStreamHandler_data_complete </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Stream Data Complete (MTI 0x08A8). </p>
+<p>Finalizes the stream, frees the state entry, and notifies the application callback.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Algorithm:</p><ol type="1">
+<li>Extract SID (byte 0) and DID (byte 1) from payload</li>
+<li>Find stream by SID+remote (if we are destination) or DID+remote (if we are source)</li>
+<li>If not found, ignore</li>
+<li>Notify application callback</li>
+<li>Free the stream state entry</li>
+</ol>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* </pre> 
+</div>
+</div>
+<a id="a407407fb57459b85fde988d243c4b0e2" name="a407407fb57459b85fde988d243c4b0e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a407407fb57459b85fde988d243c4b0e2">&#9670;&#160;</a></span>ProtocolStreamHandler_handle_terminate_due_to_error()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolStreamHandler_handle_terminate_due_to_error </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles Terminate Due To Error for stream-related MTIs. </p>
+<p>Per StreamTransportS Section 7.4, closes any open stream with the sending node when the rejected MTI is Stream Data Send or Stream Data Proceed.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Per StreamTransportS Section 7.4, a stream is closed if:</p><ol type="1">
+<li>The destination sends TDE with rejected_mti = MTI_STREAM_SEND</li>
+<li>The source sends TDE with rejected_mti = MTI_STREAM_PROCEED</li>
+</ol>
+<p>Algorithm:</p><ol type="1">
+<li>If payload &lt; 4 bytes, return (no rejected_mti field)</li>
+<li>Extract rejected_mti from bytes 2-3</li>
+<li>If not a stream MTI, return</li>
+<li>Scan stream table for entries matching remote node ID</li>
+<li>For each match, notify on_complete callback and free the entry</li>
+</ol>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* </pre> 
+</div>
+</div>
+<a id="aab208e6f655b2c2bc0bcfd6c0e3ead52" name="aab208e6f655b2c2bc0bcfd6c0e3ead52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab208e6f655b2c2bc0bcfd6c0e3ead52">&#9670;&#160;</a></span>ProtocolStreamHandler_initiate_outbound()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structstream__state__t.html">stream_state_t</a> * ProtocolStreamHandler_initiate_outbound </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>dest_alias</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>dest_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>proposed_buffer_size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>suggested_dest_stream_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>content_uid</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Opens an outbound stream where this node is the source. </p>
+<p>Allocates a stream slot, assigns a SID, and sends Stream Initiate Request to the destination. Returns NULL if the stream table is full. The caller waits for on_initiate_reply.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">dest_alias</td><td>CAN alias of the destination (0 on non-CAN). </td></tr>
+    <tr><td class="paramname">dest_id</td><td>Node ID of the destination. </td></tr>
+    <tr><td class="paramname">proposed_buffer_size</td><td>Proposed max buffer size. </td></tr>
+    <tr><td class="paramname">suggested_dest_stream_id</td><td>Suggested DID (0xFF if no preference). </td></tr>
+    <tr><td class="paramname">content_uid</td><td>Optional 6-byte Content UID (NULL to omit).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to allocated <a class="el" href="structstream__state__t.html">stream_state_t</a>, or NULL if table full.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Allocate a stream state entry; return NULL if table full</li>
+<li>Assign a SID, populate state with is_source=true, INITIATED</li>
+<li>Send Stream Initiate Request to the destination</li>
+<li>Return pointer to stream state entry</li>
+</ol>
+<p>The caller waits for on_initiate_reply to learn accept/reject.</p>
+<pre class="fragment">* @param statemachine_info         Pointer to openlcb_statemachine_info_t context.
+* @param dest_alias                CAN alias of the destination node.
+* @param dest_id                   Node ID of the destination node.
+* @param proposed_buffer_size      Proposed max buffer size.
+* @param suggested_dest_stream_id  Suggested DID (0xFF if no preference).
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to allocated <a class="el" href="structstream__state__t.html" title="Tracks the state of a single open stream.">stream_state_t</a>, or NULL if table full. </dd></dl>
+
+</div>
+</div>
+<a id="a6a59b573d967b1dc77b2baa0d37d1ee9" name="a6a59b573d967b1dc77b2baa0d37d1ee9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a59b573d967b1dc77b2baa0d37d1ee9">&#9670;&#160;</a></span>ProtocolStreamHandler_send_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ProtocolStreamHandler_send_data </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structstream__state__t.html">stream_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>stream</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>data_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sends data on an open stream where this node is the source. </p>
+<p>Returns false if the stream is not open, this node is not the source, or data_len exceeds bytes_remaining.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>Pointer to the stream state entry. </td></tr>
+    <tr><td class="paramname">data</td><td>Pointer to data bytes to send. </td></tr>
+    <tr><td class="paramname">data_len</td><td>Number of data bytes.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if data was sent, false on precondition failure.</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Validate stream is non-NULL, OPEN, and is_source</li>
+<li>Validate data_len fits within bytes_remaining</li>
+<li>Build and send Stream Data Send message</li>
+<li>Update bytes_transferred and bytes_remaining</li>
+</ol>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param stream             Pointer to the stream state entry.
+* @param data               Pointer to data bytes to send.
+* @param data_len           Number of data bytes.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if data was sent, false if precondition failed. </dd></dl>
+
+</div>
+</div>
+<a id="a67461ef7376f2879078603cfcd047794" name="a67461ef7376f2879078603cfcd047794"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67461ef7376f2879078603cfcd047794">&#9670;&#160;</a></span>ProtocolStreamHandler_send_complete()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolStreamHandler_send_complete </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structstream__state__t.html">stream_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>stream</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sends Stream Data Complete and frees the stream slot. </p>
+<p>Either side (source or destination) may call this.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>Pointer to the stream state entry.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Either the source or destination may call this to close the stream normally.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param stream             Pointer to the stream state entry.
+* </pre> 
+</div>
+</div>
+<a id="a9cfb6d7486a3f8b1d3abf2b2a1421958" name="a9cfb6d7486a3f8b1d3abf2b2a1421958"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cfb6d7486a3f8b1d3abf2b2a1421958">&#9670;&#160;</a></span>ProtocolStreamHandler_send_terminate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolStreamHandler_send_terminate </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structstream__state__t.html">stream_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>stream</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>error_code</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sends Terminate Due To Error to abort a stream and frees the slot. </p>
+<p>Rejected MTI is chosen by role: source sends MTI_STREAM_PROCEED, destination sends MTI_STREAM_SEND.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>Pointer to the stream state entry. </td></tr>
+    <tr><td class="paramname">error_code</td><td>Error code for the TDE payload.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>The rejected MTI is chosen automatically based on the role:</p><ul>
+<li>Source sends TDE with rejected_mti = MTI_STREAM_PROCEED</li>
+<li>Destination sends TDE with rejected_mti = MTI_STREAM_SEND</li>
+</ul>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param stream             Pointer to the stream state entry.
+* @param error_code         Error code for bytes 0-1 of the TDE payload.
+* </pre> 
+</div>
+</div>
+<a id="a0ef88e6efa848708374e5898d5602281" name="a0ef88e6efa848708374e5898d5602281"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ef88e6efa848708374e5898d5602281">&#9670;&#160;</a></span>ProtocolStreamHandler_send_early_proceed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ProtocolStreamHandler_send_early_proceed </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structstream__state__t.html">stream_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>stream</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sends an early Stream Data Proceed to allow double-buffering. </p>
+<p>Per StreamTransportS Section 7.3, the destination may send one advance Proceed before the full buffer window is consumed. Only valid when this node is the destination (is_source == false) and the stream is OPEN.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>Pointer to the stream state entry.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if Proceed was sent, false if precondition failed.</dd></dl>
+<p>Per StreamTransportS Section 7.3, the destination may send one advance Proceed before the full buffer window is consumed. This extends the source's send window by max_buffer_size. Only valid when this node is the destination and the stream is OPEN.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param stream             Pointer to the stream state entry.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if Proceed was sent, false if precondition failed. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <!doctype html>
 <html>
     <body>

@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -217,8 +217,6 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a5d7b93a9aae87e4f058691b22ece61e9" id="r_a5d7b93a9aae87e4f058691b22ece61e9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d7b93a9aae87e4f058691b22ece61e9">OPENLCB_COMPILE_CAN</a></td></tr>
-<tr class="separator:a5d7b93a9aae87e4f058691b22ece61e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6979a5461154792d5d61db73f1b2f86c" id="r_ga6979a5461154792d5d61db73f1b2f86c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga6979a5461154792d5d61db73f1b2f86c">USER_DEFINED_STREAM_BUFFER_LEN</a>&#160;&#160;&#160;256</td></tr>
 <tr class="memdesc:ga6979a5461154792d5d61db73f1b2f86c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of BASIC message buffers (16 bytes each) in the pool.  <br /></td></tr>
 <tr class="separator:ga6979a5461154792d5d61db73f1b2f86c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -276,10 +274,10 @@ Macros</h2></td></tr>
 <tr class="memitem:gac622153763bbbd4970a00d7ec2f7f737" id="r_gac622153763bbbd4970a00d7ec2f7f737"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a>&#160;&#160;&#160;256</td></tr>
 <tr class="memdesc:gac622153763bbbd4970a00d7ec2f7f737"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP message payload size (also covers Events with Payload)  <br /></td></tr>
 <tr class="separator:gac622153763bbbd4970a00d7ec2f7f737"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad7e3d2c90a3bbfd68b51f5068f5692ff" id="r_gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>&#160;&#160;&#160;1  /* stream not compiled in — payload collapsed to 1 byte; define OPENLCB_COMPILE_STREAM to restore */</td></tr>
+<tr class="memitem:gad7e3d2c90a3bbfd68b51f5068f5692ff" id="r_gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>&#160;&#160;&#160;<a class="el" href="group__user__config__constants.html#ga6979a5461154792d5d61db73f1b2f86c">USER_DEFINED_STREAM_BUFFER_LEN</a></td></tr>
 <tr class="memdesc:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload size. Equals USER_DEFINED_STREAM_BUFFER_LEN when OPENLCB_COMPILE_STREAM is defined; collapses to 1 byte otherwise to save RAM.  <br /></td></tr>
 <tr class="separator:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga240ec53ac7dfd1edd992d84723fdf555" id="r_ga240ec53ac7dfd1edd992d84723fdf555"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga240ec53ac7dfd1edd992d84723fdf555">LEN_MESSAGE_BYTES_WORKER</a>&#160;&#160;&#160;<a class="el" href="group__buffer__size__constants.html#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td></tr>
+<tr class="memitem:ga240ec53ac7dfd1edd992d84723fdf555" id="r_ga240ec53ac7dfd1edd992d84723fdf555"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga240ec53ac7dfd1edd992d84723fdf555">LEN_MESSAGE_BYTES_WORKER</a>&#160;&#160;&#160;<a class="el" href="group__buffer__size__constants.html#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a></td></tr>
 <tr class="memdesc:ga240ec53ac7dfd1edd992d84723fdf555"><td class="mdescLeft">&#160;</td><td class="mdescRight">Worker buffer payload size — largest of all payload sizes. Clamped to at least SNIP size (256 bytes).  <br /></td></tr>
 <tr class="separator:ga240ec53ac7dfd1edd992d84723fdf555"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga12eb42fe9afe213aa8690aff0c9e4ee6" id="r_ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga12eb42fe9afe213aa8690aff0c9e4ee6">LEN_EVENT_ID</a>&#160;&#160;&#160;8</td></tr>
@@ -402,24 +400,46 @@ Enumerations</h2></td></tr>
 <tr class="separator:aab08faa6c2f49792c273f5267068d549"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29cac8697a125631149cacda733a9faa" id="r_a29cac8697a125631149cacda733a9faa"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a> { <br />
 &#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaaf3cf9374f875518f965c7915e86c8d57">EVENT_RANGE_COUNT_1</a> = 0
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaa9468e41e19572f329f541d26d479e7ed">EVENT_RANGE_COUNT_2</a> = 2
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaa72f3fae6685ccfc2c0ebfb5a27fe746f">EVENT_RANGE_COUNT_4</a> = 4
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaa797b7fe1393e39d8b6da77b6b5c060b0">EVENT_RANGE_COUNT_8</a> = 8
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa9468e41e19572f329f541d26d479e7ed">EVENT_RANGE_COUNT_2</a> = 1
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa72f3fae6685ccfc2c0ebfb5a27fe746f">EVENT_RANGE_COUNT_4</a> = 2
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa797b7fe1393e39d8b6da77b6b5c060b0">EVENT_RANGE_COUNT_8</a> = 3
 , <br />
-&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaa02dd44c73f6053d1e115115b523ef184">EVENT_RANGE_COUNT_16</a> = 16
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaa34148699ccdcb018549bff4a6af46f55">EVENT_RANGE_COUNT_32</a> = 32
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaaa902bd21e2cc00adfab7c368b40d68e1">EVENT_RANGE_COUNT_64</a> = 64
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaaf5a0dda3c6defaa7c1083ef40041939c">EVENT_RANGE_COUNT_128</a> = 128
+&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaa02dd44c73f6053d1e115115b523ef184">EVENT_RANGE_COUNT_16</a> = 4
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa34148699ccdcb018549bff4a6af46f55">EVENT_RANGE_COUNT_32</a> = 5
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaaa902bd21e2cc00adfab7c368b40d68e1">EVENT_RANGE_COUNT_64</a> = 6
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaaf5a0dda3c6defaa7c1083ef40041939c">EVENT_RANGE_COUNT_128</a> = 7
 , <br />
-&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaadb8fe84787c36d2613ef8b6a6d922c65">EVENT_RANGE_COUNT_256</a> = 256
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaa28eafb973153365834c56bfc82b1f183">EVENT_RANGE_COUNT_512</a> = 512
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaaa467ad5d735790da48c6629f0ee8880f">EVENT_RANGE_COUNT_1024</a> = 1024
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaac99b6432c1d17877dfb1f48aca221242">EVENT_RANGE_COUNT_2048</a> = 2048
+&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaadb8fe84787c36d2613ef8b6a6d922c65">EVENT_RANGE_COUNT_256</a> = 8
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa28eafb973153365834c56bfc82b1f183">EVENT_RANGE_COUNT_512</a> = 9
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaaa467ad5d735790da48c6629f0ee8880f">EVENT_RANGE_COUNT_1024</a> = 10
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaac99b6432c1d17877dfb1f48aca221242">EVENT_RANGE_COUNT_2048</a> = 11
 , <br />
-&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaae5b8e28f28495311e061a73b2ea4ce4f">EVENT_RANGE_COUNT_4096</a> = 4096
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaa5cba51a9b680b388089ba7879614f8d1">EVENT_RANGE_COUNT_8192</a> = 8192
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaaf5415e3d7f8d538af12c7b5442d3b0a3">EVENT_RANGE_COUNT_16384</a> = 16384
-, <a class="el" href="#a29cac8697a125631149cacda733a9faaa5121e69499e6250862df79a412d959f7">EVENT_RANGE_COUNT_32768</a> = 32768
+&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaae5b8e28f28495311e061a73b2ea4ce4f">EVENT_RANGE_COUNT_4096</a> = 12
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa5cba51a9b680b388089ba7879614f8d1">EVENT_RANGE_COUNT_8192</a> = 13
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaaf5415e3d7f8d538af12c7b5442d3b0a3">EVENT_RANGE_COUNT_16384</a> = 14
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa5121e69499e6250862df79a412d959f7">EVENT_RANGE_COUNT_32768</a> = 15
+, <br />
+&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaa1a58ea92b77399bcc1d5be7cadbcc934">EVENT_RANGE_COUNT_65536</a> = 16
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa4a90701257cac20b44d304ea2eac8d5b">EVENT_RANGE_COUNT_131072</a> = 17
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa67c37965cf2591a5b762f98f7c98e112">EVENT_RANGE_COUNT_262144</a> = 18
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaaf0f7c6f853469495c73eb08a34df9990">EVENT_RANGE_COUNT_524288</a> = 19
+, <br />
+&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaa28f0696974a11791dd26485835e27206">EVENT_RANGE_COUNT_1048576</a> = 20
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaacdd964777ad1111b33805db55d4816c4">EVENT_RANGE_COUNT_2097152</a> = 21
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa4eadb7a9d307ceb85d0be9f999fd27f9">EVENT_RANGE_COUNT_4194304</a> = 22
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa7363d1c7cd6e2a6e735692b3f3552794">EVENT_RANGE_COUNT_8388608</a> = 23
+, <br />
+&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaa1fc325049e5ea243f79f943c119686b7">EVENT_RANGE_COUNT_16777216</a> = 24
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa0df4c6cb2af1f6f996acb756ad43d99f">EVENT_RANGE_COUNT_33554432</a> = 25
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa9f5df7f28e45ab18a117e3c77aa9e13b">EVENT_RANGE_COUNT_67108864</a> = 26
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa2dfd479bc6cc18c3e34d9414640fe1e3">EVENT_RANGE_COUNT_134217728</a> = 27
+, <br />
+&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaa017753355a5b617e212b1e9623539ac7">EVENT_RANGE_COUNT_268435456</a> = 28
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa46740a9aa5bd5f4f293e2840bc198625">EVENT_RANGE_COUNT_536870912</a> = 29
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa810b6b62925241a3feaacf988653a463">EVENT_RANGE_COUNT_1073741824</a> = 30
+, <a class="el" href="#a29cac8697a125631149cacda733a9faaa319a27447a10244691a4d8594aa255e5">EVENT_RANGE_COUNT_2147483648</a> = 31
+, <br />
+&#160;&#160;<a class="el" href="#a29cac8697a125631149cacda733a9faaac00ca6bc811bf3bd5a44e467c8ae0835">EVENT_RANGE_COUNT_4294967296</a> = 32
 <br />
  }</td></tr>
 <tr class="memdesc:a29cac8697a125631149cacda733a9faa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Power-of-two event range sizes for range-identified events.  <a href="#a29cac8697a125631149cacda733a9faa">More...</a><br /></td></tr>
@@ -464,22 +484,7 @@ Enumerations</h2></td></tr>
 <p>Defines all fundamental data types used across the library: message buffers (BASIC/DATAGRAM/SNIP/STREAM pools), node structures with event producer/consumer lists, configuration memory request types, broadcast time clock state, and train state. All memory is statically allocated at compile time — there is no dynamic allocation at runtime.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>23 Apr 2026 </dd></dl>
-</div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="a5d7b93a9aae87e4f058691b22ece61e9" name="a5d7b93a9aae87e4f058691b22ece61e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d7b93a9aae87e4f058691b22ece61e9">&#9670;&#160;</a></span>OPENLCB_COMPILE_CAN</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define OPENLCB_COMPILE_CAN</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Typedef Documentation</h2>
+</div><h2 class="groupheader">Typedef Documentation</h2>
 <a id="a4925a4e7a5380d3c40cfceadbbed1c78" name="a4925a4e7a5380d3c40cfceadbbed1c78"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4925a4e7a5380d3c40cfceadbbed1c78">&#9670;&#160;</a></span>openlcb_payload_t</h2>
 
@@ -606,7 +611,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Mutable runtime state for a single train node. </p>
-<p>Allocated from a static pool by <a class="el" href="openlcb__application__train_8h.html#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>. </p>
+<p>Allocated from a static pool by <a class="el" href="openlcb__application__train_8c.html#ae17ef6101bcfddf2d9debadb6c11d8d0" title="Allocates a train state slot and assigns it to the node.">OpenLcbApplicationTrain_setup()</a>. </p>
 
 </div>
 </div>
@@ -852,6 +857,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Power-of-two event range sizes for range-identified events. </p>
+<p>Each enumerator's numeric value is the exponent N in 2^N events covered by the range (0..32). The actual event count is computed as (1ULL &lt;&lt; N) where needed. Storing the exponent rather than the count lets a single int-sized enumerator cover ranges up to 2^32 (required by Train Search) without overflowing int. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaf3cf9374f875518f965c7915e86c8d57" name="a29cac8697a125631149cacda733a9faaaf3cf9374f875518f965c7915e86c8d57"></a>EVENT_RANGE_COUNT_1&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa9468e41e19572f329f541d26d479e7ed" name="a29cac8697a125631149cacda733a9faaa9468e41e19572f329f541d26d479e7ed"></a>EVENT_RANGE_COUNT_2&#160;</td><td class="fielddoc"></td></tr>
@@ -869,6 +875,23 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa5cba51a9b680b388089ba7879614f8d1" name="a29cac8697a125631149cacda733a9faaa5cba51a9b680b388089ba7879614f8d1"></a>EVENT_RANGE_COUNT_8192&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaf5415e3d7f8d538af12c7b5442d3b0a3" name="a29cac8697a125631149cacda733a9faaaf5415e3d7f8d538af12c7b5442d3b0a3"></a>EVENT_RANGE_COUNT_16384&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa5121e69499e6250862df79a412d959f7" name="a29cac8697a125631149cacda733a9faaa5121e69499e6250862df79a412d959f7"></a>EVENT_RANGE_COUNT_32768&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa1a58ea92b77399bcc1d5be7cadbcc934" name="a29cac8697a125631149cacda733a9faaa1a58ea92b77399bcc1d5be7cadbcc934"></a>EVENT_RANGE_COUNT_65536&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa4a90701257cac20b44d304ea2eac8d5b" name="a29cac8697a125631149cacda733a9faaa4a90701257cac20b44d304ea2eac8d5b"></a>EVENT_RANGE_COUNT_131072&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa67c37965cf2591a5b762f98f7c98e112" name="a29cac8697a125631149cacda733a9faaa67c37965cf2591a5b762f98f7c98e112"></a>EVENT_RANGE_COUNT_262144&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaaf0f7c6f853469495c73eb08a34df9990" name="a29cac8697a125631149cacda733a9faaaf0f7c6f853469495c73eb08a34df9990"></a>EVENT_RANGE_COUNT_524288&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa28f0696974a11791dd26485835e27206" name="a29cac8697a125631149cacda733a9faaa28f0696974a11791dd26485835e27206"></a>EVENT_RANGE_COUNT_1048576&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaacdd964777ad1111b33805db55d4816c4" name="a29cac8697a125631149cacda733a9faaacdd964777ad1111b33805db55d4816c4"></a>EVENT_RANGE_COUNT_2097152&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa4eadb7a9d307ceb85d0be9f999fd27f9" name="a29cac8697a125631149cacda733a9faaa4eadb7a9d307ceb85d0be9f999fd27f9"></a>EVENT_RANGE_COUNT_4194304&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa7363d1c7cd6e2a6e735692b3f3552794" name="a29cac8697a125631149cacda733a9faaa7363d1c7cd6e2a6e735692b3f3552794"></a>EVENT_RANGE_COUNT_8388608&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa1fc325049e5ea243f79f943c119686b7" name="a29cac8697a125631149cacda733a9faaa1fc325049e5ea243f79f943c119686b7"></a>EVENT_RANGE_COUNT_16777216&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa0df4c6cb2af1f6f996acb756ad43d99f" name="a29cac8697a125631149cacda733a9faaa0df4c6cb2af1f6f996acb756ad43d99f"></a>EVENT_RANGE_COUNT_33554432&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa9f5df7f28e45ab18a117e3c77aa9e13b" name="a29cac8697a125631149cacda733a9faaa9f5df7f28e45ab18a117e3c77aa9e13b"></a>EVENT_RANGE_COUNT_67108864&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa2dfd479bc6cc18c3e34d9414640fe1e3" name="a29cac8697a125631149cacda733a9faaa2dfd479bc6cc18c3e34d9414640fe1e3"></a>EVENT_RANGE_COUNT_134217728&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa017753355a5b617e212b1e9623539ac7" name="a29cac8697a125631149cacda733a9faaa017753355a5b617e212b1e9623539ac7"></a>EVENT_RANGE_COUNT_268435456&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa46740a9aa5bd5f4f293e2840bc198625" name="a29cac8697a125631149cacda733a9faaa46740a9aa5bd5f4f293e2840bc198625"></a>EVENT_RANGE_COUNT_536870912&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa810b6b62925241a3feaacf988653a463" name="a29cac8697a125631149cacda733a9faaa810b6b62925241a3feaacf988653a463"></a>EVENT_RANGE_COUNT_1073741824&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaa319a27447a10244691a4d8594aa255e5" name="a29cac8697a125631149cacda733a9faaa319a27447a10244691a4d8594aa255e5"></a>EVENT_RANGE_COUNT_2147483648&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a29cac8697a125631149cacda733a9faaac00ca6bc811bf3bd5a44e467c8ae0835" name="a29cac8697a125631149cacda733a9faaac00ca6bc811bf3bd5a44e467c8ae0835"></a>EVENT_RANGE_COUNT_4294967296&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>

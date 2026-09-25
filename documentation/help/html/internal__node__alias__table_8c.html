@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -95,6 +95,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">internal_node_alias_table.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Implementation of the CAN alias / Node ID mapping buffer.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -126,7 +129,19 @@ Functions</h2></td></tr>
 <tr class="memdesc:aba23f329b8d7112ada222f9feaf1bb19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all alias mappings and resets all flags. Runtime equivalent of initialize().  <br /></td></tr>
 <tr class="separator:aba23f329b8d7112ada222f9feaf1bb19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Implementation of the CAN alias / Node ID mapping buffer. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+</ul>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>Single static buffer instance using a linear array. Empty slots are marked by alias = 0 and node_id = 0. First-fit allocation. One alias per Node ID enforced. NOT thread-safe.</p>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>4 Mar 2026 </dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="a708a91c6693ca1fb7ede1f9cfc96f46d" name="a708a91c6693ca1fb7ede1f9cfc96f46d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a708a91c6693ca1fb7ede1f9cfc96f46d">&#9670;&#160;</a></span>InternalNodeAliasTable_initialize()</h2>
 

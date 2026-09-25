@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -1564,11 +1564,14 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">base_event_id</td><td>Starting <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> of the range </td></tr>
-    <tr><td class="paramname">count</td><td>Number of events in the range (<a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a>)</td></tr>
+    <tr><td class="paramname">count</td><td>Exponent N from <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a>; range covers 2^N events</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Masked <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for a Range Identified message. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Masked <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> for a Range Identified message.</dd></dl>
+<p>Generates a masked Event ID covering a range of consecutive events.</p>
+<p>count is the exponent N from event_range_count_enum (0..32). For N == 0 the mask is 0 and the result equals base_event_id (single event).</p>
+<p>A receiver finds the range's size from the run of identical low-order bits (Event Transport TN), so the low N bits are filled with the opposite of bit N of the base: 1s if bit N is 0, 0s if it is 1. Filling with 1s when bit N is 1 would extend the run and announce a larger range. </p>
 
 </div>
 </div>

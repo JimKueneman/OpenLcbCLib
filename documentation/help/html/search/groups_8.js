@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['layout_0',['Layout',['../group__acdi__manufacturer__layout.html',1,'ACDI Manufacturer Space Memory Layout'],['../group__acdi__user__layout.html',1,'ACDI User Space Memory Layout']]],
-  ['length_20flags_1',['Configuration Write Length Flags',['../group__config__write__length__flags.html',1,'']]],
-  ['login_20state_20machine_20states_2',['Node Login State Machine States',['../group__node__login__states.html',1,'']]]
+  ['key_20management_0',['Node Enumeration Key Management',['../group__node__enum__keys.html',1,'']]],
+  ['known_20event_20ids_1',['Well-Known Event IDs',['../group__well__known__events.html',1,'']]],
+  ['known_20events_2',['Known Events',['../group__well__known__events__auto.html',1,'Auto-Routed Well-Known Events'],['../group__well__known__events__local.html',1,'Non-Auto-Routed Well-Known Events']]]
 ];

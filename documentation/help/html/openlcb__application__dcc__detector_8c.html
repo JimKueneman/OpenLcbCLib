@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -90,12 +90,45 @@ $(function(){ initResizable(false); });
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">openlcb_application_dcc_detector.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Encode/decode helpers for DCC Detection Protocol Event IDs.  
 <a href="#details">More...</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a1f87745522819011cd493a1297ae7e61" id="r_a1f87745522819011cd493a1297ae7e61"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f87745522819011cd493a1297ae7e61">OpenLcbApplicationDccDetector_encode_event_id</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> detector_node_id, <a class="el" href="openlcb__application__dcc__detector_8h.html#a3c4ff756971e44e791b2cab602d0a6db">dcc_detector_direction_enum</a> direction, uint16_t raw_address_14)</td></tr>
+<tr class="memdesc:a1f87745522819011cd493a1297ae7e61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a DCC detector Event ID from its components.  <br /></td></tr>
+<tr class="separator:a1f87745522819011cd493a1297ae7e61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabf5e4f18f3f807b3cd779a7f1755720" id="r_aabf5e4f18f3f807b3cd779a7f1755720"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aabf5e4f18f3f807b3cd779a7f1755720">OpenLcbApplicationDccDetector_make_short_address</a> (uint8_t short_address)</td></tr>
+<tr class="memdesc:aabf5e4f18f3f807b3cd779a7f1755720"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a 14-bit raw address field for a DCC short address.  <br /></td></tr>
+<tr class="separator:aabf5e4f18f3f807b3cd779a7f1755720"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74fa550a4e73b7ac22065c80e62cd3b2" id="r_a74fa550a4e73b7ac22065c80e62cd3b2"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74fa550a4e73b7ac22065c80e62cd3b2">OpenLcbApplicationDccDetector_make_consist_address</a> (uint8_t consist_address)</td></tr>
+<tr class="memdesc:a74fa550a4e73b7ac22065c80e62cd3b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a 14-bit raw address field for a DCC consist address.  <br /></td></tr>
+<tr class="separator:a74fa550a4e73b7ac22065c80e62cd3b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32d47924f282d7df3f360b59e25e2357" id="r_a32d47924f282d7df3f360b59e25e2357"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__application__dcc__detector_8h.html#a3c4ff756971e44e791b2cab602d0a6db">dcc_detector_direction_enum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32d47924f282d7df3f360b59e25e2357">OpenLcbApplicationDccDetector_extract_direction</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a32d47924f282d7df3f360b59e25e2357"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the direction/occupancy status from a detector Event ID.  <br /></td></tr>
+<tr class="separator:a32d47924f282d7df3f360b59e25e2357"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6203c8dbbe20dd41618dc36cc686979" id="r_aa6203c8dbbe20dd41618dc36cc686979"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__application__dcc__detector_8h.html#ac14559da43a57941d600f0a717d62719">dcc_detector_address_type_enum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6203c8dbbe20dd41618dc36cc686979">OpenLcbApplicationDccDetector_extract_address_type</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:aa6203c8dbbe20dd41618dc36cc686979"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines the DCC address category from a detector Event ID.  <br /></td></tr>
+<tr class="separator:aa6203c8dbbe20dd41618dc36cc686979"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01cdf65352c9a9f1e0d9819f105a0f9d" id="r_a01cdf65352c9a9f1e0d9819f105a0f9d"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01cdf65352c9a9f1e0d9819f105a0f9d">OpenLcbApplicationDccDetector_extract_raw_address</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a01cdf65352c9a9f1e0d9819f105a0f9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the raw 14-bit DCC address field from a detector Event ID.  <br /></td></tr>
+<tr class="separator:a01cdf65352c9a9f1e0d9819f105a0f9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ea9fc77c9084bf364b5d620f23cf973" id="r_a0ea9fc77c9084bf364b5d620f23cf973"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ea9fc77c9084bf364b5d620f23cf973">OpenLcbApplicationDccDetector_extract_dcc_address</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a0ea9fc77c9084bf364b5d620f23cf973"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the usable DCC address from a detector Event ID.  <br /></td></tr>
+<tr class="separator:a0ea9fc77c9084bf364b5d620f23cf973"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59918e035b55180171566477a011d5ec" id="r_a59918e035b55180171566477a011d5ec"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59918e035b55180171566477a011d5ec">OpenLcbApplicationDccDetector_extract_detector_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a59918e035b55180171566477a011d5ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the 48-bit detector node ID from a detector Event ID.  <br /></td></tr>
+<tr class="separator:a59918e035b55180171566477a011d5ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa8b05f0b040aec78595cf830566efce" id="r_aaa8b05f0b040aec78595cf830566efce"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa8b05f0b040aec78595cf830566efce">OpenLcbApplicationDccDetector_is_track_empty</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:aaa8b05f0b040aec78595cf830566efce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests whether a detector Event ID represents "track is empty".  <br /></td></tr>
+<tr class="separator:aaa8b05f0b040aec78595cf830566efce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Encode/decode helpers for DCC Detection Protocol Event IDs. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2026, Jim Kueneman All rights reserved.</dd></dl>
@@ -108,7 +141,250 @@ $(function(){ initResizable(false); });
 <p>Implements the packing and unpacking of detector Event IDs as specified in the OpenLCB DCC Detection Protocol Working Note. Each Event ID is an 8-byte value: 6 bytes of detector unique ID, 2 direction/occupancy bits, and 14 bits of DCC address.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>04 Apr 2026 </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a1f87745522819011cd493a1297ae7e61" name="a1f87745522819011cd493a1297ae7e61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f87745522819011cd493a1297ae7e61">&#9670;&#160;</a></span>OpenLcbApplicationDccDetector_encode_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbApplicationDccDetector_encode_event_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>detector_node_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__application__dcc__detector_8h.html#a3c4ff756971e44e791b2cab602d0a6db">dcc_detector_direction_enum</a></td>          <td class="paramname"><span class="paramname"><em>direction</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>raw_address_14</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Builds a DCC detector Event ID from its components. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Shift the 48-bit detector node ID into the upper 6 bytes of a 64-bit value</li>
+<li>Shift the 2-bit direction field into bits [15:14]</li>
+<li>Mask the 14-bit raw address into bits [13:0]</li>
+<li>OR all three fields together</li>
+</ol>
+<pre class="fragment">* @param detector_node_id 48-bit node ID of the detector
+* @param direction dcc_detector_direction_enum occupancy status
+* @param raw_address_14 14-bit DCC address field (already includes type prefix)
+* </pre><dl class="section return"><dt>Returns</dt><dd>Assembled event_id_t </dd></dl>
+
+</div>
+</div>
+<a id="aabf5e4f18f3f807b3cd779a7f1755720" name="aabf5e4f18f3f807b3cd779a7f1755720"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabf5e4f18f3f807b3cd779a7f1755720">&#9670;&#160;</a></span>OpenLcbApplicationDccDetector_make_short_address()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t OpenLcbApplicationDccDetector_make_short_address </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>short_address</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Builds a 14-bit raw address field for a DCC short address. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Shift the short-address prefix (0x38) into the upper 6 bits</li>
+<li>OR with the 8-bit address in the lower 8 bits</li>
+</ol>
+<pre class="fragment">* @param short_address DCC short address (0-127)
+* </pre><dl class="section return"><dt>Returns</dt><dd>14-bit raw address field with short-address prefix </dd></dl>
+
+</div>
+</div>
+<a id="a74fa550a4e73b7ac22065c80e62cd3b2" name="a74fa550a4e73b7ac22065c80e62cd3b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74fa550a4e73b7ac22065c80e62cd3b2">&#9670;&#160;</a></span>OpenLcbApplicationDccDetector_make_consist_address()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t OpenLcbApplicationDccDetector_make_consist_address </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>consist_address</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Builds a 14-bit raw address field for a DCC consist address. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Shift the consist-address prefix (0x39) into the upper 6 bits</li>
+<li>OR with the 8-bit address in the lower 8 bits</li>
+</ol>
+<pre class="fragment">* @param consist_address DCC consist address (0-127)
+* </pre><dl class="section return"><dt>Returns</dt><dd>14-bit raw address field with consist-address prefix </dd></dl>
+
+</div>
+</div>
+<a id="a32d47924f282d7df3f360b59e25e2357" name="a32d47924f282d7df3f360b59e25e2357"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32d47924f282d7df3f360b59e25e2357">&#9670;&#160;</a></span>OpenLcbApplicationDccDetector_extract_direction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__application__dcc__detector_8h.html#a3c4ff756971e44e791b2cab602d0a6db">dcc_detector_direction_enum</a> OpenLcbApplicationDccDetector_extract_direction </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts the direction/occupancy status from a detector Event ID. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Mask the lower 16 bits of the Event ID</li>
+<li>Shift right by 14 to isolate the 2-bit direction field</li>
+</ol>
+<pre class="fragment">* @param event_id event_id_t to decode
+* </pre><dl class="section return"><dt>Returns</dt><dd>dcc_detector_direction_enum value </dd></dl>
+
+</div>
+</div>
+<a id="aa6203c8dbbe20dd41618dc36cc686979" name="aa6203c8dbbe20dd41618dc36cc686979"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6203c8dbbe20dd41618dc36cc686979">&#9670;&#160;</a></span>OpenLcbApplicationDccDetector_extract_address_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__application__dcc__detector_8h.html#ac14559da43a57941d600f0a717d62719">dcc_detector_address_type_enum</a> OpenLcbApplicationDccDetector_extract_address_type </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determines the DCC address category from a detector Event ID. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Extract the 14-bit raw address from the lower bits</li>
+<li>Check for the track-empty sentinel (0x3800)</li>
+<li>Check the upper 6 bits for short-address prefix (0x38)</li>
+<li>Check the upper 6 bits for consist-address prefix (0x39)</li>
+<li>Otherwise classify as long address</li>
+</ol>
+<pre class="fragment">* @param event_id event_id_t to decode
+* </pre><dl class="section return"><dt>Returns</dt><dd>dcc_detector_address_type_enum category </dd></dl>
+
+</div>
+</div>
+<a id="a01cdf65352c9a9f1e0d9819f105a0f9d" name="a01cdf65352c9a9f1e0d9819f105a0f9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01cdf65352c9a9f1e0d9819f105a0f9d">&#9670;&#160;</a></span>OpenLcbApplicationDccDetector_extract_raw_address()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t OpenLcbApplicationDccDetector_extract_raw_address </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts the raw 14-bit DCC address field from a detector Event ID. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Mask the lower 14 bits of the Event ID</li>
+</ol>
+<pre class="fragment">* @param event_id event_id_t to decode
+* </pre><dl class="section return"><dt>Returns</dt><dd>14-bit raw DCC address field </dd></dl>
+
+</div>
+</div>
+<a id="a0ea9fc77c9084bf364b5d620f23cf973" name="a0ea9fc77c9084bf364b5d620f23cf973"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ea9fc77c9084bf364b5d620f23cf973">&#9670;&#160;</a></span>OpenLcbApplicationDccDetector_extract_dcc_address()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t OpenLcbApplicationDccDetector_extract_dcc_address </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts the usable DCC address from a detector Event ID. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Extract address type to determine decoding</li>
+<li>For short and consist addresses, mask off the prefix to get the 8-bit address</li>
+<li>For track-empty, return 0</li>
+<li>For long addresses, return the full 14-bit value</li>
+</ol>
+<pre class="fragment">* @param event_id event_id_t to decode
+* </pre><dl class="section return"><dt>Returns</dt><dd>DCC address value (meaning depends on address type) </dd></dl>
+
+</div>
+</div>
+<a id="a59918e035b55180171566477a011d5ec" name="a59918e035b55180171566477a011d5ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59918e035b55180171566477a011d5ec">&#9670;&#160;</a></span>OpenLcbApplicationDccDetector_extract_detector_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> OpenLcbApplicationDccDetector_extract_detector_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts the 48-bit detector node ID from a detector Event ID. </p>
+<p>Algorithm:</p><ol type="1">
+<li>Shift the Event ID right by 16 to isolate the upper 6 bytes</li>
+<li>Mask to 48 bits</li>
+</ol>
+<pre class="fragment">* @param event_id event_id_t to decode
+* </pre><dl class="section return"><dt>Returns</dt><dd>48-bit node_id_t of the detector </dd></dl>
+
+</div>
+</div>
+<a id="aaa8b05f0b040aec78595cf830566efce" name="aaa8b05f0b040aec78595cf830566efce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa8b05f0b040aec78595cf830566efce">&#9670;&#160;</a></span>OpenLcbApplicationDccDetector_is_track_empty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbApplicationDccDetector_is_track_empty </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tests whether a detector Event ID represents "track is empty". </p>
+<p>Algorithm:</p><ol type="1">
+<li>Mask the lower 14 bits of the Event ID</li>
+<li>Compare against the track-empty sentinel (0x3800)</li>
+</ol>
+<pre class="fragment">* @param event_id event_id_t to test
+* </pre><dl class="section return"><dt>Returns</dt><dd>true if the Event ID encodes the track-empty sentinel </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <!doctype html>
 <html>
     <body>

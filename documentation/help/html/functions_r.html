@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -96,19 +96,33 @@ $(function(){ initResizable(false); });
 <li>read_from_manufacturer_space_0xfc_supported&#160;:&#160;<a class="el" href="structuser__configuration__options__t.html#ae478089e0727f73e530680655b9753bb">user_configuration_options_t</a></li>
 <li>read_from_user_space_0xfb_supported&#160;:&#160;<a class="el" href="structuser__configuration__options__t.html#a7dc4f01a2dab5926365ec432e1fd87e8">user_configuration_options_t</a></li>
 <li>read_only&#160;:&#160;<a class="el" href="structuser__address__space__info__t.html#ae851b490bae2ad91e401b972664fde81">user_address_space_info_t</a></li>
-<li>read_request_acdi_manufacturer&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#ae02053e5803a8c99e280dc136b0c9608">interface_protocol_config_mem_read_handler_t</a></li>
-<li>read_request_acdi_user&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#af091fb7cc074c39b7b8d10a889bd9913">interface_protocol_config_mem_read_handler_t</a></li>
-<li>read_request_all&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#a102f3bec55c573e02b854ba5bd4669a8">interface_protocol_config_mem_read_handler_t</a></li>
-<li>read_request_config_definition_info&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#aaf908782386bc2df34025b16b12d7ab1">interface_protocol_config_mem_read_handler_t</a></li>
+<li>read_request_acdi_manufacturer&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#ae02053e5803a8c99e280dc136b0c9608">interface_protocol_config_mem_read_handler_t</a>, <a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html#ab02a618ca20d51876ffd8e7c50b1ae3f">interface_protocol_config_mem_stream_handler_t</a></li>
+<li>read_request_acdi_user&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#af091fb7cc074c39b7b8d10a889bd9913">interface_protocol_config_mem_read_handler_t</a>, <a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html#aada944e13515a8b4091e38b80bb076f7">interface_protocol_config_mem_stream_handler_t</a></li>
+<li>read_request_all&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#a102f3bec55c573e02b854ba5bd4669a8">interface_protocol_config_mem_read_handler_t</a>, <a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html#a799ff11811cdc145133dd33803049be3">interface_protocol_config_mem_stream_handler_t</a></li>
+<li>read_request_config_definition_info&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#aaf908782386bc2df34025b16b12d7ab1">interface_protocol_config_mem_read_handler_t</a>, <a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html#a564fdc201315832d79dfd9f6c0905d1b">interface_protocol_config_mem_stream_handler_t</a></li>
 <li>read_request_config_mem&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#a58b4d0585792e0737aa6cc3ea8f61cca">interface_protocol_config_mem_read_handler_t</a></li>
+<li>read_request_configuration_memory&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html#addbd7fae0be01335fbfeacb5ba9e124b">interface_protocol_config_mem_stream_handler_t</a></li>
+<li>read_request_dcc_cv&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#aa79332c63f472412bb2c07b2613a5561">interface_protocol_config_mem_read_handler_t</a></li>
+<li>read_request_firmware&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html#a606127696779b5bdbafe077e5f0ae2e6">interface_protocol_config_mem_stream_handler_t</a></li>
+<li>read_request_func&#160;:&#160;<a class="el" href="structconfig__mem__stream__context__t.html#a86f7c8ac9a99ad16dbfa7e95c51943d9">config_mem_stream_context_t</a></li>
 <li>read_request_train_function_config_definition_info&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#a4f768d837a22d5f7cc6ab26ad680e63d">interface_protocol_config_mem_read_handler_t</a></li>
-<li>read_request_train_function_config_memory&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#a60e114b6133aebdf6f31f11d59f079c6">interface_protocol_config_mem_read_handler_t</a></li>
+<li>read_request_train_function_config_memory&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__read__handler__t.html#a60e114b6133aebdf6f31f11d59f079c6">interface_protocol_config_mem_read_handler_t</a>, <a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html#a492a3694cf9ddeaf37eb15f701065fb1">interface_protocol_config_mem_stream_handler_t</a></li>
+<li>read_request_train_function_definition_info&#160;:&#160;<a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html#a6be583aaf9eb3dad4903cc01e47a7bc4">interface_protocol_config_mem_stream_handler_t</a></li>
 <li>read_space_func&#160;:&#160;<a class="el" href="structconfig__mem__read__request__info___t_a_g.html#a58a8f26e86622afbfa38fa7c966a6ef8">config_mem_read_request_info_TAG</a></li>
+<li>reboot&#160;:&#160;<a class="el" href="structopenlcb__config__t.html#a6e69453bb4a864b0b98fb8be0a06afd4">openlcb_config_t</a></li>
 <li>reference_count&#160;:&#160;<a class="el" href="structopenlcb__msg__t.html#a88bbea41a453d7a42970580800cafe26">openlcb_msg_t</a></li>
+<li>remote_alias&#160;:&#160;<a class="el" href="structconfig__mem__stream__context__t.html#a036f94e1244f2d3ace2a10e4e35be55b">config_mem_stream_context_t</a>, <a class="el" href="structstream__state__t.html#a036f94e1244f2d3ace2a10e4e35be55b">stream_state_t</a></li>
+<li>remote_node_id&#160;:&#160;<a class="el" href="structconfig__mem__stream__context__t.html#a76a71a5b4cfba15f71e34e7dde72444e">config_mem_stream_context_t</a>, <a class="el" href="structstream__state__t.html#a76a71a5b4cfba15f71e34e7dde72444e">stream_state_t</a></li>
+<li>reply_cmd_byte&#160;:&#160;<a class="el" href="structconfig__mem__stream__context__t.html#a46eea212fce50cc4f941da2f2dd9feec">config_mem_stream_context_t</a></li>
+<li>reply_fail_cmd_byte&#160;:&#160;<a class="el" href="structconfig__mem__stream__context__t.html#a78ac09c126c3c5ba880efa76e3d42a7a">config_mem_stream_context_t</a></li>
+<li>reply_seen&#160;:&#160;<a class="el" href="struct__pending__allocate__t.html#ae354860805376a608fff397efe6dedd3">_pending_allocate_t</a></li>
 <li>report_cooldown_ticks&#160;:&#160;<a class="el" href="structbroadcast__clock__t.html#ad6c2847a289cdfa050d0d57faecefc18">broadcast_clock_t</a></li>
+<li>requester_alias&#160;:&#160;<a class="el" href="structdcc__cv__pending__t.html#ae3487a82a35489e4449f615d1dfe1318">dcc_cv_pending_t</a></li>
+<li>requester_id&#160;:&#160;<a class="el" href="structdcc__cv__pending__t.html#ab486594631900d53ddf1fb2283170fbc">dcc_cv_pending_t</a></li>
 <li>resend_datagram&#160;:&#160;<a class="el" href="structopenlcb__node__state__t.html#acd0a1be14f6be8688140b887981fdc5b">openlcb_node_state_t</a></li>
 <li>reserved_by_node_id&#160;:&#160;<a class="el" href="structtrain__state___t_a_g.html#ab588ad9b4079a0aca40cba80fb036589">train_state_TAG</a></li>
 <li>reserved_node_count&#160;:&#160;<a class="el" href="structtrain__state___t_a_g.html#ab0772b8ee106d86cafd6b17930570e1e">train_state_TAG</a></li>
+<li>result&#160;:&#160;<a class="el" href="structdcc__cv__pending__t.html#abfd24350fd0f519cf2cc67a7827ab6fa">dcc_cv_pending_t</a></li>
 <li>retry_count&#160;:&#160;<a class="el" href="unionopenlcb__msg__timer__t.html#ad7f3b7d0c00bba5352cf56e5ecd54519">openlcb_msg_timer_t</a></li>
 <li>run_state&#160;:&#160;<a class="el" href="structopenlcb__node__state__t.html#ac19567045b318f16df3206eb95f4a2f9">openlcb_node_state_t</a></li>
 <li>running&#160;:&#160;<a class="el" href="structevent__id__enum__t.html#a36f7b6be7108281af77939ceaec42fd6">event_id_enum_t</a></li>

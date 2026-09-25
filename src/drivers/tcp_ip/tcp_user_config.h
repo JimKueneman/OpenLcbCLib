@@ -5,7 +5,7 @@
  *  defaults.  Copy this file to your project's include path and edit to
  *  override any value.
  *
- *  All values use #ifndef guards in tcp_types.h so defining them here (or
+ *  All values use \#ifndef guards in tcp_types.h so defining them here (or
  *  via -D compiler flags) takes priority over the library defaults.
  */
 

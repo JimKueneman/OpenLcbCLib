@@ -6,6 +6,8 @@ var searchData=
   ['can_5fstatemachine_5finfo_5ft_3',['can_statemachine_info_t',['../can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e',1,'can_types.h']]],
   ['config_5fmem_5foperations_5frequest_5finfo_5ft_4',['config_mem_operations_request_info_t',['../openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8',1,'openlcb_types.h']]],
   ['config_5fmem_5fread_5frequest_5finfo_5ft_5',['config_mem_read_request_info_t',['../openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4',1,'openlcb_types.h']]],
-  ['config_5fmem_5fwrite_5frequest_5finfo_5ft_6',['config_mem_write_request_info_t',['../openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c',1,'openlcb_types.h']]],
-  ['configuration_5fmemory_5fbuffer_5ft_7',['configuration_memory_buffer_t',['../openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be',1,'openlcb_types.h']]]
+  ['config_5fmem_5fstream_5fread_5frequest_5ffunc_5ft_6',['config_mem_stream_read_request_func_t',['../protocol__config__mem__stream__handler_8h.html#a800a8d3b58aa3fc0670f685e74b2b563',1,'protocol_config_mem_stream_handler.h']]],
+  ['config_5fmem_5fstream_5fwrite_5frequest_5ffunc_5ft_7',['config_mem_stream_write_request_func_t',['../protocol__config__mem__stream__handler_8h.html#ad6236b62344b69c26695753678b96500',1,'protocol_config_mem_stream_handler.h']]],
+  ['config_5fmem_5fwrite_5frequest_5finfo_5ft_8',['config_mem_write_request_info_t',['../openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c',1,'openlcb_types.h']]],
+  ['configuration_5fmemory_5fbuffer_5ft_9',['configuration_memory_buffer_t',['../openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be',1,'openlcb_types.h']]]
 ];

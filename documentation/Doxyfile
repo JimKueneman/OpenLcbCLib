@@ -48,7 +48,7 @@ PROJECT_NAME           = OpenLcbCLib
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = "1.0 Alpha"
+PROJECT_NUMBER         = 1.1.0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -74,7 +74,7 @@ PROJECT_ICON           = /Users/jimkueneman/Documents/OpenLcbCLib/documentation/
 # entered, it will be relative to the location where Doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = /Users/jimkueneman/Documents/OpenLcbCLib/documentation/Help
+OUTPUT_DIRECTORY       = /Users/jimkueneman/Documents/OpenLcbCLib/documentation/help
 
 # If the CREATE_SUBDIRS tag is set to YES then Doxygen will create up to 4096
 # sub-directories (in 2 levels) under the output directory of each output format
@@ -1074,7 +1074,7 @@ EXAMPLE_RECURSIVE      = NO
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = /Users/jimkueneman/Documents/OpenLcbCLib/documentation/Help/Images
+IMAGE_PATH             = /Users/jimkueneman/Documents/OpenLcbCLib/documentation/help/images
 
 # The INPUT_FILTER tag can be used to specify a program that Doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -2442,7 +2442,18 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             =
+PREDEFINED             = OPENLCB_COMPILE_CAN \
+                         OPENLCB_COMPILE_TCP \
+                         OPENLCB_COMPILE_EVENTS \
+                         OPENLCB_COMPILE_DATAGRAMS \
+                         OPENLCB_COMPILE_MEMORY_CONFIGURATION \
+                         OPENLCB_COMPILE_FIRMWARE \
+                         OPENLCB_COMPILE_BROADCAST_TIME \
+                         OPENLCB_COMPILE_TRAIN \
+                         OPENLCB_COMPILE_TRAIN_SEARCH \
+                         OPENLCB_COMPILE_STREAM \
+                         OPENLCB_COMPILE_DCC_DETECTOR \
+                         OPENLCB_COMPILE_DCC_CV
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

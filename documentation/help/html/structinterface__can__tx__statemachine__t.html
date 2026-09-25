@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -118,6 +118,18 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a9572d43e73f7dd06b6dea53e0fcf1186" id="r_a9572d43e73f7dd06b6dea53e0fcf1186"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9572d43e73f7dd06b6dea53e0fcf1186">listener_find_by_node_id</a> )(<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
 <tr class="memdesc:a9572d43e73f7dd06b6dea53e0fcf1186"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Resolve a listener Node ID to its CAN alias.  <br /></td></tr>
 <tr class="separator:a9572d43e73f7dd06b6dea53e0fcf1186"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0651c591fcdd3d6346901a1eef8c8a8e" id="r_a0651c591fcdd3d6346901a1eef8c8a8e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0651c591fcdd3d6346901a1eef8c8a8e">listener_register</a> )(<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memdesc:a0651c591fcdd3d6346901a1eef8c8a8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Register a listener node_id in the alias table.  <br /></td></tr>
+<tr class="separator:a0651c591fcdd3d6346901a1eef8c8a8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6a3214d7751eb08e1c579c1cc82eadf" id="r_ae6a3214d7751eb08e1c579c1cc82eadf"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae6a3214d7751eb08e1c579c1cc82eadf">listener_unregister</a> )(<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memdesc:ae6a3214d7751eb08e1c579c1cc82eadf"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Unregister a listener node_id from the alias table.  <br /></td></tr>
+<tr class="separator:ae6a3214d7751eb08e1c579c1cc82eadf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5d977bbc45e071d19d77e261f17b7e7" id="r_ad5d977bbc45e071d19d77e261f17b7e7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7">lock_shared_resources</a> )(void)</td></tr>
+<tr class="memdesc:ad5d977bbc45e071d19d77e261f17b7e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Lock shared CAN resources (buffer store, FIFO).  <br /></td></tr>
+<tr class="separator:ad5d977bbc45e071d19d77e261f17b7e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a654fa7c6260aa2ac2c0589f57fcd67e9" id="r_a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a654fa7c6260aa2ac2c0589f57fcd67e9">unlock_shared_resources</a> )(void)</td></tr>
+<tr class="memdesc:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">OPTIONAL. Unlock shared CAN resources.  <br /></td></tr>
+<tr class="separator:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dependency-injection interface for the CAN transmit state machine. </p>
@@ -235,6 +247,74 @@ Data Fields</h2></td></tr>
 <p>OPTIONAL. Resolve a listener Node ID to its CAN alias. </p>
 <p>Called by the TX path when dest_alias == 0 and dest_id != 0 (forwarded consist commands). Returns a pointer to the listener table entry so the caller can read entry-&gt;alias. NULL pointer = feature not linked in; NULL return = node_id not found in table.</p>
 <dl class="section note"><dt>Note</dt><dd>Typical: AliasMappingListener_find_by_node_id. May be NULL. </dd></dl>
+
+</div>
+</div>
+<a id="a0651c591fcdd3d6346901a1eef8c8a8e" name="a0651c591fcdd3d6346901a1eef8c8a8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0651c591fcdd3d6346901a1eef8c8a8e">&#9670;&#160;</a></span>listener_register</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="can__types_8h.html#a0af04be2385c36a87e0b635199c3195b">listener_alias_entry_t</a> *(* listener_register) (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Register a listener node_id in the alias table. </p>
+<p>Called when the TX path sniffs a successful Listener Config Attach Reply being transmitted. Adds the node_id to the listener alias table so periodic verification can resolve its alias.</p>
+<dl class="section note"><dt>Note</dt><dd>Typical: AliasMappingListener_register. May be NULL. </dd></dl>
+
+</div>
+</div>
+<a id="ae6a3214d7751eb08e1c579c1cc82eadf" name="ae6a3214d7751eb08e1c579c1cc82eadf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6a3214d7751eb08e1c579c1cc82eadf">&#9670;&#160;</a></span>listener_unregister</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* listener_unregister) (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Unregister a listener node_id from the alias table. </p>
+<p>Called when the TX path sniffs a successful Listener Config Detach Reply being transmitted. Removes the node_id from the listener alias table.</p>
+<dl class="section note"><dt>Note</dt><dd>Typical: AliasMappingListener_unregister. May be NULL. </dd></dl>
+
+</div>
+</div>
+<a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* lock_shared_resources) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Lock shared CAN resources (buffer store, FIFO). </p>
+
+</div>
+</div>
+<a id="a654fa7c6260aa2ac2c0589f57fcd67e9" name="a654fa7c6260aa2ac2c0589f57fcd67e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a654fa7c6260aa2ac2c0589f57fcd67e9">&#9670;&#160;</a></span>unlock_shared_resources</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* unlock_shared_resources) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>OPTIONAL. Unlock shared CAN resources. </p>
 
 </div>
 </div>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['alias_5fmapping_5finfo_5fstruct_0',['alias_mapping_info_struct',['../structalias__mapping__info__struct.html',1,'']]],
-  ['alias_5fmapping_5fstruct_1',['alias_mapping_struct',['../structalias__mapping__struct.html',1,'']]]
+  ['_5fconfig_5ffield_5ft_0',['_config_field_t',['../struct__config__field__t.html',1,'']]],
+  ['_5fpending_5fallocate_5ft_1',['_pending_allocate_t',['../struct__pending__allocate__t.html',1,'']]]
 ];

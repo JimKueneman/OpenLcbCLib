@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -148,10 +148,10 @@ Macros</h2></td></tr>
 <tr class="memitem:gac622153763bbbd4970a00d7ec2f7f737" id="r_gac622153763bbbd4970a00d7ec2f7f737"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a>&#160;&#160;&#160;256</td></tr>
 <tr class="memdesc:gac622153763bbbd4970a00d7ec2f7f737"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP message payload size (also covers Events with Payload)  <br /></td></tr>
 <tr class="separator:gac622153763bbbd4970a00d7ec2f7f737"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad7e3d2c90a3bbfd68b51f5068f5692ff" id="r_gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>&#160;&#160;&#160;1  /* stream not compiled in — payload collapsed to 1 byte; define OPENLCB_COMPILE_STREAM to restore */</td></tr>
+<tr class="memitem:gad7e3d2c90a3bbfd68b51f5068f5692ff" id="r_gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>&#160;&#160;&#160;<a class="el" href="group__user__config__constants.html#ga6979a5461154792d5d61db73f1b2f86c">USER_DEFINED_STREAM_BUFFER_LEN</a></td></tr>
 <tr class="memdesc:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload size. Equals USER_DEFINED_STREAM_BUFFER_LEN when OPENLCB_COMPILE_STREAM is defined; collapses to 1 byte otherwise to save RAM.  <br /></td></tr>
 <tr class="separator:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga240ec53ac7dfd1edd992d84723fdf555" id="r_ga240ec53ac7dfd1edd992d84723fdf555"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga240ec53ac7dfd1edd992d84723fdf555">LEN_MESSAGE_BYTES_WORKER</a>&#160;&#160;&#160;<a class="el" href="#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td></tr>
+<tr class="memitem:ga240ec53ac7dfd1edd992d84723fdf555" id="r_ga240ec53ac7dfd1edd992d84723fdf555"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga240ec53ac7dfd1edd992d84723fdf555">LEN_MESSAGE_BYTES_WORKER</a>&#160;&#160;&#160;<a class="el" href="#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a></td></tr>
 <tr class="memdesc:ga240ec53ac7dfd1edd992d84723fdf555"><td class="mdescLeft">&#160;</td><td class="mdescRight">Worker buffer payload size — largest of all payload sizes. Clamped to at least SNIP size (256 bytes).  <br /></td></tr>
 <tr class="separator:ga240ec53ac7dfd1edd992d84723fdf555"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga12eb42fe9afe213aa8690aff0c9e4ee6" id="r_ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga12eb42fe9afe213aa8690aff0c9e4ee6">LEN_EVENT_ID</a>&#160;&#160;&#160;8</td></tr>
@@ -457,7 +457,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define LEN_MESSAGE_BYTES_STREAM&#160;&#160;&#160;1  /* stream not compiled in — payload collapsed to 1 byte; define OPENLCB_COMPILE_STREAM to restore */</td>
+          <td class="memname">#define LEN_MESSAGE_BYTES_STREAM&#160;&#160;&#160;<a class="el" href="group__user__config__constants.html#ga6979a5461154792d5d61db73f1b2f86c">USER_DEFINED_STREAM_BUFFER_LEN</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -473,7 +473,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define LEN_MESSAGE_BYTES_WORKER&#160;&#160;&#160;<a class="el" href="#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td>
+          <td class="memname">#define LEN_MESSAGE_BYTES_WORKER&#160;&#160;&#160;<a class="el" href="#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a></td>
         </tr>
       </table>
 </div><div class="memdoc">

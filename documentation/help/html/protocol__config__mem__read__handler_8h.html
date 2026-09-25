@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -134,6 +134,9 @@ Functions</h2></td></tr>
 <tr class="memitem:adfe1b9ad5e6c6eb6751203f497e93109" id="r_adfe1b9ad5e6c6eb6751203f497e93109"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfe1b9ad5e6c6eb6751203f497e93109">ProtocolConfigMemReadHandler_read_space_train_function_config_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:adfe1b9ad5e6c6eb6751203f497e93109"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from Train Fn Config space (0xF9).  <br /></td></tr>
 <tr class="separator:adfe1b9ad5e6c6eb6751203f497e93109"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a187d914b68524df4fcceaeec0b240d28" id="r_a187d914b68524df4fcceaeec0b240d28"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a187d914b68524df4fcceaeec0b240d28">ProtocolConfigMemReadHandler_read_space_dcc_cv</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a187d914b68524df4fcceaeec0b240d28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from DCC CV space (0xF8).  <br /></td></tr>
+<tr class="separator:a187d914b68524df4fcceaeec0b240d28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc4a977b77083cf4a361056044eefa73" id="r_acc4a977b77083cf4a361056044eefa73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc4a977b77083cf4a361056044eefa73">ProtocolConfigMemReadHandler_read_request_config_definition_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
 <tr class="memdesc:acc4a977b77083cf4a361056044eefa73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send read request targeting CDI (0xFF) on another node.  <br /></td></tr>
 <tr class="separator:acc4a977b77083cf4a361056044eefa73"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -201,10 +204,12 @@ Functions</h2></td></tr>
 <p>Stores the callback interface. Call once at startup. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_protocol_config_mem_read_handler</td><td>Pointer to <a class="el" href="structinterface__protocol__config__mem__read__handler__t.html">interface_protocol_config_mem_read_handler_t</a> (must remain valid for application lifetime). </td></tr>
+    <tr><td class="paramname">interface_protocol_config_mem_read_handler</td><td>Pointer to <a class="el" href="structinterface__protocol__config__mem__read__handler__t.html">interface_protocol_config_mem_read_handler_t</a> (must remain valid for application lifetime).</td></tr>
   </table>
   </dd>
 </dl>
+<pre class="fragment">* @param interface_protocol_config_mem_read_handler  Populated table.
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Structure must remain valid for application lifetime. </dd></dl>
 
 </div>
 </div>
@@ -234,10 +239,11 @@ Functions</h2></td></tr>
 <p>Read from CDI space (0xFF). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Read from CDI space (0xFF). </p>
 
 </div>
 </div>
@@ -267,10 +273,11 @@ Functions</h2></td></tr>
 <p>Read from All space (0xFE). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Read from All space (0xFE). </p>
 
 </div>
 </div>
@@ -300,10 +307,11 @@ Functions</h2></td></tr>
 <p>Read from Config space (0xFD). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Read from Config space (0xFD). </p>
 
 </div>
 </div>
@@ -333,10 +341,11 @@ Functions</h2></td></tr>
 <p>Read from ACDI-Mfg space (0xFC). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Read from ACDI-Mfg space (0xFC). </p>
 
 </div>
 </div>
@@ -366,10 +375,11 @@ Functions</h2></td></tr>
 <p>Read from ACDI-User space (0xFB). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Read from ACDI-User space (0xFB). </p>
 
 </div>
 </div>
@@ -399,10 +409,11 @@ Functions</h2></td></tr>
 <p>Read from Train FDI space (0xFA). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Read from Train FDI space (0xFA). </p>
 
 </div>
 </div>
@@ -432,10 +443,45 @@ Functions</h2></td></tr>
 <p>Read from Train Fn Config space (0xF9). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Read from Train Fn Config space (0xF9). </p>
+
+</div>
+</div>
+<a id="a187d914b68524df4fcceaeec0b240d28" name="a187d914b68524df4fcceaeec0b240d28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a187d914b68524df4fcceaeec0b240d28">&#9670;&#160;</a></span>ProtocolConfigMemReadHandler_read_space_dcc_cv()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemReadHandler_read_space_dcc_cv </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read from DCC CV space (0xF8). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Read from DCC CV space (0xF8). </p>
 
 </div>
 </div>
@@ -470,10 +516,11 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request. </td></tr>
+    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Send read request targeting CDI (0xFF) on another node. </p>
 
 </div>
 </div>
@@ -508,10 +555,12 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request. </td></tr>
+    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Send read request targeting Config (0xFD) on another node.</p>
+<p>Partial reads (fewer bytes than requested) return TRANSFER_ERROR. </p>
 
 </div>
 </div>
@@ -546,10 +595,11 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request. </td></tr>
+    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Send read request targeting ACDI-Mfg (0xFC) on another node. </p>
 
 </div>
 </div>
@@ -584,10 +634,11 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request. </td></tr>
+    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Send read request targeting ACDI-User (0xFB) on another node. </p>
 
 </div>
 </div>
@@ -622,10 +673,11 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request. </td></tr>
+    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Send read request targeting Train FDI (0xFA) on another node. </p>
 
 </div>
 </div>
@@ -660,10 +712,12 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
-    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request. </td></tr>
+    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> request.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Send read request targeting Train Fn Config (0xF9) on another node.</p>
+<p>Each 16-bit function value occupies 2 bytes big-endian: address/2 = fn_index, address%2 selects high/low byte. </p>
 
 </div>
 </div>

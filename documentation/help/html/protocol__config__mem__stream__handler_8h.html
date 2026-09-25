@@ -26,7 +26,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.0 Alpha</span>
+   <div id="projectname">OpenLcbCLib<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">OpenSource C Library to create OpenLcb/Lcc Nodes</div>
   </td>
@@ -90,6 +90,11 @@ $(function(){ initResizable(false); });
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">protocol_config_mem_stream_handler.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -98,6 +103,119 @@ $(function(){ initResizable(false); });
 <a href="#details">More...</a></p>
 
 <p><a href="protocol__config__mem__stream__handler_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structconfig__mem__stream__context__t.html">config_mem_stream_context_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracks the state of one config-mem stream operation (read or write).  <a href="structconfig__mem__stream__context__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html">interface_protocol_config_mem_stream_handler_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dependency injection interface for the config-mem stream handler.  <a href="structinterface__protocol__config__mem__stream__handler__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a800a8d3b58aa3fc0670f685e74b2b563" id="r_a800a8d3b58aa3fc0670f685e74b2b563"><td class="memItemLeft" align="right" valign="top">typedef uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a800a8d3b58aa3fc0670f685e74b2b563">config_mem_stream_read_request_func_t</a>) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *node, uint32_t address, uint16_t count, uint8_t *buffer)</td></tr>
+<tr class="memdesc:a800a8d3b58aa3fc0670f685e74b2b563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Signature for a per-space stream read callback.  <br /></td></tr>
+<tr class="separator:a800a8d3b58aa3fc0670f685e74b2b563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6236b62344b69c26695753678b96500" id="r_ad6236b62344b69c26695753678b96500"><td class="memItemLeft" align="right" valign="top">typedef uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6236b62344b69c26695753678b96500">config_mem_stream_write_request_func_t</a>) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *node, uint32_t address, uint16_t count, const uint8_t *buffer)</td></tr>
+<tr class="memdesc:ad6236b62344b69c26695753678b96500"><td class="mdescLeft">&#160;</td><td class="mdescRight">Signature for a per-space stream write callback.  <br /></td></tr>
+<tr class="separator:ad6236b62344b69c26695753678b96500"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:aa2648fef38912cf80419351bdd3f88a9" id="r_aa2648fef38912cf80419351bdd3f88a9"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2648fef38912cf80419351bdd3f88a9">config_mem_stream_phase_enum</a> { <br />
+&#160;&#160;<a class="el" href="#aa2648fef38912cf80419351bdd3f88a9ad7d0cf55d647607e0dcb779ffb6da072">CONFIG_MEM_STREAM_PHASE_IDLE</a>
+, <a class="el" href="#aa2648fef38912cf80419351bdd3f88a9a091af434914a5896bc60442d2c694634">CONFIG_MEM_STREAM_PHASE_ALLOCATED</a>
+, <a class="el" href="#aa2648fef38912cf80419351bdd3f88a9a38f2fb1c7e338a491376171afcbab754">CONFIG_MEM_STREAM_PHASE_WAIT_INITIATE_REPLY</a>
+, <a class="el" href="#aa2648fef38912cf80419351bdd3f88a9af36a672130c6810bcf2d44e2e54b5f6c">CONFIG_MEM_STREAM_PHASE_SEND_REPLY_DATAGRAM</a>
+, <br />
+&#160;&#160;<a class="el" href="#aa2648fef38912cf80419351bdd3f88a9aed32f3e992319c71eb778a9f0c06fd46">CONFIG_MEM_STREAM_PHASE_PUMPING</a>
+, <a class="el" href="#aa2648fef38912cf80419351bdd3f88a9a994eef5d2c295f84f61ffa413078dd90">CONFIG_MEM_STREAM_PHASE_SEND_COMPLETE</a>
+, <a class="el" href="#aa2648fef38912cf80419351bdd3f88a9a6f29099b2817f533e67ccabafee57b5c">CONFIG_MEM_STREAM_PHASE_WRITE_WAIT_STREAM_INITIATE</a>
+, <a class="el" href="#aa2648fef38912cf80419351bdd3f88a9a59b734c23266bb644207d70130e1b107">CONFIG_MEM_STREAM_PHASE_WRITE_RECEIVING</a>
+, <br />
+&#160;&#160;<a class="el" href="#aa2648fef38912cf80419351bdd3f88a9a9e69706ca147f539a2cf2b98a152af87">CONFIG_MEM_STREAM_PHASE_WRITE_SEND_REPLY</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:aa2648fef38912cf80419351bdd3f88a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal state machine phases for a config-mem stream operation.  <a href="#aa2648fef38912cf80419351bdd3f88a9">More...</a><br /></td></tr>
+<tr class="separator:aa2648fef38912cf80419351bdd3f88a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:af17c2b637ba20e0de0e17d80945cb3c2" id="r_af17c2b637ba20e0de0e17d80945cb3c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af17c2b637ba20e0de0e17d80945cb3c2">ProtocolConfigMemStreamHandler_initialize</a> (const <a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html">interface_protocol_config_mem_stream_handler_t</a> *interface)</td></tr>
+<tr class="memdesc:af17c2b637ba20e0de0e17d80945cb3c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the DI interface and initializes internal state.  <br /></td></tr>
+<tr class="separator:af17c2b637ba20e0de0e17d80945cb3c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c0ce69612b00f78fe59b0335f9fff3a" id="r_a5c0ce69612b00f78fe59b0335f9fff3a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c0ce69612b00f78fe59b0335f9fff3a">ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a5c0ce69612b00f78fe59b0335f9fff3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Read Stream CDI (0xFF) datagram command.  <br /></td></tr>
+<tr class="separator:a5c0ce69612b00f78fe59b0335f9fff3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accffbc93d267f6edab2c77cef7786d1e" id="r_accffbc93d267f6edab2c77cef7786d1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#accffbc93d267f6edab2c77cef7786d1e">ProtocolConfigMemStreamHandler_handle_read_stream_space_all</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:accffbc93d267f6edab2c77cef7786d1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Read Stream All (0xFE) datagram command.  <br /></td></tr>
+<tr class="separator:accffbc93d267f6edab2c77cef7786d1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd508d3fbc62a6acfbef01d06479507e" id="r_afd508d3fbc62a6acfbef01d06479507e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd508d3fbc62a6acfbef01d06479507e">ProtocolConfigMemStreamHandler_handle_read_stream_space_configuration_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:afd508d3fbc62a6acfbef01d06479507e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Read Stream Config Memory (0xFD) datagram command.  <br /></td></tr>
+<tr class="separator:afd508d3fbc62a6acfbef01d06479507e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad98ec90c7fbf7bbebad8f24cf98a55d" id="r_aad98ec90c7fbf7bbebad8f24cf98a55d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad98ec90c7fbf7bbebad8f24cf98a55d">ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_manufacturer</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:aad98ec90c7fbf7bbebad8f24cf98a55d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Read Stream ACDI Manufacturer (0xFC) datagram command.  <br /></td></tr>
+<tr class="separator:aad98ec90c7fbf7bbebad8f24cf98a55d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab99ba4b720b88a2ecfd511e136bfd172" id="r_ab99ba4b720b88a2ecfd511e136bfd172"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab99ba4b720b88a2ecfd511e136bfd172">ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_user</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ab99ba4b720b88a2ecfd511e136bfd172"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Read Stream ACDI User (0xFB) datagram command.  <br /></td></tr>
+<tr class="separator:ab99ba4b720b88a2ecfd511e136bfd172"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09a1f68eb9942787a158ab234514e9ee" id="r_a09a1f68eb9942787a158ab234514e9ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09a1f68eb9942787a158ab234514e9ee">ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_definition_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a09a1f68eb9942787a158ab234514e9ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Read Stream Train FDI (0xFA) datagram command.  <br /></td></tr>
+<tr class="separator:a09a1f68eb9942787a158ab234514e9ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bbb8f3c792424a4ce0f762485af3ce0" id="r_a8bbb8f3c792424a4ce0f762485af3ce0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bbb8f3c792424a4ce0f762485af3ce0">ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_config_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a8bbb8f3c792424a4ce0f762485af3ce0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Read Stream Train Fn Config (0xF9) datagram command.  <br /></td></tr>
+<tr class="separator:a8bbb8f3c792424a4ce0f762485af3ce0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85045c03febb3b57ba8eb49e3a0f524d" id="r_a85045c03febb3b57ba8eb49e3a0f524d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85045c03febb3b57ba8eb49e3a0f524d">ProtocolConfigMemStreamHandler_handle_read_stream_space_firmware</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a85045c03febb3b57ba8eb49e3a0f524d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Read Stream Firmware (0xEF) datagram command.  <br /></td></tr>
+<tr class="separator:a85045c03febb3b57ba8eb49e3a0f524d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea1a23029e30ea9991125bc287577e82" id="r_aea1a23029e30ea9991125bc287577e82"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea1a23029e30ea9991125bc287577e82">ProtocolConfigMemStreamHandler_handle_write_stream_space_config_description_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:aea1a23029e30ea9991125bc287577e82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Write Stream CDI (0xFF) datagram command.  <br /></td></tr>
+<tr class="separator:aea1a23029e30ea9991125bc287577e82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6140c72bd231b26b67ad16fbfa4ae85" id="r_ab6140c72bd231b26b67ad16fbfa4ae85"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6140c72bd231b26b67ad16fbfa4ae85">ProtocolConfigMemStreamHandler_handle_write_stream_space_all</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ab6140c72bd231b26b67ad16fbfa4ae85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Write Stream All (0xFE) datagram command.  <br /></td></tr>
+<tr class="separator:ab6140c72bd231b26b67ad16fbfa4ae85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a2c683be57455f4d65c8abdb9decdd6" id="r_a5a2c683be57455f4d65c8abdb9decdd6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a2c683be57455f4d65c8abdb9decdd6">ProtocolConfigMemStreamHandler_handle_write_stream_space_configuration_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a5a2c683be57455f4d65c8abdb9decdd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Write Stream Config Memory (0xFD) datagram command.  <br /></td></tr>
+<tr class="separator:a5a2c683be57455f4d65c8abdb9decdd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2ed73a6ade765458faa8b1a17a1ba5c" id="r_ad2ed73a6ade765458faa8b1a17a1ba5c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2ed73a6ade765458faa8b1a17a1ba5c">ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_manufacturer</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ad2ed73a6ade765458faa8b1a17a1ba5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Write Stream ACDI Manufacturer (0xFC) datagram command.  <br /></td></tr>
+<tr class="separator:ad2ed73a6ade765458faa8b1a17a1ba5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a681fbff2884699129cde4661b7cb5c09" id="r_a681fbff2884699129cde4661b7cb5c09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a681fbff2884699129cde4661b7cb5c09">ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_user</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a681fbff2884699129cde4661b7cb5c09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Write Stream ACDI User (0xFB) datagram command.  <br /></td></tr>
+<tr class="separator:a681fbff2884699129cde4661b7cb5c09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98d287af633564ea0c667711ac3b2cfe" id="r_a98d287af633564ea0c667711ac3b2cfe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a98d287af633564ea0c667711ac3b2cfe">ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_definition_info</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a98d287af633564ea0c667711ac3b2cfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Write Stream Train FDI (0xFA) datagram command.  <br /></td></tr>
+<tr class="separator:a98d287af633564ea0c667711ac3b2cfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9f111af6dc8290e271d85bc45b176a8" id="r_ab9f111af6dc8290e271d85bc45b176a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9f111af6dc8290e271d85bc45b176a8">ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_config_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ab9f111af6dc8290e271d85bc45b176a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Write Stream Train Fn Config (0xF9) datagram command.  <br /></td></tr>
+<tr class="separator:ab9f111af6dc8290e271d85bc45b176a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ed81f73032968c89630d6cc5c0407b7" id="r_a0ed81f73032968c89630d6cc5c0407b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ed81f73032968c89630d6cc5c0407b7">ProtocolConfigMemStreamHandler_handle_write_stream_space_firmware</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a0ed81f73032968c89630d6cc5c0407b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Write Stream Firmware (0xEF) datagram command.  <br /></td></tr>
+<tr class="separator:a0ed81f73032968c89630d6cc5c0407b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a621496b2250fcf2c36950d3db77011e7" id="r_a621496b2250fcf2c36950d3db77011e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a621496b2250fcf2c36950d3db77011e7">ProtocolConfigMemStreamHandler_run</a> (void)</td></tr>
+<tr class="memdesc:a621496b2250fcf2c36950d3db77011e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drives the config-mem stream data pump.  <br /></td></tr>
+<tr class="separator:a621496b2250fcf2c36950d3db77011e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9981e8c14d61a9ba4372dda9eb0145e" id="r_aa9981e8c14d61a9ba4372dda9eb0145e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9981e8c14d61a9ba4372dda9eb0145e">ProtocolConfigMemStreamHandler_check_timeouts</a> (uint8_t current_tick)</td></tr>
+<tr class="memdesc:aa9981e8c14d61a9ba4372dda9eb0145e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for timed-out config-mem stream operations.  <br /></td></tr>
+<tr class="separator:aa9981e8c14d61a9ba4372dda9eb0145e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ca8480606dadca577bc8adc2de5a6b8" id="r_a8ca8480606dadca577bc8adc2de5a6b8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ca8480606dadca577bc8adc2de5a6b8">ProtocolConfigMemStreamHandler_on_initiate_request</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structstream__state__t.html">stream_state_t</a> *stream)</td></tr>
+<tr class="memdesc:a8ca8480606dadca577bc8adc2de5a6b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routes Stream Initiate Request between config-mem and user.  <br /></td></tr>
+<tr class="separator:a8ca8480606dadca577bc8adc2de5a6b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d54dbdb7d88ad826e81c9232283ccf6" id="r_a6d54dbdb7d88ad826e81c9232283ccf6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6d54dbdb7d88ad826e81c9232283ccf6">ProtocolConfigMemStreamHandler_on_initiate_reply</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structstream__state__t.html">stream_state_t</a> *stream)</td></tr>
+<tr class="memdesc:a6d54dbdb7d88ad826e81c9232283ccf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routes Stream Initiate Reply between config-mem and user.  <br /></td></tr>
+<tr class="separator:a6d54dbdb7d88ad826e81c9232283ccf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f2e3c67206bad5fb6ca5722b0cd6bda" id="r_a9f2e3c67206bad5fb6ca5722b0cd6bda"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f2e3c67206bad5fb6ca5722b0cd6bda">ProtocolConfigMemStreamHandler_on_data_received</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structstream__state__t.html">stream_state_t</a> *stream)</td></tr>
+<tr class="memdesc:a9f2e3c67206bad5fb6ca5722b0cd6bda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routes Stream Data Received between config-mem and user.  <br /></td></tr>
+<tr class="separator:a9f2e3c67206bad5fb6ca5722b0cd6bda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf390030f069170472798317be15e1df" id="r_aaf390030f069170472798317be15e1df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf390030f069170472798317be15e1df">ProtocolConfigMemStreamHandler_on_data_proceed</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structstream__state__t.html">stream_state_t</a> *stream)</td></tr>
+<tr class="memdesc:aaf390030f069170472798317be15e1df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routes Stream Data Proceed between config-mem and user.  <br /></td></tr>
+<tr class="separator:aaf390030f069170472798317be15e1df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06783c19ffc11d9d8416b91412928cf1" id="r_a06783c19ffc11d9d8416b91412928cf1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06783c19ffc11d9d8416b91412928cf1">ProtocolConfigMemStreamHandler_on_complete</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structstream__state__t.html">stream_state_t</a> *stream)</td></tr>
+<tr class="memdesc:a06783c19ffc11d9d8416b91412928cf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routes Stream Complete between config-mem and user.  <br /></td></tr>
+<tr class="separator:a06783c19ffc11d9d8416b91412928cf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Memory Configuration stream transport handler. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2026, Jim Kueneman All rights reserved.</dd></dl>
@@ -111,7 +229,960 @@ $(function(){ initResizable(false); });
 <p>The module intercepts stream handler callbacks via the stream-&gt;context pointer to distinguish config-mem streams from user application streams, forwarding unrecognized streams to the user callbacks.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>04 Apr 2026 </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Typedef Documentation</h2>
+<a id="a800a8d3b58aa3fc0670f685e74b2b563" name="a800a8d3b58aa3fc0670f685e74b2b563"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a800a8d3b58aa3fc0670f685e74b2b563">&#9670;&#160;</a></span>config_mem_stream_read_request_func_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef uint16_t(* config_mem_stream_read_request_func_t) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *node, uint32_t address, uint16_t count, uint8_t *buffer)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Signature for a per-space stream read callback. </p>
+<p>Reads up to <code>count</code> bytes from the address space at <code>address</code> into <code>buffer</code>. Returns the number of bytes actually read.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">node</td><td>Node whose address space is being read. </td></tr>
+    <tr><td class="paramname">address</td><td>Starting byte offset within the address space. </td></tr>
+    <tr><td class="paramname">count</td><td>Maximum number of bytes to read. </td></tr>
+    <tr><td class="paramname">buffer</td><td>Destination buffer (caller-owned, at least <code>count</code> bytes).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Actual number of bytes placed in <code>buffer</code>. </dd></dl>
+
+</div>
+</div>
+<a id="ad6236b62344b69c26695753678b96500" name="ad6236b62344b69c26695753678b96500"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6236b62344b69c26695753678b96500">&#9670;&#160;</a></span>config_mem_stream_write_request_func_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef uint16_t(* config_mem_stream_write_request_func_t) (<a class="el" href="openlcb__types_8h.html#a2b2ee067d4e133b8a20b892d2337e0de">openlcb_node_t</a> *node, uint32_t address, uint16_t count, const uint8_t *buffer)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Signature for a per-space stream write callback. </p>
+<p>Writes up to <code>count</code> bytes from <code>buffer</code> into the address space at <code>address</code>. Returns the number of bytes actually written.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">node</td><td>Node whose address space is being written. </td></tr>
+    <tr><td class="paramname">address</td><td>Starting byte offset within the address space. </td></tr>
+    <tr><td class="paramname">count</td><td>Number of bytes to write. </td></tr>
+    <tr><td class="paramname">buffer</td><td>Source buffer (caller-owned, at least <code>count</code> bytes).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Actual number of bytes written. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="aa2648fef38912cf80419351bdd3f88a9" name="aa2648fef38912cf80419351bdd3f88a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2648fef38912cf80419351bdd3f88a9">&#9670;&#160;</a></span>config_mem_stream_phase_enum</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#aa2648fef38912cf80419351bdd3f88a9">config_mem_stream_phase_enum</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Internal state machine phases for a config-mem stream operation. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa2648fef38912cf80419351bdd3f88a9ad7d0cf55d647607e0dcb779ffb6da072" name="aa2648fef38912cf80419351bdd3f88a9ad7d0cf55d647607e0dcb779ffb6da072"></a>CONFIG_MEM_STREAM_PHASE_IDLE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa2648fef38912cf80419351bdd3f88a9a091af434914a5896bc60442d2c694634" name="aa2648fef38912cf80419351bdd3f88a9a091af434914a5896bc60442d2c694634"></a>CONFIG_MEM_STREAM_PHASE_ALLOCATED&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa2648fef38912cf80419351bdd3f88a9a38f2fb1c7e338a491376171afcbab754" name="aa2648fef38912cf80419351bdd3f88a9a38f2fb1c7e338a491376171afcbab754"></a>CONFIG_MEM_STREAM_PHASE_WAIT_INITIATE_REPLY&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa2648fef38912cf80419351bdd3f88a9af36a672130c6810bcf2d44e2e54b5f6c" name="aa2648fef38912cf80419351bdd3f88a9af36a672130c6810bcf2d44e2e54b5f6c"></a>CONFIG_MEM_STREAM_PHASE_SEND_REPLY_DATAGRAM&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa2648fef38912cf80419351bdd3f88a9aed32f3e992319c71eb778a9f0c06fd46" name="aa2648fef38912cf80419351bdd3f88a9aed32f3e992319c71eb778a9f0c06fd46"></a>CONFIG_MEM_STREAM_PHASE_PUMPING&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa2648fef38912cf80419351bdd3f88a9a994eef5d2c295f84f61ffa413078dd90" name="aa2648fef38912cf80419351bdd3f88a9a994eef5d2c295f84f61ffa413078dd90"></a>CONFIG_MEM_STREAM_PHASE_SEND_COMPLETE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa2648fef38912cf80419351bdd3f88a9a6f29099b2817f533e67ccabafee57b5c" name="aa2648fef38912cf80419351bdd3f88a9a6f29099b2817f533e67ccabafee57b5c"></a>CONFIG_MEM_STREAM_PHASE_WRITE_WAIT_STREAM_INITIATE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa2648fef38912cf80419351bdd3f88a9a59b734c23266bb644207d70130e1b107" name="aa2648fef38912cf80419351bdd3f88a9a59b734c23266bb644207d70130e1b107"></a>CONFIG_MEM_STREAM_PHASE_WRITE_RECEIVING&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa2648fef38912cf80419351bdd3f88a9a9e69706ca147f539a2cf2b98a152af87" name="aa2648fef38912cf80419351bdd3f88a9a9e69706ca147f539a2cf2b98a152af87"></a>CONFIG_MEM_STREAM_PHASE_WRITE_SEND_REPLY&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="af17c2b637ba20e0de0e17d80945cb3c2" name="af17c2b637ba20e0de0e17d80945cb3c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af17c2b637ba20e0de0e17d80945cb3c2">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_initialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_initialize </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html">interface_protocol_config_mem_stream_handler_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Stores the DI interface and initializes internal state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface</td><td>Pointer to <a class="el" href="structinterface__protocol__config__mem__stream__handler__t.html">interface_protocol_config_mem_stream_handler_t</a> (must remain valid for application lifetime).</td></tr>
+  </table>
+  </dd>
+</dl>
+<pre class="fragment">* @param interface  Populated DI table.
+* </pre> 
+</div>
+</div>
+<a id="a5c0ce69612b00f78fe59b0335f9fff3a" name="a5c0ce69612b00f78fe59b0335f9fff3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c0ce69612b00f78fe59b0335f9fff3a">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_info </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Read Stream CDI (0xFF) datagram command. </p>
+<p>Two-phase dispatch: Phase 1 sends Datagram Received OK, Phase 2 initiates the outbound stream.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Main state machine context (from datagram handler).</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Read Stream CDI (0xFF) datagram command. </p>
+
+</div>
+</div>
+<a id="accffbc93d267f6edab2c77cef7786d1e" name="accffbc93d267f6edab2c77cef7786d1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accffbc93d267f6edab2c77cef7786d1e">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_read_stream_space_all()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_read_stream_space_all </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Read Stream All (0xFE) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Read Stream All (0xFE) datagram command. </p>
+
+</div>
+</div>
+<a id="afd508d3fbc62a6acfbef01d06479507e" name="afd508d3fbc62a6acfbef01d06479507e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd508d3fbc62a6acfbef01d06479507e">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_read_stream_space_configuration_memory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_read_stream_space_configuration_memory </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Read Stream Config Memory (0xFD) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Read Stream Config Memory (0xFD) datagram command. </p>
+
+</div>
+</div>
+<a id="aad98ec90c7fbf7bbebad8f24cf98a55d" name="aad98ec90c7fbf7bbebad8f24cf98a55d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad98ec90c7fbf7bbebad8f24cf98a55d">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_manufacturer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_manufacturer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Read Stream ACDI Manufacturer (0xFC) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Read Stream ACDI Manufacturer (0xFC) datagram command. </p>
+
+</div>
+</div>
+<a id="ab99ba4b720b88a2ecfd511e136bfd172" name="ab99ba4b720b88a2ecfd511e136bfd172"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab99ba4b720b88a2ecfd511e136bfd172">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_user()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_read_stream_space_acdi_user </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Read Stream ACDI User (0xFB) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Read Stream ACDI User (0xFB) datagram command. </p>
+
+</div>
+</div>
+<a id="a09a1f68eb9942787a158ab234514e9ee" name="a09a1f68eb9942787a158ab234514e9ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09a1f68eb9942787a158ab234514e9ee">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_definition_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_definition_info </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Read Stream Train FDI (0xFA) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Read Stream Train FDI (0xFA) datagram command. </p>
+
+</div>
+</div>
+<a id="a8bbb8f3c792424a4ce0f762485af3ce0" name="a8bbb8f3c792424a4ce0f762485af3ce0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8bbb8f3c792424a4ce0f762485af3ce0">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_config_memory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_read_stream_space_train_function_config_memory </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Read Stream Train Fn Config (0xF9) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Read Stream Train Fn Config (0xF9) datagram command. </p>
+
+</div>
+</div>
+<a id="a85045c03febb3b57ba8eb49e3a0f524d" name="a85045c03febb3b57ba8eb49e3a0f524d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85045c03febb3b57ba8eb49e3a0f524d">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_read_stream_space_firmware()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_read_stream_space_firmware </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Read Stream Firmware (0xEF) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Read Stream Firmware (0xEF) datagram command. </p>
+
+</div>
+</div>
+<a id="aea1a23029e30ea9991125bc287577e82" name="aea1a23029e30ea9991125bc287577e82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea1a23029e30ea9991125bc287577e82">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_write_stream_space_config_description_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_write_stream_space_config_description_info </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Write Stream CDI (0xFF) datagram command. </p>
+<p>Always rejected &ndash; CDI is read-only.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Write Stream CDI (0xFF) datagram command. </p>
+
+</div>
+</div>
+<a id="ab6140c72bd231b26b67ad16fbfa4ae85" name="ab6140c72bd231b26b67ad16fbfa4ae85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6140c72bd231b26b67ad16fbfa4ae85">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_write_stream_space_all()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_write_stream_space_all </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Write Stream All (0xFE) datagram command. </p>
+<p>Always rejected &ndash; All space is read-only.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Write Stream All (0xFE) datagram command. </p>
+
+</div>
+</div>
+<a id="a5a2c683be57455f4d65c8abdb9decdd6" name="a5a2c683be57455f4d65c8abdb9decdd6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a2c683be57455f4d65c8abdb9decdd6">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_write_stream_space_configuration_memory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_write_stream_space_configuration_memory </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Write Stream Config Memory (0xFD) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Write Stream Config Memory (0xFD) datagram command. </p>
+
+</div>
+</div>
+<a id="ad2ed73a6ade765458faa8b1a17a1ba5c" name="ad2ed73a6ade765458faa8b1a17a1ba5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2ed73a6ade765458faa8b1a17a1ba5c">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_manufacturer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_manufacturer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Write Stream ACDI Manufacturer (0xFC) datagram command. </p>
+<p>Always rejected &ndash; ACDI Manufacturer is read-only.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Write Stream ACDI Manufacturer (0xFC) datagram command. </p>
+
+</div>
+</div>
+<a id="a681fbff2884699129cde4661b7cb5c09" name="a681fbff2884699129cde4661b7cb5c09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a681fbff2884699129cde4661b7cb5c09">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_user()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_write_stream_space_acdi_user </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Write Stream ACDI User (0xFB) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Write Stream ACDI User (0xFB) datagram command. </p>
+
+</div>
+</div>
+<a id="a98d287af633564ea0c667711ac3b2cfe" name="a98d287af633564ea0c667711ac3b2cfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98d287af633564ea0c667711ac3b2cfe">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_definition_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_definition_info </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Write Stream Train FDI (0xFA) datagram command. </p>
+<p>Always rejected &ndash; Train FDI is read-only.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Write Stream Train FDI (0xFA) datagram command. </p>
+
+</div>
+</div>
+<a id="ab9f111af6dc8290e271d85bc45b176a8" name="ab9f111af6dc8290e271d85bc45b176a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9f111af6dc8290e271d85bc45b176a8">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_config_memory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_write_stream_space_train_function_config_memory </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Write Stream Train Fn Config (0xF9) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Write Stream Train Fn Config (0xF9) datagram command. </p>
+
+</div>
+</div>
+<a id="a0ed81f73032968c89630d6cc5c0407b7" name="a0ed81f73032968c89630d6cc5c0407b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ed81f73032968c89630d6cc5c0407b7">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_handle_write_stream_space_firmware()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_handle_write_stream_space_firmware </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles incoming Write Stream Firmware (0xEF) datagram command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Handles incoming Write Stream Firmware (0xEF) datagram command. </p>
+
+</div>
+</div>
+<a id="a621496b2250fcf2c36950d3db77011e7" name="a621496b2250fcf2c36950d3db77011e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a621496b2250fcf2c36950d3db77011e7">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_run()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_run </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Drives the config-mem stream data pump. </p>
+<p>Called once per main loop iteration. If an active stream read is in progress and the outgoing buffer is free, loads the next chunk of data and transmits it.</p>
+<p>Called once per main loop iteration from <a class="el" href="openlcb__config_8c.html#a0bae30ea9c618269a0f7164675050e7d" title="Runs one iteration of all state machines and periodic services.">OpenLcbConfig_run()</a>. State machine:</p><ul>
+<li>IDLE: nothing to do</li>
+<li>WAIT_INITIATE_REPLY: waiting for stream accept (handled by callback)</li>
+<li>SEND_REPLY_DATAGRAM: load and send Read Stream Reply OK</li>
+<li>PUMPING: load and send next data chunk</li>
+<li>SEND_COMPLETE: send Stream Data Complete</li>
+<li>WRITE_WAIT_STREAM_INITIATE: waiting for inbound stream (callback)</li>
+<li>WRITE_RECEIVING: receiving data (callback)</li>
+<li>WRITE_SEND_REPLY: load and send Write Stream Reply OK </li>
+</ul>
+
+</div>
+</div>
+<a id="aa9981e8c14d61a9ba4372dda9eb0145e" name="aa9981e8c14d61a9ba4372dda9eb0145e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9981e8c14d61a9ba4372dda9eb0145e">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_check_timeouts()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_check_timeouts </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>current_tick</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks for timed-out config-mem stream operations. </p>
+<p>Called from the periodic services loop with the current global 100ms tick. If the active operation has stalled for longer than the timeout threshold, terminates the stream and resets to idle.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">current_tick</td><td>Current value of the global 100ms tick counter.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>If the active operation is in WAIT_INITIATE_REPLY, PUMPING, WRITE_WAIT_STREAM_INITIATE, or WRITE_RECEIVING and the elapsed time exceeds the timeout threshold, terminates the stream (if open) and resets to idle.</p>
+<pre class="fragment">* @param current_tick  Current value of the global 100ms tick counter.
+* </pre> 
+</div>
+</div>
+<a id="a8ca8480606dadca577bc8adc2de5a6b8" name="a8ca8480606dadca577bc8adc2de5a6b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ca8480606dadca577bc8adc2de5a6b8">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_on_initiate_request()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ProtocolConfigMemStreamHandler_on_initiate_request </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structstream__state__t.html">stream_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>stream</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Routes Stream Initiate Request between config-mem and user. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>Pointer to <a class="el" href="structstream__state__t.html">stream_state_t</a> entry.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true to accept, false to reject.</dd></dl>
+<p>Routes Stream Initiate Request between config-mem and user.</p>
+<p>For read streams, this module is always the source (outbound), so inbound initiate requests are never ours. For write streams, the remote initiates an inbound stream to us after we ACK the Write Stream Command datagram. We match by phase and remote alias.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param stream             Pointer to stream_state_t entry.
+* </pre><dl class="section return"><dt>Returns</dt><dd>true to accept, false to reject. </dd></dl>
+
+</div>
+</div>
+<a id="a6d54dbdb7d88ad826e81c9232283ccf6" name="a6d54dbdb7d88ad826e81c9232283ccf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d54dbdb7d88ad826e81c9232283ccf6">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_on_initiate_reply()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_on_initiate_reply </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structstream__state__t.html">stream_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>stream</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Routes Stream Initiate Reply between config-mem and user. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>Pointer to <a class="el" href="structstream__state__t.html">stream_state_t</a> entry.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Routes Stream Initiate Reply between config-mem and user.</p>
+<p>If the stream belongs to us, check accept/reject and transition to SEND_REPLY_DATAGRAM or back to IDLE. Otherwise forward to user.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param stream             Pointer to stream_state_t entry.
+* </pre> 
+</div>
+</div>
+<a id="a9f2e3c67206bad5fb6ca5722b0cd6bda" name="a9f2e3c67206bad5fb6ca5722b0cd6bda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f2e3c67206bad5fb6ca5722b0cd6bda">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_on_data_received()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_on_data_received </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structstream__state__t.html">stream_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>stream</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Routes Stream Data Received between config-mem and user. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>Pointer to <a class="el" href="structstream__state__t.html">stream_state_t</a> entry.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Routes Stream Data Received between config-mem and user.</p>
+<p>For write streams, incoming data is written to the address space via the per-space write callback. For read streams, we are source-side only and never receive data.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param stream             Pointer to stream_state_t entry.
+* </pre> 
+</div>
+</div>
+<a id="aaf390030f069170472798317be15e1df" name="aaf390030f069170472798317be15e1df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf390030f069170472798317be15e1df">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_on_data_proceed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_on_data_proceed </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structstream__state__t.html">stream_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>stream</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Routes Stream Data Proceed between config-mem and user. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>Pointer to <a class="el" href="structstream__state__t.html">stream_state_t</a> entry.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Routes Stream Data Proceed between config-mem and user.</p>
+<p>If the stream belongs to us, the Layer 1 stream handler has already refilled bytes_remaining. The pump will pick up and continue on its next run() call. No action needed here beyond recognition.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param stream             Pointer to stream_state_t entry.
+* </pre> 
+</div>
+</div>
+<a id="a06783c19ffc11d9d8416b91412928cf1" name="a06783c19ffc11d9d8416b91412928cf1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06783c19ffc11d9d8416b91412928cf1">&#9670;&#160;</a></span>ProtocolConfigMemStreamHandler_on_complete()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemStreamHandler_on_complete </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structstream__state__t.html">stream_state_t</a> *</td>          <td class="paramname"><span class="paramname"><em>stream</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Routes Stream Complete between config-mem and user. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to <a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> context. </td></tr>
+    <tr><td class="paramname">stream</td><td>Pointer to <a class="el" href="structstream__state__t.html">stream_state_t</a> entry.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Routes Stream Complete between config-mem and user.</p>
+<p>For write streams, completion means all data has been received. Transition to WRITE_SEND_REPLY so the pump sends the Write Reply OK. For read streams, the remote end closed early &ndash; reset to idle.</p>
+<pre class="fragment">* @param statemachine_info  Pointer to openlcb_statemachine_info_t context.
+* @param stream             Pointer to stream_state_t entry.
+* </pre> 
+</div>
+</div>
+</div><!-- contents -->
 <!doctype html>
 <html>
     <body>
