@@ -207,6 +207,45 @@ static bool _addressed_message_last_frame(openlcb_msg_t *openlcb_msg, can_msg_t 
 
 }
 
+    /**
+     * @brief Sends the frame of a multi-frame PC Event Report with payload that starts at
+     * *openlcb_start_index, choosing FIRST/MIDDLE/LAST by position.
+     *
+     * @return true if transmitted (and *openlcb_start_index advanced), false on hardware failure.
+     */
+static bool _pcer_with_payload_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index) {
+
+    uint8_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
+    uint16_t can_mti;
+
+    if (*openlcb_start_index == 0) {
+
+        can_mti = CAN_MTI_PCER_WITH_PAYLOAD_FIRST;
+
+    } else if (*openlcb_start_index + len_msg_frame < openlcb_msg->payload_count) {
+
+        can_mti = CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE;
+
+    } else {
+
+        can_mti = CAN_MTI_PCER_WITH_PAYLOAD_LAST;
+
+    }
+
+    can_msg_worker->identifier = (_OPENLCB_MESSAGE_STANDARD_FRAME | ((uint32_t) can_mti << 12) | openlcb_msg->source_alias);
+
+    bool result = _transmit_can_frame(can_msg_worker);
+
+    if (result) {
+
+        *openlcb_start_index = *openlcb_start_index + len_msg_frame;
+
+    }
+
+    return result;
+
+}
+
     /** @brief Writes the 12-bit destination alias into payload bytes 0 (high nibble) and 1 (low byte). */
 static void _load_destination_address_in_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg) {
 
@@ -275,8 +314,10 @@ bool CanTxMessageHandler_datagram_frame(openlcb_msg_t *openlcb_msg, can_msg_t *c
      * @details Algorithm:
      * -# If payload fits in one frame (<= 8 bytes): copy payload, build identifier, transmit.
      * -# On success, advance *openlcb_start_index.
-     * -# Assert on oversized payloads -- no standard unaddressed message exceeds 8 bytes.
-     *    PCER-with-Payload uses dedicated CAN MTIs (FIRST/MIDDLE/LAST), not this path.
+     * -# A PC Event Report with payload longer than 8 bytes is sent one frame per call
+     *    with the CAN-MTIs FIRST/MIDDLE/LAST (_pcer_with_payload_frame()).
+     * -# Assert on any other oversized payload -- no other standard unaddressed message
+     *    exceeds 8 bytes.
      * -# Return transmission result.
      *
      * @verbatim
@@ -304,10 +345,17 @@ bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t *openlcb_msg, can_m
 
         }
 
+    } else if (openlcb_msg->mti == MTI_PC_EVENT_REPORT_WITH_PAYLOAD) {
+
+        // A PC Event Report with payload goes out as unaddressed frames whose CAN-MTI marks
+        // the position -- FIRST (0x0F16), MIDDLE (0x0F15), LAST (0x0F14) -- each carrying up
+        // to 8 payload bytes (the Event ID fills the first frame). can_rx_statemachine.c
+        // already reassembles exactly this.
+        result = _pcer_with_payload_frame(openlcb_msg, can_msg_worker, openlcb_start_index);
+
     } else {
 
-        // No standard unaddressed message exceeds 8 bytes on CAN.
-        // PCER-with-Payload uses dedicated CAN MTIs (FIRST/MIDDLE/LAST), not this path.
+        // No other standard unaddressed message exceeds 8 bytes on CAN.
         assert(false);
 
     }

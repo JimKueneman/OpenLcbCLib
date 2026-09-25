@@ -45,7 +45,8 @@ typedef enum
     SEND_MSG_TEACH,
     SEND_MSG_INIT,
     SEND_MSG_CLOCK,
-    SEND_MSG_SNIP_REQUEST
+    SEND_MSG_SNIP_REQUEST,
+    SEND_MSG_PC_REPORT_WITH_PAYLOAD
 } send_msg_enum_t;
 
 node_parameters_t _node_parameters_main_node = {
@@ -135,6 +136,11 @@ bool fail_configuration_read = false;
 bool fail_configuration_write = false;
 openlcb_msg_t *local_sent_msg = nullptr;
 send_msg_enum_t send_msg_enum = SEND_MSG_PC_REPORT;
+
+// PC Event Report with payload: what the mock saw (the message itself is on the sender's stack)
+uint16_t last_sent_payload_count = 0;
+uint16_t last_sent_payload_type = 0;
+uint8_t last_sent_payload[LEN_EVENT_PAYLOAD];
 configuration_memory_buffer_t write_buffer;
 
 // Clock test tracking
@@ -176,6 +182,17 @@ bool _transmit_openlcb_message(openlcb_msg_t *openlcb_msg)
         last_sent_mti = openlcb_msg->mti;
         last_sent_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
         clock_msg_send_count++;
+        break;
+
+    case SEND_MSG_PC_REPORT_WITH_PAYLOAD:
+        last_sent_mti = openlcb_msg->mti;
+        last_sent_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        last_sent_payload_count = openlcb_msg->payload_count;
+        last_sent_payload_type = openlcb_msg->payload_type;
+        for (uint16_t i = 0; i < openlcb_msg->payload_count && i < LEN_EVENT_PAYLOAD; i++)
+        {
+            last_sent_payload[i] = *openlcb_msg->payload[i];
+        }
         break;
 
     case SEND_MSG_SNIP_REQUEST:
@@ -412,6 +429,94 @@ TEST(OpenLcbApplication, send_event_pc_report_null_interface)
     EXPECT_NE(node1, nullptr);
 
     EXPECT_FALSE(OpenLcbApplication_send_event_pc_report(node1, EVENT_ID_DCC_TURNOUT_FEEDBACK_HIGH));
+}
+
+TEST(OpenLcbApplication, send_event_pc_report_with_payload)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    uint8_t data[20];
+    for (int i = 0; i < 20; i++)
+    {
+        data[i] = (uint8_t)(0xA0 + i);
+    }
+
+    send_msg_enum = SEND_MSG_PC_REPORT_WITH_PAYLOAD;
+    last_sent_payload_count = 0;
+    EXPECT_TRUE(OpenLcbApplication_send_event_pc_report_with_payload(node1, EVENT_ID_DCC_TURNOUT_FEEDBACK_HIGH, data, 20));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT_WITH_PAYLOAD);
+    EXPECT_EQ(last_sent_event_id, EVENT_ID_DCC_TURNOUT_FEEDBACK_HIGH);
+    EXPECT_EQ(last_sent_payload_count, 28);
+    EXPECT_EQ(last_sent_payload_type, SNIP);
+    for (int i = 0; i < 20; i++)
+    {
+        EXPECT_EQ(last_sent_payload[8 + i], data[i]);
+    }
+
+    // A two-byte payload (a 10-byte message: first + last frame on CAN)
+    EXPECT_TRUE(OpenLcbApplication_send_event_pc_report_with_payload(node1, EVENT_ID_DCC_TURNOUT_FEEDBACK_HIGH, data, 2));
+    EXPECT_EQ(last_sent_payload_count, 10);
+    EXPECT_EQ(last_sent_payload[8], 0xA0);
+    EXPECT_EQ(last_sent_payload[9], 0xA1);
+
+    fail_transmit_openlcb_msg = true;
+    EXPECT_FALSE(OpenLcbApplication_send_event_pc_report_with_payload(node1, EVENT_ID_DCC_TURNOUT_FEEDBACK_HIGH, data, 20));
+    EXPECT_EQ(local_sent_msg, nullptr);
+    fail_transmit_openlcb_msg = false;
+}
+
+TEST(OpenLcbApplication, send_event_pc_report_with_payload_size_limits)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    static uint8_t data[LEN_EVENT_PAYLOAD];
+    for (int i = 0; i < LEN_EVENT_PAYLOAD; i++)
+    {
+        data[i] = (uint8_t)i;
+    }
+
+    send_msg_enum = SEND_MSG_PC_REPORT_WITH_PAYLOAD;
+
+    // Empty payload: that is a plain PCER, refused here
+    local_sent_msg = nullptr;
+    EXPECT_FALSE(OpenLcbApplication_send_event_pc_report_with_payload(node1, EVENT_ID_DCC_TURNOUT_FEEDBACK_HIGH, data, 0));
+    EXPECT_EQ(local_sent_msg, nullptr);
+
+    // The largest that fits: event ID + payload == LEN_EVENT_PAYLOAD
+    EXPECT_TRUE(OpenLcbApplication_send_event_pc_report_with_payload(node1, EVENT_ID_DCC_TURNOUT_FEEDBACK_HIGH, data, LEN_EVENT_PAYLOAD - 8));
+    EXPECT_EQ(last_sent_payload_count, LEN_EVENT_PAYLOAD);
+    EXPECT_EQ(last_sent_payload[LEN_EVENT_PAYLOAD - 1], (uint8_t)(LEN_EVENT_PAYLOAD - 9));
+
+    // One more is refused
+    local_sent_msg = nullptr;
+    EXPECT_FALSE(OpenLcbApplication_send_event_pc_report_with_payload(node1, EVENT_ID_DCC_TURNOUT_FEEDBACK_HIGH, data, LEN_EVENT_PAYLOAD - 7));
+    EXPECT_EQ(local_sent_msg, nullptr);
+}
+
+TEST(OpenLcbApplication, send_event_pc_report_with_payload_null_interface)
+{
+    _reset_variables();
+    _global_initialize_nulls();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    uint8_t data[2] = {0x01, 0x02};
+    EXPECT_FALSE(OpenLcbApplication_send_event_pc_report_with_payload(node1, EVENT_ID_DCC_TURNOUT_FEEDBACK_HIGH, data, 2));
 }
 
 TEST(OpenLcbApplication, send_teach_event)
