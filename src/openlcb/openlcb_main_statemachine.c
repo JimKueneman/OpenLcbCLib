@@ -114,14 +114,6 @@ static uint8_t _sibling_response_queue_tail;
     /** @brief High-water mark for runtime monitoring of chain depth. */
 static uint8_t _sibling_response_queue_high_water;
 
-// ---- Path B pending slot ----
-
-    /** @brief Single-slot pending message for Path B sibling dispatch.
-     *  Holds a copy of the last application-layer send so the run loop
-     *  can dispatch it to siblings. */
-static openlcb_worker_message_t _path_b_pending_msg;
-static openlcb_msg_t *_path_b_pending_ptr;
-static bool _path_b_pending;
 
     /**
     * @brief Stores the callback interface and wires up the outgoing message buffer.
@@ -168,11 +160,6 @@ void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachin
 
     _sibling_dispatch_active = false;
 
-    // Path B pending slot
-    _path_b_pending_ptr = &_path_b_pending_msg.openlcb_msg;
-    _path_b_pending_ptr->payload = (openlcb_payload_t *) _path_b_pending_msg.openlcb_payload;
-    _path_b_pending_ptr->payload_type = WORKER;
-    _path_b_pending = false;
 
     // Sibling response queue
     for (int i = 0; i < SIBLING_RESPONSE_QUEUE_DEPTH; i++) {
@@ -1329,7 +1316,7 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
     * @details Priority order:
     * -# Send pending main outgoing (skip if held for sibling dispatch)
     * -# Sibling dispatch: send sibling response, reenumerate, dispatch current, advance
-    * -# Check sibling response queue or Path B pending for next dispatch cycle
+    * -# Check the sibling response queue (responses and application sends) for the next dispatch cycle
     * -# Re-enumerate main handler for multi-message responses
     * -# Pop next incoming message from FIFO
     * -# Enumerate first node for the message
@@ -1389,17 +1376,10 @@ void OpenLcbMainStatemachine_run(void) {
 
     }
 
-    // ── Priority 2.5: Sibling response queue or Path B pending ──────
+    // ── Priority 2.5: Sibling response queue ────────────────────────
     if (!_sibling_dispatch_active) {
 
         openlcb_msg_t *queued = _sibling_response_queue_pop();
-
-        if (!queued && _path_b_pending) {
-
-            queued = _path_b_pending_ptr;
-            _path_b_pending = false;
-
-        }
 
         if (queued) {
 
@@ -1472,19 +1452,33 @@ uint8_t OpenLcbMainStatemachine_get_sibling_response_queue_high_water(void) {
      * @brief Wrapper around the transport send that adds sibling dispatch.
      *
      * @details Algorithm:
+     * -# If there are siblings and the sibling response queue is full, return false
+     *    before sending anything, so the caller retries and wire and siblings stay in step
      * -# Send the message to the wire via the real transport callback
      * -# If only one node, return immediately (no siblings)
-     * -# Copy message header and payload into the Path B pending slot
-     * -# Set loopback flag so self-skip works during sibling dispatch
-     * -# The run loop will dispatch it to siblings on subsequent _run() calls
+     * -# Copy the message into the sibling response queue (sets loopback, so the sender
+     *    self-skips); the run loop dispatches it to the siblings on subsequent _run() calls
+     *
+     * The copy used to go into a single pending slot, which a second application send
+     * overwrote if the run loop had not dispatched the first one yet: a sibling never saw
+     * the first message. The queue keeps each send.
      *
      * @verbatim
      * @param msg  Pointer to the outgoing openlcb_msg_t (often stack-allocated)
      * @endverbatim
      *
-     * @return true if wire send succeeded, false if transport busy
+     * @return true if sent, false if the transport is busy or the sibling queue is full
      */
 bool OpenLcbMainStatemachine_send_with_sibling_dispatch(openlcb_msg_t *msg) {
+
+    bool has_siblings = (_interface->openlcb_node_get_count() > 1);
+
+    // No room for the sibling copy: refuse before the wire send, like a busy transport
+    if (has_siblings && ((_sibling_response_queue_tail + 1) % SIBLING_RESPONSE_QUEUE_DEPTH) == _sibling_response_queue_head) {
+
+        return false;
+
+    }
 
     // Send to wire via the real transport function
     if (!_interface->send_openlcb_msg(msg)) {
@@ -1494,30 +1488,14 @@ bool OpenLcbMainStatemachine_send_with_sibling_dispatch(openlcb_msg_t *msg) {
     }
 
     // If only one node, no siblings to notify
-    if (_interface->openlcb_node_get_count() <= 1) {
+    if (!has_siblings) {
 
         return true;
 
     }
 
-    // Copy into pending slot for sibling dispatch by run loop
-    openlcb_msg_t *pending = _path_b_pending_ptr;
-
-    pending->mti           = msg->mti;
-    pending->source_alias  = msg->source_alias;
-    pending->source_id     = msg->source_id;
-    pending->dest_alias    = msg->dest_alias;
-    pending->dest_id       = msg->dest_id;
-    pending->payload_count = msg->payload_count;
-    pending->state.loopback = true;
-
-    for (uint16_t i = 0; i < msg->payload_count; i++) {
-
-        *pending->payload[i] = *msg->payload[i];
-
-    }
-
-    _path_b_pending = true;
+    // Copy into the queue for sibling dispatch by the run loop
+    _sibling_response_queue_push(msg);
 
     return true;
 

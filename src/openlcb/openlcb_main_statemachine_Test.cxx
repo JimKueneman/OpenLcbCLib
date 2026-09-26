@@ -5113,6 +5113,101 @@ TEST(OpenLcbMainStatemachine, sibling_path_b_wrapper)
 }
 
 // ============================================================================
+// TEST: Two application sends before the run loop dispatches either — the
+// siblings see both (a single pending slot used to lose the first)
+// ============================================================================
+
+static void _st_three_running_nodes(void)
+{
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+}
+
+static bool _st_app_send_pcer_from_a(void)
+{
+    openlcb_msg_t app_msg;
+    payload_basic_t app_payload;
+    app_msg.payload = (openlcb_payload_t *) &app_payload;
+    app_msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(
+            &app_msg,
+            0xAAA,
+            0x010203040501,
+            0, 0,
+            MTI_PC_EVENT_REPORT);
+    app_msg.payload_count = 8;
+
+    return OpenLcbMainStatemachine_send_with_sibling_dispatch(&app_msg);
+}
+
+TEST(OpenLcbMainStatemachine, sibling_two_app_sends_before_dispatch)
+{
+    _st_init();
+    _st_three_running_nodes();
+
+    EXPECT_TRUE(_st_app_send_pcer_from_a());
+    EXPECT_TRUE(_st_app_send_pcer_from_a());
+
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), 2);
+
+    for (int i = 0; i < 100; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Each sibling saw both sends
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_PC_EVENT_REPORT), 2);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_PC_EVENT_REPORT), 2);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_PC_EVENT_REPORT), 0);
+}
+
+// ============================================================================
+// TEST: Sibling queue full — the send is refused before it reaches the wire,
+// and succeeds again once the run loop has made room
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_app_send_refused_when_queue_full)
+{
+    _st_init();
+    _st_three_running_nodes();
+
+    // SIBLING_RESPONSE_QUEUE_DEPTH is 5: four messages fit
+    for (int i = 0; i < 4; i++) {
+
+        EXPECT_TRUE(_st_app_send_pcer_from_a());
+
+    }
+
+    EXPECT_FALSE(_st_app_send_pcer_from_a());
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), 4);   // the refused one never went out
+
+    for (int i = 0; i < 200; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_PC_EVENT_REPORT), 4);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_PC_EVENT_REPORT), 4);
+
+    EXPECT_TRUE(_st_app_send_pcer_from_a());
+}
+
+// ============================================================================
 // TEST: Transport busy during sibling outgoing — retries correctly
 // ============================================================================
 
