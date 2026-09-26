@@ -564,6 +564,7 @@ TEST(OpenLcbLoginStateMachine, process_run_state_no_dispatch)
 
     openlcb_node_t *node_1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
     node_1->alias = DEST_ALIAS;
+    node_1->state.initialized = true;
     node_1->state.run_state = RUNSTATE_RUN;
 
     openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
@@ -748,6 +749,7 @@ TEST(OpenLcbLoginStateMachine, handle_first_node_exists_already_running)
 
     openlcb_node_t *node_1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
     node_1->alias = DEST_ALIAS;
+    node_1->state.initialized = true;
     node_1->state.run_state = RUNSTATE_RUN;
 
     openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
@@ -869,7 +871,9 @@ TEST(OpenLcbLoginStateMachine, handle_next_node_exists_already_running)
 
     openlcb_node_t *node_1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
     openlcb_node_t *node_2 = OpenLcbNode_allocate(DEST_ID + 1, &_node_parameters_main_node);
+    node_1->state.initialized = true;
     node_1->state.run_state = RUNSTATE_RUN;
+    node_2->state.initialized = true;
     node_2->state.run_state = RUNSTATE_RUN;
 
     openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
@@ -1122,6 +1126,7 @@ TEST(OpenLcbLoginStateMachine, process_state_sequence)
 
     // Test RUNSTATE_RUN (no dispatch)
     _reset_variables();
+    node_1->state.initialized = true;
     node_1->state.run_state = RUNSTATE_RUN;
     OpenLcbLoginStatemachine_process(statemachine_info);
     EXPECT_EQ(called_function_ptr, nullptr);
@@ -1238,8 +1243,10 @@ TEST(OpenLcbLoginStateMachine, skip_running_nodes)
     openlcb_node_t *node_2 = OpenLcbNode_allocate(DEST_ID + 1, &_node_parameters_main_node);
     openlcb_node_t *node_3 = OpenLcbNode_allocate(DEST_ID + 2, &_node_parameters_main_node);
     
+    node_1->state.initialized = true;
     node_1->state.run_state = RUNSTATE_RUN;           // Already running
     node_2->state.run_state = RUNSTATE_INIT;          // Needs processing
+    node_3->state.initialized = true;
     node_3->state.run_state = RUNSTATE_RUN;           // Already running
 
     openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
@@ -1746,6 +1753,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_loopback_flag_lifecycle)
 
     openlcb_node_t *node_b = OpenLcbNode_allocate(0x050101010101, &_node_parameters_main_node);
     node_b->alias = 0x101;
+    node_b->state.initialized = true;
     node_b->state.run_state = RUNSTATE_RUN;
 
     openlcb_login_statemachine_info_t *info = OpenLcbLoginStatemachine_get_statemachine_info();
@@ -1788,6 +1796,7 @@ TEST(OpenLcbLoginStateMachine, sibling_dispatch_response_send_fails_then_retries
 
     openlcb_node_t *node_b = OpenLcbNode_allocate(0x050101010101, &_node_parameters_main_node);
     node_b->alias = 0x101;
+    node_b->state.initialized = true;
     node_b->state.run_state = RUNSTATE_RUN;
 
     // Produce a response on first dispatch call
@@ -1826,6 +1835,7 @@ TEST(OpenLcbLoginStateMachine, handle_outgoing_send_fails_keeps_valid_for_retry)
 
     openlcb_node_t *node_b = OpenLcbNode_allocate(0x050101010101, &_node_parameters_main_node);
     node_b->alias = 0x101;
+    node_b->state.initialized = true;
     node_b->state.run_state = RUNSTATE_RUN;
 
     // Fail the first send (Init Complete to wire). Retries until it succeeds.

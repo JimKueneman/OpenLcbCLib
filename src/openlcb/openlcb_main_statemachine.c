@@ -399,7 +399,9 @@ static void _sibling_run_top(void) {
 
     }
 
-    if (level->info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+    // A node that has sent Initialization Complete is Initialized on the
+    // network, even while it is still announcing its events
+    if (level->info.openlcb_node->state.initialized) {
 
         _interface->process_main_statemachine(&level->info);
 
@@ -1226,7 +1228,7 @@ bool OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message(void) 
     * -# If node pointer already set, return false (already enumerating)
     * -# Reset train search match flag for new enumeration
     * -# Get first node; if NULL free the message and return true
-    * -# If node is in RUNSTATE_RUN, dispatch message via process_main_statemachine
+    * -# If node has sent Initialization Complete, dispatch message via process_main_statemachine
     * -# Return true
     *
     * @return true if enumeration step taken, false if no action needed
@@ -1251,7 +1253,7 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void) {
 
         }
 
-        if (_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+        if (_statemachine_info.openlcb_node->state.initialized) {
 
             // Do the processing of the incoming message on the node
             _interface->process_main_statemachine(&_statemachine_info);
@@ -1272,7 +1274,7 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void) {
     * @details Algorithm:
     * -# If no current node, return false
     * -# Get next node; if NULL free the message and return true
-    * -# If node is in RUNSTATE_RUN, dispatch message via process_main_statemachine
+    * -# If node has sent Initialization Complete, dispatch message via process_main_statemachine
     * -# Return true
     *
     * @return true if enumeration active, false if no current node
@@ -1293,7 +1295,7 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
 
         }
 
-        if (_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+        if (_statemachine_info.openlcb_node->state.initialized) {
 
             // Do the processing of the incoming message on the node
             _interface->process_main_statemachine(&_statemachine_info);
