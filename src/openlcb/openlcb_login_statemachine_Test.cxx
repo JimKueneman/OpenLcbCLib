@@ -1499,16 +1499,16 @@ TEST(OpenLcbLoginStateMachine, process_login_complete_callback_returns_false)
 }
 
 // ============================================================================
-// SIBLING DISPATCH TESTS
+// REAL-ENUMERATION TESTS
 // ============================================================================
 //
-// These tests exercise the Phase 2 sibling dispatch mechanism in the login
-// statemachine.  They use real node allocation and real node enumeration
-// functions (OpenLcbNode_get_first/get_next/get_count) instead of mocks,
-// because sibling dispatch iterates over all allocated nodes internally.
-//
-// The interface struct wires the REAL handle_outgoing (which triggers sibling
-// dispatch) and real node functions, but keeps mock send and mock handlers.
+// These tests drive the login state machine with real node allocation and
+// real node enumeration (OpenLcbNode_get_first/get_next) instead of mocks.
+// The interface struct wires the REAL handle_outgoing and real node
+// functions, but keeps a mock send (which can be made to fail) and mock
+// login handlers.  Showing login messages to the other local nodes is the
+// main state machine's job (its send path) and is tested there and in
+// openlcb_multinode_e2e_Test.cxx.
 // ============================================================================
 
     /** @brief Tracks how many times process_main_statemachine was called */
@@ -1704,116 +1704,6 @@ void _sibling_test_initialize(void)
 }
 
 // ============================================================================
-// TEST: Single node — no sibling dispatch overhead
-// ============================================================================
-
-TEST(OpenLcbLoginStateMachine, sibling_dispatch_single_node_no_dispatch)
-{
-
-    _sibling_test_initialize();
-
-    openlcb_node_t *node_a = OpenLcbNode_allocate(0x050101010100, &_node_parameters_main_node);
-    node_a->alias = 0x100;
-    node_a->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
-
-    // Run until Init Complete is sent and slot cleared
-    for (int i = 0; i < 20; i++) {
-
-        OpenLcbLoginStatemachine_run();
-
-    }
-
-    // Send was called for each login message (Init Complete + Producer + Consumer)
-    EXPECT_GE(send_call_count, 1);
-
-    // No sibling dispatch — only 1 node
-    EXPECT_EQ(sibling_dispatch_call_count, 0);
-
-}
-
-// ============================================================================
-// TEST: Loopback flag — outgoing message has loopback=true during dispatch,
-//       cleared after dispatch completes
-// ============================================================================
-
-TEST(OpenLcbLoginStateMachine, sibling_dispatch_loopback_flag_lifecycle)
-{
-
-    _sibling_test_initialize();
-
-    openlcb_node_t *node_a = OpenLcbNode_allocate(0x050101010100, &_node_parameters_main_node);
-    node_a->alias = 0x100;
-    node_a->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
-
-    openlcb_node_t *node_b = OpenLcbNode_allocate(0x050101010101, &_node_parameters_main_node);
-    node_b->alias = 0x101;
-    node_b->state.initialized = true;
-    node_b->state.run_state = RUNSTATE_RUN;
-
-    openlcb_login_statemachine_info_t *info = OpenLcbLoginStatemachine_get_statemachine_info();
-
-    // Before anything — loopback should be false
-    EXPECT_FALSE(info->outgoing_msg_info.msg_ptr->state.loopback);
-
-    // Run through the full cycle
-    for (int i = 0; i < 30; i++) {
-
-        OpenLcbLoginStatemachine_run();
-
-    }
-
-    // After dispatch completes — loopback should be cleared
-    EXPECT_FALSE(info->outgoing_msg_info.msg_ptr->state.loopback);
-
-    // And valid should be cleared
-    EXPECT_FALSE(info->outgoing_msg_info.valid);
-
-}
-
-// ============================================================================
-// BRANCH COVERAGE TESTS — exercises specific branches in sibling dispatch
-// ============================================================================
-
-// ============================================================================
-// TEST: Sibling response send fails — exercises _sibling_handle_outgoing
-//       valid=true, send returns false (retry path)
-// ============================================================================
-
-TEST(OpenLcbLoginStateMachine, sibling_dispatch_response_send_fails_then_retries)
-{
-
-    _sibling_test_initialize();
-
-    openlcb_node_t *node_a = OpenLcbNode_allocate(0x050101010100, &_node_parameters_main_node);
-    node_a->alias = 0x100;
-    node_a->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
-
-    openlcb_node_t *node_b = OpenLcbNode_allocate(0x050101010101, &_node_parameters_main_node);
-    node_b->alias = 0x101;
-    node_b->state.initialized = true;
-    node_b->state.run_state = RUNSTATE_RUN;
-
-    // Produce a response on first dispatch call
-    sibling_produce_response_on_call = 0;
-
-    // Fail the second send call (the sibling response send).
-    // Call 1 = Init Complete to wire (succeeds).
-    // Call 2 = sibling response to wire (fails).
-    // Call 3 = retry of sibling response (succeeds).
-    fail_send_on_call = 2;
-
-    for (int i = 0; i < 50; i++) {
-
-        OpenLcbLoginStatemachine_run();
-
-    }
-
-    // Should have eventually sent everything (retry succeeds)
-    EXPECT_GE(send_call_count, 3);
-
-}
-
-// ============================================================================
 // TEST: Login outgoing send fails — exercises handle_outgoing_openlcb_message
 //       valid=true, send returns false (keeps valid, retries next tick)
 // ============================================================================
@@ -1846,52 +1736,6 @@ TEST(OpenLcbLoginStateMachine, handle_outgoing_send_fails_keeps_valid_for_retry)
 
     // Node eventually continued login
     EXPECT_GE(node_a->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
-
-}
-
-// ============================================================================
-// TEST: Sibling dispatch with NULL openlcb_node clears active flag
-// @details Forces node_count > 1 (so dispatch_begin marks active=true) but
-//          openlcb_node_get_first returns NULL (so openlcb_node stays NULL).
-//          On the next _run() Priority 2 entry, _sibling_dispatch_current
-//          hits its NULL guard, clears active, and returns false.  Control
-//          falls through to the closing brace of the if(active) block.
-// @coverage _sibling_dispatch_current NULL-node early return (lines 315, 317)
-//           AND end-of-block fall-through in _run (line 566)
-// ============================================================================
-
-TEST(OpenLcbLoginStateMachine, sibling_dispatch_null_first_node_clears_active)
-{
-
-    _reset_variables();
-    _global_initialize();
-
-    // Make get_first return NULL despite count=2 — the only natural way to
-    // land in dispatch with a NULL openlcb_node.  This represents a corner
-    // case where a node was deallocated between count read and first read.
-    mock_node_count = 2;
-    fail_first_node = true;
-    fail_send_msg = false;
-
-    openlcb_login_statemachine_info_t *info = OpenLcbLoginStatemachine_get_statemachine_info();
-    info->outgoing_msg_info.valid = true;
-
-    // Drive the real handle_outgoing_openlcb_message — it sends, then
-    // _sibling_dispatch_begin sets active=true while leaving openlcb_node NULL.
-    OpenLcbLoginStatemachine_handle_outgoing_openlcb_message();
-
-    // Next _run(): Priority 1 skipped (active=true), Priority 2 enters,
-    //   2a: false (no sibling outgoing pending),
-    //   2b: false (enumerate=false from dispatch_begin),
-    //   2c: dispatch_current sees NULL openlcb_node → clears active, returns false.
-    //   Falls through to the end of the if(active) block (line 566).
-    OpenLcbLoginStatemachine_run();
-
-    // After the NULL-guard fired, active must be cleared so the next _run()
-    // tick re-enables Priority 1.  Verify by observing handle_outgoing fire.
-    called_function_ptr = nullptr;
-    OpenLcbLoginStatemachine_run();
-    EXPECT_EQ(called_function_ptr, &_handle_outgoing_openlcb_message);
 
 }
 
