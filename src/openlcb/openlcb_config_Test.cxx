@@ -60,6 +60,9 @@ extern "C" {
 #include "openlcb_application_train.h"
 #include "drivers/canbus/can_main_statemachine.h"
 #include "drivers/canbus/can_types.h"
+#include "drivers/canbus/can_config.h"
+#include "openlcb_main_statemachine.h"
+#include "openlcb_utilities.h"
 
 // Matches _config_field_t in openlcb_config.c
 typedef struct {
@@ -1387,5 +1390,201 @@ TEST(OpenLcbConfig, stream_write_train_function_config_memory_single_byte) {
     uint8_t data_lo[] = { 0xCD };
     OpenLcbConfigTest_stream_write_request_train_function_config_memory(node, 1, 1, data_lo);
     EXPECT_EQ(state->functions[0], 0xABCD);
+
+}
+
+// =============================================================================
+// Config-memory Read Stream between two nodes on the same device
+//
+// Node A reads node B's configuration memory (space 0xFD) by stream.  Both
+// nodes live on this device, so nothing comes back from the bus: every
+// message must reach the other node through the main loop.  Runs the full
+// library wiring (OpenLcbConfig_initialize) with a mock CAN transmit.
+//
+// Expected sequence: A -> B Read Stream datagram; B -> A Datagram OK;
+// B -> A Stream Initiate Request; A -> B Initiate Reply; B -> A Read Stream
+// Reply datagram (A acknowledges it); B -> A stream data; B -> A Data Complete.
+// =============================================================================
+
+static int _ls_can_frames;
+
+static bool _ls_transmit(can_msg_t *can_msg) {
+
+    (void) can_msg;
+    _ls_can_frames++;
+
+    return true;
+
+}
+
+static const can_config_t _ls_can_config = {
+
+    .transmit_raw_can_frame  = &_ls_transmit,
+    .is_tx_buffer_clear      = &_mock_return_true,
+    .lock_shared_resources   = &_mock_lock,
+    .unlock_shared_resources = &_mock_unlock,
+
+};
+
+static openlcb_node_t *_ls_requester;
+static int _ls_initiate_requests_accepted;
+static uint8_t _ls_received[256];
+static uint16_t _ls_received_count;
+static bool _ls_complete;
+static int _ls_replies;
+static uint8_t _ls_reply_cmd;
+
+static bool _ls_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
+
+    (void) stream;
+
+    if (statemachine_info->openlcb_node == _ls_requester) {
+
+        _ls_initiate_requests_accepted++;
+
+        return true;
+
+    }
+
+    return false;
+
+}
+
+static void _ls_on_data_received(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
+
+    (void) stream;
+
+    openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
+
+    // byte 0 is the destination stream ID, then data
+    for (uint16_t i = 1; (i < msg->payload_count) && (_ls_received_count < sizeof(_ls_received)); i++) {
+
+        _ls_received[_ls_received_count++] = *msg->payload[i];
+
+    }
+
+}
+
+static void _ls_on_complete(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
+
+    (void) stream;
+
+    if (statemachine_info->openlcb_node == _ls_requester) {
+
+        _ls_complete = true;
+
+    }
+
+}
+
+static void _ls_on_config_mem_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *reply) {
+
+    if (openlcb_node == _ls_requester) {
+
+        _ls_replies++;
+        _ls_reply_cmd = *reply->payload[1];
+
+    }
+
+}
+
+static const openlcb_config_t _ls_config = {
+
+    .lock_shared_resources      = &_mock_lock,
+    .unlock_shared_resources    = &_mock_unlock,
+    .config_mem_read            = &_mock_config_read,
+    .config_mem_write           = &_mock_config_write,
+    .on_config_mem_reply        = &_ls_on_config_mem_reply,
+    .on_stream_initiate_request = &_ls_on_initiate_request,
+    .on_stream_data_received    = &_ls_on_data_received,
+    .on_stream_complete         = &_ls_on_complete,
+
+};
+
+TEST(OpenLcbConfig, local_config_mem_read_stream_between_two_nodes) {
+
+    _reset_mock_state();
+
+    for (int i = 0; i < 256; i++) {
+
+        _mock_config_mem[i] = (uint8_t) (i ^ 0x5A);
+
+    }
+
+    _ls_can_frames = 0;
+    _ls_initiate_requests_accepted = 0;
+    _ls_received_count = 0;
+    _ls_complete = false;
+    _ls_replies = 0;
+    _ls_reply_cmd = 0;
+
+    CanConfig_initialize(&_ls_can_config);
+    OpenLcbConfig_initialize(&_ls_config);
+
+    openlcb_node_t *node_a = OpenLcbConfig_create_node(0x050101010101ULL, &_node_params_full);
+    openlcb_node_t *node_b = OpenLcbConfig_create_node(0x050101010102ULL, &_node_params_full);
+    ASSERT_NE(node_a, nullptr);
+    ASSERT_NE(node_b, nullptr);
+
+    // Logged in already (the CAN login is not part of this test)
+    node_a->alias = 0xAAA;
+    node_a->state.permitted = true;
+    node_a->state.initialized = true;
+    node_a->state.run_state = RUNSTATE_RUN;
+
+    node_b->alias = 0xBBB;
+    node_b->state.permitted = true;
+    node_b->state.initialized = true;
+    node_b->state.run_state = RUNSTATE_RUN;
+
+    _ls_requester = node_a;
+
+    // A's application: Read Stream, space 0xFD, address 0x10, 100 bytes
+    const uint32_t address = 0x10;
+    const uint32_t count = 100;
+
+    openlcb_msg_t msg;
+    payload_datagram_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = DATAGRAM;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, node_a->alias, node_a->id, node_b->alias, node_b->id, MTI_DATAGRAM);
+    OpenLcbUtilities_clear_openlcb_message_payload(&msg);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, CONFIG_MEM_READ_STREAM_SPACE_FD, 1);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(&msg, address, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x00, 6);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0xFF, 7);    // no DID preference
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(&msg, count, 8);
+    msg.payload_count = 12;
+
+    ASSERT_TRUE(OpenLcbMainStatemachine_send_with_sibling_dispatch(&msg));
+
+    for (int i = 0; i < 5000; i++) {
+
+        OpenLcbConfig_run();
+
+    }
+
+    // The stream was offered to A and accepted
+    EXPECT_EQ(_ls_initiate_requests_accepted, 1);
+
+    // A got B's Read Stream Reply (acknowledged, not rejected)
+    EXPECT_EQ(_ls_replies, 1);
+    EXPECT_EQ(_ls_reply_cmd, CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FD);
+
+    // A got exactly the requested bytes, then Data Complete
+    ASSERT_EQ(_ls_received_count, count);
+
+    for (uint32_t i = 0; i < count; i++) {
+
+        EXPECT_EQ(_ls_received[i], (uint8_t) ((address + i) ^ 0x5A)) << "byte " << i;
+
+    }
+
+    EXPECT_TRUE(_ls_complete);
+
+    // Everything also went out on the wire
+    EXPECT_GT(_ls_can_frames, 0);
 
 }
