@@ -719,12 +719,9 @@ static void _build_config_mem_stream_handler(void) {
 
     memset(&_config_mem_stream, 0, sizeof(_config_mem_stream));
 
-#ifdef OPENLCB_COMPILE_CAN
-    _config_mem_stream.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
-#endif
-#ifdef OPENLCB_COMPILE_TCP
-    _config_mem_stream.send_openlcb_msg = TcpConfig_get_send_openlcb_msg();
-#endif
+    // Through the main state machine's send path, so a local node on the
+    // other end of the stream sees the reply datagram, data and completion
+    _config_mem_stream.send_openlcb_msg = &OpenLcbMainStatemachine_send_with_sibling_dispatch;
 
     _config_mem_stream.load_datagram_received_ok_message =
             &ProtocolDatagramHandler_load_datagram_received_ok_message;
