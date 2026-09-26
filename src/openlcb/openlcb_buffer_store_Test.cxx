@@ -787,11 +787,14 @@ TEST(OpenLcbBufferStore, multiple_reference_increments)
  * 
  * Verifies:
  * - Re-initialize resets all counters
- * - Previously allocated buffers are lost (memory leak scenario)
  * - New allocations work after re-init
- * 
- * Note: This tests the "undefined behavior" of re-initializing with
- * allocated buffers - counters reset but buffers stay marked allocated
+ *
+ * Note: Re-initializing with buffers still allocated is not supported in
+ * production. initialize() clears every slot, including its allocated flag,
+ * so the outstanding buffers are silently returned to the pool while the
+ * caller still holds pointers to them: the next allocation can hand out the
+ * same slot again. This test only checks the counters and that allocation
+ * works afterwards.
  */
 TEST(OpenLcbBufferStore, reinitialize_with_allocated)
 {
@@ -814,7 +817,7 @@ TEST(OpenLcbBufferStore, reinitialize_with_allocated)
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_max_allocated(), 0);
 
-    // Can allocate fresh buffers (but old ones are leaked)
+    // Can allocate fresh buffers (old msg1/msg2 pointers now alias free slots)
     openlcb_msg_t *msg3 = OpenLcbBufferStore_allocate_buffer(BASIC);
     ASSERT_NE(msg3, nullptr);
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);

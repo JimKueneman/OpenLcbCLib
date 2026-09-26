@@ -29,9 +29,9 @@
 * @details Tests cover all public functions, edge cases, and dependency injection scenarios
 *
 * Test Organization:
-* - Section 1: Existing Tests (16 tests) - Active and validated
-* - Section 2: New Dependency Injection Tests (2 tests) - Commented, test incrementally
-* - Section 3: New Detailed Coverage Tests (11 tests) - Commented, test incrementally
+* - Section 1: Core tests (20 tests)
+* - Section 2: Dependency injection tests (2 tests)
+* - Section 3: Detailed coverage tests (9 tests)
 *
 * Expected Coverage with All Tests: ~99-100%
 *
@@ -632,12 +632,10 @@ TEST(OpenLcbNode, allocate_duplicate_node_id)
 }
 
 // ============================================================================
-// SECTION 2: NEW DEPENDENCY INJECTION TESTS (2 tests)
+// SECTION 2: DEPENDENCY INJECTION TESTS (2 tests)
 // @details Tests NULL interface and NULL callback handling
-// @note Uncomment one test at a time to validate
 // ============================================================================
 
-/*
 // ============================================================================
 // TEST: Initialization with NULL Interface Pointer
 // @details Tests that module handles NULL interface pointer safely
@@ -662,9 +660,7 @@ TEST(OpenLcbNode, initialize_null_interface)
     // Callback should NOT be called (NULL interface)
     EXPECT_FALSE(on_100ms_timer_tick_called);
 }
-*/
 
-/*
 // ============================================================================
 // TEST: Timer Tick with NULL Callback Function
 // @details Tests that module handles NULL callback function safely
@@ -688,15 +684,12 @@ TEST(OpenLcbNode, timer_tick_null_callback)
     // Callback should NOT be called (NULL callback)
     EXPECT_FALSE(on_100ms_timer_tick_called);
 }
-*/
 
 // ============================================================================
-// SECTION 3: NEW DETAILED COVERAGE TESTS (11 tests)
+// SECTION 3: DETAILED COVERAGE TESTS (9 tests)
 // @details Additional tests for comprehensive branch and edge case coverage
-// @note Uncomment one test at a time to validate
 // ============================================================================
 
-/*
 // ============================================================================
 // TEST: Node Allocation - Verify Initial State
 // @details Verifies all node fields are properly initialized after allocation
@@ -722,9 +715,7 @@ TEST(OpenLcbNode, allocate_verify_initial_state)
     EXPECT_EQ(node->timerticks, 0);
     EXPECT_EQ(node->parameters, &_node_parameters_main_node);
 }
-*/
 
-/*
 // ============================================================================
 // TEST: Node Allocation - Verify Index Assignment
 // @details Verifies that node index is correctly assigned sequentially
@@ -749,9 +740,7 @@ TEST(OpenLcbNode, allocate_verify_index)
     ASSERT_NE(node3, nullptr);
     EXPECT_EQ(node3->index, 2);
 }
-*/
 
-/*
 // ============================================================================
 // TEST: Get First - Verify Index Reset
 // @details Verifies that get_first resets enumeration index each time
@@ -775,9 +764,7 @@ TEST(OpenLcbNode, get_first_resets_index)
     EXPECT_EQ(OpenLcbNode_get_first(USER_ENUM_KEYS_VALUES_1), node1);
     EXPECT_EQ(OpenLcbNode_get_next(USER_ENUM_KEYS_VALUES_1), node2);
 }
-*/
 
-/*
 // ============================================================================
 // TEST: Find by Alias - First Node Match
 // @details Verifies finding first node in list by alias
@@ -800,9 +787,7 @@ TEST(OpenLcbNode, find_by_alias_first_node)
     // Find first node by alias
     EXPECT_EQ(OpenLcbNode_find_by_alias(0x111), node1);
 }
-*/
 
-/*
 // ============================================================================
 // TEST: Find by Alias - Last Node Match
 // @details Verifies finding last node in list by alias
@@ -829,9 +814,7 @@ TEST(OpenLcbNode, find_by_alias_last_node)
     // Find last node by alias - ensures we iterate through all nodes
     EXPECT_EQ(OpenLcbNode_find_by_alias(0x333), node3);
 }
-*/
 
-/*
 // ============================================================================
 // TEST: Find by Node ID - First Node Match
 // @details Verifies finding first node in list by ID
@@ -855,9 +838,7 @@ TEST(OpenLcbNode, find_by_node_id_first_node)
     // Also verify second node is findable
     EXPECT_EQ(OpenLcbNode_find_by_node_id(0x010203040507), node2);
 }
-*/
 
-/*
 // ============================================================================
 // TEST: Find by Node ID - Last Node Match
 // @details Verifies finding last node in list by ID
@@ -881,9 +862,7 @@ TEST(OpenLcbNode, find_by_node_id_last_node)
     // Find last node by ID - ensures we iterate through all nodes
     EXPECT_EQ(OpenLcbNode_find_by_node_id(0x010203040508), node3);
 }
-*/
 
-/*
 // ============================================================================
 // TEST: Reset State - Verify Only Specific Fields Reset
 // @details Verifies that reset_state only clears run_state, permitted, initialized
@@ -921,33 +900,7 @@ TEST(OpenLcbNode, reset_state_partial_reset)
     EXPECT_EQ(node->id, 0x010203040506);
     EXPECT_EQ(node->timerticks, 100);
 }
-*/
 
-/*
-// ============================================================================
-// TEST: Timer Tick - Multiple Calls Accumulate
-// @details Verifies that timer ticks accumulate correctly over multiple calls
-// @coverage Tests timer tick increment logic in OpenLcbNode_100ms_timer_tick
-// ============================================================================
-
-TEST(OpenLcbNode, timer_tick_accumulation)
-{
-    _global_initialize();
-    _reset_variables();
-
-    openlcb_node_t *node = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-    ASSERT_NE(node, nullptr);
-
-    // Call timer tick multiple times and verify accumulation
-    for (int i = 1; i <= 10; i++)
-    {
-        OpenLcbNode_100ms_timer_tick();
-        EXPECT_EQ(node->timerticks, i);
-    }
-}
-*/
-
-/*
 // ============================================================================
 // TEST: Enumeration with All Keys
 // @details Verifies that all enumeration keys work independently
@@ -969,4 +922,3 @@ TEST(OpenLcbNode, enumerate_all_keys)
         EXPECT_EQ(OpenLcbNode_get_next(key), nullptr);
     }
 }
-*/
