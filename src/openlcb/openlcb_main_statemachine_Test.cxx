@@ -4434,6 +4434,14 @@ static node_id_t _st_stream_reply_from_node;
 
 // ---- Reset all sibling test state ----
 
+// ---- Train listener forwarding: a train command handler that forwards each command it gets
+// to _st_forward_per_command listeners, one outgoing message per pass, with the enumerate
+// flag set between them (as protocol_train_handler.c's _forward_to_next_listener() does).
+// 0 = just log, like the other handlers.
+
+static int _st_forward_per_command;
+static int _st_forward_remaining;
+
 static void _st_reset(void) {
 
     _st_dispatch_count = 0;
@@ -4448,6 +4456,8 @@ static void _st_reset(void) {
     _st_wire_busy = false;
     _st_stream_reply_active = false;
     _st_stream_reply_from_node = 0;
+    _st_forward_per_command = 0;
+    _st_forward_remaining = 0;
 
 }
 
@@ -4539,6 +4549,41 @@ static void _st_enumerate_handler(openlcb_statemachine_info_t *si) {
             si->incoming_msg_info.enumerate = false;
 
         }
+
+    }
+
+}
+
+// ---- Train command handler that forwards to listeners (see _st_forward_per_command) ----
+
+static void _st_train_forward_handler(openlcb_statemachine_info_t *si) {
+
+    _st_log_handler(si);
+
+    if (_st_forward_per_command == 0) {
+
+        return;
+
+    }
+
+    if (!si->incoming_msg_info.enumerate) {
+
+        _st_forward_remaining = _st_forward_per_command;   // a new command, not a re-enumerate
+
+    }
+
+    if (_st_forward_remaining > 0) {
+
+        // Forwarded to a listener that is not on this device
+        OpenLcbUtilities_load_openlcb_message(
+                si->outgoing_msg_info.msg_ptr,
+                si->openlcb_node->alias,
+                si->openlcb_node->id,
+                0xFFF, 0x0A0B0C0D0E0F,
+                MTI_TRAIN_PROTOCOL);
+        si->outgoing_msg_info.valid = true;
+        _st_forward_remaining--;
+        si->incoming_msg_info.enumerate = (_st_forward_remaining > 0);
 
     }
 
@@ -4649,7 +4694,7 @@ static const interface_openlcb_main_statemachine_t _st_interface = {
     .event_transport_pc_report = &_st_log_handler,
     .event_transport_pc_report_with_payload = &_st_log_handler,
 
-    .train_control_command = &_st_log_handler,
+    .train_control_command = &_st_train_forward_handler,
     .train_control_reply = &_st_log_handler,
     .simple_train_node_ident_info_request = &_st_log_handler,
     .simple_train_node_ident_info_reply = &_st_log_handler,
@@ -5110,6 +5155,114 @@ TEST(OpenLcbMainStatemachine, sibling_path_b_wrapper)
 
     // Node A should NOT see its own message (self-skip)
     EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_PC_EVENT_REPORT), 0);
+}
+
+static void _st_three_nodes_for_forwarding(void)
+{
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = true;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_RUN;
+}
+
+// ============================================================================
+// TEST: A sibling addressed by an application send forwards the command to
+// listeners (an enumeration). The dispatch stays on it until it is done, and
+// the state machine keeps running afterwards. It used to advance to the next
+// node first, whose re-enumerate pass never finished: the run loop stalled.
+// ============================================================================
+
+static int _st_count_wire_mti_from(uint16_t mti, node_id_t source_id)
+{
+    int count = 0;
+
+    for (int i = 0; i < _st_wire_count; i++) {
+
+        if (_st_wire_log[i].mti == mti && _st_wire_log[i].source_id == source_id) {
+
+            count++;
+
+        }
+
+    }
+
+    return count;
+}
+
+static void _st_train_forward_case(node_id_t train_id, uint16_t train_alias)
+{
+    _st_forward_per_command = 3;
+
+    // Node A sends a train command to the train node on the same device
+    openlcb_msg_t app_msg;
+    payload_basic_t app_payload;
+    app_msg.payload = (openlcb_payload_t *) &app_payload;
+    app_msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(
+            &app_msg,
+            0xAAA,
+            0x010203040501,
+            train_alias,
+            train_id,
+            MTI_TRAIN_PROTOCOL);
+    app_msg.payload_count = 3;
+
+    EXPECT_TRUE(OpenLcbMainStatemachine_send_with_sibling_dispatch(&app_msg));
+
+    for (int i = 0; i < 200; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // The train got the command and forwarded it to all three listeners
+    EXPECT_EQ(_st_count_wire_mti_from(MTI_TRAIN_PROTOCOL, train_id), 3);
+
+    // The state machine still runs: a global message from the wire reaches every node
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_PC_EVENT_REPORT;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    incoming->payload_count = 8;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 200; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_PC_EVENT_REPORT), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_PC_EVENT_REPORT), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040503, MTI_PC_EVENT_REPORT), 1);
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+TEST(OpenLcbMainStatemachine, sibling_enumerating_node_in_the_middle)
+{
+    _st_init();
+    _st_three_nodes_for_forwarding();
+
+    _st_train_forward_case(0x010203040502, 0xBBB);   // B, with C after it
+}
+
+TEST(OpenLcbMainStatemachine, sibling_enumerating_node_last)
+{
+    _st_init();
+    _st_three_nodes_for_forwarding();
+
+    _st_train_forward_case(0x010203040503, 0xCCC);   // C, the last node
 }
 
 // ============================================================================
