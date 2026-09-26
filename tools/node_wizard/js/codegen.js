@@ -606,6 +606,13 @@ function generateH(s) {
     L.push('');
     L.push(_def('USER_DEFINED_NODE_BUFFER_DEPTH',     (s.advNodeBuf !== undefined ? s.advNodeBuf : 1).toString()) + '      // must be >= 1; enforced by compiler');
     L.push('');
+    L.push('// With more than one node, every message a node sends is also shown to the');
+    L.push('// other nodes on this device.  Application sends (including sends from');
+    L.push('// callbacks) wait in this queue until the loop can send them; each waiting');
+    L.push('// message and each answer between local nodes uses a buffer from the pools');
+    L.push('// above, so a busy multi-node device may need larger pools.');
+    L.push(_def('USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH', '4') + '      // must be >= 1; enforced by compiler');
+    L.push('');
 
     /* ---- Events ---- */
     L.push(_section('Events (requires OPENLCB_COMPILE_EVENTS)'));
@@ -1390,6 +1397,9 @@ function generateMain(s) {
 
         var writeDelayFn = _findCallbackFnByConfigField(cbConfigChecked, 'config_mem_write_delayed_reply_time');
         L.push('    .config_mem_write_delayed_reply_time = ' + (writeDelayFn ? '&CallbacksConfigMem_config_mem_write_delayed_reply_time' : 'NULL') + ',');
+
+        var cfgReplyFn = _findCallbackFnByConfigField(cbConfigChecked, 'on_config_mem_reply');
+        L.push('    .on_config_mem_reply                 = ' + (cfgReplyFn ? '&CallbacksConfigMem_on_config_mem_reply' : 'NULL') + ',');
         L.push('');
 
     }

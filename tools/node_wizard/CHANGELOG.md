@@ -6,6 +6,19 @@ For library changes, see the root `CHANGELOG.md`.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **`on_config_mem_reply` callback** (Config Memory group). Optional; called
+  when a reply datagram arrives for a configuration memory request the node
+  itself sent. Wired as `.on_config_mem_reply` in the generated `main.c`
+  (NULL when unchecked).
+- **`USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH`** (default 4) emitted in the
+  Virtual Node Allocation section of `openlcb_user_config.h`. Holds
+  application sends waiting to be shown to the other nodes on a multi-node
+  device.
+
 ## [1.0.2] - 2026-09-25
 
 ### Added

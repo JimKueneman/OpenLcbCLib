@@ -333,6 +333,16 @@ const CALLBACK_GROUPS = {
                 detail: 'Fires when a configuration tool sends a Reset/Reboot command. Implement this to restart your microcontroller — typically by calling the platform reset function (e.g. NVIC_SystemReset on ARM, ESP.restart on ESP32, or a watchdog-triggered reset). The library calls this after completing any pending configuration writes. If this callback is NULL, the reboot command is acknowledged but no reset occurs.',
                 required: false,
                 configField: 'reboot'
+            },
+
+            {
+                name: 'on_config_mem_reply',
+                returnType: 'void',
+                params: 'openlcb_node_t *openlcb_node, openlcb_msg_t *reply',
+                description: 'A reply arrived for a configuration memory request this node sent',
+                detail: 'Only needed if your node itself reads or writes another node\'s memory (a throttle or configuration tool built on the library). Fires for every reply datagram to your own requests: read, write, read/write stream, write under mask, options, address space info, lock and unique ID, OK or fail. The library has already answered Datagram Received OK. The reply payload starts with the command byte 0x20 followed by the reply code (for example 0x50-0x53 Read Reply OK, 0x58-0x5B Read Reply Fail); the message is only valid during the call. If NULL, replies are acknowledged and dropped. See Memory Configuration Standard for the reply layouts.',
+                required: false,
+                configField: 'on_config_mem_reply'
             }
 
         ]
