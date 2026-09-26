@@ -4738,3 +4738,161 @@ TEST(ProtocolDatagramHandler, datagram_fragmentation)
 // while keeping test count manageable.
 //
 // ============================================================================
+
+// ============================================================================
+// Replies to this node's own Memory Configuration requests
+//
+// ProtocolDatagramHandler_handle_config_mem_reply is wired (in openlcb_config.c)
+// to every *_reply_ok / *_reply_fail slot and to the operations replies.  It
+// answers Datagram Received OK without Reply Pending (nothing follows a reply)
+// and passes the reply to the optional on_config_mem_reply callback.
+// ============================================================================
+
+static openlcb_node_t *_config_mem_reply_node = nullptr;
+static openlcb_msg_t *_config_mem_reply_msg = nullptr;
+static int _config_mem_reply_calls = 0;
+
+static void _on_config_mem_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *reply)
+{
+    _config_mem_reply_node = openlcb_node;
+    _config_mem_reply_msg = reply;
+    _config_mem_reply_calls++;
+}
+
+static void _setup_reply_test(interface_protocol_datagram_handler_t *iface, bool with_callback,
+                              openlcb_statemachine_info_t *statemachine_info, openlcb_node_t **node,
+                              openlcb_msg_t **incoming, openlcb_msg_t **outgoing)
+{
+    _reset_variables();
+    _config_mem_reply_node = nullptr;
+    _config_mem_reply_msg = nullptr;
+    _config_mem_reply_calls = 0;
+
+    *iface = interface_protocol_datagram_handler;
+    iface->memory_read_space_configuration_memory_reply_ok = &ProtocolDatagramHandler_handle_config_mem_reply;
+    iface->memory_options_reply = &ProtocolDatagramHandler_handle_config_mem_reply;
+    iface->on_config_mem_reply = with_callback ? &_on_config_mem_reply : nullptr;
+
+    ProtocolDatagramHandler_initialize(iface);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+
+    *node = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    (*node)->alias = DEST_ALIAS;
+
+    *incoming = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    *outgoing = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+
+    statemachine_info->openlcb_node = *node;
+    statemachine_info->incoming_msg_info.msg_ptr = *incoming;
+    statemachine_info->incoming_msg_info.enumerate = false;
+    statemachine_info->outgoing_msg_info.msg_ptr = *outgoing;
+    statemachine_info->outgoing_msg_info.enumerate = false;
+    statemachine_info->outgoing_msg_info.valid = false;
+}
+
+static void _expect_ack_without_reply_pending(openlcb_statemachine_info_t *statemachine_info)
+{
+    openlcb_msg_t *out = statemachine_info->outgoing_msg_info.msg_ptr;
+
+    EXPECT_TRUE(statemachine_info->outgoing_msg_info.valid);
+    EXPECT_EQ(out->mti, MTI_DATAGRAM_OK_REPLY);
+    EXPECT_EQ(out->payload_count, 1);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(out, 0), 0x00);
+    EXPECT_EQ(out->dest_alias, SOURCE_ALIAS);
+    EXPECT_EQ(out->dest_id, (node_id_t) SOURCE_ID);
+    EXPECT_EQ(out->source_alias, DEST_ALIAS);
+    EXPECT_EQ(out->source_id, (node_id_t) DEST_ID);
+}
+
+TEST(ProtocolDatagramHandler, config_mem_reply_acks_and_calls_application)
+{
+    interface_protocol_datagram_handler_t iface;
+    openlcb_statemachine_info_t statemachine_info;
+    openlcb_node_t *node;
+    openlcb_msg_t *incoming;
+    openlcb_msg_t *outgoing;
+
+    _setup_reply_test(&iface, true, &statemachine_info, &node, &incoming, &outgoing);
+
+    OpenLcbUtilities_load_openlcb_message(incoming, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, CONFIG_MEM_READ_REPLY_OK_SPACE_FD, 1);
+    incoming->payload_count = 2;
+
+    ProtocolDatagramHandler_handle_config_mem_reply(&statemachine_info);
+
+    _expect_ack_without_reply_pending(&statemachine_info);
+
+    EXPECT_EQ(_config_mem_reply_calls, 1);
+    EXPECT_EQ(_config_mem_reply_node, node);
+    EXPECT_EQ(_config_mem_reply_msg, incoming);
+}
+
+TEST(ProtocolDatagramHandler, config_mem_reply_without_callback_still_acks)
+{
+    interface_protocol_datagram_handler_t iface;
+    openlcb_statemachine_info_t statemachine_info;
+    openlcb_node_t *node;
+    openlcb_msg_t *incoming;
+    openlcb_msg_t *outgoing;
+
+    _setup_reply_test(&iface, false, &statemachine_info, &node, &incoming, &outgoing);
+
+    OpenLcbUtilities_load_openlcb_message(incoming, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, CONFIG_MEM_READ_REPLY_OK_SPACE_FD, 1);
+    incoming->payload_count = 2;
+
+    ProtocolDatagramHandler_handle_config_mem_reply(&statemachine_info);
+
+    _expect_ack_without_reply_pending(&statemachine_info);
+    EXPECT_EQ(_config_mem_reply_calls, 0);
+}
+
+TEST(ProtocolDatagramHandler, config_mem_read_reply_dispatched_is_acked_not_rejected)
+{
+    interface_protocol_datagram_handler_t iface;
+    openlcb_statemachine_info_t statemachine_info;
+    openlcb_node_t *node;
+    openlcb_msg_t *incoming;
+    openlcb_msg_t *outgoing;
+
+    _setup_reply_test(&iface, true, &statemachine_info, &node, &incoming, &outgoing);
+
+    // Read Reply OK, space 0xFD: 0x20 0x51 address(4) data(4)
+    OpenLcbUtilities_load_openlcb_message(incoming, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, CONFIG_MEM_READ_REPLY_OK_SPACE_FD, 1);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming, 0x00000010, 2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming, 0xA1B2C3D4, 6);
+    incoming->payload_count = 10;
+
+    ProtocolDatagramHandler_datagram(&statemachine_info);
+
+    _expect_ack_without_reply_pending(&statemachine_info);
+    EXPECT_EQ(_config_mem_reply_calls, 1);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(_config_mem_reply_msg, 6), 0xA1B2C3D4u);
+}
+
+TEST(ProtocolDatagramHandler, config_mem_options_reply_dispatched_is_acked_not_rejected)
+{
+    interface_protocol_datagram_handler_t iface;
+    openlcb_statemachine_info_t statemachine_info;
+    openlcb_node_t *node;
+    openlcb_msg_t *incoming;
+    openlcb_msg_t *outgoing;
+
+    _setup_reply_test(&iface, true, &statemachine_info, &node, &incoming, &outgoing);
+
+    OpenLcbUtilities_load_openlcb_message(incoming, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, CONFIG_MEM_OPTIONS_REPLY, 1);
+    incoming->payload_count = 7;
+
+    ProtocolDatagramHandler_datagram(&statemachine_info);
+
+    _expect_ack_without_reply_pending(&statemachine_info);
+    EXPECT_EQ(_config_mem_reply_calls, 1);
+}

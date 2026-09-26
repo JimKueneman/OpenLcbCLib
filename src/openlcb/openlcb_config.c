@@ -1018,21 +1018,81 @@ static void _build_datagram_handler(void) {
 
     // Operations commands -- bootloader needs options, address space info, freeze/unfreeze, reset/reboot
     _datagram.memory_options_cmd                                = &ProtocolConfigMemOperationsHandler_options_cmd;
-    _datagram.memory_options_reply                              = &ProtocolConfigMemOperationsHandler_options_reply;
+    _datagram.memory_options_reply                              = &ProtocolDatagramHandler_handle_config_mem_reply;
     _datagram.memory_get_address_space_info                     = &ProtocolConfigMemOperationsHandler_get_address_space_info;
-    _datagram.memory_get_address_space_info_reply_not_present   = &ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present;
-    _datagram.memory_get_address_space_info_reply_present       = &ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present;
+    _datagram.memory_get_address_space_info_reply_not_present   = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_get_address_space_info_reply_present       = &ProtocolDatagramHandler_handle_config_mem_reply;
     _datagram.memory_unfreeze                                   = &ProtocolConfigMemOperationsHandler_unfreeze;
     _datagram.memory_freeze                                     = &ProtocolConfigMemOperationsHandler_freeze;
     _datagram.memory_reset_reboot                               = &ProtocolConfigMemOperationsHandler_reset_reboot;
 
 #ifndef OPENLCB_COMPILE_BOOTLOADER
     _datagram.memory_reserve_lock                               = &ProtocolConfigMemOperationsHandler_reserve_lock;
-    _datagram.memory_reserve_lock_reply                         = &ProtocolConfigMemOperationsHandler_reserve_lock_reply;
+    _datagram.memory_reserve_lock_reply                         = &ProtocolDatagramHandler_handle_config_mem_reply;
     _datagram.memory_get_unique_id                              = &ProtocolConfigMemOperationsHandler_get_unique_id;
-    _datagram.memory_get_unique_id_reply                        = &ProtocolConfigMemOperationsHandler_get_unique_id_reply;
+    _datagram.memory_get_unique_id_reply                        = &ProtocolDatagramHandler_handle_config_mem_reply;
     _datagram.memory_update_complete                            = &ProtocolConfigMemOperationsHandler_update_complete;
     _datagram.memory_factory_reset                              = &ProtocolConfigMemOperationsHandler_factory_reset;
+
+    // Replies to this node's own Memory Configuration requests: acknowledge
+    // with Datagram Received OK and pass to the application (on_config_mem_reply)
+    _datagram.on_config_mem_reply = _config->on_config_mem_reply;
+    _datagram.memory_read_space_config_description_info_reply_ok                  = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_all_reply_ok                                      = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_configuration_memory_reply_ok                     = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_acdi_manufacturer_reply_ok                        = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_acdi_user_reply_ok                                = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_train_function_definition_info_reply_ok           = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_train_function_config_memory_reply_ok             = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_config_description_info_reply_fail                = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_all_reply_fail                                    = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_configuration_memory_reply_fail                   = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_acdi_manufacturer_reply_fail                      = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_acdi_user_reply_fail                              = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_train_function_definition_info_reply_fail         = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_space_train_function_config_memory_reply_fail           = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_config_description_info_reply_ok           = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_all_reply_ok                               = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_configuration_memory_reply_ok              = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_acdi_manufacturer_reply_ok                 = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_acdi_user_reply_ok                         = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_train_function_definition_info_reply_ok    = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_train_function_config_memory_reply_ok      = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_config_description_info_reply_fail         = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_all_reply_fail                             = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_configuration_memory_reply_fail            = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_acdi_manufacturer_reply_fail               = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_acdi_user_reply_fail                       = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_train_function_definition_info_reply_fail  = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_read_stream_space_train_function_config_memory_reply_fail    = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_config_description_info_reply_ok                 = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_all_reply_ok                                     = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_configuration_memory_reply_ok                    = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_acdi_manufacturer_reply_ok                       = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_acdi_user_reply_ok                               = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_train_function_definition_info_reply_ok          = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_train_function_config_memory_reply_ok            = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_config_description_info_reply_fail               = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_all_reply_fail                                   = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_configuration_memory_reply_fail                  = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_acdi_manufacturer_reply_fail                     = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_acdi_user_reply_fail                             = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_train_function_definition_info_reply_fail        = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_space_train_function_config_memory_reply_fail          = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_config_description_info_reply_ok          = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_all_reply_ok                              = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_configuration_memory_reply_ok             = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_acdi_manufacturer_reply_ok                = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_acdi_user_reply_ok                        = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_train_function_definition_info_reply_ok   = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_train_function_config_memory_reply_ok     = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_config_description_info_reply_fail        = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_all_reply_fail                            = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_configuration_memory_reply_fail           = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_acdi_manufacturer_reply_fail              = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_acdi_user_reply_fail                      = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_train_function_definition_info_reply_fail = &ProtocolDatagramHandler_handle_config_mem_reply;
+    _datagram.memory_write_stream_space_train_function_config_memory_reply_fail   = &ProtocolDatagramHandler_handle_config_mem_reply;
 
     // Write-under-mask address spaces
     _datagram.memory_write_under_mask_space_config_description_info      = &ProtocolConfigMemWriteHandler_write_under_mask_space_config_description_info;
