@@ -6,16 +6,15 @@
 # (node process restarted between modes, bridge stays up for all runs).
 #
 # Two node binaries are built as needed: a base build (stream off) for most
-# modes, and a stream build (OPENLCB_COMPILE_STREAM on) for the stream mode.
+# modes, and a stream build (OPENLCB_COMPILE_STREAM on) for stream and trains-stream.
 #
 # Usage:
-#   ./run_olcbchecker.sh                                 # core + stream tests
+#   ./run_olcbchecker.sh                                 # core, stream, trains-stream
 #   ./run_olcbchecker.sh -m all                          # run all protocol modes
 #   ./run_olcbchecker.sh -m core,trains                  # core + train tests
 #   ./run_olcbchecker.sh -m trains -s check_tr090_controller  # one test in train mode
 #   ./run_olcbchecker.sh -r                              # enable reboot tests
 #   ./run_olcbchecker.sh --no-writes                     # skip config memory write tests
-#   ./run_olcbchecker.sh -v --skip-build                 # debug with last build
 #
 
 set -e
@@ -56,6 +55,7 @@ STREAM_MODE_COUNT=2
 MODES=(
     "core                           --basic                      core                        base      Core Compliance"
     "stream                         --basic                      stream                      stream    Stream Enabled"
+    "trains-stream                  --train                      fdi_stream                  stream    Train FDI"
     "broadcast-time-consumer        --broadcast-time-consumer    broadcast_time_consumer     base      Broadcast Time Consumer"
     "broadcast-time-producer        --broadcast-time-producer    broadcast_time_producer     base      Broadcast Time Producer"
     "trains                         --train                      trains                      base      Train Protocol"
@@ -71,7 +71,7 @@ AUTO_REBOOT=false
 FORCE_WRITES=true
 ENABLE_STREAM=false
 STREAM_COUNT=1
-MODE_LIST="core,stream"
+MODE_LIST="core,stream,trains-stream"
 SINGLE_SCRIPT=""
 
 ARGS=("$@")
@@ -113,9 +113,10 @@ while [ $i -lt ${#ARGS[@]} ]; do
         --help|-h)
             echo "Usage: $0 [OPTIONS]"
             echo ""
-            echo "  -m, --mode MODES       Comma-separated list of protocol modes to run (default: core,stream)"
-            echo "                         Available: core, stream, broadcast-time-consumer, broadcast-time-producer, trains, dcc-detector, all"
+            echo "  -m, --mode MODES       Comma-separated list of protocol modes to run (default: core,stream,trains-stream)"
+            echo "                         Available: core, stream, trains-stream, broadcast-time-consumer, broadcast-time-producer, trains, dcc-detector, all"
             echo "                         stream = Datagram, Memory Config, CDI, and Stream checks on a stream-enabled build"
+            echo "                         trains-stream = FDI checks on a stream-enabled train node"
             echo "  -s, --single SCRIPT    Run a single check or control script (use -m to set the node mode)"
             echo "  -r, --auto-reboot      Pass --auto-reboot to OlcbChecker (programmatic restart)"
             echo "  -w, --force-writes     Enable tests that write to config memory (0xFD) (default: on)"
@@ -164,7 +165,7 @@ lookup_mode() {
         fi
     done
     echo "ERROR: Unknown mode '$target'"
-    echo "  Available: core, stream, broadcast-time-consumer, broadcast-time-producer, trains, dcc-detector, all"
+    echo "  Available: core, stream, trains-stream, broadcast-time-consumer, broadcast-time-producer, trains, dcc-detector, all"
     exit 1
 }
 

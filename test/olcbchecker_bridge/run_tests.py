@@ -12,6 +12,8 @@ variables set by run_olcbchecker.sh:
     RUN_SECTIONS="trains"                 Run train tests only
     RUN_SECTIONS="stream"                 Run Datagram, Memory Config, CDI, and
                                           Stream tests (node built with stream on)
+    RUN_SECTIONS="fdi_stream"             Run FDI tests (train node built with
+                                          stream on)
 
   Legacy mode (BasicNode):
     RUN_BROADCAST_TIME=1   Include Broadcast Time consumer tests
@@ -173,6 +175,15 @@ if "stream" in run_sections:
     import control_stream
     logger.info("=== Stream Transport (stream) ===")
     total += min(control_stream.checkAll(), 1)
+
+# ---- Train FDI, Stream Enabled -----------------------------------------------
+# Train node built with OPENLCB_COMPILE_STREAM.  Only FDI is rerun: its read
+# check has a stream pass; Train Control and Train Search do not use streams.
+
+if "fdi_stream" in run_sections:
+    import control_fdi
+    logger.info("=== FDI (stream) ===")
+    total += min(control_fdi.checkAll(), 1)
 
 # ---- DCC Detector Protocol ---------------------------------------------------
 
