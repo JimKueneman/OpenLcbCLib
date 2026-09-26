@@ -242,24 +242,20 @@ TEST(TCP_Config, incoming_data_parses_message)
 }
 
 // =============================================================================
-// Link Up sends Verify Node ID Global
+// Link Up transmits nothing
 // =============================================================================
+// The transport has no Node ID of its own and no node has sent Initialization
+// Complete yet (Message Network 3.4.1), so the TCP layer must stay silent at
+// link-up. Node login is the OpenLCB login statemachine's job.
 
-TEST(TCP_Config, link_up_sends_verify_node_id_global)
+TEST(TCP_Config, link_up_transmits_nothing)
 {
     setup_test();
 
     TcpConfig_link_up();
-
-    // link_up does not send immediately
     EXPECT_FALSE(_transmit_called);
 
-    // run() drives the login statemachine which sends Verify Node ID Global
     TcpConfig_run();
-
-    EXPECT_TRUE(_transmit_called);
-
-    // Verify the transmitted message has MTI_VERIFY_NODE_ID_GLOBAL
-    uint16_t mti = TcpUtilities_decode_mti(&_transmitted_data[TCP_PREAMBLE_LEN]);
-    EXPECT_EQ(mti, MTI_VERIFY_NODE_ID_GLOBAL);
+    TcpConfig_run();
+    EXPECT_FALSE(_transmit_called);
 }

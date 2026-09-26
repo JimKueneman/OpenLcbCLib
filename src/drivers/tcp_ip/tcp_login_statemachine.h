@@ -28,12 +28,15 @@
  * @brief TCP/IP-specific login state machine.
  *
  * @details Handles the TCP connection setup phase.  Unlike CAN (which requires
- * multi-step alias negotiation), TCP login simply transitions nodes through the
- * standard OpenLCB login sequence via the protocol layer's login state machine.
+ * multi-step alias negotiation), TCP has no transport-level login: once the
+ * link is up, each local node goes through the standard OpenLCB login
+ * (Initialization Complete, then its identified events) via the protocol
+ * layer's login state machine.  This module only tracks link-up so the TCP
+ * main statemachine can move the link to RUNNING.
  *
- * The TCP login state machine is responsible for:
- * 1. Notifying the protocol layer that the link is up
- * 2. Triggering node login through the existing OpenLCB login statemachine
+ * It deliberately sends nothing itself.  Message Network 3.4.1 forbids any
+ * message before a node's Initialization Complete, and a Verify Node ID Global
+ * from the transport would also have no valid source Node ID.
  *
  * @author Jim Kueneman
  * @date 4 Apr 2026
@@ -47,63 +50,33 @@
 
 #include "tcp_types.h"
 
-/**
- * @brief Dependency-injection interface for the TCP login state machine.
- *
- * @see TcpLoginStatemachine_initialize
- */
-typedef struct {
-
-    /** @brief REQUIRED. Send a Verify Node ID Global to discover remote nodes.
-     *  Typical: wired to send through TcpTxStatemachine_send_openlcb_message. */
-    bool (*send_openlcb_msg)(openlcb_msg_t *msg);
-
-    /** @brief REQUIRED. Allocate a message buffer.
-     *  Typical: OpenLcbBufferStore_allocate_buffer. */
-    openlcb_msg_t *(*allocate_buffer)(payload_type_enum payload_type);
-
-    /** @brief REQUIRED. Free a message buffer.
-     *  Typical: OpenLcbBufferStore_free_buffer. */
-    void (*free_buffer)(openlcb_msg_t *msg);
-
-    /** @brief REQUIRED. Disable interrupts / acquire mutex. */
-    void (*lock_shared_resources)(void);
-
-    /** @brief REQUIRED. Re-enable interrupts / release mutex. */
-    void (*unlock_shared_resources)(void);
-
-} interface_tcp_login_statemachine_t;
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
     /**
-     * @brief Registers the dependency-injection interface for this module.
+     * @brief Resets the module to TCP_LOGIN_IDLE.
      *
-     * @param interface Pointer to a populated @ref interface_tcp_login_statemachine_t.
-     *        Must remain valid for the lifetime of the application.
-     *
-     * @warning NOT thread-safe — call during single-threaded initialization only.
+     * @warning NOT thread-safe - call during single-threaded initialization only.
      */
-    extern void TcpLoginStatemachine_initialize(const interface_tcp_login_statemachine_t *interface);
+    extern void TcpLoginStatemachine_initialize(void);
 
     /**
      * @brief Signals that the TCP connection has been established.
      *
-     * @details Transitions to TCP_LOGIN_SEND_VERIFY_GLOBAL state.
-     * The actual send happens in TcpLoginStatemachine_run().
+     * @details Transitions directly to TCP_LOGIN_COMPLETE.  Nothing is sent:
+     * node login is handled by the OpenLCB login statemachine.
      */
     extern void TcpLoginStatemachine_link_up(void);
 
     /**
      * @brief Drives the login state machine.
      *
-     * @details If in TCP_LOGIN_SEND_VERIFY_GLOBAL state, attempts to
-     * allocate a buffer and send a Verify Node ID Global message.  Retries
-     * each cycle until the transport accepts the message.
+     * @details There is no pending work in any state.  Kept so the TCP main
+     * statemachine's login_run hook has a single shape whether or not a
+     * transport ever needs a multi-step login.
      *
-     * @return true if work is pending (caller should keep calling), false if idle or done.
+     * @return Always false (no work pending).
      */
     extern bool TcpLoginStatemachine_run(void);
 

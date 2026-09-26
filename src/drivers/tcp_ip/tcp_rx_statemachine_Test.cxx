@@ -1007,3 +1007,87 @@ TEST(TCP_RxStatemachine, multipart_first_middle_last)
 
     OpenLcbBufferStore_free_buffer(_last_pushed_msg);
 }
+
+// =============================================================================
+// Multipart reassembly driven by raw wire flag values
+// =============================================================================
+// TcpTransferS puts the multipart field in the 0x0C00 pair: first = 0x0400,
+// middle = 0x0C00, last = 0x0800. These tests use the literal values so a
+// change to the constants that stays self-consistent still fails here.
+
+TEST(TCP_RxStatemachine, multipart_raw_wire_flags_first_and_last)
+{
+    setup_test();
+
+    node_id_t orig_id = 0x050101012200ULL;
+    node_id_t source_id = 0x010203040506ULL;
+    node_id_t dest_id = 0x0A0B0C0D0E0FULL;
+
+    // FIRST part: flags 0x8400 (message bit + first)
+    uint8_t first_wire[128];
+    uint8_t first_payload[] = {0x11, 0x22, 0x33};
+    uint16_t first_body_len = TCP_BODY_MTI_LEN + TCP_BODY_NODE_ID_LEN + TCP_BODY_NODE_ID_LEN + 3;
+    uint16_t offset = TcpUtilities_encode_preamble(first_wire, 0x8400, first_body_len, orig_id, 500);
+    EXPECT_EQ(first_wire[0], 0x84);
+    EXPECT_EQ(first_wire[1], 0x00);
+    offset += TcpUtilities_encode_uint16(&first_wire[offset], 0x1C48);
+    offset += TcpUtilities_encode_node_id(&first_wire[offset], source_id);
+    offset += TcpUtilities_encode_node_id(&first_wire[offset], dest_id);
+    memcpy(&first_wire[offset], first_payload, 3);
+    offset += 3;
+
+    TcpRxStatemachine_incoming_data(first_wire, offset);
+    EXPECT_EQ(_push_count, 0);
+
+    // MIDDLE part: flags 0x8C00
+    uint8_t middle_wire[64];
+    uint8_t middle_payload[] = {0x44, 0x55};
+    uint16_t offset2 = TcpUtilities_encode_preamble(middle_wire, 0x8C00, 2, orig_id, 600);
+    memcpy(&middle_wire[offset2], middle_payload, 2);
+    offset2 += 2;
+
+    TcpRxStatemachine_incoming_data(middle_wire, offset2);
+    EXPECT_EQ(_push_count, 0);
+
+    // LAST part: flags 0x8800
+    uint8_t last_wire[64];
+    uint8_t last_payload[] = {0x66};
+    uint16_t offset3 = TcpUtilities_encode_preamble(last_wire, 0x8800, 1, orig_id, 700);
+    memcpy(&last_wire[offset3], last_payload, 1);
+    offset3 += 1;
+
+    TcpRxStatemachine_incoming_data(last_wire, offset3);
+    EXPECT_EQ(_push_count, 1);
+    ASSERT_NE(_last_pushed_msg, nullptr);
+    EXPECT_EQ(_last_pushed_msg->mti, 0x1C48);
+    EXPECT_EQ(_last_pushed_msg->source_id, source_id);
+    EXPECT_EQ(_last_pushed_msg->dest_id, dest_id);
+    EXPECT_EQ(_last_pushed_msg->payload_count, 6);
+
+    uint8_t expected[] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};
+    EXPECT_EQ(memcmp(_last_pushed_msg->payload, expected, 6), 0);
+
+    OpenLcbBufferStore_free_buffer(_last_pushed_msg);
+}
+
+TEST(TCP_RxStatemachine, reserved_low_flag_bits_do_not_mean_multipart)
+{
+    setup_test();
+
+    // 0x80C0 is where the old, wrong constants put "middle". Per the standard
+    // the low 10 bits are reserved and ignored, so this is a single complete
+    // message and must be forwarded as one.
+    uint8_t wire[64];
+    uint16_t body_len = TCP_BODY_MTI_LEN + TCP_BODY_NODE_ID_LEN;
+    uint16_t offset = TcpUtilities_encode_preamble(wire, 0x80C0, body_len, 0x050101012200ULL, 500);
+    offset += TcpUtilities_encode_uint16(&wire[offset], 0x0490);
+    offset += TcpUtilities_encode_node_id(&wire[offset], 0x010203040506ULL);
+
+    TcpRxStatemachine_incoming_data(wire, offset);
+    EXPECT_EQ(_push_count, 1);
+    ASSERT_NE(_last_pushed_msg, nullptr);
+    EXPECT_EQ(_last_pushed_msg->mti, 0x0490);
+    EXPECT_EQ(_last_pushed_msg->source_id, 0x010203040506ULL);
+
+    OpenLcbBufferStore_free_buffer(_last_pushed_msg);
+}

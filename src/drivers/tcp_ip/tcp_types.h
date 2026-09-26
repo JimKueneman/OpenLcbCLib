@@ -138,20 +138,21 @@ extern "C" {
     /** @brief Bit 14: 1 = another preamble follows (chaining). */
 #define TCP_FLAGS_CHAINING                             0x4000
 
-    /** @brief Mask for multi-part indicator bits (bits 11-10). */
-#define TCP_FLAGS_MULTIPART_MASK                       0x00C0
+    /** @brief Mask for multi-part indicator bits (bits 11-10, TcpTransferS "0x0C00 bits").
+     *  The lower 10 bits of the flags are reserved: sent as zero, ignored on receipt. */
+#define TCP_FLAGS_MULTIPART_MASK                       0x0C00
 
     /** @brief Multi-part: single complete message (bits 11-10 = 00). */
 #define TCP_FLAGS_MULTIPART_SINGLE                     0x0000
 
     /** @brief Multi-part: first part of message (bits 11-10 = 01). */
-#define TCP_FLAGS_MULTIPART_FIRST                      0x0040
+#define TCP_FLAGS_MULTIPART_FIRST                      0x0400
 
     /** @brief Multi-part: middle part of message (bits 11-10 = 11). */
-#define TCP_FLAGS_MULTIPART_MIDDLE                     0x00C0
+#define TCP_FLAGS_MULTIPART_MIDDLE                     0x0C00
 
     /** @brief Multi-part: last part of message (bits 11-10 = 10). */
-#define TCP_FLAGS_MULTIPART_LAST                       0x0080
+#define TCP_FLAGS_MULTIPART_LAST                       0x0800
 
     // =========================================================================
     // Message Body Offsets (relative to start of body, after preamble)
@@ -197,10 +198,7 @@ extern "C" {
     /** @brief TCP login states. */
     typedef enum {
         TCP_LOGIN_IDLE = 0,              /**< @brief Not connected / not started. */
-        TCP_LOGIN_SEND_VERIFY_GLOBAL,    /**< @brief Send Verify Node ID Global (retries until transport accepts). */
-        TCP_LOGIN_SEND_INIT_COMPLETE,    /**< @brief Send Initialization Complete for each local node. */
-        TCP_LOGIN_SEND_EVENTS,           /**< @brief Send Producer/Consumer Identified for declared events. */
-        TCP_LOGIN_COMPLETE               /**< @brief Login finished, all nodes in RUN state. */
+        TCP_LOGIN_COMPLETE               /**< @brief Link is up; the OpenLCB login statemachine logs each node in from here. */
     } tcp_login_state_enum;
 
     // =========================================================================

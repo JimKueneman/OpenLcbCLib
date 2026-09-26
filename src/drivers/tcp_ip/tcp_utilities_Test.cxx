@@ -301,3 +301,53 @@ TEST(TCP_Utilities, multipart_type_last)
     EXPECT_EQ(TcpUtilities_multipart_type(TCP_FLAGS_MESSAGE | TCP_FLAGS_MULTIPART_LAST),
               TCP_FLAGS_MULTIPART_LAST);
 }
+
+// =============================================================================
+// Multipart field: raw wire bits (TcpTransferS: the 0x0C00 pair, lower 10 bits reserved)
+// =============================================================================
+// These use literal flag values on purpose. The symbolic tests above pass with
+// any consistent set of constants; these pin the bit positions the standard and
+// OpenMRN use: first = 0x0400 alone, middle = both, last = 0x0800 alone.
+
+TEST(TCP_Utilities, multipart_constants_match_standard)
+{
+    EXPECT_EQ(TCP_FLAGS_MULTIPART_MASK,   0x0C00);
+    EXPECT_EQ(TCP_FLAGS_MULTIPART_SINGLE, 0x0000);
+    EXPECT_EQ(TCP_FLAGS_MULTIPART_FIRST,  0x0400);
+    EXPECT_EQ(TCP_FLAGS_MULTIPART_MIDDLE, 0x0C00);
+    EXPECT_EQ(TCP_FLAGS_MULTIPART_LAST,   0x0800);
+}
+
+TEST(TCP_Utilities, multipart_type_raw_wire_bits)
+{
+    EXPECT_EQ(TcpUtilities_multipart_type(0x8000), TCP_FLAGS_MULTIPART_SINGLE);
+    EXPECT_EQ(TcpUtilities_multipart_type(0x8400), TCP_FLAGS_MULTIPART_FIRST);
+    EXPECT_EQ(TcpUtilities_multipart_type(0x8C00), TCP_FLAGS_MULTIPART_MIDDLE);
+    EXPECT_EQ(TcpUtilities_multipart_type(0x8800), TCP_FLAGS_MULTIPART_LAST);
+
+    // Chaining bit set alongside a multipart value does not disturb the field
+    EXPECT_EQ(TcpUtilities_multipart_type(0xC400), TCP_FLAGS_MULTIPART_FIRST);
+}
+
+TEST(TCP_Utilities, multipart_type_ignores_reserved_low_bits)
+{
+    // The lower 10 bits are reserved and ignored on receipt. 0x00C0 is where
+    // the old, wrong constants lived; it must now read as single-part.
+    EXPECT_EQ(TcpUtilities_multipart_type(0x80C0), TCP_FLAGS_MULTIPART_SINGLE);
+    EXPECT_EQ(TcpUtilities_multipart_type(0x83FF), TCP_FLAGS_MULTIPART_SINGLE);
+    EXPECT_EQ(TcpUtilities_multipart_type(0x87FF), TCP_FLAGS_MULTIPART_FIRST);
+}
+
+TEST(TCP_Utilities, multipart_type_from_encoded_preamble)
+{
+    uint8_t buf[TCP_PREAMBLE_LEN];
+
+    TcpUtilities_encode_preamble(buf, 0x8400, 0, 0x050101012200ULL, 0);
+    EXPECT_EQ(buf[0], 0x84);
+    EXPECT_EQ(buf[1], 0x00);
+    EXPECT_EQ(TcpUtilities_multipart_type(TcpUtilities_decode_flags(buf)), TCP_FLAGS_MULTIPART_FIRST);
+
+    TcpUtilities_encode_preamble(buf, 0x8800, 0, 0x050101012200ULL, 0);
+    EXPECT_EQ(buf[0], 0x88);
+    EXPECT_EQ(TcpUtilities_multipart_type(TcpUtilities_decode_flags(buf)), TCP_FLAGS_MULTIPART_LAST);
+}

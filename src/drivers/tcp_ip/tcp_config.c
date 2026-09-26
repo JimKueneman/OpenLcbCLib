@@ -58,7 +58,6 @@ static const tcp_config_t *_user_config;
 static interface_tcp_rx_statemachine_t _rx_interface;
 static interface_tcp_tx_statemachine_t _tx_interface;
 static interface_tcp_link_control_t _link_control_interface;
-static interface_tcp_login_statemachine_t _login_interface;
 static interface_tcp_main_statemachine_t _main_interface;
 
 // =========================================================================
@@ -102,15 +101,6 @@ static void _build_link_control_interface(void) {
     _link_control_interface.on_link_status_changed = _user_config->on_link_status_changed;
 }
 
-static void _build_login_interface(void) {
-
-    _login_interface.send_openlcb_msg = &_send_openlcb_msg_wrapper;
-    _login_interface.allocate_buffer = &OpenLcbBufferStore_allocate_buffer;
-    _login_interface.free_buffer = &OpenLcbBufferStore_free_buffer;
-    _login_interface.lock_shared_resources = _user_config->lock_shared_resources;
-    _login_interface.unlock_shared_resources = _user_config->unlock_shared_resources;
-}
-
 static void _build_main_interface(void) {
 
     _main_interface.login_link_up = &TcpLoginStatemachine_link_up;
@@ -133,14 +123,13 @@ void TcpConfig_initialize(const tcp_config_t *config) {
     _build_tx_interface();
     _build_link_control_interface();
     _build_rx_interface();
-    _build_login_interface();
     _build_main_interface();
 
     // Initialize modules in dependency order
     TcpTxStatemachine_initialize(&_tx_interface);
     TcpLinkControl_initialize(&_link_control_interface);
     TcpRxStatemachine_initialize(&_rx_interface);
-    TcpLoginStatemachine_initialize(&_login_interface);
+    TcpLoginStatemachine_initialize();
     TcpMainStatemachine_initialize(&_main_interface);
 }
 
