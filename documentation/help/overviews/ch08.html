@@ -215,9 +215,9 @@ _enumerate_next_node()"}
         <h2>8.3 The State Machine Contexts</h2>
 
         <p>
-            The dispatcher maintains a main context plus one context per dispatch stack level, all
-            of type <code>openlcb_statemachine_info_t</code>. They share the same protocol handler
-            callbacks.
+            The dispatcher maintains <strong>two</strong> static context structures of type
+            <code>openlcb_statemachine_info_t</code>: the main context and the context used for
+            handler calls on the dispatch stack. They share the same protocol handler callbacks.
         </p>
 
         <pre><code>typedef struct {
@@ -238,15 +238,15 @@ _enumerate_next_node()"}
                     <td>Processes messages from the incoming FIFO; builds outgoing replies during normal node enumeration.</td>
                 </tr>
                 <tr>
-                    <td><strong>Stack levels</strong></td>
-                    <td><code>_sibling_levels[USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH]</code></td>
-                    <td>One context per level of the dispatch stack (&sect;8.6). Its incoming pointer is the message being shown to the local nodes, owned by the level below (or the main outgoing slot, or the application send queue); its own worker outgoing buffer holds the answer of the node currently being shown it.</td>
+                    <td><strong>Stack context</strong></td>
+                    <td><code>_sibling_info</code></td>
+                    <td>Used for every handler call on the dispatch stack (&sect;8.6). Its incoming pointer is set to the message the top level is showing; its worker outgoing buffer is shared by all levels, because a node's answer is copied into a buffer-store buffer as soon as the handler returns.</td>
                 </tr>
             </tbody>
         </table>
 
         <div class="callout callout-warning">
-            <strong>Worker buffer:</strong> Every context (main and each stack level) pre-allocates a <code>STREAM</code>-sized
+            <strong>Worker buffer:</strong> Both contexts pre-allocate a <code>STREAM</code>-sized
             outgoing buffer at initialization (the largest available), so any protocol handler
             can build a response without worrying about buffer size limits.
         </div>
@@ -352,35 +352,41 @@ sequenceDiagram
         <ol>
             <li>A message a local node sends goes to the wire first.</li>
             <li>With more than one node, it is then pushed as a level of the dispatch stack
-                (<code>_sibling_push()</code>): the level points at the message (no copy), marks it
-                <code>loopback = true</code> so the sender skips its own copy in
-                <code>does_node_process_msg()</code>, and starts at the first node.</li>
+                (<code>_sibling_push()</code>). A level is small: a pointer to the message (no
+                copy), a pointer to the answer of the node just shown it, and the position of the
+                next node (nodes are walked with <code>OpenLcbNode_get_by_index()</code>). The
+                message is marked <code>loopback = true</code> so the sender skips its own copy in
+                <code>does_node_process_msg()</code>.</li>
             <li>Each <code>_run()</code> call then does one step on the top level
                 (<code>_sibling_run_top()</code>):
                 <ul>
-                    <li>if the node just shown the message answered, the answer is sent to the wire
-                        (retried until the transport takes it) and pushed as the next level, so it
-                        is shown to the local nodes before this level continues;</li>
+                    <li>if the node just shown the message answered, its answer (already copied from
+                        the shared worker buffer into the smallest buffer-store buffer that holds it)
+                        is sent to the wire, retried until the transport takes it, and pushed as the
+                        next level, so it is shown to the local nodes before this level continues; if
+                        the buffer store has no free buffer, the copy is retried on the next pass
+                        before anything else runs;</li>
                     <li>if the node set the enumerate flag (several messages), it is called again,
                         on the same node, once its previous message has finished;</li>
                     <li>otherwise the message is shown to the next node that has sent Initialization
                         Complete (<code>state.initialized</code>);</li>
                     <li>when every node has been shown it, the level finishes and releases the
-                        message to its owner.</li>
+                        message to its owner (the main outgoing slot, the level below, or the
+                        application send queue); buffer-store buffers are returned to the store.</li>
                 </ul>
             </li>
         </ol>
 
         <h3>Depth</h3>
         <p>
-            The stack grows with how far answers chain, not with the number of nodes: a node's
-            answer is finished before the next node is shown the original message. Unaddressed
-            answers stop at depth 2, a datagram exchange between two local nodes needs 3, and
-            train listener forwarding between local trains needs the consist depth.
-            <code>USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH</code> (default 4, at most
-            <code>OPENLCB_SIBLING_DISPATCH_STACK_DEPTH_MAX</code> = 8) sets the size. A message that
-            would go deeper is still sent to the wire but is not shown to the local nodes; it is
-            counted.
+            The stack grows with how far answers chain, not with how many nodes answer: a node's
+            answer is finished before the next node is shown the original message, and a node
+            answering with several messages (listener forwarding to many listeners, Identify
+            Events) uses one level. Unaddressed answers stop at depth 2, a datagram exchange
+            between two local nodes needs 3, and a daisy-chained consist of local trains needs one
+            level per train. A chain cannot pass through more local nodes than the device has, so
+            the stack is sized <code>USER_DEFINED_NODE_BUFFER_DEPTH + 2</code>; there is no separate
+            setting.
         </p>
 
         <div class="callout callout-info">
@@ -395,10 +401,11 @@ sequenceDiagram
             Messages from application code, the login state machine, the train, Broadcast Time
             and DCC CV helpers and the config-memory stream pump go through
             <code>OpenLcbMainStatemachine_send_with_sibling_dispatch()</code>. With one node it sends
-            straight to the transport. With several, it copies the message into the application
-            send queue (<code>USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH</code>, default 4) and returns
-            <code>true</code> (accepted, not yet on the wire), or <code>false</code> when the queue is
-            full (retry later). The queue is drained oldest first when the stack is empty and no
+            straight to the transport. With several, it copies the message into the smallest
+            buffer-store buffer that holds it, queues a pointer (up to
+            <code>USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH</code>, default 4) and returns
+            <code>true</code> (accepted, not yet on the wire), or <code>false</code> when the queue
+            or the buffer store is full (retry later). The queue is drained oldest first when the stack is empty and no
             incoming message is being processed, so everything a message caused goes out before the
             next incoming message is handled.
         </p>
@@ -411,10 +418,12 @@ sequenceDiagram
         </div>
 
         <div class="callout callout-info">
-            <strong>Buffer pressure:</strong> No dynamic allocation is used. Each level and each
-            queue entry is a statically allocated worker buffer. Each node is shown a message in one
-            <code>_run()</code> call; the CAN RX ISR continues filling its software FIFO
-            independently, so no frames are lost.
+            <strong>Buffer pressure:</strong> No dynamic allocation is used. Answers between local
+            nodes and queued application sends take buffers from the same buffer store as received
+            messages, so a multi-node device may need larger pools
+            (<code>USER_DEFINED_BASIC_BUFFER_DEPTH</code> and friends). Each node is shown a message
+            in one <code>_run()</code> call; the CAN RX ISR continues filling its software FIFO
+            independently.
         </div>
 
         <!-- ================================================================ -->
@@ -536,9 +545,9 @@ sequenceDiagram
         <h2>8.11 Interface Requirements</h2>
 
         <p>
-            The DI struct <code>interface_openlcb_main_statemachine_t</code> has one new
-            <strong>required</strong> function pointer added alongside the existing enumeration
-            callbacks:
+            The DI struct <code>interface_openlcb_main_statemachine_t</code> needs these node-table
+            function pointers in addition to the enumeration callbacks (both
+            <strong>required</strong>; <code>OpenLcbConfig</code> wires them):
         </p>
 
         <table>
@@ -550,6 +559,11 @@ sequenceDiagram
                     <td><code>openlcb_node_get_count</code></td>
                     <td><code>uint16_t (*)(void)</code></td>
                     <td>Returns the number of allocated nodes. Used by <code>_sibling_push()</code> and <code>send_with_sibling_dispatch()</code> to skip local delivery entirely on single-node configurations.</td>
+                </tr>
+                <tr>
+                    <td><code>openlcb_node_get_by_index</code></td>
+                    <td><code>openlcb_node_t *(*)(uint16_t)</code></td>
+                    <td>Returns the node at a position in the node table (<code>OpenLcbNode_get_by_index</code>). The dispatch stack walks the nodes for several messages at once, one per level, without enumeration keys.</td>
                 </tr>
             </tbody>
         </table>
@@ -568,11 +582,11 @@ sequenceDiagram
                 </tr>
                 <tr>
                     <td><code>OpenLcbMainStatemachine_get_sibling_statemachine_info(void)</code></td>
-                    <td>Returns a pointer to the context of stack level 1.  For unit testing only.</td>
+                    <td>Returns a pointer to the context used for handler calls on the dispatch stack.  For unit testing only.</td>
                 </tr>
                 <tr>
                     <td><code>OpenLcbMainStatemachine_get_sibling_response_queue_high_water(void)</code></td>
-                    <td>Returns the deepest the dispatch stack has been since initialization.  Useful for sizing <code>USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH</code>.</td>
+                    <td>Returns the deepest the dispatch stack has been since initialization.  Useful for diagnostics.</td>
                 </tr>
             </tbody>
         </table>

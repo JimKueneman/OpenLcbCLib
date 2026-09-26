@@ -114,6 +114,19 @@
             <code>RUNSTATE_RUN</code>. Nodes already in <code>RUNSTATE_RUN</code> are skipped.
         </p>
 
+        <p>
+            Login messages are sent through <code>OpenLcbMainStatemachine_send_with_sibling_dispatch()</code>,
+            so the other nodes on the same device see them like any other message (Ch 21). A node
+            is Initialized on the network from the moment it has sent Initialization Complete
+            (<code>state.initialized</code>): from then on the main dispatcher shows it every
+            message, even while it is still announcing its events. The one exception is Identify
+            Events: its answer uses the same event enumerators the login is using, so an Identify
+            Events (global, or addressed to the node) that arrives before <code>RUNSTATE_RUN</code>
+            restarts the login's Producer/Consumer Identified round from the first producer
+            instead. The full set then goes out after the request; repeating messages already sent
+            is allowed.
+        </p>
+
         <div class="mermaid">
 stateDiagram-v2
     [*] --> INIT: Node allocated

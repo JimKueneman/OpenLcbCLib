@@ -149,6 +149,45 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   both the Python tool and Node Wizard.
 
 ### Changed
+- **Delivery between nodes on the same device redesigned (dispatch stack).**
+  A device hosting several nodes must show every message one of them sends to
+  the others, since CAN does not loop a device's own frames back. The old
+  mechanism (one sibling context, a 5-slot reply queue and a single "Path B"
+  slot for application sends, plus a second copy in the login state machine)
+  lost messages when a local node's request made several siblings answer, when
+  the application sent twice before the loop ran, and froze the main loop when
+  a sibling answered with several messages (found on hardware by Bob Gamble,
+  #18 and #20). Now every message goes to the wire and is then shown to every
+  other local node before the loop moves on; an answer made while showing it is
+  finished the same way one level deeper on a stack sized
+  `USER_DEFINED_NODE_BUFFER_DEPTH + 2`, and a node answering with several
+  messages is called again only after the previous one is finished. Answers
+  and application sends live in buffer-store buffers. Login messages and the
+  config-memory stream pump go through the same path, so a config-memory
+  stream between two local nodes now works. See overview Ch 21.
+
+  Upgrade notes:
+  - On a device with more than one node, `OpenLcbMainStatemachine_send_with_sibling_dispatch()`
+    (behind every application send helper) now queues the message: `true`
+    means accepted, not yet on the wire; it goes out on a later
+    `OpenLcbConfig_run()`. Code that sends and then resets without running the
+    loop loses the message. Single-node devices are unchanged.
+  - That send can now also return `false` when the application send queue
+    (`USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH`, new, optional, default 4) or
+    the buffer store is full. Never loop on a send inside a callback; keep the
+    message and send it from the main loop.
+  - Answers between local nodes and queued sends use the same buffer store as
+    received messages; busy multi-node devices may need larger pools.
+  - Other local nodes can see an answer before the request it answers; the
+    wire order is unchanged.
+  - Hand-built interfaces (not using `OpenLcbConfig`): the main state machine
+    interface needs `openlcb_node_get_by_index` (new
+    `OpenLcbNode_get_by_index()`); the login state machine interface no longer
+    has `process_main_statemachine` or `openlcb_node_get_count`, and its
+    `send_openlcb_msg` must be `OpenLcbMainStatemachine_send_with_sibling_dispatch`.
+  - `OpenLcbMainStatemachine_get_sibling_response_queue_high_water()` now
+    returns the deepest the dispatch stack has been.
+
 - **Transport drivers are guarded by their flag.** All `src/drivers/canbus` sources
   are wrapped in `OPENLCB_COMPILE_CAN` and all `src/drivers/tcp_ip` sources in
   `OPENLCB_COMPILE_TCP`, so the unused transport no longer compiles into the image

@@ -141,7 +141,7 @@
     bool allocated : 1;   // Buffer is in use (owned by buffer store)
     bool inprocess : 1;   // Multi-frame message being assembled
     bool invalid : 1;     // Invalidated (e.g., by AMR) -- discard on next access
-    bool loopback : 1;    // Sibling dispatch copy -- skip source node, no re-loopback
+    bool loopback : 1;    // Being shown to the local nodes -- the sender skips its own copy
 } openlcb_msg_state_t;</code></pre>
 
         <table>
@@ -152,7 +152,7 @@
                 <tr><td><code>allocated</code></td><td>Buffer store allocate</td><td>Buffer store free (ref_count reaches 0)</td><td>Prevents double allocation</td></tr>
                 <tr><td><code>inprocess</code></td><td>CAN RX (first frame of multi-frame)</td><td>CAN RX (final frame received)</td><td>Marks partially assembled messages in buffer list</td></tr>
                 <tr><td><code>invalid</code></td><td>FIFO invalidation on AMR</td><td>Never (message is freed)</td><td>Prevents processing stale messages from departed nodes</td></tr>
-                <tr><td><code>loopback</code></td><td>Sibling dispatch</td><td>Main dispatcher after processing</td><td>Ensures loopback copies skip the originating node</td></tr>
+                <tr><td><code>loopback</code></td><td>Dispatch stack, when a level starts showing the message to the local nodes</td><td>Dispatch stack, when that level finishes</td><td>Ensures the originating node skips its own message</td></tr>
             </tbody>
         </table>
 
