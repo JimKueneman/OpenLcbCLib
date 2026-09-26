@@ -216,9 +216,15 @@ static bool _send_heartbeat_request(train_state_t *state) {
     // Send remaining time (rounded up so a partial tick still leaves the
     // controller a full second's worth of headroom).
     uint32_t remaining_s = (state->heartbeat_counter_100ms + 9) / 10;
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (remaining_s >> 16) & 0xFF, 2);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (remaining_s >> 8) & 0xFF, 3);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, remaining_s & 0xFF, 4);
+
+    // The wire field is one byte of seconds (TrainControlS 6.6, OpenMRN); clamp.
+    if (remaining_s > 255) {
+
+        remaining_s = 255;
+
+    }
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (uint8_t) remaining_s, 2);
 
     return _interface->send_openlcb_msg(&msg);
 

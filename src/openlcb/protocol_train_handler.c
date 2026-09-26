@@ -1193,10 +1193,8 @@ static void _handle_management_reply(openlcb_statemachine_info_t *statemachine_i
 
             if (_interface && _interface->on_heartbeat_request) {
 
-                uint32_t timeout =
-                        ((uint32_t) OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 2) << 16)
-                        | ((uint32_t) OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 3) << 8)
-                        | (uint32_t) OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 4);
+                // TrainControlS 6.6 / OpenMRN: the deadline is a single byte of seconds at byte 2.
+                uint32_t timeout = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 2);
 
                 _interface->on_heartbeat_request(node, timeout);
 

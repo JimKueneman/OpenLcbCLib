@@ -945,10 +945,9 @@ TEST(ApplicationTrain, heartbeat_sends_request_at_halfway)
     EXPECT_EQ(last_sent_msg.source_id, TEST_DEST_ID);
     EXPECT_EQ(last_sent_payload[0], TRAIN_MANAGEMENT);
     EXPECT_EQ(last_sent_payload[1], TRAIN_MGMT_NOOP);
-    // 3-byte deadline: remaining time at halfway = 5 seconds = 0x00, 0x00, 0x05
-    EXPECT_EQ(last_sent_payload[2], 0x00);
-    EXPECT_EQ(last_sent_payload[3], 0x00);
-    EXPECT_EQ(last_sent_payload[4], 0x05);
+    // One-byte deadline (TrainControlS 6.6, OpenMRN): remaining time at halfway = 5 seconds
+    EXPECT_EQ(last_sent_payload[2], 0x05);
+    EXPECT_EQ(last_sent_msg.payload_count, 3);
 
 }
 

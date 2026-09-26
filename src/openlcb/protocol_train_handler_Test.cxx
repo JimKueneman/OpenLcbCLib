@@ -2103,11 +2103,9 @@ TEST(ProtocolTrainHandler, reply_management_heartbeat)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_NOOP, 1);
-    // 3-byte timeout: 10 seconds = 0x00, 0x00, 0x0A
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x0A, 4);
-    incoming->payload_count = 5;
+    // One-byte deadline (TrainControlS 6.6, OpenMRN): 10 seconds
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x0A, 2);
+    incoming->payload_count = 3;
 
     ProtocolTrainHandler_handle_train_reply(&sm);
 

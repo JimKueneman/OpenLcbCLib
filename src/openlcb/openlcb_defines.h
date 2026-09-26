@@ -567,19 +567,19 @@ extern "C" {
 #define EVENT_ID_POWER_SUPPLY_BROWN_OUT_STANDARD 0x010000000000FFF0
 
     /** @brief Identification button combination pressed on node */
-#define EVENT_ID_IDENT_BUTTON_COMBO_PRESSED 0x010000000000FF00
+#define EVENT_ID_IDENT_BUTTON_COMBO_PRESSED 0x010000000000FE00
 
     /** @brief Link layer error code 1 detected */
-#define EVENT_ID_LINK_ERROR_CODE_1 0x010000000000FF01
+#define EVENT_ID_LINK_ERROR_CODE_1 0x010000000000FD01
 
     /** @brief Link layer error code 2 detected */
-#define EVENT_ID_LINK_ERROR_CODE_2 0x010000000000FF02
+#define EVENT_ID_LINK_ERROR_CODE_2 0x010000000000FD02
 
     /** @brief Link layer error code 3 detected */
-#define EVENT_ID_LINK_ERROR_CODE_3 0x010000000000FF03
+#define EVENT_ID_LINK_ERROR_CODE_3 0x010000000000FD03
 
     /** @brief Link layer error code 4 detected */
-#define EVENT_ID_LINK_ERROR_CODE_4 0x010000000000FF04
+#define EVENT_ID_LINK_ERROR_CODE_4 0x010000000000FD04
 
     /** @} */ // end of well_known_events_auto
 
@@ -714,8 +714,8 @@ extern "C" {
     /** @brief Permanent error base code */
 #define ERROR_PERMANENT 0x1000
 
-    /** @brief Permanent: Streams not supported by this node */
-#define ERROR_PERMANENT_STREAMS_NOT_SUPPORTED 0x1010
+    /** @brief Permanent: Streams not supported by this node (StreamTransportS Initiate Reply reject code; 0x101x is reserved in MessageNetworkS) */
+#define ERROR_PERMANENT_STREAMS_NOT_SUPPORTED 0x1040
 
     /** @brief Permanent: Unknown or unsupported address space (0x1080 | 0x0001) */
 #define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN 0x1081

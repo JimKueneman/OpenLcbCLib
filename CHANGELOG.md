@@ -54,6 +54,45 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **Well-known event IDs for ident button and link errors were wrong.**
+  `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
+  says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says
+  FD.01..FD.04. Nothing in the library consumes them; applications and the
+  Node Wizard's well-known event list pick up the corrected values.
+- **Heartbeat Request deadline is one byte, not three.** The train node sent the
+  deadline as three bytes and the controller side read three, while
+  TrainControlS 6.6 and OpenMRN carry a single byte of seconds at byte 2. A
+  three-byte read of OpenMRN's three-byte message ran past the payload. Both
+  sides now use one byte; the sender clamps to 255.
+- **Stream "streams not supported" reject code.** Was 0x1010, which
+  MessageNetworkS reserves; StreamTransportS lists 0x1040 for this reject.
+- **Stream handler hardening.** A Stream Initiate Request shorter than the
+  mandatory five bytes is dropped instead of read past its end; a proposed
+  Max Buffer Size of zero (out of the standard's 1..65535 range) is rejected
+  with invalid arguments instead of opening a stream whose window can never
+  advance and whose slot never frees; a Stream Initiate Reply is accepted only
+  for a stream this node initiated that is still waiting, so a duplicate can no
+  longer reset the window mid-transfer; destination stream IDs skip values an
+  active inbound stream still holds; and stream lookup prefers the entry whose
+  role matches the message, so coinciding inbound and outbound IDs with one
+  peer resolve correctly.
+- **TCP multipart flag bits were in the reserved field.** `tcp_types.h` placed
+  the multipart field at 0x00C0 (bits 7-6). TcpTransferS defines it as the
+  0x0C00 pair (bits 11-10) with the lower ten bits reserved, and the Technical
+  Note and OpenMRN agree: first 0x0400, middle 0x0C00, last 0x0800. Every
+  multipart frame from a conforming sender decoded as single-part and was
+  forwarded as a corrupt standalone message. Values corrected; the receive
+  logic compares symbolically and is unchanged. Tests now pin the raw wire
+  bits. (Section 5.1 of the draft standard refers to 0x0010/0x0020/0x0030
+  bits, which contradicts its own definition; reported as a spec issue, not
+  followed.)
+- **TCP login sent a Verify Node ID Global with source Node ID zero.** A
+  leading-zero Node ID is reserved as "uninitialized" and must never appear on
+  the wire, and Message Network 3.4.1 forbids any message before a node's
+  Initialization Complete, which no local node has sent at link-up. The send is
+  removed: TCP login now goes straight to complete and each node's normal
+  OpenLCB login announces it. The unused login interface hooks and the three
+  never-reached login states are removed with it.
 - **Config memory overrun clamp fired one byte early.** `_check_for_read_overrun()`
   and `_check_for_write_overrun()` treated a transfer ending exactly one byte short
   of `highest_address` as an overrun and grew it by one byte, so a one-byte write at
