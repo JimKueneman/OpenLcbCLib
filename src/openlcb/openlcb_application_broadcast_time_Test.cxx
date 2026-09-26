@@ -78,6 +78,8 @@ static int fail_after_count = -1;  // -1 means disabled; otherwise fail after N 
 static uint16_t last_sent_mti = 0;
 static event_id_t last_sent_event_id = 0;
 static int send_count = 0;
+static event_id_t sent_event_log[32];
+static int sent_event_log_count = 0;
 
 static node_parameters_t _test_node_parameters = {
 
@@ -164,6 +166,12 @@ static bool _mock_transmit_openlcb_message(openlcb_msg_t *openlcb_msg) {
     last_sent_mti = openlcb_msg->mti;
     last_sent_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
     send_count++;
+
+    if (sent_event_log_count < 32) {
+
+        sent_event_log[sent_event_log_count++] = last_sent_event_id;
+
+    }
 
     return true;
 
@@ -304,6 +312,7 @@ static void _reset_test_state(void) {
     last_sent_mti = 0;
     last_sent_event_id = 0;
     send_count = 0;
+    sent_event_log_count = 0;
     callback_time_received = false;
     callback_date_received = false;
     callback_year_received = false;
@@ -1694,8 +1703,9 @@ TEST(BroadcastTimeApp, send_date_rollover_does_not_fire_callback)
 // Section 6c: §6.5 Set Time/Date/Year/Rate echo tests
 // ----------------------------------------------------------------------------
 // Per OpenLCB Broadcast Time Standard §6.5, when a producer receives a Set
-// event for Time/Date/Year/Rate, it must make the change effective and
-// produce the corresponding effective Report event immediately.  Start/Stop
+// event for Time/Date/Year/Rate, it must make the change effective
+// immediately and produce the corresponding effective Report event (sent from
+// the producer node on the next 100ms tick).  Start/Stop
 // are NOT in the spec's Report-response list — they only get the 3-second
 // §6.3 sync burst.  These tests verify the immediate Report echo for the
 // four mandated cases and the absence of an echo for Start/Stop.
@@ -1721,6 +1731,9 @@ TEST(BroadcastTimeApp, receive_set_time_emits_report_time_echo)
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, true);
 
     ProtocolBroadcastTimeHandler_handle_time_event(&info, set_time);
+
+    // The report is sent from the producer node on the next 100ms tick
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
 
     // Echo must be Report Time (not Set Time) — different event-ID family.
     event_id_t expected_report = ProtocolBroadcastTimeHandler_create_time_event_id(
@@ -1750,6 +1763,9 @@ TEST(BroadcastTimeApp, receive_set_date_emits_report_date_echo)
 
     ProtocolBroadcastTimeHandler_handle_time_event(&info, set_date);
 
+    // The report is sent from the producer node on the next 100ms tick
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
+
     event_id_t expected_report = ProtocolBroadcastTimeHandler_create_date_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, false);
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
@@ -1777,6 +1793,9 @@ TEST(BroadcastTimeApp, receive_set_year_emits_report_year_echo)
 
     ProtocolBroadcastTimeHandler_handle_time_event(&info, set_year);
 
+    // The report is sent from the producer node on the next 100ms tick
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
+
     event_id_t expected_report = ProtocolBroadcastTimeHandler_create_year_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, false);
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
@@ -1803,6 +1822,9 @@ TEST(BroadcastTimeApp, receive_set_rate_emits_report_rate_echo)
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, true);
 
     ProtocolBroadcastTimeHandler_handle_time_event(&info, set_rate);
+
+    // The report is sent from the producer node on the next 100ms tick
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
 
     event_id_t expected_report = ProtocolBroadcastTimeHandler_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
@@ -4679,5 +4701,78 @@ TEST(BroadcastTimeApp, make_clock_id_works_with_setup_consumer)
     EXPECT_TRUE(cs != NULL);
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_is_consumer(clock_id));
     EXPECT_EQ(cs->clock_id, clock_id);
+
+}
+
+
+// ============================================================================
+// Section: Audit - midnight rollover reports must survive transport refusal
+// ============================================================================
+//
+// BroadcastTimeS (Producer, date rollover): when the clock crosses midnight
+// the producer shall produce the Date Rollover event followed by Report Year
+// and Report Date events.  A transport that is momentarily busy (send returns
+// false) must not cause those reports to be silently dropped; they must go
+// out once the transport accepts messages again.
+
+static bool _event_type_was_sent(broadcast_time_event_type_enum type) {
+
+    for (int i = 0; i < sent_event_log_count; i++) {
+
+        if (ProtocolBroadcastTimeHandler_get_event_type(sent_event_log[i]) == type) {
+
+            return true;
+
+        }
+
+    }
+
+    return false;
+
+}
+
+TEST(BroadcastTimeApp, audit_midnight_rollover_reports_retried_after_transport_busy)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running  = true;
+    clock_state->rate.rate   = 240;  // 60x
+    clock_state->time.hour   = 23;
+    clock_state->time.minute = 59;
+    clock_state->date.day    = 15;
+    clock_state->date.month  = 6;
+    clock_state->year.year   = 2026;
+
+    // Transport accepts the first message (Report Time) then refuses the rest.
+    fail_after_count = 1;
+
+    for (int tick = 0; tick < 10; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
+
+    }
+
+    EXPECT_EQ(clock_state->time.hour, 0);
+    EXPECT_EQ(clock_state->date.day, 16);
+
+    // Transport free again; run a few more ticks (less than one fast minute).
+    fail_after_count = -1;
+
+    for (int tick = 10; tick < 15; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
+
+    }
+
+    EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_DATE_ROLLOVER));
+    EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_REPORT_YEAR));
+    EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_REPORT_DATE));
 
 }

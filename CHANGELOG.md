@@ -54,6 +54,20 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **Broadcast Time reports could be lost when the transport was busy.** At
+  midnight the producer sent Date Rollover, Report Year and Report Date back to
+  back, and a Set Time/Date/Year/Rate sent its Report from inside the event
+  handler (from the node that received the Set, not the clock's producer node);
+  none of these checked the send result. Each clock now keeps a
+  `reports_pending` set of `BROADCAST_TIME_REPORT_PENDING_*` flags. The rollover,
+  the periodic Report Time and the Set handler (through the new
+  `OpenLcbApplicationBroadcastTime_request_report()`) only set flags; the 100ms
+  tick sends pending reports from the producer node in order (Time, Date
+  Rollover, Year, Date, Rate) and clears each flag only when its send succeeds.
+  The Set report now goes out on the next tick instead of from inside the
+  handler (BroadcastTimeS 6.5). A clock with no producer node still sends
+  nothing. (`openlcb_application_broadcast_time.c`,
+  `protocol_broadcast_time_handler.c`)
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
   says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says

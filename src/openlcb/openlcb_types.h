@@ -562,6 +562,7 @@ extern "C" {
         uint16_t report_cooldown_ticks; /**< @brief Cooldown between periodic Report Time events (600 = 60s). */
         uint8_t previous_run_state;     /**< @brief Last-seen producer node run_state for startup sync detection. */
         void *producer_node; /**< @brief Node pointer for sending (set in setup_producer). */
+        uint8_t reports_pending;        /**< @brief BROADCAST_TIME_REPORT_PENDING_* bits still to be sent. */
 
     } broadcast_clock_t;
 
