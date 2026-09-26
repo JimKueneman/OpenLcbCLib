@@ -1324,6 +1324,26 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
 }
 
     /**
+     * @brief Advances the sibling dispatch; clears the main slot if that was the last sibling.
+     *
+     * @details What step 2c did after every dispatch; also called from step 2b when a
+     * sibling's enumeration ends.
+     */
+static void _sibling_dispatch_advance_and_finish(void) {
+
+    _sibling_dispatch_advance();
+
+    // If dispatch just completed (no more siblings), clear main slot
+    if (!_sibling_dispatch_active) {
+
+        _statemachine_info.outgoing_msg_info.msg_ptr->state.loopback = false;
+        _statemachine_info.outgoing_msg_info.valid = false;
+
+    }
+
+}
+
+    /**
     * @brief Runs one iteration of the main state machine dispatch loop.
     *
     * @details Priority order:
@@ -1362,8 +1382,19 @@ void OpenLcbMainStatemachine_run(void) {
 
         }
 
+        // A sibling that starts an enumeration (a train forwarding a command to its
+        // listeners, one outgoing message per pass) stays the current node until it clears
+        // the enumerate flag; only then does the dispatch advance, as on the main path
+        // (Priority 3 runs before the next node is enumerated).
+
         // 2b: If sibling handler is mid-enumerate, continue it
         if (_sibling_handle_reenumerate()) {
+
+            if (!_sibling_statemachine_info.incoming_msg_info.enumerate) {
+
+                _sibling_dispatch_advance_and_finish();
+
+            }
 
             return;
 
@@ -1372,14 +1403,11 @@ void OpenLcbMainStatemachine_run(void) {
         // 2c: Dispatch to current sibling node
         if (_sibling_dispatch_current()) {
 
-            // After dispatch, advance to next sibling for next _run()
-            _sibling_dispatch_advance();
+            // After dispatch, advance to next sibling for next _run() -- unless this sibling
+            // is enumerating (2b continues it and advances when it is done)
+            if (!_sibling_statemachine_info.incoming_msg_info.enumerate) {
 
-            // If dispatch just completed (no more siblings), clear main slot
-            if (!_sibling_dispatch_active) {
-
-                _statemachine_info.outgoing_msg_info.msg_ptr->state.loopback = false;
-                _statemachine_info.outgoing_msg_info.valid = false;
+                _sibling_dispatch_advance_and_finish();
 
             }
 
