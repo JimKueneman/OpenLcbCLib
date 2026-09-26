@@ -242,6 +242,29 @@ listener_alias_entry_t *AliasMappingListener_find_by_node_id(node_id_t node_id) 
 
 }
 
+    /** @brief Finds the entry holding a resolved alias. */
+listener_alias_entry_t *AliasMappingListener_find_by_alias(uint16_t alias) {
+
+    if (alias == 0) {
+
+        return NULL;
+
+    }
+
+    for (int i = 0; i < LISTENER_ALIAS_TABLE_DEPTH; i++) {
+
+        if ((_table[i].node_id != 0) && (_table[i].alias == alias)) {
+
+            return &_table[i];
+
+        }
+
+    }
+
+    return NULL;
+
+}
+
     /**
      * @brief Zeros all alias fields but preserves registered node_ids.
      *
