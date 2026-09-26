@@ -54,6 +54,15 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **A node could not receive replies to its own Memory Configuration requests.**
+  None of the datagram handler's reply slots (read, write, read/write stream,
+  write under mask; options, address space info, lock, unique ID; OK and fail)
+  had an implementation, so a node built on this library that read or wrote
+  another node's configuration memory answered the reply with Datagram Rejected.
+  All 61 slots are now wired to `ProtocolDatagramHandler_handle_config_mem_reply`,
+  which answers Datagram Received OK without Reply Pending (nothing follows a
+  reply) and passes the reply to a new optional callback, `on_config_mem_reply`
+  in `openlcb_config_t`. With no callback the reply is acknowledged and dropped.
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
   says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says
