@@ -54,6 +54,19 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **CAN reassembly errors were never reported to the sender.** When a
+  multi-frame message arrived out of order (a middle or last frame without a
+  first frame, a second first frame before the last one, or a stale assembly),
+  or no buffer was free to assemble it, the CAN receive handler built the
+  Optional Interaction Rejected / Datagram Rejected reply as an OpenLCB message
+  and pushed it into the incoming FIFO, where no local node matched it and it
+  was dropped. The OIR payload also held the sender's alias where the error
+  code belongs and the error code where the rejected MTI belongs. The reject is
+  now built as a CAN frame from our alias to the sender and queued on the CAN
+  transmit FIFO: OIR carries the error code then the rejected MTI
+  (MessageNetworkS 3.3.4, 7.3.3.4), Datagram Rejected the error code only
+  (DatagramTransportS 4.3). Global multi-frame messages (PC Event Report with
+  payload) are never rejected. (`can_rx_message_handler.c`)
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
   says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says

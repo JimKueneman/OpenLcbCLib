@@ -272,6 +272,23 @@ void _test_for_all_buffer_stores_empty(void)
     EXPECT_EQ(OpenLcbBufferStore_stream_messages_allocated(), 0);
 }
 
+    /** @brief Pops the one reject frame queued for transmission, checks its MTI, error code and addressing, and frees it. */
+void _expect_one_transmitted_reject(uint16_t reject_mti, uint16_t error_code)
+{
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 1);
+
+    can_msg_t *tx = CanBufferFifo_pop();
+    ASSERT_NE(tx, nullptr);
+
+    EXPECT_EQ(CanUtilities_convert_can_mti_to_openlcb_mti(tx), reject_mti);
+    EXPECT_EQ(CanUtilities_extract_source_alias_from_can_identifier(tx), NODE_ALIAS_1);
+    EXPECT_EQ(CanUtilities_extract_dest_alias_from_can_message(tx), SOURCE_ALIAS);
+    EXPECT_EQ(((uint16_t) tx->payload[2] << 8) | tx->payload[3], error_code);
+
+    CanBufferStore_free_buffer(tx);
+}
+
 /*******************************************************************************
  * TESTS
  ******************************************************************************/
@@ -893,19 +910,11 @@ TEST(CanRxMessageHandler, first_frame_already_in_progress)
                                    0x11, 0x12, 0x13, 0x14, 0x15, 0x16);
     CanRxMessageHandler_first_frame(&can_msg, 2, DATAGRAM);
     
-    // Should have generated a reject message in FIFO
-    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
+    // Should have queued a reject for transmission to the sender
+    _expect_one_transmitted_reject(MTI_OPTIONAL_INTERACTION_REJECTED, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
     
     // Original message should still be in list
     EXPECT_FALSE(OpenLcbBufferList_is_empty());
-    
-    // Clean up
-    openlcb_msg_t *reject_msg = OpenLcbBufferFifo_pop();
-    if (reject_msg)
-    {
-        EXPECT_EQ(reject_msg->mti, MTI_OPTIONAL_INTERACTION_REJECTED);
-        OpenLcbBufferStore_free_buffer(reject_msg);
-    }
     
     openlcb_msg_t *msg = OpenLcbBufferList_index_of(0);
     if (msg)
@@ -934,15 +943,8 @@ TEST(CanRxMessageHandler, middle_frame_without_first)
                                    0x11, 0x12, 0x13, 0x14, 0x15, 0x16);
     CanRxMessageHandler_middle_frame(&can_msg, 2);
     
-    // Should have generated a reject message in FIFO
-    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
-    
-    openlcb_msg_t *reject_msg = OpenLcbBufferFifo_pop();
-    if (reject_msg)
-    {
-        EXPECT_EQ(reject_msg->mti, MTI_OPTIONAL_INTERACTION_REJECTED);
-        OpenLcbBufferStore_free_buffer(reject_msg);
-    }
+    // Should have queued a reject for transmission to the sender
+    _expect_one_transmitted_reject(MTI_OPTIONAL_INTERACTION_REJECTED, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
     
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
@@ -964,15 +966,8 @@ TEST(CanRxMessageHandler, last_frame_without_first)
                                    0x21, 0x22, 0x23, 0x24, 0x25, 0x26);
     CanRxMessageHandler_last_frame(&can_msg, 2);
     
-    // Should have generated a reject message in FIFO
-    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
-    
-    openlcb_msg_t *reject_msg = OpenLcbBufferFifo_pop();
-    if (reject_msg)
-    {
-        EXPECT_EQ(reject_msg->mti, MTI_OPTIONAL_INTERACTION_REJECTED);
-        OpenLcbBufferStore_free_buffer(reject_msg);
-    }
+    // Should have queued a reject for transmission to the sender
+    _expect_one_transmitted_reject(MTI_OPTIONAL_INTERACTION_REJECTED, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
     
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
@@ -1125,10 +1120,10 @@ TEST(CanRxMessageHandler, first_frame_buffer_allocation_failure)
     
     CanRxMessageHandler_first_frame(&can_msg, 2, DATAGRAM);
     
-    // Buffer allocation failed, so reject message also fails to allocate
-    // Result: no messages in any queue (failure is silent)
-    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+    // No OpenLCB buffer to assemble into: the sender is told to retry
+    // (the reject uses a CAN buffer, not an OpenLCB one)
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
+    _expect_one_transmitted_reject(MTI_OPTIONAL_INTERACTION_REJECTED, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
     
     force_fail_allocate = false;
     
@@ -1578,26 +1573,19 @@ TEST(CanRxMessageHandler, datagram_first_frame_already_in_progress_reject)
     InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // Start a datagram sequence
-    CanUtilities_load_can_message(&can_msg, 0x1A000000 | SOURCE_ALIAS, 8,
+    CanUtilities_load_can_message(&can_msg, 0x1A000000 | ((uint32_t) NODE_ALIAS_1 << 12) | SOURCE_ALIAS, 8,
                                    NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
                                    0x01, 0x02, 0x03, 0x04, 0x05, 0x06);
     CanRxMessageHandler_first_frame(&can_msg, 0, DATAGRAM);
     
     // Try to start ANOTHER datagram from same source (protocol violation)
-    CanUtilities_load_can_message(&can_msg, 0x1A000000 | SOURCE_ALIAS, 8,
+    CanUtilities_load_can_message(&can_msg, 0x1A000000 | ((uint32_t) NODE_ALIAS_1 << 12) | SOURCE_ALIAS, 8,
                                    NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
                                    0x11, 0x12, 0x13, 0x14, 0x15, 0x16);
     CanRxMessageHandler_first_frame(&can_msg, 0, DATAGRAM);
     
-    // Should generate MTI_DATAGRAM_REJECTED_REPLY (not OPTIONAL_INTERACTION_REJECTED)
-    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
-    
-    openlcb_msg_t *reject_msg = OpenLcbBufferFifo_pop();
-    if (reject_msg)
-    {
-        EXPECT_EQ(reject_msg->mti, MTI_DATAGRAM_REJECTED_REPLY);
-        OpenLcbBufferStore_free_buffer(reject_msg);
-    }
+    // Should transmit MTI_DATAGRAM_REJECTED_REPLY (not OPTIONAL_INTERACTION_REJECTED)
+    _expect_one_transmitted_reject(MTI_DATAGRAM_REJECTED_REPLY, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
     
     // Clean up the in-progress datagram
     openlcb_msg_t *msg = OpenLcbBufferList_index_of(0);
@@ -1612,13 +1600,13 @@ TEST(CanRxMessageHandler, datagram_first_frame_already_in_progress_reject)
 }
 
 /**
- * Test: Reject message with OpenLCB buffer allocation failure
- * Verifies graceful handling when OpenLCB buffer store is exhausted
+ * Test: Reject message with CAN buffer allocation failure
+ * Verifies graceful handling when the CAN buffer store is exhausted
  * 
- * Tests the if (target_openlcb_msg) check in _load_reject_message (line 121)
+ * Tests the CAN buffer check in _load_reject_message
  * When buffer allocation fails, reject message should be silently dropped
  */
-TEST(CanRxMessageHandler, reject_message_openlcb_buffer_fail)
+TEST(CanRxMessageHandler, reject_message_can_buffer_fail)
 {
     _global_initialize();
     _global_reset_variables();
@@ -1628,8 +1616,8 @@ TEST(CanRxMessageHandler, reject_message_openlcb_buffer_fail)
     InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
-    // Force OpenLCB buffer allocation failure
-    force_fail_allocate = true;
+    // Force CAN buffer allocation failure (the reject is a CAN frame)
+    fail_buffer = true;
     
     // Try to send last frame without first frame (normally generates reject)
     CanUtilities_load_can_message(&can_msg, 0x19C48000 | SOURCE_ALIAS, 8,
@@ -1637,10 +1625,11 @@ TEST(CanRxMessageHandler, reject_message_openlcb_buffer_fail)
                                    0x21, 0x22, 0x23, 0x24, 0x25, 0x26);
     CanRxMessageHandler_last_frame(&can_msg, 2);
     
-    // Should NOT have generated a reject message (silent drop due to buffer failure)
+    // Should NOT have queued a reject anywhere (silent drop due to buffer failure)
     EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 0);
     
-    force_fail_allocate = false;
+    fail_buffer = false;
     
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
@@ -1663,20 +1652,13 @@ TEST(CanRxMessageHandler, datagram_middle_frame_without_first_reject)
     InternalNodeAliasTable_register(SOURCE_ALIAS, 0x050403020106);
     
     // Send middle datagram frame without first frame (protocol violation)
-    CanUtilities_load_can_message(&can_msg, 0x1B000000 | SOURCE_ALIAS, 8,
+    CanUtilities_load_can_message(&can_msg, 0x1B000000 | ((uint32_t) NODE_ALIAS_1 << 12) | SOURCE_ALIAS, 8,
                                    NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
                                    0x11, 0x12, 0x13, 0x14, 0x15, 0x16);
     CanRxMessageHandler_middle_frame(&can_msg, 0);
     
-    // Should generate MTI_DATAGRAM_REJECTED_REPLY
-    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
-    
-    openlcb_msg_t *reject_msg = OpenLcbBufferFifo_pop();
-    if (reject_msg)
-    {
-        EXPECT_EQ(reject_msg->mti, MTI_DATAGRAM_REJECTED_REPLY);
-        OpenLcbBufferStore_free_buffer(reject_msg);
-    }
+    // Should transmit MTI_DATAGRAM_REJECTED_REPLY
+    _expect_one_transmitted_reject(MTI_DATAGRAM_REJECTED_REPLY, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
     
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
@@ -1952,16 +1934,8 @@ TEST(CanRxMessageHandler, middle_frame_timeout)
     // Stale assembly freed from BufferList
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
 
-    // Reject message should be in the OpenLCB FIFO
-    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
-
-    openlcb_msg_t *reject = OpenLcbBufferFifo_pop();
-
-    if (reject) {
-
-        OpenLcbBufferStore_free_buffer(reject);
-
-    }
+    // Reject should be queued for transmission to the sender
+    _expect_one_transmitted_reject(MTI_OPTIONAL_INTERACTION_REJECTED, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
@@ -2664,6 +2638,208 @@ TEST(CanRxMessageHandler, ame_global_skips_non_permitted_for_listener)
         }
 
     }
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+
+/*******************************************************************************
+ * REASSEMBLY REJECT ROUTING AND PAYLOAD (spec-driven)
+ *
+ * MessageNetworkS, Optional Interaction Rejected: addressed to the node
+ * that sent the rejected message; payload = error code (2 bytes) followed by
+ * the MTI of the rejected message (2 bytes).
+ * DatagramTransportS / CanFrameTransferS: an out-of-order datagram frame is
+ * answered with Datagram Rejected (error code, Temporary) addressed back to
+ * the sender.
+ * Both replies are produced by our node and must go out on the wire (the CAN
+ * transmit FIFO is the only outbound path this module has), not into the
+ * incoming OpenLCB FIFO that feeds our own nodes.
+ ******************************************************************************/
+
+static void _drain_all_reject_queues(void)
+{
+
+    while (OpenLcbBufferFifo_get_allocated_count() > 0) {
+
+        openlcb_msg_t *msg = OpenLcbBufferFifo_pop();
+
+        if (msg) {
+
+            OpenLcbBufferStore_free_buffer(msg);
+
+        }
+
+    }
+
+    while (CanBufferFifo_get_allocated_count() > 0) {
+
+        can_msg_t *msg = CanBufferFifo_pop();
+
+        if (msg) {
+
+            CanBufferStore_free_buffer(msg);
+
+        }
+
+    }
+
+}
+
+TEST(CanRxMessageHandler, oir_reject_for_orphan_middle_frame_is_transmitted_to_sender)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+
+    // SNIP reply middle frame from SOURCE_ALIAS to NODE_ALIAS_1 with no first frame
+    CanUtilities_load_can_message(&can_msg, 0x19A08000 | SOURCE_ALIAS, 8,
+                                   0x30 | NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
+                                   0x11, 0x12, 0x13, 0x14, 0x15, 0x16);
+    CanRxMessageHandler_middle_frame(&can_msg, 2);
+
+    // Reject must not be delivered to our own nodes as an incoming message
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+
+    // Reject must be queued for transmission
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 1);
+
+    can_msg_t *tx = CanBufferFifo_pop();
+    EXPECT_NE(tx, nullptr);
+
+    if (tx) {
+
+        EXPECT_EQ(CanUtilities_convert_can_mti_to_openlcb_mti(tx), MTI_OPTIONAL_INTERACTION_REJECTED);
+        EXPECT_EQ(CanUtilities_extract_source_alias_from_can_identifier(tx), NODE_ALIAS_1);
+        EXPECT_EQ(CanUtilities_extract_dest_alias_from_can_message(tx), SOURCE_ALIAS);
+        EXPECT_GE(tx->payload_count, 6);
+        EXPECT_EQ(((uint16_t) tx->payload[2] << 8) | tx->payload[3], ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        EXPECT_EQ(((uint16_t) tx->payload[4] << 8) | tx->payload[5], MTI_SIMPLE_NODE_INFO_REPLY);
+        CanBufferStore_free_buffer(tx);
+
+    }
+
+    _drain_all_reject_queues();
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, oir_reject_payload_is_error_code_then_rejected_mti)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+
+    CanUtilities_load_can_message(&can_msg, 0x19A08000 | SOURCE_ALIAS, 8,
+                                   0x20 | NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
+                                   0x21, 0x22, 0x23, 0x24, 0x25, 0x26);
+    CanRxMessageHandler_last_frame(&can_msg, 2);
+
+    // Inspect the reject wherever it was queued; this test checks content only
+    openlcb_msg_t *reject = OpenLcbBufferFifo_pop();
+
+    if (reject) {
+
+        EXPECT_EQ(reject->mti, MTI_OPTIONAL_INTERACTION_REJECTED);
+        EXPECT_EQ(reject->source_alias, NODE_ALIAS_1);
+        EXPECT_EQ(reject->dest_alias, SOURCE_ALIAS);
+        EXPECT_GE(reject->payload_count, 4);
+        EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(reject, 0), ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(reject, 2), MTI_SIMPLE_NODE_INFO_REPLY);
+        OpenLcbBufferStore_free_buffer(reject);
+
+    } else {
+
+        can_msg_t *tx = CanBufferFifo_pop();
+        ASSERT_NE(tx, nullptr);
+        EXPECT_EQ(((uint16_t) tx->payload[2] << 8) | tx->payload[3], ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        EXPECT_EQ(((uint16_t) tx->payload[4] << 8) | tx->payload[5], MTI_SIMPLE_NODE_INFO_REPLY);
+        CanBufferStore_free_buffer(tx);
+
+    }
+
+    _drain_all_reject_queues();
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, datagram_reject_for_orphan_middle_frame_is_transmitted_to_sender)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+
+    // Datagram middle frame (frame type 4) with no datagram first frame
+    CanUtilities_load_can_message(&can_msg, 0x1C000000 | ((uint32_t) NODE_ALIAS_1 << 12) | SOURCE_ALIAS, 8,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+    CanRxMessageHandler_middle_frame(&can_msg, 0);
+
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 1);
+
+    can_msg_t *tx = CanBufferFifo_pop();
+    EXPECT_NE(tx, nullptr);
+
+    if (tx) {
+
+        EXPECT_EQ(CanUtilities_convert_can_mti_to_openlcb_mti(tx), MTI_DATAGRAM_REJECTED_REPLY);
+        EXPECT_EQ(CanUtilities_extract_source_alias_from_can_identifier(tx), NODE_ALIAS_1);
+        EXPECT_EQ(CanUtilities_extract_dest_alias_from_can_message(tx), SOURCE_ALIAS);
+        EXPECT_GE(tx->payload_count, 4);
+        EXPECT_EQ(((uint16_t) tx->payload[2] << 8) | tx->payload[3], ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        CanBufferStore_free_buffer(tx);
+
+    }
+
+    _drain_all_reject_queues();
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+/*******************************************************************************
+ * A global multi-frame message (PC Event Report with payload) is never
+ * rejected: a middle or last frame without its first frame is dropped and
+ * nothing is sent.
+ ******************************************************************************/
+
+TEST(CanRxMessageHandler, global_middle_frame_without_first_not_rejected)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+
+    // PCER with payload, middle frame, no first frame
+    CanUtilities_load_can_message(&can_msg, 0x19F15000 | SOURCE_ALIAS, 8,
+                                   0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18);
+    CanRxMessageHandler_middle_frame(&can_msg, 0);
+
+    CanUtilities_load_can_message(&can_msg, 0x19F14000 | SOURCE_ALIAS, 8,
+                                   0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28);
+    CanRxMessageHandler_last_frame(&can_msg, 0);
+
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 0);
 
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();

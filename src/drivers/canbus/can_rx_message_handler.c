@@ -96,18 +96,18 @@ static void _fill_source_id_from_listener(openlcb_msg_t *msg) {
 }
 
     /**
-     * @brief Builds and queues a Datagram Rejected or Optional Interaction Rejected reply.
+     * @brief Builds a Datagram Rejected or Optional Interaction Rejected CAN frame and queues it for transmission.
      *
      * @details Algorithm:
-     * -# Allocate an OpenLCB BASIC buffer; silently drop if allocation fails.
-     * -# Map MTI: datagram → MTI_DATAGRAM_REJECTED_REPLY, others → MTI_OPTIONAL_INTERACTION_REJECTED.
-     * -# Load the reply message with swapped source/dest aliases.
-     * -# Write dest_alias and error_code into payload bytes 0-1 and 2-3.
-     * -# Push to the OpenLCB Tx FIFO.
+     * -# Drop if the rejected message was global (our alias is 0): a global message is never rejected.
+     * -# Allocate a CAN buffer; silently drop if allocation fails.
+     * -# Datagram frames are answered with Datagram Rejected (error code only), all others with
+     *    Optional Interaction Rejected (error code then the rejected MTI).
+     * -# Build the addressed frame from our alias to the sender and push it to the CAN transmit FIFO.
      *
      * @verbatim
-     * @param source_alias Alias of the node that sent the problematic frame.
-     * @param dest_alias   Alias of our node that received the frame.
+     * @param source_alias Alias of our node that received the frame (the reject's source).
+     * @param dest_alias   Alias of the node that sent the problematic frame (the reject's destination).
      * @param mti          Original MTI of the message being rejected.
      * @param error_code   OpenLCB error code (e.g. ERROR_TEMPORARY_OUT_OF_ORDER_*).
      * @endverbatim
@@ -116,32 +116,47 @@ static void _fill_source_id_from_listener(openlcb_msg_t *msg) {
      */
 static void _load_reject_message(uint16_t source_alias, uint16_t dest_alias, uint16_t mti, uint16_t error_code) {
 
-    openlcb_msg_t *target_openlcb_msg = _interface->openlcb_buffer_store_allocate_buffer(BASIC);
+    if (source_alias == 0) {
 
-    if (target_openlcb_msg) {
-
-        if (mti == MTI_DATAGRAM) {
-
-            mti = MTI_DATAGRAM_REJECTED_REPLY;
-
-
-        } else {
-
-            mti = MTI_OPTIONAL_INTERACTION_REJECTED;
-
-        }
-
-        // TODO: Probably Stream is a special case too
-
-        OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti);
-
-        OpenLcbUtilities_copy_word_to_openlcb_payload(target_openlcb_msg, dest_alias, 0);
-
-        OpenLcbUtilities_copy_word_to_openlcb_payload(target_openlcb_msg, error_code, 2);
-
-        OpenLcbBufferFifo_push(target_openlcb_msg);
+        return;
 
     }
+
+    can_msg_t *outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
+
+    if (!outgoing_can_msg) {
+
+        return;
+
+    }
+
+    uint16_t reject_mti = MTI_OPTIONAL_INTERACTION_REJECTED;
+
+    if (mti == MTI_DATAGRAM) {
+
+        reject_mti = MTI_DATAGRAM_REJECTED_REPLY;
+
+    }
+
+    // TODO: Probably Stream is a special case too
+
+    outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE | ((uint32_t) (reject_mti & 0x0FFF) << 12) | source_alias;
+
+    outgoing_can_msg->payload[0] = MULTIFRAME_ONLY | (uint8_t) ((dest_alias >> 8) & 0x0F);
+    outgoing_can_msg->payload[1] = (uint8_t) (dest_alias & 0xFF);
+    outgoing_can_msg->payload[2] = (uint8_t) (error_code >> 8);
+    outgoing_can_msg->payload[3] = (uint8_t) (error_code & 0xFF);
+    outgoing_can_msg->payload_count = 4;
+
+    if (reject_mti == MTI_OPTIONAL_INTERACTION_REJECTED) {
+
+        outgoing_can_msg->payload[4] = (uint8_t) (mti >> 8);
+        outgoing_can_msg->payload[5] = (uint8_t) (mti & 0xFF);
+        outgoing_can_msg->payload_count = 6;
+
+    }
+
+    CanBufferFifo_push(outgoing_can_msg);
 
 }
 
