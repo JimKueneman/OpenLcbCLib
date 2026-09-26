@@ -796,13 +796,9 @@ static void _build_login_statemachine(void) {
 
     memset(&_login_sm, 0, sizeof(_login_sm));
 
-    // Direct transport send — login has its own inline sibling dispatch (Phase 2)
-#ifdef OPENLCB_COMPILE_CAN
-    _login_sm.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
-#endif
-#ifdef OPENLCB_COMPILE_TCP
-    _login_sm.send_openlcb_msg = TcpConfig_get_send_openlcb_msg();
-#endif
+    // Through the main state machine's send path: queued on multi-node devices
+    // and shown to the other local nodes on its dispatch stack
+    _login_sm.send_openlcb_msg = &OpenLcbMainStatemachine_send_with_sibling_dispatch;
 
     // Library-internal wiring
     _login_sm.openlcb_node_get_first          = &OpenLcbNode_get_first;
