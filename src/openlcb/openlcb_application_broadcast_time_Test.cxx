@@ -78,6 +78,8 @@ static int fail_after_count = -1;  // -1 means disabled; otherwise fail after N 
 static uint16_t last_sent_mti = 0;
 static event_id_t last_sent_event_id = 0;
 static int send_count = 0;
+static event_id_t sent_event_log[32];
+static int sent_event_log_count = 0;
 
 static node_parameters_t _test_node_parameters = {
 
@@ -164,6 +166,12 @@ static bool _mock_transmit_openlcb_message(openlcb_msg_t *openlcb_msg) {
     last_sent_mti = openlcb_msg->mti;
     last_sent_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
     send_count++;
+
+    if (sent_event_log_count < 32) {
+
+        sent_event_log[sent_event_log_count++] = last_sent_event_id;
+
+    }
 
     return true;
 
@@ -304,6 +312,7 @@ static void _reset_test_state(void) {
     last_sent_mti = 0;
     last_sent_event_id = 0;
     send_count = 0;
+    sent_event_log_count = 0;
     callback_time_received = false;
     callback_date_received = false;
     callback_year_received = false;
@@ -4679,5 +4688,78 @@ TEST(BroadcastTimeApp, make_clock_id_works_with_setup_consumer)
     EXPECT_TRUE(cs != NULL);
     EXPECT_TRUE(OpenLcbApplicationBroadcastTime_is_consumer(clock_id));
     EXPECT_EQ(cs->clock_id, clock_id);
+
+}
+
+
+// ============================================================================
+// Section: Audit - midnight rollover reports must survive transport refusal
+// ============================================================================
+//
+// BroadcastTimeS (Producer, date rollover): when the clock crosses midnight
+// the producer shall produce the Date Rollover event followed by Report Year
+// and Report Date events.  A transport that is momentarily busy (send returns
+// false) must not cause those reports to be silently dropped; they must go
+// out once the transport accepts messages again.
+
+static bool _event_type_was_sent(broadcast_time_event_type_enum type) {
+
+    for (int i = 0; i < sent_event_log_count; i++) {
+
+        if (ProtocolBroadcastTimeHandler_get_event_type(sent_event_log[i]) == type) {
+
+            return true;
+
+        }
+
+    }
+
+    return false;
+
+}
+
+TEST(BroadcastTimeApp, audit_midnight_rollover_reports_retried_after_transport_busy)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running  = true;
+    clock_state->rate.rate   = 240;  // 60x
+    clock_state->time.hour   = 23;
+    clock_state->time.minute = 59;
+    clock_state->date.day    = 15;
+    clock_state->date.month  = 6;
+    clock_state->year.year   = 2026;
+
+    // Transport accepts the first message (Report Time) then refuses the rest.
+    fail_after_count = 1;
+
+    for (int tick = 0; tick < 10; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
+
+    }
+
+    EXPECT_EQ(clock_state->time.hour, 0);
+    EXPECT_EQ(clock_state->date.day, 16);
+
+    // Transport free again; run a few more ticks (less than one fast minute).
+    fail_after_count = -1;
+
+    for (int tick = 10; tick < 15; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
+
+    }
+
+    EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_DATE_ROLLOVER));
+    EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_REPORT_YEAR));
+    EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_REPORT_DATE));
 
 }

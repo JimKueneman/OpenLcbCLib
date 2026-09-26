@@ -51,6 +51,7 @@
 #include "openlcb_node.h"
 #include "protocol_broadcast_time_handler.h"
 #include "openlcb_application_broadcast_time.h"
+#include "openlcb_application.h"
 
 
 // ============================================================================
@@ -2080,5 +2081,138 @@ TEST(BroadcastTimeHandler, invalid_date_month_zero_no_update)
     ASSERT_NE(cs, nullptr);
     EXPECT_FALSE(g_date_callback_called);
     EXPECT_EQ(cs->date.valid, 0);
+
+}
+
+
+// ============================================================================
+// Section 13: Audit - Set command reports on a producer clock
+// ============================================================================
+//
+// BroadcastTimeS section 6.5: when the clock generator receives a Set
+// Time/Date/Year/Rate event it shall produce the corresponding Report event
+// with the effective value.  The report must travel the normal outgoing
+// message path (the handler's outgoing slot) so the main state machine can
+// retry it when the transport is busy; it must not be lost.  When the clock
+// has no producer node there is nobody to send it and nothing is produced.
+
+static int g_audit_send_attempts = 0;
+
+static bool _audit_mock_send_refuse(openlcb_msg_t *openlcb_msg) {
+
+    (void) openlcb_msg;
+    g_audit_send_attempts++;
+
+    return false;  // transport busy
+
+}
+
+static interface_openlcb_application_t _audit_application_interface = {
+
+    .send_openlcb_msg = &_audit_mock_send_refuse,
+
+};
+
+static openlcb_node_t g_audit_node;
+static openlcb_statemachine_info_t g_audit_info;
+
+static void _audit_setup(bool with_producer_node) {
+
+    _reset_callback_flags();
+    g_audit_send_attempts = 0;
+
+    OpenLcbBufferStore_initialize();
+    OpenLcbApplication_initialize(&_audit_application_interface);
+    ProtocolBroadcastTimeHandler_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+
+    memset(&g_audit_node, 0, sizeof(openlcb_node_t));
+    g_audit_node.id = 0x050101010700ULL;
+    g_audit_node.alias = 0x0AAA;
+
+    OpenLcbApplicationBroadcastTime_setup_producer(with_producer_node ? &g_audit_node : NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    memset(&g_audit_info, 0, sizeof(openlcb_statemachine_info_t));
+    g_audit_info.openlcb_node = &g_audit_node;
+    g_audit_info.outgoing_msg_info.msg_ptr = &g_audit_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
+    g_audit_info.outgoing_msg_info.msg_ptr->payload = (openlcb_payload_t *) &g_audit_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
+    g_audit_info.outgoing_msg_info.msg_ptr->payload_type = WORKER;
+
+}
+
+static void _audit_expect_report_in_outgoing_slot(event_id_t expected_report) {
+
+    ASSERT_TRUE(g_audit_info.outgoing_msg_info.valid) << "Report not loaded into outgoing slot (transport refused " << g_audit_send_attempts << " direct send(s))";
+    EXPECT_EQ(g_audit_info.outgoing_msg_info.msg_ptr->mti, MTI_PC_EVENT_REPORT);
+    EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(g_audit_info.outgoing_msg_info.msg_ptr), expected_report);
+
+}
+
+TEST(BroadcastTimeHandler, audit_set_time_report_uses_outgoing_slot)
+{
+
+    _audit_setup(true);
+
+    ProtocolBroadcastTimeHandler_handle_time_event(&g_audit_info,
+            ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 8, 45, true));
+
+    _audit_expect_report_in_outgoing_slot(
+            ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 8, 45, false));
+
+}
+
+TEST(BroadcastTimeHandler, audit_set_date_report_uses_outgoing_slot)
+{
+
+    _audit_setup(true);
+
+    ProtocolBroadcastTimeHandler_handle_time_event(&g_audit_info,
+            ProtocolBroadcastTimeHandler_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 7, 4, true));
+
+    _audit_expect_report_in_outgoing_slot(
+            ProtocolBroadcastTimeHandler_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 7, 4, false));
+
+}
+
+TEST(BroadcastTimeHandler, audit_set_year_report_uses_outgoing_slot)
+{
+
+    _audit_setup(true);
+
+    ProtocolBroadcastTimeHandler_handle_time_event(&g_audit_info,
+            ProtocolBroadcastTimeHandler_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2030, true));
+
+    _audit_expect_report_in_outgoing_slot(
+            ProtocolBroadcastTimeHandler_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2030, false));
+
+}
+
+TEST(BroadcastTimeHandler, audit_set_rate_report_uses_outgoing_slot)
+{
+
+    _audit_setup(true);
+
+    ProtocolBroadcastTimeHandler_handle_time_event(&g_audit_info,
+            ProtocolBroadcastTimeHandler_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 16, true));
+
+    _audit_expect_report_in_outgoing_slot(
+            ProtocolBroadcastTimeHandler_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 16, false));
+
+}
+
+TEST(BroadcastTimeHandler, audit_set_time_no_producer_node_sends_nothing)
+{
+
+    _audit_setup(false);
+
+    ProtocolBroadcastTimeHandler_handle_time_event(&g_audit_info,
+            ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 8, 45, true));
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_EQ(cs->time.hour, 8);
+    EXPECT_EQ(cs->time.minute, 45);
+    EXPECT_FALSE(g_audit_info.outgoing_msg_info.valid);
+    EXPECT_EQ(g_audit_send_attempts, 0);
 
 }

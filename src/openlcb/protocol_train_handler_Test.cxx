@@ -6607,3 +6607,55 @@ TEST(ProtocolTrainHandler, heartbeat_controller_release_wrong_id_keeps_counter)
     EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 100);
 
 }
+
+// ============================================================================
+// Audit: every listener receives the forwarded command (TrainControlS 6.5)
+// ============================================================================
+
+#define TEST_LISTENER_D 0x0A0B0C0D0E0FULL
+
+TEST(ProtocolTrainHandler, audit_forwarding_estop_reaches_every_listener)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_A, 0);
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_B, 0);
+    _attach_test_listener(&sm, incoming, TEST_LISTENER_D, 0);
+
+    sm.outgoing_msg_info.valid = false;
+    sm.incoming_msg_info.enumerate = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_EMERGENCY_STOP, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    node_id_t expected[3] = {TEST_LISTENER_A, TEST_LISTENER_B, TEST_LISTENER_D};
+
+    for (int i = 0; i < 3; i++) {
+
+        ASSERT_TRUE(sm.outgoing_msg_info.valid);
+        EXPECT_EQ(sm.outgoing_msg_info.msg_ptr->dest_id, expected[i]);
+        EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0),
+                TRAIN_EMERGENCY_STOP | TRAIN_INSTRUCTION_P_BIT);
+        ASSERT_TRUE(sm.incoming_msg_info.enumerate);
+
+        // Main state machine re-dispatches while incoming enumerate is set
+        sm.outgoing_msg_info.valid = false;
+        ProtocolTrainHandler_handle_train_command(&sm);
+
+    }
+
+    EXPECT_FALSE(sm.incoming_msg_info.enumerate);
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}

@@ -2669,3 +2669,172 @@ TEST(CanRxMessageHandler, ame_global_skips_non_permitted_for_listener)
     _test_for_all_buffer_stores_empty();
 
 }
+
+
+/*******************************************************************************
+ * REASSEMBLY REJECT ROUTING AND PAYLOAD (spec-driven)
+ *
+ * MessageNetworkS, Optional Interaction Rejected: addressed to the node
+ * that sent the rejected message; payload = error code (2 bytes) followed by
+ * the MTI of the rejected message (2 bytes).
+ * DatagramTransportS / CanFrameTransferS: an out-of-order datagram frame is
+ * answered with Datagram Rejected (error code, Temporary) addressed back to
+ * the sender.
+ * Both replies are produced by our node and must go out on the wire (the CAN
+ * transmit FIFO is the only outbound path this module has), not into the
+ * incoming OpenLCB FIFO that feeds our own nodes.
+ ******************************************************************************/
+
+static void _drain_all_reject_queues(void)
+{
+
+    while (OpenLcbBufferFifo_get_allocated_count() > 0) {
+
+        openlcb_msg_t *msg = OpenLcbBufferFifo_pop();
+
+        if (msg) {
+
+            OpenLcbBufferStore_free_buffer(msg);
+
+        }
+
+    }
+
+    while (CanBufferFifo_get_allocated_count() > 0) {
+
+        can_msg_t *msg = CanBufferFifo_pop();
+
+        if (msg) {
+
+            CanBufferStore_free_buffer(msg);
+
+        }
+
+    }
+
+}
+
+TEST(CanRxMessageHandler, oir_reject_for_orphan_middle_frame_is_transmitted_to_sender)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+
+    // SNIP reply middle frame from SOURCE_ALIAS to NODE_ALIAS_1 with no first frame
+    CanUtilities_load_can_message(&can_msg, 0x19A08000 | SOURCE_ALIAS, 8,
+                                   0x30 | NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
+                                   0x11, 0x12, 0x13, 0x14, 0x15, 0x16);
+    CanRxMessageHandler_middle_frame(&can_msg, 2);
+
+    // Reject must not be delivered to our own nodes as an incoming message
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+
+    // Reject must be queued for transmission
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 1);
+
+    can_msg_t *tx = CanBufferFifo_pop();
+    EXPECT_NE(tx, nullptr);
+
+    if (tx) {
+
+        EXPECT_EQ(CanUtilities_convert_can_mti_to_openlcb_mti(tx), MTI_OPTIONAL_INTERACTION_REJECTED);
+        EXPECT_EQ(CanUtilities_extract_source_alias_from_can_identifier(tx), NODE_ALIAS_1);
+        EXPECT_EQ(CanUtilities_extract_dest_alias_from_can_message(tx), SOURCE_ALIAS);
+        EXPECT_GE(tx->payload_count, 6);
+        EXPECT_EQ(((uint16_t) tx->payload[2] << 8) | tx->payload[3], ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        EXPECT_EQ(((uint16_t) tx->payload[4] << 8) | tx->payload[5], MTI_SIMPLE_NODE_INFO_REPLY);
+        CanBufferStore_free_buffer(tx);
+
+    }
+
+    _drain_all_reject_queues();
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, oir_reject_payload_is_error_code_then_rejected_mti)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+
+    CanUtilities_load_can_message(&can_msg, 0x19A08000 | SOURCE_ALIAS, 8,
+                                   0x20 | NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
+                                   0x21, 0x22, 0x23, 0x24, 0x25, 0x26);
+    CanRxMessageHandler_last_frame(&can_msg, 2);
+
+    // Inspect the reject wherever it was queued; this test checks content only
+    openlcb_msg_t *reject = OpenLcbBufferFifo_pop();
+
+    if (reject) {
+
+        EXPECT_EQ(reject->mti, MTI_OPTIONAL_INTERACTION_REJECTED);
+        EXPECT_EQ(reject->source_alias, NODE_ALIAS_1);
+        EXPECT_EQ(reject->dest_alias, SOURCE_ALIAS);
+        EXPECT_GE(reject->payload_count, 4);
+        EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(reject, 0), ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(reject, 2), MTI_SIMPLE_NODE_INFO_REPLY);
+        OpenLcbBufferStore_free_buffer(reject);
+
+    } else {
+
+        can_msg_t *tx = CanBufferFifo_pop();
+        ASSERT_NE(tx, nullptr);
+        EXPECT_EQ(((uint16_t) tx->payload[2] << 8) | tx->payload[3], ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        EXPECT_EQ(((uint16_t) tx->payload[4] << 8) | tx->payload[5], MTI_SIMPLE_NODE_INFO_REPLY);
+        CanBufferStore_free_buffer(tx);
+
+    }
+
+    _drain_all_reject_queues();
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+
+TEST(CanRxMessageHandler, datagram_reject_for_orphan_middle_frame_is_transmitted_to_sender)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+
+    // Datagram middle frame (frame type 4) with no datagram first frame
+    CanUtilities_load_can_message(&can_msg, 0x1C000000 | ((uint32_t) NODE_ALIAS_1 << 12) | SOURCE_ALIAS, 8,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+    CanRxMessageHandler_middle_frame(&can_msg, 0);
+
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 1);
+
+    can_msg_t *tx = CanBufferFifo_pop();
+    EXPECT_NE(tx, nullptr);
+
+    if (tx) {
+
+        EXPECT_EQ(CanUtilities_convert_can_mti_to_openlcb_mti(tx), MTI_DATAGRAM_REJECTED_REPLY);
+        EXPECT_EQ(CanUtilities_extract_source_alias_from_can_identifier(tx), NODE_ALIAS_1);
+        EXPECT_EQ(CanUtilities_extract_dest_alias_from_can_message(tx), SOURCE_ALIAS);
+        EXPECT_GE(tx->payload_count, 4);
+        EXPECT_EQ(((uint16_t) tx->payload[2] << 8) | tx->payload[3], ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        CanBufferStore_free_buffer(tx);
+
+    }
+
+    _drain_all_reject_queues();
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
