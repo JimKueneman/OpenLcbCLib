@@ -5147,15 +5147,17 @@ TEST(OpenLcbMainStatemachine, sibling_path_b_wrapper)
     bool sent = OpenLcbMainStatemachine_send_with_sibling_dispatch(&app_msg);
     EXPECT_TRUE(sent);
 
-    // Message went to wire immediately
-    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), 1);
+    // Queued: goes to the wire when the run loop sends it
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), 0);
 
-    // Run loop picks up the pending slot and dispatches to siblings
+    // Run loop sends it and dispatches it to siblings
     for (int i = 0; i < 50; i++) {
 
         OpenLcbMainStatemachine_run();
 
     }
+
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), 1);
 
     // Siblings B and C should have seen the PCER
     EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_PC_EVENT_REPORT), 1);
@@ -5591,14 +5593,16 @@ TEST(OpenLcbMainStatemachine, sibling_stream_reply_routes_back_to_originating_si
     bool sent = OpenLcbMainStatemachine_send_with_sibling_dispatch(&app_msg);
     EXPECT_TRUE(sent);
 
-    // Request on wire immediately
-    EXPECT_EQ(_st_count_wire_mti(MTI_STREAM_INIT_REQUEST), 1);
+    // Queued: goes to the wire when the run loop sends it
+    EXPECT_EQ(_st_count_wire_mti(MTI_STREAM_INIT_REQUEST), 0);
 
     for (int i = 0; i < 100; i++) {
 
         OpenLcbMainStatemachine_run();
 
     }
+
+    EXPECT_EQ(_st_count_wire_mti(MTI_STREAM_INIT_REQUEST), 1);
 
     // STREAM_INIT_REQUEST routing: only B is addressed, A self-skips, C is bystander
     EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_STREAM_INIT_REQUEST), 1);
