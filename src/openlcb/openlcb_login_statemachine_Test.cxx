@@ -392,8 +392,6 @@ const interface_openlcb_login_state_machine_t interface_openlcb_login_state_mach
     .load_initialization_complete = &_load_initialization_complete,
     .load_producer_events = &_load_producer_events,
     .load_consumer_events = &_load_consumer_events,
-    .process_main_statemachine = &_process_main_statemachine,
-    .openlcb_node_get_count = &_openlcb_node_get_count,
     .process_login_statemachine = &_process_login_statemachine,
 
     // For test injection of run loop handlers
@@ -413,8 +411,6 @@ const interface_openlcb_login_state_machine_t interface_with_login_complete = {
     .load_initialization_complete = &_load_initialization_complete,
     .load_producer_events = &_load_producer_events,
     .load_consumer_events = &_load_consumer_events,
-    .process_main_statemachine = &_process_main_statemachine,
-    .openlcb_node_get_count = &_openlcb_node_get_count,
     .process_login_statemachine = &_process_login_statemachine,
 
     .handle_outgoing_openlcb_message = &_handle_outgoing_openlcb_message,
@@ -1660,8 +1656,6 @@ const interface_openlcb_login_state_machine_t interface_sibling_dispatch = {
     .load_initialization_complete = &_sibling_load_initialization_complete,
     .load_producer_events = &_sibling_load_producer_events,
     .load_consumer_events = &_sibling_load_consumer_events,
-    .process_main_statemachine = &_tracking_process_main_statemachine,
-    .openlcb_node_get_count = &OpenLcbNode_get_count,
     .process_login_statemachine = &OpenLcbLoginStatemachine_process,
 
     .handle_outgoing_openlcb_message = &OpenLcbLoginStatemachine_handle_outgoing_openlcb_message,

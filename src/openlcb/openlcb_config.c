@@ -800,8 +800,6 @@ static void _build_login_statemachine(void) {
     // Library-internal wiring
     _login_sm.openlcb_node_get_first          = &OpenLcbNode_get_first;
     _login_sm.openlcb_node_get_next           = &OpenLcbNode_get_next;
-    _login_sm.openlcb_node_get_count          = &OpenLcbNode_get_count;
-    _login_sm.process_main_statemachine       = &OpenLcbMainStatemachine_process_main_statemachine;
     _login_sm.load_initialization_complete    = &OpenLcbLoginStatemachineHandler_load_initialization_complete;
     _login_sm.load_producer_events            = &OpenLcbLoginStatemachineHandler_load_producer_event;
     _login_sm.load_consumer_events            = &OpenLcbLoginStatemachineHandler_load_consumer_event;

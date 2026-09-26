@@ -480,10 +480,7 @@ static const interface_openlcb_login_state_machine_t _e2e_login_interface = {
     .load_producer_events         = &OpenLcbLoginStatemachineHandler_load_producer_event,
     .load_consumer_events         = &OpenLcbLoginStatemachineHandler_load_consumer_event,
 
-    // Sibling dispatch wired to the real main statemachine via our logging wrapper
-    .process_main_statemachine = &_e2e_process_main_statemachine,
 
-    .openlcb_node_get_count  = &OpenLcbNode_get_count,
 
     // Real internal handlers
     .process_login_statemachine        = &OpenLcbLoginStatemachine_process,

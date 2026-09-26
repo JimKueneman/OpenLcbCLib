@@ -88,11 +88,10 @@ static const interface_openlcb_main_statemachine_t *_interface;
     /** @brief Static state machine context for message routing and node enumeration. */
 static openlcb_statemachine_info_t _statemachine_info;
 
-    // USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH defaults in openlcb_defines.h (it also sizes the node enumerator keys)
-
-    /** @brief Default depth of the application send queue. */
-#ifndef USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH
-#define USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH 4
+    // USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH and USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH
+    // default in openlcb_types.h.  One node enumeration key is reserved per stack level.
+#if (USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH < 1) || (USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH > OPENLCB_SIBLING_DISPATCH_STACK_DEPTH_MAX)
+#error "USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH must be 1..OPENLCB_SIBLING_DISPATCH_STACK_DEPTH_MAX"
 #endif
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
