@@ -2432,3 +2432,49 @@ TEST(OpenLcbLoginStateMachine, run_loop_skips_outgoing_during_sibling_dispatch)
     EXPECT_GE(sibling_dispatch_call_count, 1);
 
 }
+
+// ============================================================================
+// TEST: A sibling that answers a login message with several messages keeps
+// answering as itself
+// @details Node A logs in; node B, the first sibling, answers A's login message
+//          and sets enumerate (a reply of several messages).  The continuation
+//          must run on node B, not on the next sibling, as on the main path
+//          where the handler is re-entered before the next node is taken.
+// ============================================================================
+
+TEST(OpenLcbLoginStateMachine, sibling_enumerate_continues_on_same_node)
+{
+
+    _sibling_test_initialize();
+
+    openlcb_node_t *node_a = OpenLcbNode_allocate(0x050101010100, &_node_parameters_main_node);
+    node_a->alias = 0x100;
+    node_a->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
+
+    openlcb_node_t *node_b = OpenLcbNode_allocate(0x050101010101, &_node_parameters_main_node);
+    node_b->alias = 0x101;
+    node_b->state.initialized = true;
+    node_b->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *node_c = OpenLcbNode_allocate(0x050101010102, &_node_parameters_main_node);
+    node_c->alias = 0x102;
+    node_c->state.initialized = true;
+    node_c->state.run_state = RUNSTATE_RUN;
+
+    // Node B's first dispatch (call 0) starts a reply of several messages
+    sibling_set_enumerate_on_call = 0;
+
+    for (int i = 0; i < 30; i++) {
+
+        OpenLcbLoginStatemachine_run();
+
+    }
+
+    ASSERT_GE(sibling_dispatch_call_count, 2);
+    EXPECT_EQ(sibling_dispatch_nodes[0], node_b);
+
+    // The continuation (call 1) belongs to node B
+    EXPECT_EQ(sibling_dispatch_nodes[1], node_b)
+            << "the reply was continued on another node";
+
+}

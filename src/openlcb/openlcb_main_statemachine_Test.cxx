@@ -4432,6 +4432,12 @@ static bool _st_wire_busy;
 static bool _st_stream_reply_active;
 static node_id_t _st_stream_reply_from_node;
 
+// ---- Train listener forwarding control (see _st_train_forward_handler) ----
+
+static node_id_t _st_forward_node;
+static int _st_forward_listener_count;
+static int _st_forward_remaining;
+
 // ---- Reset all sibling test state ----
 
 static void _st_reset(void) {
@@ -4448,6 +4454,9 @@ static void _st_reset(void) {
     _st_wire_busy = false;
     _st_stream_reply_active = false;
     _st_stream_reply_from_node = 0;
+    _st_forward_node = 0;
+    _st_forward_listener_count = 0;
+    _st_forward_remaining = 0;
 
 }
 
@@ -4541,6 +4550,50 @@ static void _st_enumerate_handler(openlcb_statemachine_info_t *si) {
         }
 
     }
+
+}
+
+// ---- Train listener forwarding (reply of several messages) ----
+//
+// When _st_forward_node receives a Train Control command, it forwards it to
+// _st_forward_listener_count listeners, one outgoing message per pass with the
+// enumerate flag set in between, as protocol_train_handler.c's
+// _forward_to_next_listener() does.  Every other node, or a count of 0, just logs.
+
+#define ST_LISTENER_BASE_ID 0x090000000001ULL
+#define ST_LISTENER_BASE_ALIAS 0x700
+
+static void _st_train_forward_handler(openlcb_statemachine_info_t *si) {
+
+    _st_log_handler(si);
+
+    if ((_st_forward_listener_count == 0) || (si->openlcb_node->id != _st_forward_node)) {
+
+        return;
+
+    }
+
+    if (!si->incoming_msg_info.enumerate) {
+
+        _st_forward_remaining = _st_forward_listener_count;
+
+    }
+
+    int index = _st_forward_listener_count - _st_forward_remaining;
+
+    OpenLcbUtilities_load_openlcb_message(
+            si->outgoing_msg_info.msg_ptr,
+            si->openlcb_node->alias,
+            si->openlcb_node->id,
+            ST_LISTENER_BASE_ALIAS + index,
+            ST_LISTENER_BASE_ID + index,
+            MTI_TRAIN_PROTOCOL);
+    si->outgoing_msg_info.msg_ptr->payload_count = 0;
+    si->outgoing_msg_info.valid = true;
+
+    _st_forward_remaining--;
+
+    si->incoming_msg_info.enumerate = (_st_forward_remaining > 0);
 
 }
 
@@ -4649,7 +4702,7 @@ static const interface_openlcb_main_statemachine_t _st_interface = {
     .event_transport_pc_report = &_st_log_handler,
     .event_transport_pc_report_with_payload = &_st_log_handler,
 
-    .train_control_command = &_st_log_handler,
+    .train_control_command = &_st_train_forward_handler,
     .train_control_reply = &_st_log_handler,
     .simple_train_node_ident_info_request = &_st_log_handler,
     .simple_train_node_ident_info_reply = &_st_log_handler,
@@ -6036,4 +6089,177 @@ TEST(OpenLcbMainStatemachine, sibling_flood_local_global_verify_8_nodes)
 TEST(OpenLcbMainStatemachine, sibling_flood_local_global_verify_20_nodes)
 {
     _st_flood_local_global_verify(20);
+}
+
+// ============================================================================
+// Replies of several messages to a message from a local node
+//
+// A local node's message is shown to its siblings one node per pass.  When a
+// sibling answers with several messages (a train forwarding a command to its
+// listeners, a node answering Identify Events), each further message must
+// still come from that sibling, and the main loop must keep running after it.
+// On the main path (a message from the wire) this works; these tests cover
+// the sibling path.
+// ============================================================================
+
+    /** @brief Counts wire messages with the given MTI sent by the given node. */
+static int _st_count_wire_mti_from(uint16_t mti, node_id_t source_id) {
+
+    int count = 0;
+
+    for (int i = 0; i < _st_wire_count; i++) {
+
+        if ((_st_wire_log[i].mti == mti) && (_st_wire_log[i].source_id == source_id)) {
+
+            count++;
+
+        }
+
+    }
+
+    return count;
+
+}
+
+    /** @brief After a test's traffic: a global message from the wire must still reach every node. */
+static void _st_expect_loop_still_running(openlcb_node_t **nodes, int count) {
+
+    int before[16];
+
+    for (int i = 0; i < count; i++) {
+
+        before[i] = _st_count_dispatches_for_node_mti(nodes[i]->id, MTI_VERIFY_NODE_ID_GLOBAL);
+
+    }
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(incoming, nullptr);
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0FULL;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 2000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    for (int i = 0; i < count; i++) {
+
+        EXPECT_EQ(_st_count_dispatches_for_node_mti(nodes[i]->id, MTI_VERIFY_NODE_ID_GLOBAL), before[i] + 1)
+                << "main loop stopped: node " << i << " never got the later message";
+
+    }
+
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+
+}
+
+    /** @brief The station's throttle sends one train command to a local train node that has listeners. */
+static void _st_local_train_command_with_listeners(int train_index) {
+
+    _st_init();
+
+    openlcb_node_t *nodes[3];
+    _st_flood_allocate_nodes(3, nodes);
+    openlcb_node_t *station = nodes[0];
+    openlcb_node_t *train = nodes[train_index];
+
+    const int listeners = 3;
+    _st_forward_node = train->id;
+    _st_forward_listener_count = listeners;
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    _st_load_train_command(&msg, station, train, TRAIN_SET_SPEED_DIRECTION);
+    ASSERT_TRUE(_st_app_send_with_retry(&msg));
+
+    for (int i = 0; i < 2000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // The command, then one forward per listener, all from the train
+    EXPECT_EQ(_st_count_wire_mti_from(MTI_TRAIN_PROTOCOL, station->id), 1);
+    EXPECT_EQ(_st_count_wire_mti_from(MTI_TRAIN_PROTOCOL, train->id), listeners);
+
+    _st_expect_loop_still_running(nodes, 3);
+
+}
+
+TEST(OpenLcbMainStatemachine, sibling_local_train_command_forwarded_train_in_middle)
+{
+    // Station, train, then another node after the train
+    _st_local_train_command_with_listeners(1);
+}
+
+TEST(OpenLcbMainStatemachine, sibling_local_train_command_forwarded_train_last)
+{
+    // The train is the last node on the device
+    _st_local_train_command_with_listeners(2);
+}
+
+// ============================================================================
+// TEST: A local node sends Identify Events; each sibling answers with several
+// Identified messages.  Every answer must come from the node that owns it,
+// every local node must see every other node's answers, and the loop must
+// keep running.
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_local_identify_events_multi_message_replies)
+{
+    _st_init();
+
+    const int node_count = 4;
+    const int per_node = 3;
+
+    openlcb_node_t *nodes[node_count];
+    _st_flood_allocate_nodes(node_count, nodes);
+    openlcb_node_t *station = nodes[0];
+
+    _st_enumerate_per_node = per_node;
+    _st_enumerate_response_mti = MTI_PRODUCER_IDENTIFIED_SET;
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, station->alias, station->id, 0, 0, MTI_EVENTS_IDENTIFY);
+    msg.payload_count = 0;
+    ASSERT_TRUE(_st_app_send_with_retry(&msg));
+
+    for (int i = 0; i < 5000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Each sibling's own answers, from that sibling
+    EXPECT_EQ(_st_count_wire_mti_from(MTI_PRODUCER_IDENTIFIED_SET, station->id), 0);
+
+    for (int i = 1; i < node_count; i++) {
+
+        EXPECT_EQ(_st_count_wire_mti_from(MTI_PRODUCER_IDENTIFIED_SET, nodes[i]->id), per_node)
+                << "answers from node " << i;
+
+    }
+
+    // Every local node saw every other local node's answers
+    for (int i = 0; i < node_count; i++) {
+
+        int others_answering = (i == 0) ? (node_count - 1) : (node_count - 2);
+
+        EXPECT_EQ(_st_count_dispatches_for_node_mti(nodes[i]->id, MTI_PRODUCER_IDENTIFIED_SET), others_answering * per_node)
+                << "node " << i;
+
+    }
+
+    _st_enumerate_per_node = 0;
+    _st_expect_loop_still_running(nodes, node_count);
 }
