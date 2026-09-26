@@ -54,6 +54,18 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **Streams could not tell their CAN peers apart.** Each stream records its
+  remote end's Node ID and alias, but lookups compared only the Node ID, and on
+  CAN a received message carries only the sender's alias (source_id is 0). So
+  on CAN every peer looked the same: a Terminate Due to Error from any node
+  closed every open stream, a Data Complete could close another peer's stream
+  when two peers used the same Source Stream ID, and a stream opened with
+  `ProtocolStreamHandler_initiate_outbound()` and a real destination Node ID
+  never matched the reply. The remote end is now matched by Node ID when both
+  sides have one and by alias otherwise, which also covers TCP (alias always 0)
+  and a peer whose Node ID becomes known mid-stream. The config-memory Write
+  Stream lookup, which matched by alias only and so could take another TCP
+  peer's stream as the write, uses the same rule. No mapping table is needed.
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
   says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says
