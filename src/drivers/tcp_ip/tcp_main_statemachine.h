@@ -82,6 +82,11 @@ typedef struct {
      *  Typical: OpenLcbNode_get_next. */
     openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
 
+    /** @brief REQUIRED. Return every node to RUNSTATE_INIT (not initialized, not permitted)
+     *  so it logs in again when the link comes back.
+     *  Typical: OpenLcbNode_reset_state. */
+    void (*openlcb_node_reset_state)(void);
+
 } interface_tcp_main_statemachine_t;
 
 #ifdef __cplusplus

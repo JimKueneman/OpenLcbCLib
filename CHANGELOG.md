@@ -61,8 +61,11 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   the TCP main state machine now hands every node still in `RUNSTATE_INIT` to
   the OpenLCB login (`RUNSTATE_LOAD_INITIALIZATION_COMPLETE`, marked permitted),
   including nodes allocated after the link came up (MessageNetworkS 3.4.1).
-  `interface_tcp_main_statemachine_t` gains two required fields,
-  `openlcb_node_get_first` / `openlcb_node_get_next`, wired in `tcp_config.c`.
+  When the link drops every node returns to `RUNSTATE_INIT`, so after a
+  reconnect each node announces itself again to the new peer.
+  `interface_tcp_main_statemachine_t` gains three required fields,
+  `openlcb_node_get_first`, `openlcb_node_get_next` and
+  `openlcb_node_reset_state`, wired in `tcp_config.c`.
   (`tcp_main_statemachine.c`)
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard

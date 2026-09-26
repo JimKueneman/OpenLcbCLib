@@ -112,6 +112,7 @@ static void _build_main_interface(void) {
     _main_interface.on_link_status_changed = _user_config->on_link_status_changed;
     _main_interface.openlcb_node_get_first = &OpenLcbNode_get_first;
     _main_interface.openlcb_node_get_next = &OpenLcbNode_get_next;
+    _main_interface.openlcb_node_reset_state = &OpenLcbNode_reset_state;
 }
 
 // =========================================================================

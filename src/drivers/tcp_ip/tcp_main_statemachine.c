@@ -101,10 +101,19 @@ void TcpMainStatemachine_link_up(void) {
         _interface->on_link_status_changed(true);
 }
 
+    /**
+     * @brief Marks the link down and returns every node to RUNSTATE_INIT.
+     *
+     * @details The peer on the next connection has never seen our nodes, so
+     * each node announces itself again (Initialization Complete and its
+     * events) once the link is running.
+     */
 void TcpMainStatemachine_link_down(void) {
 
     _statemachine_info.link_state = TCP_LINK_STATE_DISCONNECTED;
     _statemachine_info.login_state = TCP_LOGIN_IDLE;
+
+    _interface->openlcb_node_reset_state();
 
     if (_interface->on_link_status_changed)
         _interface->on_link_status_changed(false);

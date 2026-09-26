@@ -127,6 +127,23 @@ static openlcb_node_t *_mock_node_get_next(uint8_t key)
 
 }
 
+static int _mock_node_reset_count = 0;
+
+static void _mock_node_reset_state(void)
+{
+
+    _mock_node_reset_count++;
+
+    for (int i = 0; i < _mock_node_count; i++) {
+
+        _mock_nodes[i].state.run_state = RUNSTATE_INIT;
+        _mock_nodes[i].state.permitted = false;
+        _mock_nodes[i].state.initialized = false;
+
+    }
+
+}
+
 // =============================================================================
 // Test setup
 // =============================================================================
@@ -149,6 +166,7 @@ static void reset_mocks(void)
     memset(_mock_nodes, 0, sizeof(_mock_nodes));
     _mock_node_count = 0;
     _mock_node_index = 0;
+    _mock_node_reset_count = 0;
 
 }
 
@@ -165,6 +183,7 @@ static void setup_test(void)
     _interface.on_link_status_changed = &_mock_on_link_status_changed;
     _interface.openlcb_node_get_first = &_mock_node_get_first;
     _interface.openlcb_node_get_next  = &_mock_node_get_next;
+    _interface.openlcb_node_reset_state = &_mock_node_reset_state;
 
     TcpMainStatemachine_initialize(&_interface);
 
@@ -381,6 +400,7 @@ TEST(TCP_MainStatemachine, null_status_callback_no_crash)
     _interface.on_link_status_changed = NULL;
     _interface.openlcb_node_get_first = &_mock_node_get_first;
     _interface.openlcb_node_get_next  = &_mock_node_get_next;
+    _interface.openlcb_node_reset_state = &_mock_node_reset_state;
 
     TcpMainStatemachine_initialize(&_interface);
 
@@ -468,6 +488,36 @@ TEST(TCP_MainStatemachine, node_allocated_after_link_up_is_handed_off)
 
     TcpMainStatemachine_run();
 
+    EXPECT_EQ(_mock_nodes[0].state.run_state, RUNSTATE_LOAD_INITIALIZATION_COMPLETE);
+
+}
+
+TEST(TCP_MainStatemachine, reconnect_nodes_announce_again)
+{
+
+    setup_test();
+
+    _mock_node_count = 1;
+    _mock_nodes[0].state.run_state = RUNSTATE_INIT;
+
+    _mock_login_state = TCP_LOGIN_COMPLETE;
+    TcpMainStatemachine_link_up();
+    TcpMainStatemachine_run();
+    EXPECT_EQ(_mock_nodes[0].state.run_state, RUNSTATE_LOAD_INITIALIZATION_COMPLETE);
+
+    // The node finishes logging in
+    _mock_nodes[0].state.run_state = RUNSTATE_RUN;
+    _mock_nodes[0].state.initialized = true;
+
+    // Link drops: the node goes back to INIT
+    TcpMainStatemachine_link_down();
+    EXPECT_EQ(_mock_node_reset_count, 1);
+    EXPECT_EQ(_mock_nodes[0].state.run_state, RUNSTATE_INIT);
+    EXPECT_FALSE(_mock_nodes[0].state.initialized);
+
+    // Link comes back: the node logs in again
+    TcpMainStatemachine_link_up();
+    TcpMainStatemachine_run();
     EXPECT_EQ(_mock_nodes[0].state.run_state, RUNSTATE_LOAD_INITIALIZATION_COMPLETE);
 
 }
