@@ -174,18 +174,40 @@ static config_mem_stream_context_t *_find_allocated_context(openlcb_node_t *node
 }
 
     /**
-     * @brief Finds a context waiting for a write stream initiate from the given alias.
+     * @brief Finds a context waiting for a write stream initiate from the given node.
      *
-     * @param remote_alias  CAN alias of the remote node that will initiate.
+     * @details Node IDs are compared when both are known; otherwise the
+     * aliases are.  On CAN a received message carries only the sender's alias
+     * (Node ID 0); on TCP the alias is always 0 and the Node ID is present.
+     *
+     * @param remote_node_id  Node ID of the remote node that will initiate (0 if not known).
+     * @param remote_alias    CAN alias of the remote node (0 on non-CAN transports).
      *
      * @return Pointer to the matching context, or NULL if not found.
      */
-static config_mem_stream_context_t *_find_context_for_write_initiate(uint16_t remote_alias) {
+static config_mem_stream_context_t *_find_context_for_write_initiate(node_id_t remote_node_id, uint16_t remote_alias) {
 
     for (uint8_t i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
 
-        if (_context_pool[i].phase == CONFIG_MEM_STREAM_PHASE_WRITE_WAIT_STREAM_INITIATE &&
-                _context_pool[i].remote_alias == remote_alias) {
+        if (_context_pool[i].phase != CONFIG_MEM_STREAM_PHASE_WRITE_WAIT_STREAM_INITIATE) {
+
+            continue;
+
+        }
+
+        bool is_remote;
+
+        if ((_context_pool[i].remote_node_id != 0) && (remote_node_id != 0)) {
+
+            is_remote = (_context_pool[i].remote_node_id == remote_node_id);
+
+        } else {
+
+            is_remote = (remote_alias != 0) && (_context_pool[i].remote_alias == remote_alias);
+
+        }
+
+        if (is_remote) {
 
             return &_context_pool[i];
 
@@ -1073,7 +1095,7 @@ void ProtocolConfigMemStreamHandler_check_timeouts(uint8_t current_tick) {
 bool ProtocolConfigMemStreamHandler_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
 
     // Check if this is the inbound stream for a pending write
-    config_mem_stream_context_t *ctx = _find_context_for_write_initiate(stream->remote_alias);
+    config_mem_stream_context_t *ctx = _find_context_for_write_initiate(stream->remote_node_id, stream->remote_alias);
 
     if (ctx) {
 
