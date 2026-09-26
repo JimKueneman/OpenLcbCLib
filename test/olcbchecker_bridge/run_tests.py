@@ -10,6 +10,8 @@ variables set by run_olcbchecker.sh:
     RUN_SECTIONS="core"                   Run core tests only
     RUN_SECTIONS="broadcast_time_consumer"  Run BT consumer tests only
     RUN_SECTIONS="trains"                 Run train tests only
+    RUN_SECTIONS="stream"                 Run Datagram, Memory Config, CDI, and
+                                          Stream tests (node built with stream on)
 
   Legacy mode (BasicNode):
     RUN_BROADCAST_TIME=1   Include Broadcast Time consumer tests
@@ -147,6 +149,29 @@ if "trains" in run_sections:
 if "core" in run_sections:
     import control_stream
     logger.info("=== Stream Transport ===")
+    total += min(control_stream.checkAll(), 1)
+
+# ---- Stream Enabled ----------------------------------------------------------
+# Node is built with OPENLCB_COMPILE_STREAM.  Datagram is rerun because the
+# stream build changes buffer sizing.  Memory Config and CDI are rerun because
+# their stream read/write passes only execute when the node advertises stream
+# support.
+
+if "stream" in run_sections:
+    import control_datagram
+    logger.info("=== Datagram Transport (stream) ===")
+    total += min(control_datagram.checkAll(), 1)
+
+    import control_memory
+    logger.info("=== Memory Configuration (stream) ===")
+    total += min(control_memory.checkAll(), 1)
+
+    import control_cdi
+    logger.info("=== CDI (stream) ===")
+    total += min(control_cdi.checkAll(), 1)
+
+    import control_stream
+    logger.info("=== Stream Transport (stream) ===")
     total += min(control_stream.checkAll(), 1)
 
 # ---- DCC Detector Protocol ---------------------------------------------------
