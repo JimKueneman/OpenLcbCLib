@@ -2445,3 +2445,139 @@ TEST(ApplicationTrain, heartbeat_pending_retry_with_null_owner_node)
     state->owner_node = node;
 
 }
+
+// ============================================================================
+// Round trip: throttle-side builders into the train-side handler
+//
+// Each side has its own tests, and each was once right only by its own idea of
+// the layout: the throttle put the Node ID at byte 2 while the train read it at
+// byte 3 (TrainControlS: 0x20, sub-command, flags, Node ID).  These tests feed
+// the message the throttle actually sends into the train handler.
+// ============================================================================
+
+#define TEST_OTHER_THROTTLE_ID 0x0F0E0D0C0B0AULL
+
+    /** @brief Delivers the last message the throttle sent to the train node; returns the reply result byte (0xEE if no reply). */
+static uint8_t _deliver_last_sent_to_train(openlcb_node_t *train_node) {
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    EXPECT_NE(incoming, nullptr);
+    EXPECT_NE(outgoing, nullptr);
+
+    if (!incoming || !outgoing) {
+
+        return 0xEE;
+
+    }
+
+    OpenLcbUtilities_load_openlcb_message(incoming, last_sent_msg.source_alias, last_sent_msg.source_id,
+            last_sent_msg.dest_alias, last_sent_msg.dest_id, last_sent_msg.mti);
+
+    for (uint16_t i = 0; i < last_sent_msg.payload_count; i++) {
+
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, last_sent_payload[i], i);
+
+    }
+
+    incoming->payload_count = last_sent_msg.payload_count;
+
+    openlcb_statemachine_info_t sm;
+    memset(&sm, 0, sizeof(sm));
+    sm.openlcb_node = train_node;
+    sm.incoming_msg_info.msg_ptr = incoming;
+    sm.outgoing_msg_info.msg_ptr = outgoing;
+    sm.outgoing_msg_info.valid = false;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    uint8_t result = 0xEE;
+
+    if (sm.outgoing_msg_info.valid && outgoing->payload_count > 2) {
+
+        result = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2);
+
+    }
+
+    OpenLcbBufferStore_free_buffer(incoming);
+    OpenLcbBufferStore_free_buffer(outgoing);
+
+    return result;
+
+}
+
+TEST(ApplicationTrain, round_trip_assign_controller_records_throttle_node_id)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *throttle = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    throttle->alias = TEST_DEST_ALIAS;
+
+    openlcb_node_t *train = OpenLcbNode_allocate(TEST_TRAIN_NODE_ID, &_test_node_parameters);
+    train->alias = TEST_TRAIN_ALIAS;
+    train_state_t *state = OpenLcbApplicationTrain_setup(train);
+    ASSERT_NE(state, nullptr);
+
+    ASSERT_TRUE(OpenLcbApplicationTrain_send_assign_controller(throttle, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID));
+
+    // Accepted, and the train holds exactly this throttle's Node ID
+    EXPECT_EQ(_deliver_last_sent_to_train(train), 0x00);
+    EXPECT_EQ(state->controller_node_id, TEST_DEST_ID);
+
+}
+
+TEST(ApplicationTrain, round_trip_release_controller_clears_controller)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *throttle = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    throttle->alias = TEST_DEST_ALIAS;
+
+    openlcb_node_t *train = OpenLcbNode_allocate(TEST_TRAIN_NODE_ID, &_test_node_parameters);
+    train->alias = TEST_TRAIN_ALIAS;
+    train_state_t *state = OpenLcbApplicationTrain_setup(train);
+    ASSERT_NE(state, nullptr);
+
+    ASSERT_TRUE(OpenLcbApplicationTrain_send_assign_controller(throttle, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID));
+    _deliver_last_sent_to_train(train);
+    ASSERT_EQ(state->controller_node_id, TEST_DEST_ID);
+
+    ASSERT_TRUE(OpenLcbApplicationTrain_send_release_controller(throttle, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID));
+    _deliver_last_sent_to_train(train);
+
+    EXPECT_EQ(state->controller_node_id, (node_id_t) 0);
+
+}
+
+TEST(ApplicationTrain, round_trip_release_from_other_throttle_keeps_controller)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *throttle = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    throttle->alias = TEST_DEST_ALIAS;
+
+    openlcb_node_t *other = OpenLcbNode_allocate(TEST_OTHER_THROTTLE_ID, &_test_node_parameters);
+    other->alias = 0x0CC;
+
+    openlcb_node_t *train = OpenLcbNode_allocate(TEST_TRAIN_NODE_ID, &_test_node_parameters);
+    train->alias = TEST_TRAIN_ALIAS;
+    train_state_t *state = OpenLcbApplicationTrain_setup(train);
+    ASSERT_NE(state, nullptr);
+
+    ASSERT_TRUE(OpenLcbApplicationTrain_send_assign_controller(throttle, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID));
+    _deliver_last_sent_to_train(train);
+    ASSERT_EQ(state->controller_node_id, TEST_DEST_ID);
+
+    // A Release naming another throttle must not free the train
+    ASSERT_TRUE(OpenLcbApplicationTrain_send_release_controller(other, TEST_TRAIN_ALIAS, TEST_TRAIN_NODE_ID));
+    _deliver_last_sent_to_train(train);
+
+    EXPECT_EQ(state->controller_node_id, TEST_DEST_ID);
+
+}
