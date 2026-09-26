@@ -32,9 +32,6 @@
  */
 
 #include "tcp_login_statemachine.h"
-#include "../../openlcb/openlcb_defines.h"
-
-#include <string.h>
 
 #ifdef OPENLCB_COMPILE_TCP
 
@@ -42,82 +39,49 @@
 // Module state
 // =========================================================================
 
-static const interface_tcp_login_statemachine_t *_interface;
-
 static tcp_login_state_enum _login_state;
 
 // =========================================================================
 // Public API
 // =========================================================================
 
-void TcpLoginStatemachine_initialize(const interface_tcp_login_statemachine_t *interface) {
+    /** @brief Resets the login state to TCP_LOGIN_IDLE. */
+void TcpLoginStatemachine_initialize(void) {
 
-    _interface = interface;
     _login_state = TCP_LOGIN_IDLE;
+
 }
 
+    /**
+     * @brief Marks the link as up.
+     *
+     * @details Goes straight to TCP_LOGIN_COMPLETE.  TCP has no transport-level
+     * login step: the protocol layer's OpenLCB login statemachine sends
+     * Initialization Complete and the identified events for each local node,
+     * and nodes enter it immediately (no alias negotiation delay like CAN).
+     *
+     * Nothing is sent from here.  A node shall not emit any message before its
+     * Initialization Complete (Message Network 3.4.1), and the transport has no
+     * Node ID of its own to send from.
+     */
 void TcpLoginStatemachine_link_up(void) {
 
-    _login_state = TCP_LOGIN_SEND_VERIFY_GLOBAL;
+    _login_state = TCP_LOGIN_COMPLETE;
 
-    // The protocol layer's OpenLCB login statemachine handles the rest:
-    // - Initialization Complete for each local node
-    // - Producer/Consumer Identified for declared events
-    // - Transition to RUNSTATE_RUN
-    //
-    // For TCP, nodes enter the login statemachine immediately (no alias
-    // negotiation delay like CAN).
-    //
-    // The actual Verify Node ID Global send happens in
-    // TcpLoginStatemachine_run(), which retries until the transport accepts it.
 }
 
+    /** @brief No state has pending work; always returns false. */
 bool TcpLoginStatemachine_run(void) {
 
-    if (_login_state != TCP_LOGIN_SEND_VERIFY_GLOBAL) {
-
-        return false;
-
-    }
-
-    // Send Verify Node ID Global to discover remote nodes
-    _interface->lock_shared_resources();
-    openlcb_msg_t *msg = _interface->allocate_buffer(BASIC);
-    _interface->unlock_shared_resources();
-
-    if (!msg) {
-
-        return true; // allocation failed, retry next cycle
-
-    }
-
-    msg->mti = MTI_VERIFY_NODE_ID_GLOBAL;
-    msg->source_id = 0;
-    msg->dest_id = 0;
-    msg->source_alias = 0;
-    msg->dest_alias = 0;
-    msg->payload_count = 0;
-
-    bool sent = _interface->send_openlcb_msg(msg);
-
-    _interface->lock_shared_resources();
-    _interface->free_buffer(msg);
-    _interface->unlock_shared_resources();
-
-    if (sent) {
-
-        _login_state = TCP_LOGIN_COMPLETE;
-        return false; // done
-
-    }
-
-    return true; // send failed, retry next cycle
+    return false;
 
 }
 
+    /** @brief Returns the current login state. */
 tcp_login_state_enum TcpLoginStatemachine_get_state(void) {
 
     return _login_state;
+
 }
 
 #endif /* OPENLCB_COMPILE_TCP */

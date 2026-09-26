@@ -377,6 +377,16 @@ typedef struct {
     bool (*is_emergency_event)(event_id_t event_id);
 #endif /* OPENLCB_COMPILE_TRAIN */
 
+        /**
+         * @brief Returns the node at a position in the node table (NULL past the end).  REQUIRED.
+         *
+         * @details Used by the dispatch stack, which walks the nodes for several
+         * messages at once (one per level) without enumeration keys.
+         *
+         * @note Typical: OpenLcbNode_get_by_index
+         */
+    openlcb_node_t *(*openlcb_node_get_by_index)(uint16_t index);
+
 } interface_openlcb_main_statemachine_t;
 
 #ifdef __cplusplus

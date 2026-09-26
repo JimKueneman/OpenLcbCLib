@@ -326,6 +326,21 @@ typedef struct {
          */
     uint16_t (*config_mem_write_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
+        /**
+         * @brief A Memory Configuration reply arrived for a request this node sent. Optional.
+         *
+         * @details Called for every reply datagram to this node's own requests: read,
+         * write, read/write stream, write under mask, options, address space info,
+         * lock and unique ID, OK or fail.  The library has already answered Datagram
+         * Received OK.  The reply payload starts with the command byte
+         * (CONFIG_MEM_CONFIGURATION, 0x20) followed by the reply code.  NULL = replies
+         * are acknowledged and dropped.
+         *
+         * @param openlcb_node The @ref openlcb_node_t that sent the request
+         * @param reply The reply datagram (@ref openlcb_msg_t); valid only during the call
+         */
+    void (*on_config_mem_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *reply);
+
 #endif /* OPENLCB_COMPILE_MEMORY_CONFIGURATION */
 
 #ifdef OPENLCB_COMPILE_DCC_CV

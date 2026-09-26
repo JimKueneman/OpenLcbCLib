@@ -123,6 +123,19 @@ extern "C" {
     extern bool OpenLcbNode_is_last(uint8_t key);
 
         /**
+         * @brief Returns the allocated node at a position in the node table.
+         *
+         * @details Positions run 0 .. OpenLcbNode_get_count() - 1 in allocation
+         * order, the same order OpenLcbNode_get_first / get_next use.  Holds no
+         * enumeration state, so any number of callers can iterate at once.
+         *
+         * @param index  Position in the node table.
+         *
+         * @return Pointer to the node, or NULL if index is past the last allocated node.
+         */
+    extern openlcb_node_t *OpenLcbNode_get_by_index(uint16_t index);
+
+        /**
          * @brief Finds a node by its 12-bit CAN alias.
          *
          * @param alias  12-bit CAN alias to search for.

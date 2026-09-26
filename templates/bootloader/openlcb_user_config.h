@@ -81,6 +81,12 @@
 
 #define USER_DEFINED_NODE_BUFFER_DEPTH               1      // must be >= 1; enforced by compiler
 
+// With more than one node, application sends (including sends from callbacks)
+// wait here until the other nodes on this device have seen the previous
+// message.  Each waiting message uses a buffer from the pools above.
+
+#define USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH    4      // must be >= 1; enforced by compiler
+
 // =============================================================================
 // Events (requires OPENLCB_COMPILE_EVENTS) — set to 1 (minimum)
 // =============================================================================

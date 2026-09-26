@@ -70,6 +70,32 @@ void CanRxMessageHandler_initialize(const interface_can_rx_message_handler_t *in
 }
 
     /**
+     * @brief Fills in source_id when the sender is a registered train listener.
+     *
+     * @details On CAN a received message carries only the sender's
+     * alias, so source_id stays 0.  A train's listener forwarding skips the listener that sent
+     * the command by comparing Node IDs, so with source_id 0 it forwarded every command straight
+     * back to its sender (JMRI attaches itself as a listener of the train it drives).
+     */
+static void _fill_source_id_from_listener(openlcb_msg_t *msg) {
+
+    if (!_interface->listener_find_by_alias || msg->source_id != 0) {
+
+        return;
+
+    }
+
+    listener_alias_entry_t *entry = _interface->listener_find_by_alias(msg->source_alias);
+
+    if (entry) {
+
+        msg->source_id = entry->node_id;
+
+    }
+
+}
+
+    /**
      * @brief Builds and queues a Datagram Rejected or Optional Interaction Rejected reply.
      *
      * @details Algorithm:
@@ -264,6 +290,8 @@ void CanRxMessageHandler_last_frame(can_msg_t *can_msg, uint8_t offset) {
 
     target_openlcb_msg->state.inprocess = false;
 
+    _fill_source_id_from_listener(target_openlcb_msg);
+
     OpenLcbBufferList_release(target_openlcb_msg);
     OpenLcbBufferFifo_push(target_openlcb_msg);
 
@@ -285,6 +313,8 @@ void CanRxMessageHandler_single_frame(can_msg_t *can_msg, uint8_t offset, payloa
     OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti);
 
     CanUtilities_append_can_payload_to_openlcb_payload(target_openlcb_msg, can_msg, offset);
+
+    _fill_source_id_from_listener(target_openlcb_msg);
 
     OpenLcbBufferFifo_push(target_openlcb_msg); // Can not fail List is as large as the number of buffers
 

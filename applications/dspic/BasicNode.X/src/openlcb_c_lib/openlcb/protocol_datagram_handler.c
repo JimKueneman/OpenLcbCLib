@@ -1440,6 +1440,40 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
 }
 
     /**
+     * @brief Handles a Memory Configuration reply to a request this node sent.
+     *
+     * @details Algorithm:
+     * -# Load Datagram Received OK addressed to the replying node, flags 0:
+     *    no Reply Pending, since nothing follows a reply
+     * -# Pass the reply to the optional on_config_mem_reply callback
+     *
+     * @verbatim
+     * @param statemachine_info  Current context.
+     * @endverbatim
+     */
+void ProtocolDatagramHandler_handle_config_mem_reply(openlcb_statemachine_info_t *statemachine_info) {
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM_OK_REPLY);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 0);
+
+    statemachine_info->outgoing_msg_info.valid = true;
+
+    if (_interface->on_config_mem_reply) {
+
+        _interface->on_config_mem_reply(statemachine_info->openlcb_node, statemachine_info->incoming_msg_info.msg_ptr);
+
+    }
+
+}
+
+    /**
      * @brief Build a Datagram Rejected message (MTI 0x0A48).
      *
      * @details Algorithm:
