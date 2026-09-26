@@ -3212,3 +3212,91 @@ TEST(ProtocolStreamHandler, tde_without_node_id_or_alias_matches_nothing) {
     EXPECT_EQ(stream->state, STREAM_STATE_OPEN);
 
 }
+
+// ============================================================================
+// TEST: Data Complete addressed to a second local node does not close the
+//       first local node's stream
+// @details StreamTransportS: a stream is identified by its source node,
+//          destination node and stream IDs. A Data Complete addressed to
+//          local node B must not close a stream whose destination is local
+//          node A, even when the remote source and the stream IDs coincide.
+// ============================================================================
+
+#define SECOND_LOCAL_ALIAS 0xCCC
+#define SECOND_LOCAL_ID    0x0A0B0C0D0E0F
+
+TEST(ProtocolStreamHandler, data_complete_for_other_local_node_leaves_stream_open) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node_a = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node_a->alias = DEST_ALIAS;
+    openlcb_node_t *node_b = OpenLcbNode_allocate(SECOND_LOCAL_ID, &_node_params);
+    node_b->alias = SECOND_LOCAL_ALIAS;
+
+    // Remote SOURCE_ID opens a stream to local node A
+    openlcb_msg_t *incoming_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming_req, 128, 0x50);
+    openlcb_statemachine_info_t info_req = _build_statemachine_info(node_a, incoming_req, outgoing_req);
+    ProtocolStreamHandler_initiate_request(&info_req);
+    stream_state_t *stream_a = _last_stream;
+    ASSERT_NE(stream_a, nullptr);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_OPEN);
+    uint8_t did = stream_a->dest_stream_id;
+
+    // The same remote sends Data Complete with the same IDs, addressed to node B
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_complete = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_complete = OpenLcbBufferStore_allocate_buffer(BASIC);
+    OpenLcbUtilities_load_openlcb_message(incoming_complete, SOURCE_ALIAS, SOURCE_ID, SECOND_LOCAL_ALIAS, SECOND_LOCAL_ID, MTI_STREAM_COMPLETE);
+    OpenLcbUtilities_clear_openlcb_message_payload(incoming_complete);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming_complete, 0x50, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming_complete, did, 1);
+    incoming_complete->payload_count = 2;
+    openlcb_statemachine_info_t info_complete = _build_statemachine_info(node_b, incoming_complete, outgoing_complete);
+
+    ProtocolStreamHandler_data_complete(&info_complete);
+
+    EXPECT_EQ(_complete_called, 0);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_OPEN);
+
+}
+
+// ============================================================================
+// TEST: Terminate Due To Error addressed to a second local node does not
+//       close the first local node's stream
+// @details StreamTransportS 7.4: the TDE closes the stream between the
+//          sender and the addressed node only.
+// ============================================================================
+
+TEST(ProtocolStreamHandler, tde_for_other_local_node_leaves_stream_open) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node_a = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node_a->alias = DEST_ALIAS;
+    openlcb_node_t *node_b = OpenLcbNode_allocate(SECOND_LOCAL_ID, &_node_params);
+    node_b->alias = SECOND_LOCAL_ALIAS;
+
+    openlcb_msg_t *incoming_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming_req, 128, 0xA0);
+    openlcb_statemachine_info_t info_req = _build_statemachine_info(node_a, incoming_req, outgoing_req);
+    ProtocolStreamHandler_initiate_request(&info_req);
+    stream_state_t *stream_a = _last_stream;
+    ASSERT_NE(stream_a, nullptr);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_OPEN);
+
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_tde(incoming_tde, SOURCE_ALIAS, SOURCE_ID, SECOND_LOCAL_ALIAS, SECOND_LOCAL_ID, ERROR_TEMPORARY, MTI_STREAM_SEND);
+    openlcb_statemachine_info_t info_tde = _build_statemachine_info(node_b, incoming_tde, outgoing_tde);
+
+    ProtocolStreamHandler_handle_terminate_due_to_error(&info_tde);
+
+    EXPECT_EQ(_complete_called, 0);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_OPEN);
+
+}

@@ -54,6 +54,14 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **A stream message for one local node could close another local node's
+  stream.** The stream table is shared by every node on the device, and lookups
+  matched only the remote end and the stream IDs, so on a multi-node device a
+  Data Complete or Terminate Due to Error from a remote node, addressed to
+  local node B, closed a stream that remote had open with local node A.
+  `stream_state_t` now records its `local_node`, set when the stream is opened
+  (incoming or outbound), and every lookup and the Terminate scan match it as
+  well as the remote end (StreamTransportS 7.4). (`protocol_stream_handler.c`)
 - **Streams could not tell their CAN peers apart.** Each stream records its
   remote end's Node ID and alias, but lookups compared only the Node ID, and on
   CAN a received message carries only the sender's alias (source_id is 0). So
