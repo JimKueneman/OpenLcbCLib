@@ -123,30 +123,41 @@
         <h2>8.2 Priority Dispatch Flowchart</h2>
 
         <p>
-            Each call to <code>_run()</code> evaluates six priorities in order. The first one that
-            does work causes the function to return immediately, ensuring the highest-priority task
-            always gets serviced first.
+            Each call to <code>_run()</code> does one step of work and returns. While a message is
+            being shown to the other nodes on this device (the dispatch stack is active, see
+            &sect;8.6), the step is always taken on the stack. Otherwise the priorities below are
+            evaluated in order, and the first one that does work returns.
         </p>
 
         <div class="mermaid">
 flowchart TD
-    A["OpenLcbMainStatemachine_run()"] --> P1{"P1: sibling_dispatch_active?\nNO → handle_outgoing()"}
-    P1 -- "true (sent to wire, began sibling dispatch)" --> Z["return"]
-    P1 -- "false" --> P2{"P2: sibling_dispatch_active?\nYES → sibling sub-steps"}
-
-    P2 -- "false (no dispatch)" --> P25
-    P2 -- "2a: sibling outgoing pending" --> Z
-    P2 -- "2b: sibling enumerate flag set" --> Z
-    P2 -- "2c: dispatched current sibling" --> Z
-
-    P25{"P2.5: sibling response queue\nor path_b_pending?"} -- "true (queued msg → start dispatch)" --> Z
-    P25 -- "false" --> P3{"P3: handle_try\n_reenumerate()"}
-    P3 -- "true" --> Z
-    P3 -- "false" --> P4{"P4: handle_try_pop_next\n_incoming_openlcb_message()"}
+    A["OpenLcbMainStatemachine_run()"] --> S{"Dispatch stack active?
+(_sibling_depth > 0)"}
+    S -- "yes" --> T["One step on the top level:
+send its answer and push a level,
+or call a node again for its next message,
+or show the message to the next node,
+or finish the level"]
+    T --> Z["return"]
+    S -- "no" --> P1{"P1: handle_outgoing
+_openlcb_message()"}
+    P1 -- "true (sent; shown to the other
+local nodes on level 1)" --> Z
+    P1 -- "false" --> P2{"P2: handle_try
+_reenumerate()"}
+    P2 -- "true" --> Z
+    P2 -- "false" --> P3{"P3: no incoming message in progress
+and application send queue not empty?"}
+    P3 -- "true (send the oldest,
+push level 1)" --> Z
+    P3 -- "false" --> P4{"P4: handle_try_pop_next
+_incoming_openlcb_message()"}
     P4 -- "true" --> Z
-    P4 -- "false" --> P5{"P5: handle_try\n_enumerate_first_node()"}
+    P4 -- "false" --> P5{"P5: handle_try
+_enumerate_first_node()"}
     P5 -- "true" --> Z
-    P5 -- "false" --> P6{"P6: handle_try\n_enumerate_next_node()"}
+    P5 -- "false" --> P6{"P6: handle_try
+_enumerate_next_node()"}
     P6 --> Z
 
     style A fill:#4a90d9,color:#fff
@@ -163,34 +174,24 @@ flowchart TD
             </thead>
             <tbody>
                 <tr>
-                    <td>1 (highest)</td>
+                    <td>Stack (while active)</td>
+                    <td><code>_sibling_run_top()</code></td>
+                    <td>One step on the top level of the dispatch stack (&sect;8.6). Nothing else runs until the stack is empty.</td>
+                </tr>
+                <tr>
+                    <td>1</td>
                     <td><code>handle_outgoing_openlcb_message()</code></td>
-                    <td>Send the pending main outgoing message to the wire. Skipped if sibling dispatch is already active (the outgoing slot must stay intact while siblings read it). On success, <code>_sibling_dispatch_begin()</code> is called to set up sibling iteration.</td>
+                    <td>Send the pending main outgoing message to the wire. On success, with more than one node, push it as level 1 of the dispatch stack so the other local nodes are shown it; the slot stays valid until that level finishes.</td>
                 </tr>
                 <tr>
-                    <td>2a</td>
-                    <td><code>_sibling_handle_outgoing()</code></td>
-                    <td>If a sibling handler wrote a response into the sibling context's outgoing slot, send it to the wire and push a copy to the sibling response queue for chain dispatch.</td>
-                </tr>
-                <tr>
-                    <td>2b</td>
-                    <td><code>_sibling_handle_reenumerate()</code></td>
-                    <td>If a sibling handler set the enumerate flag (multi-message response), re-enter the handler without advancing to the next sibling.</td>
-                </tr>
-                <tr>
-                    <td>2c</td>
-                    <td><code>_sibling_dispatch_current()</code> + <code>_sibling_dispatch_advance()</code></td>
-                    <td>Dispatch the outgoing message to the current sibling node, then advance to the next sibling. When all siblings have been visited, clears the sibling dispatch state.</td>
-                </tr>
-                <tr>
-                    <td>2.5</td>
-                    <td>Sibling response queue / Path B pending</td>
-                    <td>After sibling dispatch completes, pop queued sibling responses (chain depth &gt; 1) or the Path B pending slot (messages sent by the application layer during dispatch) and restart sibling iteration for each.</td>
+                    <td>2</td>
+                    <td><code>handle_try_reenumerate()</code></td>
+                    <td>If a main handler set the <code>enumerate</code> flag (multi-message response), re-enter the same handler on the same node. Runs only after the previous message has been sent and shown to the local nodes.</td>
                 </tr>
                 <tr>
                     <td>3</td>
-                    <td><code>handle_try_reenumerate()</code></td>
-                    <td>If a main handler set the <code>enumerate</code> flag (multi-message response), re-enter the same handler without advancing to the next node.</td>
+                    <td><code>_handle_application_send_queue()</code></td>
+                    <td>With no incoming message in progress, send the oldest queued application message (&sect;8.6) and push it as level 1.</td>
                 </tr>
                 <tr>
                     <td>4</td>
@@ -214,8 +215,9 @@ flowchart TD
         <h2>8.3 The State Machine Contexts</h2>
 
         <p>
-            The dispatcher maintains <strong>two</strong> static context structures of type
-            <code>openlcb_statemachine_info_t</code>. Both share the same protocol handler callbacks.
+            The dispatcher maintains a main context plus one context per dispatch stack level, all
+            of type <code>openlcb_statemachine_info_t</code>. They share the same protocol handler
+            callbacks.
         </p>
 
         <pre><code>typedef struct {
@@ -236,15 +238,15 @@ flowchart TD
                     <td>Processes messages from the incoming FIFO; builds outgoing replies during normal node enumeration.</td>
                 </tr>
                 <tr>
-                    <td><strong>Sibling context</strong></td>
-                    <td><code>_sibling_statemachine_info</code></td>
-                    <td>Reuses the main outgoing message as its incoming message pointer during sibling dispatch. Has its own <code>STREAM</code>-sized outgoing worker buffer so sibling responses do not corrupt the main outgoing slot.</td>
+                    <td><strong>Stack levels</strong></td>
+                    <td><code>_sibling_levels[USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH]</code></td>
+                    <td>One context per level of the dispatch stack (&sect;8.6). Its incoming pointer is the message being shown to the local nodes, owned by the level below (or the main outgoing slot, or the application send queue); its own worker outgoing buffer holds the answer of the node currently being shown it.</td>
                 </tr>
             </tbody>
         </table>
 
         <div class="callout callout-warning">
-            <strong>Worker buffer:</strong> Both contexts pre-allocate a <code>STREAM</code>-sized
+            <strong>Worker buffer:</strong> Every context (main and each stack level) pre-allocates a <code>STREAM</code>-sized
             outgoing buffer at initialization (the largest available), so any protocol handler
             can build a response without worrying about buffer size limits.
         </div>
@@ -337,73 +339,82 @@ sequenceDiagram
         </div>
 
         <!-- ================================================================ -->
-        <h2>8.6 Sibling Dispatch (Zero-Copy)</h2>
+        <h2>8.6 Delivery Between Local Nodes (Dispatch Stack)</h2>
 
         <p>
-            When a node sends a message (e.g., Init Complete, a PCER), sibling virtual nodes on
-            the same microcontroller must also see it because the CAN hardware does not loop
-            transmitted frames back to the local receive path.  The dispatcher uses a
-            <strong>zero-copy, zero-FIFO</strong> sequential sibling dispatch mechanism.
+            When a node sends a message (e.g., Init Complete, a PCER), the other virtual nodes on
+            the same device must also see it, because the CAN hardware does not loop transmitted
+            frames back to the local receive path. Chapter 21 covers the design; this section
+            covers how the run loop does it.
         </p>
 
         <h3>Mechanism</h3>
         <ol>
-            <li>Priority 1 sends the main outgoing message to the wire via
-                <code>handle_outgoing_openlcb_message()</code>.</li>
-            <li>On success, <code>_sibling_dispatch_begin()</code> is called:
+            <li>A message a local node sends goes to the wire first.</li>
+            <li>With more than one node, it is then pushed as a level of the dispatch stack
+                (<code>_sibling_push()</code>): the level points at the message (no copy), marks it
+                <code>loopback = true</code> so the sender skips its own copy in
+                <code>does_node_process_msg()</code>, and starts at the first node.</li>
+            <li>Each <code>_run()</code> call then does one step on the top level
+                (<code>_sibling_run_top()</code>):
                 <ul>
-                    <li>If only one node exists, return immediately (nothing to dispatch).</li>
-                    <li>Otherwise, point <code>_sibling_statemachine_info.incoming_msg_info.msg_ptr</code>
-                        directly at the main outgoing message (<em>no buffer copy, no FIFO push</em>).</li>
-                    <li>Mark the message as <code>loopback = true</code> so the originating node
-                        skips it in <code>does_node_process_msg()</code>.</li>
-                    <li>Set <code>_sibling_dispatch_active = true</code> and fetch the first node.</li>
-                </ul>
-            </li>
-            <li>Priority 2 sub-steps run one sibling per <code>_run()</code> call:
-                <ul>
-                    <li><strong>2a</strong> — if the sibling produced a response, send it to the wire
-                        and push a copy to the sibling response queue.</li>
-                    <li><strong>2b</strong> — if the sibling handler set the enumerate flag, re-enter it.</li>
-                    <li><strong>2c</strong> — dispatch the message to the current sibling, then advance
-                        to the next.  When the last sibling is reached, clear
-                        <code>_sibling_dispatch_active</code> and release the main outgoing slot.</li>
+                    <li>if the node just shown the message answered, the answer is sent to the wire
+                        (retried until the transport takes it) and pushed as the next level, so it
+                        is shown to the local nodes before this level continues;</li>
+                    <li>if the node set the enumerate flag (several messages), it is called again,
+                        on the same node, once its previous message has finished;</li>
+                    <li>otherwise the message is shown to the next node that has sent Initialization
+                        Complete (<code>state.initialized</code>);</li>
+                    <li>when every node has been shown it, the level finishes and releases the
+                        message to its owner.</li>
                 </ul>
             </li>
         </ol>
 
-        <h3>Chain Dispatch (depth &gt; 1 responses)</h3>
+        <h3>Depth</h3>
         <p>
-            A sibling's response (sent in step 2a) may itself need to be seen by <em>other</em>
-            siblings.  For example, Init Complete from Node A must reach Node B, and Node B's
-            Init Complete response must then reach Node A.  This is handled by a small static
-            circular queue (<code>_sibling_response_queue[5]</code>):
-        </p>
-        <ol>
-            <li>When step 2a sends a sibling response, a copy is pushed to the queue.</li>
-            <li>Priority 2.5 (after sibling dispatch ends) pops each queued message and
-                restarts sibling iteration for it.</li>
-            <li>The queue depth is 5 — sufficient for all observed chain depths.
-                A high-water mark is maintained in
-                <code>_sibling_response_queue_high_water</code> for diagnostics.</li>
-        </ol>
-
-        <h3>Path B Pending Slot</h3>
-        <p>
-            If application code calls
-            <code>OpenLcbMainStatemachine_send_with_sibling_dispatch()</code> while a sibling
-            dispatch is already active (e.g., a protocol handler sends an application-layer
-            message mid-iteration), the message cannot use the main outgoing slot immediately.
-            It is copied into the single-slot <code>_path_b_pending_msg</code> and dispatched
-            at Priority 2.5 once the current dispatch cycle completes.
+            The stack grows with how far answers chain, not with the number of nodes: a node's
+            answer is finished before the next node is shown the original message. Unaddressed
+            answers stop at depth 2, a datagram exchange between two local nodes needs 3, and
+            train listener forwarding between local trains needs the consist depth.
+            <code>USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH</code> (default 4, at most
+            <code>OPENLCB_SIBLING_DISPATCH_STACK_DEPTH_MAX</code> = 8) sets the size. A message that
+            would go deeper is still sent to the wire but is not shown to the local nodes; it is
+            counted.
         </p>
 
         <div class="callout callout-info">
-            <strong>Buffer pressure:</strong> No dynamic allocation is used during sibling dispatch.
-            The sibling context points directly at the main outgoing message buffer.
-            Each sibling is visited in one <code>_run()</code> call (~10 µs of CPU work per sibling),
-            so 50 siblings ≈ 500 µs — less than one CAN frame time at 125 kbps.
-            The CAN RX ISR continues filling its software FIFO independently, so no frames are lost.
+            <strong>Order:</strong> the wire sees messages in the order they are sent. Other local
+            nodes can see an answer before the request it answers: if Node A's global Verify Node
+            ID is shown to Node B first, B's Verified Node ID is shown to Node C before A's Verify
+            is.
+        </div>
+
+        <h3>Application Send Queue</h3>
+        <p>
+            Messages from application code, the login state machine, the train, Broadcast Time
+            and DCC CV helpers and the config-memory stream pump go through
+            <code>OpenLcbMainStatemachine_send_with_sibling_dispatch()</code>. With one node it sends
+            straight to the transport. With several, it copies the message into the application
+            send queue (<code>USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH</code>, default 4) and returns
+            <code>true</code> (accepted, not yet on the wire), or <code>false</code> when the queue is
+            full (retry later). The queue is drained oldest first when the stack is empty and no
+            incoming message is being processed, so everything a message caused goes out before the
+            next incoming message is handled.
+        </p>
+
+        <div class="callout callout-warning">
+            <strong>Callbacks:</strong> a send from inside a callback goes into the queue like any
+            other application send. Never loop waiting for a send to succeed inside a callback: the
+            queue only drains after the callback returns. A <code>false</code> there means the queue
+            is full; keep the message and send it from the main loop.
+        </div>
+
+        <div class="callout callout-info">
+            <strong>Buffer pressure:</strong> No dynamic allocation is used. Each level and each
+            queue entry is a statically allocated worker buffer. Each node is shown a message in one
+            <code>_run()</code> call; the CAN RX ISR continues filling its software FIFO
+            independently, so no frames are lost.
         </div>
 
         <!-- ================================================================ -->
@@ -418,8 +429,11 @@ sequenceDiagram
         <ol>
             <li>The handler builds the first response, sets <code>outgoing_msg_info.valid = true</code>,
                 and sets <code>incoming_msg_info.enumerate = true</code>.</li>
-            <li>Priority 1 sends the outgoing message.</li>
-            <li>Priority 2 sees the enumerate flag and re-enters the handler.</li>
+            <li>Priority 1 sends the outgoing message and, with several nodes, it is shown to the
+                other local nodes on the dispatch stack.</li>
+            <li>Priority 2 sees the enumerate flag and re-enters the handler on the same node. On a
+                stack level the same rule applies: the node is called again only after its previous
+                message has finished.</li>
             <li>The handler builds the next response. When the last message is sent, it clears
                 the enumerate flag.</li>
             <li>The dispatcher advances to the next node (or the next incoming message).</li>
@@ -535,13 +549,13 @@ sequenceDiagram
                 <tr>
                     <td><code>openlcb_node_get_count</code></td>
                     <td><code>uint16_t (*)(void)</code></td>
-                    <td>Returns the number of allocated nodes. Used by <code>_sibling_dispatch_begin()</code> to skip the sibling loop entirely on single-node configurations.</td>
+                    <td>Returns the number of allocated nodes. Used by <code>_sibling_push()</code> and <code>send_with_sibling_dispatch()</code> to skip local delivery entirely on single-node configurations.</td>
                 </tr>
             </tbody>
         </table>
 
         <!-- ================================================================ -->
-        <h2>8.12 Public API for Sibling Dispatch</h2>
+        <h2>8.12 Public API for Local Delivery</h2>
 
         <table>
             <thead>
@@ -550,15 +564,15 @@ sequenceDiagram
             <tbody>
                 <tr>
                     <td><code>OpenLcbMainStatemachine_send_with_sibling_dispatch(openlcb_msg_t *msg)</code></td>
-                    <td>Transport wrapper used by application helpers and the login state machine.  Sends the message to the wire and queues it for sibling dispatch via the Path B pending slot.  Returns <code>false</code> if the transport is busy.</td>
+                    <td>Transport wrapper used by application helpers, the login state machine and the config-memory stream pump. One node: sends straight to the transport and returns its result. Several nodes: queues the message (&sect;8.6) and returns <code>true</code>, or <code>false</code> when the application send queue is full.</td>
                 </tr>
                 <tr>
                     <td><code>OpenLcbMainStatemachine_get_sibling_statemachine_info(void)</code></td>
-                    <td>Returns a pointer to <code>_sibling_statemachine_info</code>.  For unit testing only.</td>
+                    <td>Returns a pointer to the context of stack level 1.  For unit testing only.</td>
                 </tr>
                 <tr>
                     <td><code>OpenLcbMainStatemachine_get_sibling_response_queue_high_water(void)</code></td>
-                    <td>Returns the maximum queue depth reached since initialization.  Useful for sizing the queue during development.</td>
+                    <td>Returns the deepest the dispatch stack has been since initialization.  Useful for sizing <code>USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH</code>.</td>
                 </tr>
             </tbody>
         </table>
