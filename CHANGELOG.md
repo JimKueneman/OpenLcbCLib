@@ -54,6 +54,16 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **Nodes on the TCP transport never logged in.** After the link came up
+  nothing moved a node out of `RUNSTATE_INIT` (on CAN the alias login's final
+  AMD step does this), so a TCP node never sent Initialization Complete, never
+  became Initialized and never reached `RUNSTATE_RUN`. Once the link is running
+  the TCP main state machine now hands every node still in `RUNSTATE_INIT` to
+  the OpenLCB login (`RUNSTATE_LOAD_INITIALIZATION_COMPLETE`, marked permitted),
+  including nodes allocated after the link came up (MessageNetworkS 3.4.1).
+  `interface_tcp_main_statemachine_t` gains two required fields,
+  `openlcb_node_get_first` / `openlcb_node_get_next`, wired in `tcp_config.c`.
+  (`tcp_main_statemachine.c`)
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
   says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says

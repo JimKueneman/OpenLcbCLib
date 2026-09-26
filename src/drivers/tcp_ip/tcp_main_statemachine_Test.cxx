@@ -25,6 +25,8 @@
 
 #include "test/main_Test.hxx"
 
+#include <string.h>
+
 #include "tcp_main_statemachine.h"
 
 // =============================================================================
@@ -102,6 +104,29 @@ static void _mock_on_link_status_changed(bool is_up)
 
 }
 
+    /** @brief Mock node table walked by the node enumeration mocks. */
+static openlcb_node_t _mock_nodes[2];
+static int _mock_node_count = 0;
+static int _mock_node_index = 0;
+
+static openlcb_node_t *_mock_node_get_first(uint8_t key)
+{
+
+    _mock_node_index = 0;
+
+    return (_mock_node_count > 0) ? &_mock_nodes[0] : NULL;
+
+}
+
+static openlcb_node_t *_mock_node_get_next(uint8_t key)
+{
+
+    _mock_node_index++;
+
+    return (_mock_node_index < _mock_node_count) ? &_mock_nodes[_mock_node_index] : NULL;
+
+}
+
 // =============================================================================
 // Test setup
 // =============================================================================
@@ -121,6 +146,9 @@ static void reset_mocks(void)
     _link_control_run_count = 0;
     _link_control_run_returns_busy = false;
     _link_control_run_info = NULL;
+    memset(_mock_nodes, 0, sizeof(_mock_nodes));
+    _mock_node_count = 0;
+    _mock_node_index = 0;
 
 }
 
@@ -135,6 +163,8 @@ static void setup_test(void)
     _interface.link_control_run       = &_mock_link_control_run;
     _interface.get_current_tick       = &_mock_get_tick;
     _interface.on_link_status_changed = &_mock_on_link_status_changed;
+    _interface.openlcb_node_get_first = &_mock_node_get_first;
+    _interface.openlcb_node_get_next  = &_mock_node_get_next;
 
     TcpMainStatemachine_initialize(&_interface);
 
@@ -349,6 +379,8 @@ TEST(TCP_MainStatemachine, null_status_callback_no_crash)
     _interface.link_control_run       = &_mock_link_control_run;
     _interface.get_current_tick       = &_mock_get_tick;
     _interface.on_link_status_changed = NULL;
+    _interface.openlcb_node_get_first = &_mock_node_get_first;
+    _interface.openlcb_node_get_next  = &_mock_node_get_next;
 
     TcpMainStatemachine_initialize(&_interface);
 
@@ -369,5 +401,73 @@ TEST(TCP_MainStatemachine, get_statemachine_info_not_null)
     setup_test();
 
     EXPECT_NE(TcpMainStatemachine_get_statemachine_info(), nullptr);
+
+}
+
+// =============================================================================
+// Login hand-off: once the link is running, nodes still in RUNSTATE_INIT go
+// to RUNSTATE_LOAD_INITIALIZATION_COMPLETE (Message Network 3.4.1); nodes
+// already logging in or running are left alone
+// =============================================================================
+
+TEST(TCP_MainStatemachine, running_link_hands_init_nodes_to_openlcb_login)
+{
+
+    setup_test();
+
+    _mock_node_count = 2;
+    _mock_nodes[0].state.run_state = RUNSTATE_INIT;
+    _mock_nodes[1].state.run_state = RUNSTATE_RUN;
+
+    _mock_login_state = TCP_LOGIN_COMPLETE;
+    TcpMainStatemachine_link_up();
+    TcpMainStatemachine_run();
+
+    EXPECT_EQ(TcpMainStatemachine_get_link_state(), TCP_LINK_STATE_RUNNING);
+    EXPECT_EQ(_mock_nodes[0].state.run_state, RUNSTATE_LOAD_INITIALIZATION_COMPLETE);
+    EXPECT_TRUE(_mock_nodes[0].state.permitted);
+    EXPECT_EQ(_mock_nodes[1].state.run_state, RUNSTATE_RUN);
+
+}
+
+TEST(TCP_MainStatemachine, no_hand_off_before_link_running)
+{
+
+    setup_test();
+
+    _mock_node_count = 1;
+    _mock_nodes[0].state.run_state = RUNSTATE_INIT;
+
+    // Link down: nothing happens
+    TcpMainStatemachine_run();
+    EXPECT_EQ(_mock_nodes[0].state.run_state, RUNSTATE_INIT);
+
+    // Logging in, login still busy: nothing happens
+    _login_run_returns_busy = true;
+    TcpMainStatemachine_link_up();
+    TcpMainStatemachine_run();
+    EXPECT_EQ(TcpMainStatemachine_get_link_state(), TCP_LINK_STATE_LOGGING_IN);
+    EXPECT_EQ(_mock_nodes[0].state.run_state, RUNSTATE_INIT);
+    EXPECT_FALSE(_mock_nodes[0].state.permitted);
+
+}
+
+TEST(TCP_MainStatemachine, node_allocated_after_link_up_is_handed_off)
+{
+
+    setup_test();
+
+    _mock_login_state = TCP_LOGIN_COMPLETE;
+    TcpMainStatemachine_link_up();
+    TcpMainStatemachine_run();
+    EXPECT_EQ(TcpMainStatemachine_get_link_state(), TCP_LINK_STATE_RUNNING);
+
+    // A virtual node is allocated later
+    _mock_node_count = 1;
+    _mock_nodes[0].state.run_state = RUNSTATE_INIT;
+
+    TcpMainStatemachine_run();
+
+    EXPECT_EQ(_mock_nodes[0].state.run_state, RUNSTATE_LOAD_INITIALIZATION_COMPLETE);
 
 }

@@ -44,6 +44,38 @@ static const interface_tcp_main_statemachine_t *_interface;
 static tcp_statemachine_info_t _statemachine_info;
 
 // =========================================================================
+// Private helpers
+// =========================================================================
+
+    /**
+     * @brief Hands every node still in RUNSTATE_INIT to the OpenLCB login.
+     *
+     * @details TCP has no alias negotiation, so once the link is running a node
+     * is permitted and goes straight to loading Initialization Complete
+     * (Message Network 3.4.1).  This is the TCP counterpart of the CAN login's
+     * final AMD step.  Checked every pass so nodes allocated after the link came
+     * up are handed off too.
+     */
+static void _hand_new_nodes_to_openlcb_login(void) {
+
+    openlcb_node_t *node = _interface->openlcb_node_get_first(TCP_STATEMACHINE_NODE_ENUMERATOR_KEY);
+
+    while (node) {
+
+        if (node->state.run_state == RUNSTATE_INIT) {
+
+            node->state.permitted = true;
+            node->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
+
+        }
+
+        node = _interface->openlcb_node_get_next(TCP_STATEMACHINE_NODE_ENUMERATOR_KEY);
+
+    }
+
+}
+
+// =========================================================================
 // Public API
 // =========================================================================
 
@@ -94,6 +126,12 @@ bool TcpMainStatemachine_run(void) {
             _statemachine_info.link_state = TCP_LINK_STATE_RUNNING;
 
         }
+
+    }
+
+    if (_statemachine_info.link_state == TCP_LINK_STATE_RUNNING) {
+
+        _hand_new_nodes_to_openlcb_login();
 
     }
 

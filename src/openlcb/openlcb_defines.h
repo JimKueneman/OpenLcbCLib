@@ -1260,6 +1260,9 @@ extern "C" {
     /** @brief Enumeration key used by CAN state machine */
 #define CAN_STATEMACHINE_NODE_ENUMRATOR_KEY (MAX_USER_ENUM_KEYS_VALUES + 2)
 
+    /** @brief Enumeration key used by the TCP state machine (same slot as CAN; only one transport can be compiled in) */
+#define TCP_STATEMACHINE_NODE_ENUMERATOR_KEY CAN_STATEMACHINE_NODE_ENUMRATOR_KEY
+
     /** @brief Enumeration key used by datagram timeout scanner */
 #define DATAGRAM_TIMEOUT_ENUM_KEY (MAX_USER_ENUM_KEYS_VALUES + 3)
 
