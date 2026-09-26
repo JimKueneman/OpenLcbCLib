@@ -54,6 +54,13 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **On TCP every node accepted every addressed message.** The addressed
+  filter matched on destination alias OR destination Node ID. On TCP every
+  alias is 0, so every addressed message matched every node (and on CAN any
+  message with destination alias 0 matched a node without an alias). The
+  filter now matches by Node ID when the message carries a destination Node
+  ID, otherwise by alias, and alias 0 never matches (MessageNetworkS 3.6).
+  (`openlcb_main_statemachine.c`)
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
   says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says

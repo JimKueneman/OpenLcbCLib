@@ -425,6 +425,26 @@ static bool _sibling_dispatch_advance(void) {
 }
 
     /**
+     * @brief Returns true when an addressed message is for this node.
+     *
+     * @details Matches by Node ID when the message carries a destination
+     * Node ID, otherwise by alias.  On CAN a received message carries only the
+     * destination alias (dest_id is 0); on TCP every alias is 0 and messages
+     * carry Node IDs, so alias 0 must never count as a match.
+     */
+static bool _is_addressed_to_node(const openlcb_node_t *openlcb_node, const openlcb_msg_t *msg) {
+
+    if (msg->dest_id != 0) {
+
+        return openlcb_node->id == msg->dest_id;
+
+    }
+
+    return (msg->dest_alias != 0) && (openlcb_node->alias == msg->dest_alias);
+
+}
+
+    /**
     * @brief Returns true if the node should process this message.
     *
     * @details Algorithm:
@@ -462,18 +482,13 @@ bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *
 
     }
 
+    openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
+
     return ( (statemachine_info->openlcb_node->state.initialized) &&
             (
-            ((statemachine_info->incoming_msg_info.msg_ptr->mti & MASK_DEST_ADDRESS_PRESENT) != 
-                        MASK_DEST_ADDRESS_PRESENT) || // if not addressed process it
-            (((statemachine_info->openlcb_node->alias == 
-                        statemachine_info->incoming_msg_info.msg_ptr->dest_alias) || 
-                        (statemachine_info->openlcb_node->id == 
-                        statemachine_info->incoming_msg_info.msg_ptr->dest_id)) && 
-                        ((statemachine_info->incoming_msg_info.msg_ptr->mti & MASK_DEST_ADDRESS_PRESENT) == 
-                        MASK_DEST_ADDRESS_PRESENT)) ||
-            (statemachine_info->incoming_msg_info.msg_ptr->mti == 
-                        MTI_VERIFY_NODE_ID_GLOBAL) // special case
+            ((msg->mti & MASK_DEST_ADDRESS_PRESENT) != MASK_DEST_ADDRESS_PRESENT) || // if not addressed process it
+            _is_addressed_to_node(statemachine_info->openlcb_node, msg) ||
+            (msg->mti == MTI_VERIFY_NODE_ID_GLOBAL) // special case
             )
             );
 
