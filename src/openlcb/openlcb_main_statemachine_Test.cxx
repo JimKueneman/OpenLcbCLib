@@ -1821,6 +1821,96 @@ TEST(OpenLcbMainStatemachine, handle_enumerate_next_node_not_run_state)
 }
 
 // ============================================================================
+// TEST: Node announcing its events after Initialization Complete - an
+// addressed message is processed, a global one and Identify Events addressed
+// wait for RUNSTATE_RUN
+// ============================================================================
+
+static bool _enumerate_first_node_processes(uint8_t run_state, uint16_t mti)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    state->openlcb_node = nullptr;
+
+    state->incoming_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(BASIC);
+    EXPECT_NE(state->incoming_msg_info.msg_ptr, nullptr);
+    state->incoming_msg_info.msg_ptr->mti = mti;
+
+    openlcb_node_t *test_node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    test_node->state.run_state = run_state;
+    node_get_first = test_node;
+    process_statemachine_called = false;
+
+    EXPECT_TRUE(OpenLcbMainStatemachine_handle_try_enumerate_first_node());
+    EXPECT_EQ(state->openlcb_node, test_node);
+
+    return process_statemachine_called;
+}
+
+TEST(OpenLcbMainStatemachine, handle_enumerate_first_node_login_addressed_processed)
+{
+    EXPECT_TRUE(_enumerate_first_node_processes(RUNSTATE_LOAD_CONSUMER_EVENTS, MTI_TRAIN_PROTOCOL));
+    EXPECT_TRUE(_enumerate_first_node_processes(RUNSTATE_LOAD_PRODUCER_EVENTS, MTI_TRAIN_PROTOCOL));
+    EXPECT_TRUE(_enumerate_first_node_processes(RUNSTATE_LOGIN_COMPLETE, MTI_TRAIN_PROTOCOL));
+    EXPECT_TRUE(_enumerate_first_node_processes(RUNSTATE_LOAD_PRODUCER_EVENTS, MTI_VERIFY_NODE_ID_ADDRESSED));
+    EXPECT_TRUE(_enumerate_first_node_processes(RUNSTATE_LOAD_PRODUCER_EVENTS, MTI_SIMPLE_NODE_INFO_REQUEST));
+}
+
+TEST(OpenLcbMainStatemachine, handle_enumerate_first_node_login_global_not_processed)
+{
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOAD_CONSUMER_EVENTS, MTI_VERIFY_NODE_ID_GLOBAL));
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOAD_PRODUCER_EVENTS, MTI_VERIFY_NODE_ID_GLOBAL));
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOGIN_COMPLETE, MTI_VERIFY_NODE_ID_GLOBAL));
+}
+
+TEST(OpenLcbMainStatemachine, handle_enumerate_first_node_login_identify_events_dest_not_processed)
+{
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOAD_CONSUMER_EVENTS, MTI_EVENTS_IDENTIFY_DEST));
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOAD_PRODUCER_EVENTS, MTI_EVENTS_IDENTIFY_DEST));
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOGIN_COMPLETE, MTI_EVENTS_IDENTIFY_DEST));
+}
+
+TEST(OpenLcbMainStatemachine, handle_enumerate_first_node_before_init_complete_addressed_not_processed)
+{
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOAD_RESERVE_ID, MTI_TRAIN_PROTOCOL));
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOAD_ALIAS_MAP_DEFINITION, MTI_TRAIN_PROTOCOL));
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOAD_INITIALIZATION_COMPLETE, MTI_TRAIN_PROTOCOL));
+}
+
+TEST(OpenLcbMainStatemachine, handle_enumerate_next_node_login_addressed_processed)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    openlcb_node_t *current_node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    state->openlcb_node = current_node;
+
+    state->incoming_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(state->incoming_msg_info.msg_ptr, nullptr);
+    state->incoming_msg_info.msg_ptr->mti = MTI_TRAIN_PROTOCOL;
+
+    openlcb_node_t *next_node = OpenLcbNode_allocate(0x070605040302, &_node_parameters_main_node);
+    next_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+    node_get_next = next_node;
+    process_statemachine_called = false;
+
+    EXPECT_TRUE(OpenLcbMainStatemachine_handle_try_enumerate_next_node());
+    EXPECT_TRUE(process_statemachine_called);
+    EXPECT_EQ(state->openlcb_node, next_node);
+
+    // A global message still waits for RUNSTATE_RUN
+    state->openlcb_node = current_node;
+    state->incoming_msg_info.msg_ptr->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    process_statemachine_called = false;
+
+    EXPECT_TRUE(OpenLcbMainStatemachine_handle_try_enumerate_next_node());
+    EXPECT_FALSE(process_statemachine_called);
+}
+
+// ============================================================================
 // TEST: handle_try_enumerate_next_node - End of list (frees message)
 // ============================================================================
 

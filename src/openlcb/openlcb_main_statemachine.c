@@ -205,6 +205,36 @@ static void _free_incoming_message(openlcb_statemachine_info_t *statemachine_inf
 
 }
 
+    /**
+    * @brief Returns true if the incoming message may be dispatched to the node.
+    *
+    * @details A node in RUNSTATE_RUN gets every message.  A node that
+    * has already loaded its Initialization Complete but is still announcing its events is
+    * "Initialized" on the network, so a message ADDRESSED to it must not be dropped (JMRI sends
+    * the Traction controller-assign within a millisecond of a new train node's Initialization
+    * Complete and never re-sends it).  Global messages still wait for RUNSTATE_RUN, and so does
+    * the addressed Identify Events, whose reply uses the event enumerators the login is using.
+    */
+static bool _node_accepts_message(openlcb_node_t *openlcb_node, openlcb_msg_t *msg) {
+
+    if (openlcb_node->state.run_state == RUNSTATE_RUN) {
+
+        return true;
+
+    }
+
+    // The login order is PRODUCER_EVENTS (12) -> CONSUMER_EVENTS (11) -> LOGIN_COMPLETE (13):
+    // the values are not in login order, so list the states instead of comparing.
+    bool initialized = (openlcb_node->state.run_state == RUNSTATE_LOAD_PRODUCER_EVENTS) ||
+            (openlcb_node->state.run_state == RUNSTATE_LOAD_CONSUMER_EVENTS) ||
+            (openlcb_node->state.run_state == RUNSTATE_LOGIN_COMPLETE);
+
+    return initialized &&
+            OpenLcbUtilities_is_addressed_openlcb_message(msg) &&
+            (msg->mti != MTI_EVENTS_IDENTIFY_DEST);
+
+}
+
 // ============================================================================
 // Sibling Response Queue Helpers
 // ============================================================================
@@ -1266,7 +1296,7 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void) {
 
         }
 
-        if (_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+        if (_node_accepts_message(_statemachine_info.openlcb_node, _statemachine_info.incoming_msg_info.msg_ptr)) {
 
             // Do the processing of the incoming message on the node
             _interface->process_main_statemachine(&_statemachine_info);
@@ -1308,7 +1338,7 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
 
         }
 
-        if (_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+        if (_node_accepts_message(_statemachine_info.openlcb_node, _statemachine_info.incoming_msg_info.msg_ptr)) {
 
             // Do the processing of the incoming message on the node
             _interface->process_main_statemachine(&_statemachine_info);
