@@ -88,49 +88,98 @@ static const interface_openlcb_main_statemachine_t *_interface;
     /** @brief Static state machine context for message routing and node enumeration. */
 static openlcb_statemachine_info_t _statemachine_info;
 
-    /** @brief Second context for sibling dispatch of outgoing messages.
-     *  Uses its own outgoing slot so sibling responses don't corrupt the
-     *  main dispatch. Shares the same protocol handler functions. */
-static openlcb_statemachine_info_t _sibling_statemachine_info;
+    // USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH defaults in openlcb_defines.h (it also sizes the node enumerator keys)
+
+    /** @brief Default depth of the application send queue. */
+#ifndef USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH
+#define USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH 4
+#endif
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
     /** @brief Tracks whether any train node matched during the current enumeration. */
 static bool _train_search_match_found;
 #endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
 
-    /** @brief TRUE while we are iterating siblings for an outgoing message. */
-static bool _sibling_dispatch_active;
+// ---- Sibling dispatch stack ----
+//
+// A message sent by a local node is sent to the wire and then shown to every
+// other local node before the loop moves on.  When one of those nodes answers,
+// its answer is finished the same way (wire, then every other local node)
+// before the original message is shown to the next node: one level deeper on
+// this stack.  Each level holds the message being shown, the node it is up to,
+// and its own outgoing slot for the answer of that node.  Depth grows with how
+// far answers chain, not with how many nodes there are.
 
-// ---- Sibling response queue (depth > 1 chains) ----
+    /** @brief Who owns the message a level is showing, released when the level finishes. */
+typedef enum {
 
-#define SIBLING_RESPONSE_QUEUE_DEPTH 5
+    SIBLING_MSG_OWNER_MAIN,
+    SIBLING_MSG_OWNER_LEVEL,
+    SIBLING_MSG_OWNER_APPLICATION_QUEUE
 
-    /** @brief Circular queue of sibling responses awaiting dispatch. */
-static openlcb_worker_message_t _sibling_response_queue[SIBLING_RESPONSE_QUEUE_DEPTH];
+} sibling_msg_owner_enum;
 
-static uint8_t _sibling_response_queue_head;
-static uint8_t _sibling_response_queue_tail;
+    /** @brief One level of the sibling dispatch stack. */
+typedef struct {
 
-    /** @brief High-water mark for runtime monitoring of chain depth. */
-static uint8_t _sibling_response_queue_high_water;
+    openlcb_statemachine_info_t info;
+    sibling_msg_owner_enum owner;
 
-// ---- Path B pending slot ----
+} sibling_dispatch_level_t;
 
-    /** @brief Single-slot pending message for Path B sibling dispatch.
-     *  Holds a copy of the last application-layer send so the run loop
-     *  can dispatch it to siblings. */
-static openlcb_worker_message_t _path_b_pending_msg;
-static openlcb_msg_t *_path_b_pending_ptr;
-static bool _path_b_pending;
+    /** @brief The sibling dispatch stack. */
+static sibling_dispatch_level_t _sibling_levels[USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH];
+
+    /** @brief Number of active levels (0 = nothing being shown to siblings). */
+static uint8_t _sibling_depth;
+
+    /** @brief Deepest the stack has been, for runtime monitoring. */
+static uint8_t _sibling_depth_high_water;
+
+    /** @brief Messages that could not be shown to siblings because the stack was full. */
+static uint16_t _sibling_depth_overflow_count;
+
+// ---- Application send queue ----
+//
+// Application sends (including sends from callbacks) on a device with more
+// than one node are queued, and each is sent and shown to the local nodes
+// when the stack is empty and no incoming message is being processed.
+
+    /** @brief Circular queue of application sends. */
+static openlcb_worker_message_t _application_send_queue[USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH];
+
+static uint8_t _application_send_queue_head;
+static uint8_t _application_send_queue_count;
+
+    /** @brief Application sends refused because the queue was full. */
+static uint16_t _application_send_queue_overflow_count;
+
+    /** @brief Wires a context's outgoing message buffer to its own storage. */
+static void _initialize_context(openlcb_statemachine_info_t *statemachine_info) {
+
+    statemachine_info->outgoing_msg_info.msg_ptr = &statemachine_info->outgoing_msg_info.openlcb_msg.openlcb_msg;
+    statemachine_info->outgoing_msg_info.msg_ptr->payload =
+            (openlcb_payload_t *) statemachine_info->outgoing_msg_info.openlcb_msg.openlcb_payload;
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_type = WORKER;
+    OpenLcbUtilities_clear_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr);
+    OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.msg_ptr);
+    statemachine_info->outgoing_msg_info.msg_ptr->state.allocated = true;
+    statemachine_info->outgoing_msg_info.valid = false;
+    statemachine_info->outgoing_msg_info.enumerate = false;
+
+    statemachine_info->incoming_msg_info.msg_ptr = NULL;
+    statemachine_info->incoming_msg_info.enumerate = false;
+    statemachine_info->openlcb_node = NULL;
+
+}
 
     /**
-    * @brief Stores the callback interface and wires up the outgoing message buffer.
+    * @brief Stores the callback interface and wires up the message buffers.
     *
     * @details Algorithm:
     * -# Store interface pointer
-    * -# Link outgoing message buffer pointers, set payload type to STREAM
-    * -# Clear message and payload, mark buffer as allocated
-    * -# Set incoming message to NULL, clear enumerate flag, set node to NULL
+    * -# Wire the main context and every sibling stack level to its own outgoing buffer
+    * -# Wire the application send queue buffers and empty the queue
     *
     * @verbatim
     * @param interface_openlcb_main_statemachine Pointer to populated interface structure
@@ -140,52 +189,30 @@ void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachin
 
     _interface = interface_openlcb_main_statemachine;
 
-    // Main context — unchanged
-    _statemachine_info.outgoing_msg_info.msg_ptr = &_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
-    _statemachine_info.outgoing_msg_info.msg_ptr->payload =
-            (openlcb_payload_t *) _statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
-    _statemachine_info.outgoing_msg_info.msg_ptr->payload_type = WORKER;
-    OpenLcbUtilities_clear_openlcb_message(_statemachine_info.outgoing_msg_info.msg_ptr);
-    OpenLcbUtilities_clear_openlcb_message_payload(_statemachine_info.outgoing_msg_info.msg_ptr);
-    _statemachine_info.outgoing_msg_info.msg_ptr->state.allocated = true;
+    _initialize_context(&_statemachine_info);
 
-    _statemachine_info.incoming_msg_info.msg_ptr = NULL;
-    _statemachine_info.incoming_msg_info.enumerate = false;
-    _statemachine_info.openlcb_node = NULL;
+    for (int i = 0; i < USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH; i++) {
 
-    // Sibling context — same pattern, its own outgoing slot
-    _sibling_statemachine_info.outgoing_msg_info.msg_ptr = &_sibling_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
-    _sibling_statemachine_info.outgoing_msg_info.msg_ptr->payload =
-            (openlcb_payload_t *) _sibling_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
-    _sibling_statemachine_info.outgoing_msg_info.msg_ptr->payload_type = WORKER;
-    OpenLcbUtilities_clear_openlcb_message(_sibling_statemachine_info.outgoing_msg_info.msg_ptr);
-    OpenLcbUtilities_clear_openlcb_message_payload(_sibling_statemachine_info.outgoing_msg_info.msg_ptr);
-    _sibling_statemachine_info.outgoing_msg_info.msg_ptr->state.allocated = true;
-
-    _sibling_statemachine_info.incoming_msg_info.msg_ptr = NULL;
-    _sibling_statemachine_info.incoming_msg_info.enumerate = false;
-    _sibling_statemachine_info.openlcb_node = NULL;
-
-    _sibling_dispatch_active = false;
-
-    // Path B pending slot
-    _path_b_pending_ptr = &_path_b_pending_msg.openlcb_msg;
-    _path_b_pending_ptr->payload = (openlcb_payload_t *) _path_b_pending_msg.openlcb_payload;
-    _path_b_pending_ptr->payload_type = WORKER;
-    _path_b_pending = false;
-
-    // Sibling response queue
-    for (int i = 0; i < SIBLING_RESPONSE_QUEUE_DEPTH; i++) {
-
-        _sibling_response_queue[i].openlcb_msg.payload =
-                (openlcb_payload_t *) _sibling_response_queue[i].openlcb_payload;
-        _sibling_response_queue[i].openlcb_msg.payload_type = WORKER;
+        _initialize_context(&_sibling_levels[i].info);
+        _sibling_levels[i].owner = SIBLING_MSG_OWNER_MAIN;
 
     }
 
-    _sibling_response_queue_head = 0;
-    _sibling_response_queue_tail = 0;
-    _sibling_response_queue_high_water = 0;
+    _sibling_depth = 0;
+    _sibling_depth_high_water = 0;
+    _sibling_depth_overflow_count = 0;
+
+    for (int i = 0; i < USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH; i++) {
+
+        _application_send_queue[i].openlcb_msg.payload =
+                (openlcb_payload_t *) _application_send_queue[i].openlcb_payload;
+        _application_send_queue[i].openlcb_msg.payload_type = WORKER;
+
+    }
+
+    _application_send_queue_head = 0;
+    _application_send_queue_count = 0;
+    _application_send_queue_overflow_count = 0;
 
 }
 
@@ -206,79 +233,22 @@ static void _free_incoming_message(openlcb_statemachine_info_t *statemachine_inf
 }
 
 // ============================================================================
-// Sibling Response Queue Helpers
-// ============================================================================
-
-    /** @brief Copies a message into the sibling response queue for later dispatch. */
-static void _sibling_response_queue_push(openlcb_msg_t *msg) {
-
-    uint8_t next_tail = (_sibling_response_queue_tail + 1) % SIBLING_RESPONSE_QUEUE_DEPTH;
-
-    if (next_tail == _sibling_response_queue_head) {
-
-        return; // queue full — chain depth exceeds design limit
-
-    }
-
-    openlcb_msg_t *slot = &_sibling_response_queue[_sibling_response_queue_tail].openlcb_msg;
-
-    slot->mti           = msg->mti;
-    slot->source_alias  = msg->source_alias;
-    slot->source_id     = msg->source_id;
-    slot->dest_alias    = msg->dest_alias;
-    slot->dest_id       = msg->dest_id;
-    slot->payload_count = msg->payload_count;
-    slot->state.loopback = true;
-
-    for (uint16_t i = 0; i < msg->payload_count; i++) {
-
-        *slot->payload[i] = *msg->payload[i];
-
-    }
-
-    _sibling_response_queue_tail = next_tail;
-
-    uint8_t depth = (uint8_t) ((_sibling_response_queue_tail - _sibling_response_queue_head
-            + SIBLING_RESPONSE_QUEUE_DEPTH) % SIBLING_RESPONSE_QUEUE_DEPTH);
-
-    if (depth > _sibling_response_queue_high_water) {
-
-        _sibling_response_queue_high_water = depth;
-
-    }
-
-}
-
-    /** @brief Pops the next message from the sibling response queue. NULL if empty. */
-static openlcb_msg_t *_sibling_response_queue_pop(void) {
-
-    if (_sibling_response_queue_head == _sibling_response_queue_tail) {
-
-        return NULL;
-
-    }
-
-    openlcb_msg_t *slot = &_sibling_response_queue[_sibling_response_queue_head].openlcb_msg;
-    _sibling_response_queue_head = (_sibling_response_queue_head + 1) % SIBLING_RESPONSE_QUEUE_DEPTH;
-
-    return slot;
-
-}
-
-// ============================================================================
-// Sibling Dispatch Functions
+// Sibling Dispatch Stack
 // ============================================================================
 
     /**
-     * @brief Begins sibling dispatch of the outgoing message.
+     * @brief Starts showing a message just sent to the wire to the other local nodes.
      *
-     * @details Called after handle_outgoing sends the message to the wire.
-     * Points the sibling context's incoming_msg_info at the main outgoing
-     * message, then fetches the first node for sibling iteration.
+     * @details Pushes a level whose incoming message is msg.  The level's owner
+     * keeps msg unchanged until the level finishes.  Nothing is pushed when
+     * there is only one node, or when the stack is full (counted).
      *
-     * @return true if sibling dispatch started, false if only 1 node (no siblings)
+     * @param msg    The message to show (already sent to the wire).
+     * @param owner  Who owns msg, released when the level finishes.
+     *
+     * @return true if a level was pushed, false if msg needs no local delivery.
      */
-static bool _sibling_dispatch_begin(void) {
+static bool _sibling_push(openlcb_msg_t *msg, sibling_msg_owner_enum owner) {
 
     if (_interface->openlcb_node_get_count() <= 1) {
 
@@ -286,99 +256,31 @@ static bool _sibling_dispatch_begin(void) {
 
     }
 
-    // Point sibling's incoming at the outgoing message we just sent
-    _sibling_statemachine_info.incoming_msg_info.msg_ptr =
-            _statemachine_info.outgoing_msg_info.msg_ptr;
-    _sibling_statemachine_info.incoming_msg_info.enumerate = false;
+    if (_sibling_depth >= USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH) {
 
-    // Mark the outgoing as loopback so self-skip works in does_node_process_msg
-    _sibling_statemachine_info.incoming_msg_info.msg_ptr->state.loopback = true;
-
-    // Get first sibling node
-    _sibling_statemachine_info.openlcb_node =
-            _interface->openlcb_node_get_first(OPENLCB_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX);
-
-    _sibling_dispatch_active = true;
-
-    return true;
-
-}
-
-    /**
-     * @brief Sends the sibling's pending outgoing response to the wire.
-     *
-     * @details Also pushes the response to the sibling response queue so
-     * other siblings can see it (depth > 1 chains).
-     *
-     * @return true if a message was pending (caller should retry), false if idle
-     */
-static bool _sibling_handle_outgoing(void) {
-
-    if (_sibling_statemachine_info.outgoing_msg_info.valid) {
-
-        if (_interface->send_openlcb_msg(_sibling_statemachine_info.outgoing_msg_info.msg_ptr)) {
-
-            // Queue the response for sibling dispatch (depth > 1 chains)
-            _sibling_response_queue_push(_sibling_statemachine_info.outgoing_msg_info.msg_ptr);
-
-            _sibling_statemachine_info.outgoing_msg_info.valid = false;
-
-        }
-
-        return true;
-
-    }
-
-    return false;
-
-}
-
-    /**
-     * @brief Re-enters the sibling handler for multi-message enumerate responses.
-     *
-     * @return true if re-enumeration active, false if complete
-     */
-static bool _sibling_handle_reenumerate(void) {
-
-    if (_sibling_statemachine_info.incoming_msg_info.enumerate) {
-
-        _interface->process_main_statemachine(&_sibling_statemachine_info);
-
-        return true;
-
-    }
-
-    return false;
-
-}
-
-    /**
-     * @brief Dispatches the outgoing message to the current sibling node.
-     *
-     * @details Skips the originating node (self-skip handled by
-     * does_node_process_msg via source_id comparison). Dispatches to nodes
-     * in RUNSTATE_RUN only.
-     *
-     * @return true if dispatch occurred or node skipped, false if no node
-     */
-static bool _sibling_dispatch_current(void) {
-
-    if (!_sibling_statemachine_info.openlcb_node) {
-
-        // Deferred cleanup path: last sibling's response was drained by 2a.
-        // Clear the main outgoing slot now that dispatch is truly complete.
-        _sibling_dispatch_active = false;
-        _sibling_statemachine_info.incoming_msg_info.msg_ptr = NULL;
-        _statemachine_info.outgoing_msg_info.msg_ptr->state.loopback = false;
-        _statemachine_info.outgoing_msg_info.valid = false;
+        _sibling_depth_overflow_count++;
 
         return false;
 
     }
 
-    if (_sibling_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+    sibling_dispatch_level_t *level = &_sibling_levels[_sibling_depth];
 
-        _interface->process_main_statemachine(&_sibling_statemachine_info);
+    msg->state.loopback = true;   // the sender skips its own copy
+
+    level->owner = owner;
+    level->info.incoming_msg_info.msg_ptr = msg;
+    level->info.incoming_msg_info.enumerate = false;
+    level->info.outgoing_msg_info.valid = false;
+    level->info.current_tick = _interface->get_current_tick();
+    level->info.openlcb_node =
+            _interface->openlcb_node_get_first(OPENLCB_SIBLING_STACK_NODE_ENUMERATOR_BASE + _sibling_depth);
+
+    _sibling_depth++;
+
+    if (_sibling_depth > _sibling_depth_high_water) {
+
+        _sibling_depth_high_water = _sibling_depth;
 
     }
 
@@ -386,41 +288,124 @@ static bool _sibling_dispatch_current(void) {
 
 }
 
-    /**
-     * @brief Advances to the next sibling node.
-     *
-     * @return true if advanced (more siblings or reached end), false if not active
-     */
-static bool _sibling_dispatch_advance(void) {
+    /** @brief Removes the oldest application send from the queue. */
+static void _application_send_queue_pop_head(void) {
 
-    if (!_sibling_statemachine_info.openlcb_node) {
+    if (_application_send_queue_count == 0) {
 
-        return false;
+        return;
 
     }
 
-    _sibling_statemachine_info.openlcb_node =
-            _interface->openlcb_node_get_next(OPENLCB_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX);
+    _application_send_queue_head = (_application_send_queue_head + 1) % USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH;
+    _application_send_queue_count--;
 
-    if (!_sibling_statemachine_info.openlcb_node) {
+}
 
-        if (!_sibling_statemachine_info.outgoing_msg_info.valid) {
+    /** @brief Finishes the top level: releases the message it showed back to its owner. */
+static void _sibling_pop(void) {
 
-            // Last sibling has no pending response — deactivate immediately.
-            _sibling_dispatch_active = false;
-            _sibling_statemachine_info.incoming_msg_info.msg_ptr = NULL;
+    sibling_dispatch_level_t *level = &_sibling_levels[_sibling_depth - 1];
+
+    level->info.incoming_msg_info.msg_ptr->state.loopback = false;
+    level->info.incoming_msg_info.msg_ptr = NULL;
+    level->info.openlcb_node = NULL;
+
+    _sibling_depth--;
+
+    switch (level->owner) {
+
+        case SIBLING_MSG_OWNER_MAIN:
+
+            _statemachine_info.outgoing_msg_info.valid = false;
+
+            break;
+
+        case SIBLING_MSG_OWNER_LEVEL:
+
+            _sibling_levels[_sibling_depth - 1].info.outgoing_msg_info.valid = false;
+
+            break;
+
+        case SIBLING_MSG_OWNER_APPLICATION_QUEUE:
+
+            _application_send_queue_pop_head();
+
+            break;
+
+    }
+
+}
+
+    /** @brief Moves the top level on to the next node, unless its current node is still answering. */
+static void _sibling_advance(sibling_dispatch_level_t *level) {
+
+    if (level->info.incoming_msg_info.enumerate) {
+
+        return;
+
+    }
+
+    level->info.openlcb_node =
+            _interface->openlcb_node_get_next(OPENLCB_SIBLING_STACK_NODE_ENUMERATOR_BASE + (_sibling_depth - 1));
+
+}
+
+    /**
+     * @brief One step of sibling delivery on the top level of the stack.
+     *
+     * @details Priority:
+     * -# An answer made on this level goes to the wire, then one level deeper
+     * -# A node still answering (enumerate) is called again for its next message
+     * -# When every node has been shown the message, the level is finished
+     * -# Otherwise the current node is shown the message
+     */
+static void _sibling_run_top(void) {
+
+    sibling_dispatch_level_t *level = &_sibling_levels[_sibling_depth - 1];
+
+    if (level->info.outgoing_msg_info.valid) {
+
+        if (!_interface->send_openlcb_msg(level->info.outgoing_msg_info.msg_ptr)) {
+
+            return;   // wire busy: stay here until it goes
 
         }
 
-        // If last sibling HAS a pending response, keep _sibling_dispatch_active = true
-        // so Priority 2a fires next cycle to send it.  _sibling_dispatch_current()
-        // will deactivate and clear the main slot once 2a has drained the response.
+        if (!_sibling_push(level->info.outgoing_msg_info.msg_ptr, SIBLING_MSG_OWNER_LEVEL)) {
 
-        return true;
+            level->info.outgoing_msg_info.valid = false;
+
+        }
+
+        return;
 
     }
 
-    return true;
+    if (level->info.incoming_msg_info.enumerate) {
+
+        _interface->process_main_statemachine(&level->info);
+        _sibling_advance(level);
+
+        return;
+
+    }
+
+    if (!level->info.openlcb_node) {
+
+        _sibling_pop();
+
+        return;
+
+    }
+
+    if (level->info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+
+        _interface->process_main_statemachine(&level->info);
+
+    }
+
+    _sibling_advance(level);
 
 }
 
@@ -1154,11 +1139,11 @@ bool OpenLcbMainStatemachine_handle_outgoing_openlcb_message(void) {
 
         if (_interface->send_openlcb_msg(_statemachine_info.outgoing_msg_info.msg_ptr)) {
 
-            // Start sibling dispatch if multiple nodes exist.
-            // The outgoing slot stays valid until sibling dispatch completes.
-            if (!_sibling_dispatch_begin()) {
+            // Show it to the other local nodes; the outgoing slot stays valid
+            // until that is finished.
+            if (!_sibling_push(_statemachine_info.outgoing_msg_info.msg_ptr, SIBLING_MSG_OWNER_MAIN)) {
 
-                // Single node — no siblings, clear immediately
+                // Single node (or stack full) - done
                 _statemachine_info.outgoing_msg_info.valid = false;
 
             }
@@ -1324,121 +1309,96 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
 }
 
     /**
+     * @brief Sends the oldest queued application message and shows it to the local nodes.
+     *
+     * @details Only called when the stack is empty and no incoming message is
+     * being processed, so everything caused by earlier messages has gone out.
+     *
+     * @return true if a queued message was pending (caller should return), false if idle
+     */
+static bool _handle_application_send_queue(void) {
+
+    if (_application_send_queue_count == 0) {
+
+        return false;
+
+    }
+
+    openlcb_msg_t *msg = &_application_send_queue[_application_send_queue_head].openlcb_msg;
+
+    if (!_interface->send_openlcb_msg(msg)) {
+
+        return true;   // wire busy: try again next pass
+
+    }
+
+    if (!_sibling_push(msg, SIBLING_MSG_OWNER_APPLICATION_QUEUE)) {
+
+        _application_send_queue_pop_head();
+
+    }
+
+    return true;
+
+}
+
+    /**
     * @brief Runs one iteration of the main state machine dispatch loop.
     *
     * @details Priority order:
-    * -# Send pending main outgoing (skip if held for sibling dispatch)
-    * -# Sibling dispatch: send sibling response, reenumerate, dispatch current, advance
-    * -# Check sibling response queue or Path B pending for next dispatch cycle
+    * -# While the sibling stack is active, only it runs (one step)
+    * -# Send pending main outgoing, then show it to the local nodes
     * -# Re-enumerate main handler for multi-message responses
+    * -# With no incoming message in progress, send the next queued application message
     * -# Pop next incoming message from FIFO
     * -# Enumerate first node for the message
     * -# Enumerate next node
     */
 void OpenLcbMainStatemachine_run(void) {
 
-    // ── Priority 1: Send pending main outgoing message ──────────────
-    // If valid and NOT in sibling dispatch, try to send to wire.
-    // If valid and IN sibling dispatch, skip (held for siblings to read).
-    if (!_sibling_dispatch_active) {
+    // A message is being shown to the local nodes: finish it first.
+    if (_sibling_depth > 0) {
 
-        if (_interface->handle_outgoing_openlcb_message()) {
+        _sibling_run_top();
 
-            return;
-
-        }
+        return;
 
     }
 
-    // ── Priority 2: Sibling dispatch of the outgoing message ────────
-    // After sending to wire, show the outgoing msg to each sibling.
-    // One step per _run() call — same cadence as node enumeration.
-    if (_sibling_dispatch_active) {
+    if (_interface->handle_outgoing_openlcb_message()) {
 
-        // 2a: Send any pending sibling response to wire first
-        if (_sibling_handle_outgoing()) {
-
-            return;
-
-        }
-
-        // 2b: If sibling handler is mid-enumerate, continue it
-        if (_sibling_handle_reenumerate()) {
-
-            return;
-
-        }
-
-        // 2c: Dispatch to current sibling node
-        if (_sibling_dispatch_current()) {
-
-            // After dispatch, advance to next sibling for next _run()
-            _sibling_dispatch_advance();
-
-            // If dispatch just completed (no more siblings), clear main slot
-            if (!_sibling_dispatch_active) {
-
-                _statemachine_info.outgoing_msg_info.msg_ptr->state.loopback = false;
-                _statemachine_info.outgoing_msg_info.valid = false;
-
-            }
-
-            return;
-
-        }
+        return;
 
     }
 
-    // ── Priority 2.5: Sibling response queue or Path B pending ──────
-    if (!_sibling_dispatch_active) {
-
-        openlcb_msg_t *queued = _sibling_response_queue_pop();
-
-        if (!queued && _path_b_pending) {
-
-            queued = _path_b_pending_ptr;
-            _path_b_pending = false;
-
-        }
-
-        if (queued) {
-
-            _sibling_statemachine_info.incoming_msg_info.msg_ptr = queued;
-            _sibling_statemachine_info.incoming_msg_info.enumerate = false;
-
-            _sibling_statemachine_info.openlcb_node =
-                    _interface->openlcb_node_get_first(OPENLCB_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX);
-
-            _sibling_dispatch_active = true;
-
-            return;
-
-        }
-
-    }
-
-    // ── Priority 3: Re-enumerate main handler for multi-message ─────
     if (_interface->handle_try_reenumerate()) {
 
         return;
 
     }
 
-    // ── Priority 4: Pop next incoming from wire FIFO ────────────────
+    if (!_statemachine_info.incoming_msg_info.msg_ptr) {
+
+        if (_handle_application_send_queue()) {
+
+            return;
+
+        }
+
+    }
+
     if (_interface->handle_try_pop_next_incoming_openlcb_message()) {
 
         return;
 
     }
 
-    // ── Priority 5: Enumerate first node for incoming message ───────
     if (_interface->handle_try_enumerate_first_node()) {
 
         return;
 
     }
 
-    // ── Priority 6: Enumerate next node ─────────────────────────────
     if (_interface->handle_try_enumerate_next_node()) {
 
         return;
@@ -1454,70 +1414,70 @@ openlcb_statemachine_info_t *OpenLcbMainStatemachine_get_statemachine_info(void)
 
 }
 
-    /** @brief Returns pointer to sibling dispatch state.  For unit testing only. */
+    /** @brief Returns pointer to the first sibling dispatch level.  For unit testing only. */
 openlcb_statemachine_info_t *OpenLcbMainStatemachine_get_sibling_statemachine_info(void) {
 
-    return &_sibling_statemachine_info;
+    return &_sibling_levels[0].info;
 
 }
 
-    /** @brief Returns the high-water mark of the sibling response queue. */
+    /** @brief Returns the deepest the sibling dispatch stack has been. */
 uint8_t OpenLcbMainStatemachine_get_sibling_response_queue_high_water(void) {
 
-    return _sibling_response_queue_high_water;
+    return _sibling_depth_high_water;
 
 }
 
     /**
-     * @brief Wrapper around the transport send that adds sibling dispatch.
+     * @brief Sends an application message, showing it to the other local nodes.
      *
-     * @details Algorithm:
-     * -# Send the message to the wire via the real transport callback
-     * -# If only one node, return immediately (no siblings)
-     * -# Copy message header and payload into the Path B pending slot
-     * -# Set loopback flag so self-skip works during sibling dispatch
-     * -# The run loop will dispatch it to siblings on subsequent _run() calls
+     * @details With one node the message goes straight to the transport.
+     * With several nodes it is copied into the application send queue; the
+     * run loop sends it and shows it to the other local nodes when the stack
+     * is empty and no incoming message is being processed.
      *
      * @verbatim
      * @param msg  Pointer to the outgoing openlcb_msg_t (often stack-allocated)
      * @endverbatim
      *
-     * @return true if wire send succeeded, false if transport busy
+     * @return true if sent (one node) or queued, false if the transport is
+     *         busy (one node) or the queue is full (caller retries)
      */
 bool OpenLcbMainStatemachine_send_with_sibling_dispatch(openlcb_msg_t *msg) {
 
-    // Send to wire via the real transport function
-    if (!_interface->send_openlcb_msg(msg)) {
+    if (_interface->openlcb_node_get_count() <= 1) {
+
+        return _interface->send_openlcb_msg(msg);
+
+    }
+
+    if ((_application_send_queue_count >= USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH) ||
+            (msg->payload_count > LEN_MESSAGE_BYTES_WORKER)) {
+
+        _application_send_queue_overflow_count++;
 
         return false;
 
     }
 
-    // If only one node, no siblings to notify
-    if (_interface->openlcb_node_get_count() <= 1) {
+    uint8_t tail = (_application_send_queue_head + _application_send_queue_count) % USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH;
+    openlcb_msg_t *slot = &_application_send_queue[tail].openlcb_msg;
 
-        return true;
-
-    }
-
-    // Copy into pending slot for sibling dispatch by run loop
-    openlcb_msg_t *pending = _path_b_pending_ptr;
-
-    pending->mti           = msg->mti;
-    pending->source_alias  = msg->source_alias;
-    pending->source_id     = msg->source_id;
-    pending->dest_alias    = msg->dest_alias;
-    pending->dest_id       = msg->dest_id;
-    pending->payload_count = msg->payload_count;
-    pending->state.loopback = true;
+    slot->mti           = msg->mti;
+    slot->source_alias  = msg->source_alias;
+    slot->source_id     = msg->source_id;
+    slot->dest_alias    = msg->dest_alias;
+    slot->dest_id       = msg->dest_id;
+    slot->payload_count = msg->payload_count;
+    slot->state.loopback = false;
 
     for (uint16_t i = 0; i < msg->payload_count; i++) {
 
-        *pending->payload[i] = *msg->payload[i];
+        *slot->payload[i] = *msg->payload[i];
 
     }
 
-    _path_b_pending = true;
+    _application_send_queue_count++;
 
     return true;
 

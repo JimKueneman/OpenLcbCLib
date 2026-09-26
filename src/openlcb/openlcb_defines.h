@@ -1231,7 +1231,10 @@ extern "C" {
  */
 
     /** @brief Maximum number of enumeration keys available for user/application */
-#define MAX_INTERNAL_ENUM_KEYS_VALUES 6
+#ifndef USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH
+#define USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH 4
+#endif
+#define MAX_INTERNAL_ENUM_KEYS_VALUES (6 + USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH)
 
     /** @brief Maximum number of internal system enumeration keys */
 #define MAX_USER_ENUM_KEYS_VALUES 4
@@ -1268,6 +1271,9 @@ extern "C" {
 
     /** @brief Enumeration key used by sibling dispatch in login state machine */
 #define OPENLCB_LOGIN_SIBLING_DISPATCH_NODE_ENUMERATOR_INDEX (MAX_USER_ENUM_KEYS_VALUES + 5)
+
+    /** @brief First of USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH keys, one per sibling dispatch stack level */
+#define OPENLCB_SIBLING_STACK_NODE_ENUMERATOR_BASE (MAX_USER_ENUM_KEYS_VALUES + 6)
 
     /** @} */ // end of node_enum_keys
 
