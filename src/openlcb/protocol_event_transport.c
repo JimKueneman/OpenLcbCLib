@@ -989,9 +989,53 @@ void ProtocolEventTransport_handle_producer_identified_reserved(openlcb_statemac
 }
 
     /**
+    * @brief Restarts the login's Identified round if the node is still announcing its events.
+    *
+    * @details Between Initialization Complete and RUNSTATE_RUN the login state
+    * machine sends the node's Producer/Consumer Identified messages using the
+    * node's event enumerators, the same ones the Identify Events reply uses.
+    * Rather than answer here, the login's round is started again from the first
+    * producer, so every Identified message goes out after the request
+    * (EventTransportS 6.2).  Repeating messages already sent is allowed.
+    *
+    * @verbatim
+    * @param statemachine_info Pointer to state machine context
+    * @endverbatim
+    *
+    * @return true if the node was still announcing and the round was restarted
+    */
+static bool _restart_login_announcements(openlcb_statemachine_info_t *statemachine_info) {
+
+    openlcb_node_t *openlcb_node = statemachine_info->openlcb_node;
+
+    if (!openlcb_node->state.initialized || (openlcb_node->state.run_state >= RUNSTATE_RUN)) {
+
+        return false;
+
+    }
+
+    openlcb_node->producers.enumerator.running = true;
+    openlcb_node->producers.enumerator.enum_index = 0;
+    openlcb_node->producers.enumerator.range_enum_index = 0;
+    openlcb_node->consumers.enumerator.running = false;
+    openlcb_node->consumers.enumerator.enum_index = 0;
+    openlcb_node->consumers.enumerator.range_enum_index = 0;
+
+    openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+
+    statemachine_info->incoming_msg_info.enumerate = false;
+    statemachine_info->outgoing_msg_info.valid = false;
+
+    return true;
+
+}
+
+    /**
     * @brief Handles global Identify Events message
     *
     * @details Algorithm:
+    * -# If the node is still announcing its events after Initialization
+    *    Complete, restart the login's Identified round and return
     * -# Check if more producer events need enumeration (enum_index < count):
     *    - If yes: Call _identify_producers() to handle next producer event
     *    - Return to caller for transmission
@@ -1025,6 +1069,12 @@ void ProtocolEventTransport_handle_producer_identified_reserved(openlcb_statemac
     * @see ProtocolEventTransport_extract_consumer_event_status_mti - Get consumer response MTI
     */
 void ProtocolEventTransport_handle_events_identify(openlcb_statemachine_info_t *statemachine_info) {
+
+    if (_restart_login_announcements(statemachine_info)) {
+
+        return;
+
+    }
 
     if (_identify_producers(statemachine_info)) {
 

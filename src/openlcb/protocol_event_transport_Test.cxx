@@ -1095,6 +1095,182 @@ TEST(ProtocolEventTransport, handle_events_identify_dest)
 }
 
 // ============================================================================
+// TEST: Identify Events while the node is still announcing its events
+// @details Between Initialization Complete and RUNSTATE_RUN the login is sending
+// the Identified messages with the node's enumerators.  Identify Events (global
+// or addressed to the node) restarts that round from the first producer instead
+// of answering, so the whole set goes out after the request.
+// @coverage ProtocolEventTransport_handle_events_identify()
+// @coverage ProtocolEventTransport_handle_events_identify_dest()
+// ============================================================================
+
+static void _check_login_round_restarted(uint8_t run_state, uint16_t mti)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    ASSERT_NE(node1, nullptr);
+    node1->alias = DEST_ALIAS;
+    node1->state.initialized = true;
+    node1->state.run_state = run_state;
+
+    // Login part way through its round
+    node1->producers.enumerator.running = false;
+    node1->producers.enumerator.enum_index = 3;
+    node1->producers.enumerator.range_enum_index = 1;
+    node1->consumers.enumerator.running = true;
+    node1->consumers.enumerator.enum_index = 2;
+    node1->consumers.enumerator.range_enum_index = 1;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    if (mti == MTI_EVENTS_IDENTIFY_DEST) {
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, mti);
+        ProtocolEventTransport_handle_events_identify_dest(&statemachine_info);
+
+    } else {
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, 0, 0, mti);
+        ProtocolEventTransport_handle_events_identify(&statemachine_info);
+
+    }
+
+    // No reply of its own; the login re-sends the whole set
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
+
+    EXPECT_EQ(node1->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
+    EXPECT_TRUE(node1->producers.enumerator.running);
+    EXPECT_EQ(node1->producers.enumerator.enum_index, 0);
+    EXPECT_EQ(node1->producers.enumerator.range_enum_index, 0);
+    EXPECT_FALSE(node1->consumers.enumerator.running);
+    EXPECT_EQ(node1->consumers.enumerator.enum_index, 0);
+    EXPECT_EQ(node1->consumers.enumerator.range_enum_index, 0);
+
+    _reset_variables();
+}
+
+TEST(ProtocolEventTransport, handle_events_identify_during_login_restarts_round)
+{
+    _check_login_round_restarted(RUNSTATE_LOAD_PRODUCER_EVENTS, MTI_EVENTS_IDENTIFY);
+    _check_login_round_restarted(RUNSTATE_LOAD_CONSUMER_EVENTS, MTI_EVENTS_IDENTIFY);
+    _check_login_round_restarted(RUNSTATE_LOGIN_COMPLETE, MTI_EVENTS_IDENTIFY);
+}
+
+TEST(ProtocolEventTransport, handle_events_identify_dest_during_login_restarts_round)
+{
+    _check_login_round_restarted(RUNSTATE_LOAD_PRODUCER_EVENTS, MTI_EVENTS_IDENTIFY_DEST);
+    _check_login_round_restarted(RUNSTATE_LOAD_CONSUMER_EVENTS, MTI_EVENTS_IDENTIFY_DEST);
+    _check_login_round_restarted(RUNSTATE_LOGIN_COMPLETE, MTI_EVENTS_IDENTIFY_DEST);
+}
+
+TEST(ProtocolEventTransport, handle_events_identify_dest_during_login_other_node_ignored)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    ASSERT_NE(node1, nullptr);
+    node1->alias = DEST_ALIAS;
+    node1->state.initialized = true;
+    node1->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+    node1->consumers.enumerator.running = true;
+    node1->consumers.enumerator.enum_index = 2;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    // Addressed to some other node
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, 0x0999, 0x010101010101, MTI_EVENTS_IDENTIFY_DEST);
+    ProtocolEventTransport_handle_events_identify_dest(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(node1->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+    EXPECT_TRUE(node1->consumers.enumerator.running);
+    EXPECT_EQ(node1->consumers.enumerator.enum_index, 2);
+
+    _reset_variables();
+}
+
+TEST(ProtocolEventTransport, handle_events_identify_in_run_state_replies)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    ASSERT_NE(node1, nullptr);
+    node1->alias = DEST_ALIAS;
+    node1->state.initialized = true;
+    node1->state.run_state = RUNSTATE_RUN;
+
+    for (int i = 0; i < AUTO_CREATE_EVENT_COUNT; i++) {
+        node1->consumers.list[i].status = EVENT_STATUS_CLEAR;
+        node1->producers.list[i].status = EVENT_STATUS_CLEAR;
+    }
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, 0, 0, MTI_EVENTS_IDENTIFY);
+
+    int counter = 0;
+    bool done = false;
+
+    while (!done && counter < 100) {
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_events_identify(&statemachine_info);
+        done = !statemachine_info.incoming_msg_info.enumerate;
+
+        if (counter < AUTO_CREATE_EVENT_COUNT) {
+            EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_CLEAR);
+        } else if (counter < (AUTO_CREATE_EVENT_COUNT * 2)) {
+            EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_CLEAR);
+        }
+
+        counter++;
+    }
+
+    // Answered directly; the login state is untouched
+    EXPECT_EQ(counter, (AUTO_CREATE_EVENT_COUNT * 2) + 1);
+    EXPECT_EQ(node1->state.run_state, RUNSTATE_RUN);
+
+    _reset_variables();
+}
+
+// ============================================================================
 // SECTION 2: NULL CALLBACK SAFETY TESTS
 // ============================================================================
 
