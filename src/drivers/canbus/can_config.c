@@ -143,6 +143,7 @@ static void _build_rx_message_handler(void) {
     _rx_msg.listener_set_alias = &AliasMappingListener_set_alias;
     _rx_msg.listener_clear_alias_by_alias = &AliasMappingListener_clear_alias_by_alias;
     _rx_msg.listener_flush_aliases = &AliasMappingListener_flush_aliases;
+    _rx_msg.listener_find_by_alias = &AliasMappingListener_find_by_alias;
 #endif
 
 }

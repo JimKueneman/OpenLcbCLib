@@ -139,6 +139,27 @@ void _mock_listener_clear_alias_by_alias(uint16_t alias)
 
 }
 
+    /** @brief Node ID and alias of the one listener _mock_listener_find_by_alias knows */
+#define KNOWN_LISTENER_NODE_ID 0x0A0B0C0D0E0FULL
+#define KNOWN_LISTENER_ALIAS   0x0567
+
+static listener_alias_entry_t _mock_listener_entry = { .node_id = KNOWN_LISTENER_NODE_ID, .alias = KNOWN_LISTENER_ALIAS, .verify_ticks = 0, .verify_pending = 0 };
+
+static bool listener_find_by_alias_called = false;
+
+    /** @brief Mock listener_find_by_alias that knows one resolved listener */
+listener_alias_entry_t *_mock_listener_find_by_alias(uint16_t alias)
+{
+    listener_find_by_alias_called = true;
+
+    if (alias == KNOWN_LISTENER_ALIAS)
+    {
+        return &_mock_listener_entry;
+    }
+
+    return nullptr;
+}
+
 void _mock_listener_flush_aliases(void)
 {
 
@@ -171,6 +192,7 @@ const interface_can_rx_message_handler_t _can_rx_message_handler_interface_with_
     .listener_set_alias = &_mock_listener_set_alias,
     .listener_clear_alias_by_alias = &_mock_listener_clear_alias_by_alias,
     .listener_flush_aliases = &_mock_listener_flush_aliases,
+    .listener_find_by_alias = &_mock_listener_find_by_alias,
 };
 
 /*******************************************************************************
@@ -213,6 +235,7 @@ void _global_reset_variables(void)
     listener_clear_alias_called = false;
     listener_clear_alias_alias = 0;
     listener_flush_aliases_called = false;
+    listener_find_by_alias_called = false;
 }
 
 // Helper: Count items in OpenLcbBufferList (API doesn't provide count())
@@ -553,6 +576,114 @@ TEST(CanRxMessageHandler, last_frame)
         OpenLcbBufferStore_free_buffer(openlcb_msg);
     }
     
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+}
+
+// Helper: receive one addressed Traction command from source_alias and return
+// the source_id the handler gave it
+node_id_t _single_frame_source_id(uint16_t source_alias)
+{
+    can_msg_t can_msg;
+    node_id_t source_id = 0xFFFFFFFFFFFFULL;
+
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+
+    CanUtilities_load_can_message(&can_msg, 0x195EB000 | source_alias, 5,
+                                   NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
+                                   0x00, 0x00, 0x00, 0, 0, 0);
+
+    CanRxMessageHandler_single_frame(&can_msg, 2, BASIC);
+
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferFifo_pop();
+    EXPECT_NE(openlcb_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+        EXPECT_EQ(openlcb_msg->source_alias, source_alias);
+        source_id = openlcb_msg->source_id;
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+    }
+
+    return source_id;
+}
+
+TEST(CanRxMessageHandler, single_frame_from_listener_fills_source_id)
+{
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    EXPECT_EQ(_single_frame_source_id(KNOWN_LISTENER_ALIAS), KNOWN_LISTENER_NODE_ID);
+    EXPECT_TRUE(listener_find_by_alias_called);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+}
+
+TEST(CanRxMessageHandler, single_frame_not_from_listener_leaves_source_id)
+{
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    EXPECT_EQ(_single_frame_source_id(SOURCE_ALIAS), 0ULL);
+    EXPECT_TRUE(listener_find_by_alias_called);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+}
+
+TEST(CanRxMessageHandler, single_frame_without_listener_lookup_leaves_source_id)
+{
+    _global_initialize();
+    _global_reset_variables();
+
+    // listener_find_by_alias is NULL in this interface
+    EXPECT_EQ(_single_frame_source_id(KNOWN_LISTENER_ALIAS), 0ULL);
+    EXPECT_FALSE(listener_find_by_alias_called);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+}
+
+TEST(CanRxMessageHandler, last_frame_from_listener_fills_source_id)
+{
+    _global_initialize_with_listeners();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+    openlcb_msg_t *openlcb_msg;
+
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+
+    // First frame
+    CanUtilities_load_can_message(&can_msg, 0x19C48000 | KNOWN_LISTENER_ALIAS, 8,
+                                   0x20 | NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06);
+    CanRxMessageHandler_first_frame(&can_msg, 2, DATAGRAM);
+
+    // Not looked up while the message is still being assembled
+    EXPECT_FALSE(listener_find_by_alias_called);
+
+    // Last frame
+    CanUtilities_load_can_message(&can_msg, 0x19C48000 | KNOWN_LISTENER_ALIAS, 8,
+                                   0x00 | NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
+                                   0x21, 0x22, 0x23, 0x24, 0x25, 0x26);
+    CanRxMessageHandler_last_frame(&can_msg, 2);
+
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 1);
+
+    openlcb_msg = OpenLcbBufferFifo_pop();
+    EXPECT_NE(openlcb_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+        EXPECT_EQ(openlcb_msg->source_id, KNOWN_LISTENER_NODE_ID);
+        EXPECT_EQ(openlcb_msg->payload_count, 12);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+    }
+
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
 }

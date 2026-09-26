@@ -122,6 +122,17 @@ extern "C" {
          */
         void (*listener_flush_aliases)(void);
 
+        /**
+         * @brief OPTIONAL. Find a registered listener by its resolved alias.
+         *
+         * @details Used to fill in the source Node ID of an incoming
+         * message whose sender is a registered train listener, so the train's listener
+         * forwarding can skip the sender.  NULL = feature not linked in.
+         *
+         * @note Typical: AliasMappingListener_find_by_alias.
+         */
+        listener_alias_entry_t *(*listener_find_by_alias)(uint16_t alias);
+
     } interface_can_rx_message_handler_t;
 
 

@@ -430,6 +430,73 @@ TEST(AliasMappingListener, find_last_entry_in_full_table) {
 }
 
 /*******************************************************************************
+ * Find By Alias Tests
+ ******************************************************************************/
+
+TEST(AliasMappingListener, find_by_alias_returns_resolved_entry) {
+
+    setup_test();
+
+    AliasMappingListener_register(TEST_NODE_ID_A);
+    AliasMappingListener_register(TEST_NODE_ID_B);
+    AliasMappingListener_set_alias(TEST_NODE_ID_A, TEST_ALIAS_A);
+    AliasMappingListener_set_alias(TEST_NODE_ID_B, TEST_ALIAS_B);
+
+    listener_alias_entry_t *entry = AliasMappingListener_find_by_alias(TEST_ALIAS_B);
+
+    EXPECT_NE(entry, nullptr);
+    EXPECT_EQ(entry->node_id, TEST_NODE_ID_B);
+    EXPECT_EQ(entry->alias, TEST_ALIAS_B);
+
+}
+
+TEST(AliasMappingListener, find_by_alias_returns_null_for_unknown_alias) {
+
+    setup_test();
+
+    AliasMappingListener_register(TEST_NODE_ID_A);
+    AliasMappingListener_set_alias(TEST_NODE_ID_A, TEST_ALIAS_A);
+
+    EXPECT_EQ(AliasMappingListener_find_by_alias(TEST_ALIAS_C), nullptr);
+
+}
+
+TEST(AliasMappingListener, find_by_alias_returns_null_for_zero_alias) {
+
+    setup_test();
+
+    // A registered entry whose alias is not resolved yet holds alias 0
+    AliasMappingListener_register(TEST_NODE_ID_A);
+
+    EXPECT_EQ(AliasMappingListener_find_by_alias(0), nullptr);
+
+}
+
+TEST(AliasMappingListener, find_by_alias_returns_null_after_unregister) {
+
+    setup_test();
+
+    AliasMappingListener_register(TEST_NODE_ID_A);
+    AliasMappingListener_set_alias(TEST_NODE_ID_A, TEST_ALIAS_A);
+    AliasMappingListener_unregister(TEST_NODE_ID_A);
+
+    EXPECT_EQ(AliasMappingListener_find_by_alias(TEST_ALIAS_A), nullptr);
+
+}
+
+TEST(AliasMappingListener, find_by_alias_returns_null_after_flush) {
+
+    setup_test();
+
+    AliasMappingListener_register(TEST_NODE_ID_A);
+    AliasMappingListener_set_alias(TEST_NODE_ID_A, TEST_ALIAS_A);
+    AliasMappingListener_flush_aliases();
+
+    EXPECT_EQ(AliasMappingListener_find_by_alias(TEST_ALIAS_A), nullptr);
+
+}
+
+/*******************************************************************************
  * Flush Aliases Tests (Global AME)
  ******************************************************************************/
 
