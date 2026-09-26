@@ -437,6 +437,8 @@ static const interface_openlcb_main_statemachine_t _e2e_main_interface = {
     .is_train_search_event   = NULL,
     .is_emergency_event      = NULL,
 
+
+    .openlcb_node_get_by_index = &OpenLcbNode_get_by_index,
 };
 
 // ============================================================================
@@ -915,6 +917,16 @@ TEST(OpenLcbMultinodeE2E, login_and_main_statemachines_concurrent_no_interferenc
 
     // Exactly 3 Init Complete messages (one per node)
     EXPECT_EQ(_e2e_count_wire_mti(MTI_INITIALIZATION_COMPLETE), 3);
+
+    // The last login message can still be on its way to the other local
+    // nodes (in a buffer-store buffer) when the last node reaches RUN; let
+    // both loops finish before checking for leaks
+    for (int i = 0; i < 200; i++) {
+
+        OpenLcbLoginStatemachine_run();
+        OpenLcbMainStatemachine_run();
+
+    }
 
     // No leaked buffers
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);

@@ -840,7 +840,9 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     // Event Classification Filters
     .is_broadcast_time_event = &ProtocolBroadcastTimeHandler_is_time_event,
     .is_train_search_event = &ProtocolTrainSearchHandler_is_search_event,
-    .is_emergency_event = &ProtocolTrainHandler_is_emergency_event
+    .is_emergency_event = &ProtocolTrainHandler_is_emergency_event,
+
+    .openlcb_node_get_by_index = &OpenLcbNode_get_by_index,
 };
 
 /**
@@ -925,7 +927,9 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .stream_initiate_reply = nullptr,
     .stream_send_data = nullptr,
     .stream_data_proceed = nullptr,
-    .stream_data_complete = nullptr
+    .stream_data_complete = nullptr,
+
+    .openlcb_node_get_by_index = &OpenLcbNode_get_by_index,
 };
 
 interface_openlcb_node_t interface_openlcb_node = {};
@@ -4788,6 +4792,8 @@ static const interface_openlcb_main_statemachine_t _st_interface = {
     .stream_data_proceed = &_st_log_handler,
     .stream_data_complete = &_st_log_handler,
 
+
+    .openlcb_node_get_by_index = &OpenLcbNode_get_by_index,
 };
 
     /** @brief Initialize for sibling dispatch integration tests. */

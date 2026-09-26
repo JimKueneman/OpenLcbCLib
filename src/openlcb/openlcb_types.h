@@ -152,12 +152,7 @@ extern "C" {
 #error "USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS must be >= 1 to avoid a zero-length array"
 #endif
 
-    /** @brief Levels of nested delivery between nodes on this device (a message, an answer to it, an answer to that, ...) */
-#ifndef USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH
-#define USER_DEFINED_SIBLING_DISPATCH_STACK_DEPTH    4
-#endif
-
-    /** @brief Application sends (from the main loop or callbacks) queued on a device with more than one node */
+    /** @brief Application sends (from the main loop or callbacks) that can wait at once on a device with more than one node; each waits in a buffer-store buffer */
 #ifndef USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH
 #define USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH    4
 #endif

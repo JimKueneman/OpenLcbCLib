@@ -1185,6 +1185,7 @@ static void _build_main_statemachine(void) {
     _main_sm.openlcb_node_get_next     = &OpenLcbNode_get_next;
     _main_sm.openlcb_node_is_last      = &OpenLcbNode_is_last;
     _main_sm.openlcb_node_get_count    = &OpenLcbNode_get_count;
+    _main_sm.openlcb_node_get_by_index = &OpenLcbNode_get_by_index;
     _main_sm.load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected;
 
     // Required Message Network handlers
