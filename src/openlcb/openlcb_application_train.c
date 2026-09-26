@@ -649,7 +649,7 @@ bool OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, u
      * @details Algorithm:
      * -# Call _prepare_train_command(); return if it fails.
      * -# Set payload byte 0 to TRAIN_CONTROLLER_CONFIG, byte 1 to TRAIN_CONTROLLER_ASSIGN.
-     * -# Set payload bytes 2-7 to openlcb_node->id (the throttle's Node ID).
+     * -# Set payload byte 2 to 0 (reserved flags) and bytes 3-8 to openlcb_node->id (the throttle's Node ID).
      * -# Call send_openlcb_msg().
      *
      * @verbatim
@@ -671,7 +671,8 @@ bool OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_ASSIGN, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, openlcb_node->id, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, openlcb_node->id, 3);
 
     return _interface->send_openlcb_msg(&msg);
 
@@ -683,7 +684,7 @@ bool OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node
      * @details Algorithm:
      * -# Call _prepare_train_command(); return if it fails.
      * -# Set payload byte 0 to TRAIN_CONTROLLER_CONFIG, byte 1 to TRAIN_CONTROLLER_RELEASE.
-     * -# Set payload bytes 2-7 to openlcb_node->id (the throttle's Node ID).
+     * -# Set payload byte 2 to 0 (reserved flags) and bytes 3-8 to openlcb_node->id (the throttle's Node ID).
      * -# Call send_openlcb_msg().
      *
      * @verbatim
@@ -705,7 +706,8 @@ bool OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_nod
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_RELEASE, 1);
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, openlcb_node->id, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(&msg, openlcb_node->id, 3);
 
     return _interface->send_openlcb_msg(&msg);
 
