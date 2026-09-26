@@ -5989,6 +5989,56 @@ TEST(OpenLcbMainStatemachine, sibling_flood_throttle_burst_to_local_train)
 }
 
 // ============================================================================
+// TEST: The application send queue has no limit of its own; a burst is
+// accepted until the buffer pool is empty, then send returns false, and
+// every accepted message still reaches the wire and the other node
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, application_send_queue_limited_only_by_buffer_pool)
+{
+    _st_init();
+
+    openlcb_node_t *nodes[2];
+    _st_flood_allocate_nodes(2, nodes);
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    int free_basic = USER_DEFINED_BASIC_BUFFER_DEPTH - OpenLcbBufferStore_basic_messages_allocated();
+    int accepted = 0;
+
+    // No run() between sends: nothing drains the queue
+    for (int i = 0; i < USER_DEFINED_BASIC_BUFFER_DEPTH + 4; i++) {
+
+        _st_load_pcer(&msg, nodes[0], 0x0101020304050000ULL + i);
+
+        if (!OpenLcbMainStatemachine_send_with_sibling_dispatch(&msg)) {
+
+            break;
+
+        }
+
+        accepted++;
+
+    }
+
+    EXPECT_EQ(accepted, free_basic);
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), USER_DEFINED_BASIC_BUFFER_DEPTH);
+
+    for (int i = 0; i < 1000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), accepted);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(nodes[1]->id, MTI_PC_EVENT_REPORT), accepted);
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), USER_DEFINED_BASIC_BUFFER_DEPTH - free_basic);
+}
+
+// ============================================================================
 // TEST: Throttle commands interleaved with the station's own global reports
 // (meter reports, presence events); every train command reaches its train,
 // every report reaches every other node, none reaches a node it is not for

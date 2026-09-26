@@ -575,6 +575,13 @@ function generateH(s) {
     L.push('//   DATAGRAM (72 bytes each)  -- datagram protocol messages');
     L.push('//   SNIP     (256 bytes each) -- SNIP replies and Events with Payload');
     L.push('//   STREAM   (USER_DEFINED_STREAM_BUFFER_LEN bytes each) -- stream data transfer (future use)');
+    L.push('//');
+    L.push('// Size the pool for the worst case.  It must hold, at the same time, every');
+    L.push('// message the application can send in one burst (from the main loop and from');
+    L.push('// callbacks together) and the incoming CAN messages waiting to be processed.  On a');
+    L.push('// device with more than one node each waiting send holds a buffer until the');
+    L.push('// loop sends it; when the pool is empty a send returns false and an incoming');
+    L.push('// message is dropped.');
     L.push('');
     if (isBootloader) {
 
@@ -605,13 +612,6 @@ function generateH(s) {
     L.push('// Train command stations may need more (one per locomotive being controlled).');
     L.push('');
     L.push(_def('USER_DEFINED_NODE_BUFFER_DEPTH',     (s.advNodeBuf !== undefined ? s.advNodeBuf : 1).toString()) + '      // must be >= 1; enforced by compiler');
-    L.push('');
-    L.push('// With more than one node, every message a node sends is also shown to the');
-    L.push('// other nodes on this device.  Application sends (including sends from');
-    L.push('// callbacks) wait in this queue until the loop can send them; each waiting');
-    L.push('// message and each answer between local nodes uses a buffer from the pools');
-    L.push('// above, so a busy multi-node device may need larger pools.');
-    L.push(_def('USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH', '4') + '      // must be >= 1; enforced by compiler');
     L.push('');
 
     /* ---- Events ---- */

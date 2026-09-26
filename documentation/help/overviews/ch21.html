@@ -255,10 +255,12 @@ sequenceDiagram
         <ul>
             <li><strong>One node:</strong> the message goes straight to the transport and the
                 result is the transport's.</li>
-            <li><strong>Several nodes:</strong> the message is copied and queued (up to
-                <code>USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH</code>, default 4). The call returns
-                <code>true</code> when accepted (not yet on the wire) or <code>false</code> when the
-                queue or the buffer store is full; retry later. Queued messages are sent oldest
+            <li><strong>Several nodes:</strong> the message is copied into a buffer-store buffer and
+                queued. The call returns <code>true</code> when accepted (not yet on the wire) or
+                <code>false</code> when the buffer store is empty; retry later. The queue has one
+                slot per buffer-store buffer, so size the buffer pools for the largest burst the
+                application sends (including from callbacks) plus the incoming messages waiting to
+                be processed. Queued messages are sent oldest
                 first when the stack is empty and no incoming message is being processed, so
                 everything a message caused goes out before the next incoming message is
                 handled.</li>

@@ -184,9 +184,9 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
     means accepted, not yet on the wire; it goes out on a later
     `OpenLcbConfig_run()`. Code that sends and then resets without running the
     loop loses the message. Single-node devices are unchanged.
-  - That send can now also return `false` when the application send queue
-    (`USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH`, new, optional, default 4) or
-    the buffer store is full. Never loop on a send inside a callback; keep the
+  - That send can now also return `false` when the buffer store is empty
+    (queued sends each hold a buffer until sent; the queue itself has one slot
+    per buffer, so there is no separate setting). Never loop on a send inside a callback; keep the
     message and send it from the main loop.
   - Answers between local nodes and queued sends use the same buffer store as
     received messages; busy multi-node devices may need larger pools.

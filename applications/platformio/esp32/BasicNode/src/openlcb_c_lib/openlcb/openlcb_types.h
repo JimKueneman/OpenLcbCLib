@@ -152,14 +152,6 @@ extern "C" {
 #error "USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS must be >= 1 to avoid a zero-length array"
 #endif
 
-    /** @brief Application sends (from the main loop or callbacks) that can wait at once on a device with more than one node; each waits in a buffer-store buffer */
-#ifndef USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH
-#define USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH    4
-#endif
-#if USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH < 1
-#error "USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH must be >= 1 to avoid a zero-length array"
-#endif
-
     /** @brief Maximum number of virtual nodes that can be allocated */
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
 #error "USER_DEFINED_NODE_BUFFER_DEPTH must be defined in openlcb_user_config.h"

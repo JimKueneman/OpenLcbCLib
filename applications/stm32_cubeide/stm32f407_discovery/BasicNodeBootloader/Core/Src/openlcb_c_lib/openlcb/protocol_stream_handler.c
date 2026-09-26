@@ -72,20 +72,48 @@ static uint8_t _next_source_stream_id = 0;
 // =============================================================================
 
     /**
-     * @brief Finds a stream state entry by remote node ID and stream ID.
+     * @brief Returns true if a message from (node_id, alias) came from the stream's remote end.
+     *
+     * @details Node IDs are compared when both are known.  Otherwise the
+     * aliases are compared: on CAN a received message carries only the
+     * sender's alias (source_id is 0), while on TCP the alias is always 0 and
+     * the Node ID is always present.  Messages between nodes on this device
+     * carry both.
+     *
+     * @param stream   Stream state entry.
+     * @param node_id  Source Node ID of the message (0 if not known).
+     * @param alias    Source alias of the message (0 on non-CAN transports).
+     *
+     * @return true if the message is from the stream's remote end.
+     */
+static bool _is_from_remote(const stream_state_t *stream, node_id_t node_id, uint16_t alias) {
+
+    if ((stream->remote_node_id != 0) && (node_id != 0)) {
+
+        return stream->remote_node_id == node_id;
+
+    }
+
+    return (alias != 0) && (stream->remote_alias == alias);
+
+}
+
+    /**
+     * @brief Finds a stream state entry by its remote end and stream ID.
      *
      * @details Algorithm:
      * -# Iterate through the stream table
-     * -# Match on remote_node_id and the appropriate stream ID
+     * -# Match on the remote end (see _is_from_remote) and the appropriate stream ID
      * -# Return pointer to matching entry or NULL if not found
      *
-     * @param remote_node_id  Node ID of the remote end.
+     * @param remote_node_id  Node ID of the remote end (0 if not known).
+     * @param remote_alias    Alias of the remote end (0 on non-CAN transports).
      * @param stream_id       Stream ID to match (SID or DID depending on role).
      * @param match_source_id If true, match source_stream_id; if false, match dest_stream_id.
      *
      * @return Pointer to matching entry, or NULL if not found.
      */
-static stream_state_t *_find_stream(node_id_t remote_node_id, uint8_t stream_id, bool match_source_id) {
+static stream_state_t *_find_stream(node_id_t remote_node_id, uint16_t remote_alias, uint8_t stream_id, bool match_source_id) {
 
     // Two passes. The first only accepts an entry whose role matches the
     // lookup (a SID lookup normally means we are the source, a DID lookup
@@ -103,7 +131,7 @@ static stream_state_t *_find_stream(node_id_t remote_node_id, uint8_t stream_id,
 
             }
 
-            if (_stream_table[i].remote_node_id != remote_node_id) {
+            if (!_is_from_remote(&_stream_table[i], remote_node_id, remote_alias)) {
 
                 continue;
 
@@ -638,7 +666,7 @@ void ProtocolStreamHandler_initiate_reply(openlcb_statemachine_info_t *statemach
     uint8_t dest_stream_id = OpenLcbUtilities_extract_byte_from_openlcb_payload(incoming, 5);
 
     // Find our stream by SID (we are the source)
-    stream_state_t *stream = _find_stream(incoming->source_id, source_stream_id, true);
+    stream_state_t *stream = _find_stream(incoming->source_id, incoming->source_alias, source_stream_id, true);
 
     if (!stream) { return; }
 
@@ -698,7 +726,7 @@ void ProtocolStreamHandler_data_send(openlcb_statemachine_info_t *statemachine_i
 
     uint8_t dest_stream_id = OpenLcbUtilities_extract_byte_from_openlcb_payload(incoming, 0);
 
-    stream_state_t *stream = _find_stream(incoming->source_id, dest_stream_id, false);
+    stream_state_t *stream = _find_stream(incoming->source_id, incoming->source_alias, dest_stream_id, false);
 
     if (!stream) { return; }
 
@@ -762,7 +790,7 @@ void ProtocolStreamHandler_data_proceed(openlcb_statemachine_info_t *statemachin
 
     uint8_t source_stream_id = OpenLcbUtilities_extract_byte_from_openlcb_payload(incoming, 0);
 
-    stream_state_t *stream = _find_stream(incoming->source_id, source_stream_id, true);
+    stream_state_t *stream = _find_stream(incoming->source_id, incoming->source_alias, source_stream_id, true);
 
     if (!stream) { return; }
 
@@ -801,12 +829,12 @@ void ProtocolStreamHandler_data_complete(openlcb_statemachine_info_t *statemachi
     uint8_t dest_stream_id = OpenLcbUtilities_extract_byte_from_openlcb_payload(incoming, 1);
 
     // Try to find by SID (we are destination, remote is source)
-    stream_state_t *stream = _find_stream(incoming->source_id, source_stream_id, true);
+    stream_state_t *stream = _find_stream(incoming->source_id, incoming->source_alias, source_stream_id, true);
 
     // If not found, try by DID (we are source, remote is destination)
     if (!stream) {
 
-        stream = _find_stream(incoming->source_id, dest_stream_id, false);
+        stream = _find_stream(incoming->source_id, incoming->source_alias, dest_stream_id, false);
 
     }
 
@@ -833,7 +861,7 @@ void ProtocolStreamHandler_data_complete(openlcb_statemachine_info_t *statemachi
      * -# If payload < 4 bytes, return (no rejected_mti field)
      * -# Extract rejected_mti from bytes 2-3
      * -# If not a stream MTI, return
-     * -# Scan stream table for entries matching remote node ID
+     * -# Scan stream table for entries whose remote end sent the TDE
      * -# For each match, notify on_complete callback and free the entry
      *
      * @verbatim
@@ -856,7 +884,7 @@ void ProtocolStreamHandler_handle_terminate_due_to_error(openlcb_statemachine_in
 
         if (_stream_table[i].state == STREAM_STATE_CLOSED) { continue; }
 
-        if (_stream_table[i].remote_node_id != incoming->source_id) { continue; }
+        if (!_is_from_remote(&_stream_table[i], incoming->source_id, incoming->source_alias)) { continue; }
 
         if (_interface->on_complete) {
 

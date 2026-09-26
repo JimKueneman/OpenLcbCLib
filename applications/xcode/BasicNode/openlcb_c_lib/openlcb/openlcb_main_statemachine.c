@@ -151,13 +151,14 @@ static bool _sibling_answer_waiting_for_buffer;
 // Application sends (including sends from callbacks) on a device with more
 // than one node are copied into buffer-store buffers and queued; each is sent
 // and shown to the local nodes when the stack is empty and no incoming message
-// is being processed.
+// is being processed.  The queue holds one slot per buffer-store buffer, so it
+// is never the limit: a send is refused only when no buffer is free.
 
     /** @brief Circular queue of buffer-store messages sent by the application. */
-static openlcb_msg_t *_application_send_queue[USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH];
+static openlcb_msg_t *_application_send_queue[LEN_MESSAGE_BUFFER];
 
-static uint8_t _application_send_queue_head;
-static uint8_t _application_send_queue_count;
+static uint16_t _application_send_queue_head;
+static uint16_t _application_send_queue_count;
 
     /** @brief Application sends refused because the queue or the buffer store was full. */
 static uint16_t _application_send_queue_overflow_count;
@@ -215,7 +216,7 @@ void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachin
     _sibling_depth_overflow_count = 0;
     _sibling_answer_waiting_for_buffer = false;
 
-    for (int i = 0; i < USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH; i++) {
+    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
         _application_send_queue[i] = NULL;
 
@@ -379,7 +380,7 @@ static void _application_send_queue_pop_head(void) {
     _release_to_buffer_store(_application_send_queue[_application_send_queue_head]);
     _application_send_queue[_application_send_queue_head] = NULL;
 
-    _application_send_queue_head = (_application_send_queue_head + 1) % USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH;
+    _application_send_queue_head = (_application_send_queue_head + 1) % LEN_MESSAGE_BUFFER;
     _application_send_queue_count--;
 
 }
@@ -1575,14 +1576,6 @@ bool OpenLcbMainStatemachine_send_with_sibling_dispatch(openlcb_msg_t *msg) {
 
     }
 
-    if (_application_send_queue_count >= USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH) {
-
-        _application_send_queue_overflow_count++;
-
-        return false;
-
-    }
-
     openlcb_msg_t *copy = _copy_to_buffer_store(msg);
 
     if (!copy) {
@@ -1593,7 +1586,7 @@ bool OpenLcbMainStatemachine_send_with_sibling_dispatch(openlcb_msg_t *msg) {
 
     }
 
-    uint8_t tail = (_application_send_queue_head + _application_send_queue_count) % USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH;
+    uint16_t tail = (_application_send_queue_head + _application_send_queue_count) % LEN_MESSAGE_BUFFER;
 
     _application_send_queue[tail] = copy;
     _application_send_queue_count++;

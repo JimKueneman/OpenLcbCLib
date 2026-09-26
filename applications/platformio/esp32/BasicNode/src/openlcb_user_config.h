@@ -81,6 +81,13 @@
 //   DATAGRAM (72 bytes each)  -- datagram protocol messages
 //   SNIP     (256 bytes each) -- SNIP replies and Events with Payload
 //   STREAM   (USER_DEFINED_STREAM_BUFFER_LEN bytes each) -- stream data transfer
+//
+// Size the pool for the worst case.  It must hold, at the same time, every
+// message the application can send in one burst (from the main loop and from
+// callbacks together) and the incoming CAN messages waiting to be processed.  On a
+// device with more than one node each waiting send holds a buffer until the
+// loop sends it; when the pool is empty a send returns false and an incoming
+// message is dropped.
 
 #define USER_DEFINED_BASIC_BUFFER_DEPTH              32     // must be >= 1; enforced by compiler
 #define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4      // must be >= 1; enforced by compiler
@@ -108,12 +115,6 @@
 // Train command stations may need more (one per locomotive being controlled).
 
 #define USER_DEFINED_NODE_BUFFER_DEPTH               4      // must be >= 1; enforced by compiler
-
-// With more than one node, application sends (including sends from callbacks)
-// wait here until the other nodes on this device have seen the previous
-// message.  Each waiting message uses a buffer from the pools above.
-
-#define USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH    4      // must be >= 1; enforced by compiler
 
 // =============================================================================
 // Events (requires OPENLCB_COMPILE_EVENTS)

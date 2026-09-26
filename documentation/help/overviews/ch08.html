@@ -402,10 +402,10 @@ sequenceDiagram
             and DCC CV helpers and the config-memory stream pump go through
             <code>OpenLcbMainStatemachine_send_with_sibling_dispatch()</code>. With one node it sends
             straight to the transport. With several, it copies the message into the smallest
-            buffer-store buffer that holds it, queues a pointer (up to
-            <code>USER_DEFINED_APPLICATION_SEND_QUEUE_DEPTH</code>, default 4) and returns
-            <code>true</code> (accepted, not yet on the wire), or <code>false</code> when the queue
-            or the buffer store is full (retry later). The queue is drained oldest first when the stack is empty and no
+            buffer-store buffer that holds it, queues a pointer and returns
+            <code>true</code> (accepted, not yet on the wire), or <code>false</code> when the
+            buffer store is empty (retry later). The queue has one slot per buffer-store buffer,
+            so only the buffer pool limits it. The queue is drained oldest first when the stack is empty and no
             incoming message is being processed, so everything a message caused goes out before the
             next incoming message is handled.
         </p>
