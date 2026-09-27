@@ -54,6 +54,22 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **Device-wide Train Search and Broadcast Time handling depended on one
+  node.** The Train Search "no local train matched" decision was made while
+  the last node in the list processed the message, and the Train Search reply
+  watcher and the Broadcast Time clock handler ran only on node 0. So a search
+  was never declared unmatched when the last node was not logged in, and a
+  clock event or search reply was missed when node 0 sent it or was not yet
+  logged in; local searches (the station's own throttle) did not fit the
+  last-node rule at all. The main loop now runs these handlers exactly once
+  per message after every local node has seen it (`_message_finished`), for
+  wire messages and for messages sent by the device's own nodes, with the
+  "a train matched" result gathered across all nodes. The Broadcast Time
+  callbacks receive the node the clock was set up on (new
+  `OpenLcbApplicationBroadcastTime_get_clock_node()`; clocks now remember
+  their consumer node), or node 0 if it was set up without one.
+  (`openlcb_main_statemachine.c`, `protocol_broadcast_time_handler.c`,
+  `openlcb_application_broadcast_time.c`)
 - **Default stream table too small for a stream between two local nodes.**
   The stream table is shared by every node on the device and a local stream
   uses one entry for each end, so the old default of 1 could not open one.

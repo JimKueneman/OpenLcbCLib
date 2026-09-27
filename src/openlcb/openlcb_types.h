@@ -575,6 +575,7 @@ extern "C" {
         uint16_t report_cooldown_ticks; /**< @brief Cooldown between periodic Report Time events (600 = 60s). */
         uint8_t previous_run_state;     /**< @brief Last-seen producer node run_state for startup sync detection. */
         void *producer_node; /**< @brief Node pointer for sending (set in setup_producer). */
+        void *consumer_node; /**< @brief Node the clock was set up on as a consumer (set in setup_consumer; may be NULL). */
         event_id_t report_queue[BROADCAST_TIME_REPORT_QUEUE_DEPTH]; /**< @brief Report event IDs waiting to be sent, oldest first. */
         uint8_t report_queue_head;      /**< @brief Index of the oldest queued report. */
         uint8_t report_queue_count;     /**< @brief Number of queued reports. */

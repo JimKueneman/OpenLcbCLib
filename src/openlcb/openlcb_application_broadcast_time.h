@@ -588,6 +588,20 @@ extern "C" {
     extern void OpenLcbApplicationBroadcastTime_request_report(event_id_t clock_id, uint8_t report_flags);
 
         /**
+         * @brief Returns the node a clock was set up on.
+         *
+         * @details The producer node for a producer clock, otherwise the node
+         * passed to setup_consumer.  Used as the node handed to the clock's
+         * callbacks, which run once per message rather than on one node.
+         *
+         * @param clock_id  64-bit @ref event_id_t identifying the clock.
+         *
+         * @return The clock's node, or NULL if the clock is unknown or was set
+         *         up without a node.
+         */
+    extern openlcb_node_t *OpenLcbApplicationBroadcastTime_get_clock_node(event_id_t clock_id);
+
+        /**
          * @brief Constructs a broadcast time clock ID from a 48-bit unique identifier.
          *
          * @details Takes a raw 48-bit OpenLCB unique identifier (e.g. a node ID,

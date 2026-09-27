@@ -198,6 +198,7 @@ broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_setup_consumer(openlcb_
     }
 
     clock->is_consumer = 1;
+    clock->consumer_node = openlcb_node;
 
     if (openlcb_node) {
 
@@ -1769,6 +1770,27 @@ void OpenLcbApplicationBroadcastTime_trigger_query_reply(event_id_t clock_id) {
         clock->sync_delay_ticks = 0;
 
     }
+
+}
+
+    /** @brief Returns the node a clock was set up on: its producer node, else its consumer node, else NULL. */
+openlcb_node_t *OpenLcbApplicationBroadcastTime_get_clock_node(event_id_t clock_id) {
+
+    broadcast_clock_t *clock = _find_clock_by_id(clock_id);
+
+    if (!clock) {
+
+        return NULL;
+
+    }
+
+    if (clock->is_producer && clock->producer_node) {
+
+        return (openlcb_node_t *) clock->producer_node;
+
+    }
+
+    return (openlcb_node_t *) clock->consumer_node;
 
 }
 
