@@ -70,6 +70,7 @@ typedef enum {
     CONFIG_MEM_STREAM_PHASE_ALLOCATED,
 
     // ---- Read phases ----
+    CONFIG_MEM_STREAM_PHASE_WAIT_STREAM_ENTRY,   /**< Datagram OK sent, stream table full: waiting for a free entry */
     CONFIG_MEM_STREAM_PHASE_WAIT_INITIATE_REPLY,
     CONFIG_MEM_STREAM_PHASE_SEND_REPLY_DATAGRAM,
     CONFIG_MEM_STREAM_PHASE_PUMPING,

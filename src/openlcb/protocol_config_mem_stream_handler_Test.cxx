@@ -701,7 +701,12 @@ TEST(ProtocolConfigMemStreamHandler, phase2_initiates_outbound_stream) {
 
 }
 
-TEST(ProtocolConfigMemStreamHandler, phase2_stream_table_full_resets) {
+// Stream table full after the Datagram OK: the request must not be dropped
+// (the requester cannot be assumed to retry).  It waits for a stream entry and
+// goes ahead when one frees; only if none frees within the timeout does a Read
+// Stream Reply Fail go out, so the requester always gets an answer.
+
+TEST(ProtocolConfigMemStreamHandler, phase2_stream_table_full_waits_then_opens_stream) {
 
     _global_init(&_interface_full);
 
@@ -715,25 +720,81 @@ TEST(ProtocolConfigMemStreamHandler, phase2_stream_table_full_resets) {
 
     _load_read_stream_cdi_datagram(incoming, 0, 0x10, 0);
 
-    // Force initiate_outbound to return NULL (table full)
+    // Table full when the request arrives
     _initiate_return = NULL;
 
     openlcb_statemachine_info_t info = _build_sm_info(node, incoming, outgoing);
+    info.current_tick = 5;
 
     _run_two_phase_dispatch(&info);
 
     EXPECT_EQ(_stream_initiate_called, 1);
+    EXPECT_EQ(_datagram_ok_called, 1);
+    EXPECT_FALSE(info.outgoing_msg_info.valid);   // no reply fail: it waits
 
-    // Module should reset to idle -- next call should be accepted
-    // (not rejected as "busy")
+    // Still full on the next pass: nothing sent
+    _send_msg_called = 0;
+    ProtocolConfigMemStreamHandler_check_timeouts(10);
+    ProtocolConfigMemStreamHandler_run();
+    EXPECT_EQ(_send_msg_called, 0);
+
+    // An entry frees: the next pass opens the stream without a new request
+    _initiate_return = &_mock_stream;
+    ProtocolConfigMemStreamHandler_run();
+    EXPECT_EQ(_stream_initiate_called, 3);
+    EXPECT_NE(_mock_stream.context, nullptr);
+
+    // The Stream Initiate Request goes out
+    ProtocolConfigMemStreamHandler_run();
+    EXPECT_EQ(_send_msg_called, 1);
+
+    OpenLcbBufferStore_free_buffer(incoming);
+    OpenLcbBufferStore_free_buffer(outgoing);
+
+}
+
+TEST(ProtocolConfigMemStreamHandler, phase2_stream_table_full_times_out_with_reply_fail) {
+
+    _global_init(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    ASSERT_NE(incoming, nullptr);
+    ASSERT_NE(outgoing, nullptr);
+
+    _load_read_stream_cdi_datagram(incoming, 0, 0x10, 0);
+    _initiate_return = NULL;
+
+    openlcb_statemachine_info_t info = _build_sm_info(node, incoming, outgoing);
+    info.current_tick = 5;
+
+    _run_two_phase_dispatch(&info);
+
+    // Never frees: before the timeout nothing is sent
+    ProtocolConfigMemStreamHandler_check_timeouts(20);
+    ProtocolConfigMemStreamHandler_run();
+    EXPECT_EQ(_send_msg_called, 0);
+
+    // Timeout: a Read Stream Reply Fail (buffer unavailable) goes to the requester
+    ProtocolConfigMemStreamHandler_check_timeouts(40);
+    ProtocolConfigMemStreamHandler_run();
+
+    ASSERT_EQ(_send_msg_called, 1);
+    ASSERT_NE(_last_sent_msg, nullptr);
+    EXPECT_EQ(_last_sent_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(_last_sent_msg->dest_alias, SOURCE_ALIAS);
+    EXPECT_EQ(*_last_sent_msg->payload[1], CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FF);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(_last_sent_msg, 6), ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
+
+    // The context is free again
     _initiate_return = &_mock_stream;
     _reset_mocks();
-
     node->state.openlcb_datagram_ack_sent = false;
     _load_read_stream_cdi_datagram(incoming, 0, 0x10, 0);
     info = _build_sm_info(node, incoming, outgoing);
-
-    // Phase 1 should succeed (not busy)
     ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_info(&info);
     EXPECT_EQ(_datagram_ok_called, 1);
 

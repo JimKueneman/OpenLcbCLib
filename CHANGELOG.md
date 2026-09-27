@@ -54,6 +54,13 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **A Read Stream could leave the requester waiting forever.** When the
+  stream table was full after the Datagram Received OK had gone out, the
+  request was silently dropped. It now waits for a stream entry to free (the
+  pump retries every pass) and then continues normally; if none frees within
+  the stream timeout (3 s) a Read Stream Reply Fail with Buffer Unavailable
+  (0x2020) is sent, so the requester always gets an answer and does not have
+  to retry. (`protocol_config_mem_stream_handler.c`)
 - **Default stream table too small for a stream between two local nodes.**
   The stream table is shared by every node on the device and a local stream
   uses one entry for each end, so the old default of 1 could not open one.

@@ -290,6 +290,9 @@ stateDiagram-v2
     [*] --> IDLE
     IDLE --> ALLOCATED : Read/Write stream command received
     ALLOCATED --> WAIT_INITIATE_REPLY : Initiate outbound stream (read)
+    ALLOCATED --> WAIT_STREAM_ENTRY : Stream table full (read)
+    WAIT_STREAM_ENTRY --> WAIT_INITIATE_REPLY : Entry freed, stream initiated
+    WAIT_STREAM_ENTRY --> IDLE : Timeout, Read Stream Reply Fail sent
     ALLOCATED --> WRITE_WAIT_STREAM_INITIATE : Wait for client stream (write)
     WAIT_INITIATE_REPLY --> SEND_REPLY_DATAGRAM : Stream accepted
     SEND_REPLY_DATAGRAM --> PUMPING : Reply datagram sent
@@ -323,6 +326,18 @@ stateDiagram-v2
             be called once per main loop iteration to pump data for active stream transfers. It
             checks for pending read data and sends it via the stream transport layer.
         </p>
+
+        <div class="callout callout-info">
+            <strong>Stream table full:</strong> A Read Stream is acknowledged (Datagram Received
+            OK) before the outbound stream is opened, so it must still be answered if no stream
+            table entry is free at that moment. The request waits in
+            <code>WAIT_STREAM_ENTRY</code>: <code>ProtocolConfigMemStreamHandler_run()</code>
+            tries to open the stream on every pass and the transfer continues as soon as another
+            stream frees an entry. If none frees within the stream timeout (3 seconds) a Read
+            Stream Reply Fail with Buffer Unavailable (0x2020) is sent, so the requester always
+            gets an answer and never needs to retry just because the table was briefly full. See
+            Ch 14b for sizing <code>USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS</code>.
+        </div>
 
         <div class="callout callout-info">
             <strong>User streams:</strong> When the stream handler receives a stream initiate
