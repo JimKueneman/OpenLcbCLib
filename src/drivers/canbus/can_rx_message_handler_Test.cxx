@@ -2845,3 +2845,44 @@ TEST(CanRxMessageHandler, global_middle_frame_without_first_not_rejected)
     _test_for_all_buffer_stores_empty();
 
 }
+
+/*******************************************************************************
+ * A two-frame Stream Initiate Request (with Stream Content UID) whose last
+ * frame arrives without its first frame is answered with Optional Interaction
+ * Rejected carrying the Stream Initiate Request MTI (StreamTransportS 6.1, 7.2).
+ ******************************************************************************/
+
+TEST(CanRxMessageHandler, stream_initiate_request_last_frame_without_first_rejected_with_its_mti)
+{
+
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
+
+    // Stream Initiate Request (CAN MTI 0xCC8), last frame, no first frame
+    CanUtilities_load_can_message(&can_msg, 0x19CC8000 | SOURCE_ALIAS, 8,
+                                   0x20 | NODE_ALIAS_1_HI, NODE_ALIAS_1_LO,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06);
+    CanRxMessageHandler_last_frame(&can_msg, 2);
+
+    EXPECT_EQ(OpenLcbBufferFifo_get_allocated_count(), 0);
+    ASSERT_EQ(CanBufferFifo_get_allocated_count(), 1);
+
+    can_msg_t *tx = CanBufferFifo_pop();
+    ASSERT_NE(tx, nullptr);
+
+    EXPECT_EQ(CanUtilities_convert_can_mti_to_openlcb_mti(tx), MTI_OPTIONAL_INTERACTION_REJECTED);
+    EXPECT_EQ(CanUtilities_extract_dest_alias_from_can_message(tx), SOURCE_ALIAS);
+    EXPECT_EQ(((uint16_t) tx->payload[2] << 8) | tx->payload[3], ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+    EXPECT_EQ(((uint16_t) tx->payload[4] << 8) | tx->payload[5], MTI_STREAM_INIT_REQUEST);
+
+    CanBufferStore_free_buffer(tx);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+}
+

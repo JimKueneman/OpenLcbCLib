@@ -138,7 +138,13 @@ static void _load_reject_message(uint16_t source_alias, uint16_t dest_alias, uin
 
     }
 
-    // TODO: Probably Stream is a special case too
+    // Streams need no special case: Stream Data Send frames (frame type 7) are
+    // self-contained and never reassembled, and the other stream messages
+    // (e.g. a two-frame Stream Initiate Request) are answered with Optional
+    // Interaction Rejected carrying the stream message's MTI, which
+    // StreamTransportS 6.1 allows ("when possible, the MTI value should be set
+    // to the MTI of Stream Initiate Request").  A Stream Initiate Reply cannot be
+    // built here: without the first frame the Source Stream ID is not known.
 
     outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE | ((uint32_t) (reject_mti & 0x0FFF) << 12) | source_alias;
 
