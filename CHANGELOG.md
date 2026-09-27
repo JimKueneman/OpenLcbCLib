@@ -54,6 +54,22 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **A datagram rejected with a temporary error was never resent.** The resend
+  logic existed but nothing stored the sent datagram and nothing acted on the
+  resend flag. Now every datagram a local node hands to the transport is kept
+  on the node (`last_sent_datagram`, renamed from `last_received_datagram`)
+  until the receiver answers. A temporary Datagram Rejected from that receiver
+  schedules a resend, which the main loop sends through the normal send path
+  (so other local nodes see it) at least one 100ms tick later; after 3 retries,
+  a permanent rejection or 3 seconds without an answer the copy is dropped.
+  Datagram Received OK / Rejected only act on the stored copy when they come
+  from the node it was sent to. While a node still holds an unacknowledged
+  datagram, a new incoming datagram to it is rejected with a temporary Buffer
+  Unavailable (the sender retries), so answering it cannot replace the stored
+  copy (DatagramTransportS 4.3, 6.1). `interface_openlcb_main_statemachine_t`
+  gains three optional fields, `datagram_sent`, `datagram_resend_due` and
+  `datagram_resend_queued`, wired under `OPENLCB_COMPILE_DATAGRAMS`.
+  (`protocol_datagram_handler.c`, `openlcb_main_statemachine.c`)
 - **Messages to a node still announcing its events were dropped.** After
   Initialization Complete a node spends several passes sending its Producer/Consumer
   Identified messages before it reaches `RUNSTATE_RUN`, and every message that

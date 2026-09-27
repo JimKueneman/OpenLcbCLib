@@ -1681,3 +1681,197 @@ TEST(OpenLcbConfig, local_config_mem_read_stream_multi_window) {
     EXPECT_TRUE(_ls_complete);
 
 }
+
+// =============================================================================
+// Datagram resend between two nodes on the same device (full library wiring)
+//
+// Node B has sent a datagram to a node on the bus (alias 0xCCC) and is still
+// waiting for its Datagram Received OK.  Node A then reads B's configuration
+// memory by datagram.  B must not answer yet (its reply datagram would replace
+// the stored, unacknowledged one), so it rejects A's datagram with a temporary
+// Buffer Unavailable.  A keeps its datagram and resends it after a tick.
+// DatagramTransportS 4.3, 6.1.
+// =============================================================================
+
+#define DR_BUS_ALIAS 0xCCC
+#define DR_BUS_ID    0x0501010101CCULL
+
+static void _dr_setup_nodes(openlcb_node_t **node_a, openlcb_node_t **node_b) {
+
+    _reset_mock_state();
+
+    for (int i = 0; i < 256; i++) {
+
+        _mock_config_mem[i] = (uint8_t) (i ^ 0x5A);
+
+    }
+
+    _ls_can_frames = 0;
+    _ls_replies = 0;
+    _ls_reply_cmd = 0;
+
+    CanConfig_initialize(&_ls_can_config);
+    OpenLcbConfig_initialize(&_ls_config);
+
+    *node_a = OpenLcbConfig_create_node(0x050101010101ULL, &_node_params_full);
+    *node_b = OpenLcbConfig_create_node(0x050101010102ULL, &_node_params_full);
+    ASSERT_NE(*node_a, nullptr);
+    ASSERT_NE(*node_b, nullptr);
+
+    (*node_a)->alias = 0xAAA;
+    (*node_a)->state.permitted = true;
+    (*node_a)->state.initialized = true;
+    (*node_a)->state.run_state = RUNSTATE_RUN;
+
+    (*node_b)->alias = 0xBBB;
+    (*node_b)->state.permitted = true;
+    (*node_b)->state.initialized = true;
+    (*node_b)->state.run_state = RUNSTATE_RUN;
+
+    _ls_requester = *node_a;
+
+}
+
+static void _dr_run(int passes) {
+
+    for (int i = 0; i < passes; i++) {
+
+        OpenLcbConfig_run();
+
+    }
+
+}
+
+static void _dr_tick_and_run(int ticks) {
+
+    for (int t = 0; t < ticks; t++) {
+
+        OpenLcbConfig_100ms_timer_tick();
+        _dr_run(200);
+
+    }
+
+}
+
+    /** @brief B sends a datagram to the bus node; nothing answers it yet. */
+static void _dr_b_sends_to_bus(openlcb_node_t *node_b) {
+
+    openlcb_msg_t msg;
+    payload_datagram_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = DATAGRAM;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, node_b->alias, node_b->id, DR_BUS_ALIAS, DR_BUS_ID, MTI_DATAGRAM);
+    OpenLcbUtilities_clear_openlcb_message_payload(&msg);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x30, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x31, 1);
+    msg.payload_count = 2;
+
+    ASSERT_TRUE(OpenLcbMainStatemachine_send_with_sibling_dispatch(&msg));
+    _dr_run(200);
+
+}
+
+    /** @brief A reads 4 bytes of B's space 0xFD at address 0x10 by datagram. */
+static void _dr_a_reads_b(openlcb_node_t *node_a, openlcb_node_t *node_b) {
+
+    openlcb_msg_t msg;
+    payload_datagram_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = DATAGRAM;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, node_a->alias, node_a->id, node_b->alias, node_b->id, MTI_DATAGRAM);
+    OpenLcbUtilities_clear_openlcb_message_payload(&msg);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, CONFIG_MEM_READ_SPACE_FD, 1);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(&msg, 0x10, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 4, 6);
+    msg.payload_count = 7;
+
+    ASSERT_TRUE(OpenLcbMainStatemachine_send_with_sibling_dispatch(&msg));
+    _dr_run(200);
+
+}
+
+    /** @brief The bus node's Datagram Received OK for B arrives (CAN: alias only). */
+static void _dr_bus_acks_b(openlcb_node_t *node_b) {
+
+    openlcb_msg_t *ok = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(ok, nullptr);
+    OpenLcbUtilities_load_openlcb_message(ok, DR_BUS_ALIAS, 0, node_b->alias, 0, MTI_DATAGRAM_OK_REPLY);
+    ok->payload_count = 0;
+    OpenLcbBufferFifo_push(ok);
+    _dr_run(200);
+
+}
+
+TEST(OpenLcbConfig, local_datagram_rejected_while_outstanding_then_resent) {
+
+    openlcb_node_t *node_a;
+    openlcb_node_t *node_b;
+    _dr_setup_nodes(&node_a, &node_b);
+
+    _dr_b_sends_to_bus(node_b);
+    ASSERT_NE(node_b->last_sent_datagram, nullptr);
+
+    _dr_a_reads_b(node_a, node_b);
+
+    // B told A to retry; A kept its read for resend; B's datagram untouched
+    EXPECT_EQ(_ls_replies, 0);
+    ASSERT_NE(node_a->last_sent_datagram, nullptr);
+    EXPECT_TRUE(node_a->state.resend_datagram);
+    EXPECT_EQ(node_a->last_sent_datagram->timer.datagram.retry_count, 1);
+    ASSERT_NE(node_b->last_sent_datagram, nullptr);
+    EXPECT_EQ(*node_b->last_sent_datagram->payload[0], 0x30);
+
+    // Not resent until a tick has passed
+    _dr_run(200);
+    EXPECT_TRUE(node_a->state.resend_datagram);
+
+    // The bus node acknowledges B's datagram; B's copy is freed
+    _dr_bus_acks_b(node_b);
+    EXPECT_EQ(node_b->last_sent_datagram, nullptr);
+
+    // A resends; B answers the read; A acknowledges B's reply
+    _dr_tick_and_run(1);
+
+    EXPECT_EQ(_ls_replies, 1);
+    EXPECT_EQ(_ls_reply_cmd, CONFIG_MEM_READ_REPLY_OK_SPACE_FD);
+    EXPECT_EQ(node_a->last_sent_datagram, nullptr);
+    EXPECT_EQ(node_b->last_sent_datagram, nullptr);
+    EXPECT_FALSE(node_a->state.resend_datagram);
+
+    // Nothing left behind
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+
+}
+
+TEST(OpenLcbConfig, local_datagram_resend_gives_up_after_max_retries) {
+
+    openlcb_node_t *node_a;
+    openlcb_node_t *node_b;
+    _dr_setup_nodes(&node_a, &node_b);
+
+    // B's datagram is never acknowledged, so B keeps rejecting A
+    _dr_b_sends_to_bus(node_b);
+    _dr_a_reads_b(node_a, node_b);
+    ASSERT_NE(node_a->last_sent_datagram, nullptr);
+
+    // Each tick A resends and is rejected again, until the retry limit
+    _dr_tick_and_run(6);
+
+    EXPECT_EQ(node_a->last_sent_datagram, nullptr);
+    EXPECT_FALSE(node_a->state.resend_datagram);
+    EXPECT_EQ(_ls_replies, 0);
+
+    // B's own unacknowledged datagram is dropped after the 3 second timeout
+    EXPECT_NE(node_b->last_sent_datagram, nullptr);
+    _dr_tick_and_run(32);
+    EXPECT_EQ(node_b->last_sent_datagram, nullptr);
+
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+
+}
+

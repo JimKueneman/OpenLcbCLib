@@ -248,6 +248,58 @@ static void _free_incoming_message(openlcb_statemachine_info_t *statemachine_inf
 // Sibling Dispatch Stack
 // ============================================================================
 
+    /** @brief Returns the local node that sent a message, or NULL. */
+static openlcb_node_t *_find_local_sender(const openlcb_msg_t *msg) {
+
+    for (uint16_t i = 0; ; i++) {
+
+        openlcb_node_t *node = _interface->openlcb_node_get_by_index(i);
+
+        if (!node) {
+
+            return NULL;
+
+        }
+
+        if (node->id == msg->source_id) {
+
+            return node;
+
+        }
+
+    }
+
+}
+
+    /**
+     * @brief Hands a message to the transport; a local node's datagram is also kept for resend.
+     *
+     * @return true when the transport accepted it.
+     */
+static bool _send_to_transport(openlcb_msg_t *msg) {
+
+    if (!_interface->send_openlcb_msg(msg)) {
+
+        return false;
+
+    }
+
+    if ((msg->mti == MTI_DATAGRAM) && _interface->datagram_sent) {
+
+        openlcb_node_t *sender = _find_local_sender(msg);
+
+        if (sender) {
+
+            _interface->datagram_sent(sender, msg, _interface->get_current_tick());
+
+        }
+
+    }
+
+    return true;
+
+}
+
     /**
      * @brief Copies a message into the smallest buffer-store buffer that holds it.
      *
@@ -503,7 +555,7 @@ static void _sibling_run_top(void) {
 
     if (level->answer) {
 
-        if (!_interface->send_openlcb_msg(level->answer)) {
+        if (!_send_to_transport(level->answer)) {
 
             return;   // wire busy: stay here until it goes
 
@@ -1262,7 +1314,7 @@ bool OpenLcbMainStatemachine_handle_outgoing_openlcb_message(void) {
 
     if (_statemachine_info.outgoing_msg_info.valid) {
 
-        if (_interface->send_openlcb_msg(_statemachine_info.outgoing_msg_info.msg_ptr)) {
+        if (_send_to_transport(_statemachine_info.outgoing_msg_info.msg_ptr)) {
 
             // Show it to the other local nodes; the outgoing slot stays valid
             // until that is finished.
@@ -1451,7 +1503,7 @@ static bool _handle_application_send_queue(void) {
 
     openlcb_msg_t *msg = _application_send_queue[_application_send_queue_head];
 
-    if (!_interface->send_openlcb_msg(msg)) {
+    if (!_send_to_transport(msg)) {
 
         return true;   // wire busy: try again next pass
 
@@ -1468,13 +1520,65 @@ static bool _handle_application_send_queue(void) {
 }
 
     /**
+     * @brief Hands one due datagram resend back to the send path.
+     *
+     * @details A datagram rejected with a temporary error is resent through
+     * OpenLcbMainStatemachine_send_with_sibling_dispatch(), so local nodes see
+     * it like any other send.  When that refuses (buffer store or transport
+     * busy) the resend stays due and the rest of the loop carries on, so the
+     * application queue can still drain and free buffers.
+     *
+     * @return true if a resend was handed off this pass
+     */
+static bool _handle_datagram_resend(void) {
+
+    if (!_interface->datagram_resend_due) {
+
+        return false;
+
+    }
+
+    uint8_t current_tick = _interface->get_current_tick();
+
+    for (uint16_t i = 0; ; i++) {
+
+        openlcb_node_t *node = _interface->openlcb_node_get_by_index(i);
+
+        if (!node) {
+
+            return false;
+
+        }
+
+        openlcb_msg_t *datagram = _interface->datagram_resend_due(node, current_tick);
+
+        if (datagram) {
+
+            if (!OpenLcbMainStatemachine_send_with_sibling_dispatch(datagram)) {
+
+                return false;
+
+            }
+
+            _interface->datagram_resend_queued(node);
+
+            return true;
+
+        }
+
+    }
+
+}
+
+    /**
     * @brief Runs one iteration of the main state machine dispatch loop.
     *
     * @details Priority order:
     * -# While the sibling stack is active, only it runs (one step)
     * -# Send pending main outgoing, then show it to the local nodes
     * -# Re-enumerate main handler for multi-message responses
-    * -# With no incoming message in progress, send the next queued application message
+    * -# With no incoming message in progress, hand a due datagram resend to the
+    *    send path, then send the next queued application message
     * -# Pop next incoming message from FIFO
     * -# Enumerate first node for the message
     * -# Enumerate next node
@@ -1503,6 +1607,12 @@ void OpenLcbMainStatemachine_run(void) {
     }
 
     if (!_statemachine_info.incoming_msg_info.msg_ptr) {
+
+        if (_handle_datagram_resend()) {
+
+            return;
+
+        }
 
         if (_handle_application_send_queue()) {
 
@@ -1572,7 +1682,7 @@ bool OpenLcbMainStatemachine_send_with_sibling_dispatch(openlcb_msg_t *msg) {
 
     if (_interface->openlcb_node_get_count() <= 1) {
 
-        return _interface->send_openlcb_msg(msg);
+        return _send_to_transport(msg);
 
     }
 

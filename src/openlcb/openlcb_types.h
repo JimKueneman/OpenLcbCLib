@@ -756,7 +756,7 @@ extern "C" {
         bool initialized : 1;              /**< Node fully initialized */
         bool duplicate_id_detected : 1;     /**< Duplicate Node ID conflict */
         bool openlcb_datagram_ack_sent : 1; /**< Datagram ACK sent, awaiting reply */
-        bool resend_datagram : 1;           /**< Resend last datagram (retry logic) */
+        bool resend_datagram : 1;           /**< last_sent_datagram was rejected with a temporary error and is waiting to be resent */
         bool firmware_upgrade_active : 1;   /**< Firmware upgrade in progress */
 
     } openlcb_node_state_t;
@@ -823,7 +823,7 @@ extern "C" {
         const node_parameters_t *parameters;
         uint16_t timerticks;                    /**< 100ms timer tick counter */
         uint64_t owner_node;                    /**< Node ID that has locked this node */
-        openlcb_msg_t *last_received_datagram;  /**< Saved for reply processing */
+        openlcb_msg_t *last_sent_datagram;  /**< Copy of the last datagram this node sent, kept for resend until OK, permanent reject, retries used up or timeout */
         uint8_t index;                          /**< Index in node array */
         struct train_state_TAG *train_state;    /**< NULL if not a train node */
 

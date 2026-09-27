@@ -387,6 +387,27 @@ typedef struct {
          */
     openlcb_node_t *(*openlcb_node_get_by_index)(uint16_t index);
 
+        /**
+         * @brief Called after a local node's message reaches the transport; keeps datagrams for resend.  Optional.
+         *
+         * @note Typical: ProtocolDatagramHandler_datagram_sent (NULL when datagrams are compiled out)
+         */
+    void (*datagram_sent)(openlcb_node_t *openlcb_node, openlcb_msg_t *msg, uint8_t current_tick);
+
+        /**
+         * @brief Returns a node's stored datagram when it is due to be resent, else NULL.  Optional.
+         *
+         * @note Typical: ProtocolDatagramHandler_datagram_resend_due
+         */
+    openlcb_msg_t *(*datagram_resend_due)(openlcb_node_t *openlcb_node, uint8_t current_tick);
+
+        /**
+         * @brief Tells the datagram handler its due resend was handed to the send path.  Optional.
+         *
+         * @note Typical: ProtocolDatagramHandler_datagram_resend_queued
+         */
+    void (*datagram_resend_queued)(openlcb_node_t *openlcb_node);
+
 } interface_openlcb_main_statemachine_t;
 
 #ifdef __cplusplus
