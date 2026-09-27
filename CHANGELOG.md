@@ -54,6 +54,20 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **Messages to a node still announcing its events were dropped.** After
+  Initialization Complete a node spends several passes sending its Producer/Consumer
+  Identified messages before it reaches `RUNSTATE_RUN`, and every message that
+  arrived in that window, addressed or global, was freed unanswered. A node is
+  Initialized on the network from Initialization Complete on, and JMRI sends its
+  Traction controller-assign about a millisecond after a new train node's
+  Initialization Complete and never re-sends it, so the first throttle on a new
+  locomotive hung. The main dispatch, its sibling dispatch and the login's sibling
+  dispatch now gate on `state.initialized` instead of `RUNSTATE_RUN`. An Identify
+  Events (global, or addressed to the node) that arrives in that window restarts
+  the login's Identified round from the first producer rather than being answered
+  directly, because the answer uses the same event enumerators the login is using;
+  the full set then goes out after the request (EventTransportS 6.2). Reported by
+  Bob Gamble (#14).
 - **A stream message for one local node could close another local node's
   stream.** The stream table is shared by every node on the device, and lookups
   matched only the remote end and the stream IDs, so on a multi-node device a
