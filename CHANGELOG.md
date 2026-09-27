@@ -61,6 +61,95 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   filter now matches by Node ID when the message carries a destination Node
   ID, otherwise by alias, and alias 0 never matches (MessageNetworkS 3.6).
   (`openlcb_main_statemachine.c`)
+- **Nodes on the TCP transport never logged in.** After the link came up
+  nothing moved a node out of `RUNSTATE_INIT` (on CAN the alias login's final
+  AMD step does this), so a TCP node never sent Initialization Complete, never
+  became Initialized and never reached `RUNSTATE_RUN`. Once the link is running
+  the TCP main state machine now hands every node still in `RUNSTATE_INIT` to
+  the OpenLCB login (`RUNSTATE_LOAD_INITIALIZATION_COMPLETE`, marked permitted),
+  including nodes allocated after the link came up (MessageNetworkS 3.4.1).
+  When the link drops every node returns to `RUNSTATE_INIT`, so after a
+  reconnect each node announces itself again to the new peer.
+  `interface_tcp_main_statemachine_t` gains three required fields,
+  `openlcb_node_get_first`, `openlcb_node_get_next` and
+  `openlcb_node_reset_state`, wired in `tcp_config.c`.
+  (`tcp_main_statemachine.c`)
+- **On CAN any node could take over a train's reservation.** A Train
+  Management Reserve carries no Node ID, and a message received over CAN
+  carries only the sender's alias (source_id is 0), so the holder was recorded
+  and compared as Node ID 0 and every requester matched it. The train now also
+  records the holder's alias (`train_state_t.reserved_by_alias`) and compares
+  Node IDs when both are known (TCP, local nodes), otherwise aliases. A second
+  Reserve from the holder is still accepted (idempotent, per Bob Jacobsen's
+  ruling and OlcbChecker check_tr100); a Reserve from any other node while
+  reserved is refused; any node may Release. New getter
+  `OpenLcbApplicationTrain_get_reserved_by_alias()` returns the holder's alias,
+  the only identity known for a reservation made over CAN
+  (`get_reserved_by_node_id()` returns 0 for it). (`protocol_train_handler.c`,
+  `openlcb_application_train.c`)
+- **CAN reassembly errors were never reported to the sender.** When a
+  multi-frame message arrived out of order (a middle or last frame without a
+  first frame, a second first frame before the last one, or a stale assembly),
+  or no buffer was free to assemble it, the CAN receive handler built the
+  Optional Interaction Rejected / Datagram Rejected reply as an OpenLCB message
+  and pushed it into the incoming FIFO, where no local node matched it and it
+  was dropped. The OIR payload also held the sender's alias where the error
+  code belongs and the error code where the rejected MTI belongs. The reject is
+  now built as a CAN frame from our alias to the sender and queued on the CAN
+  transmit FIFO: OIR carries the error code then the rejected MTI
+  (MessageNetworkS 3.3.4, 7.3.3.4), Datagram Rejected the error code only
+  (DatagramTransportS 4.3). Global multi-frame messages (PC Event Report with
+  payload) are never rejected. (`can_rx_message_handler.c`)
+- **Broadcast Time reports could be lost, merged, late or missing.** At
+  midnight the producer sent Date Rollover, Report Year and Report Date back to
+  back, and a Set Time/Date/Year/Rate sent its Report from inside the event
+  handler (from the node that received the Set, not the clock's producer node);
+  none of these checked the send result. Each producer clock now keeps a small
+  queue of report event IDs (`BROADCAST_TIME_REPORT_QUEUE_DEPTH`, 8), sent in
+  order from the producer node on the 100ms tick; a report stays queued until
+  the transport accepts it. Every Set gets its own echo carrying the value in
+  effect at that Set (BroadcastTimeS 6.5, TN 2.6.5), queued through the new
+  `OpenLcbApplicationBroadcastTime_request_report()`, so the echo now goes out
+  on the next tick instead of from inside the handler. A rollover through 00:00
+  is detected in either direction, running forward or backward; Date Rollover
+  goes out before that minute's Report Time, and Report Year and Report Date
+  follow three real seconds later (BroadcastTimeS 6.2, TN 2.6.2). A clock with
+  no producer node still sends nothing. (`openlcb_application_broadcast_time.c`,
+  `protocol_broadcast_time_handler.c`)
+- **Messages to a node still announcing its events were dropped.** After
+  Initialization Complete a node spends several passes sending its Producer/Consumer
+  Identified messages before it reaches `RUNSTATE_RUN`, and every message that
+  arrived in that window, addressed or global, was freed unanswered. A node is
+  Initialized on the network from Initialization Complete on, and JMRI sends its
+  Traction controller-assign about a millisecond after a new train node's
+  Initialization Complete and never re-sends it, so the first throttle on a new
+  locomotive hung. The main dispatch, its sibling dispatch and the login's sibling
+  dispatch now gate on `state.initialized` instead of `RUNSTATE_RUN`. An Identify
+  Events (global, or addressed to the node) that arrives in that window restarts
+  the login's Identified round from the first producer rather than being answered
+  directly, because the answer uses the same event enumerators the login is using;
+  the full set then goes out after the request (EventTransportS 6.2). Reported by
+  Bob Gamble (#14).
+- **A stream message for one local node could close another local node's
+  stream.** The stream table is shared by every node on the device, and lookups
+  matched only the remote end and the stream IDs, so on a multi-node device a
+  Data Complete or Terminate Due to Error from a remote node, addressed to
+  local node B, closed a stream that remote had open with local node A.
+  `stream_state_t` now records its `local_node`, set when the stream is opened
+  (incoming or outbound), and every lookup and the Terminate scan match it as
+  well as the remote end (StreamTransportS 7.4). (`protocol_stream_handler.c`)
+- **Streams could not tell their CAN peers apart.** Each stream records its
+  remote end's Node ID and alias, but lookups compared only the Node ID, and on
+  CAN a received message carries only the sender's alias (source_id is 0). So
+  on CAN every peer looked the same: a Terminate Due to Error from any node
+  closed every open stream, a Data Complete could close another peer's stream
+  when two peers used the same Source Stream ID, and a stream opened with
+  `ProtocolStreamHandler_initiate_outbound()` and a real destination Node ID
+  never matched the reply. The remote end is now matched by Node ID when both
+  sides have one and by alias otherwise, which also covers TCP (alias always 0)
+  and a peer whose Node ID becomes known mid-stream. The config-memory Write
+  Stream lookup, which matched by alias only and so could take another TCP
+  peer's stream as the write, uses the same rule. No mapping table is needed.
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
   says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says

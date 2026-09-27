@@ -1260,6 +1260,9 @@ extern "C" {
     /** @brief Enumeration key used by CAN state machine */
 #define CAN_STATEMACHINE_NODE_ENUMRATOR_KEY (MAX_USER_ENUM_KEYS_VALUES + 2)
 
+    /** @brief Enumeration key used by the TCP state machine (same slot as CAN; only one transport can be compiled in) */
+#define TCP_STATEMACHINE_NODE_ENUMERATOR_KEY CAN_STATEMACHINE_NODE_ENUMRATOR_KEY
+
     /** @brief Enumeration key used by datagram timeout scanner */
 #define DATAGRAM_TIMEOUT_ENUM_KEY (MAX_USER_ENUM_KEYS_VALUES + 3)
 
@@ -1335,6 +1338,36 @@ extern "C" {
 #define BROADCAST_TIME_SET_COMMAND_OFFSET          0x8000
 
     /** @} */ // end of broadcast_time_events
+
+/**
+ * @defgroup broadcast_time_report_pending Broadcast Time Report Requests
+ * @brief Flags for OpenLcbApplicationBroadcastTime_request_report().  Each flag
+ * queues one report with the clock's value at the time of the request, in the
+ * order Date Rollover, Time, Year, Date, Rate; the producer node sends the
+ * queue in order on the 100ms tick and keeps each report until the transport
+ * accepts it.
+ * @{
+ */
+
+    /** @brief Report Time pending */
+#define BROADCAST_TIME_REPORT_PENDING_TIME 0x01
+
+    /** @brief Date Rollover pending */
+#define BROADCAST_TIME_REPORT_PENDING_DATE_ROLLOVER 0x02
+
+    /** @brief Report Year pending */
+#define BROADCAST_TIME_REPORT_PENDING_YEAR 0x04
+
+    /** @brief Report Date pending */
+#define BROADCAST_TIME_REPORT_PENDING_DATE 0x08
+
+    /** @brief Report Rate pending */
+#define BROADCAST_TIME_REPORT_PENDING_RATE 0x10
+
+    /** @brief 100ms ticks between a Date Rollover and its Report Year / Report Date (3 real seconds, BroadcastTimeS 6.2). */
+#define BROADCAST_TIME_ROLLOVER_REPORT_DELAY_TICKS 30
+
+    /** @} */ // end of broadcast_time_report_pending
 
 /**
  * @defgroup train_protocol Train Control Protocol Defines

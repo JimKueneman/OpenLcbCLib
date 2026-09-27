@@ -573,6 +573,21 @@ extern "C" {
     extern void OpenLcbApplicationBroadcastTime_trigger_sync_delay(event_id_t clock_id);
 
         /**
+         * @brief Queues reports for a producer clock, to be sent from its producer node.
+         *
+         * @details Each flag queues one report carrying the clock's value at the
+         * time of this call, in the order Date Rollover, Time, Year, Date, Rate, so
+         * every call (for example every Set echo) produces its own reports.  The
+         * queue is sent in order on the 100ms tick; a report whose send fails stays
+         * queued and is retried on the next tick.  Nothing is sent for a clock that
+         * is not a producer or has no producer node.
+         *
+         * @param clock_id      64-bit @ref event_id_t identifying the clock.
+         * @param report_flags  BROADCAST_TIME_REPORT_PENDING_* bits.
+         */
+    extern void OpenLcbApplicationBroadcastTime_request_report(event_id_t clock_id, uint8_t report_flags);
+
+        /**
          * @brief Constructs a broadcast time clock ID from a 48-bit unique identifier.
          *
          * @details Takes a raw 48-bit OpenLCB unique identifier (e.g. a node ID,

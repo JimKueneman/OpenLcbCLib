@@ -300,3 +300,37 @@ TEST(TCP_Config, addressed_message_for_other_node_id_not_processed)
 
     OpenLcbBufferStore_free_buffer(msg);
 }
+
+// =============================================================================
+// Suspected bug: nodes on TCP never leave RUNSTATE_INIT
+// =============================================================================
+// On CAN the alias login ends by setting RUNSTATE_LOAD_INITIALIZATION_COMPLETE,
+// which hands the node to the OpenLCB login statemachine. TCP has no alias
+// login, so once the link is up something on the TCP path must make the same
+// hand-off, or the node never sends Initialization Complete (Message Network
+// 3.4.1) and never reaches RUNSTATE_RUN.
+
+static const node_parameters_t _tcp_test_node_parameters = {};
+
+static interface_openlcb_node_t _tcp_test_node_interface = {};
+
+TEST(TCP_Config, link_up_hands_allocated_node_to_openlcb_login)
+{
+    setup_test();
+    OpenLcbNode_initialize(&_tcp_test_node_interface);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x050101012200ULL, &_tcp_test_node_parameters);
+    ASSERT_NE(node, nullptr);
+    EXPECT_EQ(node->state.run_state, RUNSTATE_INIT);
+
+    TcpConfig_link_up();
+
+    for (int i = 0; i < 10; i++) {
+
+        TcpConfig_run();
+
+    }
+
+    EXPECT_EQ(TcpMainStatemachine_get_link_state(), TCP_LINK_STATE_RUNNING);
+    EXPECT_GE(node->state.run_state, RUNSTATE_LOAD_INITIALIZATION_COMPLETE);
+}
