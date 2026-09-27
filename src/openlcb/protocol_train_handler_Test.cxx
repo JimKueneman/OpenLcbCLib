@@ -1635,6 +1635,84 @@ TEST(ProtocolTrainHandler, command_management_reserve_different_source_fails)
 
 }
 
+// CAN: a received message carries only the sender's alias (source_id is 0).
+// The holder must still be told apart from other nodes.
+
+static void _reserve_from_alias(openlcb_statemachine_info_t *sm, openlcb_msg_t *incoming, uint16_t alias)
+{
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
+    incoming->payload_count = 2;
+    incoming->source_id = 0;
+    incoming->source_alias = alias;
+    sm->outgoing_msg_info.valid = false;
+
+    ProtocolTrainHandler_handle_train_command(sm);
+
+}
+
+TEST(ProtocolTrainHandler, command_management_reserve_can_different_alias_fails)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    _reserve_from_alias(&sm, incoming, 0x111);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+    EXPECT_EQ(state->reserved_node_count, 1);
+
+    // Another node (different alias, no Node ID on CAN) must be refused
+    _reserve_from_alias(&sm, incoming, 0x222);
+    EXPECT_NE(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+    EXPECT_EQ(state->reserved_node_count, 1);
+
+}
+
+TEST(ProtocolTrainHandler, command_management_reserve_can_same_alias_succeeds_and_release_frees)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    _reserve_from_alias(&sm, incoming, 0x111);
+    _reserve_from_alias(&sm, incoming, 0x111);   // same holder again: accepted (idempotent)
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+    EXPECT_EQ(state->reserved_node_count, 1);
+
+    // Any node may release
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RELEASE, 1);
+    incoming->payload_count = 2;
+    incoming->source_alias = 0x333;
+    sm.outgoing_msg_info.valid = false;
+    ProtocolTrainHandler_handle_train_command(&sm);
+    EXPECT_EQ(state->reserved_node_count, 0);
+
+    // Now a different node can reserve
+    _reserve_from_alias(&sm, incoming, 0x222);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+}
+
 TEST(ProtocolTrainHandler, command_management_release)
 {
 

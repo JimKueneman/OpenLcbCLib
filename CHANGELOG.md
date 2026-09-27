@@ -54,6 +54,19 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **On CAN any node could take over a train's reservation.** A Train
+  Management Reserve carries no Node ID, and a message received over CAN
+  carries only the sender's alias (source_id is 0), so the holder was recorded
+  and compared as Node ID 0 and every requester matched it. The train now also
+  records the holder's alias (`train_state_t.reserved_by_alias`) and compares
+  Node IDs when both are known (TCP, local nodes), otherwise aliases. A second
+  Reserve from the holder is still accepted (idempotent, per Bob Jacobsen's
+  ruling and OlcbChecker check_tr100); a Reserve from any other node while
+  reserved is refused; any node may Release. New getter
+  `OpenLcbApplicationTrain_get_reserved_by_alias()` returns the holder's alias,
+  the only identity known for a reservation made over CAN
+  (`get_reserved_by_node_id()` returns 0 for it). (`protocol_train_handler.c`,
+  `openlcb_application_train.c`)
 - **CAN reassembly errors were never reported to the sender.** When a
   multi-frame message arrived out of order (a middle or last frame without a
   first frame, a second first frame before the last one, or a stale assembly),

@@ -943,6 +943,26 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 
 }
 
+    /**
+     * @brief Returns true when a Reserve comes from the node holding the reservation.
+     *
+     * @details A Reserve carries no Node ID in its payload, so the sender is
+     * known only from the message source: on CAN the alias (source_id is 0),
+     * on TCP the Node ID (alias is 0).  Compare Node IDs when both are known,
+     * otherwise aliases.
+     */
+static bool _is_reservation_holder(const train_state_t *state, const openlcb_msg_t *msg) {
+
+    if ((state->reserved_by_node_id != 0) && (msg->source_id != 0)) {
+
+        return state->reserved_by_node_id == msg->source_id;
+
+    }
+
+    return (msg->source_alias != 0) && (state->reserved_by_alias == msg->source_alias);
+
+}
+
     /** @brief Handle Management sub-commands (reserve, release, noop/heartbeat). */
 static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
 
@@ -955,23 +975,22 @@ static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
 
         case TRAIN_MGMT_RESERVE: {
 
-            // Per TrainControlS: a second reserve from the same source
-            // shall be accepted; a reserve from a different source while
-            // already reserved shall return a fail code.
+            // A second Reserve from the holder is accepted (idempotent, ruling by
+            // Bob Jacobsen 2026-09-27, matches OlcbChecker check_tr100); a Reserve
+            // from any other node while reserved returns a fail code.
             uint8_t result = 0;
 
             if (state) {
 
-                node_id_t requesting_id = msg->source_id;
-
-                if (state->reserved_node_count > 0 && state->reserved_by_node_id != requesting_id) {
+                if (state->reserved_node_count > 0 && !_is_reservation_holder(state, msg)) {
 
                     result = 0xFF;
 
                 } else {
 
                     state->reserved_node_count = 1;
-                    state->reserved_by_node_id = requesting_id;
+                    state->reserved_by_node_id = msg->source_id;
+                    state->reserved_by_alias = msg->source_alias;
 
                 }
 
@@ -989,6 +1008,7 @@ static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
 
                 state->reserved_node_count--;
                 state->reserved_by_node_id = 0;
+                state->reserved_by_alias = 0;
 
             }
 
