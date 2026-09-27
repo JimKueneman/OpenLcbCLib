@@ -54,6 +54,13 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **On TCP every node accepted every addressed message.** The addressed
+  filter matched on destination alias OR destination Node ID. On TCP every
+  alias is 0, so every addressed message matched every node (and on CAN any
+  message with destination alias 0 matched a node without an alias). The
+  filter now matches by Node ID when the message carries a destination Node
+  ID, otherwise by alias, and alias 0 never matches (MessageNetworkS 3.6).
+  (`openlcb_main_statemachine.c`)
 - **Nodes on the TCP transport never logged in.** After the link came up
   nothing moved a node out of `RUNSTATE_INIT` (on CAN the alias login's final
   AMD step does this), so a TCP node never sent Initialization Complete, never

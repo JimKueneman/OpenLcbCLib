@@ -263,6 +263,45 @@ TEST(TCP_Config, link_up_transmits_nothing)
 }
 
 // =============================================================================
+// Suspected bug: addressed-message filter matches on alias 0 over TCP
+// =============================================================================
+// On TCP there are no aliases; every alias is 0. Addressed messages must be
+// matched by destination Node ID (TcpTransfer / Message Network 3.3). A
+// message addressed to another Node ID must not be processed by our node.
+
+TEST(TCP_Config, addressed_message_for_other_node_id_not_processed)
+{
+    setup_test();
+
+    openlcb_node_t node = {};
+    node.id = 0x050101012200ULL;
+    node.alias = 0;
+    node.state.initialized = true;
+    node.state.run_state = RUNSTATE_RUN;
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(msg, nullptr);
+
+    msg->mti = MTI_VERIFY_NODE_ID_ADDRESSED;
+    msg->source_id = 0x010203040506ULL;
+    msg->source_alias = 0;
+    msg->dest_id = 0x0A0B0C0D0E0FULL;
+    msg->dest_alias = 0;
+
+    openlcb_statemachine_info_t info = {};
+    info.openlcb_node = &node;
+    info.incoming_msg_info.msg_ptr = msg;
+
+    EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(&info));
+
+    // Sanity: addressed to our Node ID it is processed
+    msg->dest_id = 0x050101012200ULL;
+    EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(&info));
+
+    OpenLcbBufferStore_free_buffer(msg);
+}
+
+// =============================================================================
 // Suspected bug: nodes on TCP never leave RUNSTATE_INIT
 // =============================================================================
 // On CAN the alias login ends by setting RUNSTATE_LOAD_INITIALIZATION_COMPLETE,
