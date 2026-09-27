@@ -3301,3 +3301,105 @@ TEST(ProtocolConfigMemStreamHandler, write_data_received_empty_payload_no_write)
     OpenLcbBufferStore_free_buffer(out);
 
 }
+
+// ============================================================================
+// TEST: Write Stream initiate matching on TCP - peers are told apart by Node ID
+// (every alias is 0), so another peer's initiate is not taken as the write
+// ============================================================================
+
+TEST(ProtocolConfigMemStreamHandler, write_stream_tcp_initiate_from_other_peer_not_matched) {
+
+    _global_init(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params_config_mem);
+    node->alias = 0;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    ASSERT_NE(incoming, nullptr);
+    ASSERT_NE(outgoing, nullptr);
+
+    _load_write_stream_config_memory_datagram(incoming, 0, 0xAA);
+    incoming->source_alias = 0;
+    incoming->dest_alias = 0;
+
+    openlcb_statemachine_info_t info = _build_sm_info(node, incoming, outgoing);
+    info.current_tick = 0;
+
+    _run_write_two_phase_dispatch(&info);
+
+    // Initiate from a different TCP peer: alias 0 too, different Node ID
+    stream_state_t other_stream;
+    memset(&other_stream, 0, sizeof(other_stream));
+    other_stream.remote_alias = 0;
+    other_stream.remote_node_id = 0x0B0000000002ULL;
+    other_stream.state = STREAM_STATE_OPEN;
+
+    bool accepted = ProtocolConfigMemStreamHandler_on_initiate_request(&info, &other_stream);
+
+    EXPECT_TRUE(accepted);  // forwarded to the user callback
+    EXPECT_EQ(_user_initiate_request_called, 1);
+    EXPECT_EQ(other_stream.context, nullptr);
+
+    // Initiate from the peer that sent the Write Stream command
+    stream_state_t own_stream;
+    memset(&own_stream, 0, sizeof(own_stream));
+    own_stream.remote_alias = 0;
+    own_stream.remote_node_id = SOURCE_ID;
+    own_stream.state = STREAM_STATE_OPEN;
+    own_stream.dest_stream_id = 0x55;
+
+    _user_initiate_request_called = 0;
+    accepted = ProtocolConfigMemStreamHandler_on_initiate_request(&info, &own_stream);
+
+    EXPECT_TRUE(accepted);
+    EXPECT_EQ(_user_initiate_request_called, 0);
+    EXPECT_NE(own_stream.context, nullptr);
+
+    OpenLcbBufferStore_free_buffer(incoming);
+    OpenLcbBufferStore_free_buffer(outgoing);
+
+}
+
+// ============================================================================
+// TEST: Write Stream initiate matching on CAN - the command arrived without a
+// Node ID (source_id 0), the initiate arrives with one; the alias matches
+// ============================================================================
+
+TEST(ProtocolConfigMemStreamHandler, write_stream_can_initiate_matched_by_alias) {
+
+    _global_init(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params_config_mem);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    ASSERT_NE(incoming, nullptr);
+    ASSERT_NE(outgoing, nullptr);
+
+    _load_write_stream_config_memory_datagram(incoming, 0, 0xAA);
+    incoming->source_id = 0;  // as received on CAN
+
+    openlcb_statemachine_info_t info = _build_sm_info(node, incoming, outgoing);
+    info.current_tick = 0;
+
+    _run_write_two_phase_dispatch(&info);
+
+    stream_state_t own_stream;
+    memset(&own_stream, 0, sizeof(own_stream));
+    own_stream.remote_alias = SOURCE_ALIAS;
+    own_stream.remote_node_id = SOURCE_ID;
+    own_stream.state = STREAM_STATE_OPEN;
+    own_stream.dest_stream_id = 0x55;
+
+    bool accepted = ProtocolConfigMemStreamHandler_on_initiate_request(&info, &own_stream);
+
+    EXPECT_TRUE(accepted);
+    EXPECT_EQ(_user_initiate_request_called, 0);
+    EXPECT_NE(own_stream.context, nullptr);
+
+    OpenLcbBufferStore_free_buffer(incoming);
+    OpenLcbBufferStore_free_buffer(outgoing);
+
+}

@@ -357,7 +357,8 @@ static bool _sibling_handle_reenumerate(void) {
      *
      * @details Skips the originating node (self-skip handled by
      * does_node_process_msg via source_id comparison). Dispatches to nodes
-     * in RUNSTATE_RUN only.
+     * that have sent Initialization Complete (state.initialized); a node still
+     * announcing its events is already Initialized on the network.
      *
      * @return true if dispatch occurred or node skipped, false if no node
      */
@@ -376,7 +377,7 @@ static bool _sibling_dispatch_current(void) {
 
     }
 
-    if (_sibling_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+    if (_sibling_statemachine_info.openlcb_node->state.initialized) {
 
         _interface->process_main_statemachine(&_sibling_statemachine_info);
 
@@ -1241,7 +1242,7 @@ bool OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message(void) 
     * -# If node pointer already set, return false (already enumerating)
     * -# Reset train search match flag for new enumeration
     * -# Get first node; if NULL free the message and return true
-    * -# If node is in RUNSTATE_RUN, dispatch message via process_main_statemachine
+    * -# If node has sent Initialization Complete, dispatch message via process_main_statemachine
     * -# Return true
     *
     * @return true if enumeration step taken, false if no action needed
@@ -1266,7 +1267,7 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void) {
 
         }
 
-        if (_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+        if (_statemachine_info.openlcb_node->state.initialized) {
 
             // Do the processing of the incoming message on the node
             _interface->process_main_statemachine(&_statemachine_info);
@@ -1287,7 +1288,7 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void) {
     * @details Algorithm:
     * -# If no current node, return false
     * -# Get next node; if NULL free the message and return true
-    * -# If node is in RUNSTATE_RUN, dispatch message via process_main_statemachine
+    * -# If node has sent Initialization Complete, dispatch message via process_main_statemachine
     * -# Return true
     *
     * @return true if enumeration active, false if no current node
@@ -1308,7 +1309,7 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
 
         }
 
-        if (_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+        if (_statemachine_info.openlcb_node->state.initialized) {
 
             // Do the processing of the incoming message on the node
             _interface->process_main_statemachine(&_statemachine_info);

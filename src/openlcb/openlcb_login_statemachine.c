@@ -303,8 +303,9 @@ static bool _sibling_handle_reenumerate(void) {
     *
     * @details Skips the originating node (self-skip handled by
     * does_node_process_msg via source_id comparison and loopback flag).
-    * Dispatches only to nodes in RUNSTATE_RUN — nodes still logging in
-    * are not ready to process protocol messages.
+    * Dispatches only to nodes that have sent Initialization Complete
+    * (state.initialized); a node still announcing its events is already
+    * Initialized on the network.
     *
     * @return true if dispatch occurred or node skipped, false if no node
     */
@@ -318,7 +319,7 @@ static bool _sibling_dispatch_current(void) {
 
     }
 
-    if (_sibling_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+    if (_sibling_statemachine_info.openlcb_node->state.initialized) {
 
         _interface->process_main_statemachine(&_sibling_statemachine_info);
 
