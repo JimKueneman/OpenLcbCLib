@@ -124,6 +124,7 @@
             </thead>
             <tbody>
                 <tr><td><code>USER_DEFINED_NODE_BUFFER_DEPTH</code></td><td>Maximum virtual nodes that can be allocated</td><td>1-5</td></tr>
+                <tr><td><code>USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS</code></td><td>Streams open at once across all nodes (optional; default 2 with more than one node, else 1). A stream between two nodes on the same device uses one entry for each end.</td><td>1-4</td></tr>
                 <tr><td><code>USER_DEFINED_PRODUCER_COUNT</code></td><td>Max events a node can produce</td><td>2-16</td></tr>
                 <tr><td><code>USER_DEFINED_CONSUMER_COUNT</code></td><td>Max events a node can consume</td><td>2-16</td></tr>
                 <tr><td><code>USER_DEFINED_PRODUCER_RANGE_COUNT</code></td><td>Max producer event ranges (must be >= 1)</td><td>1-4</td></tr>

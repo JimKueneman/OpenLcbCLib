@@ -113,6 +113,17 @@
             streams open simultaneously (up to 255 per the specification).
         </p>
 
+        <div class="callout">
+            <div class="callout-title">Stream table size</div>
+            <p>All nodes on the device share one stream table of
+            <code>USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS</code> entries; each entry
+            records the local node that owns it. A stream between two nodes on the same
+            device uses one entry for each end, so a multi-node device that streams between
+            its own nodes (for example a throttle reading a local train's FDI) needs at
+            least 2. When the setting is left out, a device with more than one node gets 2,
+            otherwise 1.</p>
+        </div>
+
         <div class="mermaid">
 stateDiagram-v2
     [*] --> CLOSED

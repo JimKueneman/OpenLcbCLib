@@ -54,6 +54,14 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **Default stream table too small for a stream between two local nodes.**
+  The stream table is shared by every node on the device and a local stream
+  uses one entry for each end, so the old default of 1 could not open one.
+  When `USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS` is not set, a device with
+  more than one node now gets 2, otherwise 1. Configs that set it are
+  unchanged; the template and application config comments and the docs (Ch 14b,
+  Appendix E) now say a multi-node device that streams between its own nodes
+  needs at least 2. (`openlcb_types.h`)
 - **A datagram rejected with a temporary error was never resent.** The resend
   logic existed but nothing stored the sent datagram and nothing acted on the
   resend flag. Now every datagram a local node hands to the transport is kept

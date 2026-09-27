@@ -144,20 +144,30 @@ extern "C" {
 #define USER_DEFINED_STREAM_BUFFER_LEN               256
 #endif
 
-    /** @brief Maximum concurrent active streams across all nodes */
-#ifndef USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS
-#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   1
-#endif
-#if USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS < 1
-#error "USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS must be >= 1 to avoid a zero-length array"
-#endif
-
     /** @brief Maximum number of virtual nodes that can be allocated */
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
 #error "USER_DEFINED_NODE_BUFFER_DEPTH must be defined in openlcb_user_config.h"
 #endif
 #if USER_DEFINED_NODE_BUFFER_DEPTH < 1
 #error "USER_DEFINED_NODE_BUFFER_DEPTH must be >= 1 to avoid a zero-length array"
+#endif
+
+    /**
+     * @brief Maximum concurrent active streams across all nodes on the device.
+     *
+     * @details The stream table is shared by every node, and a stream between two
+     * nodes on the same device uses one entry for each end.  When not set, a
+     * device with more than one node gets 2 (one local stream), otherwise 1.
+     */
+#ifndef USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS
+#if USER_DEFINED_NODE_BUFFER_DEPTH > 1
+#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   2
+#else
+#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   1
+#endif
+#endif
+#if USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS < 1
+#error "USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS must be >= 1 to avoid a zero-length array"
 #endif
 
 

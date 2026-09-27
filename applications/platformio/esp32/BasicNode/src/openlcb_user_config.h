@@ -103,7 +103,9 @@
 //
 // MAX_CONCURRENT_ACTIVE_STREAMS controls how many streams can be open at the
 // same time across all nodes.  Each active stream uses a small state struct,
-// not a full payload buffer.  The expensive RAM is governed by
+// not a full payload buffer.  A stream between two nodes on this device uses
+// one entry for each end, so a multi-node device that streams between its own
+// nodes needs at least 2.  The expensive RAM is governed by
 // STREAM_BUFFER_DEPTH in the buffer pool above.
 #define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 #define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   1      // must be >= 1; enforced by compiler
