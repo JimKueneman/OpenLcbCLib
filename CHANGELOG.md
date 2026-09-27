@@ -54,6 +54,19 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **Nodes on the TCP transport never logged in.** After the link came up
+  nothing moved a node out of `RUNSTATE_INIT` (on CAN the alias login's final
+  AMD step does this), so a TCP node never sent Initialization Complete, never
+  became Initialized and never reached `RUNSTATE_RUN`. Once the link is running
+  the TCP main state machine now hands every node still in `RUNSTATE_INIT` to
+  the OpenLCB login (`RUNSTATE_LOAD_INITIALIZATION_COMPLETE`, marked permitted),
+  including nodes allocated after the link came up (MessageNetworkS 3.4.1).
+  When the link drops every node returns to `RUNSTATE_INIT`, so after a
+  reconnect each node announces itself again to the new peer.
+  `interface_tcp_main_statemachine_t` gains three required fields,
+  `openlcb_node_get_first`, `openlcb_node_get_next` and
+  `openlcb_node_reset_state`, wired in `tcp_config.c`.
+  (`tcp_main_statemachine.c`)
 - **On CAN any node could take over a train's reservation.** A Train
   Management Reserve carries no Node ID, and a message received over CAN
   carries only the sender's alias (source_id is 0), so the holder was recorded
