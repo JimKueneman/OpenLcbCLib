@@ -517,6 +517,15 @@ TEST(ApplicationTrain, send_assign_controller)
     EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
     EXPECT_EQ(last_sent_payload[0], TRAIN_CONTROLLER_CONFIG);
     EXPECT_EQ(last_sent_payload[1], TRAIN_CONTROLLER_ASSIGN);
+    EXPECT_EQ(last_sent_payload[2], 0x00);    // reserved flags byte
+    // Bytes 3-8 = this throttle's Node ID, big-endian, where the train reads it.
+    EXPECT_EQ(last_sent_payload[3], 0x06);
+    EXPECT_EQ(last_sent_payload[4], 0x05);
+    EXPECT_EQ(last_sent_payload[5], 0x04);
+    EXPECT_EQ(last_sent_payload[6], 0x03);
+    EXPECT_EQ(last_sent_payload[7], 0x02);
+    EXPECT_EQ(last_sent_payload[8], 0x01);
+    EXPECT_EQ(last_sent_msg.payload_count, 9);
 
 }
 
@@ -535,6 +544,15 @@ TEST(ApplicationTrain, send_release_controller)
     EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_PROTOCOL);
     EXPECT_EQ(last_sent_payload[0], TRAIN_CONTROLLER_CONFIG);
     EXPECT_EQ(last_sent_payload[1], TRAIN_CONTROLLER_RELEASE);
+    EXPECT_EQ(last_sent_payload[2], 0x00);    // reserved flags byte
+    // Bytes 3-8 = this throttle's Node ID, big-endian, where the train reads it.
+    EXPECT_EQ(last_sent_payload[3], 0x06);
+    EXPECT_EQ(last_sent_payload[4], 0x05);
+    EXPECT_EQ(last_sent_payload[5], 0x04);
+    EXPECT_EQ(last_sent_payload[6], 0x03);
+    EXPECT_EQ(last_sent_payload[7], 0x02);
+    EXPECT_EQ(last_sent_payload[8], 0x01);
+    EXPECT_EQ(last_sent_msg.payload_count, 9);
 
 }
 
