@@ -422,7 +422,6 @@ static void _load_forwarded_command(openlcb_statemachine_info_t *statemachine_in
     }
 
     statemachine_info->outgoing_msg_info.valid = true;
-    statemachine_info->outgoing_msg_info.enumerate = true;
 
 }
 
