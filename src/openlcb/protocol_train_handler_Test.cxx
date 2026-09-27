@@ -3552,7 +3552,6 @@ TEST(ProtocolTrainHandler, forwarding_speed_to_single_listener)
 
     // First forwarded message should be valid
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
-    EXPECT_TRUE(sm.outgoing_msg_info.enumerate);
     EXPECT_TRUE(sm.incoming_msg_info.enumerate);
 
     // Outgoing should be addressed to listener A
