@@ -54,19 +54,21 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
-- **Broadcast Time reports could be lost when the transport was busy.** At
+- **Broadcast Time reports could be lost, merged, late or missing.** At
   midnight the producer sent Date Rollover, Report Year and Report Date back to
   back, and a Set Time/Date/Year/Rate sent its Report from inside the event
   handler (from the node that received the Set, not the clock's producer node);
-  none of these checked the send result. Each clock now keeps a
-  `reports_pending` set of `BROADCAST_TIME_REPORT_PENDING_*` flags. The rollover,
-  the periodic Report Time and the Set handler (through the new
-  `OpenLcbApplicationBroadcastTime_request_report()`) only set flags; the 100ms
-  tick sends pending reports from the producer node in order (Time, Date
-  Rollover, Year, Date, Rate) and clears each flag only when its send succeeds.
-  The Set report now goes out on the next tick instead of from inside the
-  handler (BroadcastTimeS 6.5). A clock with no producer node still sends
-  nothing. (`openlcb_application_broadcast_time.c`,
+  none of these checked the send result. Each producer clock now keeps a small
+  queue of report event IDs (`BROADCAST_TIME_REPORT_QUEUE_DEPTH`, 8), sent in
+  order from the producer node on the 100ms tick; a report stays queued until
+  the transport accepts it. Every Set gets its own echo carrying the value in
+  effect at that Set (BroadcastTimeS 6.5, TN 2.6.5), queued through the new
+  `OpenLcbApplicationBroadcastTime_request_report()`, so the echo now goes out
+  on the next tick instead of from inside the handler. A rollover through 00:00
+  is detected in either direction, running forward or backward; Date Rollover
+  goes out before that minute's Report Time, and Report Year and Report Date
+  follow three real seconds later (BroadcastTimeS 6.2, TN 2.6.2). A clock with
+  no producer node still sends nothing. (`openlcb_application_broadcast_time.c`,
   `protocol_broadcast_time_handler.c`)
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard

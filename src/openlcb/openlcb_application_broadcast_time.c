@@ -882,57 +882,94 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
      * @param current_tick  Current value of the global 100ms tick counter.
      * @endverbatim
      */
+    /** @brief Appends one report event ID to a clock's queue; drops it (and counts it) if the queue is full. */
+static void _queue_report(broadcast_clock_t *clock, event_id_t event_id) {
+
+    if (clock->report_queue_count >= BROADCAST_TIME_REPORT_QUEUE_DEPTH) {
+
+        if (clock->report_queue_overflow_count < 0xFF) {
+
+            clock->report_queue_overflow_count++;
+
+        }
+
+        return;
+
+    }
+
+    clock->report_queue[(clock->report_queue_head + clock->report_queue_count) % BROADCAST_TIME_REPORT_QUEUE_DEPTH] = event_id;
+    clock->report_queue_count++;
+
+}
+
     /**
-     * @brief Sends a clock's pending reports in order, stopping at the first refused send.
+     * @brief Queues the requested reports with the clock's current values.
      *
-     * @details Each bit is cleared only when its send succeeds, so a busy
-     * transport leaves the rest pending for the next tick and the order is kept
-     * (Time, Date Rollover, Year, Date, Rate).  Values are the clock's current ones.
+     * @details Order: Date Rollover, Time, Year, Date, Rate, so a Date Rollover
+     * always goes out before the new day's Report Time (BroadcastTimeS 6.2).
+     *
+     * @param clock         Producer clock.
+     * @param report_flags  BROADCAST_TIME_REPORT_PENDING_* flags.
+     */
+static void _queue_reports(broadcast_clock_t *clock, uint8_t report_flags) {
+
+    event_id_t clock_id = clock->state.clock_id;
+
+    if (report_flags & BROADCAST_TIME_REPORT_PENDING_DATE_ROLLOVER) {
+
+        _queue_report(clock, ProtocolBroadcastTimeHandler_create_command_event_id(clock_id, BROADCAST_TIME_EVENT_DATE_ROLLOVER));
+
+    }
+
+    if (report_flags & BROADCAST_TIME_REPORT_PENDING_TIME) {
+
+        _queue_report(clock, ProtocolBroadcastTimeHandler_create_time_event_id(clock_id, clock->state.time.hour, clock->state.time.minute, false));
+
+    }
+
+    if (report_flags & BROADCAST_TIME_REPORT_PENDING_YEAR) {
+
+        _queue_report(clock, ProtocolBroadcastTimeHandler_create_year_event_id(clock_id, clock->state.year.year, false));
+
+    }
+
+    if (report_flags & BROADCAST_TIME_REPORT_PENDING_DATE) {
+
+        _queue_report(clock, ProtocolBroadcastTimeHandler_create_date_event_id(clock_id, clock->state.date.month, clock->state.date.day, false));
+
+    }
+
+    if (report_flags & BROADCAST_TIME_REPORT_PENDING_RATE) {
+
+        _queue_report(clock, ProtocolBroadcastTimeHandler_create_rate_event_id(clock_id, clock->state.rate.rate, false));
+
+    }
+
+}
+
+    /**
+     * @brief Sends a clock's queued reports in order from its producer node.
+     *
+     * @details Stops at the first send the transport refuses; that report and
+     * the rest stay queued for the next tick, so nothing is lost and the order
+     * is kept.
      *
      * @param clock  Producer clock with a producer node.
      */
 static void _send_pending_reports(broadcast_clock_t *clock) {
 
     openlcb_node_t *node = (openlcb_node_t *) clock->producer_node;
-    event_id_t clock_id = clock->state.clock_id;
 
-    if (clock->reports_pending & BROADCAST_TIME_REPORT_PENDING_TIME) {
+    while (clock->report_queue_count > 0) {
 
-        if (!OpenLcbApplicationBroadcastTime_send_report_time(node, clock_id, clock->state.time.hour, clock->state.time.minute)) { return; }
+        if (!OpenLcbApplication_send_event_pc_report(node, clock->report_queue[clock->report_queue_head])) {
 
-        clock->reports_pending &= (uint8_t) ~BROADCAST_TIME_REPORT_PENDING_TIME;
+            return;
 
-    }
+        }
 
-    if (clock->reports_pending & BROADCAST_TIME_REPORT_PENDING_DATE_ROLLOVER) {
-
-        if (!OpenLcbApplicationBroadcastTime_send_date_rollover(node, clock_id)) { return; }
-
-        clock->reports_pending &= (uint8_t) ~BROADCAST_TIME_REPORT_PENDING_DATE_ROLLOVER;
-
-    }
-
-    if (clock->reports_pending & BROADCAST_TIME_REPORT_PENDING_YEAR) {
-
-        if (!OpenLcbApplicationBroadcastTime_send_report_year(node, clock_id, clock->state.year.year)) { return; }
-
-        clock->reports_pending &= (uint8_t) ~BROADCAST_TIME_REPORT_PENDING_YEAR;
-
-    }
-
-    if (clock->reports_pending & BROADCAST_TIME_REPORT_PENDING_DATE) {
-
-        if (!OpenLcbApplicationBroadcastTime_send_report_date(node, clock_id, clock->state.date.month, clock->state.date.day)) { return; }
-
-        clock->reports_pending &= (uint8_t) ~BROADCAST_TIME_REPORT_PENDING_DATE;
-
-    }
-
-    if (clock->reports_pending & BROADCAST_TIME_REPORT_PENDING_RATE) {
-
-        if (!OpenLcbApplicationBroadcastTime_send_report_rate(node, clock_id, clock->state.rate.rate)) { return; }
-
-        clock->reports_pending &= (uint8_t) ~BROADCAST_TIME_REPORT_PENDING_RATE;
+        clock->report_queue_head = (clock->report_queue_head + 1) % BROADCAST_TIME_REPORT_QUEUE_DEPTH;
+        clock->report_queue_count--;
 
     }
 
@@ -957,6 +994,25 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
         if (!clock->is_allocated) {
 
             continue;
+
+        }
+
+        // --- Producer: Report Year / Report Date three seconds after a Date Rollover ---
+        // (counted before this tick's time advance, so a rollover in this tick
+        // starts its full delay on the next tick)
+
+        if (clock->is_producer && clock->rollover_report_ticks > 0) {
+
+            if (ticks_elapsed >= clock->rollover_report_ticks) {
+
+                clock->rollover_report_ticks = 0;
+                _queue_reports(clock, BROADCAST_TIME_REPORT_PENDING_YEAR | BROADCAST_TIME_REPORT_PENDING_DATE);
+
+            } else {
+
+                clock->rollover_report_ticks -= ticks_elapsed;
+
+            }
 
         }
 
@@ -998,19 +1054,23 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
 
                     if (clock->is_producer && clock->producer_node) {
 
-                        // Periodic Report Time PCER (rate-limited to once per 60 real seconds)
-                        if (clock->report_cooldown_ticks == 0) {
+                        // Rollover through 00:00 in either direction (BroadcastTimeS 6.2):
+                        // Date Rollover first, before this minute's Report Time, and
+                        // Report Year / Report Date three real seconds later.
+                        if ((rate > 0 && prev_hour == 23 && clock->state.time.hour == 0) ||
+                                (rate < 0 && prev_hour == 0 && clock->state.time.hour == 23)) {
 
-                            clock->reports_pending |= BROADCAST_TIME_REPORT_PENDING_TIME;
-
-                            clock->report_cooldown_ticks = 600;  // 60 seconds
+                            _queue_reports(clock, BROADCAST_TIME_REPORT_PENDING_DATE_ROLLOVER);
+                            clock->rollover_report_ticks = BROADCAST_TIME_ROLLOVER_REPORT_DELAY_TICKS;
 
                         }
 
-                        // Rollover detection: hour went from 23 to 0
-                        if (prev_hour == 23 && clock->state.time.hour == 0) {
+                        // Periodic Report Time PCER (rate-limited to once per 60 real seconds)
+                        if (clock->report_cooldown_ticks == 0) {
 
-                            clock->reports_pending |= BROADCAST_TIME_REPORT_PENDING_DATE_ROLLOVER | BROADCAST_TIME_REPORT_PENDING_YEAR | BROADCAST_TIME_REPORT_PENDING_DATE;
+                            _queue_reports(clock, BROADCAST_TIME_REPORT_PENDING_TIME);
+
+                            clock->report_cooldown_ticks = 600;  // 60 seconds
 
                         }
 
@@ -1022,9 +1082,9 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(uint8_t current_tick) {
 
         }
 
-        // --- Producer: send pending reports, keeping any the transport refused ---
+        // --- Producer: send queued reports, keeping any the transport refused ---
 
-        if (clock->is_producer && clock->producer_node && clock->reports_pending) {
+        if (clock->is_producer && clock->producer_node && clock->report_queue_count > 0) {
 
             _send_pending_reports(clock);
 
@@ -1712,14 +1772,14 @@ void OpenLcbApplicationBroadcastTime_trigger_query_reply(event_id_t clock_id) {
 
 }
 
-    /** @brief Marks reports for a producer clock; sent on the next 100ms tick (see header). */
+    /** @brief Queues reports for a producer clock with its current values; sent on the 100ms tick (see header). */
 void OpenLcbApplicationBroadcastTime_request_report(event_id_t clock_id, uint8_t report_flags) {
 
     broadcast_clock_t *clock = _find_clock_by_id(clock_id);
 
     if (clock && clock->is_producer) {
 
-        clock->reports_pending |= report_flags;
+        _queue_reports(clock, report_flags);
 
     }
 

@@ -548,6 +548,9 @@ extern "C" {
 
     } broadcast_clock_state_t;
 
+        /** @brief Reports a producer clock can hold waiting to be sent (one per Set echo, rollover, periodic report). */
+#define BROADCAST_TIME_REPORT_QUEUE_DEPTH 8
+
         /** @brief A clock slot with state and subscription flags. */
     typedef struct {
 
@@ -562,7 +565,11 @@ extern "C" {
         uint16_t report_cooldown_ticks; /**< @brief Cooldown between periodic Report Time events (600 = 60s). */
         uint8_t previous_run_state;     /**< @brief Last-seen producer node run_state for startup sync detection. */
         void *producer_node; /**< @brief Node pointer for sending (set in setup_producer). */
-        uint8_t reports_pending;        /**< @brief BROADCAST_TIME_REPORT_PENDING_* bits still to be sent. */
+        event_id_t report_queue[BROADCAST_TIME_REPORT_QUEUE_DEPTH]; /**< @brief Report event IDs waiting to be sent, oldest first. */
+        uint8_t report_queue_head;      /**< @brief Index of the oldest queued report. */
+        uint8_t report_queue_count;     /**< @brief Number of queued reports. */
+        uint8_t report_queue_overflow_count; /**< @brief Reports dropped because the queue was full. */
+        uint8_t rollover_report_ticks;  /**< @brief Countdown to Report Year / Report Date after a Date Rollover (0 = none). */
 
     } broadcast_clock_t;
 

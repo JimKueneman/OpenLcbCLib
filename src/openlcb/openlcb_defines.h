@@ -1337,10 +1337,12 @@ extern "C" {
     /** @} */ // end of broadcast_time_events
 
 /**
- * @defgroup broadcast_time_report_pending Broadcast Time Pending Report Flags
- * @brief Bits in broadcast_clock_t.reports_pending; a producer sends each pending
- * report from its producer node on the 100ms tick, in this order, and clears the
- * bit only when the send succeeds.
+ * @defgroup broadcast_time_report_pending Broadcast Time Report Requests
+ * @brief Flags for OpenLcbApplicationBroadcastTime_request_report().  Each flag
+ * queues one report with the clock's value at the time of the request, in the
+ * order Date Rollover, Time, Year, Date, Rate; the producer node sends the
+ * queue in order on the 100ms tick and keeps each report until the transport
+ * accepts it.
  * @{
  */
 
@@ -1358,6 +1360,9 @@ extern "C" {
 
     /** @brief Report Rate pending */
 #define BROADCAST_TIME_REPORT_PENDING_RATE 0x10
+
+    /** @brief 100ms ticks between a Date Rollover and its Report Year / Report Date (3 real seconds, BroadcastTimeS 6.2). */
+#define BROADCAST_TIME_ROLLOVER_REPORT_DELAY_TICKS 30
 
     /** @} */ // end of broadcast_time_report_pending
 

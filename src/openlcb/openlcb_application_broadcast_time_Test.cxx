@@ -1080,12 +1080,22 @@ TEST(BroadcastTimeApp, producer_midnight_crossing_emits_rollover_year_date)
     EXPECT_EQ(clock_state->time.minute, 0);
     EXPECT_EQ(clock_state->date.day, 16);
 
-    // Minute boundary fires:
-    //   - Report Time (rate-limited, first one always fires)
-    //   - Date Rollover (midnight crossing)
-    //   - Report Year (midnight crossing)
-    //   - Report Date (midnight crossing)
-    // = 4 wire frames in this single tick.
+    // Minute boundary fires (BroadcastTimeS 6.2):
+    //   - Date Rollover, immediately prior to the new day's time
+    //   - Report Time 00:00 (rate-limited, first one always fires)
+    EXPECT_EQ(send_count, 2);
+
+    // Report Year and Report Date follow three real seconds (30 ticks) later
+    for (int tick = 10; tick < 39; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
+
+    }
+
+    EXPECT_EQ(send_count, 2);
+
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(40);
+
     EXPECT_EQ(send_count, 4);
 
 }
@@ -4040,8 +4050,9 @@ TEST(BroadcastTimeApp, producer_tick_midnight_rollover_sends_date_events)
     cs->date.day = 15;
     cs->year.year = 2026;
 
-    // Advance 1 minute to cross midnight (23:59 -> 0:00)
-    for (int tick = 0; tick < 600; tick++) {
+    // Advance 1 minute to cross midnight (23:59 -> 0:00), plus the 3 s
+    // before Report Year / Report Date
+    for (int tick = 0; tick < 640; tick++) {
 
         OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
@@ -4050,7 +4061,7 @@ TEST(BroadcastTimeApp, producer_tick_midnight_rollover_sends_date_events)
     EXPECT_EQ(cs->time.hour, 0);
     EXPECT_EQ(cs->time.minute, 0);
 
-    // Should have sent: report_time + date_rollover + report_year + report_date = 4 sends
+    // Should have sent: date_rollover + report_time + report_year + report_date = 4 sends
     EXPECT_GE(send_count, 4);
 
 }
@@ -4750,7 +4761,7 @@ TEST(BroadcastTimeApp, audit_midnight_rollover_reports_retried_after_transport_b
     clock_state->date.month  = 6;
     clock_state->year.year   = 2026;
 
-    // Transport accepts the first message (Report Time) then refuses the rest.
+    // Transport accepts the first message (Date Rollover) then refuses the rest.
     fail_after_count = 1;
 
     for (int tick = 0; tick < 10; tick++) {
@@ -4762,17 +4773,141 @@ TEST(BroadcastTimeApp, audit_midnight_rollover_reports_retried_after_transport_b
     EXPECT_EQ(clock_state->time.hour, 0);
     EXPECT_EQ(clock_state->date.day, 16);
 
-    // Transport free again; run a few more ticks (less than one fast minute).
+    // Transport free again; run past the 3 s Year / Date delay.
     fail_after_count = -1;
 
-    for (int tick = 10; tick < 15; tick++) {
+    for (int tick = 10; tick < 45; tick++) {
 
         OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t)(tick + 1));
 
     }
 
     EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_DATE_ROLLOVER));
+    EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_REPORT_TIME));
     EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_REPORT_YEAR));
     EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_REPORT_DATE));
 
 }
+
+// ============================================================================
+// BroadcastTimeS 6.2 / 6.5 ordering and timing
+// ============================================================================
+
+    /** @brief Returns the event type of the Nth logged send, or -1. */
+static int _logged_type(int index) {
+
+    if (index >= sent_event_log_count) {
+
+        return -1;
+
+    }
+
+    return (int) ProtocolBroadcastTimeHandler_get_event_type(sent_event_log[index]);
+
+}
+
+static broadcast_clock_state_t *_bt_producer_at(openlcb_node_t **node_out, int16_t rate, uint8_t hour, uint8_t minute)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    *node_out = node;
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_setup_producer(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    cs->is_running = true;
+    cs->rate.rate = rate;
+    cs->time.hour = hour;
+    cs->time.minute = minute;
+    cs->date.month = 6;
+    cs->date.day = 15;
+    cs->year.year = 2026;
+
+    return cs;
+
+}
+
+TEST(BroadcastTimeApp, rollover_sends_date_rollover_before_report_time_then_year_date_3s_later)
+{
+
+    openlcb_node_t *node;
+    _bt_producer_at(&node, 240, 23, 59);   // 60x: one fast minute per 10 ticks
+
+    for (int tick = 1; tick <= 10; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t) tick);
+
+    }
+
+    ASSERT_EQ(sent_event_log_count, 2);
+    EXPECT_EQ(_logged_type(0), BROADCAST_TIME_EVENT_DATE_ROLLOVER);
+    EXPECT_EQ(_logged_type(1), BROADCAST_TIME_EVENT_REPORT_TIME);
+
+    for (int tick = 11; tick <= 40; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t) tick);
+
+    }
+
+    ASSERT_EQ(sent_event_log_count, 4);
+    EXPECT_EQ(_logged_type(2), BROADCAST_TIME_EVENT_REPORT_YEAR);
+    EXPECT_EQ(_logged_type(3), BROADCAST_TIME_EVENT_REPORT_DATE);
+    EXPECT_EQ(sent_event_log[3], ProtocolBroadcastTimeHandler_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 16, false));
+
+}
+
+TEST(BroadcastTimeApp, backward_rollover_sends_date_rollover_and_year_date)
+{
+
+    openlcb_node_t *node;
+    broadcast_clock_state_t *cs = _bt_producer_at(&node, -240, 0, 0);   // running backward
+
+    for (int tick = 1; tick <= 10; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t) tick);
+
+    }
+
+    EXPECT_EQ(cs->time.hour, 23);
+    EXPECT_EQ(cs->time.minute, 59);
+    EXPECT_EQ(cs->date.day, 14);
+    ASSERT_GE(sent_event_log_count, 1);
+    EXPECT_EQ(_logged_type(0), BROADCAST_TIME_EVENT_DATE_ROLLOVER);
+
+    for (int tick = 11; tick <= 40; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick((uint8_t) tick);
+
+    }
+
+    EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_REPORT_YEAR));
+    EXPECT_TRUE(_event_type_was_sent(BROADCAST_TIME_EVENT_REPORT_DATE));
+    EXPECT_EQ(sent_event_log[sent_event_log_count - 1], ProtocolBroadcastTimeHandler_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 14, false));
+
+}
+
+TEST(BroadcastTimeApp, two_sets_in_one_tick_give_two_echoes_in_order)
+{
+
+    openlcb_node_t *node;
+    _bt_producer_at(&node, 4, 10, 0);
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    cs->is_running = false;
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(info));
+    info.openlcb_node = node;
+
+    ProtocolBroadcastTimeHandler_handle_time_event(&info, ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 8, 45, true));
+    ProtocolBroadcastTimeHandler_handle_time_event(&info, ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 9, 15, true));
+
+    OpenLcbApplicationBroadcastTime_100ms_time_tick(1);
+
+    ASSERT_EQ(sent_event_log_count, 2);
+    EXPECT_EQ(sent_event_log[0], ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 8, 45, false));
+    EXPECT_EQ(sent_event_log[1], ProtocolBroadcastTimeHandler_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 9, 15, false));
+
+}
+
