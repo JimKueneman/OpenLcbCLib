@@ -334,9 +334,14 @@ sequenceDiagram
         </table>
 
         <div class="callout callout-info">
-            <strong>Node index restriction:</strong> The protocol handler only processes broadcast
-            time events for node index 0. Broadcast time events are global and do not need to be
-            processed by every virtual node in a multi-node configuration.
+            <strong>Once per message:</strong> Broadcast Time events are global, so the handler runs
+            once per event for the whole device, after every local node has seen it (Ch 8.9), not
+            on a particular node. It runs whichever node sent the event (including one of the
+            device's own nodes) and whichever nodes are logged in. The callbacks receive the node
+            the clock was set up on: its producer node, otherwise the node passed to
+            <code>setup_consumer()</code>
+            (<code>OpenLcbApplicationBroadcastTime_get_clock_node()</code>), or node 0 if the clock
+            was set up without a node.
         </div>
 
         <!-- ================================================================ -->

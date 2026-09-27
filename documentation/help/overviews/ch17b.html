@@ -205,8 +205,11 @@ sequenceDiagram
         </div>
 
         <p>
-            The <code>on_search_no_match()</code> callback is called after the full train node
-            enumeration completes with no match. The application allocates a new virtual train
+            The <code>on_search_no_match()</code> callback is called once the search has been
+            shown to every local node and none matched (the main loop's once-per-message step,
+            Ch 8.9). This works for searches from the bus and from the device's own nodes (for
+            example the command station's own throttle), and does not depend on which nodes are
+            logged in. The application allocates a new virtual train
             node and returns a pointer to it. The newly created node then sends the Producer
             Identified reply.
         </p>
