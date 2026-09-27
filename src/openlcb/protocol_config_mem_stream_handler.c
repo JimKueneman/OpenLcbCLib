@@ -53,6 +53,9 @@
     /** @brief Timeout threshold in 100ms ticks (3 seconds, matches datagram handler). */
 #define CONFIG_MEM_STREAM_TIMEOUT_TICKS 30
 
+    /** @brief Latest 100ms tick seen by check_timeouts; used by the pump to time a stream it opens. */
+static uint8_t _last_tick;
+
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
@@ -434,6 +437,7 @@ void ProtocolConfigMemStreamHandler_initialize(const interface_protocol_config_m
     }
 
     _pump_index = 0;
+    _last_tick = 0;
     _init_pump_outgoing();
 
 }
@@ -561,9 +565,12 @@ static void _handle_read_stream(openlcb_statemachine_info_t *statemachine_info, 
 
     if (!stream) {
 
-        // Stream table full -- no way to reply (ACK already sent).
-        // Reset and let the requester time out.
-        _reset_context(ctx);
+        // Stream table full.  The Datagram OK has gone out, so the request must
+        // still be answered, and the requester cannot be assumed to retry: wait
+        // for a stream entry to free.  The pump retries on every pass; if none
+        // frees within the timeout a Read Stream Reply Fail is sent instead.
+        ctx->tick_snapshot = statemachine_info->current_tick;
+        ctx->phase = CONFIG_MEM_STREAM_PHASE_WAIT_STREAM_ENTRY;
 
         return;
 
@@ -970,6 +977,30 @@ void ProtocolConfigMemStreamHandler_run(void) {
 
         switch (ctx->phase) {
 
+            case CONFIG_MEM_STREAM_PHASE_WAIT_STREAM_ENTRY: {
+
+                // Try again to open the outbound stream; the pump slot is free here
+                _pump_sm_info.openlcb_node = ctx->node;
+
+                stream_state_t *stream = _interface->stream_initiate_outbound(&_pump_sm_info, ctx->remote_alias, ctx->remote_node_id, LEN_MESSAGE_BYTES_STREAM, ctx->dest_stream_id, NULL);
+
+                if (!stream) {
+
+                    break;   // still full: leave it waiting, look at the other contexts
+
+                }
+
+                ctx->stream = stream;
+                stream->context = ctx;
+                ctx->tick_snapshot = _last_tick;
+                ctx->phase = CONFIG_MEM_STREAM_PHASE_WAIT_INITIATE_REPLY;
+
+                _pump_index = (idx + 1) % USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS;
+
+                return;
+
+            }
+
             case CONFIG_MEM_STREAM_PHASE_SEND_REPLY_DATAGRAM:
 
                 _load_reply_ok_datagram(ctx);
@@ -1043,7 +1074,9 @@ static bool _pump_msg_is_for_context(const config_mem_stream_context_t *ctx) {
     /**
      * @brief Checks for timed-out config-mem stream operations.
      *
-     * @details If the active operation is in WAIT_INITIATE_REPLY, PUMPING,
+     * @details A read still waiting for a stream entry (WAIT_STREAM_ENTRY) that
+     * times out is answered with a Read Stream Reply Fail (buffer unavailable).
+     * If the active operation is in WAIT_INITIATE_REPLY, PUMPING,
      * WRITE_WAIT_STREAM_INITIATE, or WRITE_RECEIVING and the elapsed time
      * exceeds the timeout threshold, terminates the stream (if open) and
      * resets to idle.
@@ -1054,9 +1087,36 @@ static bool _pump_msg_is_for_context(const config_mem_stream_context_t *ctx) {
      */
 void ProtocolConfigMemStreamHandler_check_timeouts(uint8_t current_tick) {
 
+    _last_tick = current_tick;
+
     for (uint8_t i = 0; i < USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS; i++) {
 
         config_mem_stream_context_t *ctx = &_context_pool[i];
+
+        // Waiting for a stream entry: when the wait times out, answer the
+        // requester with a Read Stream Reply Fail through the pump slot.
+        if (ctx->phase == CONFIG_MEM_STREAM_PHASE_WAIT_STREAM_ENTRY) {
+
+            if ((uint8_t) (current_tick - ctx->tick_snapshot) < CONFIG_MEM_STREAM_TIMEOUT_TICKS) {
+
+                continue;
+
+            }
+
+            if (_pump_sm_info.outgoing_msg_info.valid) {
+
+                return;   // pump slot busy: answer on a later tick
+
+            }
+
+            _pump_sm_info.openlcb_node = ctx->node;
+            _load_reply_fail_datagram(&_pump_sm_info, ctx, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
+
+            _reset_context(ctx);
+
+            return;
+
+        }
 
         if (ctx->phase != CONFIG_MEM_STREAM_PHASE_WAIT_INITIATE_REPLY &&
                 ctx->phase != CONFIG_MEM_STREAM_PHASE_PUMPING &&
