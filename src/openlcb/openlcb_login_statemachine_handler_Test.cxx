@@ -55,6 +55,7 @@
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
 #include "openlcb_buffer_fifo.h"
+#include "protocol_event_transport.h"
 
 // ============================================================================
 // Test Constants
@@ -1702,4 +1703,155 @@ TEST(OpenLcbLoginMessageHandler, verify_range_index_management)
     OpenLcbLoginStatemachineHandler_load_producer_event(&statemachine_info);
     EXPECT_EQ(node1->producers.enumerator.range_enum_index, 0);
     EXPECT_FALSE(node1->producers.enumerator.running);
+}
+
+// ============================================================================
+// TEST: Identify Events during login restarts the Identified round
+// @details The node has sent Initialization Complete and part of its
+// Identified messages when an Identify Events arrives.  The event handler
+// restarts the login's round, and the login then sends every producer and
+// consumer again, all after the request.
+// ============================================================================
+
+typedef struct {
+
+    uint16_t mti;
+    event_id_t event;
+
+} _login_sent_t;
+
+    /** @brief Runs the login's event states to RUNSTATE_LOGIN_COMPLETE, or stops after max_messages. */
+static int _run_login_events(openlcb_login_statemachine_info_t *login_info, _login_sent_t *sent, int max_messages)
+{
+    int count = 0;
+
+    for (int i = 0; (i < 100) && (count < max_messages); i++) {
+
+        uint8_t run_state = login_info->openlcb_node->state.run_state;
+
+        if (run_state == RUNSTATE_LOAD_PRODUCER_EVENTS) {
+
+            OpenLcbLoginStatemachineHandler_load_producer_event(login_info);
+
+        } else if (run_state == RUNSTATE_LOAD_CONSUMER_EVENTS) {
+
+            OpenLcbLoginStatemachineHandler_load_consumer_event(login_info);
+
+        } else {
+
+            break;
+
+        }
+
+        if (login_info->outgoing_msg_info.valid) {
+
+            sent[count].mti = login_info->outgoing_msg_info.msg_ptr->mti;
+            sent[count].event = OpenLcbUtilities_extract_event_id_from_openlcb_payload(login_info->outgoing_msg_info.msg_ptr);
+            count++;
+
+        }
+
+    }
+
+    return count;
+}
+
+static void _check_identify_events_restart(int sent_before_request)
+{
+    _node_parameters_main_node.producer_count_autocreate = 3;
+    _node_parameters_main_node.consumer_count_autocreate = 2;
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    ASSERT_NE(node1, nullptr);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *login_outgoing = OpenLcbBufferStore_allocate_buffer(SNIP);
+    openlcb_msg_t *main_incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *main_outgoing = OpenLcbBufferStore_allocate_buffer(SNIP);
+    ASSERT_NE(login_outgoing, nullptr);
+    ASSERT_NE(main_incoming, nullptr);
+    ASSERT_NE(main_outgoing, nullptr);
+
+    openlcb_login_statemachine_info_t login_info;
+    login_info.openlcb_node = node1;
+    login_info.outgoing_msg_info.msg_ptr = login_outgoing;
+    login_info.outgoing_msg_info.valid = false;
+    login_info.outgoing_msg_info.enumerate = false;
+
+    OpenLcbLoginStatemachineHandler_load_initialization_complete(&login_info);
+    ASSERT_TRUE(node1->state.initialized);
+    ASSERT_EQ(node1->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
+
+    _login_sent_t sent[16];
+
+    // Part of the round, or all of it, goes out before the request
+    if (sent_before_request < 5) {
+
+        EXPECT_EQ(_run_login_events(&login_info, sent, sent_before_request), sent_before_request);
+
+    } else {
+
+        EXPECT_EQ(_run_login_events(&login_info, sent, 16), 5);
+        EXPECT_EQ(node1->state.run_state, RUNSTATE_LOGIN_COMPLETE);
+
+    }
+
+    // Identify Events arrives
+    openlcb_statemachine_info_t main_info;
+    main_info.openlcb_node = node1;
+    main_info.incoming_msg_info.msg_ptr = main_incoming;
+    main_info.incoming_msg_info.enumerate = false;
+    main_info.outgoing_msg_info.msg_ptr = main_outgoing;
+    main_info.outgoing_msg_info.valid = false;
+    main_info.outgoing_msg_info.enumerate = false;
+
+    OpenLcbUtilities_load_openlcb_message(main_incoming, SOURCE_ALIAS, SOURCE_ID, 0, 0, MTI_EVENTS_IDENTIFY);
+    ProtocolEventTransport_handle_events_identify(&main_info);
+
+    EXPECT_FALSE(main_info.outgoing_msg_info.valid);
+
+    // Everything after the request: all 3 producers then both consumers
+    int count = _run_login_events(&login_info, sent, 16);
+
+    ASSERT_EQ(count, 5);
+
+    for (int i = 0; i < 3; i++) {
+
+        EXPECT_EQ(sent[i].mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+        EXPECT_EQ(sent[i].event, node1->producers.list[i].event);
+
+    }
+
+    for (int i = 0; i < 2; i++) {
+
+        EXPECT_EQ(sent[3 + i].mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+        EXPECT_EQ(sent[3 + i].event, node1->consumers.list[i].event);
+
+    }
+
+    EXPECT_EQ(node1->state.run_state, RUNSTATE_LOGIN_COMPLETE);
+
+    _node_parameters_main_node.producer_count_autocreate = 0;
+    _node_parameters_main_node.consumer_count_autocreate = 0;
+}
+
+TEST(OpenLcbLoginMessageHandler, identify_events_during_producers_restarts_round)
+{
+    // Two of three producers sent
+    _check_identify_events_restart(2);
+}
+
+TEST(OpenLcbLoginMessageHandler, identify_events_during_consumers_restarts_round)
+{
+    // All producers and one consumer sent
+    _check_identify_events_restart(4);
+}
+
+TEST(OpenLcbLoginMessageHandler, identify_events_at_login_complete_restarts_round)
+{
+    // Whole round sent, on_login_complete not yet run
+    _check_identify_events_restart(5);
 }

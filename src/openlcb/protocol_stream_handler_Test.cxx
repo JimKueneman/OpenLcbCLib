@@ -2990,3 +2990,313 @@ TEST(ProtocolStreamHandler, lookup_prefers_matching_role_on_id_collision) {
     EXPECT_EQ(inbound->bytes_remaining, inbound_window);
 
 }
+
+// ============================================================================
+// SECTION: REMOTE END MATCHING
+// On CAN a received message carries only the sender's alias (source_id 0);
+// on TCP the alias is 0 and the Node ID is present.  A stream's remote end is
+// matched by Node ID when both sides have one, otherwise by alias.
+// ============================================================================
+
+#define CAN_PEER_A_ALIAS 0x0AA
+#define CAN_PEER_B_ALIAS 0x0BB
+#define TCP_PEER_A_ID    0x0A0000000001ULL
+#define TCP_PEER_B_ID    0x0B0000000002ULL
+
+// Helper: open an inbound stream from a peer identified by (alias, node_id)
+static stream_state_t *_open_inbound_from(openlcb_node_t *node, uint16_t peer_alias, node_id_t peer_id, uint8_t sid) {
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    _load_initiate_request(incoming, 128, sid);
+    incoming->source_alias = peer_alias;
+    incoming->source_id = peer_id;
+
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+    _last_stream = NULL;
+    ProtocolStreamHandler_initiate_request(&info);
+
+    return _last_stream;
+
+}
+
+static void _load_complete_from(openlcb_msg_t *msg, uint16_t peer_alias, node_id_t peer_id, uint8_t sid, uint8_t did) {
+
+    OpenLcbUtilities_load_openlcb_message(msg, peer_alias, peer_id, DEST_ALIAS, DEST_ID, MTI_STREAM_COMPLETE);
+    OpenLcbUtilities_clear_openlcb_message_payload(msg);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, sid, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, did, 1);
+    msg->payload_count = 2;
+
+}
+
+// ============================================================================
+// TEST: CAN - a TDE from one peer closes only that peer's stream
+// ============================================================================
+
+TEST(ProtocolStreamHandler, can_tde_from_one_peer_leaves_other_peer_stream_open) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    stream_state_t *stream_a = _open_inbound_from(node, CAN_PEER_A_ALIAS, 0, 0x10);
+    stream_state_t *stream_b = _open_inbound_from(node, CAN_PEER_B_ALIAS, 0, 0x20);
+    ASSERT_NE(stream_a, nullptr);
+    ASSERT_NE(stream_b, nullptr);
+    ASSERT_NE(stream_a, stream_b);
+
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_tde(incoming_tde, CAN_PEER_A_ALIAS, 0, DEST_ALIAS, DEST_ID, ERROR_TEMPORARY, MTI_STREAM_PROCEED);
+    openlcb_statemachine_info_t info_tde = _build_statemachine_info(node, incoming_tde, outgoing_tde);
+
+    ProtocolStreamHandler_handle_terminate_due_to_error(&info_tde);
+
+    EXPECT_EQ(_complete_called, 1);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_CLOSED);
+    EXPECT_EQ(stream_b->state, STREAM_STATE_OPEN);
+
+}
+
+// ============================================================================
+// TEST: CAN - two peers using the same SID each close their own stream
+// ============================================================================
+
+TEST(ProtocolStreamHandler, can_same_sid_from_two_peers_complete_closes_own_stream) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    stream_state_t *stream_a = _open_inbound_from(node, CAN_PEER_A_ALIAS, 0, 0x05);
+    stream_state_t *stream_b = _open_inbound_from(node, CAN_PEER_B_ALIAS, 0, 0x05);
+    ASSERT_NE(stream_a, nullptr);
+    ASSERT_NE(stream_b, nullptr);
+
+    uint8_t did_b = stream_b->dest_stream_id;
+
+    // Peer B finishes first
+    _reset_mock_counters();
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_complete_from(incoming, CAN_PEER_B_ALIAS, 0, 0x05, did_b);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    ProtocolStreamHandler_data_complete(&info);
+
+    EXPECT_EQ(_complete_called, 1);
+    EXPECT_EQ(_last_stream, stream_b);
+    EXPECT_EQ(stream_b->state, STREAM_STATE_CLOSED);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_OPEN);
+
+}
+
+// ============================================================================
+// TEST: CAN - outbound stream opened with a real destination Node ID still
+// matches the reply, which arrives with source_id 0
+// ============================================================================
+
+TEST(ProtocolStreamHandler, can_outbound_with_node_id_matches_reply_without_node_id) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    openlcb_msg_t *dummy_incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_statemachine_info_t info_init = _build_statemachine_info(node, dummy_incoming, outgoing);
+
+    stream_state_t *stream = ProtocolStreamHandler_initiate_outbound(&info_init, SOURCE_ALIAS, SOURCE_ID, 128, 0xFF, NULL);
+    ASSERT_NE(stream, nullptr);
+
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_reply = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_reply = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_reply_msg(incoming_reply, 128, STREAM_REPLY_ACCEPT, stream->source_stream_id, 0x50);
+    incoming_reply->source_id = 0;  // as received on CAN
+    openlcb_statemachine_info_t info_reply = _build_statemachine_info(node, incoming_reply, outgoing_reply);
+
+    ProtocolStreamHandler_initiate_reply(&info_reply);
+
+    EXPECT_EQ(_initiate_reply_called, 1);
+    EXPECT_EQ(stream->state, STREAM_STATE_OPEN);
+
+}
+
+// ============================================================================
+// TEST: CAN - a peer whose Node ID becomes known mid-stream still matches
+// ============================================================================
+
+TEST(ProtocolStreamHandler, can_peer_node_id_learned_mid_stream_still_matches) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    stream_state_t *stream = _open_inbound_from(node, CAN_PEER_A_ALIAS, 0, 0x10);
+    ASSERT_NE(stream, nullptr);
+
+    _reset_mock_counters();
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_complete_from(incoming, CAN_PEER_A_ALIAS, TCP_PEER_A_ID, 0x10, stream->dest_stream_id);
+    openlcb_statemachine_info_t info = _build_statemachine_info(node, incoming, outgoing);
+
+    ProtocolStreamHandler_data_complete(&info);
+
+    EXPECT_EQ(_complete_called, 1);
+    EXPECT_EQ(stream->state, STREAM_STATE_CLOSED);
+
+}
+
+// ============================================================================
+// TEST: TCP - peers are told apart by Node ID (all aliases are 0)
+// ============================================================================
+
+TEST(ProtocolStreamHandler, tcp_tde_from_one_peer_leaves_other_peer_stream_open) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = 0;
+
+    stream_state_t *stream_a = _open_inbound_from(node, 0, TCP_PEER_A_ID, 0x10);
+    stream_state_t *stream_b = _open_inbound_from(node, 0, TCP_PEER_B_ID, 0x20);
+    ASSERT_NE(stream_a, nullptr);
+    ASSERT_NE(stream_b, nullptr);
+
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_tde(incoming_tde, 0, TCP_PEER_B_ID, 0, DEST_ID, ERROR_TEMPORARY, MTI_STREAM_PROCEED);
+    openlcb_statemachine_info_t info_tde = _build_statemachine_info(node, incoming_tde, outgoing_tde);
+
+    ProtocolStreamHandler_handle_terminate_due_to_error(&info_tde);
+
+    EXPECT_EQ(_complete_called, 1);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_OPEN);
+    EXPECT_EQ(stream_b->state, STREAM_STATE_CLOSED);
+
+}
+
+// ============================================================================
+// TEST: a message with neither Node ID nor alias matches nothing
+// ============================================================================
+
+TEST(ProtocolStreamHandler, tde_without_node_id_or_alias_matches_nothing) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node->alias = DEST_ALIAS;
+
+    stream_state_t *stream = _open_inbound_from(node, CAN_PEER_A_ALIAS, 0, 0x10);
+    ASSERT_NE(stream, nullptr);
+
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_tde(incoming_tde, 0, 0, DEST_ALIAS, DEST_ID, ERROR_TEMPORARY, MTI_STREAM_PROCEED);
+    openlcb_statemachine_info_t info_tde = _build_statemachine_info(node, incoming_tde, outgoing_tde);
+
+    ProtocolStreamHandler_handle_terminate_due_to_error(&info_tde);
+
+    EXPECT_EQ(_complete_called, 0);
+    EXPECT_EQ(stream->state, STREAM_STATE_OPEN);
+
+}
+
+// ============================================================================
+// TEST: Data Complete addressed to a second local node does not close the
+//       first local node's stream
+// @details StreamTransportS: a stream is identified by its source node,
+//          destination node and stream IDs. A Data Complete addressed to
+//          local node B must not close a stream whose destination is local
+//          node A, even when the remote source and the stream IDs coincide.
+// ============================================================================
+
+#define SECOND_LOCAL_ALIAS 0xCCC
+#define SECOND_LOCAL_ID    0x0A0B0C0D0E0F
+
+TEST(ProtocolStreamHandler, data_complete_for_other_local_node_leaves_stream_open) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node_a = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node_a->alias = DEST_ALIAS;
+    openlcb_node_t *node_b = OpenLcbNode_allocate(SECOND_LOCAL_ID, &_node_params);
+    node_b->alias = SECOND_LOCAL_ALIAS;
+
+    // Remote SOURCE_ID opens a stream to local node A
+    openlcb_msg_t *incoming_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming_req, 128, 0x50);
+    openlcb_statemachine_info_t info_req = _build_statemachine_info(node_a, incoming_req, outgoing_req);
+    ProtocolStreamHandler_initiate_request(&info_req);
+    stream_state_t *stream_a = _last_stream;
+    ASSERT_NE(stream_a, nullptr);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_OPEN);
+    uint8_t did = stream_a->dest_stream_id;
+
+    // The same remote sends Data Complete with the same IDs, addressed to node B
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_complete = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_complete = OpenLcbBufferStore_allocate_buffer(BASIC);
+    OpenLcbUtilities_load_openlcb_message(incoming_complete, SOURCE_ALIAS, SOURCE_ID, SECOND_LOCAL_ALIAS, SECOND_LOCAL_ID, MTI_STREAM_COMPLETE);
+    OpenLcbUtilities_clear_openlcb_message_payload(incoming_complete);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming_complete, 0x50, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming_complete, did, 1);
+    incoming_complete->payload_count = 2;
+    openlcb_statemachine_info_t info_complete = _build_statemachine_info(node_b, incoming_complete, outgoing_complete);
+
+    ProtocolStreamHandler_data_complete(&info_complete);
+
+    EXPECT_EQ(_complete_called, 0);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_OPEN);
+
+}
+
+// ============================================================================
+// TEST: Terminate Due To Error addressed to a second local node does not
+//       close the first local node's stream
+// @details StreamTransportS 7.4: the TDE closes the stream between the
+//          sender and the addressed node only.
+// ============================================================================
+
+TEST(ProtocolStreamHandler, tde_for_other_local_node_leaves_stream_open) {
+
+    _global_initialize(&_interface_full);
+
+    openlcb_node_t *node_a = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node_a->alias = DEST_ALIAS;
+    openlcb_node_t *node_b = OpenLcbNode_allocate(SECOND_LOCAL_ID, &_node_params);
+    node_b->alias = SECOND_LOCAL_ALIAS;
+
+    openlcb_msg_t *incoming_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_req = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_initiate_request(incoming_req, 128, 0xA0);
+    openlcb_statemachine_info_t info_req = _build_statemachine_info(node_a, incoming_req, outgoing_req);
+    ProtocolStreamHandler_initiate_request(&info_req);
+    stream_state_t *stream_a = _last_stream;
+    ASSERT_NE(stream_a, nullptr);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_OPEN);
+
+    _reset_mock_counters();
+    openlcb_msg_t *incoming_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_tde = OpenLcbBufferStore_allocate_buffer(BASIC);
+    _load_tde(incoming_tde, SOURCE_ALIAS, SOURCE_ID, SECOND_LOCAL_ALIAS, SECOND_LOCAL_ID, ERROR_TEMPORARY, MTI_STREAM_SEND);
+    openlcb_statemachine_info_t info_tde = _build_statemachine_info(node_b, incoming_tde, outgoing_tde);
+
+    ProtocolStreamHandler_handle_terminate_due_to_error(&info_tde);
+
+    EXPECT_EQ(_complete_called, 0);
+    EXPECT_EQ(stream_a->state, STREAM_STATE_OPEN);
+
+}
