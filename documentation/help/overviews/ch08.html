@@ -206,7 +206,7 @@ _enumerate_next_node()"}
                 <tr>
                     <td>6</td>
                     <td><code>handle_try_enumerate_next_node()</code></td>
-                    <td>Advance to the next node and dispatch. Frees the incoming message when the last node is reached.</td>
+                    <td>Advance to the next node and dispatch. When the last node is reached, runs the device-wide handlers once (<code>_message_finished()</code>, see 8.9) and frees the incoming message.</td>
                 </tr>
             </tbody>
         </table>
@@ -370,9 +370,11 @@ sequenceDiagram
                         on the same node, once its previous message has finished;</li>
                     <li>otherwise the message is shown to the next node that has sent Initialization
                         Complete (<code>state.initialized</code>);</li>
-                    <li>when every node has been shown it, the level finishes and releases the
-                        message to its owner (the main outgoing slot, the level below, or the
-                        application send queue); buffer-store buffers are returned to the store.</li>
+                    <li>when every node has been shown it, the device-wide handlers run once for the
+                        message (<code>_message_finished()</code>, see 8.9), then the level finishes
+                        and releases the message to its owner (the main outgoing slot, the level
+                        below, or the application send queue); buffer-store buffers are returned to
+                        the store.</li>
                 </ul>
             </li>
         </ol>
@@ -516,15 +518,39 @@ sequenceDiagram
 
         <ul>
             <li><strong>MTI_PRODUCER_IDENTIFY (0x0914):</strong> If the event ID is a train search
-                event, it is dispatched to <code>train_search_event_handler</code> for train nodes only.
-                If no train matches across all nodes, <code>train_search_no_match_handler</code> fires
-                on the last node.</li>
-            <li><strong>MTI_PRODUCER_IDENTIFIED_SET (0x0544):</strong> If the event ID is a broadcast
-                time event, it is dispatched to <code>broadcast_time_event_handler</code> (node index 0 only).</li>
-            <li><strong>MTI_PC_EVENT_REPORT (0x05B4):</strong> Checked first for broadcast time events
-                (node 0 only), then for emergency events (dispatched to all train nodes), before
-                falling through to the regular event handler.</li>
+                event, it is dispatched to <code>train_search_event_handler</code> for each train node;
+                a train that answers marks the search as matched.</li>
+            <li><strong>MTI_PC_EVENT_REPORT (0x05B4):</strong> Checked for emergency events
+                (dispatched to all train nodes) before falling through to the regular event handler.</li>
+            <li>Node 0 skips the regular event handler for Broadcast Time events and Train Search
+                replies, as it always has; the device-wide handlers below do the work.</li>
         </ul>
+
+        <h3>Device-wide handlers: once per message</h3>
+        <p>
+            Some messages concern the device rather than one node. They are handled exactly once,
+            after the message has been shown to every local node, by
+            <code>_message_finished()</code>. It runs for messages from the bus (when node
+            enumeration reaches the end) and for messages sent by the device's own nodes (when
+            their dispatch-stack level finishes), whichever node sent the message and whichever
+            nodes are logged in:
+        </p>
+        <ul>
+            <li><strong>Train Search, no match:</strong> a train-search Producer Identify that no
+                local train answered calls <code>train_search_no_match_handler</code> (which may lead
+                to allocating a new train node). The "a train matched" result is gathered across all
+                nodes; each dispatch-stack level keeps its own, so a local search nested inside a
+                bus message is not confused with it.</li>
+            <li><strong>Train Search reply:</strong> a train-search Producer Identified Set, from the
+                bus or from a local train, calls <code>train_search_reply_handler</code>.</li>
+            <li><strong>Broadcast Time:</strong> a Broadcast Time event (PC Event Report or Producer
+                Identified Set) calls <code>broadcast_time_event_handler</code>. Its callbacks get
+                the node the clock was set up on (Ch 18).</li>
+        </ul>
+        <p>
+            On a single-node device a node's own messages are not shown to any other node, so this
+            step runs for bus messages only there.
+        </p>
 
         <!-- ================================================================ -->
         <h2>8.10 Interaction Rejected</h2>

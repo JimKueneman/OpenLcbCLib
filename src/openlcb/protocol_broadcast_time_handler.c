@@ -223,24 +223,26 @@ void ProtocolBroadcastTimeHandler_handle_time_event(openlcb_statemachine_info_t 
 
     }
 
-    node = statemachine_info->openlcb_node;
-
-    if (!node) {
-
-        return;
-
-    }
-
-    if (node->index != 0) {
-
-        return;
-
-    }
-
     clock_id = ProtocolBroadcastTimeHandler_extract_clock_id(event_id);
     clock = OpenLcbApplicationBroadcastTime_get_clock(clock_id);
 
     if (!clock) {
+
+        return;
+
+    }
+
+    // Called once per message for the whole device; the callbacks get the
+    // node the clock was set up on, or the context's node (node 0) if none.
+    node = OpenLcbApplicationBroadcastTime_get_clock_node(clock_id);
+
+    if (!node) {
+
+        node = statemachine_info->openlcb_node;
+
+    }
+
+    if (!node) {
 
         return;
 

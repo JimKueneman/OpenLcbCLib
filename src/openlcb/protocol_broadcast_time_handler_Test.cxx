@@ -1982,7 +1982,7 @@ TEST(BroadcastTimeHandler, query_event_triggers_query_reply_for_producer)
 // Section 11: node->index != 0 Early Return
 // ============================================================================
 
-TEST(BroadcastTimeHandler, nonzero_node_index_returns_early)
+TEST(BroadcastTimeHandler, any_node_index_updates_clock)
 {
 
     _reset_callback_flags();
@@ -1995,7 +1995,7 @@ TEST(BroadcastTimeHandler, nonzero_node_index_returns_early)
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.index = 1;  // Non-zero — handler should return early
+    node.index = 1;  // Not node 0: handled anyway (called once per message)
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -2006,12 +2006,12 @@ TEST(BroadcastTimeHandler, nonzero_node_index_returns_early)
 
     ProtocolBroadcastTimeHandler_handle_time_event(&info, event_id);
 
-    // Should NOT update clock state
+    // Clock updated and callback called, whatever the node index
     broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
     ASSERT_NE(cs, nullptr);
-    EXPECT_EQ(cs->time.hour, 0);
-    EXPECT_EQ(cs->time.minute, 0);
-    EXPECT_FALSE(g_time_callback_called);
+    EXPECT_EQ(cs->time.hour, 12);
+    EXPECT_EQ(cs->time.minute, 30);
+    EXPECT_TRUE(g_time_callback_called);
 
 }
 

@@ -3864,8 +3864,10 @@ TEST(OpenLcbMainStatemachine, broadcast_time_event_calls_handler)
     called_function_ptr = nullptr;
     OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
 
-    // Should have called broadcast_time_event_handler, NOT event_transport_pc_report
-    EXPECT_TRUE(broadcast_time_handler_called);
+    // Broadcast Time is handled once per message after every node has seen it
+    // (see message_finished_* tests), not while a node processes it; node 0
+    // still skips the ordinary event_transport_pc_report for it
+    EXPECT_FALSE(broadcast_time_handler_called);
     EXPECT_FALSE(pc_event_report_handler_called);
 }
 
@@ -3944,8 +3946,9 @@ TEST(OpenLcbMainStatemachine, broadcast_time_pid_set_calls_handler)
     called_function_ptr = nullptr;
     OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
 
-    // Should have called broadcast_time_event_handler, NOT event_transport_producer_identified_set
-    EXPECT_TRUE(broadcast_time_handler_called);
+    // Handled once per message after every node (message_finished_* tests);
+    // node 0 still skips the ordinary producer_identified_set for it
+    EXPECT_FALSE(broadcast_time_handler_called);
     EXPECT_FALSE(producer_identified_set_handler_called);
 }
 
@@ -4076,8 +4079,10 @@ TEST(OpenLcbMainStatemachine, train_search_event_no_match_last_node)
 
     OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
 
+    // The per-node pass only asks the train; "no match" is decided once the
+    // message has been shown to every node (message_finished_* tests)
     EXPECT_TRUE(train_search_event_handler_called);
-    EXPECT_TRUE(train_search_no_match_handler_called);
+    EXPECT_FALSE(train_search_no_match_handler_called);
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
 }
 
@@ -6552,3 +6557,188 @@ TEST(OpenLcbMainStatemachine, addressed_filter_alias_zero_never_matches)
     EXPECT_FALSE(_st_filter_accepts(node, 0, 0x0A0B0C0D0E0F));
     EXPECT_TRUE(_st_filter_accepts(node, 0, 0x060504030201));
 }
+
+// ============================================================================
+// Device-wide handlers run once per message, after every local node has seen
+// it (_message_finished): not tied to node 0 or to the last node, and run for
+// messages sent by the device's own nodes as well as ones from the bus.
+// ============================================================================
+
+static int _mf_bt_calls;
+static int _mf_no_match_calls;
+static int _mf_reply_calls;
+static node_id_t _mf_matching_train;
+
+static void _mf_bt_handler(openlcb_statemachine_info_t *si, event_id_t event_id)
+{
+    (void) si; (void) event_id;
+    _mf_bt_calls++;
+}
+
+static bool _mf_is_bt_event(event_id_t event_id)
+{
+    return (event_id & BROADCAST_TIME_MASK_CLOCK_ID) == BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+}
+
+static void _mf_no_match_handler(openlcb_statemachine_info_t *si, event_id_t event_id)
+{
+    (void) si; (void) event_id;
+    _mf_no_match_calls++;
+}
+
+static void _mf_reply_handler(openlcb_statemachine_info_t *si, event_id_t event_id)
+{
+    (void) si; (void) event_id;
+    _mf_reply_calls++;
+}
+
+static bool _mf_is_train_search_event(event_id_t event_id)
+{
+    return (event_id & 0xFFFF000000000000ULL) == (EVENT_TRAIN_SEARCH_SPACE & 0xFFFF000000000000ULL);
+}
+
+    /** @brief A train node answers the search only if it is the matching train. */
+static void _mf_train_search_handler(openlcb_statemachine_info_t *si, event_id_t event_id)
+{
+    if (si->openlcb_node->id == _mf_matching_train) {
+
+        OpenLcbUtilities_load_openlcb_message(si->outgoing_msg_info.msg_ptr, si->openlcb_node->alias, si->openlcb_node->id, 0, 0, MTI_PRODUCER_IDENTIFIED_SET);
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(si->outgoing_msg_info.msg_ptr, event_id);
+        si->outgoing_msg_info.valid = true;
+
+    }
+}
+
+static train_state_t _mf_train_states[3];
+
+static void _mf_init(openlcb_node_t **nodes)
+{
+    _st_reset();
+    OpenLcbBufferStore_initialize();
+    OpenLcbBufferFifo_initialize();
+    OpenLcbNode_initialize(&interface_openlcb_node);
+
+    static interface_openlcb_main_statemachine_t iface;
+    iface = _st_interface;
+    iface.broadcast_time_event_handler = &_mf_bt_handler;
+    iface.is_broadcast_time_event = &_mf_is_bt_event;
+    iface.train_search_event_handler = &_mf_train_search_handler;
+    iface.train_search_no_match_handler = &_mf_no_match_handler;
+    iface.train_search_reply_handler = &_mf_reply_handler;
+    iface.is_train_search_event = &_mf_is_train_search_event;
+    OpenLcbMainStatemachine_initialize(&iface);
+
+    _mf_bt_calls = 0;
+    _mf_no_match_calls = 0;
+    _mf_reply_calls = 0;
+    _mf_matching_train = 0;
+
+    _st_flood_allocate_nodes(3, nodes);
+
+    // nodes 1 and 2 are train nodes
+    memset(_mf_train_states, 0, sizeof(_mf_train_states));
+    nodes[1]->train_state = &_mf_train_states[1];
+    nodes[2]->train_state = &_mf_train_states[2];
+}
+
+static void _mf_push_from_bus(uint16_t mti, event_id_t event_id)
+{
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(incoming, nullptr);
+    OpenLcbUtilities_load_openlcb_message(incoming, 0xFFF, 0x0A0B0C0D0E0FULL, 0, 0, mti);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(incoming, event_id);
+    OpenLcbBufferFifo_push(incoming);
+}
+
+static void _mf_send_from_node(openlcb_node_t *node, uint16_t mti, event_id_t event_id)
+{
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+    OpenLcbUtilities_load_openlcb_message(&msg, node->alias, node->id, 0, 0, mti);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, event_id);
+    ASSERT_TRUE(OpenLcbMainStatemachine_send_with_sibling_dispatch(&msg));
+}
+
+static void _mf_run(void)
+{
+    for (int i = 0; i < 2000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+}
+
+TEST(OpenLcbMainStatemachine, message_finished_bt_from_bus_with_node0_not_logged_in)
+{
+    openlcb_node_t *nodes[3];
+    _mf_init(nodes);
+    nodes[0]->state.initialized = false;
+
+    _mf_push_from_bus(MTI_PC_EVENT_REPORT, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E);
+    _mf_run();
+
+    EXPECT_EQ(_mf_bt_calls, 1);
+}
+
+TEST(OpenLcbMainStatemachine, message_finished_bt_sent_by_node0)
+{
+    openlcb_node_t *nodes[3];
+    _mf_init(nodes);
+
+    _mf_send_from_node(nodes[0], MTI_PC_EVENT_REPORT, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E);
+    _mf_run();
+
+    EXPECT_EQ(_mf_bt_calls, 1);
+}
+
+TEST(OpenLcbMainStatemachine, message_finished_train_search_from_bus_last_node_not_logged_in)
+{
+    openlcb_node_t *nodes[3];
+    _mf_init(nodes);
+    nodes[2]->state.initialized = false;
+
+    _mf_push_from_bus(MTI_PRODUCER_IDENTIFY, EVENT_TRAIN_SEARCH_SPACE | 0x00000100);
+    _mf_run();
+
+    EXPECT_EQ(_mf_no_match_calls, 1);
+}
+
+TEST(OpenLcbMainStatemachine, message_finished_local_train_search_no_match)
+{
+    openlcb_node_t *nodes[3];
+    _mf_init(nodes);
+
+    // The station's own throttle (node 0) searches; no local train matches
+    _mf_send_from_node(nodes[0], MTI_PRODUCER_IDENTIFY, EVENT_TRAIN_SEARCH_SPACE | 0x00000100);
+    _mf_run();
+
+    EXPECT_EQ(_mf_no_match_calls, 1);
+}
+
+TEST(OpenLcbMainStatemachine, message_finished_local_train_search_matched)
+{
+    openlcb_node_t *nodes[3];
+    _mf_init(nodes);
+    _mf_matching_train = nodes[2]->id;
+
+    _mf_send_from_node(nodes[0], MTI_PRODUCER_IDENTIFY, EVENT_TRAIN_SEARCH_SPACE | 0x00000100);
+    _mf_run();
+
+    EXPECT_EQ(_mf_no_match_calls, 0);
+    // The matching train's answer is itself a search reply, watched once
+    EXPECT_EQ(_mf_reply_calls, 1);
+}
+
+TEST(OpenLcbMainStatemachine, message_finished_train_search_reply_sent_by_node0)
+{
+    openlcb_node_t *nodes[3];
+    _mf_init(nodes);
+
+    _mf_send_from_node(nodes[0], MTI_PRODUCER_IDENTIFIED_SET, EVENT_TRAIN_SEARCH_SPACE | 0x00000100);
+    _mf_run();
+
+    EXPECT_EQ(_mf_reply_calls, 1);
+}
+

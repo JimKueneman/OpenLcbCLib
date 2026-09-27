@@ -124,6 +124,7 @@ typedef struct {
     openlcb_msg_t *answer;              // answer of the node just shown it, waiting to go out
     uint16_t node_index;                // position of the next node to show it to
     bool continuing;                    // the node at node_index is answering with several messages
+    bool train_search_matched;          // a local train answered this level's train search
     sibling_msg_owner_enum owner;
 
 } sibling_dispatch_level_t;
@@ -142,6 +143,9 @@ static uint16_t _sibling_depth_overflow_count;
 
     /** @brief Context for handler calls on stack levels; its worker outgoing buffer is shared by all levels. */
 static openlcb_statemachine_info_t _sibling_info;
+
+    /** @brief Context for the once-per-message device-wide handlers (see _message_finished()). */
+static openlcb_statemachine_info_t _finished_info;
 
     /** @brief An answer is waiting in _sibling_info's worker buffer for a free buffer-store buffer. */
 static bool _sibling_answer_waiting_for_buffer;
@@ -200,6 +204,7 @@ void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachin
 
     _initialize_context(&_statemachine_info);
     _initialize_context(&_sibling_info);
+    _initialize_context(&_finished_info);
 
     for (int i = 0; i < SIBLING_DISPATCH_STACK_DEPTH; i++) {
 
@@ -207,6 +212,7 @@ void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachin
         _sibling_levels[i].answer = NULL;
         _sibling_levels[i].node_index = 0;
         _sibling_levels[i].continuing = false;
+        _sibling_levels[i].train_search_matched = false;
         _sibling_levels[i].owner = SIBLING_MSG_OWNER_MAIN;
 
     }
@@ -406,6 +412,7 @@ static bool _sibling_push(openlcb_msg_t *msg, sibling_msg_owner_enum owner) {
     level->answer = NULL;
     level->node_index = 0;
     level->continuing = false;
+    level->train_search_matched = false;
     level->owner = owner;
 
     _sibling_depth++;
@@ -434,6 +441,90 @@ static void _application_send_queue_pop_head(void) {
 
     _application_send_queue_head = (_application_send_queue_head + 1) % LEN_MESSAGE_BUFFER;
     _application_send_queue_count--;
+
+}
+
+    /**
+     * @brief Runs the device-wide handlers once a message has been shown to every local node.
+     *
+     * @details Some messages concern the device, not one node, and are handled
+     * exactly once per message, whichever node sent it and whichever nodes are
+     * logged in:
+     * -# Train Search with no matching local train: the no-match handler
+     *    (may lead to allocating a new train node)
+     * -# Another node's Train Search reply: the reply watcher
+     * -# Broadcast Time events: the clock handler
+     *
+     * Called for wire messages after the last node, and for local messages when
+     * their dispatch level finishes.  The handlers do not send; the context's
+     * node is node 0 for handlers that need one.
+     *
+     * @param msg                   The message that has been shown to every node.
+     * @param train_search_matched  A local train answered it (Train Search only).
+     */
+static void _message_finished(openlcb_msg_t *msg, bool train_search_matched) {
+
+#if (defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)) || defined(OPENLCB_COMPILE_BROADCAST_TIME)
+
+    if (!msg || (msg->payload_count < 8)) {
+
+        return;
+
+    }
+
+    if ((msg->mti != MTI_PRODUCER_IDENTIFY) && (msg->mti != MTI_PRODUCER_IDENTIFIED_SET) && (msg->mti != MTI_PC_EVENT_REPORT)) {
+
+        return;
+
+    }
+
+    event_id_t event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(msg);
+
+    _finished_info.incoming_msg_info.msg_ptr = msg;
+    _finished_info.incoming_msg_info.enumerate = false;
+    _finished_info.outgoing_msg_info.valid = false;
+    _finished_info.openlcb_node = _interface->openlcb_node_get_by_index(0);
+    _finished_info.current_tick = _interface->get_current_tick();
+
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
+
+    if (_interface->is_train_search_event && _interface->is_train_search_event(event_id)) {
+
+        if ((msg->mti == MTI_PRODUCER_IDENTIFY) && !train_search_matched && _interface->train_search_no_match_handler) {
+
+            _interface->train_search_no_match_handler(&_finished_info, event_id);
+
+        }
+
+        if ((msg->mti == MTI_PRODUCER_IDENTIFIED_SET) && _interface->train_search_reply_handler) {
+
+            _interface->train_search_reply_handler(&_finished_info, event_id);
+
+        }
+
+    }
+
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
+
+#ifdef OPENLCB_COMPILE_BROADCAST_TIME
+
+    if ((msg->mti != MTI_PRODUCER_IDENTIFY) && _interface->broadcast_time_event_handler &&
+            _interface->is_broadcast_time_event && _interface->is_broadcast_time_event(event_id)) {
+
+        _interface->broadcast_time_event_handler(&_finished_info, event_id);
+
+    }
+
+#endif /* OPENLCB_COMPILE_BROADCAST_TIME */
+
+    _finished_info.incoming_msg_info.msg_ptr = NULL;
+
+#else
+
+    (void) msg;
+    (void) train_search_matched;
+
+#endif
 
 }
 
@@ -510,7 +601,19 @@ static void _sibling_show_to_node(sibling_dispatch_level_t *level, openlcb_node_
     // network, even while it is still announcing its events
     if (node->state.initialized) {
 
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
+        // A level can open while a wire message is part-way through its nodes;
+        // each keeps its own "a train matched" result.
+        bool outer_match_found = _train_search_match_found;
+        _train_search_match_found = level->train_search_matched;
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
+
         _interface->process_main_statemachine(&_sibling_info);
+
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
+        level->train_search_matched = _train_search_match_found;
+        _train_search_match_found = outer_match_found;
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
 
     }
 
@@ -575,6 +678,8 @@ static void _sibling_run_top(void) {
     openlcb_node_t *node = _interface->openlcb_node_get_by_index(level->node_index);
 
     if (!node) {
+
+        _message_finished(level->msg, level->train_search_matched);
 
         _sibling_pop();
 
@@ -950,14 +1055,8 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
                 }
 
-                // On last node with no match, invoke no-match handler
-                if (_interface->openlcb_node_is_last(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX) &&
-                    !_train_search_match_found &&
-                    _interface->train_search_no_match_handler) {
-
-                    _interface->train_search_no_match_handler(statemachine_info, producer_event_id);
-
-                }
+                // No match across all nodes is decided once the message has
+                // been shown to every node (_message_finished)
 
                 break;
 
@@ -999,12 +1098,13 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
 #if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
 
+            // Train Search replies are watched once per message (_message_finished);
+            // node 0 keeps skipping the ordinary event handling for them, as before
             if (_interface->train_search_reply_handler && _interface->is_train_search_event && statemachine_info->openlcb_node->index == 0) {
 
                 event_id_t event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
                 if (_interface->is_train_search_event(event_id)) {
 
-                    _interface->train_search_reply_handler(statemachine_info, event_id);
                     break;
 
                 }
@@ -1015,12 +1115,13 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
 #ifdef OPENLCB_COMPILE_BROADCAST_TIME
 
+            // Broadcast Time is handled once per message (_message_finished);
+            // node 0 keeps skipping the ordinary event handling for it, as before
             if (_interface->broadcast_time_event_handler && _interface->is_broadcast_time_event && statemachine_info->openlcb_node->index == 0) {
 
                 event_id_t event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
                 if (_interface->is_broadcast_time_event(event_id)) {
 
-                    _interface->broadcast_time_event_handler(statemachine_info, event_id);
                     break;
 
                 }
@@ -1097,11 +1198,11 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
 #ifdef OPENLCB_COMPILE_BROADCAST_TIME
 
+            // Broadcast Time is handled once per message (_message_finished);
+            // node 0 keeps skipping the ordinary event handling for it, as before
             if (_interface->broadcast_time_event_handler && _interface->is_broadcast_time_event && statemachine_info->openlcb_node->index == 0) {
 
                 if (_interface->is_broadcast_time_event(event_id)) {
-
-                    _interface->broadcast_time_event_handler(statemachine_info, event_id);
 
                     break;
 
@@ -1478,7 +1579,12 @@ bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
 
         if (!_statemachine_info.openlcb_node) {
 
-            // reached the end of the list, free the incoming message
+            // reached the end of the list: device-wide handlers, then free the incoming message
+#if defined(OPENLCB_COMPILE_TRAIN) && defined(OPENLCB_COMPILE_TRAIN_SEARCH)
+            _message_finished(_statemachine_info.incoming_msg_info.msg_ptr, _train_search_match_found);
+#else
+            _message_finished(_statemachine_info.incoming_msg_info.msg_ptr, false);
+#endif /* OPENLCB_COMPILE_TRAIN && OPENLCB_COMPILE_TRAIN_SEARCH */
             _free_incoming_message(&_statemachine_info);
 
             return true; // done
