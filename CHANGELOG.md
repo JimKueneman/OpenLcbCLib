@@ -67,6 +67,48 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   `openlcb_node_get_first`, `openlcb_node_get_next` and
   `openlcb_node_reset_state`, wired in `tcp_config.c`.
   (`tcp_main_statemachine.c`)
+- **On CAN any node could take over a train's reservation.** A Train
+  Management Reserve carries no Node ID, and a message received over CAN
+  carries only the sender's alias (source_id is 0), so the holder was recorded
+  and compared as Node ID 0 and every requester matched it. The train now also
+  records the holder's alias (`train_state_t.reserved_by_alias`) and compares
+  Node IDs when both are known (TCP, local nodes), otherwise aliases. A second
+  Reserve from the holder is still accepted (idempotent, per Bob Jacobsen's
+  ruling and OlcbChecker check_tr100); a Reserve from any other node while
+  reserved is refused; any node may Release. New getter
+  `OpenLcbApplicationTrain_get_reserved_by_alias()` returns the holder's alias,
+  the only identity known for a reservation made over CAN
+  (`get_reserved_by_node_id()` returns 0 for it). (`protocol_train_handler.c`,
+  `openlcb_application_train.c`)
+- **CAN reassembly errors were never reported to the sender.** When a
+  multi-frame message arrived out of order (a middle or last frame without a
+  first frame, a second first frame before the last one, or a stale assembly),
+  or no buffer was free to assemble it, the CAN receive handler built the
+  Optional Interaction Rejected / Datagram Rejected reply as an OpenLCB message
+  and pushed it into the incoming FIFO, where no local node matched it and it
+  was dropped. The OIR payload also held the sender's alias where the error
+  code belongs and the error code where the rejected MTI belongs. The reject is
+  now built as a CAN frame from our alias to the sender and queued on the CAN
+  transmit FIFO: OIR carries the error code then the rejected MTI
+  (MessageNetworkS 3.3.4, 7.3.3.4), Datagram Rejected the error code only
+  (DatagramTransportS 4.3). Global multi-frame messages (PC Event Report with
+  payload) are never rejected. (`can_rx_message_handler.c`)
+- **Broadcast Time reports could be lost, merged, late or missing.** At
+  midnight the producer sent Date Rollover, Report Year and Report Date back to
+  back, and a Set Time/Date/Year/Rate sent its Report from inside the event
+  handler (from the node that received the Set, not the clock's producer node);
+  none of these checked the send result. Each producer clock now keeps a small
+  queue of report event IDs (`BROADCAST_TIME_REPORT_QUEUE_DEPTH`, 8), sent in
+  order from the producer node on the 100ms tick; a report stays queued until
+  the transport accepts it. Every Set gets its own echo carrying the value in
+  effect at that Set (BroadcastTimeS 6.5, TN 2.6.5), queued through the new
+  `OpenLcbApplicationBroadcastTime_request_report()`, so the echo now goes out
+  on the next tick instead of from inside the handler. A rollover through 00:00
+  is detected in either direction, running forward or backward; Date Rollover
+  goes out before that minute's Report Time, and Report Year and Report Date
+  follow three real seconds later (BroadcastTimeS 6.2, TN 2.6.2). A clock with
+  no producer node still sends nothing. (`openlcb_application_broadcast_time.c`,
+  `protocol_broadcast_time_handler.c`)
 - **Messages to a node still announcing its events were dropped.** After
   Initialization Complete a node spends several passes sending its Producer/Consumer
   Identified messages before it reaches `RUNSTATE_RUN`, and every message that
