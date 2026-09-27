@@ -785,7 +785,8 @@ extern "C" {
         node_id_t controller_node_id;     /**< Active controller (0 if none) */
         uint16_t controller_alias;        /**< CAN alias of active controller (0 if none) */
         uint8_t reserved_node_count;      /**< Reservation count */
-        node_id_t reserved_by_node_id;    /**< Node ID that holds the reservation (0 if none) */
+        node_id_t reserved_by_node_id;    /**< Node ID that holds the reservation (0 if none or not known, e.g. on CAN) */
+        uint16_t reserved_by_alias;       /**< CAN alias that holds the reservation (0 if none or on TCP) */
         uint32_t heartbeat_timeout_s;     /**< Heartbeat deadline in seconds (0 = disabled) */
         uint32_t heartbeat_counter_100ms; /**< Heartbeat countdown in 100ms ticks */
 

@@ -54,6 +54,15 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **On CAN any node could take over a train's reservation.** A Train
+  Management Reserve carries no Node ID, and a message received over CAN
+  carries only the sender's alias (source_id is 0), so the holder was recorded
+  and compared as Node ID 0 and every requester matched it. The train now also
+  records the holder's alias (`train_state_t.reserved_by_alias`) and compares
+  Node IDs when both are known (TCP, local nodes), otherwise aliases. A second
+  Reserve from the holder is still accepted (idempotent, per Bob Jacobsen's
+  ruling and OlcbChecker check_tr100); a Reserve from any other node while
+  reserved is refused; any node may Release. (`protocol_train_handler.c`)
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
   says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says
