@@ -70,6 +70,40 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   follow three real seconds later (BroadcastTimeS 6.2, TN 2.6.2). A clock with
   no producer node still sends nothing. (`openlcb_application_broadcast_time.c`,
   `protocol_broadcast_time_handler.c`)
+- **Messages to a node still announcing its events were dropped.** After
+  Initialization Complete a node spends several passes sending its Producer/Consumer
+  Identified messages before it reaches `RUNSTATE_RUN`, and every message that
+  arrived in that window, addressed or global, was freed unanswered. A node is
+  Initialized on the network from Initialization Complete on, and JMRI sends its
+  Traction controller-assign about a millisecond after a new train node's
+  Initialization Complete and never re-sends it, so the first throttle on a new
+  locomotive hung. The main dispatch, its sibling dispatch and the login's sibling
+  dispatch now gate on `state.initialized` instead of `RUNSTATE_RUN`. An Identify
+  Events (global, or addressed to the node) that arrives in that window restarts
+  the login's Identified round from the first producer rather than being answered
+  directly, because the answer uses the same event enumerators the login is using;
+  the full set then goes out after the request (EventTransportS 6.2). Reported by
+  Bob Gamble (#14).
+- **A stream message for one local node could close another local node's
+  stream.** The stream table is shared by every node on the device, and lookups
+  matched only the remote end and the stream IDs, so on a multi-node device a
+  Data Complete or Terminate Due to Error from a remote node, addressed to
+  local node B, closed a stream that remote had open with local node A.
+  `stream_state_t` now records its `local_node`, set when the stream is opened
+  (incoming or outbound), and every lookup and the Terminate scan match it as
+  well as the remote end (StreamTransportS 7.4). (`protocol_stream_handler.c`)
+- **Streams could not tell their CAN peers apart.** Each stream records its
+  remote end's Node ID and alias, but lookups compared only the Node ID, and on
+  CAN a received message carries only the sender's alias (source_id is 0). So
+  on CAN every peer looked the same: a Terminate Due to Error from any node
+  closed every open stream, a Data Complete could close another peer's stream
+  when two peers used the same Source Stream ID, and a stream opened with
+  `ProtocolStreamHandler_initiate_outbound()` and a real destination Node ID
+  never matched the reply. The remote end is now matched by Node ID when both
+  sides have one and by alias otherwise, which also covers TCP (alias always 0)
+  and a peer whose Node ID becomes known mid-stream. The config-memory Write
+  Stream lookup, which matched by alias only and so could take another TCP
+  peer's stream as the write, uses the same rule. No mapping table is needed.
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
   says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says
