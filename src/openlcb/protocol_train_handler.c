@@ -686,7 +686,14 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
                 } else {
 
-                    // Different controller — ask app or default accept
+                    // Different controller — ask app or default accept.
+                    //
+                    // TrainControlS says the train sends Controller Changing
+                    // Notify to the previous controller here. It is deliberately
+                    // not sent: waiting for that controller's reply would delay
+                    // the new throttle's Assign reply by up to 3 seconds, JMRI
+                    // ignores the notify, and OpenMRN's TractionTrain.cxx does
+                    // the same (takes over without notifying).  See issue #21.
                     if (_interface && _interface->on_controller_assign_request) {
 
                         accepted = _interface->on_controller_assign_request(node, state->controller_node_id, requesting_id);
