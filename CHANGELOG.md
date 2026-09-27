@@ -62,7 +62,11 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   Node IDs when both are known (TCP, local nodes), otherwise aliases. A second
   Reserve from the holder is still accepted (idempotent, per Bob Jacobsen's
   ruling and OlcbChecker check_tr100); a Reserve from any other node while
-  reserved is refused; any node may Release. (`protocol_train_handler.c`)
+  reserved is refused; any node may Release. New getter
+  `OpenLcbApplicationTrain_get_reserved_by_alias()` returns the holder's alias,
+  the only identity known for a reservation made over CAN
+  (`get_reserved_by_node_id()` returns 0 for it). (`protocol_train_handler.c`,
+  `openlcb_application_train.c`)
 - **Well-known event IDs for ident button and link errors were wrong.**
   `EVENT_ID_IDENT_BUTTON_COMBO_PRESSED` was 01.00.00.00.00.00.FF.00; the standard
   says FE.00. `EVENT_ID_LINK_ERROR_CODE_1..4` were FF.01..FF.04; the standard says
