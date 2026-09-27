@@ -1337,6 +1337,36 @@ extern "C" {
     /** @} */ // end of broadcast_time_events
 
 /**
+ * @defgroup broadcast_time_report_pending Broadcast Time Report Requests
+ * @brief Flags for OpenLcbApplicationBroadcastTime_request_report().  Each flag
+ * queues one report with the clock's value at the time of the request, in the
+ * order Date Rollover, Time, Year, Date, Rate; the producer node sends the
+ * queue in order on the 100ms tick and keeps each report until the transport
+ * accepts it.
+ * @{
+ */
+
+    /** @brief Report Time pending */
+#define BROADCAST_TIME_REPORT_PENDING_TIME 0x01
+
+    /** @brief Date Rollover pending */
+#define BROADCAST_TIME_REPORT_PENDING_DATE_ROLLOVER 0x02
+
+    /** @brief Report Year pending */
+#define BROADCAST_TIME_REPORT_PENDING_YEAR 0x04
+
+    /** @brief Report Date pending */
+#define BROADCAST_TIME_REPORT_PENDING_DATE 0x08
+
+    /** @brief Report Rate pending */
+#define BROADCAST_TIME_REPORT_PENDING_RATE 0x10
+
+    /** @brief 100ms ticks between a Date Rollover and its Report Year / Report Date (3 real seconds, BroadcastTimeS 6.2). */
+#define BROADCAST_TIME_ROLLOVER_REPORT_DELAY_TICKS 30
+
+    /** @} */ // end of broadcast_time_report_pending
+
+/**
  * @defgroup train_protocol Train Control Protocol Defines
  * @brief Instruction bytes and sub-commands for MTI_TRAIN_PROTOCOL / MTI_TRAIN_REPLY.
  * @{
