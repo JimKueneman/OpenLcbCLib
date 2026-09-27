@@ -3826,6 +3826,7 @@ TEST(OpenLcbMainStatemachine, null_handler_stream_complete)
 
     openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
     msg->mti = MTI_STREAM_COMPLETE;
+    msg->dest_id = node->id;
 
     openlcb_statemachine_info_t statemachine_info;
     statemachine_info.openlcb_node = node;
@@ -6484,4 +6485,70 @@ TEST(OpenLcbMainStatemachine, sibling_dispatch_reaches_node_announcing_events)
 
     // C sees nothing, wire or sibling
     EXPECT_EQ(_st_count_dispatches_for_node(0x010203040503), 0);
+}
+
+// ============================================================================
+// Addressed-message filter: match by destination Node ID when the message
+// carries one, otherwise by alias; alias 0 never matches
+// ============================================================================
+
+static bool _st_filter_accepts(openlcb_node_t *node, uint16_t dest_alias, node_id_t dest_id)
+{
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_VERIFY_NODE_ID_ADDRESSED;
+    msg->dest_alias = dest_alias;
+    msg->dest_id = dest_id;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+
+    bool result = OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+    return result;
+
+}
+
+TEST(OpenLcbMainStatemachine, addressed_filter_can_matches_by_alias)
+{
+
+    _global_initialize();
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->alias = 0x0AAA;
+    node->state.initialized = true;
+
+    // Received on CAN: destination alias only
+    EXPECT_TRUE(_st_filter_accepts(node, 0x0AAA, 0));
+    EXPECT_FALSE(_st_filter_accepts(node, 0x0BBB, 0));
+
+}
+
+TEST(OpenLcbMainStatemachine, addressed_filter_node_id_wins_over_alias)
+{
+
+    _global_initialize();
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->alias = 0x0AAA;
+    node->state.initialized = true;
+
+    EXPECT_TRUE(_st_filter_accepts(node, 0x0AAA, 0x060504030201));
+    EXPECT_TRUE(_st_filter_accepts(node, 0, 0x060504030201));
+    EXPECT_FALSE(_st_filter_accepts(node, 0x0AAA, 0x0A0B0C0D0E0F));
+
+}
+
+TEST(OpenLcbMainStatemachine, addressed_filter_alias_zero_never_matches)
+{
+
+    _global_initialize();
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->alias = 0;  // TCP: every alias is 0
+    node->state.initialized = true;
+
+    EXPECT_FALSE(_st_filter_accepts(node, 0, 0));
+    EXPECT_FALSE(_st_filter_accepts(node, 0, 0x0A0B0C0D0E0F));
+    EXPECT_TRUE(_st_filter_accepts(node, 0, 0x060504030201));
 }

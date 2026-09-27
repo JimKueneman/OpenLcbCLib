@@ -1903,6 +1903,57 @@ TEST(ApplicationTrain, get_reserved_by_node_id_active_reservation)
 
 }
 
+TEST(ApplicationTrain, get_reserved_by_alias_null_node_and_state)
+{
+
+    _global_initialize();
+
+    EXPECT_EQ(OpenLcbApplicationTrain_get_reserved_by_alias(NULL), (uint16_t) 0);
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->train_state = NULL;
+
+    EXPECT_EQ(OpenLcbApplicationTrain_get_reserved_by_alias(node), (uint16_t) 0);
+
+}
+
+TEST(ApplicationTrain, get_reserved_by_alias_no_reservation)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+    state->reserved_node_count = 0;
+    state->reserved_by_alias = 0x0AAA;
+
+    EXPECT_EQ(OpenLcbApplicationTrain_get_reserved_by_alias(node), (uint16_t) 0);
+
+}
+
+TEST(ApplicationTrain, get_reserved_by_alias_active_reservation_on_can)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    // Reserved over CAN: alias known, Node ID not
+    EXPECT_NE(state, nullptr);
+    state->reserved_node_count = 1;
+    state->reserved_by_node_id = 0;
+    state->reserved_by_alias = 0x0AAA;
+
+    EXPECT_EQ(OpenLcbApplicationTrain_get_reserved_by_alias(node), (uint16_t) 0x0AAA);
+    EXPECT_EQ(OpenLcbApplicationTrain_get_reserved_by_node_id(node), (node_id_t) 0);
+
+}
+
 TEST(ApplicationTrain, get_listener_count_null_node)
 {
 
