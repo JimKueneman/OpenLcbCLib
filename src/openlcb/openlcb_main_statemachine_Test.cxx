@@ -1660,6 +1660,7 @@ TEST(OpenLcbMainStatemachine, handle_enumerate_first_node_run_state)
     
     // Set up a node to be returned
     openlcb_node_t *test_node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    test_node->state.initialized = true;
     test_node->state.run_state = RUNSTATE_RUN;
     node_get_first = test_node;
     node_get_first_called = false;
@@ -1777,6 +1778,7 @@ TEST(OpenLcbMainStatemachine, handle_enumerate_next_node_run_state)
     
     // Set up next node to be returned
     openlcb_node_t *next_node = OpenLcbNode_allocate(0x070605040302, &_node_parameters_main_node);
+    next_node->state.initialized = true;
     next_node->state.run_state = RUNSTATE_RUN;
     node_get_next = next_node;
     node_get_next_called = false;
@@ -1818,6 +1820,75 @@ TEST(OpenLcbMainStatemachine, handle_enumerate_next_node_not_run_state)
     EXPECT_TRUE(node_get_next_called);
     EXPECT_FALSE(process_statemachine_called);  // Should NOT process
     EXPECT_EQ(state->openlcb_node, next_node);
+}
+
+// ============================================================================
+// TEST: handle_try_enumerate_first/next_node - A node that has sent
+// Initialization Complete but is still announcing its events is processed;
+// a node that has not sent it yet is not
+// ============================================================================
+
+static bool _enumerate_first_node_processes(uint8_t run_state, bool initialized)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    state->openlcb_node = nullptr;
+
+    openlcb_node_t *test_node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    test_node->state.initialized = initialized;
+    test_node->state.run_state = run_state;
+    node_get_first = test_node;
+    process_statemachine_called = false;
+
+    EXPECT_TRUE(OpenLcbMainStatemachine_handle_try_enumerate_first_node());
+    EXPECT_EQ(state->openlcb_node, test_node);
+
+    return process_statemachine_called;
+}
+
+static bool _enumerate_next_node_processes(uint8_t run_state, bool initialized)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+
+    openlcb_node_t *current_node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    state->openlcb_node = current_node;
+
+    openlcb_node_t *next_node = OpenLcbNode_allocate(0x070605040302, &_node_parameters_main_node);
+    next_node->state.initialized = initialized;
+    next_node->state.run_state = run_state;
+    node_get_next = next_node;
+    process_statemachine_called = false;
+
+    EXPECT_TRUE(OpenLcbMainStatemachine_handle_try_enumerate_next_node());
+    EXPECT_EQ(state->openlcb_node, next_node);
+
+    return process_statemachine_called;
+}
+
+TEST(OpenLcbMainStatemachine, handle_enumerate_node_announcing_events_processed)
+{
+    EXPECT_TRUE(_enumerate_first_node_processes(RUNSTATE_LOAD_PRODUCER_EVENTS, true));
+    EXPECT_TRUE(_enumerate_first_node_processes(RUNSTATE_LOAD_CONSUMER_EVENTS, true));
+    EXPECT_TRUE(_enumerate_first_node_processes(RUNSTATE_LOGIN_COMPLETE, true));
+
+    EXPECT_TRUE(_enumerate_next_node_processes(RUNSTATE_LOAD_PRODUCER_EVENTS, true));
+    EXPECT_TRUE(_enumerate_next_node_processes(RUNSTATE_LOAD_CONSUMER_EVENTS, true));
+    EXPECT_TRUE(_enumerate_next_node_processes(RUNSTATE_LOGIN_COMPLETE, true));
+}
+
+TEST(OpenLcbMainStatemachine, handle_enumerate_node_before_init_complete_not_processed)
+{
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOAD_RESERVE_ID, false));
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOAD_ALIAS_MAP_DEFINITION, false));
+    EXPECT_FALSE(_enumerate_first_node_processes(RUNSTATE_LOAD_INITIALIZATION_COMPLETE, false));
+
+    EXPECT_FALSE(_enumerate_next_node_processes(RUNSTATE_LOAD_RESERVE_ID, false));
+    EXPECT_FALSE(_enumerate_next_node_processes(RUNSTATE_LOAD_ALIAS_MAP_DEFINITION, false));
+    EXPECT_FALSE(_enumerate_next_node_processes(RUNSTATE_LOAD_INITIALIZATION_COMPLETE, false));
 }
 
 // ============================================================================
@@ -5691,4 +5762,95 @@ TEST(OpenLcbMainStatemachine, sibling_stream_third_sibling_isolation_under_load)
 
     // No buffer leak
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+}
+
+// ============================================================================
+// TEST: Wire messages reach a node that has sent Initialization Complete but
+// is still announcing its events - global and addressed alike
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_node_announcing_events_receives_wire_messages)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+
+    // Not yet sent Initialization Complete
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = false;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
+
+    openlcb_msg_t *global = OpenLcbBufferStore_allocate_buffer(BASIC);
+    global->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    global->source_alias = 0xFFF;
+    global->source_id = 0x0A0B0C0D0E0F;
+    OpenLcbBufferFifo_push(global);
+
+    openlcb_msg_t *addressed = OpenLcbBufferStore_allocate_buffer(BASIC);
+    addressed->mti = MTI_VERIFY_NODE_ID_ADDRESSED;
+    addressed->source_alias = 0xFFF;
+    addressed->source_id = 0x0A0B0C0D0E0F;
+    addressed->dest_alias = 0xAAA;
+    addressed->dest_id = 0x010203040501;
+    OpenLcbBufferFifo_push(addressed);
+
+    for (int i = 0; i < 100; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_VERIFY_NODE_ID_GLOBAL), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_VERIFY_NODE_ID_ADDRESSED), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node(0x010203040502), 0);
+}
+
+// ============================================================================
+// TEST: Sibling dispatch reaches a node that has sent Initialization Complete
+// but is still announcing its events; not one that has not sent it yet
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_dispatch_reaches_node_announcing_events)
+{
+    _st_init();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->state.initialized = true;
+    nodeA->alias = 0xAAA;
+    nodeA->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->state.initialized = true;
+    nodeB->alias = 0xBBB;
+    nodeB->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+
+    // Not yet sent Initialization Complete
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->state.initialized = false;
+    nodeC->alias = 0xCCC;
+    nodeC->state.run_state = RUNSTATE_LOAD_ALIAS_MAP_DEFINITION;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0F;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 100; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // A and B answer; each sees the other's Verified Node ID through sibling dispatch
+    EXPECT_EQ(_st_count_wire_mti(MTI_VERIFIED_NODE_ID), 2);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040501, MTI_VERIFIED_NODE_ID), 1);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_VERIFIED_NODE_ID), 1);
+
+    // C sees nothing, wire or sibling
+    EXPECT_EQ(_st_count_dispatches_for_node(0x010203040503), 0);
 }
