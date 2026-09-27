@@ -613,7 +613,7 @@ TEST(CanMainStatemachine, duplicate_alias)
     EXPECT_FALSE(node1->state.duplicate_id_detected);
     EXPECT_FALSE(node1->state.firmware_upgrade_active);
     EXPECT_FALSE(node1->state.resend_datagram);
-    EXPECT_EQ(node1->last_received_datagram, nullptr);
+    EXPECT_EQ(node1->last_sent_datagram, nullptr);
     EXPECT_EQ(node1->state.run_state, RUNSTATE_GENERATE_SEED);
     
     // Test with pending datagram
@@ -625,7 +625,7 @@ TEST(CanMainStatemachine, duplicate_alias)
     node1->state.permitted = true;
     node1->state.initialized = true;
     node1->state.run_state = RUNSTATE_RUN;
-    node1->last_received_datagram = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    node1->last_sent_datagram = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
     
     alias_mapping = InternalNodeAliasTable_register(NODE_ALIAS_1, NODE_ID_1);
     alias_mapping->is_duplicate = true;
@@ -639,7 +639,7 @@ TEST(CanMainStatemachine, duplicate_alias)
     // Verify node was reset and datagram freed
     EXPECT_FALSE(node1->state.permitted);
     EXPECT_FALSE(node1->state.initialized);
-    EXPECT_EQ(node1->last_received_datagram, nullptr);
+    EXPECT_EQ(node1->last_sent_datagram, nullptr);
     EXPECT_EQ(node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
 }

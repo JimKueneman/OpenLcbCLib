@@ -1226,14 +1226,14 @@ extern "C" {
 
 /**
  * @defgroup node_enum_keys Node Enumeration Key Management
- * @brief User keys (0-3) and internal keys (4-6) for independent node enumeration.
+ * @brief User keys (0-3) and internal keys (4-9) for independent node enumeration.
  * @{
  */
 
-    /** @brief Maximum number of enumeration keys available for user/application */
+    /** @brief Maximum number of internal system enumeration keys */
 #define MAX_INTERNAL_ENUM_KEYS_VALUES 6
 
-    /** @brief Maximum number of internal system enumeration keys */
+    /** @brief Maximum number of enumeration keys available for user/application */
 #define MAX_USER_ENUM_KEYS_VALUES 4
 
     /** @brief User enumeration key 1 */

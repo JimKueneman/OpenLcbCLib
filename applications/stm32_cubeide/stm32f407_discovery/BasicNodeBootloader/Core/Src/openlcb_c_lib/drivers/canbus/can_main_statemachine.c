@@ -122,10 +122,10 @@ static void _reset_node(openlcb_node_t *openlcb_node) {
     openlcb_node->state.firmware_upgrade_active = false;
     openlcb_node->state.resend_datagram = false;
     openlcb_node->state.openlcb_datagram_ack_sent = false;
-    if (openlcb_node->last_received_datagram) {
+    if (openlcb_node->last_sent_datagram) {
 
-        OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
-        openlcb_node->last_received_datagram = NULL;
+        OpenLcbBufferStore_free_buffer(openlcb_node->last_sent_datagram);
+        openlcb_node->last_sent_datagram = NULL;
 
     }
 

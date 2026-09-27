@@ -162,7 +162,7 @@ void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *msg);</code></pre>
         <ul>
             <li><code>allocate_buffer()</code>: Scans the specified pool for the first non-allocated slot, marks it allocated with <code>reference_count = 1</code>, clears the payload, and returns the pointer. Returns <code>NULL</code> if the pool is exhausted.</li>
             <li><code>free_buffer()</code>: Decrements the reference count. When it reaches zero, clears the message structure and marks it as not allocated. Passing <code>NULL</code> is safe.</li>
-            <li><code>inc_reference_count()</code>: Increments the reference count, allowing the same buffer to be held by multiple queues simultaneously (e.g., sibling dispatch sends a loopback copy while the original is still in the TX pipeline).</li>
+            <li><code>inc_reference_count()</code>: Increments the reference count, allowing the same buffer to be held by multiple queues simultaneously (e.g., a message held by more than one owner at once).</li>
         </ul>
 
         <h3>4.3.3 Reference Counting Lifecycle</h3>
@@ -282,9 +282,9 @@ sequenceDiagram
                     <td>Increase the relevant pool depth.</td>
                 </tr>
                 <tr>
-                    <td>Sibling dispatch (loopback copy)</td>
-                    <td>Loopback copy for sibling nodes is dropped. The sibling never sees the message.</td>
-                    <td>Increase BASIC pool depth.</td>
+                    <td>Local delivery (answers between local nodes, application sends on a multi-node device)</td>
+                    <td>An answer waits in the shared worker buffer and is retried each pass, holding up the loop; an application send returns <code>false</code> and must be retried.</td>
+                    <td>Increase the relevant pool depth (BASIC for most messages).</td>
                 </tr>
             </tbody>
         </table>

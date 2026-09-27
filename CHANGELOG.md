@@ -54,6 +54,30 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   pointer safety, short payload and non-matching MTI guards.
 
 ### Fixed
+- **Default stream table too small for a stream between two local nodes.**
+  The stream table is shared by every node on the device and a local stream
+  uses one entry for each end, so the old default of 1 could not open one.
+  When `USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS` is not set, a device with
+  more than one node now gets 2, otherwise 1. Configs that set it are
+  unchanged; the template and application config comments and the docs (Ch 14b,
+  Appendix E) now say a multi-node device that streams between its own nodes
+  needs at least 2. (`openlcb_types.h`)
+- **A datagram rejected with a temporary error was never resent.** The resend
+  logic existed but nothing stored the sent datagram and nothing acted on the
+  resend flag. Now every datagram a local node hands to the transport is kept
+  on the node (`last_sent_datagram`, renamed from `last_received_datagram`)
+  until the receiver answers. A temporary Datagram Rejected from that receiver
+  schedules a resend, which the main loop sends through the normal send path
+  (so other local nodes see it) at least one 100ms tick later; after 3 retries,
+  a permanent rejection or 3 seconds without an answer the copy is dropped.
+  Datagram Received OK / Rejected only act on the stored copy when they come
+  from the node it was sent to. While a node still holds an unacknowledged
+  datagram, a new incoming datagram to it is rejected with a temporary Buffer
+  Unavailable (the sender retries), so answering it cannot replace the stored
+  copy (DatagramTransportS 4.3, 6.1). `interface_openlcb_main_statemachine_t`
+  gains three optional fields, `datagram_sent`, `datagram_resend_due` and
+  `datagram_resend_queued`, wired under `OPENLCB_COMPILE_DATAGRAMS`.
+  (`protocol_datagram_handler.c`, `openlcb_main_statemachine.c`)
 - **On TCP every node accepted every addressed message.** The addressed
   filter matched on destination alias OR destination Node ID. On TCP every
   alias is 0, so every addressed message matched every node (and on CAN any
@@ -130,6 +154,15 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   directly, because the answer uses the same event enumerators the login is using;
   the full set then goes out after the request (EventTransportS 6.2). Reported by
   Bob Gamble (#14).
+- **A node could not receive replies to its own Memory Configuration requests.**
+  None of the datagram handler's reply slots (read, write, read/write stream,
+  write under mask; options, address space info, lock, unique ID; OK and fail)
+  had an implementation, so a node built on this library that read or wrote
+  another node's configuration memory answered the reply with Datagram Rejected.
+  All 61 slots are now wired to `ProtocolDatagramHandler_handle_config_mem_reply`,
+  which answers Datagram Received OK without Reply Pending (nothing follows a
+  reply) and passes the reply to a new optional callback, `on_config_mem_reply`
+  in `openlcb_config_t`. With no callback the reply is acknowledged and dropped.
 - **A stream message for one local node could close another local node's
   stream.** The stream table is shared by every node on the device, and lookups
   matched only the remote end and the stream IDs, so on a multi-node device a
@@ -222,6 +255,45 @@ For Node Wizard changes, see `tools/node_wizard/CHANGELOG.md`.
   both the Python tool and Node Wizard.
 
 ### Changed
+- **Delivery between nodes on the same device redesigned (dispatch stack).**
+  A device hosting several nodes must show every message one of them sends to
+  the others, since CAN does not loop a device's own frames back. The old
+  mechanism (one sibling context, a 5-slot reply queue and a single "Path B"
+  slot for application sends, plus a second copy in the login state machine)
+  lost messages when a local node's request made several siblings answer, when
+  the application sent twice before the loop ran, and froze the main loop when
+  a sibling answered with several messages (found on hardware by Bob Gamble,
+  #18 and #20). Now every message goes to the wire and is then shown to every
+  other local node before the loop moves on; an answer made while showing it is
+  finished the same way one level deeper on a stack sized
+  `USER_DEFINED_NODE_BUFFER_DEPTH + 2`, and a node answering with several
+  messages is called again only after the previous one is finished. Answers
+  and application sends live in buffer-store buffers. Login messages and the
+  config-memory stream pump go through the same path, so a config-memory
+  stream between two local nodes now works. See overview Ch 21.
+
+  Upgrade notes:
+  - On a device with more than one node, `OpenLcbMainStatemachine_send_with_sibling_dispatch()`
+    (behind every application send helper) now queues the message: `true`
+    means accepted, not yet on the wire; it goes out on a later
+    `OpenLcbConfig_run()`. Code that sends and then resets without running the
+    loop loses the message. Single-node devices are unchanged.
+  - That send can now also return `false` when the buffer store is empty
+    (queued sends each hold a buffer until sent; the queue itself has one slot
+    per buffer, so there is no separate setting). Never loop on a send inside a callback; keep the
+    message and send it from the main loop.
+  - Answers between local nodes and queued sends use the same buffer store as
+    received messages; busy multi-node devices may need larger pools.
+  - Other local nodes can see an answer before the request it answers; the
+    wire order is unchanged.
+  - Hand-built interfaces (not using `OpenLcbConfig`): the main state machine
+    interface needs `openlcb_node_get_by_index` (new
+    `OpenLcbNode_get_by_index()`); the login state machine interface no longer
+    has `process_main_statemachine` or `openlcb_node_get_count`, and its
+    `send_openlcb_msg` must be `OpenLcbMainStatemachine_send_with_sibling_dispatch`.
+  - `OpenLcbMainStatemachine_get_sibling_response_queue_high_water()` now
+    returns the deepest the dispatch stack has been.
+
 - **Transport drivers are guarded by their flag.** All `src/drivers/canbus` sources
   are wrapped in `OPENLCB_COMPILE_CAN` and all `src/drivers/tcp_ip` sources in
   `OPENLCB_COMPILE_TCP`, so the unused transport no longer compiles into the image

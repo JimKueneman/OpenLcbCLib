@@ -74,6 +74,19 @@ typedef struct {
     /** @brief OPTIONAL. Called when the link state changes. May be NULL. */
     void (*on_link_status_changed)(bool is_up);
 
+    /** @brief REQUIRED. Get the first allocated node for the given enumerator key.
+     *  Typical: OpenLcbNode_get_first. */
+    openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
+
+    /** @brief REQUIRED. Get the next allocated node for the given enumerator key.
+     *  Typical: OpenLcbNode_get_next. */
+    openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
+
+    /** @brief REQUIRED. Return every node to RUNSTATE_INIT (not initialized, not permitted)
+     *  so it logs in again when the link comes back.
+     *  Typical: OpenLcbNode_reset_state. */
+    void (*openlcb_node_reset_state)(void);
+
 } interface_tcp_main_statemachine_t;
 
 #ifdef __cplusplus

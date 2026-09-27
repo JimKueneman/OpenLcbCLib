@@ -60,6 +60,9 @@ extern "C" {
 #include "openlcb_application_train.h"
 #include "drivers/canbus/can_main_statemachine.h"
 #include "drivers/canbus/can_types.h"
+#include "drivers/canbus/can_config.h"
+#include "openlcb_main_statemachine.h"
+#include "openlcb_utilities.h"
 
 // Matches _config_field_t in openlcb_config.c
 typedef struct {
@@ -1389,3 +1392,486 @@ TEST(OpenLcbConfig, stream_write_train_function_config_memory_single_byte) {
     EXPECT_EQ(state->functions[0], 0xABCD);
 
 }
+
+// =============================================================================
+// Config-memory Read Stream between two nodes on the same device
+//
+// Node A reads node B's configuration memory (space 0xFD) by stream.  Both
+// nodes live on this device, so nothing comes back from the bus: every
+// message must reach the other node through the main loop.  Runs the full
+// library wiring (OpenLcbConfig_initialize) with a mock CAN transmit.
+//
+// Expected sequence: A -> B Read Stream datagram; B -> A Datagram OK;
+// B -> A Stream Initiate Request; A -> B Initiate Reply; B -> A Read Stream
+// Reply datagram (A acknowledges it); B -> A stream data; B -> A Data Complete.
+// =============================================================================
+
+static int _ls_can_frames;
+
+static bool _ls_transmit(can_msg_t *can_msg) {
+
+    (void) can_msg;
+    _ls_can_frames++;
+
+    return true;
+
+}
+
+static const can_config_t _ls_can_config = {
+
+    .transmit_raw_can_frame  = &_ls_transmit,
+    .is_tx_buffer_clear      = &_mock_return_true,
+    .lock_shared_resources   = &_mock_lock,
+    .unlock_shared_resources = &_mock_unlock,
+
+};
+
+static openlcb_node_t *_ls_requester;
+static int _ls_initiate_requests_accepted;
+static uint8_t _ls_received[1024];
+static uint16_t _ls_received_count;
+static bool _ls_complete;
+static int _ls_replies;
+static uint8_t _ls_reply_cmd;
+
+static bool _ls_on_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
+
+    (void) stream;
+
+    if (statemachine_info->openlcb_node == _ls_requester) {
+
+        _ls_initiate_requests_accepted++;
+
+        return true;
+
+    }
+
+    return false;
+
+}
+
+static void _ls_on_data_received(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
+
+    (void) stream;
+
+    openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
+
+    // byte 0 is the destination stream ID, then data
+    for (uint16_t i = 1; (i < msg->payload_count) && (_ls_received_count < sizeof(_ls_received)); i++) {
+
+        _ls_received[_ls_received_count++] = *msg->payload[i];
+
+    }
+
+}
+
+static void _ls_on_complete(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
+
+    (void) stream;
+
+    if (statemachine_info->openlcb_node == _ls_requester) {
+
+        _ls_complete = true;
+
+    }
+
+}
+
+static void _ls_on_config_mem_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *reply) {
+
+    if (openlcb_node == _ls_requester) {
+
+        _ls_replies++;
+        _ls_reply_cmd = *reply->payload[1];
+
+    }
+
+}
+
+static const openlcb_config_t _ls_config = {
+
+    .lock_shared_resources      = &_mock_lock,
+    .unlock_shared_resources    = &_mock_unlock,
+    .config_mem_read            = &_mock_config_read,
+    .config_mem_write           = &_mock_config_write,
+    .on_config_mem_reply        = &_ls_on_config_mem_reply,
+    .on_stream_initiate_request = &_ls_on_initiate_request,
+    .on_stream_data_received    = &_ls_on_data_received,
+    .on_stream_complete         = &_ls_on_complete,
+
+};
+
+TEST(OpenLcbConfig, local_config_mem_read_stream_between_two_nodes) {
+
+    _reset_mock_state();
+
+    for (int i = 0; i < 256; i++) {
+
+        _mock_config_mem[i] = (uint8_t) (i ^ 0x5A);
+
+    }
+
+    _ls_can_frames = 0;
+    _ls_initiate_requests_accepted = 0;
+    _ls_received_count = 0;
+    _ls_complete = false;
+    _ls_replies = 0;
+    _ls_reply_cmd = 0;
+
+    CanConfig_initialize(&_ls_can_config);
+    OpenLcbConfig_initialize(&_ls_config);
+
+    openlcb_node_t *node_a = OpenLcbConfig_create_node(0x050101010101ULL, &_node_params_full);
+    openlcb_node_t *node_b = OpenLcbConfig_create_node(0x050101010102ULL, &_node_params_full);
+    ASSERT_NE(node_a, nullptr);
+    ASSERT_NE(node_b, nullptr);
+
+    // Logged in already (the CAN login is not part of this test)
+    node_a->alias = 0xAAA;
+    node_a->state.permitted = true;
+    node_a->state.initialized = true;
+    node_a->state.run_state = RUNSTATE_RUN;
+
+    node_b->alias = 0xBBB;
+    node_b->state.permitted = true;
+    node_b->state.initialized = true;
+    node_b->state.run_state = RUNSTATE_RUN;
+
+    _ls_requester = node_a;
+
+    // A's application: Read Stream, space 0xFD, address 0x10, 100 bytes
+    const uint32_t address = 0x10;
+    const uint32_t count = 100;
+
+    openlcb_msg_t msg;
+    payload_datagram_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = DATAGRAM;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, node_a->alias, node_a->id, node_b->alias, node_b->id, MTI_DATAGRAM);
+    OpenLcbUtilities_clear_openlcb_message_payload(&msg);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, CONFIG_MEM_READ_STREAM_SPACE_FD, 1);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(&msg, address, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x00, 6);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0xFF, 7);    // no DID preference
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(&msg, count, 8);
+    msg.payload_count = 12;
+
+    ASSERT_TRUE(OpenLcbMainStatemachine_send_with_sibling_dispatch(&msg));
+
+    for (int i = 0; i < 5000; i++) {
+
+        OpenLcbConfig_run();
+
+    }
+
+    // The stream was offered to A and accepted
+    EXPECT_EQ(_ls_initiate_requests_accepted, 1);
+
+    // A got B's Read Stream Reply (acknowledged, not rejected)
+    EXPECT_EQ(_ls_replies, 1);
+    EXPECT_EQ(_ls_reply_cmd, CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FD);
+
+    // A got exactly the requested bytes, then Data Complete
+    ASSERT_EQ(_ls_received_count, count);
+
+    for (uint32_t i = 0; i < count; i++) {
+
+        EXPECT_EQ(_ls_received[i], (uint8_t) ((address + i) ^ 0x5A)) << "byte " << i;
+
+    }
+
+    EXPECT_TRUE(_ls_complete);
+
+    // Everything also went out on the wire
+    EXPECT_GT(_ls_can_frames, 0);
+
+}
+
+// =============================================================================
+// Same, larger than one stream window: flow control between two local nodes
+//
+// 600 bytes is more than two windows of LEN_MESSAGE_BYTES_STREAM, so A must
+// answer with Stream Data Proceed and B must continue after each one.
+// =============================================================================
+
+TEST(OpenLcbConfig, local_config_mem_read_stream_multi_window) {
+
+    ASSERT_LT((uint32_t) LEN_MESSAGE_BYTES_STREAM * 2, 600u);
+
+    _reset_mock_state();
+
+    for (int i = 0; i < 256; i++) {
+
+        _mock_config_mem[i] = (uint8_t) (i ^ 0x5A);
+
+    }
+
+    _ls_can_frames = 0;
+    _ls_initiate_requests_accepted = 0;
+    _ls_received_count = 0;
+    _ls_complete = false;
+    _ls_replies = 0;
+    _ls_reply_cmd = 0;
+
+    // Space 0xFD big enough for the read (the mock memory repeats every 256 bytes)
+    static node_parameters_t params;
+    params = _node_params_full;
+    params.address_space_config_memory.highest_address = 1023;
+
+    CanConfig_initialize(&_ls_can_config);
+    OpenLcbConfig_initialize(&_ls_config);
+
+    openlcb_node_t *node_a = OpenLcbConfig_create_node(0x050101010101ULL, &params);
+    openlcb_node_t *node_b = OpenLcbConfig_create_node(0x050101010102ULL, &params);
+    ASSERT_NE(node_a, nullptr);
+    ASSERT_NE(node_b, nullptr);
+
+    node_a->alias = 0xAAA;
+    node_a->state.permitted = true;
+    node_a->state.initialized = true;
+    node_a->state.run_state = RUNSTATE_RUN;
+
+    node_b->alias = 0xBBB;
+    node_b->state.permitted = true;
+    node_b->state.initialized = true;
+    node_b->state.run_state = RUNSTATE_RUN;
+
+    _ls_requester = node_a;
+
+    const uint32_t address = 0x10;
+    const uint32_t count = 600;
+
+    openlcb_msg_t msg;
+    payload_datagram_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = DATAGRAM;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, node_a->alias, node_a->id, node_b->alias, node_b->id, MTI_DATAGRAM);
+    OpenLcbUtilities_clear_openlcb_message_payload(&msg);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, CONFIG_MEM_READ_STREAM_SPACE_FD, 1);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(&msg, address, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x00, 6);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0xFF, 7);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(&msg, count, 8);
+    msg.payload_count = 12;
+
+    ASSERT_TRUE(OpenLcbMainStatemachine_send_with_sibling_dispatch(&msg));
+
+    for (int i = 0; i < 20000; i++) {
+
+        OpenLcbConfig_run();
+
+    }
+
+    EXPECT_EQ(_ls_initiate_requests_accepted, 1);
+    EXPECT_EQ(_ls_replies, 1);
+    EXPECT_EQ(_ls_reply_cmd, CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FD);
+
+    ASSERT_EQ(_ls_received_count, count);
+
+    for (uint32_t i = 0; i < count; i++) {
+
+        EXPECT_EQ(_ls_received[i], (uint8_t) (((address + i) % 256) ^ 0x5A)) << "byte " << i;
+
+    }
+
+    EXPECT_TRUE(_ls_complete);
+
+}
+
+// =============================================================================
+// Datagram resend between two nodes on the same device (full library wiring)
+//
+// Node B has sent a datagram to a node on the bus (alias 0xCCC) and is still
+// waiting for its Datagram Received OK.  Node A then reads B's configuration
+// memory by datagram.  B must not answer yet (its reply datagram would replace
+// the stored, unacknowledged one), so it rejects A's datagram with a temporary
+// Buffer Unavailable.  A keeps its datagram and resends it after a tick.
+// DatagramTransportS 4.3, 6.1.
+// =============================================================================
+
+#define DR_BUS_ALIAS 0xCCC
+#define DR_BUS_ID    0x0501010101CCULL
+
+static void _dr_setup_nodes(openlcb_node_t **node_a, openlcb_node_t **node_b) {
+
+    _reset_mock_state();
+
+    for (int i = 0; i < 256; i++) {
+
+        _mock_config_mem[i] = (uint8_t) (i ^ 0x5A);
+
+    }
+
+    _ls_can_frames = 0;
+    _ls_replies = 0;
+    _ls_reply_cmd = 0;
+
+    CanConfig_initialize(&_ls_can_config);
+    OpenLcbConfig_initialize(&_ls_config);
+
+    *node_a = OpenLcbConfig_create_node(0x050101010101ULL, &_node_params_full);
+    *node_b = OpenLcbConfig_create_node(0x050101010102ULL, &_node_params_full);
+    ASSERT_NE(*node_a, nullptr);
+    ASSERT_NE(*node_b, nullptr);
+
+    (*node_a)->alias = 0xAAA;
+    (*node_a)->state.permitted = true;
+    (*node_a)->state.initialized = true;
+    (*node_a)->state.run_state = RUNSTATE_RUN;
+
+    (*node_b)->alias = 0xBBB;
+    (*node_b)->state.permitted = true;
+    (*node_b)->state.initialized = true;
+    (*node_b)->state.run_state = RUNSTATE_RUN;
+
+    _ls_requester = *node_a;
+
+}
+
+static void _dr_run(int passes) {
+
+    for (int i = 0; i < passes; i++) {
+
+        OpenLcbConfig_run();
+
+    }
+
+}
+
+static void _dr_tick_and_run(int ticks) {
+
+    for (int t = 0; t < ticks; t++) {
+
+        OpenLcbConfig_100ms_timer_tick();
+        _dr_run(200);
+
+    }
+
+}
+
+    /** @brief B sends a datagram to the bus node; nothing answers it yet. */
+static void _dr_b_sends_to_bus(openlcb_node_t *node_b) {
+
+    openlcb_msg_t msg;
+    payload_datagram_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = DATAGRAM;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, node_b->alias, node_b->id, DR_BUS_ALIAS, DR_BUS_ID, MTI_DATAGRAM);
+    OpenLcbUtilities_clear_openlcb_message_payload(&msg);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x30, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 0x31, 1);
+    msg.payload_count = 2;
+
+    ASSERT_TRUE(OpenLcbMainStatemachine_send_with_sibling_dispatch(&msg));
+    _dr_run(200);
+
+}
+
+    /** @brief A reads 4 bytes of B's space 0xFD at address 0x10 by datagram. */
+static void _dr_a_reads_b(openlcb_node_t *node_a, openlcb_node_t *node_b) {
+
+    openlcb_msg_t msg;
+    payload_datagram_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = DATAGRAM;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, node_a->alias, node_a->id, node_b->alias, node_b->id, MTI_DATAGRAM);
+    OpenLcbUtilities_clear_openlcb_message_payload(&msg);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, CONFIG_MEM_READ_SPACE_FD, 1);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(&msg, 0x10, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, 4, 6);
+    msg.payload_count = 7;
+
+    ASSERT_TRUE(OpenLcbMainStatemachine_send_with_sibling_dispatch(&msg));
+    _dr_run(200);
+
+}
+
+    /** @brief The bus node's Datagram Received OK for B arrives (CAN: alias only). */
+static void _dr_bus_acks_b(openlcb_node_t *node_b) {
+
+    openlcb_msg_t *ok = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(ok, nullptr);
+    OpenLcbUtilities_load_openlcb_message(ok, DR_BUS_ALIAS, 0, node_b->alias, 0, MTI_DATAGRAM_OK_REPLY);
+    ok->payload_count = 0;
+    OpenLcbBufferFifo_push(ok);
+    _dr_run(200);
+
+}
+
+TEST(OpenLcbConfig, local_datagram_rejected_while_outstanding_then_resent) {
+
+    openlcb_node_t *node_a;
+    openlcb_node_t *node_b;
+    _dr_setup_nodes(&node_a, &node_b);
+
+    _dr_b_sends_to_bus(node_b);
+    ASSERT_NE(node_b->last_sent_datagram, nullptr);
+
+    _dr_a_reads_b(node_a, node_b);
+
+    // B told A to retry; A kept its read for resend; B's datagram untouched
+    EXPECT_EQ(_ls_replies, 0);
+    ASSERT_NE(node_a->last_sent_datagram, nullptr);
+    EXPECT_TRUE(node_a->state.resend_datagram);
+    EXPECT_EQ(node_a->last_sent_datagram->timer.datagram.retry_count, 1);
+    ASSERT_NE(node_b->last_sent_datagram, nullptr);
+    EXPECT_EQ(*node_b->last_sent_datagram->payload[0], 0x30);
+
+    // Not resent until a tick has passed
+    _dr_run(200);
+    EXPECT_TRUE(node_a->state.resend_datagram);
+
+    // The bus node acknowledges B's datagram; B's copy is freed
+    _dr_bus_acks_b(node_b);
+    EXPECT_EQ(node_b->last_sent_datagram, nullptr);
+
+    // A resends; B answers the read; A acknowledges B's reply
+    _dr_tick_and_run(1);
+
+    EXPECT_EQ(_ls_replies, 1);
+    EXPECT_EQ(_ls_reply_cmd, CONFIG_MEM_READ_REPLY_OK_SPACE_FD);
+    EXPECT_EQ(node_a->last_sent_datagram, nullptr);
+    EXPECT_EQ(node_b->last_sent_datagram, nullptr);
+    EXPECT_FALSE(node_a->state.resend_datagram);
+
+    // Nothing left behind
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+
+}
+
+TEST(OpenLcbConfig, local_datagram_resend_gives_up_after_max_retries) {
+
+    openlcb_node_t *node_a;
+    openlcb_node_t *node_b;
+    _dr_setup_nodes(&node_a, &node_b);
+
+    // B's datagram is never acknowledged, so B keeps rejecting A
+    _dr_b_sends_to_bus(node_b);
+    _dr_a_reads_b(node_a, node_b);
+    ASSERT_NE(node_a->last_sent_datagram, nullptr);
+
+    // Each tick A resends and is rejected again, until the retry limit
+    _dr_tick_and_run(6);
+
+    EXPECT_EQ(node_a->last_sent_datagram, nullptr);
+    EXPECT_FALSE(node_a->state.resend_datagram);
+    EXPECT_EQ(_ls_replies, 0);
+
+    // B's own unacknowledged datagram is dropped after the 3 second timeout
+    EXPECT_NE(node_b->last_sent_datagram, nullptr);
+    _dr_tick_and_run(32);
+    EXPECT_EQ(node_b->last_sent_datagram, nullptr);
+
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+
+}
+

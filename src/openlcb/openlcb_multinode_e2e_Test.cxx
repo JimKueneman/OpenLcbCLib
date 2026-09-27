@@ -291,6 +291,44 @@ static void _e2e_verified_handler(openlcb_statemachine_info_t *si) {
 
 }
 
+// ---- Initialization Complete: optionally answered with several messages ----
+//
+// When _e2e_ic_answer_node sees an Initialization Complete it answers with
+// _e2e_ic_answer_count Verified Node ID messages, one per call with the
+// enumerate flag set in between, like any multi-message handler.  With
+// _e2e_ic_answer_node == 0 it does nothing.
+
+static node_id_t _e2e_ic_answer_node;
+static int       _e2e_ic_answer_count;
+static int       _e2e_ic_answer_remaining;
+
+static void _e2e_init_complete_handler(openlcb_statemachine_info_t *si) {
+
+    if ((_e2e_ic_answer_node == 0) || (si->openlcb_node->id != _e2e_ic_answer_node)) {
+
+        return;
+
+    }
+
+    if (!si->incoming_msg_info.enumerate) {
+
+        _e2e_ic_answer_remaining = _e2e_ic_answer_count;
+
+    }
+
+    OpenLcbUtilities_load_openlcb_message(
+            si->outgoing_msg_info.msg_ptr,
+            si->openlcb_node->alias,
+            si->openlcb_node->id,
+            0, 0,
+            MTI_VERIFIED_NODE_ID);
+    si->outgoing_msg_info.valid = true;
+
+    _e2e_ic_answer_remaining--;
+    si->incoming_msg_info.enumerate = (_e2e_ic_answer_remaining > 0);
+
+}
+
 // ============================================================================
 // Datagram handler interface — lock/unlock only; all callbacks NULL (auto-reject)
 // ============================================================================
@@ -322,7 +360,7 @@ static const interface_openlcb_main_statemachine_t _e2e_main_interface = {
     .load_interaction_rejected = &_e2e_load_interaction_rejected,
 
     // Message network — noop (tests 2/3 use globals to configure responses)
-    .message_network_initialization_complete        = &_e2e_noop_handler,
+    .message_network_initialization_complete        = &_e2e_init_complete_handler,
     .message_network_initialization_complete_simple = &_e2e_noop_handler,
     .message_network_verify_node_id_addressed       = &_e2e_noop_handler,
     .message_network_verify_node_id_global          = &_e2e_verify_global_handler,
@@ -399,6 +437,8 @@ static const interface_openlcb_main_statemachine_t _e2e_main_interface = {
     .is_train_search_event   = NULL,
     .is_emergency_event      = NULL,
 
+
+    .openlcb_node_get_by_index = &OpenLcbNode_get_by_index,
 };
 
 // ============================================================================
@@ -432,7 +472,9 @@ static const interface_openlcb_login_message_handler_t _e2e_login_msg_interface 
 
 static const interface_openlcb_login_state_machine_t _e2e_login_interface = {
 
-    .send_openlcb_msg        = &_e2e_wire_send,
+    // As in openlcb_config.c: login messages go through the main state
+    // machine's send path, which shows them to the other local nodes
+    .send_openlcb_msg        = &OpenLcbMainStatemachine_send_with_sibling_dispatch,
     .openlcb_node_get_first  = &OpenLcbNode_get_first,
     .openlcb_node_get_next   = &OpenLcbNode_get_next,
 
@@ -440,10 +482,7 @@ static const interface_openlcb_login_state_machine_t _e2e_login_interface = {
     .load_producer_events         = &OpenLcbLoginStatemachineHandler_load_producer_event,
     .load_consumer_events         = &OpenLcbLoginStatemachineHandler_load_consumer_event,
 
-    // Sibling dispatch wired to the real main statemachine via our logging wrapper
-    .process_main_statemachine = &_e2e_process_main_statemachine,
 
-    .openlcb_node_get_count  = &OpenLcbNode_get_count,
 
     // Real internal handlers
     .process_login_statemachine        = &OpenLcbLoginStatemachine_process,
@@ -480,6 +519,10 @@ static void _e2e_reset(void) {
     _e2e_verified_node_1 = 0;
     _e2e_verified_mti_1  = 0;
     _e2e_verified_done_1 = false;
+
+    _e2e_ic_answer_node = 0;
+    _e2e_ic_answer_count = 0;
+    _e2e_ic_answer_remaining = 0;
 
     memset(_e2e_wire_log,     0, sizeof(_e2e_wire_log));
     memset(_e2e_dispatch_log, 0, sizeof(_e2e_dispatch_log));
@@ -526,51 +569,139 @@ static bool _e2e_all_nodes_in_run_state(void) {
 }
 
 // ============================================================================
-// TEST 1: Login sibling dispatch reaches the real main protocol handler
+// TEST 1: A node's login messages reach its siblings through the main loop
 //
-// NodeA completes login while NodeB is already in RUNSTATE_RUN.
-// The login statemachine sends Init Complete and then calls
-// process_main_statemachine for each RUN sibling — wired to our logging
-// wrapper which calls through to OpenLcbMainStatemachine_process_main_statemachine.
-// We verify NodeB appears in the dispatch log and NodeA does not (self-skip).
+// NodeA logs in (with 2 producers and 1 consumer) while NodeB is already in
+// RUNSTATE_RUN.  The login statemachine's sends go through the main state
+// machine's send path, as in openlcb_config.c, and both statemachines run as
+// in OpenLcbConfig_run.  NodeB must see Init Complete and every Identified
+// message; NodeA must not see its own.
 // ============================================================================
 
-TEST(OpenLcbMultinodeE2E, login_sibling_dispatch_reaches_real_main_handler)
+static void _e2e_run_login_and_main(int passes) {
+
+    for (int i = 0; i < passes; i++) {
+
+        OpenLcbLoginStatemachine_run();
+        OpenLcbMainStatemachine_run();
+
+    }
+
+}
+
+TEST(OpenLcbMultinodeE2E, login_messages_reach_siblings_through_main_loop)
 {
 
     _e2e_init_with_login();
 
-    // NodeA — starts login from RUNSTATE_LOAD_INITIALIZATION_COMPLETE
-    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    node_parameters_t params_with_events = _node_parameters_main_node;
+    params_with_events.producer_count_autocreate = 2;
+    params_with_events.consumer_count_autocreate = 1;
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &params_with_events);
     nodeA->alias = 0x111;
     nodeA->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
 
-    // NodeB — already in RUNSTATE_RUN (will be a sibling dispatch target)
     openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
     nodeB->alias = 0x222;
     nodeB->state.initialized = true;
     nodeB->state.run_state = RUNSTATE_RUN;
 
-    // Drive login until NodeA reaches RUNSTATE_RUN
-    for (int i = 0; i < 50; i++) {
-
-        if (nodeA->state.run_state == RUNSTATE_RUN) { break; }
-        OpenLcbLoginStatemachine_run();
-
-    }
+    _e2e_run_login_and_main(200);
 
     ASSERT_EQ(nodeA->state.run_state, RUNSTATE_RUN);
 
-    // Init Complete must have been put on the wire
-    EXPECT_GE(_e2e_count_wire_mti(MTI_INITIALIZATION_COMPLETE), 1);
+    // On the wire
+    EXPECT_EQ(_e2e_count_wire_mti(MTI_INITIALIZATION_COMPLETE), 1);
+    EXPECT_EQ(_e2e_count_wire_mti(MTI_PRODUCER_IDENTIFIED_UNKNOWN), 2);
+    EXPECT_EQ(_e2e_count_wire_mti(MTI_CONSUMER_IDENTIFIED_UNKNOWN), 1);
 
-    // NodeB must have been dispatched the Init Complete via sibling dispatch
-    EXPECT_GE(_e2e_dispatch_count_for_node_mti(0x010203040502, MTI_INITIALIZATION_COMPLETE), 1);
+    // NodeB saw every login message
+    EXPECT_EQ(_e2e_dispatch_count_for_node_mti(0x010203040502, MTI_INITIALIZATION_COMPLETE), 1);
+    EXPECT_EQ(_e2e_dispatch_count_for_node_mti(0x010203040502, MTI_PRODUCER_IDENTIFIED_UNKNOWN), 2);
+    EXPECT_EQ(_e2e_dispatch_count_for_node_mti(0x010203040502, MTI_CONSUMER_IDENTIFIED_UNKNOWN), 1);
 
-    // NodeA must NOT have dispatched its own Init Complete to itself (self-skip)
+    // NodeA did not see its own
     EXPECT_EQ(_e2e_dispatch_count_for_node_mti(0x010203040501, MTI_INITIALIZATION_COMPLETE), 0);
 
     // No leaked buffers
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+
+}
+
+// ============================================================================
+// TEST 1b: A sibling answering a login message with several messages keeps
+// answering as itself, and the loop keeps running afterwards
+//
+// NodeA logs in; NodeB (first sibling) answers A's Init Complete with 3
+// messages, NodeC comes after it.  All 3 answers must come from NodeB, NodeA
+// and NodeC must see each of them, and a later message from the wire must
+// still reach every node.
+// ============================================================================
+
+static int _e2e_count_wire_mti_from_alias(uint16_t mti, uint16_t source_alias) {
+
+    int n = 0;
+
+    for (int i = 0; i < _e2e_wire_count; i++) {
+
+        if ((_e2e_wire_log[i].mti == mti) && (_e2e_wire_log[i].source_alias == source_alias)) { n++; }
+
+    }
+
+    return n;
+
+}
+
+TEST(OpenLcbMultinodeE2E, login_message_multi_message_answer_continues_on_same_node)
+{
+
+    _e2e_init_with_login();
+
+    openlcb_node_t *nodeA = OpenLcbNode_allocate(0x010203040501, &_node_parameters_main_node);
+    nodeA->alias = 0x111;
+    nodeA->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
+
+    openlcb_node_t *nodeB = OpenLcbNode_allocate(0x010203040502, &_node_parameters_main_node);
+    nodeB->alias = 0x222;
+    nodeB->state.initialized = true;
+    nodeB->state.run_state = RUNSTATE_RUN;
+
+    openlcb_node_t *nodeC = OpenLcbNode_allocate(0x010203040503, &_node_parameters_main_node);
+    nodeC->alias = 0x333;
+    nodeC->state.initialized = true;
+    nodeC->state.run_state = RUNSTATE_RUN;
+
+    _e2e_ic_answer_node = nodeB->id;
+    _e2e_ic_answer_count = 3;
+
+    _e2e_run_login_and_main(300);
+
+    ASSERT_EQ(nodeA->state.run_state, RUNSTATE_RUN);
+
+    // All three answers came from NodeB
+    EXPECT_EQ(_e2e_count_wire_mti_from_alias(MTI_VERIFIED_NODE_ID, nodeB->alias), 3);
+    EXPECT_EQ(_e2e_count_wire_mti(MTI_VERIFIED_NODE_ID), 3);
+
+    // NodeA and NodeC saw each of them; NodeB did not see its own
+    EXPECT_EQ(_e2e_dispatch_count_for_node_mti(nodeA->id, MTI_VERIFIED_NODE_ID), 3);
+    EXPECT_EQ(_e2e_dispatch_count_for_node_mti(nodeC->id, MTI_VERIFIED_NODE_ID), 3);
+    EXPECT_EQ(_e2e_dispatch_count_for_node_mti(nodeB->id, MTI_VERIFIED_NODE_ID), 0);
+
+    // The loop is still running: a later message from the wire reaches every node
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(incoming, nullptr);
+    incoming->mti          = MTI_VERIFY_NODE_ID_ADDRESSED;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id    = 0x0A0B0C0D0E0F;
+    incoming->dest_alias   = nodeC->alias;
+    incoming->dest_id      = nodeC->id;
+    OpenLcbBufferFifo_push(incoming);
+
+    _e2e_run_login_and_main(100);
+
+    EXPECT_EQ(_e2e_dispatch_count_for_node_mti(nodeC->id, MTI_VERIFY_NODE_ID_ADDRESSED), 1);
+
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
 
 }
@@ -786,6 +917,16 @@ TEST(OpenLcbMultinodeE2E, login_and_main_statemachines_concurrent_no_interferenc
 
     // Exactly 3 Init Complete messages (one per node)
     EXPECT_EQ(_e2e_count_wire_mti(MTI_INITIALIZATION_COMPLETE), 3);
+
+    // The last login message can still be on its way to the other local
+    // nodes (in a buffer-store buffer) when the last node reaches RUN; let
+    // both loops finish before checking for leaks
+    for (int i = 0; i < 200; i++) {
+
+        OpenLcbLoginStatemachine_run();
+        OpenLcbMainStatemachine_run();
+
+    }
 
     // No leaked buffers
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);

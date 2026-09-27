@@ -192,6 +192,12 @@ static void _mock_send_terminate(
     _stream_send_terminate_called++;
     _last_terminate_error = error_code;
 
+    // As ProtocolStreamHandler_send_terminate: the TDE to the stream's peer
+    // is loaded into the caller's slot
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_alias = stream->remote_alias;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_id = stream->remote_node_id;
+    statemachine_info->outgoing_msg_info.valid = true;
+
 }
 
 static bool _mock_user_initiate_request(openlcb_statemachine_info_t *statemachine_info, stream_state_t *stream) {
@@ -1419,14 +1425,16 @@ TEST(ProtocolConfigMemStreamHandler, pump_address_past_end_sends_fail_reply) {
     ProtocolConfigMemStreamHandler_handle_read_stream_space_config_description_info(&info);
     EXPECT_EQ(_stream_initiate_called, 0);
 
-    // Pump sends the fail reply
+    // The handler answers with the fail reply
     _reset_counters();
     _send_msg_return = true;
     ProtocolConfigMemStreamHandler_run();
 
-    EXPECT_EQ(_send_msg_called, 1);
-    ASSERT_NE(_last_sent_msg, nullptr);
-    EXPECT_EQ(*_last_sent_msg->payload[1], CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FF);
+    // The fail reply is the handler's own answer, not a pump message
+    EXPECT_EQ(_send_msg_called, 0);
+    EXPECT_TRUE(info.outgoing_msg_info.valid);
+    ASSERT_NE(info.outgoing_msg_info.msg_ptr, nullptr);
+    EXPECT_EQ(*info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FF);
 
     OpenLcbBufferStore_free_buffer(incoming);
     OpenLcbBufferStore_free_buffer(outgoing);
@@ -1682,29 +1690,31 @@ TEST(ProtocolConfigMemStreamHandler, out_of_bounds_cdi_sends_fail_reply) {
     EXPECT_FALSE(node->state.openlcb_datagram_ack_sent);
     EXPECT_FALSE(info.incoming_msg_info.enumerate);
 
-    // Pump should have a pending fail reply datagram
+    // The handler answered with a fail reply datagram
     _reset_counters();
     _send_msg_return = true;
     ProtocolConfigMemStreamHandler_run();
 
-    EXPECT_EQ(_send_msg_called, 1);
-    ASSERT_NE(_last_sent_msg, nullptr);
+    // The fail reply is the handler's own answer, not a pump message
+    EXPECT_EQ(_send_msg_called, 0);
+    EXPECT_TRUE(info.outgoing_msg_info.valid);
+    ASSERT_NE(info.outgoing_msg_info.msg_ptr, nullptr);
 
     // Check fail reply format
-    EXPECT_EQ(*_last_sent_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*_last_sent_msg->payload[1], CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FF);
+    EXPECT_EQ(*info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FF);
 
     // Bytes 2-5: address (0x1000 big-endian)
-    EXPECT_EQ(*_last_sent_msg->payload[2], 0x00);
-    EXPECT_EQ(*_last_sent_msg->payload[3], 0x00);
-    EXPECT_EQ(*_last_sent_msg->payload[4], 0x10);
-    EXPECT_EQ(*_last_sent_msg->payload[5], 0x00);
+    EXPECT_EQ(*info.outgoing_msg_info.msg_ptr->payload[2], 0x00);
+    EXPECT_EQ(*info.outgoing_msg_info.msg_ptr->payload[3], 0x00);
+    EXPECT_EQ(*info.outgoing_msg_info.msg_ptr->payload[4], 0x10);
+    EXPECT_EQ(*info.outgoing_msg_info.msg_ptr->payload[5], 0x00);
 
     // Bytes 6-7: error code (0x1082 big-endian)
-    EXPECT_EQ(*_last_sent_msg->payload[6], 0x10);
-    EXPECT_EQ(*_last_sent_msg->payload[7], 0x82);
+    EXPECT_EQ(*info.outgoing_msg_info.msg_ptr->payload[6], 0x10);
+    EXPECT_EQ(*info.outgoing_msg_info.msg_ptr->payload[7], 0x82);
 
-    EXPECT_EQ(_last_sent_msg->payload_count, 8);
+    EXPECT_EQ(info.outgoing_msg_info.msg_ptr->payload_count, 8);
 
     OpenLcbBufferStore_free_buffer(incoming);
     OpenLcbBufferStore_free_buffer(outgoing);
@@ -1736,14 +1746,16 @@ TEST(ProtocolConfigMemStreamHandler, out_of_bounds_config_memory_sends_fail_repl
     ProtocolConfigMemStreamHandler_handle_read_stream_space_configuration_memory(&info);
     EXPECT_EQ(_stream_initiate_called, 0);
 
-    // Pump sends the fail reply
+    // The handler answers with the fail reply
     _reset_counters();
     _send_msg_return = true;
     ProtocolConfigMemStreamHandler_run();
 
-    EXPECT_EQ(_send_msg_called, 1);
-    ASSERT_NE(_last_sent_msg, nullptr);
-    EXPECT_EQ(*_last_sent_msg->payload[1], CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FD);
+    // The fail reply is the handler's own answer, not a pump message
+    EXPECT_EQ(_send_msg_called, 0);
+    EXPECT_TRUE(info.outgoing_msg_info.valid);
+    ASSERT_NE(info.outgoing_msg_info.msg_ptr, nullptr);
+    EXPECT_EQ(*info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FD);
 
     OpenLcbBufferStore_free_buffer(incoming);
     OpenLcbBufferStore_free_buffer(outgoing);
@@ -2189,7 +2201,9 @@ TEST(ProtocolConfigMemStreamHandler, write_stream_out_of_bounds_sends_fail_reply
     _send_msg_return = true;
     ProtocolConfigMemStreamHandler_run();
 
-    EXPECT_EQ(_send_msg_called, 1);
+    // The fail reply is the handler's own answer, not a pump message
+    EXPECT_EQ(_send_msg_called, 0);
+    EXPECT_TRUE(info.outgoing_msg_info.valid);
 
     OpenLcbBufferStore_free_buffer(incoming);
     OpenLcbBufferStore_free_buffer(outgoing);
@@ -3299,6 +3313,84 @@ TEST(ProtocolConfigMemStreamHandler, write_data_received_empty_payload_no_write)
 
     OpenLcbBufferStore_free_buffer(in);
     OpenLcbBufferStore_free_buffer(out);
+
+}
+
+// ============================================================================
+// TEST: Two streams time out in the same tick; each gets its Terminate
+// @details The Terminate goes out through the one pump slot.  The second
+//          must not overwrite the first: it waits until the pump has sent
+//          the first one.
+// ============================================================================
+
+TEST(ProtocolConfigMemStreamHandler, timeout_two_streams_same_tick_both_terminated) {
+
+    _global_init(&_interface_full);
+
+    openlcb_node_t *node_1 = OpenLcbNode_allocate(DEST_ID, &_node_params);
+    node_1->alias = DEST_ALIAS;
+    openlcb_node_t *node_2 = OpenLcbNode_allocate(DEST_ID + 1, &_node_params);
+    node_2->alias = DEST_ALIAS + 1;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    ASSERT_NE(incoming, nullptr);
+    ASSERT_NE(outgoing, nullptr);
+
+    stream_state_t stream_2;
+    memset(&stream_2, 0, sizeof(stream_2));
+
+    // Stream 1: node_1 serves a read
+    _initiate_return = &_mock_stream;
+    _load_read_stream_cdi_datagram(incoming, 0, 0x10, 0);
+    openlcb_statemachine_info_t info_1 = _build_sm_info(node_1, incoming, outgoing);
+    info_1.current_tick = 5;
+    _run_two_phase_dispatch(&info_1);
+    _simulate_stream_accepted();
+    ProtocolConfigMemStreamHandler_on_initiate_reply(&info_1, &_mock_stream);
+
+    // Reply datagram, then the first chunk exhausts the window: stalled
+    _send_msg_return = true;
+    ProtocolConfigMemStreamHandler_run();
+    ProtocolConfigMemStreamHandler_run();
+    ProtocolConfigMemStreamHandler_run();
+
+    // Stream 2: node_2 serves a read
+    _initiate_return = &stream_2;
+    _load_read_stream_cdi_datagram(incoming, 0, 0x11, 0);
+    openlcb_statemachine_info_t info_2 = _build_sm_info(node_2, incoming, outgoing);
+    info_2.current_tick = 5;
+    _run_two_phase_dispatch(&info_2);
+    stream_2.state = STREAM_STATE_OPEN;
+    stream_2.dest_stream_id = 0x43;
+    stream_2.bytes_remaining = stream_2.max_buffer_size;
+    ProtocolConfigMemStreamHandler_on_initiate_reply(&info_2, &stream_2);
+
+    ProtocolConfigMemStreamHandler_run();
+    ProtocolConfigMemStreamHandler_run();
+    ProtocolConfigMemStreamHandler_run();
+
+    // Both time out in the same tick
+    _reset_counters();
+    ProtocolConfigMemStreamHandler_check_timeouts(35);
+    EXPECT_EQ(_stream_send_terminate_called, 1);
+
+    // Same tick again: the pump slot still holds the first Terminate
+    ProtocolConfigMemStreamHandler_check_timeouts(35);
+    EXPECT_EQ(_stream_send_terminate_called, 1);
+
+    // The pump sends the first Terminate; now the second one goes in
+    ProtocolConfigMemStreamHandler_run();
+    EXPECT_EQ(_send_msg_called, 1);
+
+    ProtocolConfigMemStreamHandler_check_timeouts(35);
+    EXPECT_EQ(_stream_send_terminate_called, 2);
+
+    ProtocolConfigMemStreamHandler_run();
+    EXPECT_EQ(_send_msg_called, 2);
+
+    OpenLcbBufferStore_free_buffer(incoming);
+    OpenLcbBufferStore_free_buffer(outgoing);
 
 }
 

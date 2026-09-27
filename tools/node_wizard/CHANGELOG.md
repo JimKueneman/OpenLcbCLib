@@ -6,6 +6,19 @@ For library changes, see the root `CHANGELOG.md`.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **`on_config_mem_reply` callback** (Config Memory group). Optional; called
+  when a reply datagram arrives for a configuration memory request the node
+  itself sent. Wired as `.on_config_mem_reply` in the generated `main.c`
+  (NULL when unchecked).
+- **Buffer pool sizing note** in the Core Message Buffer Pool section of
+  `openlcb_user_config.h`: the pool must hold the application's largest burst
+  of sends (including sends from callbacks) plus the incoming CAN messages
+  waiting to be processed.
+
 ## [1.0.2] - 2026-09-25
 
 ### Added

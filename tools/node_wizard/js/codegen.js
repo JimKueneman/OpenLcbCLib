@@ -575,6 +575,13 @@ function generateH(s) {
     L.push('//   DATAGRAM (72 bytes each)  -- datagram protocol messages');
     L.push('//   SNIP     (256 bytes each) -- SNIP replies and Events with Payload');
     L.push('//   STREAM   (USER_DEFINED_STREAM_BUFFER_LEN bytes each) -- stream data transfer (future use)');
+    L.push('//');
+    L.push('// Size the pool for the worst case.  It must hold, at the same time, every');
+    L.push('// message the application can send in one burst (from the main loop and from');
+    L.push('// callbacks together) and the incoming CAN messages waiting to be processed.  On a');
+    L.push('// device with more than one node each waiting send holds a buffer until the');
+    L.push('// loop sends it; when the pool is empty a send returns false and an incoming');
+    L.push('// message is dropped.');
     L.push('');
     if (isBootloader) {
 
@@ -1390,6 +1397,9 @@ function generateMain(s) {
 
         var writeDelayFn = _findCallbackFnByConfigField(cbConfigChecked, 'config_mem_write_delayed_reply_time');
         L.push('    .config_mem_write_delayed_reply_time = ' + (writeDelayFn ? '&CallbacksConfigMem_config_mem_write_delayed_reply_time' : 'NULL') + ',');
+
+        var cfgReplyFn = _findCallbackFnByConfigField(cbConfigChecked, 'on_config_mem_reply');
+        L.push('    .on_config_mem_reply                 = ' + (cfgReplyFn ? '&CallbacksConfigMem_on_config_mem_reply' : 'NULL') + ',');
         L.push('');
 
     }

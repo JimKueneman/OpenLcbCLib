@@ -281,35 +281,40 @@ static uint32_t _bytes_remaining_to_send(config_mem_stream_context_t *ctx) {
 }
 
     /**
-     * @brief Loads a Read Stream Reply Fail datagram into the shared outgoing buffer.
+     * @brief Loads a Read/Write Stream Reply Fail datagram as the handler's answer.
      *
-     * @details Payload layout:
+     * @details Called from the second pass of the two-phase datagram handler,
+     * after Datagram Received OK has gone out, so the handler's own outgoing
+     * slot is free.  The main loop sends it and shows it to the local nodes.
+     *
+     * Payload layout:
      * - Byte 0: 0x20 (config mem command)
      * - Byte 1: reply_fail_cmd_byte (e.g. 0x7B for CDI)
      * - Bytes 2-5: Starting address (big-endian)
      * - Bytes 6-7: Error code (big-endian)
      *
-     * @param ctx         Pointer to the active config-mem stream context.
-     * @param error_code  The error code to include (e.g. out-of-bounds).
+     * @param statemachine_info  The handler's context (answer goes in its outgoing slot).
+     * @param ctx                Pointer to the active config-mem stream context.
+     * @param error_code         The error code to include (e.g. out-of-bounds).
      */
-static void _load_reply_fail_datagram(config_mem_stream_context_t *ctx, uint16_t error_code) {
+static void _load_reply_fail_datagram(openlcb_statemachine_info_t *statemachine_info, config_mem_stream_context_t *ctx, uint16_t error_code) {
 
-    _pump_sm_info.openlcb_node = ctx->node;
+    openlcb_msg_t *msg = statemachine_info->outgoing_msg_info.msg_ptr;
 
-    OpenLcbUtilities_load_openlcb_message(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->node->alias, ctx->node->id, ctx->remote_alias, ctx->remote_node_id, MTI_DATAGRAM);
+    OpenLcbUtilities_load_openlcb_message(msg, ctx->node->alias, ctx->node->id, ctx->remote_alias, ctx->remote_node_id, MTI_DATAGRAM);
 
-    OpenLcbUtilities_clear_openlcb_message_payload(_pump_sm_info.outgoing_msg_info.msg_ptr);
+    OpenLcbUtilities_clear_openlcb_message_payload(msg);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, CONFIG_MEM_CONFIGURATION, 0);
 
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->reply_fail_cmd_byte, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, ctx->reply_fail_cmd_byte, 1);
 
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, ctx->start_address, 2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(msg, ctx->start_address, 2);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(_pump_sm_info.outgoing_msg_info.msg_ptr, error_code, 6);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(msg, error_code, 6);
 
-    _pump_sm_info.outgoing_msg_info.msg_ptr->payload_count = 8;
-    _pump_sm_info.outgoing_msg_info.valid = true;
+    msg->payload_count = 8;
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
@@ -538,7 +543,7 @@ static void _handle_read_stream(openlcb_statemachine_info_t *statemachine_info, 
     // Reject if start address is past end of space
     if (ctx->start_address > ctx->space_info->highest_address) {
 
-        _load_reply_fail_datagram(ctx, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+        _load_reply_fail_datagram(statemachine_info, ctx, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
 
         statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false;
         statemachine_info->incoming_msg_info.enumerate = false;
@@ -811,7 +816,7 @@ static void _handle_write_stream(
     // Reject if start address is past end of space
     if (ctx->start_address > ctx->space_info->highest_address) {
 
-        _load_reply_fail_datagram(ctx, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+        _load_reply_fail_datagram(statemachine_info, ctx, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
 
         statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false;
         statemachine_info->incoming_msg_info.enumerate = false;
@@ -1024,6 +1029,17 @@ void ProtocolConfigMemStreamHandler_run(void) {
 
 }
 
+    /** @brief True if the message waiting in the pump slot is from this context's node to its peer. */
+static bool _pump_msg_is_for_context(const config_mem_stream_context_t *ctx) {
+
+    const openlcb_msg_t *msg = _pump_sm_info.outgoing_msg_info.msg_ptr;
+
+    return (_pump_sm_info.openlcb_node == ctx->node) &&
+            (msg->dest_alias == ctx->remote_alias) &&
+            (msg->dest_id == ctx->remote_node_id);
+
+}
+
     /**
      * @brief Checks for timed-out config-mem stream operations.
      *
@@ -1059,11 +1075,25 @@ void ProtocolConfigMemStreamHandler_check_timeouts(uint8_t current_tick) {
 
         }
 
-        // Timed out -- terminate the stream if it exists and reset
+        // Timed out -- terminate the stream if it exists and reset.  The
+        // Terminate goes out through the one pump slot, one per pass.  A
+        // message still waiting there for this same stream (a stalled data
+        // send) is replaced; one for another stream is left alone, and this
+        // context stays timed out until a later tick.
         if (ctx->stream) {
+
+            if (_pump_sm_info.outgoing_msg_info.valid && !_pump_msg_is_for_context(ctx)) {
+
+                return;
+
+            }
 
             _pump_sm_info.openlcb_node = ctx->node;
             _interface->stream_send_terminate(&_pump_sm_info, ctx->stream, ERROR_TEMPORARY_TIME_OUT);
+
+            _reset_context(ctx);
+
+            return;
 
         }
 

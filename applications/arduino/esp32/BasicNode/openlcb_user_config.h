@@ -82,6 +82,13 @@
 //   DATAGRAM (72 bytes each)  -- datagram protocol messages
 //   SNIP     (256 bytes each) -- SNIP replies and Events with Payload
 //   STREAM   (USER_DEFINED_STREAM_BUFFER_LEN bytes each) -- stream data transfer
+//
+// Size the pool for the worst case.  It must hold, at the same time, every
+// message the application can send in one burst (from the main loop and from
+// callbacks together) and the incoming CAN messages waiting to be processed.  On a
+// device with more than one node each waiting send holds a buffer until the
+// loop sends it; when the pool is empty a send returns false and an incoming
+// message is dropped.
 
 #define USER_DEFINED_BASIC_BUFFER_DEPTH              32     // must be >= 1; enforced by compiler
 #define USER_DEFINED_DATAGRAM_BUFFER_DEPTH           4      // must be >= 1; enforced by compiler
@@ -97,7 +104,9 @@
 //
 // MAX_CONCURRENT_ACTIVE_STREAMS controls how many streams can be open at the
 // same time across all nodes.  Each active stream uses a small state struct,
-// not a full payload buffer.  The expensive RAM is governed by
+// not a full payload buffer.  A stream between two nodes on this device uses
+// one entry for each end, so a multi-node device that streams between its own
+// nodes needs at least 2.  The expensive RAM is governed by
 // STREAM_BUFFER_DEPTH in the buffer pool above.
 #define USER_DEFINED_STREAM_BUFFER_LEN               256    // ignored and overridden to 1 if OPENLCB_COMPILE_STREAM is not defined
 #define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   1      // must be >= 1; enforced by compiler

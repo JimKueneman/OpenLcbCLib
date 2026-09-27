@@ -109,6 +109,19 @@ extern "C" {
     extern listener_alias_entry_t *AliasMappingListener_find_by_node_id(node_id_t node_id);
 
         /**
+         * @brief Finds the table entry holding a given resolved alias.
+         *
+         * @details RX-path query: lets the CAN receive side fill in the
+         * Node ID of a message sent by a registered listener, so a train can skip that listener
+         * when it forwards the command.
+         *
+         * @param alias  12-bit CAN alias to look up.
+         *
+         * @return Pointer to the @ref listener_alias_entry_t, or NULL if alias is 0 or not found.
+         */
+    extern listener_alias_entry_t *AliasMappingListener_find_by_alias(uint16_t alias);
+
+        /**
          * @brief Zeros all alias fields but preserves registered node_ids.
          *
          * @details Called when a global AME (empty payload) is received per

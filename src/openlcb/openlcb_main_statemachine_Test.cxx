@@ -840,7 +840,9 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     // Event Classification Filters
     .is_broadcast_time_event = &ProtocolBroadcastTimeHandler_is_time_event,
     .is_train_search_event = &ProtocolTrainSearchHandler_is_search_event,
-    .is_emergency_event = &ProtocolTrainHandler_is_emergency_event
+    .is_emergency_event = &ProtocolTrainHandler_is_emergency_event,
+
+    .openlcb_node_get_by_index = &OpenLcbNode_get_by_index,
 };
 
 /**
@@ -925,7 +927,9 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .stream_initiate_reply = nullptr,
     .stream_send_data = nullptr,
     .stream_data_proceed = nullptr,
-    .stream_data_complete = nullptr
+    .stream_data_complete = nullptr,
+
+    .openlcb_node_get_by_index = &OpenLcbNode_get_by_index,
 };
 
 interface_openlcb_node_t interface_openlcb_node = {};
@@ -4504,6 +4508,12 @@ static bool _st_wire_busy;
 static bool _st_stream_reply_active;
 static node_id_t _st_stream_reply_from_node;
 
+// ---- Train listener forwarding control (see _st_train_forward_handler) ----
+
+static node_id_t _st_forward_node;
+static int _st_forward_listener_count;
+static int _st_forward_remaining;
+
 // ---- Reset all sibling test state ----
 
 static void _st_reset(void) {
@@ -4520,6 +4530,9 @@ static void _st_reset(void) {
     _st_wire_busy = false;
     _st_stream_reply_active = false;
     _st_stream_reply_from_node = 0;
+    _st_forward_node = 0;
+    _st_forward_listener_count = 0;
+    _st_forward_remaining = 0;
 
 }
 
@@ -4613,6 +4626,50 @@ static void _st_enumerate_handler(openlcb_statemachine_info_t *si) {
         }
 
     }
+
+}
+
+// ---- Train listener forwarding (reply of several messages) ----
+//
+// When _st_forward_node receives a Train Control command, it forwards it to
+// _st_forward_listener_count listeners, one outgoing message per pass with the
+// enumerate flag set in between, as protocol_train_handler.c's
+// _forward_to_next_listener() does.  Every other node, or a count of 0, just logs.
+
+#define ST_LISTENER_BASE_ID 0x090000000001ULL
+#define ST_LISTENER_BASE_ALIAS 0x700
+
+static void _st_train_forward_handler(openlcb_statemachine_info_t *si) {
+
+    _st_log_handler(si);
+
+    if ((_st_forward_listener_count == 0) || (si->openlcb_node->id != _st_forward_node)) {
+
+        return;
+
+    }
+
+    if (!si->incoming_msg_info.enumerate) {
+
+        _st_forward_remaining = _st_forward_listener_count;
+
+    }
+
+    int index = _st_forward_listener_count - _st_forward_remaining;
+
+    OpenLcbUtilities_load_openlcb_message(
+            si->outgoing_msg_info.msg_ptr,
+            si->openlcb_node->alias,
+            si->openlcb_node->id,
+            ST_LISTENER_BASE_ALIAS + index,
+            ST_LISTENER_BASE_ID + index,
+            MTI_TRAIN_PROTOCOL);
+    si->outgoing_msg_info.msg_ptr->payload_count = 0;
+    si->outgoing_msg_info.valid = true;
+
+    _st_forward_remaining--;
+
+    si->incoming_msg_info.enumerate = (_st_forward_remaining > 0);
 
 }
 
@@ -4721,7 +4778,7 @@ static const interface_openlcb_main_statemachine_t _st_interface = {
     .event_transport_pc_report = &_st_log_handler,
     .event_transport_pc_report_with_payload = &_st_log_handler,
 
-    .train_control_command = &_st_log_handler,
+    .train_control_command = &_st_train_forward_handler,
     .train_control_reply = &_st_log_handler,
     .simple_train_node_ident_info_request = &_st_log_handler,
     .simple_train_node_ident_info_reply = &_st_log_handler,
@@ -4736,6 +4793,8 @@ static const interface_openlcb_main_statemachine_t _st_interface = {
     .stream_data_proceed = &_st_log_handler,
     .stream_data_complete = &_st_log_handler,
 
+
+    .openlcb_node_get_by_index = &OpenLcbNode_get_by_index,
 };
 
     /** @brief Initialize for sibling dispatch integration tests. */
@@ -5166,15 +5225,17 @@ TEST(OpenLcbMainStatemachine, sibling_path_b_wrapper)
     bool sent = OpenLcbMainStatemachine_send_with_sibling_dispatch(&app_msg);
     EXPECT_TRUE(sent);
 
-    // Message went to wire immediately
-    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), 1);
+    // Queued: goes to the wire when the run loop sends it
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), 0);
 
-    // Run loop picks up the pending slot and dispatches to siblings
+    // Run loop sends it and dispatches it to siblings
     for (int i = 0; i < 50; i++) {
 
         OpenLcbMainStatemachine_run();
 
     }
+
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), 1);
 
     // Siblings B and C should have seen the PCER
     EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_PC_EVENT_REPORT), 1);
@@ -5610,14 +5671,16 @@ TEST(OpenLcbMainStatemachine, sibling_stream_reply_routes_back_to_originating_si
     bool sent = OpenLcbMainStatemachine_send_with_sibling_dispatch(&app_msg);
     EXPECT_TRUE(sent);
 
-    // Request on wire immediately
-    EXPECT_EQ(_st_count_wire_mti(MTI_STREAM_INIT_REQUEST), 1);
+    // Queued: goes to the wire when the run loop sends it
+    EXPECT_EQ(_st_count_wire_mti(MTI_STREAM_INIT_REQUEST), 0);
 
     for (int i = 0; i < 100; i++) {
 
         OpenLcbMainStatemachine_run();
 
     }
+
+    EXPECT_EQ(_st_count_wire_mti(MTI_STREAM_INIT_REQUEST), 1);
 
     // STREAM_INIT_REQUEST routing: only B is addressed, A self-skips, C is bystander
     EXPECT_EQ(_st_count_dispatches_for_node_mti(0x010203040502, MTI_STREAM_INIT_REQUEST), 1);
@@ -5766,69 +5829,571 @@ TEST(OpenLcbMainStatemachine, sibling_stream_third_sibling_isolation_under_load)
 }
 
 // ============================================================================
-// Addressed-message filter: match by destination Node ID when the message
-// carries one, otherwise by alias; alias 0 never matches
+// Sibling flooding: nodes on one device generating traffic for each other
+//
+// A device with several nodes (for example a command station with its train
+// nodes and a throttle of its own) must show every message one of its nodes
+// sends to the other nodes on the device, just as a remote node would have
+// seen it on the wire.  These tests generate more such messages at once than
+// the fixed-depth sibling queue was sized for.
+//
+// Invariant checked: every message a local node sends reaches every other
+// local node it concerns (all of them for a global message, the destination
+// for an addressed one), and nothing reaches the wire that the local nodes
+// never see.
 // ============================================================================
 
-static bool _st_filter_accepts(openlcb_node_t *node, uint16_t dest_alias, node_id_t dest_id)
-{
+#define ST_FLOOD_BASE_ID 0x050101010100ULL
+#define ST_FLOOD_BASE_ALIAS 0x100
 
-    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    msg->mti = MTI_VERIFY_NODE_ID_ADDRESSED;
-    msg->dest_alias = dest_alias;
-    msg->dest_id = dest_id;
+    /** @brief Allocates count running nodes with consecutive IDs and aliases. */
+static void _st_flood_allocate_nodes(int count, openlcb_node_t **nodes) {
 
-    openlcb_statemachine_info_t statemachine_info;
-    statemachine_info.openlcb_node = node;
-    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    for (int i = 0; i < count; i++) {
 
-    bool result = OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info);
+        nodes[i] = OpenLcbNode_allocate(ST_FLOOD_BASE_ID + i, &_node_parameters_main_node);
+        ASSERT_NE(nodes[i], nullptr) << "node " << i;
+        nodes[i]->state.initialized = true;
+        nodes[i]->alias = ST_FLOOD_BASE_ALIAS + i;
+        nodes[i]->state.run_state = RUNSTATE_RUN;
 
-    OpenLcbBufferStore_free_buffer(msg);
-
-    return result;
+    }
 
 }
 
-TEST(OpenLcbMainStatemachine, addressed_filter_can_matches_by_alias)
-{
+    /** @brief Global Verify Node ID from a remote node: every local node answers, and each must see all the others' answers. */
+static void _st_flood_global_verify(int node_count) {
 
-    _global_initialize();
-    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
-    node->alias = 0x0AAA;
-    node->state.initialized = true;
+    _st_init();
 
-    // Received on CAN: destination alias only
-    EXPECT_TRUE(_st_filter_accepts(node, 0x0AAA, 0));
-    EXPECT_FALSE(_st_filter_accepts(node, 0x0BBB, 0));
+    openlcb_node_t *nodes[64];
+    _st_flood_allocate_nodes(node_count, nodes);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(incoming, nullptr);
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0FULL;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 20000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Every local node answered on the wire
+    EXPECT_EQ(_st_count_wire_mti(MTI_VERIFIED_NODE_ID), node_count);
+
+    // Every local node saw every other local node's answer
+    for (int i = 0; i < node_count; i++) {
+
+        EXPECT_EQ(_st_count_dispatches_for_node_mti(nodes[i]->id, MTI_VERIFIED_NODE_ID), node_count - 1)
+                << "node " << i << " of " << node_count;
+
+    }
 
 }
 
-TEST(OpenLcbMainStatemachine, addressed_filter_node_id_wins_over_alias)
+TEST(OpenLcbMainStatemachine, sibling_flood_global_verify_3_nodes)
 {
+    _st_flood_global_verify(3);
+}
 
-    _global_initialize();
-    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
-    node->alias = 0x0AAA;
-    node->state.initialized = true;
+TEST(OpenLcbMainStatemachine, sibling_flood_global_verify_8_nodes)
+{
+    _st_flood_global_verify(8);
+}
 
-    EXPECT_TRUE(_st_filter_accepts(node, 0x0AAA, 0x060504030201));
-    EXPECT_TRUE(_st_filter_accepts(node, 0, 0x060504030201));
-    EXPECT_FALSE(_st_filter_accepts(node, 0x0AAA, 0x0A0B0C0D0E0F));
+TEST(OpenLcbMainStatemachine, sibling_flood_global_verify_20_nodes)
+{
+    // A command station with a node of its own and 19 train nodes
+    _st_flood_global_verify(20);
+}
+
+    /** @brief Sends as an application would: retries on false, running the loop between tries. */
+static bool _st_app_send_with_retry(openlcb_msg_t *msg) {
+
+    for (int tries = 0; tries < 1000; tries++) {
+
+        if (OpenLcbMainStatemachine_send_with_sibling_dispatch(msg)) {
+
+            return true;
+
+        }
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    return false;
 
 }
 
-TEST(OpenLcbMainStatemachine, addressed_filter_alias_zero_never_matches)
+    /** @brief Loads a Train Control command addressed from the station node to a local train node. */
+static void _st_load_train_command(openlcb_msg_t *msg, openlcb_node_t *from, openlcb_node_t *to, uint8_t command) {
+
+    OpenLcbUtilities_load_openlcb_message(msg, from->alias, from->id, to->alias, to->id, MTI_TRAIN_PROTOCOL);
+    OpenLcbUtilities_clear_openlcb_message_payload(msg);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, command, 0);
+    msg->payload_count = 3;
+
+}
+
+    /** @brief Loads a global PC Event Report from a local node. */
+static void _st_load_pcer(openlcb_msg_t *msg, openlcb_node_t *from, event_id_t event) {
+
+    OpenLcbUtilities_load_openlcb_message(msg, from->alias, from->id, 0, 0, MTI_PC_EVENT_REPORT);
+    OpenLcbUtilities_clear_openlcb_message_payload(msg);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg, event);
+
+}
+
+// ============================================================================
+// TEST: A throttle on the command station sends several commands to its own
+// train node back to back; the train node must receive every one
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_flood_throttle_burst_to_local_train)
 {
+    _st_init();
 
-    _global_initialize();
-    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
-    node->alias = 0;  // TCP: every alias is 0
-    node->state.initialized = true;
+    openlcb_node_t *nodes[2];
+    _st_flood_allocate_nodes(2, nodes);
+    openlcb_node_t *station = nodes[0];
+    openlcb_node_t *train = nodes[1];
 
-    EXPECT_FALSE(_st_filter_accepts(node, 0, 0));
-    EXPECT_FALSE(_st_filter_accepts(node, 0, 0x0A0B0C0D0E0F));
-    EXPECT_TRUE(_st_filter_accepts(node, 0, 0x060504030201));
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    // Assign Controller, Set Speed, Set Function: no run() between them, as
+    // when an application reacts to one touch with several commands
+    const uint8_t commands[] = { TRAIN_CONTROLLER_CONFIG, TRAIN_SET_SPEED_DIRECTION, TRAIN_SET_FUNCTION };
+
+    for (int i = 0; i < 3; i++) {
+
+        _st_load_train_command(&msg, station, train, commands[i]);
+        ASSERT_TRUE(_st_app_send_with_retry(&msg)) << "command " << i;
+
+    }
+
+    for (int i = 0; i < 1000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    EXPECT_EQ(_st_count_wire_mti(MTI_TRAIN_PROTOCOL), 3);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(train->id, MTI_TRAIN_PROTOCOL), 3);
+}
+
+// ============================================================================
+// TEST: The application send queue has no limit of its own; a burst is
+// accepted until the buffer pool is empty, then send returns false, and
+// every accepted message still reaches the wire and the other node
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, application_send_queue_limited_only_by_buffer_pool)
+{
+    _st_init();
+
+    openlcb_node_t *nodes[2];
+    _st_flood_allocate_nodes(2, nodes);
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    int free_basic = USER_DEFINED_BASIC_BUFFER_DEPTH - OpenLcbBufferStore_basic_messages_allocated();
+    int accepted = 0;
+
+    // No run() between sends: nothing drains the queue
+    for (int i = 0; i < USER_DEFINED_BASIC_BUFFER_DEPTH + 4; i++) {
+
+        _st_load_pcer(&msg, nodes[0], 0x0101020304050000ULL + i);
+
+        if (!OpenLcbMainStatemachine_send_with_sibling_dispatch(&msg)) {
+
+            break;
+
+        }
+
+        accepted++;
+
+    }
+
+    EXPECT_EQ(accepted, free_basic);
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), USER_DEFINED_BASIC_BUFFER_DEPTH);
+
+    for (int i = 0; i < 1000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), accepted);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(nodes[1]->id, MTI_PC_EVENT_REPORT), accepted);
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), USER_DEFINED_BASIC_BUFFER_DEPTH - free_basic);
+}
+
+// ============================================================================
+// TEST: Throttle commands interleaved with the station's own global reports
+// (meter reports, presence events); every train command reaches its train,
+// every report reaches every other node, none reaches a node it is not for
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_flood_throttle_burst_mixed_with_reports)
+{
+    _st_init();
+
+    openlcb_node_t *nodes[3];
+    _st_flood_allocate_nodes(3, nodes);
+    openlcb_node_t *station = nodes[0];
+    openlcb_node_t *train_1 = nodes[1];
+    openlcb_node_t *train_2 = nodes[2];
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    int train_1_commands = 0;
+    int reports = 0;
+
+    for (int round = 0; round < 3; round++) {
+
+        _st_load_train_command(&msg, station, train_1, TRAIN_SET_SPEED_DIRECTION);
+        ASSERT_TRUE(_st_app_send_with_retry(&msg));
+        train_1_commands++;
+
+        _st_load_pcer(&msg, station, 0x0501010101000000ULL + round);
+        ASSERT_TRUE(_st_app_send_with_retry(&msg));
+        reports++;
+
+        _st_load_train_command(&msg, station, train_1, TRAIN_SET_FUNCTION);
+        ASSERT_TRUE(_st_app_send_with_retry(&msg));
+        train_1_commands++;
+
+    }
+
+    for (int i = 0; i < 2000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    EXPECT_EQ(_st_count_wire_mti(MTI_TRAIN_PROTOCOL), train_1_commands);
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), reports);
+
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(train_1->id, MTI_TRAIN_PROTOCOL), train_1_commands);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(train_1->id, MTI_PC_EVENT_REPORT), reports);
+    EXPECT_EQ(_st_count_dispatches_for_node_mti(train_2->id, MTI_PC_EVENT_REPORT), reports);
+
+    // The station never sees its own messages
+    EXPECT_EQ(_st_count_dispatches_for_node(station->id), 0);
+}
+
+// ============================================================================
+// TEST: A global request arrives while the station's application is also
+// sending: the replies of 8 local nodes and the application's reports compete
+// for the same sibling delivery; all of them must reach every local node
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_flood_replies_and_app_sends_together)
+{
+    _st_init();
+
+    const int node_count = 8;
+    openlcb_node_t *nodes[node_count];
+    _st_flood_allocate_nodes(node_count, nodes);
+    openlcb_node_t *station = nodes[0];
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(incoming, nullptr);
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0FULL;
+    OpenLcbBufferFifo_push(incoming);
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    const int reports = 4;
+
+    for (int i = 0; i < reports; i++) {
+
+        // Let the incoming request start being handled, then send a report
+        OpenLcbMainStatemachine_run();
+        OpenLcbMainStatemachine_run();
+
+        _st_load_pcer(&msg, station, 0x0501010101000100ULL + i);
+        ASSERT_TRUE(_st_app_send_with_retry(&msg));
+
+    }
+
+    for (int i = 0; i < 20000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    EXPECT_EQ(_st_count_wire_mti(MTI_VERIFIED_NODE_ID), node_count);
+    EXPECT_EQ(_st_count_wire_mti(MTI_PC_EVENT_REPORT), reports);
+
+    for (int i = 0; i < node_count; i++) {
+
+        EXPECT_EQ(_st_count_dispatches_for_node_mti(nodes[i]->id, MTI_VERIFIED_NODE_ID), node_count - 1)
+                << "node " << i;
+
+        if (i != 0) {
+
+            EXPECT_EQ(_st_count_dispatches_for_node_mti(nodes[i]->id, MTI_PC_EVENT_REPORT), reports)
+                    << "node " << i;
+
+        }
+
+    }
+}
+
+// ============================================================================
+// TEST: A local node's own global request makes every sibling answer
+//
+// Replies to a message from the wire are shown to the siblings as each one is
+// sent (the tests above).  Replies to a message from a local node are made
+// while that message is still being shown to the siblings, so they wait in
+// the sibling queue until it is done.  With many siblings that is where they
+// pile up.
+// ============================================================================
+
+static void _st_flood_local_global_verify(int node_count) {
+
+    _st_init();
+
+    openlcb_node_t *nodes[64];
+    _st_flood_allocate_nodes(node_count, nodes);
+    openlcb_node_t *station = nodes[0];
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, station->alias, station->id, 0, 0, MTI_VERIFY_NODE_ID_GLOBAL);
+    msg.payload_count = 0;
+    ASSERT_TRUE(_st_app_send_with_retry(&msg));
+
+    for (int i = 0; i < 20000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Every sibling answered on the wire
+    EXPECT_EQ(_st_count_wire_mti(MTI_VERIFIED_NODE_ID), node_count - 1);
+
+    // Every local node saw every other local node's answer
+    for (int i = 0; i < node_count; i++) {
+
+        int expected = (i == 0) ? (node_count - 1) : (node_count - 2);
+
+        EXPECT_EQ(_st_count_dispatches_for_node_mti(nodes[i]->id, MTI_VERIFIED_NODE_ID), expected)
+                << "node " << i << " of " << node_count;
+
+    }
+
+}
+
+TEST(OpenLcbMainStatemachine, sibling_flood_local_global_verify_3_nodes)
+{
+    _st_flood_local_global_verify(3);
+}
+
+TEST(OpenLcbMainStatemachine, sibling_flood_local_global_verify_8_nodes)
+{
+    _st_flood_local_global_verify(8);
+}
+
+TEST(OpenLcbMainStatemachine, sibling_flood_local_global_verify_20_nodes)
+{
+    _st_flood_local_global_verify(20);
+}
+
+// ============================================================================
+// Replies of several messages to a message from a local node
+//
+// A local node's message is shown to its siblings one node per pass.  When a
+// sibling answers with several messages (a train forwarding a command to its
+// listeners, a node answering Identify Events), each further message must
+// still come from that sibling, and the main loop must keep running after it.
+// On the main path (a message from the wire) this works; these tests cover
+// the sibling path.
+// ============================================================================
+
+    /** @brief Counts wire messages with the given MTI sent by the given node. */
+static int _st_count_wire_mti_from(uint16_t mti, node_id_t source_id) {
+
+    int count = 0;
+
+    for (int i = 0; i < _st_wire_count; i++) {
+
+        if ((_st_wire_log[i].mti == mti) && (_st_wire_log[i].source_id == source_id)) {
+
+            count++;
+
+        }
+
+    }
+
+    return count;
+
+}
+
+    /** @brief After a test's traffic: a global message from the wire must still reach every node. */
+static void _st_expect_loop_still_running(openlcb_node_t **nodes, int count) {
+
+    int before[16];
+
+    for (int i = 0; i < count; i++) {
+
+        before[i] = _st_count_dispatches_for_node_mti(nodes[i]->id, MTI_VERIFY_NODE_ID_GLOBAL);
+
+    }
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    ASSERT_NE(incoming, nullptr);
+    incoming->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    incoming->source_alias = 0xFFF;
+    incoming->source_id = 0x0A0B0C0D0E0FULL;
+    OpenLcbBufferFifo_push(incoming);
+
+    for (int i = 0; i < 2000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    for (int i = 0; i < count; i++) {
+
+        EXPECT_EQ(_st_count_dispatches_for_node_mti(nodes[i]->id, MTI_VERIFY_NODE_ID_GLOBAL), before[i] + 1)
+                << "main loop stopped: node " << i << " never got the later message";
+
+    }
+
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0);
+
+}
+
+    /** @brief The station's throttle sends one train command to a local train node that has listeners. */
+static void _st_local_train_command_with_listeners(int train_index) {
+
+    _st_init();
+
+    openlcb_node_t *nodes[3];
+    _st_flood_allocate_nodes(3, nodes);
+    openlcb_node_t *station = nodes[0];
+    openlcb_node_t *train = nodes[train_index];
+
+    const int listeners = 3;
+    _st_forward_node = train->id;
+    _st_forward_listener_count = listeners;
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    _st_load_train_command(&msg, station, train, TRAIN_SET_SPEED_DIRECTION);
+    ASSERT_TRUE(_st_app_send_with_retry(&msg));
+
+    for (int i = 0; i < 2000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // The command, then one forward per listener, all from the train
+    EXPECT_EQ(_st_count_wire_mti_from(MTI_TRAIN_PROTOCOL, station->id), 1);
+    EXPECT_EQ(_st_count_wire_mti_from(MTI_TRAIN_PROTOCOL, train->id), listeners);
+
+    _st_expect_loop_still_running(nodes, 3);
+
+}
+
+TEST(OpenLcbMainStatemachine, sibling_local_train_command_forwarded_train_in_middle)
+{
+    // Station, train, then another node after the train
+    _st_local_train_command_with_listeners(1);
+}
+
+TEST(OpenLcbMainStatemachine, sibling_local_train_command_forwarded_train_last)
+{
+    // The train is the last node on the device
+    _st_local_train_command_with_listeners(2);
+}
+
+// ============================================================================
+// TEST: A local node sends Identify Events; each sibling answers with several
+// Identified messages.  Every answer must come from the node that owns it,
+// every local node must see every other node's answers, and the loop must
+// keep running.
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, sibling_local_identify_events_multi_message_replies)
+{
+    _st_init();
+
+    const int node_count = 4;
+    const int per_node = 3;
+
+    openlcb_node_t *nodes[node_count];
+    _st_flood_allocate_nodes(node_count, nodes);
+    openlcb_node_t *station = nodes[0];
+
+    _st_enumerate_per_node = per_node;
+    _st_enumerate_response_mti = MTI_PRODUCER_IDENTIFIED_SET;
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(&msg, station->alias, station->id, 0, 0, MTI_EVENTS_IDENTIFY);
+    msg.payload_count = 0;
+    ASSERT_TRUE(_st_app_send_with_retry(&msg));
+
+    for (int i = 0; i < 5000; i++) {
+
+        OpenLcbMainStatemachine_run();
+
+    }
+
+    // Each sibling's own answers, from that sibling
+    EXPECT_EQ(_st_count_wire_mti_from(MTI_PRODUCER_IDENTIFIED_SET, station->id), 0);
+
+    for (int i = 1; i < node_count; i++) {
+
+        EXPECT_EQ(_st_count_wire_mti_from(MTI_PRODUCER_IDENTIFIED_SET, nodes[i]->id), per_node)
+                << "answers from node " << i;
+
+    }
+
+    // Every local node saw every other local node's answers
+    for (int i = 0; i < node_count; i++) {
+
+        int others_answering = (i == 0) ? (node_count - 1) : (node_count - 2);
+
+        EXPECT_EQ(_st_count_dispatches_for_node_mti(nodes[i]->id, MTI_PRODUCER_IDENTIFIED_SET), others_answering * per_node)
+                << "node " << i;
+
+    }
+
+    _st_enumerate_per_node = 0;
+    _st_expect_loop_still_running(nodes, node_count);
 }
 
 // ============================================================================
@@ -5920,4 +6485,70 @@ TEST(OpenLcbMainStatemachine, sibling_dispatch_reaches_node_announcing_events)
 
     // C sees nothing, wire or sibling
     EXPECT_EQ(_st_count_dispatches_for_node(0x010203040503), 0);
+}
+
+// ============================================================================
+// Addressed-message filter: match by destination Node ID when the message
+// carries one, otherwise by alias; alias 0 never matches
+// ============================================================================
+
+static bool _st_filter_accepts(openlcb_node_t *node, uint16_t dest_alias, node_id_t dest_id)
+{
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_VERIFY_NODE_ID_ADDRESSED;
+    msg->dest_alias = dest_alias;
+    msg->dest_id = dest_id;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+
+    bool result = OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info);
+
+    OpenLcbBufferStore_free_buffer(msg);
+
+    return result;
+
+}
+
+TEST(OpenLcbMainStatemachine, addressed_filter_can_matches_by_alias)
+{
+
+    _global_initialize();
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->alias = 0x0AAA;
+    node->state.initialized = true;
+
+    // Received on CAN: destination alias only
+    EXPECT_TRUE(_st_filter_accepts(node, 0x0AAA, 0));
+    EXPECT_FALSE(_st_filter_accepts(node, 0x0BBB, 0));
+
+}
+
+TEST(OpenLcbMainStatemachine, addressed_filter_node_id_wins_over_alias)
+{
+
+    _global_initialize();
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->alias = 0x0AAA;
+    node->state.initialized = true;
+
+    EXPECT_TRUE(_st_filter_accepts(node, 0x0AAA, 0x060504030201));
+    EXPECT_TRUE(_st_filter_accepts(node, 0, 0x060504030201));
+    EXPECT_FALSE(_st_filter_accepts(node, 0x0AAA, 0x0A0B0C0D0E0F));
+
+}
+
+TEST(OpenLcbMainStatemachine, addressed_filter_alias_zero_never_matches)
+{
+
+    _global_initialize();
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->alias = 0;  // TCP: every alias is 0
+    node->state.initialized = true;
+
+    EXPECT_FALSE(_st_filter_accepts(node, 0, 0));
+    EXPECT_FALSE(_st_filter_accepts(node, 0, 0x0A0B0C0D0E0F));
+    EXPECT_TRUE(_st_filter_accepts(node, 0, 0x060504030201));
 }

@@ -124,6 +124,7 @@
             </thead>
             <tbody>
                 <tr><td><code>USER_DEFINED_NODE_BUFFER_DEPTH</code></td><td>Maximum virtual nodes that can be allocated</td><td>1-5</td></tr>
+                <tr><td><code>USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS</code></td><td>Streams open at once across all nodes (optional; default 2 with more than one node, else 1). A stream between two nodes on the same device uses one entry for each end.</td><td>1-4</td></tr>
                 <tr><td><code>USER_DEFINED_PRODUCER_COUNT</code></td><td>Max events a node can produce</td><td>2-16</td></tr>
                 <tr><td><code>USER_DEFINED_CONSUMER_COUNT</code></td><td>Max events a node can consume</td><td>2-16</td></tr>
                 <tr><td><code>USER_DEFINED_PRODUCER_RANGE_COUNT</code></td><td>Max producer event ranges (must be >= 1)</td><td>1-4</td></tr>
@@ -222,6 +223,7 @@ flowchart TD
             <tbody>
                 <tr><td><code>LEN_MESSAGE_BUFFER</code></td><td>BASIC + DATAGRAM + SNIP + STREAM</td><td>Total number of message buffers</td></tr>
                 <tr><td><code>ALIAS_MAPPING_BUFFER_DEPTH</code></td><td><code>USER_DEFINED_NODE_BUFFER_DEPTH</code></td><td>Alias table size (one per node)</td></tr>
+                <tr><td><code>SIBLING_DISPATCH_STACK_DEPTH</code></td><td><code>USER_DEFINED_NODE_BUFFER_DEPTH + 2</code></td><td>Levels of the dispatch stack for delivery between local nodes (Ch 21); a level is a few pointers</td></tr>
                 <tr><td><code>LISTENER_ALIAS_TABLE_DEPTH</code></td><td>MAX_LISTENERS_PER_TRAIN * TRAIN_NODE_COUNT</td><td>Listener alias table size</td></tr>
             </tbody>
         </table>

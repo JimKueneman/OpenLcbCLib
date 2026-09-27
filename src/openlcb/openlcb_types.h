@@ -144,20 +144,30 @@ extern "C" {
 #define USER_DEFINED_STREAM_BUFFER_LEN               256
 #endif
 
-    /** @brief Maximum concurrent active streams across all nodes */
-#ifndef USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS
-#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   1
-#endif
-#if USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS < 1
-#error "USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS must be >= 1 to avoid a zero-length array"
-#endif
-
     /** @brief Maximum number of virtual nodes that can be allocated */
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
 #error "USER_DEFINED_NODE_BUFFER_DEPTH must be defined in openlcb_user_config.h"
 #endif
 #if USER_DEFINED_NODE_BUFFER_DEPTH < 1
 #error "USER_DEFINED_NODE_BUFFER_DEPTH must be >= 1 to avoid a zero-length array"
+#endif
+
+    /**
+     * @brief Maximum concurrent active streams across all nodes on the device.
+     *
+     * @details The stream table is shared by every node, and a stream between two
+     * nodes on the same device uses one entry for each end.  When not set, a
+     * device with more than one node gets 2 (one local stream), otherwise 1.
+     */
+#ifndef USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS
+#if USER_DEFINED_NODE_BUFFER_DEPTH > 1
+#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   2
+#else
+#define USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS   1
+#endif
+#endif
+#if USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS < 1
+#error "USER_DEFINED_MAX_CONCURRENT_ACTIVE_STREAMS must be >= 1 to avoid a zero-length array"
 #endif
 
 
@@ -764,7 +774,7 @@ extern "C" {
         bool initialized : 1;              /**< Node fully initialized */
         bool duplicate_id_detected : 1;     /**< Duplicate Node ID conflict */
         bool openlcb_datagram_ack_sent : 1; /**< Datagram ACK sent, awaiting reply */
-        bool resend_datagram : 1;           /**< Resend last datagram (retry logic) */
+        bool resend_datagram : 1;           /**< last_sent_datagram was rejected with a temporary error and is waiting to be resent */
         bool firmware_upgrade_active : 1;   /**< Firmware upgrade in progress */
 
     } openlcb_node_state_t;
@@ -832,7 +842,7 @@ extern "C" {
         const node_parameters_t *parameters;
         uint16_t timerticks;                    /**< 100ms timer tick counter */
         uint64_t owner_node;                    /**< Node ID that has locked this node */
-        openlcb_msg_t *last_received_datagram;  /**< Saved for reply processing */
+        openlcb_msg_t *last_sent_datagram;  /**< Copy of the last datagram this node sent, kept for resend until OK, permanent reject, retries used up or timeout */
         uint8_t index;                          /**< Index in node array */
         struct train_state_TAG *train_state;    /**< NULL if not a train node */
 

@@ -336,6 +336,19 @@ typedef struct {
         /** @brief Factory Reset command.  Optional. */
     void (*memory_factory_reset)(openlcb_statemachine_info_t *statemachine_info);
 
+    // =========================================================================
+    // Application callback for replies to this node's own requests
+    // =========================================================================
+
+        /**
+         * @brief A Memory Configuration reply arrived for a request this node sent.  Optional.
+         *
+         * @details Called by ProtocolDatagramHandler_handle_config_mem_reply after it has
+         * loaded Datagram Received OK.  The reply payload starts with the command byte
+         * (CONFIG_MEM_CONFIGURATION).  NULL = replies are acknowledged and dropped.
+         */
+    void (*on_config_mem_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *reply);
+
 } interface_protocol_datagram_handler_t;
 
 
@@ -364,6 +377,18 @@ extern "C" {
          * @param reply_pending_time_in_seconds  Seconds until reply (rounded up to 2^N); 0 for no specific timeout.
          */
     extern void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
+
+        /**
+         * @brief Handles a Memory Configuration reply to a request this node sent.
+         *
+         * @details Wired to every *_reply_ok / *_reply_fail slot and to the
+         * operations replies.  Loads Datagram Received OK with no Reply Pending
+         * (nothing further follows a reply), then passes the reply to the
+         * optional on_config_mem_reply callback.
+         *
+         * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
+         */
+    extern void ProtocolDatagramHandler_handle_config_mem_reply(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Builds a Datagram Rejected message (MTI 0x0A48).
@@ -403,6 +428,30 @@ extern "C" {
          * @param openlcb_node  Pointer to @ref openlcb_node_t target node.
          */
     extern void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t *openlcb_node);
+
+        /**
+         * @brief Keeps a copy of a datagram a local node has just sent, for resend.
+         *
+         * @param openlcb_node  Local node that sent it.
+         * @param msg           The message as sent (ignored unless MTI_DATAGRAM).
+         * @param current_tick  Current global 100ms tick.
+         */
+    extern void ProtocolDatagramHandler_datagram_sent(openlcb_node_t *openlcb_node, openlcb_msg_t *msg, uint8_t current_tick);
+
+        /**
+         * @brief Returns the node's stored datagram when a resend is due, else NULL.
+         *
+         * @param openlcb_node  Local node to check.
+         * @param current_tick  Current global 100ms tick.
+         */
+    extern openlcb_msg_t *ProtocolDatagramHandler_datagram_resend_due(openlcb_node_t *openlcb_node, uint8_t current_tick);
+
+        /**
+         * @brief Marks the due resend as handed to the send path.
+         *
+         * @param openlcb_node  Local node whose stored datagram was queued again.
+         */
+    extern void ProtocolDatagramHandler_datagram_resend_queued(openlcb_node_t *openlcb_node);
 
         /**
          * @brief Periodic timer tick for datagram timeout tracking.

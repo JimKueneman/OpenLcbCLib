@@ -228,20 +228,46 @@ sequenceDiagram
         <h2>14.6 Retry Logic</h2>
 
         <p>
-            When a Datagram Rejected reply is received:
+            Every datagram a local node hands to the transport (application sends and
+            handler answers such as a Read Reply) is copied into a DATAGRAM buffer and kept
+            on the node in <code>last_sent_datagram</code> until its receiver answers. The
+            main state machine reports each send through the <code>datagram_sent</code>
+            interface field (<code>ProtocolDatagramHandler_datagram_sent()</code>). A node
+            keeps one such copy; a new datagram replaces an older one, and sending the stored
+            datagram again (a resend) keeps its retry count.
+        </p>
+
+        <p>
+            Datagram Received OK and Datagram Rejected only act on the copy when they come
+            from the node it was sent to (Node ID when both are known, otherwise alias):
         </p>
         <ul>
-            <li><strong>Temporary error (0x2xxx):</strong> The <code>resend_datagram</code> flag
-                is set on the node, and the stored datagram will be retried.</li>
-            <li><strong>Permanent error (0x1xxx):</strong> The stored datagram is freed and
-                the retry state is cleared.</li>
+            <li><strong>Datagram Received OK:</strong> the copy is freed.</li>
+            <li><strong>Temporary error (0x2xxx):</strong> the retry count goes up and
+                <code>resend_datagram</code> is set. When the loop is idle and at least one
+                100ms tick has passed, the main state machine asks
+                <code>datagram_resend_due</code> for the copy and sends it through
+                <code>OpenLcbMainStatemachine_send_with_sibling_dispatch()</code>, so other
+                local nodes see the resend as well, then calls
+                <code>datagram_resend_queued</code>. The copy stays stored until answered.</li>
+            <li><strong>Permanent error (0x1xxx):</strong> the copy is freed.</li>
         </ul>
 
         <p>
-            A Datagram Received OK clears the resend flag and frees the stored datagram buffer.
-            The <code>check_timeouts()</code> function scans for timed-out pending datagrams
-            that have exceeded their maximum retry count.
+            The copy is also dropped after 3 retries or when no answer arrives within
+            3 seconds (<code>ProtocolDatagramHandler_check_timeouts()</code>).
         </p>
+
+        <div class="callout">
+            <div class="callout-title">Incoming datagrams while a copy is held</div>
+            <p>While a node holds an unacknowledged datagram, any new datagram addressed to
+            it (from the node it is retrying to or from any other node) is answered with a
+            temporary Datagram Rejected, Buffer Unavailable (0x2020), and the sender retries.
+            Answering it could mean sending a reply datagram, which would replace the stored
+            copy before it is acknowledged. Two nodes that send each other a datagram at the
+            same moment reject each other and both give up after 3 retries; the
+            applications see the failure and can try again.</p>
+        </div>
 
         <!-- ================================================================ -->
         <h2>14.7 Configuration Memory Operations</h2>

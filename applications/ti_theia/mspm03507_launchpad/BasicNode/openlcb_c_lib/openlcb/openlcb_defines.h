@@ -567,19 +567,19 @@ extern "C" {
 #define EVENT_ID_POWER_SUPPLY_BROWN_OUT_STANDARD 0x010000000000FFF0
 
     /** @brief Identification button combination pressed on node */
-#define EVENT_ID_IDENT_BUTTON_COMBO_PRESSED 0x010000000000FF00
+#define EVENT_ID_IDENT_BUTTON_COMBO_PRESSED 0x010000000000FE00
 
     /** @brief Link layer error code 1 detected */
-#define EVENT_ID_LINK_ERROR_CODE_1 0x010000000000FF01
+#define EVENT_ID_LINK_ERROR_CODE_1 0x010000000000FD01
 
     /** @brief Link layer error code 2 detected */
-#define EVENT_ID_LINK_ERROR_CODE_2 0x010000000000FF02
+#define EVENT_ID_LINK_ERROR_CODE_2 0x010000000000FD02
 
     /** @brief Link layer error code 3 detected */
-#define EVENT_ID_LINK_ERROR_CODE_3 0x010000000000FF03
+#define EVENT_ID_LINK_ERROR_CODE_3 0x010000000000FD03
 
     /** @brief Link layer error code 4 detected */
-#define EVENT_ID_LINK_ERROR_CODE_4 0x010000000000FF04
+#define EVENT_ID_LINK_ERROR_CODE_4 0x010000000000FD04
 
     /** @} */ // end of well_known_events_auto
 
@@ -714,8 +714,8 @@ extern "C" {
     /** @brief Permanent error base code */
 #define ERROR_PERMANENT 0x1000
 
-    /** @brief Permanent: Streams not supported by this node */
-#define ERROR_PERMANENT_STREAMS_NOT_SUPPORTED 0x1010
+    /** @brief Permanent: Streams not supported by this node (StreamTransportS Initiate Reply reject code; 0x101x is reserved in MessageNetworkS) */
+#define ERROR_PERMANENT_STREAMS_NOT_SUPPORTED 0x1040
 
     /** @brief Permanent: Unknown or unsupported address space (0x1080 | 0x0001) */
 #define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN 0x1081
@@ -1226,14 +1226,14 @@ extern "C" {
 
 /**
  * @defgroup node_enum_keys Node Enumeration Key Management
- * @brief User keys (0-3) and internal keys (4-6) for independent node enumeration.
+ * @brief User keys (0-3) and internal keys (4-9) for independent node enumeration.
  * @{
  */
 
-    /** @brief Maximum number of enumeration keys available for user/application */
+    /** @brief Maximum number of internal system enumeration keys */
 #define MAX_INTERNAL_ENUM_KEYS_VALUES 6
 
-    /** @brief Maximum number of internal system enumeration keys */
+    /** @brief Maximum number of enumeration keys available for user/application */
 #define MAX_USER_ENUM_KEYS_VALUES 4
 
     /** @brief User enumeration key 1 */
@@ -1259,6 +1259,9 @@ extern "C" {
 
     /** @brief Enumeration key used by CAN state machine */
 #define CAN_STATEMACHINE_NODE_ENUMRATOR_KEY (MAX_USER_ENUM_KEYS_VALUES + 2)
+
+    /** @brief Enumeration key used by the TCP state machine (same slot as CAN; only one transport can be compiled in) */
+#define TCP_STATEMACHINE_NODE_ENUMERATOR_KEY CAN_STATEMACHINE_NODE_ENUMRATOR_KEY
 
     /** @brief Enumeration key used by datagram timeout scanner */
 #define DATAGRAM_TIMEOUT_ENUM_KEY (MAX_USER_ENUM_KEYS_VALUES + 3)
@@ -1335,6 +1338,36 @@ extern "C" {
 #define BROADCAST_TIME_SET_COMMAND_OFFSET          0x8000
 
     /** @} */ // end of broadcast_time_events
+
+/**
+ * @defgroup broadcast_time_report_pending Broadcast Time Report Requests
+ * @brief Flags for OpenLcbApplicationBroadcastTime_request_report().  Each flag
+ * queues one report with the clock's value at the time of the request, in the
+ * order Date Rollover, Time, Year, Date, Rate; the producer node sends the
+ * queue in order on the 100ms tick and keeps each report until the transport
+ * accepts it.
+ * @{
+ */
+
+    /** @brief Report Time pending */
+#define BROADCAST_TIME_REPORT_PENDING_TIME 0x01
+
+    /** @brief Date Rollover pending */
+#define BROADCAST_TIME_REPORT_PENDING_DATE_ROLLOVER 0x02
+
+    /** @brief Report Year pending */
+#define BROADCAST_TIME_REPORT_PENDING_YEAR 0x04
+
+    /** @brief Report Date pending */
+#define BROADCAST_TIME_REPORT_PENDING_DATE 0x08
+
+    /** @brief Report Rate pending */
+#define BROADCAST_TIME_REPORT_PENDING_RATE 0x10
+
+    /** @brief 100ms ticks between a Date Rollover and its Report Year / Report Date (3 real seconds, BroadcastTimeS 6.2). */
+#define BROADCAST_TIME_ROLLOVER_REPORT_DELAY_TICKS 30
+
+    /** @} */ // end of broadcast_time_report_pending
 
 /**
  * @defgroup train_protocol Train Control Protocol Defines

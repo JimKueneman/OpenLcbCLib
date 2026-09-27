@@ -70,18 +70,44 @@ void CanRxMessageHandler_initialize(const interface_can_rx_message_handler_t *in
 }
 
     /**
-     * @brief Builds and queues a Datagram Rejected or Optional Interaction Rejected reply.
+     * @brief Fills in source_id when the sender is a registered train listener.
+     *
+     * @details On CAN a received message carries only the sender's
+     * alias, so source_id stays 0.  A train's listener forwarding skips the listener that sent
+     * the command by comparing Node IDs, so with source_id 0 it forwarded every command straight
+     * back to its sender (JMRI attaches itself as a listener of the train it drives).
+     */
+static void _fill_source_id_from_listener(openlcb_msg_t *msg) {
+
+    if (!_interface->listener_find_by_alias || msg->source_id != 0) {
+
+        return;
+
+    }
+
+    listener_alias_entry_t *entry = _interface->listener_find_by_alias(msg->source_alias);
+
+    if (entry) {
+
+        msg->source_id = entry->node_id;
+
+    }
+
+}
+
+    /**
+     * @brief Builds a Datagram Rejected or Optional Interaction Rejected CAN frame and queues it for transmission.
      *
      * @details Algorithm:
-     * -# Allocate an OpenLCB BASIC buffer; silently drop if allocation fails.
-     * -# Map MTI: datagram → MTI_DATAGRAM_REJECTED_REPLY, others → MTI_OPTIONAL_INTERACTION_REJECTED.
-     * -# Load the reply message with swapped source/dest aliases.
-     * -# Write dest_alias and error_code into payload bytes 0-1 and 2-3.
-     * -# Push to the OpenLCB Tx FIFO.
+     * -# Drop if the rejected message was global (our alias is 0): a global message is never rejected.
+     * -# Allocate a CAN buffer; silently drop if allocation fails.
+     * -# Datagram frames are answered with Datagram Rejected (error code only), all others with
+     *    Optional Interaction Rejected (error code then the rejected MTI).
+     * -# Build the addressed frame from our alias to the sender and push it to the CAN transmit FIFO.
      *
      * @verbatim
-     * @param source_alias Alias of the node that sent the problematic frame.
-     * @param dest_alias   Alias of our node that received the frame.
+     * @param source_alias Alias of our node that received the frame (the reject's source).
+     * @param dest_alias   Alias of the node that sent the problematic frame (the reject's destination).
      * @param mti          Original MTI of the message being rejected.
      * @param error_code   OpenLCB error code (e.g. ERROR_TEMPORARY_OUT_OF_ORDER_*).
      * @endverbatim
@@ -90,32 +116,53 @@ void CanRxMessageHandler_initialize(const interface_can_rx_message_handler_t *in
      */
 static void _load_reject_message(uint16_t source_alias, uint16_t dest_alias, uint16_t mti, uint16_t error_code) {
 
-    openlcb_msg_t *target_openlcb_msg = _interface->openlcb_buffer_store_allocate_buffer(BASIC);
+    if (source_alias == 0) {
 
-    if (target_openlcb_msg) {
-
-        if (mti == MTI_DATAGRAM) {
-
-            mti = MTI_DATAGRAM_REJECTED_REPLY;
-
-
-        } else {
-
-            mti = MTI_OPTIONAL_INTERACTION_REJECTED;
-
-        }
-
-        // TODO: Probably Stream is a special case too
-
-        OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti);
-
-        OpenLcbUtilities_copy_word_to_openlcb_payload(target_openlcb_msg, dest_alias, 0);
-
-        OpenLcbUtilities_copy_word_to_openlcb_payload(target_openlcb_msg, error_code, 2);
-
-        OpenLcbBufferFifo_push(target_openlcb_msg);
+        return;
 
     }
+
+    can_msg_t *outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
+
+    if (!outgoing_can_msg) {
+
+        return;
+
+    }
+
+    uint16_t reject_mti = MTI_OPTIONAL_INTERACTION_REJECTED;
+
+    if (mti == MTI_DATAGRAM) {
+
+        reject_mti = MTI_DATAGRAM_REJECTED_REPLY;
+
+    }
+
+    // Streams need no special case: Stream Data Send frames (frame type 7) are
+    // self-contained and never reassembled, and the other stream messages
+    // (e.g. a two-frame Stream Initiate Request) are answered with Optional
+    // Interaction Rejected carrying the stream message's MTI, which
+    // StreamTransportS 6.1 allows ("when possible, the MTI value should be set
+    // to the MTI of Stream Initiate Request").  A Stream Initiate Reply cannot be
+    // built here: without the first frame the Source Stream ID is not known.
+
+    outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE | ((uint32_t) (reject_mti & 0x0FFF) << 12) | source_alias;
+
+    outgoing_can_msg->payload[0] = MULTIFRAME_ONLY | (uint8_t) ((dest_alias >> 8) & 0x0F);
+    outgoing_can_msg->payload[1] = (uint8_t) (dest_alias & 0xFF);
+    outgoing_can_msg->payload[2] = (uint8_t) (error_code >> 8);
+    outgoing_can_msg->payload[3] = (uint8_t) (error_code & 0xFF);
+    outgoing_can_msg->payload_count = 4;
+
+    if (reject_mti == MTI_OPTIONAL_INTERACTION_REJECTED) {
+
+        outgoing_can_msg->payload[4] = (uint8_t) (mti >> 8);
+        outgoing_can_msg->payload[5] = (uint8_t) (mti & 0xFF);
+        outgoing_can_msg->payload_count = 6;
+
+    }
+
+    CanBufferFifo_push(outgoing_can_msg);
 
 }
 
@@ -264,6 +311,8 @@ void CanRxMessageHandler_last_frame(can_msg_t *can_msg, uint8_t offset) {
 
     target_openlcb_msg->state.inprocess = false;
 
+    _fill_source_id_from_listener(target_openlcb_msg);
+
     OpenLcbBufferList_release(target_openlcb_msg);
     OpenLcbBufferFifo_push(target_openlcb_msg);
 
@@ -285,6 +334,8 @@ void CanRxMessageHandler_single_frame(can_msg_t *can_msg, uint8_t offset, payloa
     OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti);
 
     CanUtilities_append_can_payload_to_openlcb_payload(target_openlcb_msg, can_msg, offset);
+
+    _fill_source_id_from_listener(target_openlcb_msg);
 
     OpenLcbBufferFifo_push(target_openlcb_msg); // Can not fail List is as large as the number of buffers
 

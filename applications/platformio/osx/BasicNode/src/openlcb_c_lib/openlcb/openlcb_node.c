@@ -88,7 +88,7 @@ static void _clear_node(openlcb_node_t *openlcb_node) {
     openlcb_node->owner_node = 0;
     openlcb_node->index = 0;
 
-    openlcb_node->last_received_datagram = NULL;
+    openlcb_node->last_sent_datagram = NULL;
     openlcb_node->train_state = NULL;
 
     openlcb_node->consumers.count = 0;
@@ -227,6 +227,19 @@ openlcb_node_t *OpenLcbNode_get_next(uint8_t key) {
     }
 
     return &_openlcb_nodes.node[_node_enum_index_array[key]];
+
+}
+
+    /** @brief Returns the allocated node at a position in the node table, NULL past the end. */
+openlcb_node_t *OpenLcbNode_get_by_index(uint16_t index) {
+
+    if (index >= _openlcb_nodes.count) {
+
+        return NULL;
+
+    }
+
+    return &_openlcb_nodes.node[index];
 
 }
 
