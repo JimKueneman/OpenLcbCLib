@@ -45,6 +45,7 @@
 #include "../../openlcb/openlcb_buffer_store.h"
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_config.h"
+#include "../../openlcb/openlcb_node.h"
 
 #ifdef OPENLCB_COMPILE_TCP
 
@@ -109,6 +110,9 @@ static void _build_main_interface(void) {
     _main_interface.link_control_run = &TcpLinkControl_run;
     _main_interface.get_current_tick = &OpenLcbConfig_get_global_100ms_tick;
     _main_interface.on_link_status_changed = _user_config->on_link_status_changed;
+    _main_interface.openlcb_node_get_first = &OpenLcbNode_get_first;
+    _main_interface.openlcb_node_get_next = &OpenLcbNode_get_next;
+    _main_interface.openlcb_node_reset_state = &OpenLcbNode_reset_state;
 }
 
 // =========================================================================

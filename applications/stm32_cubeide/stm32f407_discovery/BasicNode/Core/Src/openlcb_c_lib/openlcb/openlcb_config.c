@@ -1244,6 +1244,9 @@ static void _build_main_statemachine(void) {
     _main_sm.datagram_ok_reply       = &ProtocolDatagramHandler_datagram_received_ok;
     _main_sm.datagram_rejected_reply = &ProtocolDatagramHandler_datagram_rejected;
     _main_sm.load_datagram_rejected  = &ProtocolDatagramHandler_load_datagram_rejected_message;
+    _main_sm.datagram_sent           = &ProtocolDatagramHandler_datagram_sent;
+    _main_sm.datagram_resend_due     = &ProtocolDatagramHandler_datagram_resend_due;
+    _main_sm.datagram_resend_queued  = &ProtocolDatagramHandler_datagram_resend_queued;
 #endif
 
 #ifdef OPENLCB_COMPILE_TRAIN

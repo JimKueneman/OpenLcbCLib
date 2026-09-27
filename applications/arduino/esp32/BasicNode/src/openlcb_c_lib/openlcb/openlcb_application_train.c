@@ -1167,6 +1167,42 @@ node_id_t OpenLcbApplicationTrain_get_reserved_by_node_id(openlcb_node_t *openlc
 }
 
     /**
+     * @brief Returns the CAN alias of the node holding the train's reservation.
+     *
+     * @details Algorithm:
+     * -# Return 0 if openlcb_node or train_state is NULL.
+     * -# Return 0 if reserved_node_count is zero (no active reservation).
+     * -# Return train_state->reserved_by_alias.
+     *
+     * A Reserve carries no Node ID, so a reservation made over CAN is known by
+     * alias only (get_reserved_by_node_id() returns 0 for it); over TCP the
+     * alias is 0 and the Node ID is known.
+     *
+     * @verbatim
+     * @param openlcb_node  Pointer to the openlcb_node_t.
+     * @endverbatim
+     *
+     * @return Reserving node's alias, or 0 if no reservation is held or the alias is not known.
+     */
+uint16_t OpenLcbApplicationTrain_get_reserved_by_alias(openlcb_node_t *openlcb_node) {
+
+    if (!openlcb_node || !openlcb_node->train_state) {
+
+        return 0;
+
+    }
+
+    if (openlcb_node->train_state->reserved_node_count == 0) {
+
+        return 0;
+
+    }
+
+    return openlcb_node->train_state->reserved_by_alias;
+
+}
+
+    /**
      * @brief Returns the number of listener nodes attached to a train.
      *
      * @details Algorithm:

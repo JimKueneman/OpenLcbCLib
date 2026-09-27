@@ -397,6 +397,11 @@ typedef struct {
          * @details Call write_result when the write is complete to signal success
          * or failure.  The library loads the correct Write Reply datagram.
          *
+         * @warning Call write_result before this callback returns.  The
+         * statemachine_info and config_mem_write_request_info pointers are only
+         * valid during the call (the request info lives on the library's stack),
+         * so do not keep them to complete the write later.
+         *
          * @param statemachine_info @ref openlcb_statemachine_info_t context
          * @param config_mem_write_request_info @ref config_mem_write_request_info_t context
          * @param write_result Completion callback — call with true (OK) or false (fail)

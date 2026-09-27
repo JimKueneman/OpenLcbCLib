@@ -271,8 +271,8 @@ void ProtocolBroadcastTimeHandler_handle_time_event(openlcb_statemachine_info_t 
 
                 _handle_report_time(node, clock, event_id);
 
-                // Send immediate Report Time PCER so consumers see the change right away
-                OpenLcbApplicationBroadcastTime_send_report_time(node, clock_id, clock->time.hour, clock->time.minute);
+                // Report Time PCER so consumers see the change right away (sent by the producer node, retried if refused)
+                OpenLcbApplicationBroadcastTime_request_report(clock_id, BROADCAST_TIME_REPORT_PENDING_TIME);
 
                 // Start/reset 3-second coalescing timer for full sync sequence
                 OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
@@ -286,7 +286,7 @@ void ProtocolBroadcastTimeHandler_handle_time_event(openlcb_statemachine_info_t 
                 _handle_report_date(node, clock, event_id);
 
                 // §6.5: produce the effective Report Date PCER immediately
-                OpenLcbApplicationBroadcastTime_send_report_date(node, clock_id, clock->date.month, clock->date.day);
+                OpenLcbApplicationBroadcastTime_request_report(clock_id, BROADCAST_TIME_REPORT_PENDING_DATE);
 
                 OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
 
@@ -299,7 +299,7 @@ void ProtocolBroadcastTimeHandler_handle_time_event(openlcb_statemachine_info_t 
                 _handle_report_year(node, clock, event_id);
 
                 // §6.5: produce the effective Report Year PCER immediately
-                OpenLcbApplicationBroadcastTime_send_report_year(node, clock_id, clock->year.year);
+                OpenLcbApplicationBroadcastTime_request_report(clock_id, BROADCAST_TIME_REPORT_PENDING_YEAR);
 
                 OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
 
@@ -312,7 +312,7 @@ void ProtocolBroadcastTimeHandler_handle_time_event(openlcb_statemachine_info_t 
                 _handle_report_rate(node, clock, event_id);
 
                 // §6.5: produce the effective Report Rate PCER immediately
-                OpenLcbApplicationBroadcastTime_send_report_rate(node, clock_id, clock->rate.rate);
+                OpenLcbApplicationBroadcastTime_request_report(clock_id, BROADCAST_TIME_REPORT_PENDING_RATE);
 
                 OpenLcbApplicationBroadcastTime_trigger_sync_delay(clock_id);
 

@@ -89,7 +89,8 @@ typedef struct {
     void (*write_request_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
         /** @brief Optional - DCC CV (0xF8) write handler; see openlcb_application_dcc_cv.h. */
     void (*write_request_dcc_cv)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
-        /** @brief Optional — Firmware (0xEF) write handler (receives write_result completion callback). */
+        /** @brief Optional — Firmware (0xEF) write handler (receives write_result completion callback).
+         *  Call write_result before returning; the pointers are only valid during the call. */
     void (*write_request_firmware)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, write_result_t write_result);
 
     // ---- Optional extras ----

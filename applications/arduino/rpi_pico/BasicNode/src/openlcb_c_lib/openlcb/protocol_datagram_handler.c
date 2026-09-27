@@ -67,6 +67,9 @@
     /** @brief Maximum datagram retry attempts before abandoning. */
 #define DATAGRAM_MAX_RETRIES 3
 
+    /** @brief Minimum 100ms ticks between a temporary rejection and the resend. */
+#define DATAGRAM_RESEND_DELAY_TICKS 1
+
 
     /** @brief Stored callback interface pointer; set by _initialize(). */
 static interface_protocol_datagram_handler_t *_interface;
@@ -1300,6 +1303,11 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
      * @brief Main entry point — switches on payload[0] command byte.
      *
      * @details Algorithm:
+     * -# If this node still holds a datagram it sent that has not been
+     *    acknowledged (it may have to be resent), reject the new datagram with
+     *    a temporary Buffer Unavailable so the sender retries.  Answering it
+     *    could mean sending a reply datagram, which would replace the stored
+     *    one before it is acknowledged.
      * -# If payload[0] == CONFIG_MEM_CONFIGURATION (0x20), delegate to
      *    _handle_datagram_memory_configuration_command()
      * -# Otherwise reject with COMMAND_UNKNOWN
@@ -1309,6 +1317,16 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
      * @endverbatim
      */
 void ProtocolDatagramHandler_datagram(openlcb_statemachine_info_t *statemachine_info) {
+
+    // First pass only: the second pass of a two-phase answer is this same datagram.
+    if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent &&
+            statemachine_info->openlcb_node->last_sent_datagram) {
+
+        ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
+
+        return;
+
+    }
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[0]) { // commands
 
@@ -1503,10 +1521,167 @@ void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine
 }
 
     /**
+     * @brief Returns true when a Datagram Received OK / Rejected came from the node the stored datagram went to.
+     *
+     * @details Matches by Node ID when both are known, otherwise by alias
+     * (on CAN a received reply carries only the sender's alias).
+     */
+static bool _is_reply_to_stored_datagram(const openlcb_node_t *openlcb_node, const openlcb_msg_t *reply) {
+
+    const openlcb_msg_t *stored = openlcb_node->last_sent_datagram;
+
+    if (!stored) {
+
+        return false;
+
+    }
+
+    if ((stored->dest_id != 0) && (reply->source_id != 0)) {
+
+        return stored->dest_id == reply->source_id;
+
+    }
+
+    return (reply->source_alias != 0) && (stored->dest_alias == reply->source_alias);
+
+}
+
+    /** @brief Returns true when two datagrams have the same destination and payload. */
+static bool _is_same_datagram(const openlcb_msg_t *a, const openlcb_msg_t *b) {
+
+    if ((a->dest_id != b->dest_id) || (a->dest_alias != b->dest_alias) || (a->payload_count != b->payload_count)) {
+
+        return false;
+
+    }
+
+    for (uint16_t i = 0; i < a->payload_count; i++) {
+
+        if (*a->payload[i] != *b->payload[i]) {
+
+            return false;
+
+        }
+
+    }
+
+    return true;
+
+}
+
+    /**
+     * @brief Keeps a copy of a datagram a local node has just handed to the transport.
+     *
+     * @details Algorithm:
+     * -# Ignore anything that is not a Datagram
+     * -# If it is the stored datagram being resent, only restart its timeout
+     * -# Otherwise free any older stored datagram and store a copy with a
+     *    fresh retry count (one outstanding datagram per node,
+     *    DatagramTransportS 6.1)
+     *
+     * If no DATAGRAM buffer is free the datagram is simply not kept, and a
+     * temporary rejection of it cannot be resent.
+     *
+     * @verbatim
+     * @param openlcb_node  Local node that sent the datagram.
+     * @param msg           The datagram as sent.
+     * @param current_tick  Current global 100ms tick.
+     * @endverbatim
+     */
+void ProtocolDatagramHandler_datagram_sent(openlcb_node_t *openlcb_node, openlcb_msg_t *msg, uint8_t current_tick) {
+
+    if (msg->mti != MTI_DATAGRAM) {
+
+        return;
+
+    }
+
+    if (openlcb_node->last_sent_datagram && _is_same_datagram(openlcb_node->last_sent_datagram, msg)) {
+
+        openlcb_node->last_sent_datagram->timer.datagram.tick_snapshot = current_tick;
+
+        return;
+
+    }
+
+    ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node);
+
+    _interface->lock_shared_resources();
+    openlcb_msg_t *copy = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    _interface->unlock_shared_resources();
+
+    if (!copy) {
+
+        return;
+
+    }
+
+    copy->mti           = msg->mti;
+    copy->source_alias  = msg->source_alias;
+    copy->source_id     = msg->source_id;
+    copy->dest_alias    = msg->dest_alias;
+    copy->dest_id       = msg->dest_id;
+    copy->payload_count = msg->payload_count;
+
+    for (uint16_t i = 0; i < msg->payload_count; i++) {
+
+        *copy->payload[i] = *msg->payload[i];
+
+    }
+
+    copy->timer.datagram.retry_count = 0;
+    copy->timer.datagram.tick_snapshot = current_tick;
+
+    openlcb_node->last_sent_datagram = copy;
+
+}
+
+    /**
+     * @brief Returns the stored datagram when it is due to be resent, else NULL.
+     *
+     * @details Due when it was rejected with a temporary error and at least one
+     * 100ms tick has passed since, so the receiver gets a moment to free a
+     * buffer.  The caller sends it and then calls
+     * ProtocolDatagramHandler_datagram_resend_queued().
+     *
+     * @verbatim
+     * @param openlcb_node  Local node to check.
+     * @param current_tick  Current global 100ms tick.
+     * @endverbatim
+     */
+openlcb_msg_t *ProtocolDatagramHandler_datagram_resend_due(openlcb_node_t *openlcb_node, uint8_t current_tick) {
+
+    if (!openlcb_node->state.resend_datagram || !openlcb_node->last_sent_datagram) {
+
+        return NULL;
+
+    }
+
+    uint8_t elapsed = (current_tick - openlcb_node->last_sent_datagram->timer.datagram.tick_snapshot) & 0x1F;
+
+    if (elapsed < DATAGRAM_RESEND_DELAY_TICKS) {
+
+        return NULL;
+
+    }
+
+    return openlcb_node->last_sent_datagram;
+
+}
+
+    /** @brief Marks the stored datagram as handed back to the send path; it stays stored until answered. */
+void ProtocolDatagramHandler_datagram_resend_queued(openlcb_node_t *openlcb_node) {
+
+    openlcb_node->state.resend_datagram = false;
+
+}
+
+    /**
      * @brief Handle incoming Datagram Received OK (MTI 0x0A28).
      *
      * @details Algorithm:
-     * -# Clear resend flag and free the stored datagram buffer
+     * -# If it comes from the node the stored datagram went to, clear the
+     *    resend flag and free the stored datagram buffer
      * -# Set outgoing_msg_info.valid = false (nothing to send)
      *
      * @verbatim
@@ -1515,7 +1690,11 @@ void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine
      */
 void ProtocolDatagramHandler_datagram_received_ok(openlcb_statemachine_info_t *statemachine_info) {
 
-    ProtocolDatagramHandler_clear_resend_datagram_message(statemachine_info->openlcb_node);
+    if (_is_reply_to_stored_datagram(statemachine_info->openlcb_node, statemachine_info->incoming_msg_info.msg_ptr)) {
+
+        ProtocolDatagramHandler_clear_resend_datagram_message(statemachine_info->openlcb_node);
+
+    }
 
     statemachine_info->outgoing_msg_info.valid = false;
 
@@ -1525,6 +1704,7 @@ void ProtocolDatagramHandler_datagram_received_ok(openlcb_statemachine_info_t *s
      * @brief Handle incoming Datagram Rejected (MTI 0x0A48).
      *
      * @details Algorithm:
+     * -# Ignore it unless it comes from the node the stored datagram went to
      * -# Extract error code from payload word 0
      * -# If ERROR_TEMPORARY bit set and a stored datagram exists:
      *    a. Read retry count from timer.datagram.retry_count
@@ -1541,17 +1721,25 @@ void ProtocolDatagramHandler_datagram_received_ok(openlcb_statemachine_info_t *s
      */
 void ProtocolDatagramHandler_datagram_rejected(openlcb_statemachine_info_t *statemachine_info) {
 
+    if (!_is_reply_to_stored_datagram(statemachine_info->openlcb_node, statemachine_info->incoming_msg_info.msg_ptr)) {
+
+        statemachine_info->outgoing_msg_info.valid = false;
+
+        return;
+
+    }
+
     if ((OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) & ERROR_TEMPORARY) == ERROR_TEMPORARY) {
 
-        if (statemachine_info->openlcb_node->last_received_datagram) {
+        if (statemachine_info->openlcb_node->last_sent_datagram) {
 
-            uint8_t retries = statemachine_info->openlcb_node->last_received_datagram->timer.datagram.retry_count;
+            uint8_t retries = statemachine_info->openlcb_node->last_sent_datagram->timer.datagram.retry_count;
             retries++;
 
             if (retries < DATAGRAM_MAX_RETRIES) {
 
-                statemachine_info->openlcb_node->last_received_datagram->timer.datagram.retry_count = retries;
-                statemachine_info->openlcb_node->last_received_datagram->timer.datagram.tick_snapshot = statemachine_info->current_tick;
+                statemachine_info->openlcb_node->last_sent_datagram->timer.datagram.retry_count = retries;
+                statemachine_info->openlcb_node->last_sent_datagram->timer.datagram.tick_snapshot = statemachine_info->current_tick;
                 statemachine_info->openlcb_node->state.resend_datagram = true;
 
             } else {
@@ -1576,7 +1764,7 @@ void ProtocolDatagramHandler_datagram_rejected(openlcb_statemachine_info_t *stat
      * @brief Free stored datagram and clear resend flag for a node.
      *
      * @details Algorithm:
-     * -# If last_received_datagram exists, lock/free/unlock it and NULL the pointer
+     * -# If last_sent_datagram exists, lock/free/unlock it and NULL the pointer
      * -# Clear resend_datagram flag
      *
      * @verbatim
@@ -1587,13 +1775,13 @@ void ProtocolDatagramHandler_datagram_rejected(openlcb_statemachine_info_t *stat
      */
 void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t *openlcb_node) {
 
-    if (openlcb_node->last_received_datagram) {
+    if (openlcb_node->last_sent_datagram) {
 
         _interface->lock_shared_resources();
-        OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
+        OpenLcbBufferStore_free_buffer(openlcb_node->last_sent_datagram);
         _interface->unlock_shared_resources();
 
-        openlcb_node->last_received_datagram = NULL;
+        openlcb_node->last_sent_datagram = NULL;
 
     }
 
@@ -1636,16 +1824,16 @@ void ProtocolDatagramHandler_check_timeouts(uint8_t current_tick) {
 
     while (node) {
 
-        if (node->last_received_datagram) {
+        if (node->last_sent_datagram) {
 
-            uint8_t snapshot = node->last_received_datagram->timer.datagram.tick_snapshot;
-            uint8_t retries = node->last_received_datagram->timer.datagram.retry_count;
+            uint8_t snapshot = node->last_sent_datagram->timer.datagram.tick_snapshot;
+            uint8_t retries = node->last_sent_datagram->timer.datagram.retry_count;
             uint8_t elapsed = (current_tick - snapshot) & 0x1F;
 
             if (elapsed >= DATAGRAM_TIMEOUT_TICKS || retries >= DATAGRAM_MAX_RETRIES) {
 
-                OpenLcbBufferStore_free_buffer(node->last_received_datagram);
-                node->last_received_datagram = NULL;
+                OpenLcbBufferStore_free_buffer(node->last_sent_datagram);
+                node->last_sent_datagram = NULL;
                 node->state.resend_datagram = false;
 
             }

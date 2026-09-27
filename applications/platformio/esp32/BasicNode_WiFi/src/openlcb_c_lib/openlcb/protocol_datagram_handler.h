@@ -430,6 +430,30 @@ extern "C" {
     extern void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t *openlcb_node);
 
         /**
+         * @brief Keeps a copy of a datagram a local node has just sent, for resend.
+         *
+         * @param openlcb_node  Local node that sent it.
+         * @param msg           The message as sent (ignored unless MTI_DATAGRAM).
+         * @param current_tick  Current global 100ms tick.
+         */
+    extern void ProtocolDatagramHandler_datagram_sent(openlcb_node_t *openlcb_node, openlcb_msg_t *msg, uint8_t current_tick);
+
+        /**
+         * @brief Returns the node's stored datagram when a resend is due, else NULL.
+         *
+         * @param openlcb_node  Local node to check.
+         * @param current_tick  Current global 100ms tick.
+         */
+    extern openlcb_msg_t *ProtocolDatagramHandler_datagram_resend_due(openlcb_node_t *openlcb_node, uint8_t current_tick);
+
+        /**
+         * @brief Marks the due resend as handed to the send path.
+         *
+         * @param openlcb_node  Local node whose stored datagram was queued again.
+         */
+    extern void ProtocolDatagramHandler_datagram_resend_queued(openlcb_node_t *openlcb_node);
+
+        /**
          * @brief Periodic timer tick for datagram timeout tracking.
          *
          * @details Called from the main loop with the current global tick.

@@ -87,6 +87,9 @@ typedef struct {
         /** @brief CAN alias of the remote end (0 on non-CAN transports). */
     uint16_t remote_alias;
 
+        /** @brief The local node this stream belongs to (the table is shared by every node on the device). */
+    openlcb_node_t *local_node;
+
         /** @brief Negotiated max buffer size (bytes per window). */
     uint16_t max_buffer_size;
 

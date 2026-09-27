@@ -88,7 +88,7 @@ static void _clear_node(openlcb_node_t *openlcb_node) {
     openlcb_node->owner_node = 0;
     openlcb_node->index = 0;
 
-    openlcb_node->last_received_datagram = NULL;
+    openlcb_node->last_sent_datagram = NULL;
     openlcb_node->train_state = NULL;
 
     openlcb_node->consumers.count = 0;

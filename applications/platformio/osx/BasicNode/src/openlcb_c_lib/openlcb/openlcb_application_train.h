@@ -448,6 +448,21 @@ extern "C" {
     extern node_id_t OpenLcbApplicationTrain_get_reserved_by_node_id(openlcb_node_t *openlcb_node);
 
         /**
+         * @brief Returns the CAN alias of the node holding the train's reservation.
+         *
+         * @details A Reserve carries no Node ID, so a reservation made over CAN is
+         * known only by the sender's alias; for it
+         * OpenLcbApplicationTrain_get_reserved_by_node_id() returns 0 and this
+         * returns the alias.  Over TCP the alias is 0 and the Node ID is known.
+         *
+         * @param openlcb_node  Pointer to the @ref openlcb_node_t.
+         *
+         * @return Reserving node's alias, or 0 if no reservation is held / alias
+         *         not known / no train state / NULL node.
+         */
+    extern uint16_t OpenLcbApplicationTrain_get_reserved_by_alias(openlcb_node_t *openlcb_node);
+
+        /**
          * @brief Returns the number of listener nodes attached to a train.
          *
          * @details Listeners are attached and detached via the Train Listener
