@@ -5167,3 +5167,58 @@ TEST(ProtocolDatagramHandler, resend_new_incoming_datagram_rejected_while_one_ou
 
 }
 
+TEST(ProtocolDatagramHandler, resend_datagram_from_node_we_are_retrying_to_is_rejected)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node->alias = DEST_ALIAS;
+
+    // Our datagram to SOURCE was rejected temporarily and is waiting to be resent
+    openlcb_msg_t *sent = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    _resend_load_datagram(sent, 0x20);
+    ProtocolDatagramHandler_datagram_sent(node, sent, 4);
+    node->state.resend_datagram = true;
+    node->last_sent_datagram->timer.datagram.retry_count = 1;
+    openlcb_msg_t *stored = node->last_sent_datagram;
+
+    // SOURCE (the node we are retrying to) sends us a datagram of its own
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    OpenLcbUtilities_load_openlcb_message(incoming, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM);
+    OpenLcbUtilities_clear_openlcb_message_payload(incoming);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, CONFIG_MEM_CONFIGURATION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, CONFIG_MEM_READ_SPACE_FF, 1);
+    incoming->payload_count = 7;
+
+    openlcb_statemachine_info_t info;
+    info.openlcb_node = node;
+    info.incoming_msg_info.msg_ptr = incoming;
+    info.incoming_msg_info.enumerate = false;
+    info.outgoing_msg_info.msg_ptr = outgoing;
+    info.outgoing_msg_info.enumerate = false;
+    info.outgoing_msg_info.valid = false;
+    info.current_tick = 5;
+    node->state.openlcb_datagram_ack_sent = false;
+
+    ProtocolDatagramHandler_datagram(&info);
+
+    // SOURCE is told to retry; our pending resend is untouched
+    EXPECT_TRUE(info.outgoing_msg_info.valid);
+    EXPECT_EQ(outgoing->mti, MTI_DATAGRAM_REJECTED_REPLY);
+    EXPECT_EQ(outgoing->dest_alias, SOURCE_ALIAS);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 0), ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
+    EXPECT_EQ(node->last_sent_datagram, stored);
+    EXPECT_EQ(*node->last_sent_datagram->payload[0], 0x20);
+    EXPECT_TRUE(node->state.resend_datagram);
+    EXPECT_EQ(node->last_sent_datagram->timer.datagram.retry_count, 1);
+
+    ProtocolDatagramHandler_clear_resend_datagram_message(node);
+    OpenLcbBufferStore_free_buffer(sent);
+    OpenLcbBufferStore_free_buffer(incoming);
+    OpenLcbBufferStore_free_buffer(outgoing);
+
+}
+

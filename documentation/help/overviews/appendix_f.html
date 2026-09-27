@@ -151,6 +151,7 @@
                 <tr><td>4.2</td><td>Reserved Datagram OK flag bits sent as zero</td><td><code>protocol_datagram_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
                 <tr><td>6</td><td>Valid Datagram received sends Datagram OK or Rejected</td><td><code>protocol_datagram_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
                 <tr><td>6.1</td><td>Shall not send second Datagram before reply/timeout</td><td><code>protocol_datagram_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
+                <tr><td>6.2</td><td>Temporary Error: may resend (resent up to 3 times)</td><td><code>protocol_datagram_handler.c</code>, <code>openlcb_main_statemachine.c</code></td><td><a href="ch14.html">14</a></td></tr>
                 <tr><td>6.2</td><td>Permanent Error: abandon, do not resend</td><td><code>protocol_datagram_handler.c</code></td><td><a href="ch14.html">14</a></td></tr>
                 <tr><td>7.2</td><td>Maintain Datagram-started state for each receiving datagram</td><td><code>can_rx_message_handler.c</code></td><td><a href="ch11.html">11</a></td></tr>
                 <tr><td>7.3.1</td><td>No lower-priority frames between datagram frames</td><td><code>can_tx_statemachine.c</code></td><td><a href="ch11.html">11</a></td></tr>

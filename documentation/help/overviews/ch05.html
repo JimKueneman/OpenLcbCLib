@@ -188,7 +188,7 @@ openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t node_id);</code></pre>
                 <tr><td><code>parameters</code></td><td><code>const node_parameters_t *</code></td><td>Pointer to const configuration (SNIP, CDI, address spaces, PSI bits)</td></tr>
                 <tr><td><code>timerticks</code></td><td><code>uint16_t</code></td><td>100ms timer tick counter (incremented by main loop)</td></tr>
                 <tr><td><code>owner_node</code></td><td><code>uint64_t</code></td><td>Node ID that has locked/reserved this node (0 = unlocked)</td></tr>
-                <tr><td><code>last_received_datagram</code></td><td><code>openlcb_msg_t *</code></td><td>Saved incoming datagram for reply processing</td></tr>
+                <tr><td><code>last_sent_datagram</code></td><td><code>openlcb_msg_t *</code></td><td>Copy of the last datagram this node sent, kept for resend until answered (Ch 14.6)</td></tr>
                 <tr><td><code>index</code></td><td><code>uint8_t</code></td><td>This node's index in the node array</td></tr>
                 <tr><td><code>train_state</code></td><td><code>train_state_t *</code></td><td>Pointer to train state (NULL for non-train nodes)</td></tr>
             </tbody>

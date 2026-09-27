@@ -196,7 +196,7 @@ flowchart LR
             <li>The node's alias (set to 0)</li>
             <li>All state flags: <code>permitted</code>, <code>initialized</code>, <code>duplicate_id_detected</code>, <code>firmware_upgrade_active</code></li>
             <li>Resend/ACK flags: <code>resend_datagram</code>, <code>openlcb_datagram_ack_sent</code></li>
-            <li>Any pending datagram buffer (<code>last_received_datagram</code> freed)</li>
+            <li>Any pending datagram buffer (<code>last_sent_datagram</code> freed)</li>
             <li>Sets <code>run_state = RUNSTATE_GENERATE_SEED</code> to start a fresh alias reservation</li>
         </ul>
 
